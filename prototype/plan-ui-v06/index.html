@@ -1,0 +1,119 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><title>RunLoad Plan Prototype V0.6</title><style>
+:root{--bg:#e3ebf1;--surface:#fbfdff;--surface2:#f4f8fa;--ink:#1e2630;--muted:#5d6d79;--line:#afc4d2;--accent:#2f6385;--accent2:#214964;--soft:#e1eef6;--violet:#594472;--violetSoft:#eee8f5;--good:#356e5a;--shadow:0 14px 36px rgba(25,43,60,.08)}
+*{box-sizing:border-box}html{background:#dce4ea}body{margin:0;background:#dce4ea;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Yu Gothic UI","Yu Gothic",sans-serif;-webkit-font-smoothing:antialiased}a,button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}a{text-decoration:none;color:inherit}button{touch-action:manipulation}
+.app{width:min(100%,1180px);min-height:100dvh;margin:auto;background:var(--bg);padding-bottom:84px}.topbar{height:60px;padding:11px clamp(15px,3vw,28px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid color-mix(in srgb,var(--line) 72%,transparent)}.topbar strong{display:block;font-size:17px}.topbar small{display:block;margin-top:2px;font-size:7px;letter-spacing:.14em;color:var(--muted);font-weight:850}.badge{font-size:8px;font-weight:900;letter-spacing:.11em;color:var(--accent2);padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+main{width:min(100%,1030px);margin:auto;padding:24px clamp(14px,3vw,28px) 42px}.eyebrow{margin:0;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.16em}.page-head{display:flex;justify-content:space-between;gap:14px}.page-head h1{margin:4px 0 0;font-size:clamp(29px,4vw,38px);letter-spacing:-.045em}.page-head p:last-child{margin:8px 0 0;max-width:620px;color:var(--muted);font-size:10px;line-height:1.6}.date-pill{align-self:flex-start;margin-top:5px;padding:7px 10px;border-radius:999px;background:var(--soft);color:var(--accent2);font-size:8px;font-weight:900;white-space:nowrap}
+.carry{margin-top:19px;padding:12px 13px;border:1px solid color-mix(in srgb,var(--violet) 24%,var(--line));border-radius:15px;background:linear-gradient(135deg,var(--violetSoft),var(--surface));display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center}.carry i{width:11px;height:11px;border-radius:50%;background:var(--violet);box-shadow:0 0 0 5px color-mix(in srgb,var(--violet) 12%,transparent)}.carry small,.carry strong,.carry span{display:block}.carry small{font-size:7px;color:var(--muted);font-weight:850}.carry strong{margin-top:2px;font-size:10px;color:var(--violet)}.carry span{margin-top:4px;font-size:9px;line-height:1.45}
+.layout{margin-top:18px;display:grid;gap:12px}.panel{border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}.panel-head{padding:15px 15px 12px;border-bottom:1px solid var(--line)}.panel-head small,.panel-head h2,.panel-head p{display:block}.panel-head small{font-size:7px;color:var(--muted);font-weight:900;letter-spacing:.12em}.panel-head h2{margin:3px 0 0;font-size:18px}.panel-head p{margin:5px 0 0;color:var(--muted);font-size:8px;line-height:1.5}.panel-body{padding:14px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:var(--surface2);border:1px solid var(--line)}.seg button{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:10px;font-weight:900}.seg button.active{background:var(--surface);color:var(--accent2);box-shadow:0 3px 12px rgba(25,43,60,.08)}
+.field{display:block;margin-top:13px}.field>span{display:flex;align-items:center;gap:6px;font-size:8px;color:var(--muted);font-weight:850}.field>span b{font-size:7px;color:var(--accent2)}.field input,.field select{width:100%;height:44px;margin-top:6px;padding:0 11px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--ink);font-size:11px;outline:none}.field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.metric-field{margin-top:13px;padding:12px;border:1px solid var(--line);border-radius:15px;background:var(--surface2)}.metric-field span{display:block;font-size:8px;color:var(--muted);font-weight:850}.metric-field div{display:flex;align-items:end;gap:6px;margin-top:5px}.metric-field input{min-width:0;width:100%;height:40px;border:0;border-bottom:1px solid var(--line);background:transparent;font-size:22px;font-weight:900;color:var(--ink);outline:none}.metric-field em{padding-bottom:8px;font-style:normal;color:var(--muted);font-size:9px;font-weight:850}
+.details{margin-top:13px;border:1px solid var(--line);border-radius:14px;background:var(--surface2);overflow:hidden}.details summary{list-style:none;cursor:pointer;padding:12px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px}.details summary::-webkit-details-marker{display:none}.details summary strong{font-size:9px}.details summary span{font-size:8px;color:var(--muted)}.details summary i{font-style:normal;color:var(--accent);font-size:16px}.details[open] summary i{transform:rotate(180deg)}.details-body{padding:0 13px 13px;border-top:1px solid var(--line)}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:11px}.quick button{min-height:54px;padding:8px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--ink);text-align:left}.quick small,.quick strong{display:block}.quick small{font-size:7px;color:var(--muted)}.quick strong{margin-top:3px;font-size:9px;line-height:1.35}
+.subgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.note{margin:10px 0 0;color:var(--muted);font-size:7.5px;line-height:1.5}
+.confirm{padding:14px}.summary-card{padding:14px;border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line));border-radius:16px;background:linear-gradient(145deg,var(--soft),var(--surface))}.summary-card small,.summary-card strong,.summary-card span{display:block}.summary-card small{font-size:7px;color:var(--muted);font-weight:850}.summary-card strong{margin-top:3px;font-size:17px}.summary-card span{margin-top:5px;color:var(--muted);font-size:9px}.summary-row{display:grid;grid-template-columns:repeat(3,1fr);margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}.summary-row div{padding:10px 8px;border-right:1px solid var(--line);text-align:center}.summary-row div:last-child{border-right:0}.summary-row small,.summary-row strong{display:block}.summary-row small{font-size:7px;color:var(--muted)}.summary-row strong{margin-top:4px;font-size:10px}
+.compare{margin-top:10px}.compare-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:8px}.compare-row:last-child{border-bottom:0}.compare-row span{color:var(--muted)}.compare-row b{font-weight:900;color:var(--accent2)}
+.save{width:100%;min-height:50px;margin-top:13px;border:1px solid var(--accent);border-radius:13px;background:var(--accent);color:white;font-size:10px;font-weight:900}.saved{margin-top:18px}.saved summary{list-style:none;cursor:pointer;padding:12px 13px;border:1px solid var(--line);border-radius:14px;background:var(--surface);display:flex;align-items:center;justify-content:space-between}.saved summary::-webkit-details-marker{display:none}.saved summary strong{font-size:9px}.saved summary span{font-size:8px;color:var(--muted)}.saved-list{display:grid;gap:8px;margin-top:8px}.saved-card{padding:11px 12px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}.saved-card small,.saved-card strong,.saved-card span{display:block}.saved-card small{font-size:7px;color:var(--muted)}.saved-card strong{margin-top:3px;font-size:11px}.saved-card span{margin-top:3px;color:var(--muted);font-size:8px}.saved-actions{display:flex;gap:6px;margin-top:9px}.saved-actions button{flex:1;min-height:36px;border:1px solid var(--line);border-radius:9px;background:var(--surface2);color:var(--accent2);font-size:8px;font-weight:850}
+.bottom{position:fixed;left:50%;bottom:0;z-index:30;transform:translateX(-50%);width:min(100%,1180px);height:76px;padding:7px max(8px,env(safe-area-inset-left)) max(8px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);background:color-mix(in srgb,var(--surface) 93%,transparent);backdrop-filter:blur(18px)}.bottom a{color:var(--muted);border-radius:12px;display:grid;place-items:center;align-content:center}.bottom a span{font-size:17px}.bottom a small{font-size:8px;margin-top:2px}.toast{position:fixed;left:50%;bottom:86px;z-index:100;transform:translate(-50%,14px);max-width:calc(100% - 28px);padding:9px 12px;border-radius:999px;background:#1f333b;color:white;font-size:9px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+[hidden]{display:none!important}
+@media(max-width:620px){.page-head p:last-child{font-size:9px}.two{gap:7px}.metric-field{padding:10px}.metric-field input{font-size:20px}.quick{grid-template-columns:1fr}.subgrid{grid-template-columns:1fr}.summary-row strong{font-size:9px}}
+@media(min-width:880px){body{background:linear-gradient(90deg,#d5dfe4,#e6ecef 22%,#e6ecef 78%,#d5dfe4)}.app{width:min(calc(100% - 32px),1180px);margin:16px auto;border:1px solid var(--line);border-radius:28px;overflow:clip;box-shadow:0 28px 70px rgba(31,51,66,.12);padding-bottom:0}main{padding:30px 28px 52px}.layout{grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr);align-items:start}.confirm-panel{position:sticky;top:18px}.bottom{position:static;transform:none;width:100%;height:74px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition-duration:.001ms!important;animation-duration:.001ms!important}}
+
+.course-choice{margin-top:13px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface2);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.course-choice small,.course-choice strong,.course-choice span{display:block}.course-choice small{font-size:7px;color:var(--muted);font-weight:850}.course-choice strong{margin-top:3px;font-size:11px}.course-choice span{margin-top:3px;font-size:8px;color:var(--muted)}
+.course-choice a{flex:0 0 auto;min-height:38px;padding:0 11px;border:1px solid var(--accent);border-radius:10px;background:var(--surface);color:var(--accent2);font-size:8px;font-weight:900;display:grid;place-items:center}
+.assist-link{margin-top:13px;padding:12px 13px;border:1px solid color-mix(in srgb,var(--violet) 22%,var(--line));border-radius:14px;background:linear-gradient(135deg,var(--violetSoft),var(--surface));display:flex;align-items:center;justify-content:space-between;gap:12px}
+.assist-link small,.assist-link strong,.assist-link span{display:block}.assist-link small{font-size:7px;color:var(--muted)}.assist-link strong{margin-top:2px;font-size:10px;color:var(--violet)}.assist-link span{margin-top:3px;font-size:8px;color:var(--muted)}.assist-link i{font-style:normal;font-size:18px;color:var(--violet)}
+ .quick{grid-template-columns:repeat(2,1fr)}
+@media(max-width:620px){.quick{grid-template-columns:1fr}}
+</style></head><body>
+<div class="app"><header class="topbar"><div><strong>RunLoad</strong><small>PLAN / SIMPLE PREP PROTOTYPE V0.6</small></div><span class="badge">PROTOTYPE</span></header><main>
+<section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">9月20日</span></section>
+<section class="carry"><i></i><div><small>前回から引き継いだ内容</small><strong>次のランで確認したいこと</strong><span>最初の1 kmで速くなりすぎていないか確認する</span></div></section>
+
+<div class="layout">
+<section class="panel"><div class="panel-head"><small>PLAN</small><h2>予定内容</h2><p>基本項目を先に決めます。コースや比較は必要な場合だけ開きます。</p></div><div class="panel-body">
+<div class="seg" role="group" aria-label="予定の種類"><button type="button" class="active" data-type="run">走行</button><button type="button" data-type="rest">休養</button></div>
+<label class="field"><span>予定日 <b>必須</b></span><input id="date" type="date" value="2026-09-21"></label>
+
+<div id="runFields">
+<div class="two"><label class="metric-field"><span>距離</span><div><input id="distance" type="number" min="0.01" step="0.1" value="5.0"><em>km</em></div></label><label class="metric-field"><span>実走予定時間</span><div><input id="duration" type="number" min="0.1" step="1" value="32"><em>分</em></div></label></div>
+
+<div class="course-choice">
+  <div><small>コース・任意</small><strong id="courseName">未選択</strong><span id="courseMeta">必要な場合だけ設定</span></div>
+  <a href="../course-flow-ui-v13/?from=plan">選ぶ・作る</a>
+</div>
+
+<details class="details"><summary><div><strong>入力を早くする</strong><span>前回の距離・時間を使う</span></div><i>⌄</i></summary><div class="details-body">
+<div class="quick"><button type="button" data-preset="same"><small>入力の出発点</small><strong>前回の距離・時間</strong></button><button type="button" data-preset="rest"><small>予定を変更</small><strong>休養として入力</strong></button></div>
+<p class="note">保存記録を入力の出発点として使うだけで、推奨や指示ではありません。</p>
+</div></details>
+
+<details class="details"><summary><div><strong>走行形式</strong><span>必要な場合だけ設定</span></div><i>⌄</i></summary><div class="details-body">
+<label class="field"><span>走行形式 <b>任意</b></span><select id="runFormat"><option value="">未設定</option><option value="RUN">途中で歩かず走る予定</option><option value="RUN_WALK">走りと歩きを混ぜる予定</option></select></label>
+</div></details>
+
+<a class="assist-link" href="../plan-simulation-ui-v11/?from=plan"><div><small>任意</small><strong>前回と条件を比べる</strong><span>条件を変えたときの12部位表示を確認</span></div><i>›</i></a>
+</div>
+
+<div id="restFields" hidden><div class="summary-card" style="margin-top:13px"><small>休養予定</small><strong>走行条件は入力しません</strong><span>予定日だけを確認して保存します。</span></div></div>
+</div></section>
+
+<aside class="panel confirm-panel"><div class="panel-head"><small>CHECK</small><h2>保存前の確認</h2><p>入力した予定だけを確認します。</p></div><div class="confirm">
+<div class="summary-card"><small id="sumKind">走行予定</small><strong id="sumDate">9月21日</strong><span id="sumLine">5.0 km・32分・コース未選択</span></div>
+<div id="sumMetrics" class="summary-row"><div><small>距離</small><strong id="sumDistance">5.0 km</strong></div><div><small>時間</small><strong id="sumDuration">32分</strong></div><div><small>コース</small><strong id="sumCourse">未選択</strong></div></div>
+<details class="details compare"><summary><div><strong>前回記録との違い</strong><span>入力条件だけを確認</span></div><i>⌄</i></summary><div class="details-body"><div class="compare-row"><span>距離</span><b id="cmpDistance">変更</b></div><div class="compare-row"><span>時間</span><b id="cmpDuration">変更</b></div><div class="compare-row"><span>コース</span><b id="cmpCourse">未選択</b></div></div></details>
+<button id="save" class="save" type="button">予定を保存する</button>
+</div></aside>
+</div>
+
+<details class="saved"><summary><div><strong>保存した予定</strong><span>予定内容と実施状況を見る</span></div><span>1件</span></summary><div class="saved-list"><article class="saved-card"><small>9月21日・走行予定</small><strong>5.0 km・32分・公園周回</strong><span>実績未記録</span><div class="saved-actions"><button type="button" data-toast="この予定を使って記録入力を始める想定です。">この予定で記録</button><button type="button" data-toast="この予定を編集する想定です。">編集</button></div></article></div></details>
+</main>
+<nav class="bottom"><a href="../home-ui-v06/"><span>⌂</span><small>Home</small></a><a href="../record-ui-v14/"><span>＋</span><small>記録</small></a><a href="../result-ui-v14/"><span>◉</span><small>結果</small></a><a href="../history-ui-v13/"><span>▤</span><small>履歴</small></a><a href="../more-ui-v01/"><span>•••</span><small>その他</small></a></nav>
+</div><div id="toast" class="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const COURSE_SELECTION_KEY='runloadPrototypeCourseSelectionV1';
+const state={type:'run',reference:{distance:6.2,duration:39,course:'公園周回'},course:null};
+const fmtDate=v=>{if(!v)return '未設定';const d=new Date(v+'T00:00:00');return (d.getMonth()+1)+'月'+d.getDate()+'日'};
+function readCourse(){
+  try{
+    const p=JSON.parse(sessionStorage.getItem(COURSE_SELECTION_KEY)||'null');
+    if(!p||p.version!==1||p.target!=='plan'||!p.course||typeof p.course.name!=='string')return null;
+    return p.course;
+  }catch(_){return null}
+}
+function refreshCourse(){
+  state.course=readCourse();
+  $('#courseName').textContent=state.course?.name||'未選択';
+  $('#courseMeta').textContent=state.course?(String(state.course.gradeLabel||'分からない')+'・'+String(state.course.surfaceLabel||'分からない')):'必要な場合だけ設定';
+  update();
+}
+function update(){
+ const rest=state.type==='rest';
+ $('#runFields').hidden=rest;$('#restFields').hidden=!rest;
+ $$('[data-type]').forEach(b=>b.classList.toggle('active',b.dataset.type===state.type));
+ $('#sumKind').textContent=rest?'休養予定':'走行予定';$('#sumDate').textContent=fmtDate($('#date').value);
+ $('#sumMetrics').hidden=rest;
+ if(rest){$('#sumLine').textContent='走行条件なし';return}
+ const d=Number($('#distance').value||0),t=Number($('#duration').value||0),course=state.course?.name||'未選択';
+ $('#sumDistance').textContent=(d?d.toFixed(1):'—')+' km';$('#sumDuration').textContent=(t||'—')+'分';$('#sumCourse').textContent=course;
+ $('#sumLine').textContent=(d?d.toFixed(1):'—')+' km・'+(t||'—')+'分・'+(state.course?course:'コース未選択');
+ $('#cmpDistance').textContent=Math.abs(d-state.reference.distance)<.001?'同じ':'変更';
+ $('#cmpDuration').textContent=Math.abs(t-state.reference.duration)<.001?'同じ':'変更';
+ $('#cmpCourse').textContent=!state.course?'未選択':course===state.reference.course?'同じ':'変更';
+}
+$$('[data-type]').forEach(b=>b.addEventListener('click',()=>{state.type=b.dataset.type;update()}));
+['#date','#distance','#duration'].forEach(s=>$(s).addEventListener('input',update));
+$$('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
+ const p=b.dataset.preset;
+ if(p==='rest'){state.type='rest'}else{state.type='run';$('#distance').value='6.2';$('#duration').value='39'}
+ update();show('入力の出発点を反映しました。内容は自由に変更できます。')
+}));
+const toast=$('#toast');let timer;function show(m){toast.textContent=m;toast.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>toast.classList.remove('show'),1700)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-toast]');if(b){e.preventDefault();show(b.dataset.toast)}});
+$('#save').addEventListener('click',()=>show('予定を保存する動作を想定したprototypeです。'));
+window.addEventListener('pageshow',refreshCourse);
+refreshCourse();
+</script></body></html>
