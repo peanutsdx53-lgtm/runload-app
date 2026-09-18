@@ -40,13 +40,13 @@ main{width:min(100%,820px);margin:auto;padding:24px 14px 44px}.eyebrow{margin:0;
 </div>
 <div class="sub-section-head" style="margin-top:12px"><small>GOAL</small><strong>記録を続ける主な目的・任意</strong></div>
 <div class="goal-grid">
-<label><input type="checkbox"><span>健康づくり</span></label><label><input type="checkbox"><span>習慣化</span></label><label><input type="checkbox"><span>距離を伸ばす</span></label><label><input type="checkbox"><span>大会参加</span></label><label><input type="checkbox"><span>気分転換</span></label><label><input type="checkbox"><span>その他</span></label>
+<label><input type="checkbox" value="健康づくり" data-goal><span>健康づくり</span></label><label><input type="checkbox" value="習慣化" data-goal><span>習慣化</span></label><label><input type="checkbox" value="距離を伸ばす" data-goal><span>距離を伸ばす</span></label><label><input type="checkbox" value="大会参加" data-goal><span>大会参加</span></label><label><input type="checkbox" value="気分転換" data-goal><span>気分転換</span></label><label><input type="checkbox" value="その他" data-goal><span>その他</span></label>
 </div>
 <details class="subdetails"><summary><span><strong>身体に関する任意情報</strong><small>必要な場合だけ入力</small></span><span>⌄</span></summary><div class="subdetails-body"><div class="fields two-fields">
-<label class="field"><span>身長（cm）</span><input type="number" inputmode="decimal" min="100" max="230" step="0.1"></label>
-<label class="field"><span>体重（kg）</span><input type="number" inputmode="decimal" min="25" max="180" step="0.1"></label>
-<label class="field"><span>年齢帯</span><select><option>未設定・回答しない</option><option>18〜29歳</option><option>30〜49歳</option><option>50〜64歳</option><option>65〜74歳</option><option>75歳以上</option></select></label>
-<label class="field"><span>性別関連入力</span><select><option>未設定・回答しない</option><option>男性区分</option><option>女性区分</option></select></label>
+<label class="field"><span>身長（cm）</span><input id="profileHeight" type="number" inputmode="decimal" min="100" max="230" step="0.1"></label>
+<label class="field"><span>体重（kg）</span><input id="profileWeight" type="number" inputmode="decimal" min="25" max="180" step="0.1"></label>
+<label class="field"><span>年齢帯</span><select id="profileAgeBand"><option>未設定・回答しない</option><option>18〜29歳</option><option>30〜49歳</option><option>50〜64歳</option><option>65〜74歳</option><option>75歳以上</option></select></label>
+<label class="field"><span>性別関連入力</span><select id="profileSexContext"><option>未設定・回答しない</option><option>男性区分</option><option>女性区分</option></select></label>
 </div><p class="note">すべて任意です。個人補正、診断、性別判定には使いません。</p></div></details>
 <details class="subdetails"><summary><span><strong>保存シューズ</strong><small>Recordで次回も選べる名称</small></span><span>⌄</span></summary><div class="subdetails-body"><div class="shoes" id="savedShoes">
 <div class="shoe"><span><strong>いつもの黒い靴</strong><small>保存済み</small></span><button type="button" data-remove-shoe>削除</button></div>
@@ -59,7 +59,7 @@ main{width:min(100%,820px);margin:auto;padding:24px 14px 44px}.eyebrow{margin:0;
 <section class="group"><p class="group-title">DATA</p>
 <details class="disclosure"><summary><span><small>LOCAL DATA</small><strong>バックアップ・復元・削除</strong><span>必要なときだけ開きます</span></span><i>⌄</i></summary><div class="disclosure-body">
 <div class="data-overview"><div><small>走行・休養記録</small><strong>保存対象</strong></div><div><small>予定</small><strong>保存対象</strong></div><div><small>保存コース</small><strong>保存対象</strong></div><div><small>入力途中</small><strong>一時保存対象</strong></div></div>
-<p class="note">本実装では現在の件数を表示します。prototypeでは実データを変更しません。</p>
+<p class="note">この公開prototypeでは、prototype専用データだけを保存・復元・削除します。Formal Appの保存データは変更しません。</p>
 <div class="action-row"><button type="button" class="primary" id="exportBackup">バックアップを保存</button><label for="restoreFile">バックアップを選択</label><input class="hidden-file" id="restoreFile" type="file" accept="application/json,.json"></div>
 <div class="restore-preview" id="restorePreview">ファイルを選ぶと、内容を確認してから復元する流れを表示します。</div>
 <div class="danger-box"><strong>この端末内のRunLoadデータを削除</strong><p>記録、結果、予定、保存コース、プロフィール、設定、保存シューズ、下書きなどを削除します。端末へ書き出したバックアップファイルは削除しません。</p><label class="field"><span>確認のため「削除」と入力</span><input id="deleteConfirm" autocomplete="off"></label><div class="action-row"><button type="button" class="danger" id="deleteAll" disabled>すべて削除</button></div></div>
@@ -81,12 +81,128 @@ main{width:min(100%,820px);margin:auto;padding:24px 14px 44px}.eyebrow{margin:0;
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const app=$('#settingsApp'),toast=$('#toast');let timer;
+const KEY_PREFIX='runloadPrototype';
+const SETTINGS_KEY='runloadPrototypeSettingsV1';
+const PROFILE_KEY='runloadPrototypeProfileV1';
+const SHOES_KEY='runloadPrototypeShoesV1';
+let restoreCandidate=null;
+
 function show(m){toast.textContent=m;toast.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>toast.classList.remove('show'),1700)}
-$$('[data-text-size]').forEach(b=>b.addEventListener('click',()=>{$$('[data-text-size]').forEach(x=>x.classList.toggle('active',x===b));const large=b.dataset.textSize==='large';app.classList.toggle('large-text',large);$('#textSizeValue').textContent=large?'大きめ':'標準';show('文字サイズの表示を切り替えました')}));
-$('#saveProfile').addEventListener('click',()=>show('プロフィールを保存する動作を想定したprototypeです。'));
-$$('[data-remove-shoe]').forEach(b=>b.addEventListener('click',()=>{b.closest('.shoe').remove();show('保存シューズから削除しました（prototype表示）')}));
-$('#exportBackup').addEventListener('click',()=>show('本実装では端末内データをJSONへ書き出します。'));
-$('#restoreFile').addEventListener('change',()=>{const f=$('#restoreFile').files?.[0];if(!f)return;$('#restorePreview').innerHTML='<strong>'+f.name+'</strong><br>'+Math.max(1,Math.round(f.size/1024))+' KB を選択しました。<br><button type="button" id="restoreApply" style="margin-top:8px;min-height:36px;padding:0 10px;border:1px solid var(--accent);border-radius:9px;background:var(--surface);color:var(--accent2);font-weight:850">内容を確認して復元</button>';$('#restoreApply').addEventListener('click',()=>show('prototypeでは実データを復元しません。'));});
+function safeParse(text,fallback=null){try{return JSON.parse(text)}catch{return fallback}}
+function prototypeKeys(storage){
+  const out={};
+  for(let i=0;i<storage.length;i++){
+    const key=storage.key(i);
+    if(key&&key.startsWith(KEY_PREFIX))out[key]=storage.getItem(key);
+  }
+  return out;
+}
+function loadSettings(){
+  const s=safeParse(localStorage.getItem(SETTINGS_KEY),{})||{};
+  const large=s.textSize==='large';
+  app.classList.toggle('large-text',large);
+  $$('[data-text-size]').forEach(b=>b.classList.toggle('active',b.dataset.textSize===(large?'large':'standard')));
+  $('#textSizeValue').textContent=large?'大きめ':'標準';
+}
+$$('[data-text-size]').forEach(b=>b.addEventListener('click',()=>{
+  const large=b.dataset.textSize==='large';
+  app.classList.toggle('large-text',large);
+  $$('[data-text-size]').forEach(x=>x.classList.toggle('active',x===b));
+  $('#textSizeValue').textContent=large?'大きめ':'標準';
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify({version:1,textSize:large?'large':'standard'}));
+  show('文字サイズを保存しました');
+}));
+
+function profileFromForm(){
+  return {
+    version:1,
+    runningStart:$('#runningStart').value.trim(),
+    experience:$('#experience').value,
+    goals:$$('[data-goal]:checked').map(x=>x.value),
+    height:$('#profileHeight').value===''?null:Number($('#profileHeight').value),
+    weight:$('#profileWeight').value===''?null:Number($('#profileWeight').value),
+    ageBand:$('#profileAgeBand').value,
+    sexContext:$('#profileSexContext').value
+  };
+}
+function loadProfile(){
+  const p=safeParse(localStorage.getItem(PROFILE_KEY),null);if(!p)return;
+  $('#runningStart').value=p.runningStart||'';
+  $('#experience').value=p.experience||'';
+  $$('[data-goal]').forEach(x=>x.checked=Array.isArray(p.goals)&&p.goals.includes(x.value));
+  $('#profileHeight').value=p.height??'';
+  $('#profileWeight').value=p.weight??'';
+  $('#profileAgeBand').value=p.ageBand||'未設定・回答しない';
+  $('#profileSexContext').value=p.sexContext||'未設定・回答しない';
+}
+$('#saveProfile').addEventListener('click',()=>{
+  localStorage.setItem(PROFILE_KEY,JSON.stringify(profileFromForm()));
+  show('プロフィールを保存しました');
+});
+
+function readShoes(){
+  const stored=safeParse(localStorage.getItem(SHOES_KEY),null);
+  return Array.isArray(stored)?stored:['いつもの黒い靴','軽いシューズ'];
+}
+function writeShoes(list){localStorage.setItem(SHOES_KEY,JSON.stringify([...new Set(list.filter(Boolean))]));}
+function renderShoes(){
+  const list=readShoes();
+  $('#savedShoes').innerHTML=list.length?list.map(name=>'<div class="shoe"><span><strong></strong><small>保存済み</small></span><button type="button" data-remove-shoe>削除</button></div>').join(''):'<p class="note">保存シューズはありません。</p>';
+  $('#savedShoes').querySelectorAll('.shoe').forEach((row,i)=>{
+    row.querySelector('strong').textContent=list[i];
+    row.querySelector('[data-remove-shoe]').addEventListener('click',()=>{
+      const next=readShoes().filter(x=>x!==list[i]);writeShoes(next);renderShoes();show('保存シューズから削除しました');
+    });
+  });
+}
+
+function buildBackup(){
+  return {
+    type:'runload-prototype-backup',
+    version:1,
+    createdAt:new Date().toISOString(),
+    local:prototypeKeys(localStorage),
+    session:prototypeKeys(sessionStorage)
+  };
+}
+$('#exportBackup').addEventListener('click',()=>{
+  const backup=buildBackup();
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='RunLoad_prototype_backup.json';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  show('バックアップJSONを作成しました');
+});
+$('#restoreFile').addEventListener('change',async()=>{
+  const f=$('#restoreFile').files?.[0];if(!f)return;
+  try{
+    const parsed=JSON.parse(await f.text());
+    if(parsed?.type!=='runload-prototype-backup'||parsed?.version!==1)throw new Error('invalid');
+    const localCount=Object.keys(parsed.local||{}).filter(k=>k.startsWith(KEY_PREFIX)).length;
+    const sessionCount=Object.keys(parsed.session||{}).filter(k=>k.startsWith(KEY_PREFIX)).length;
+    restoreCandidate=parsed;
+    $('#restorePreview').innerHTML='<strong>'+f.name+'</strong><br>prototype専用データ '+(localCount+sessionCount)+' 項目を確認しました。<br><button type="button" id="restoreApply" style="margin-top:8px;min-height:36px;padding:0 10px;border:1px solid var(--accent);border-radius:9px;background:var(--surface);color:var(--accent2);font-weight:850">この内容を復元</button>';
+    $('#restoreApply').addEventListener('click',applyRestore);
+  }catch{
+    restoreCandidate=null;
+    $('#restorePreview').textContent='RunLoad prototype用のバックアップとして確認できませんでした。';
+  }
+});
+function applyRestore(){
+  if(!restoreCandidate)return;
+  for(const [k,v] of Object.entries(restoreCandidate.local||{}))if(k.startsWith(KEY_PREFIX)&&typeof v==='string')localStorage.setItem(k,v);
+  for(const [k,v] of Object.entries(restoreCandidate.session||{}))if(k.startsWith(KEY_PREFIX)&&typeof v==='string')sessionStorage.setItem(k,v);
+  loadSettings();loadProfile();renderShoes();show('prototype専用データを復元しました');
+}
 $('#deleteConfirm').addEventListener('input',()=>{$('#deleteAll').disabled=$('#deleteConfirm').value!=='削除';});
-$('#deleteAll').addEventListener('click',()=>{show('prototypeでは実データを削除しません。');$('#deleteConfirm').value='';$('#deleteAll').disabled=true;});
+$('#deleteAll').addEventListener('click',()=>{
+  for(const k of Object.keys(prototypeKeys(localStorage)))localStorage.removeItem(k);
+  for(const k of Object.keys(prototypeKeys(sessionStorage)))sessionStorage.removeItem(k);
+  $('#deleteConfirm').value='';$('#deleteAll').disabled=true;restoreCandidate=null;
+  $('#restorePreview').textContent='ファイルを選ぶと、内容を確認してから復元します。';
+  $('#runningStart').value='';$('#experience').value='';$$('[data-goal]').forEach(x=>x.checked=false);
+  $('#profileHeight').value='';$('#profileWeight').value='';$('#profileAgeBand').selectedIndex=0;$('#profileSexContext').selectedIndex=0;
+  loadSettings();renderShoes();show('prototype専用データを削除しました');
+});
+loadSettings();loadProfile();renderShoes();
 </script></body></html>
