@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>RunLoad GPX Local Analysis V0.2</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div><strong>RunLoad</strong><small>GPX LOCAL ANALYSIS / TECH PROTOTYPE V0.2</small></div>
+  <span class="prototype-badge">TECH PROTOTYPE</span>
+</header>
+
+<main>
+<a class="back-link" href="../course-flow-ui-v01/">‹ コース設定へ戻る</a>
+
+<section class="intro compact-intro">
+  <p class="eyebrow">LOCAL GPX</p>
+  <div class="intro-row">
+    <div>
+      <h1>GPXを読み込む</h1>
+      <p>GPXを持っている場合だけ使う、コース条件の自動入力補助です。</p>
+    </div>
+    <span class="local-badge">外部送信なし</span>
+  </div>
+</section>
+
+<div class="privacy-line" aria-label="GPXの扱い">
+  <strong>端末内で処理</strong>
+  <span>外部APIへ送信せず、この試作ではGPX自体を保存しません。</span>
+</div>
+
+<section class="import-card priority-import">
+  <div class="import-copy">
+    <small>GPX IMPORT</small>
+    <h2>GPXファイルを選択</h2>
+    <p>標高情報が含まれていれば、上り・平坦・下りと代表勾配の候補を作ります。</p>
+  </div>
+  <label class="file-button">
+    <input id="gpxFile" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml">
+    <span>GPXファイルを選ぶ</span>
+  </label>
+
+  <details class="gpx-help">
+    <summary><span><strong>GPXを持っていない方</strong><small>入手方法と別の入力方法</small></span><i>⌄</i></summary>
+    <div class="gpx-help-body">
+      <p><strong>GPXとは</strong> GPSで記録した走行ルートを保存できるファイル形式です。GPSウォッチやランニングサービスで、自分の走行をGPXとして書き出せる場合があります。</p>
+      <p><strong>入手の流れ</strong> 自分の走行記録からGPXを書き出し、iPhoneやPCの「ファイル／ダウンロード」に保存して、この画面から選びます。</p>
+      <p>サービスによってGPX書き出しに対応していない場合があります。その場合は無理に用意せず、手動設定を使います。</p>
+    </div>
+  </details>
+
+  <div class="alternative-actions">
+    <button id="sampleButton" class="sample-button" type="button">架空サンプルで試す</button>
+    <a class="manual-button" href="../course-flow-ui-v01/">GPXを使わず手動で設定</a>
+  </div>
+  <p class="file-note">20 MB・100,000点まで。標高がない場合、勾配は自動算出しません。</p>
+</section>
+
+<section id="statusCard" class="status-card" hidden role="status" aria-live="polite"></section>
+
+<section id="resultArea" hidden>
+  <div class="result-head">
+    <div>
+      <small>LOCAL ANALYSIS</small>
+      <h2 id="sourceName">GPX解析結果</h2>
+      <p id="sourceMeta"></p>
+    </div>
+    <button id="resetButton" type="button">別のGPX</button>
+  </div>
+
+  <section class="profile-card">
+    <div class="profile-heading">
+      <div><small>ELEVATION PROFILE</small><strong>標高と主要な勾配区間</strong></div>
+      <span id="coverageBadge">標高 100%</span>
+    </div>
+    <div class="profile-frame">
+      <svg id="profileSvg" viewBox="0 0 760 220" role="img" aria-label="GPXの標高プロフィール"></svg>
+    </div>
+    <div id="gradeStrip" class="grade-strip" aria-label="勾配区分"></div>
+    <div class="grade-legend">
+      <span><i class="up"></i>上り</span><span><i class="flat"></i>平坦</span><span><i class="down"></i>下り</span><span><i class="gap"></i>標高なし</span>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <article><small>コース距離</small><strong id="totalDistance">—</strong><span>座標から算出</span></article>
+    <article><small>標高カバー</small><strong id="elevationCoverage">—</strong><span>勾配解析できた距離</span></article>
+    <article><small>累積上昇 / 下降</small><strong id="gainLoss">—</strong><span>平滑化した標高系列</span></article>
+    <article><small>主要区間</small><strong id="zoneCount">—</strong><span>長い連続区間を抽出</span></article>
+  </section>
+
+  <section class="candidate-card">
+    <div class="candidate-heading">
+      <div><small>RUNLOAD COURSE CANDIDATE</small><h2>コース設定へ渡す候補</h2></div>
+      <span id="candidateState">候補</span>
+    </div>
+    <div class="candidate-values">
+      <div><small>上り</small><strong id="upShare">—</strong><span>代表勾配 <b id="upGrade">—</b></span></div>
+      <div><small>平坦</small><strong id="flatShare">—</strong><span id="flatThresholdLabel">±1.0%以内</span></div>
+      <div><small>下り</small><strong id="downShare">—</strong><span>代表勾配 <b id="downGrade">—</b></span></div>
+    </div>
+    <div class="surface-boundary">
+      <span>路面</span><strong>GPXから推測しない</strong><small>Course Settingsで別に設定</small>
+    </div>
+    <button id="useCandidate" class="primary-action" type="button">この候補をCourse Settingsで確認</button>
+    <p id="candidateNote" class="candidate-note"></p>
+  </section>
+
+  <details class="analysis-settings">
+    <summary>
+      <span><strong>解析設定</strong><small>勾配判定の感度を確認</small></span><i>⌄</i>
+    </summary>
+    <div class="settings-body">
+      <label>
+        <span>平坦とみなす範囲</span>
+        <select id="flatThreshold">
+          <option value="0.5">±0.5%</option>
+          <option value="1" selected>±1.0%</option>
+          <option value="2">±2.0%</option>
+        </select>
+      </label>
+      <label>
+        <span>勾配を見る距離幅</span>
+        <select id="gradeWindow">
+          <option value="40">40 m</option>
+          <option value="60" selected>60 m</option>
+          <option value="100">100 m</option>
+        </select>
+      </label>
+      <p>短い標高変動をそのまま勾配にせず、指定した距離幅の標高差から局所勾配を計算します。これは入力補助用の解析条件です。</p>
+    </div>
+  </details>
+
+  <section class="zones-section">
+    <div class="section-heading">
+      <div><small>MAJOR SECTIONS</small><h2>主要な区間</h2></div>
+      <span id="zoneCoverage"></span>
+    </div>
+    <div id="zoneList" class="zone-list"></div>
+  </section>
+
+  <section class="boundary-card">
+    <strong>GPX解析の位置づけ</strong>
+    <p>GPXから作る値はコース入力の候補です。標高データの精度は端末・作成元によって異なるため、自動確定せず、Course Settingsで確認・修正してから使用します。RunLoadの12部位モデル範囲外の条件を自動で丸める用途にも使いません。</p>
+  </section>
+</section>
+</main>
+
+<nav class="bottom-nav" aria-label="主要ナビゲーション">
+  <a href="../home-ui-v02/"><span>⌂</span><small>Home</small></a>
+  <a href="../record-ui-v09/"><span>＋</span><small>記録</small></a>
+  <a href="../result-ui-v10/"><span>◉</span><small>結果</small></a>
+  <a href="../history-ui-v07/"><span>▤</span><small>履歴</small></a>
+  <a href="#"><span>•••</span><small>その他</small></a>
+</nav>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="./app.js"></script>
+</body>
+</html>
