@@ -80,7 +80,7 @@ $('#gpxLink').href='../gpx-local-analysis-v10/?from='+encodeURIComponent(caller)
 function numOrNull(v){return v===null||v===''||v===undefined?null:(Number.isFinite(Number(v))?Number(v):null)}
 function canReturnByHistory(){
   try{return history.length>1&&document.referrer.startsWith(location.origin)&&(
-    document.referrer.includes('/prototype/plan-simulation-ui-v06/')||document.referrer.includes('/prototype/record-ui-v10/')
+    document.referrer.includes('/prototype/plan-simulation-ui-v07/')||document.referrer.includes('/prototype/record-ui-v11/')
   )}catch(_){return false}
 }
 function returnToCaller(){
