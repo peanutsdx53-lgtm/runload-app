@@ -101,15 +101,15 @@ function showRegionMode(mode){
 document.querySelector("#majorTab").addEventListener("click",()=>showRegionMode("major"));
 document.querySelector("#allTab").addEventListener("click",()=>showRegionMode("all"));
 
-let appliedTheme="default", previewTheme="default";
-function previewTheme(theme){
-  previewTheme=theme; document.documentElement.dataset.theme=theme;
+let appliedTheme="default", previewThemeName="default";
+function setThemePreview(theme){
+  previewThemeName=theme; document.documentElement.dataset.theme=theme;
   document.querySelectorAll(".theme-option").forEach(btn=>btn.classList.toggle("selected",btn.dataset.theme===theme));
 }
-document.querySelectorAll(".theme-option").forEach(btn=>btn.addEventListener("click",()=>previewTheme(btn.dataset.theme)));
-document.querySelector("#themeBtn").addEventListener("click",()=>previewTheme(appliedTheme));
-document.querySelector("#applyTheme").addEventListener("click",()=>{appliedTheme=previewTheme;closeModal("themeModal");});
+document.querySelectorAll(".theme-option").forEach(btn=>btn.addEventListener("click",()=>setThemePreview(btn.dataset.theme)));
+document.querySelector("#themeBtn").addEventListener("click",()=>setThemePreview(appliedTheme));
+document.querySelector("#applyTheme").addEventListener("click",()=>{appliedTheme=previewThemeName;closeModal("themeModal");});
 document.querySelector("#cancelTheme").addEventListener("click",()=>{previewTheme(appliedTheme);closeModal("themeModal");});
-document.querySelector('#themeModal [data-close="themeModal"]').addEventListener("click",()=>previewTheme(appliedTheme));
+document.querySelector('#themeModal [data-close="themeModal"]').addEventListener("click",()=>setThemePreview(appliedTheme));
 
 setRegion("quad");
