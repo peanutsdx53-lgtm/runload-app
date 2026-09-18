@@ -87,15 +87,21 @@ main{width:min(100%,1030px);margin:auto;padding:24px clamp(14px,3vw,28px) 42px}.
 </div></aside>
 </div>
 
-<details class="saved"><summary><div><strong>保存した予定</strong><span>予定内容と実施状況を見る</span></div><span>1件</span></summary><div class="saved-list"><article class="saved-card"><small>9月21日・走行予定</small><strong>5.0 km・32分・公園周回</strong><span>実績未記録</span><div class="saved-actions"><button type="button" data-toast="この予定を使って記録入力を始める想定です。">この予定で記録</button><button type="button" data-toast="この予定を編集する想定です。">編集</button></div></article></div></details>
+<details class="saved"><summary><div><strong>保存した予定</strong><span>予定内容と実施状況を見る</span></div><span id="savedPlanCount">0件</span></summary><div id="savedPlanList" class="saved-list"></div></details>
 </main>
 <nav class="bottom"><a href="../home-ui-v13/"><span>⌂</span><small>Home</small></a><a href="../record-ui-v16/"><span>＋</span><small>記録</small></a><a href="../result-ui-v21/"><span>◉</span><small>結果</small></a><a href="../history-ui-v14/"><span>▤</span><small>履歴</small></a><a href="../more-ui-v06/"><span>•••</span><small>その他</small></a></nav>
 </div><div id="toast" class="toast" role="status"></div>
 <script>
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const COURSE_SELECTION_KEY='runloadPrototypeCourseSelectionV1';
+const PLANS_KEY='runloadPrototypePlansV1';
+const PLAN_FOR_RECORD_KEY='runloadPrototypePlanForRecordV1';
 const state={type:'run',reference:{distance:6.2,duration:39,course:'公園周回'},course:null};
+let editingPlanId=null;
 const fmtDate=v=>{if(!v)return '未設定';const d=new Date(v+'T00:00:00');return (d.getMonth()+1)+'月'+d.getDate()+'日'};
+const safeParse=(t,f)=>{try{return JSON.parse(t)}catch{return f}};
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
 function readCourse(){
   try{
     const p=JSON.parse(sessionStorage.getItem(COURSE_SELECTION_KEY)||'null');
@@ -104,7 +110,8 @@ function readCourse(){
   }catch(_){return null}
 }
 function refreshCourse(){
-  state.course=readCourse();
+  const returned=readCourse();
+  if(returned)state.course=returned;
   $('#courseName').textContent=state.course?.name||'未選択';
   $('#courseMeta').textContent=state.course?(String(state.course.gradeLabel||'分からない')+'・'+String(state.course.surfaceLabel||'分からない')):'未選択のままでも保存できます';
   update();
@@ -132,8 +139,65 @@ $('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
  update();show('前回の距離・時間を入力しました。')
 }));
 const toast=$('#toast');let timer;function show(m){toast.textContent=m;toast.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>toast.classList.remove('show'),1700)}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-toast]');if(b){e.preventDefault();show(b.dataset.toast)}});
-$('#save').addEventListener('click',()=>show('予定を保存する動作を想定したprototypeです。'));
+
+function defaultPlans(){
+ return [{id:'demo-plan-1',scheduledDate:'2026-09-21',type:'run',distance:5,duration:32,course:{name:'公園周回',gradeLabel:'ほぼ平坦',surfaceLabel:'舗装路'},runFormat:'',status:'実績未記録'}];
+}
+function readPlans(){
+ const p=safeParse(localStorage.getItem(PLANS_KEY),null);
+ if(Array.isArray(p))return p;
+ const initial=defaultPlans();localStorage.setItem(PLANS_KEY,JSON.stringify(initial));return initial;
+}
+function writePlans(list){localStorage.setItem(PLANS_KEY,JSON.stringify(list));}
+function currentPlan(){
+ const rest=state.type==='rest';
+ return {
+  id:editingPlanId||('plan_'+Date.now()),
+  scheduledDate:$('#date').value,
+  type:state.type,
+  distance:rest?null:Number($('#distance').value||0),
+  duration:rest?null:Number($('#duration').value||0),
+  course:rest?null:(state.course?JSON.parse(JSON.stringify(state.course)):null),
+  runFormat:rest?'':$('#runFormat').value,
+  status:'実績未記録'
+ };
+}
+function renderPlans(){
+ const plans=readPlans();$('#savedPlanCount').textContent=plans.length+'件';
+ $('#savedPlanList').innerHTML=plans.length?plans.map(p=>{
+  const rest=p.type==='rest';
+  const title=rest?'休養予定':((Number(p.distance)||0).toFixed(1)+' km・'+(Number(p.duration)||0)+'分・'+(p.course?.name||'コース未選択'));
+  return '<article class="saved-card" data-plan-id="'+esc(p.id)+'"><small>'+esc(fmtDate(p.scheduledDate))+'・'+(rest?'休養予定':'走行予定')+'</small><strong>'+esc(title)+'</strong><span>'+esc(p.status||'実績未記録')+'</span><div class="saved-actions">'+(rest?'':'<button type="button" data-use-plan>この予定で記録</button>')+'<button type="button" data-edit-plan>編集</button></div></article>';
+ }).join(''):'<div class="saved-card"><strong>保存した予定はありません。</strong></div>';
+ $('#savedPlanList').querySelectorAll('[data-edit-plan]').forEach(b=>b.addEventListener('click',()=>editPlan(b.closest('[data-plan-id]').dataset.planId)));
+ $('#savedPlanList').querySelectorAll('[data-use-plan]').forEach(b=>b.addEventListener('click',()=>usePlanForRecord(b.closest('[data-plan-id]').dataset.planId)));
+}
+function editPlan(id){
+ const p=readPlans().find(x=>x.id===id);if(!p)return;
+ editingPlanId=id;state.type=p.type==='rest'?'rest':'run';
+ $('#date').value=p.scheduledDate||'';
+ if(state.type==='run'){
+  $('#distance').value=p.distance??'';
+  $('#duration').value=p.duration??'';
+  $('#runFormat').value=p.runFormat||'';
+  state.course=p.course?JSON.parse(JSON.stringify(p.course)):null;
+ }else state.course=null;
+ refreshCourse();update();window.scrollTo({top:0,behavior:'smooth'});show('保存した予定を入力欄へ戻しました');
+}
+function usePlanForRecord(id){
+ const p=readPlans().find(x=>x.id===id);if(!p||p.type==='rest')return;
+ sessionStorage.setItem(PLAN_FOR_RECORD_KEY,JSON.stringify({version:1,plan:p}));
+ if(p.course)sessionStorage.setItem(COURSE_SELECTION_KEY,JSON.stringify({version:1,target:'record',course:p.course}));
+ location.href='../record-ui-v16/';
+}
+$('#save').addEventListener('click',()=>{
+ const p=currentPlan();
+ if(!p.scheduledDate){show('予定日を入力してください');return}
+ if(p.type==='run'&&(!(p.distance>0)||!(p.duration>0))){show('距離と実走予定時間を入力してください');return}
+ const plans=readPlans();const i=plans.findIndex(x=>x.id===p.id);
+ if(i>=0)plans[i]=p;else plans.unshift(p);
+ writePlans(plans);editingPlanId=null;renderPlans();show('予定を保存しました');
+});
 window.addEventListener('pageshow',refreshCourse);
-refreshCourse();
+refreshCourse();renderPlans();
 </script></body></html>
