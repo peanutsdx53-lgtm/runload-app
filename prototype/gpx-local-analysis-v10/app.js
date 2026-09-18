@@ -449,7 +449,7 @@
     };
     try{sessionStorage.setItem(GPX_CANDIDATE_KEY,JSON.stringify(candidate));}
     catch(_){showStatus('候補をCourse Settingsへ渡せませんでした。','error');return;}
-    const canBack=history.length>1&&document.referrer.startsWith(location.origin)&&document.referrer.includes('/prototype/course-flow-ui-v08/');
+    const canBack=history.length>1&&document.referrer.startsWith(location.origin)&&document.referrer.includes('/prototype/course-flow-ui-v09/');
     if(canBack){history.back();return;}
     location.href='../course-flow-ui-v09/?from='+encodeURIComponent(caller);
   });
