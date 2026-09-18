@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="light">
-  <title>RunLoad History Prototype V0.8</title>
+  <title>RunLoad History Prototype V0.9</title>
   <style>
 :root{
   --paper:#e3ebf1;
@@ -47,31 +47,7 @@ main{width:min(100%,1080px);margin:auto;padding:23px clamp(14px,3vw,28px) 38px}
 .selected-card{border-radius:20px;padding:15px}.selected-card-head{display:flex;justify-content:space-between;align-items:flex-start}.selected-card-head small{display:block;font-size:8px;color:var(--muted);font-weight:850}.selected-card-head h2{font-size:18px;margin:2px 0 0}.selected-card-head>span{min-width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:var(--accent-soft);color:var(--accent-strong);font-size:9px;font-weight:900}.selected-main-value{margin-top:16px;padding:13px 0;border-block:1px solid var(--line)}.selected-main-value small,.selected-main-value strong,.selected-main-value span{display:block}.selected-main-value small{font-size:7px;color:var(--muted);font-weight:850}.selected-main-value strong{font-size:38px;line-height:1;margin-top:4px;letter-spacing:-.04em;color:var(--accent-strong);font-variant-numeric:tabular-nums}.selected-main-value span{margin-top:4px;color:var(--muted);font-size:7px}.selected-facts{display:grid;grid-template-columns:1fr 1fr;margin:0}.selected-facts>div{padding:11px 8px 10px 0;border-bottom:1px solid var(--line)}.selected-facts>div:nth-child(3){grid-column:1/-1}.selected-facts dt{font-size:7px;color:var(--muted)}.selected-facts dd{margin:3px 0 0;font-size:10px;font-weight:850}.result-link{width:100%;min-height:48px;margin-top:12px;padding:8px 10px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(135deg,var(--surface),var(--accent-soft));color:var(--ink);display:flex;align-items:center;justify-content:space-between;text-align:left}.result-link small,.result-link strong{display:block}.result-link small{font-size:7px;color:var(--muted)}.result-link strong{font-size:10px;margin-top:2px}.result-link i{font-style:normal;color:var(--accent);font-size:18px}
 .records-disclosure{border-radius:18px;overflow:hidden}.records-disclosure>summary{min-height:54px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;list-style:none;cursor:pointer}.records-disclosure>summary::-webkit-details-marker{display:none}.records-disclosure>summary strong,.records-disclosure>summary small{display:block}.records-disclosure>summary strong{font-size:10px}.records-disclosure>summary small{margin-top:2px;font-size:7px;color:var(--muted)}.records-disclosure>summary i{font-style:normal;color:var(--accent);transition:transform .2s var(--ease)}.records-disclosure[open]>summary i{transform:rotate(180deg)}.table-scroll{overflow-x:auto;border-top:1px solid var(--line);overscroll-behavior-x:contain}.table-scroll table{width:100%;min-width:600px;border-collapse:collapse;font-size:8px}.table-scroll th,.table-scroll td{padding:9px 10px;text-align:left;border-bottom:1px solid #d8e3e9;white-space:nowrap}.table-scroll th{color:var(--muted);font-size:7px;background:var(--surface2)}.table-scroll tbody tr{cursor:pointer}.table-scroll tbody tr:hover{background:var(--accent-soft)}.table-scroll tbody tr.selected{background:var(--model-soft);outline:2px solid color-mix(in srgb,var(--model) 35%,transparent);outline-offset:-2px}.table-scroll .weekend{color:var(--weekend);font-weight:900}.table-scroll .num{font-variant-numeric:tabular-nums;font-weight:850}
 .comparison-side{display:grid;gap:8px}.condition-details,.excluded-details{border-radius:16px;overflow:hidden}.condition-details summary,.excluded-details summary{min-height:48px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none;color:var(--accent-strong);font-size:9px;font-weight:850}.condition-details summary::-webkit-details-marker,.excluded-details summary::-webkit-details-marker{display:none}.condition-details>div,.excluded-details>p{margin:0;padding:0 12px 12px;border-top:1px solid var(--line);color:var(--muted);font-size:8px;line-height:1.55}.condition-details>div p{margin:10px 0 0}.excluded-details>p{padding-top:10px}.screen-footnote{margin:12px 2px 0;color:var(--muted);font-size:8px;line-height:1.55}
-.record-total{padding:6px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent-strong);font-size:8px;font-weight:900}.record-filters{margin-top:12px;padding:12px;border-radius:18px}.record-filters label>span{display:block;font-size:8px;color:var(--muted);font-weight:850}.record-filters input{width:100%;height:42px;margin-top:5px;padding:0 11px;border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--ink);font-size:10px}.type-toggle{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:9px;padding:3px;border:1px solid var(--line);border-radius:11px;background:#e5edf2}.type-toggle button{min-height:34px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:8px;font-weight:850}.type-toggle button.active{background:var(--surface);color:var(--accent-strong)}.record-list{display:grid;gap:8px;margin-top:11px}.record-item{padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-soft)}.record-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.record-item time{display:block;font-size:10px;font-weight:900}.record-item time.weekend{color:var(--weekend)}.record-kind{padding:4px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent-strong);font-size:7px;font-weight:850}.record-kind.rest{background:#e8ecef;color:var(--muted)}.record-item h3{font-size:12px;margin:9px 0 0}.record-item p{margin:4px 0 0;color:var(--muted);font-size:8px}.record-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.record-actions button{min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface2);color:var(--accent-strong);font-size:8px;font-weight:850}.record-actions button:first-child{border-color:var(--accent);background:var(--accent-soft)}
-.record-actions .archive-note-button{border-color:color-mix(in srgb,var(--model) 42%,var(--line));background:var(--model-soft);color:var(--model)}
-.archive-filter-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
-.archive-filter-row>span{font-size:7px;color:var(--muted);font-weight:850}
-.archive-filter{min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface2);color:var(--accent-strong);font-size:8px;font-weight:850}
-.archive-filter b{display:inline-grid;place-items:center;min-width:18px;height:18px;margin-left:5px;padding:0 4px;border-radius:999px;background:var(--surface);font-size:7px}
-.archive-filter.active{border-color:color-mix(in srgb,var(--model) 48%,var(--line));background:var(--model-soft);color:var(--model)}
-.empty-records{padding:26px 12px;text-align:center;color:var(--muted);font-size:9px}
-.archive-sheet{width:min(100%,520px);max-height:91dvh;overflow:auto;padding:10px 14px calc(22px + env(safe-area-inset-bottom));border-radius:27px 27px 0 0;background:var(--paper);box-shadow:0 -20px 60px rgba(22,36,47,.23);overscroll-behavior:contain}
-.archive-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.archive-sheet-head h2{margin:3px 0 0;font-size:21px}
-.archive-sheet-head>button{width:36px;height:36px;flex:0 0 auto;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px}
-.archive-readonly{display:inline-flex;margin-top:7px;padding:5px 8px;border-radius:999px;background:var(--model-soft);color:var(--model);font-size:7px;font-weight:900}
-.archive-paper{margin-top:14px;padding:15px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow-soft)}
-.archive-date{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:11px;border-bottom:1px solid var(--line)}
-.archive-date time{font-size:15px;font-weight:900}.archive-date span{font-size:8px;color:var(--muted)}
-.archive-theme{display:inline-flex;margin-top:13px;padding:5px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-strong);font-size:7px;font-weight:900}
-.archive-text{margin:10px 0 0;font-size:13px;line-height:1.7;font-weight:750}
-.archive-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0 0}
-.archive-facts>div{padding:9px;border-radius:11px;background:var(--surface2)}
-.archive-facts small,.archive-facts strong{display:block}.archive-facts small{font-size:7px;color:var(--muted)}.archive-facts strong{margin-top:3px;font-size:9px}
-.archive-boundary{margin:11px 1px 0;color:var(--muted);font-size:7.5px;line-height:1.5}
-@media(max-width:620px){.archive-filter-row{align-items:stretch;flex-direction:column}.archive-filter{width:100%}.archive-facts{grid-template-columns:1fr 1fr}.archive-facts>div:last-child{grid-column:1/-1}}
-@media(min-width:880px){.archive-sheet{width:min(600px,calc(100% - 40px));max-height:82dvh;border-radius:26px;align-self:center}}
-
+.record-total{padding:6px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent-strong);font-size:8px;font-weight:900}.record-filters{margin-top:12px;padding:12px;border-radius:18px}.record-filters label>span{display:block;font-size:8px;color:var(--muted);font-weight:850}.record-filters input{width:100%;height:42px;margin-top:5px;padding:0 11px;border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--ink);font-size:10px}.type-toggle{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:9px;padding:3px;border:1px solid var(--line);border-radius:11px;background:#e5edf2}.type-toggle button{min-height:34px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:8px;font-weight:850}.type-toggle button.active{background:var(--surface);color:var(--accent-strong)}.record-list{display:grid;gap:8px;margin-top:11px}.record-item{padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow-soft)}.record-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.record-item time{display:block;font-size:10px;font-weight:900}.record-item time.weekend{color:var(--weekend)}.record-kind{padding:4px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent-strong);font-size:7px;font-weight:850}.record-kind.rest{background:#e8ecef;color:var(--muted)}.record-item h3{font-size:12px;margin:9px 0 0}.record-item p{margin:4px 0 0;color:var(--muted);font-size:8px}.record-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.record-actions button{min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface2);color:var(--accent-strong);font-size:8px;font-weight:850}.record-actions button:first-child{border-color:var(--accent);background:var(--accent-soft)}.empty-records{padding:26px 12px;text-align:center;color:var(--muted);font-size:9px}
 .bottom-nav{position:fixed;left:50%;bottom:0;z-index:30;transform:translateX(-50%);width:min(100%,1180px);height:76px;padding:7px max(8px,env(safe-area-inset-left)) max(8px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid color-mix(in srgb,var(--line) 76%,transparent);background:color-mix(in srgb,var(--surface) 93%,transparent);backdrop-filter:blur(18px)}.bottom-nav button{border:0;background:transparent;color:var(--muted);border-radius:12px}.bottom-nav button span{display:block;font-size:17px}.bottom-nav button small{display:block;font-size:8px;margin-top:2px}.bottom-nav button.active{color:var(--accent-strong);background:var(--accent-soft)}
 .sheet-overlay{position:fixed;inset:0;z-index:80;background:rgba(20,34,48,.36);display:grid;align-items:end;justify-items:center}.sheet-overlay[hidden]{display:none}.region-sheet{width:min(100%,480px);max-height:91dvh;overflow:auto;padding:10px 14px calc(22px + env(safe-area-inset-bottom));border-radius:27px 27px 0 0;background:var(--paper);box-shadow:0 -20px 60px rgba(22,36,47,.23);overscroll-behavior:contain}.grip{width:40px;height:4px;border-radius:999px;background:var(--line);margin:2px auto 13px}.sheet-head{display:flex;align-items:flex-start;justify-content:space-between}.sheet-head h2{margin:3px 0 0;font-size:21px}.sheet-head>button{width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px}.region-options{display:grid;gap:7px;margin-top:14px}.region-option{min-height:48px;padding:8px 11px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:space-between;text-align:left}.region-option span{font-size:10px;font-weight:850}.region-option i{width:19px;height:19px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-style:normal;color:transparent}.region-option.active{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong)}.region-option.active i{border-color:var(--accent);background:var(--accent);color:white;font-size:10px}
 .toast{position:fixed;left:50%;bottom:86px;z-index:120;transform:translate(-50%,14px);max-width:calc(100% - 28px);padding:9px 12px;border-radius:999px;background:#1f333b;color:white;font-size:9px;font-weight:800;opacity:0;pointer-events:none;transition:.2s var(--ease);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
@@ -352,7 +328,7 @@ main{width:min(100%,1080px);margin:auto;padding:23px clamp(14px,3vw,28px) 38px}
     <header class="topbar">
       <div>
         <strong>RunLoad</strong>
-        <small>HISTORY / CURRENT-BASED V0.8</small>
+        <small>HISTORY / CURRENT-BASED V0.9</small>
       </div>
       <span class="prototype-badge">PROTOTYPE</span>
     </header>
@@ -515,7 +491,7 @@ main{width:min(100%,1080px);margin:auto;padding:23px clamp(14px,3vw,28px) 38px}
               <h2>保存記録を探す</h2>
             </div>
           </div>
-          <span class="record-total" id="recordTotal">10件</span>
+          <span class="record-total">10件</span>
         </section>
         <form class="record-filters" id="recordFilterForm">
           <label>
@@ -526,10 +502,6 @@ main{width:min(100%,1080px);margin:auto;padding:23px clamp(14px,3vw,28px) 38px}
             <button type="button" class="active" data-type="all">すべて</button>
             <button type="button" data-type="run">走行</button>
             <button type="button" data-type="rest">休養</button>
-          </div>
-          <div class="archive-filter-row">
-            <span>以前の記録ノート</span>
-            <button id="archiveNoteFilter" class="archive-filter" type="button" aria-pressed="false">ノートありだけ表示 <b>2</b></button>
           </div>
         </form>
         <div id="recordList" class="record-list"></div>
@@ -556,27 +528,6 @@ main{width:min(100%,1080px);margin:auto;padding:23px clamp(14px,3vw,28px) 38px}
         <button id="closeRegionPicker" type="button" aria-label="閉じる">×</button>
       </div>
       <div id="regionOptions" class="region-options"></div>
-    </section>
-  </div>
-
-  <div id="noteArchiveOverlay" class="sheet-overlay" hidden>
-    <section class="archive-sheet" role="dialog" aria-modal="true" aria-labelledby="noteArchiveTitle">
-      <div class="grip"></div>
-      <div class="archive-sheet-head">
-        <div>
-          <p class="eyebrow">PAST NOTE</p>
-          <h2 id="noteArchiveTitle">以前の記録ノート</h2>
-          <span class="archive-readonly">閲覧のみ</span>
-        </div>
-        <button id="closeNoteArchive" type="button" aria-label="閉じる">×</button>
-      </div>
-      <article class="archive-paper">
-        <div class="archive-date"><time id="archiveDate"></time><span id="archiveWeekday"></span></div>
-        <span class="archive-theme" id="archiveTheme"></span>
-        <p class="archive-text" id="archiveText"></p>
-        <div class="archive-facts" id="archiveFacts"></div>
-      </article>
-      <p class="archive-boundary">過去に保存した内容をそのまま確認するための表示です。ここから新規作成・編集は行いません。</p>
     </section>
   </div>
 
@@ -628,29 +579,16 @@ const weekdayShort = ['日','月','火','水','木','金','土'];
 
 const savedRecords = [
   {date:'2026-09-18',type:'run',summary:'6.2 km・39分',course:'公園周回',memo:'今回の気づきあり'},
-  {date:'2026-09-17',type:'rest',summary:'休養',course:'—',memo:'記録ノートあり',noteId:'note-20260917'},
+  {date:'2026-09-17',type:'rest',summary:'休養',course:'—',memo:''},
   {date:'2026-09-15',type:'run',summary:'5.3 km・34分',course:'河川敷',memo:'シューズ記録あり'},
   {date:'2026-09-12',type:'run',summary:'6.0 km・38分',course:'公園周回',memo:'身体の記録あり'},
   {date:'2026-09-10',type:'run',summary:'4.6 km・30分',course:'近所周回',memo:''},
   {date:'2026-09-08',type:'rest',summary:'休養',course:'—',memo:''},
-  {date:'2026-09-06',type:'run',summary:'5.5 km・36分',course:'河川敷',memo:'記録ノートあり',noteId:'note-20260906'},
+  {date:'2026-09-06',type:'run',summary:'5.5 km・36分',course:'河川敷',memo:''},
   {date:'2026-09-03',type:'run',summary:'4.8 km・31分',course:'近所周回',memo:''},
   {date:'2026-08-30',type:'run',summary:'5.0 km・33分',course:'公園周回',memo:''},
   {date:'2026-08-22',type:'run',summary:'4.2 km・28分',course:'河川敷',memo:''},
 ];
-
-const archivedNotes = {
-  'note-20260917':{
-    date:'2026-09-17',theme:'休む日のメモ',
-    text:'今日は走らず、前日の疲れ方を振り返った。次に走る時は最初の10分を急がない。',
-    facts:[['記録','休養'],['コース','—'],['保存状態','過去ノート']]
-  },
-  'note-20260906':{
-    date:'2026-09-06',theme:'今日の気づき',
-    text:'後半にペースを上げるより、同じペースを保った方が走り終わった時の感覚を比べやすかった。',
-    facts:[['距離','5.5 km'],['時間','36分'],['コース','河川敷']]
-  }
-};
 
 const state = {
   view: 'compare',
@@ -660,7 +598,6 @@ const state = {
   selectedIndex: Number(sessionStorage.getItem('historySelectedIndex') || dates.length - 1),
   recordType: 'all',
   recordQuery: '',
-  noteOnly: false,
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -784,15 +721,9 @@ function renderCompare(){
 
 function renderRecords(){
   const q=state.recordQuery.trim().toLocaleLowerCase('ja-JP');
-  const filtered=savedRecords
-    .filter(r=>(state.recordType==='all'||r.type===state.recordType))
-    .filter(r=>!state.noteOnly||Boolean(r.noteId))
-    .filter(r=>!q||[r.date,r.summary,r.course,r.memo].join(' ').toLocaleLowerCase('ja-JP').includes(q));
-  $('#recordTotal').textContent=`${filtered.length}件`;
-  $('#recordList').innerHTML=filtered.length?filtered.map(r=>`<article class="record-item"><div class="record-item-head"><time class="${isWeekend(r.date)?'weekend':''}" datetime="${r.date}">${longDate(r.date)}（${weekday(r.date)}）</time><span class="record-kind${r.type==='rest'?' rest':''}">${r.type==='rest'?'休養':'走行'}</span></div><h3>${r.summary}</h3><p>${r.course}${r.memo?`・${r.memo}`:''}</p><div class="record-actions"><button type="button" data-toast="Result画面への遷移を想定しています。">結果を見る</button>${r.noteId?`<button class="archive-note-button" type="button" data-note-id="${r.noteId}">以前の記録ノート</button>`:''}<button type="button" data-toast="編集画面への遷移を想定しています。">編集</button></div></article>`).join(''):'<div class="empty-records">条件に合う記録はありません。</div>';
-  $('.type-toggle button').forEach(btn=>btn.classList.toggle('active',btn.dataset.type===state.recordType));
-  $('#archiveNoteFilter').classList.toggle('active',state.noteOnly);
-  $('#archiveNoteFilter').setAttribute('aria-pressed',String(state.noteOnly));
+  const filtered=savedRecords.filter(r=>(state.recordType==='all'||r.type===state.recordType)).filter(r=>!q||[r.date,r.summary,r.course,r.memo].join(' ').toLocaleLowerCase('ja-JP').includes(q));
+  $('#recordList').innerHTML=filtered.length?filtered.map(r=>`<article class="record-item"><div class="record-item-head"><time class="${isWeekend(r.date)?'weekend':''}" datetime="${r.date}">${longDate(r.date)}（${weekday(r.date)}）</time><span class="record-kind${r.type==='rest'?' rest':''}">${r.type==='rest'?'休養':'走行'}</span></div><h3>${r.summary}</h3><p>${r.course}${r.memo?`・${r.memo}`:''}</p><div class="record-actions"><button type="button" data-toast="Result画面への遷移を想定しています。">結果を見る</button><button type="button" data-toast="編集画面への遷移を想定しています。">編集</button></div></article>`).join(''):'<div class="empty-records">条件に合う記録はありません。</div>';
+  $$('.type-toggle button').forEach(btn=>btn.classList.toggle('active',btn.dataset.type===state.recordType));
 }
 
 function setView(view){
@@ -830,27 +761,6 @@ function closeRegionPicker(){
   if(history.state?.runloadModal==='region') history.back(); else hideRegionPicker();
 }
 
-function showNoteArchive(noteId,push=true){
-  const note=archivedNotes[noteId];if(!note)return;
-  $('#archiveDate').textContent=longDate(note.date);
-  $('#archiveDate').dateTime=note.date;
-  $('#archiveWeekday').textContent=weekday(note.date);
-  $('#archiveWeekday').style.color=isWeekend(note.date)?'var(--weekend)':'';
-  $('#archiveTheme').textContent=note.theme;
-  $('#archiveText').textContent=note.text;
-  $('#archiveFacts').innerHTML=note.facts.map(([label,value])=>`<div><small>${label}</small><strong>${value}</strong></div>`).join('');
-  const overlay=$('#noteArchiveOverlay');overlay.hidden=false;lockScroll();
-  if(push)history.pushState({runloadModal:'noteArchive'},'',`${location.pathname}${location.search}#note-archive`);
-  setTimeout(()=>$('#closeNoteArchive').focus(),0);
-}
-function hideNoteArchive(){
-  const overlay=$('#noteArchiveOverlay');if(overlay.hidden)return;
-  overlay.hidden=true;unlockScroll();
-}
-function closeNoteArchive(){
-  if(history.state?.runloadModal==='noteArchive')history.back();else hideNoteArchive();
-}
-
 let toastTimer=null;
 function showToast(text){
   const toast=$('#toast'); toast.textContent=text; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),1800);
@@ -875,14 +785,10 @@ function bind(){
   $('#recordsTableBody').addEventListener('click',e=>{const row=e.target.closest('[data-row-index]');if(row)selectIndex(row.dataset.rowIndex);});
   $('#recordsTableBody').addEventListener('keydown',e=>{const row=e.target.closest('[data-row-index]');if(row&&(e.key==='Enter'||e.key===' ')){e.preventDefault();selectIndex(row.dataset.rowIndex);}});
   $('#recordSearch').addEventListener('input',e=>{state.recordQuery=e.target.value;renderRecords();});
-  $('.type-toggle button').forEach(btn=>btn.addEventListener('click',()=>{state.recordType=btn.dataset.type;renderRecords();}));
-  $('#archiveNoteFilter').addEventListener('click',()=>{state.noteOnly=!state.noteOnly;renderRecords();});
-  $('#recordList').addEventListener('click',e=>{const btn=e.target.closest('[data-note-id]');if(btn)showNoteArchive(btn.dataset.noteId,true);});
-  $('#closeNoteArchive').addEventListener('click',closeNoteArchive);
-  $('#noteArchiveOverlay').addEventListener('click',e=>{if(e.target===$('#noteArchiveOverlay'))closeNoteArchive();});
+  $$('.type-toggle button').forEach(btn=>btn.addEventListener('click',()=>{state.recordType=btn.dataset.type;renderRecords();}));
   document.addEventListener('click',e=>{const btn=e.target.closest('[data-toast]');if(btn)showToast(btn.dataset.toast);});
-  window.addEventListener('popstate',()=>{if(!$('#regionOverlay').hidden)hideRegionPicker();if(!$('#noteArchiveOverlay').hidden)hideNoteArchive();});
-  document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;if(!$('#noteArchiveOverlay').hidden){closeNoteArchive();return}if(!$('#regionOverlay').hidden)closeRegionPicker();});
+  window.addEventListener('popstate',()=>{if(!$('#regionOverlay').hidden)hideRegionPicker();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#regionOverlay').hidden)closeRegionPicker();});
 
   const desktop=window.matchMedia('(min-width:880px)');
   const syncDisclosure=()=>{
