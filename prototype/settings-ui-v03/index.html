@@ -31,7 +31,7 @@ main{width:min(100%,760px);margin:auto;padding:24px 14px 42px}.eyebrow{margin:0;
 <button class="row" type="button" data-pending="アプリ情報は正式統合時に整理します。"><div><small>ABOUT</small><strong>このアプリについて</strong><span>バージョン・説明</span></div><span class="value">›</span></button>
 </div></section>
 </main>
-<nav class="bottom"><a href="../home-ui-v11/"><span>⌂</span><small>Home</small></a><a href="../record-ui-v14/"><span>＋</span><small>記録</small></a><a href="../result-ui-v19/"><span>◉</span><small>結果</small></a><a href="../history-ui-v13/"><span>▤</span><small>履歴</small></a><a class="active" href="../more-ui-v03/"><span>•••</span><small>その他</small></a></nav>
+<nav class="bottom"><a href="../home-ui-v12/"><span>⌂</span><small>Home</small></a><a href="../record-ui-v14/"><span>＋</span><small>記録</small></a><a href="../result-ui-v20/"><span>◉</span><small>結果</small></a><a href="../history-ui-v13/"><span>▤</span><small>履歴</small></a><a class="active" href="../more-ui-v03/"><span>•••</span><small>その他</small></a></nav>
 </div><div id="toast" class="toast" role="status"></div>
 <script>const t=document.querySelector('#toast');let timer;document.addEventListener('click',e=>{const b=e.target.closest('[data-pending]');if(!b)return;t.textContent=b.dataset.pending;t.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>t.classList.remove('show'),1600)});</script>
 </body></html>
