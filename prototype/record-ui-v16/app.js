@@ -1,5 +1,8 @@
 const form=document.querySelector('#recordForm');
 const COURSE_SELECTION_KEY='runloadPrototypeCourseSelectionV1';
+const PLAN_FOR_RECORD_KEY='runloadPrototypePlanForRecordV1';
+const RECORD_DRAFT_KEY='runloadPrototypeRecordDraftV1';
+const SHOES_KEY='runloadPrototypeShoesV1';
 let sharedCourseCleared=false;
 function readCourseFromSettings(){
   try{
@@ -328,6 +331,17 @@ document.querySelector('#saveBodySub').addEventListener('click',function(){
 
 const savedShoe=document.querySelector('#savedShoe');
 const shoeLabel=document.querySelector('#shoeLabel');
+function readPrototypeShoes(){
+  try{const x=JSON.parse(localStorage.getItem(SHOES_KEY)||'null');return Array.isArray(x)?x:['いつもの黒い靴','軽いシューズ'];}catch{return['いつもの黒い靴','軽いシューズ'];}
+}
+function writePrototypeShoes(list){localStorage.setItem(SHOES_KEY,JSON.stringify([...new Set(list.filter(Boolean))]));}
+function renderPrototypeShoes(){
+  const selected=savedShoe.value;
+  const list=readPrototypeShoes();
+  savedShoe.innerHTML='<option value="">使わない</option>'+list.map(x=>'<option></option>').join('');
+  list.forEach((x,i)=>{savedShoe.options[i+1].value=x;savedShoe.options[i+1].textContent=x;});
+  if(list.includes(selected))savedShoe.value=selected;
+}
 savedShoe.addEventListener('change',function(){if(savedShoe.value)shoeLabel.value=savedShoe.value;});
 document.querySelector('#savePersonalSub').addEventListener('click',function(){
   const shoe=(shoeLabel.value.trim()||savedShoe.value.trim());
@@ -335,16 +349,62 @@ document.querySelector('#savePersonalSub').addEventListener('click',function(){
   personalInput=Boolean(shoe||focusCount);
   document.querySelector('#personalStatus').textContent=shoe?shoe:(focusCount?focusCount+'項目選択':'未選択');
   updateReflection();
-  if(document.querySelector('#saveShoePreset').checked&&shoe)showToast('シューズを次回用に保存する想定です');
-  else showToast(personalInput?'シューズ情報を反映しました':'入力なしで戻ります');
+  if(document.querySelector('#saveShoePreset').checked&&shoe){
+    const next=[...readPrototypeShoes(),shoe];writePrototypeShoes(next);renderPrototypeShoes();showToast('シューズを次回用に保存しました');
+  }else showToast(personalInput?'シューズ情報を反映しました':'入力なしで戻ります');
   closeSub();
 });
 
 
-document.querySelector('#draftButton').addEventListener('click',function(){showToast('入力途中を保存した想定です');});
+function draftPayload(){
+  return {
+    version:1,
+    activityType:form.elements.activityType.value,
+    recordDate:recordDate.value,
+    distance:distance.value,
+    duration:duration.value,
+    steps:steps.value,
+    stepsSource:stepsSource.value,
+    runFormat:runFormat.value,
+    temperature:temperature.value,
+    environmentNote:environmentNote.value,
+    reflectionText:document.querySelector('#reflectionText').value,
+    differenceText:document.querySelector('#differenceText').value,
+    nextText:document.querySelector('#nextText').value
+  };
+}
+function applyDraft(d){
+  if(!d||d.version!==1)return;
+  const type=form.querySelector('input[name="activityType"][value="'+(d.activityType==='rest'?'rest':'run')+'"]');
+  if(type)type.checked=true;
+  if(d.recordDate)recordDate.value=d.recordDate;
+  distance.value=d.distance??'';duration.value=d.duration??'';
+  steps.value=d.steps??'';stepsSource.value=d.stepsSource??'';runFormat.value=d.runFormat??'';
+  temperature.value=d.temperature??'';environmentNote.value=d.environmentNote??'';
+  document.querySelector('#reflectionText').value=d.reflectionText??'';
+  document.querySelector('#differenceText').value=d.differenceText??'';
+  document.querySelector('#nextText').value=d.nextText??'';
+}
+function consumePlanPrefill(){
+  let payload=null;try{payload=JSON.parse(sessionStorage.getItem(PLAN_FOR_RECORD_KEY)||'null');}catch(_){}
+  if(!payload||payload.version!==1||!payload.plan)return false;
+  sessionStorage.removeItem(PLAN_FOR_RECORD_KEY);
+  const p=payload.plan;
+  const runRadio=form.querySelector('input[name="activityType"][value="run"]');if(runRadio)runRadio.checked=true;
+  if(p.scheduledDate)recordDate.value=p.scheduledDate;
+  if(Number(p.distance)>0)distance.value=String(p.distance);
+  if(Number(p.duration)>0)duration.value=String(p.duration);
+  if(p.runFormat)runFormat.value=p.runFormat;
+  return true;
+}
+document.querySelector('#draftButton').addEventListener('click',function(){
+  localStorage.setItem(RECORD_DRAFT_KEY,JSON.stringify(draftPayload()));
+  showToast('下書きを保存しました');
+});
 form.addEventListener('submit',function(e){
   e.preventDefault();
   if(mobileSave.disabled&&desktopSave.disabled)return;
+  localStorage.removeItem(RECORD_DRAFT_KEY);
   location.href='../result-ui-v21/';
 });
 
@@ -371,6 +431,11 @@ function installScrollTapGuard(root,selector){
   },true);
 }
 installScrollTapGuard(document.querySelector('.course-strip'),'.course-chip');
+renderPrototypeShoes();
+let usedPlanPrefill=consumePlanPrefill();
+if(!usedPlanPrefill){
+  try{const d=JSON.parse(localStorage.getItem(RECORD_DRAFT_KEY)||'null');applyDraft(d);}catch(_){}
+}
 applyCourseFromSettings();
 window.addEventListener('pageshow',applyCourseFromSettings);
 updateRequired();
