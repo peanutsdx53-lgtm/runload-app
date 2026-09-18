@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>RunLoad Simulation Prototype V0.8</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div><strong>RunLoad</strong><small>RUN SIMULATION / CURRENT MODEL V0.8</small></div>
+  <span class="prototype-badge">PROTOTYPE</span>
+</header>
+<main>
+  <a class="back-link" href="../home-ui-v04/">‹ Homeへ戻る</a>
+  <section class="intro">
+    <p class="eyebrow">RUN SIMULATION</p>
+    <div class="intro-row">
+      <div><h1>前回と条件を比べる</h1><p>前回の走りを基準に、条件を変えたとき12部位の表示がどう変わるかを確認します。</p></div>
+      <span class="model-badge">12部位</span>
+    </div>
+  </section>
+
+  <section class="carry-card" aria-label="前回から引き継いだ内容">
+    <i aria-hidden="true"></i>
+    <div><small>前回から引き継いだ内容</small><strong>次のランで確認したいこと</strong><p>最初の1 kmで速くなりすぎていないか確認する</p></div>
+  </section>
+
+  <div class="workspace">
+    <section class="condition-panel" aria-labelledby="conditionTitle">
+      <div class="panel-head"><div><small>CHANGE CONDITIONS</small><h2 id="conditionTitle">条件を変更</h2></div><span>Recordと同じ入力</span></div>
+      <div class="condition-body">
+        <div class="measure-grid">
+          <label class="measure-field"><span>距離</span><div><input id="distance" type="number" inputmode="decimal" min="0.01" max="100" step="0.01" value="5.0" aria-label="距離"><b>km</b></div></label>
+          <label class="measure-field"><span>実走時間</span><div><input id="duration" type="number" inputmode="decimal" min="0.01" max="600" step="0.1" value="32" aria-label="実走時間"><b>分</b></div></label>
+        </div>
+        <div class="derived-pace"><span>入力から計算</span><strong id="derivedPace">6:24 /km</strong></div>
+
+        <a id="courseLink" class="selected-course selected course-link" href="../course-flow-ui-v10/?from=simulation">
+          <div><small>選択中のコース</small><strong id="selectedCourseName">公園周回</strong><span id="selectedCourseMeta">ほぼ平坦・舗装路</span></div>
+          <b>変更 ›</b>
+        </a>
+
+        <details class="details compact-details">
+          <summary><span><strong>走行形式</strong><small>必要な場合だけ変更</small></span><i>⌄</i></summary>
+          <div class="details-body">
+            <label class="field"><span>走行形式</span><select id="runningFormat"><option value="RUN">途中で歩かず走る</option><option value="RUN_WALK">走りと歩きを混ぜる</option></select></label>
+            <div id="runWalkFields" class="runwalk-grid" hidden>
+              <label><span>走った区間の距離</span><div><input id="runDistance" type="number" min="0.1" max="100" step="0.1" value="4.0"><em>km</em></div></label>
+              <label><span>走った区間の時間</span><div><input id="runDuration" type="number" min="1" max="600" step="1" value="26"><em>分</em></div></label>
+              <p>RUN_WALKでは、走った区間の距離と時間を12部位計算に使用します。</p>
+            </div>
+          </div>
+        </details>
+        <div id="inputWarning" class="input-warning" hidden role="status"></div>
+      </div>
+    </section>
+
+    <section class="preview-panel" aria-labelledby="previewTitle">
+      <div class="preview-head">
+        <div><small>COMPARISON</small><h2 id="previewTitle">前回の走りと比べる</h2></div>
+        <span id="calcState" class="calc-state">計算済み</span>
+      </div>
+      <div class="condition-compare" aria-label="前回と仮定条件の比較">
+        <article class="condition-snapshot previous"><small>前回の記録</small><strong>6.2 km・39分</strong><span>6:17 /km・公園周回</span></article>
+        <i aria-hidden="true">→</i>
+        <article class="condition-snapshot assumed"><small>仮定条件</small><strong id="currentRunSummary">5.0 km・32分</strong><span id="currentPaceSummary">6:24 /km・公園周回</span></article>
+      </div>
+      <div id="assumptionChips" class="assumption-chips" aria-label="現在の仮定条件"></div>
+
+      <div class="semantic-note"><strong>仮定条件を現在の12部位モデルへ入力した表示です。</strong><span>安全性・けがリスク・おすすめ・走行後の状態を予測するものではありません。</span></div>
+
+      <div class="result-layout">
+        <div>
+          <ul id="directionLegend" class="direction-legend" aria-label="身体図の色"><li><i class="above"></i>前回より上</li><li><i class="reference"></i>ほぼ同じ</li><li><i class="below"></i>前回より下</li><li><i class="unavailable"></i>比較なし</li></ul>
+          <div id="bodyMap" class="body-map" aria-label="仮定条件での前面・後面・足裏の12部位図"></div>
+          <p id="mapNote" class="map-note">同じ部位について前回の保存記録との差を色で示します。上・下は良し悪しを示しません。</p>
+        </div>
+        <aside class="region-panel">
+          <div class="region-panel-head"><div><small>12 REGIONS</small><strong id="regionModeTitle">12部位の前回差</strong></div><button id="toggleCompare" type="button" aria-pressed="true">Reference-100を見る</button></div>
+          <div id="regionList" class="region-list"></div>
+        </aside>
+      </div>
+
+      <div class="rof-boundary"><span>ROF-J</span><p><strong>疲労感はシミュレーションしません。</strong> 走る前・走った後に本人が回答した値だけをResultで扱います。</p></div>
+
+      <div class="preview-actions"><a class="primary-action" href="../record-ui-v12/">この条件を見ながら記録を始める</a><button id="reset" class="secondary-action" type="button">条件を戻す</button></div>
+    </section>
+  </div>
+</main>
+<nav class="bottom-nav" aria-label="主要ナビゲーション"><a href="../home-ui-v04/"><span>⌂</span><small>Home</small></a><a href="../record-ui-v12/"><span>＋</span><small>記録</small></a><a href="../result-ui-v12/"><span>◉</span><small>結果</small></a><a href="../history-ui-v11/"><span>▤</span><small>履歴</small></a><a href="#"><span>•••</span><small>その他</small></a></nav>
+</div>
+<script type="module" src="./app.js"></script>
+</body></html>
