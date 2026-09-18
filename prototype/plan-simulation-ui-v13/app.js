@@ -1,7 +1,7 @@
 const simulationFrom=new URLSearchParams(location.search).get('from');
 const simulationBack=document.querySelector('#backLink');
 if(simulationBack&&simulationFrom==='plan'){simulationBack.href='../plan-ui-v07/';simulationBack.textContent='‹ 予定へ戻る';}
-if(simulationBack&&simulationFrom==='activation'){simulationBack.href='../activation-ui-v02/';simulationBack.textContent='‹ 結果の活用へ戻る';}
+if(simulationBack&&simulationFrom==='activation'){simulationBack.href='../activation-ui-v03/';simulationBack.textContent='‹ 結果の活用へ戻る';}
 import { calculateRun, MODEL_VERSION } from './engine.js';
 
 const $=(s)=>document.querySelector(s);
