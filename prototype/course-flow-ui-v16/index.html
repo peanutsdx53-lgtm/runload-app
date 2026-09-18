@@ -90,7 +90,10 @@ function returnToCaller(){
 }
 $('#backToCaller').addEventListener('click',e=>{if(canReturnByHistory()){e.preventDefault();history.back();}});
 const surf=[['paved','舗装路','#56778d'],['track','陸上トラック','#8b6972'],['treadmill','トレッドミル','#6c7080'],['soil','締まった土道','#94755f'],['trail','不整地トレイル','#856c59'],['grass','天然芝','#718b72'],['turf','人工芝','#5f8978'],['sand','砂地','#b69468']];
+const COURSE_STORE_KEY='runloadPrototypeCoursesV1';
 const courses={park:{name:'公園周回',grade:'FLAT',gradeLabel:'ほぼ平坦',up:0,down:0,surface:[['paved',100]],surfaceLabel:'舗装路'},river:{name:'河川敷',grade:'FLAT',gradeLabel:'ほぼ平坦',up:0,down:0,surface:[['paved',100]],surfaceLabel:'舗装路'},hill:{name:'坂道周回',grade:'SUMMARY',gradeLabel:'上り30%・平坦40%・下り30%',up:30,down:30,surface:[['paved',70],['trail',30]],surfaceLabel:'舗装路70%・不整地30%'}};
+try{const stored=JSON.parse(localStorage.getItem(COURSE_STORE_KEY)||'null');if(stored&&typeof stored==='object')Object.assign(courses,stored);}catch(_){}
+function saveCourseStore(){try{localStorage.setItem(COURSE_STORE_KEY,JSON.stringify(courses));}catch(_){}}
 let selected='park',editing=null,gMode='FLAT',sMode='SINGLE',single='paved',duplicateChoice=false;const mix=Object.fromEntries(surf.map(([k])=>[k,k==='paved'?70:k==='trail'?30:0]));let sections=[];
 let gradeFallback={up:null,down:null,source:null};
 function normalizedCourse(id,c){
@@ -138,7 +141,34 @@ $$('[data-g]').forEach(b=>b.onclick=()=>{gMode=b.dataset.g;update()});$$('[data-
 document.onclick=e=>{let q=e.target.closest('[data-quick]');if(q)choose(q.dataset.quick);let u=e.target.closest('[data-use]');if(u)choose(u.dataset.use,true);let ed=e.target.closest('[data-edit]');if(ed)openEditor(ed.dataset.edit);let rm=e.target.closest('[data-remove-section]');if(rm){sections.splice(+rm.dataset.removeSection,1);update()}};
 document.oninput=e=>{let el=e.target.closest('[data-si]');if(el){sections[+el.dataset.si][el.dataset.key]=el.value;update()}};
 document.onchange=e=>{let el=e.target.closest('[data-si]');if(el){sections[+el.dataset.si][el.dataset.key]=el.value;update()}};
-function persistCourse(forceDuplicate=false,returnAfter=true){if(!update())return;let name=$('#name').value.trim();let duplicate=Object.entries(courses).find(([id,x])=>id!==editing&&normName(x.name)===normName(name));if(!editing&&duplicate&&!forceDuplicate){$('#duplicateName').textContent=duplicate[1].name;$('#duplicateMeta').textContent=duplicate[1].gradeLabel+'・'+duplicate[1].surfaceLabel;$('#duplicateWarn').dataset.id=duplicate[0];$('#duplicateWarn').hidden=false;$('#duplicateWarn').scrollIntoView({block:'nearest'});return}let gv=gMode==='EASY'?easyValues():gMode==='SECTIONS'?sectionValues():null;let u=gv?.up??0,d=gv?.down??0,s=sMode==='UNKNOWN'?[]:sMode==='SINGLE'?[[single,100]]:surf.filter(([k])=>mix[k]>0).map(([k])=>[k,mix[k]]);let ug=null,dg=null;if(gMode==='EASY'){ug=gradeFromHeight($('#upGradeDistance').value,$('#upHeight').value);dg=gradeFromHeight($('#downGradeDistance').value,$('#downHeight').value);if(ug==null)ug=gradeFallback.up;if(dg==null)dg=gradeFallback.down;}let id=editing||('course_'+Date.now());courses[id]={id,name,grade:gMode,gradeLabel:gradeText(),up:u,down:d,upGrade:ug,downGrade:dg,surface:s,surfaceLabel:surfaceText(),preset:gMode==='FLAT'?'flat':'custom'};selected=id;$('#currentName').textContent=name;$('#currentMeta').textContent=gradeText()+'・'+surfaceText();saveSelection(id);render();toast('保存してこのコースを使います。');$('#editor').hidden=true;document.body.style.overflow='';if(returnAfter)setTimeout(returnToCaller,80)}
+function persistCourse(forceDuplicate=false,returnAfter=true,useAfterSave=true){
+  if(!update())return;
+  let name=$('#name').value.trim();
+  let duplicate=Object.entries(courses).find(([id,x])=>id!==editing&&normName(x.name)===normName(name));
+  if(!editing&&duplicate&&!forceDuplicate){
+    $('#duplicateName').textContent=duplicate[1].name;
+    $('#duplicateMeta').textContent=duplicate[1].gradeLabel+'・'+duplicate[1].surfaceLabel;
+    $('#duplicateWarn').dataset.id=duplicate[0];$('#duplicateWarn').hidden=false;$('#duplicateWarn').scrollIntoView({block:'nearest'});return;
+  }
+  let gv=gMode==='EASY'?easyValues():gMode==='SECTIONS'?sectionValues():null;
+  let u=gv?.up??0,d=gv?.down??0,s=sMode==='UNKNOWN'?[]:sMode==='SINGLE'?[[single,100]]:surf.filter(([k])=>mix[k]>0).map(([k])=>[k,mix[k]]);
+  let ug=null,dg=null;
+  if(gMode==='EASY'){
+    ug=gradeFromHeight($('#upGradeDistance').value,$('#upHeight').value);dg=gradeFromHeight($('#downGradeDistance').value,$('#downHeight').value);
+    if(ug==null)ug=gradeFallback.up;if(dg==null)dg=gradeFallback.down;
+  }
+  let id=editing||('course_'+Date.now());
+  courses[id]={id,name,grade:gMode,gradeLabel:gradeText(),up:u,down:d,upGrade:ug,downGrade:dg,surface:s,surfaceLabel:surfaceText(),preset:gMode==='FLAT'?'flat':'custom'};
+  saveCourseStore();
+  if(useAfterSave){
+    selected=id;$('#currentName').textContent=name;$('#currentMeta').textContent=gradeText()+'・'+surfaceText();saveSelection(id);
+    toast('保存してこのコースを使います。');
+  }else{
+    toast('コースを保存しました。');
+  }
+  render();$('#editor').hidden=true;document.body.style.overflow='';
+  if(returnAfter&&useAfterSave)setTimeout(returnToCaller,80);
+}
 function consumeGpxCandidate(){
   if(!$('#editor').hidden)return;
   let p=null;try{p=JSON.parse(sessionStorage.getItem(GPX_CANDIDATE_KEY)||'null');}catch(_){}
@@ -157,5 +187,5 @@ function consumeGpxCandidate(){
   $('#gpxPrefill').hidden=false;
   update();
 }
-$('#form').onsubmit=e=>{e.preventDefault();persistCourse(false,true)};$('#useExisting').onclick=()=>{let id=$('#duplicateWarn').dataset.id;if(id){choose(id,true);$('#editor').hidden=true;document.body.style.overflow=''}};$('#saveDuplicate').onclick=()=>persistCourse(true,true);$('#saveOnly').onclick=()=>toast('保存のみの動作を想定しています。');window.onpopstate=()=>{if(!$('#editor').hidden){$('#editor').hidden=true;document.body.style.overflow=''}};restoreSelection();chips();mixed();render();update();consumeGpxCandidate();window.addEventListener('pageshow',consumeGpxCandidate);
+$('#form').onsubmit=e=>{e.preventDefault();persistCourse(false,true)};$('#useExisting').onclick=()=>{let id=$('#duplicateWarn').dataset.id;if(id){choose(id,true);$('#editor').hidden=true;document.body.style.overflow=''}};$('#saveDuplicate').onclick=()=>persistCourse(true,true,true);$('#saveOnly').onclick=()=>persistCourse(false,false,false);window.onpopstate=()=>{if(!$('#editor').hidden){$('#editor').hidden=true;document.body.style.overflow=''}};restoreSelection();chips();mixed();render();update();consumeGpxCandidate();window.addEventListener('pageshow',consumeGpxCandidate);
 </script></body></html>
