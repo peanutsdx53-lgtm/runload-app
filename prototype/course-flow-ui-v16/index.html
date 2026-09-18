@@ -13,7 +13,7 @@
 @media(max-width:620px){.section-row{grid-template-columns:1fr 1fr 1fr 30px}.calculated-grades{grid-template-columns:1fr}.import-helper{grid-template-columns:1fr}.import-helper a{justify-content:center}}
 @media(min-width:820px){body{background:linear-gradient(90deg,#d5dfe4,#e6ecef 22%,#e6ecef 78%,#d5dfe4)}.app{margin:16px auto;border:1px solid var(--line);border-radius:28px;overflow:clip;padding-bottom:0}.list{grid-template-columns:1fr 1fr}.bottom{position:static;transform:none;width:100%;height:74px}.editor{background:rgba(35,49,60,.34);padding:26px}.editor-head,.editor-main{max-width:720px}.editor-head{margin:auto;border-radius:20px 20px 0 0}.editor-main{background:var(--bg);min-height:calc(100dvh - 108px);border-radius:0 0 20px 20px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition-duration:.001ms!important}}
 </style></head><body><div class="app"><header class="top"><div><strong>RunLoad</strong><small>COURSE SETTINGS / SHARED FLOW V0.16</small></div><span class="badge">PROTOTYPE</span></header><main>
-<a id="backToCaller" class="back" href="../plan-simulation-ui-v09/">‹ シミュレーションへ戻る</a>
+<a id="backToCaller" class="back" href="../plan-simulation-ui-v15/">‹ シミュレーションへ戻る</a>
 <section class="head clean-head"><div><p class="eyebrow">COURSE</p><h1>コース設定</h1></div></section>
 
 <section class="current"><div><small>現在選択中</small><strong id="currentName">公園周回</strong><span id="currentMeta">ほぼ平坦・舗装路</span></div><b>選択中</b></section>
@@ -27,7 +27,7 @@
 </section>
 
 <section class="section saved-section"><div class="section-head"><div><small>SAVED COURSES</small><h2>保存したコース</h2></div><span>3件</span></div><div id="courseList" class="list"></div></section>
-<p class="boundary">保存コースを編集しても、過去の記録に保存済みのコース条件は自動で変更しません。</p></main><nav class="bottom"><a href="../home-ui-v06/"><span>⌂</span><small>Home</small></a><a href="../record-ui-v16/"><span>＋</span><small>記録</small></a><a href="../result-ui-v14/"><span>◉</span><small>結果</small></a><a href="../history-ui-v14/"><span>▤</span><small>履歴</small></a><a href="../more-ui-v01/"><span>•••</span><small>その他</small></a></nav></div>
+<p class="boundary">保存コースを編集しても、過去の記録に保存済みのコース条件は自動で変更しません。</p></main><nav class="bottom"><a href="../home-ui-v13/"><span>⌂</span><small>Home</small></a><a href="../record-ui-v16/"><span>＋</span><small>記録</small></a><a href="../result-ui-v21/"><span>◉</span><small>結果</small></a><a href="../history-ui-v14/"><span>▤</span><small>履歴</small></a><a href="../more-ui-v06/"><span>•••</span><small>その他</small></a></nav></div>
 <div id="editor" class="editor" hidden><header class="editor-head"><button id="backEditor">‹ コース一覧</button><strong id="editorHead">新しいコース</strong><span></span></header><main class="editor-main"><p class="eyebrow">COURSE EDITOR</p><h1 id="editorTitle">新しいコース</h1><p>分かる条件だけ入力します。不明は不明のまま残します。</p><div id="gpxPrefill" class="gpx-prefill" hidden><strong>GPXの候補を入力しました</strong><span id="gpxPrefillMeta"></span></div><form id="form">
 <section class="e-card"><div class="e-title"><b>1</b><div><small>必須</small><h2>コース名</h2></div></div><label class="field"><span>コース名</span><input id="name" maxlength="80" placeholder="例：川沿いの往復コース"></label></section>
 <section class="e-card"><div class="e-title"><b>2</b><div><small>分かる範囲で</small><h2>坂道</h2></div></div>
