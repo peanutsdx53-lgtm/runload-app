@@ -69,7 +69,7 @@
 <div id="duplicateWarn" class="duplicate-warn" hidden><div><small>同じ名前のコースがあります</small><strong id="duplicateName"></strong><span id="duplicateMeta"></span></div><div><button id="useExisting" type="button">既存コースを使う</button><button id="saveDuplicate" type="button">別コースとして保存</button></div></div>
 <div id="warn" class="warn" hidden></div><div class="editor-actions"><button class="primary" type="submit">保存してこのコースを使う</button><button id="saveOnly" class="secondary" type="button">保存のみ</button></div></form></main></div><div id="toast" class="toast"></div>
 <script>
-const $=s=>document.querySelector(s),$=s=>[...document.querySelectorAll(s)];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const COURSE_SELECTION_KEY='runloadPrototypeCourseSelectionV1';
 const GPX_CANDIDATE_KEY='runloadPrototypeGpxCandidateV1';
 const caller=new URLSearchParams(location.search).get('from')==='record'?'record':'simulation';
