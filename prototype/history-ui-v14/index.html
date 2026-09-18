@@ -722,7 +722,7 @@ function renderCompare(){
 function renderRecords(){
   const q=state.recordQuery.trim().toLocaleLowerCase('ja-JP');
   const filtered=savedRecords.filter(r=>(state.recordType==='all'||r.type===state.recordType)).filter(r=>!q||[r.date,r.summary,r.course,r.memo].join(' ').toLocaleLowerCase('ja-JP').includes(q));
-  $('#recordList').innerHTML=filtered.length?filtered.map(r=>`<article class="record-item"><div class="record-item-head"><time class="${isWeekend(r.date)?'weekend':''}" datetime="${r.date}">${longDate(r.date)}（${weekday(r.date)}）</time><span class="record-kind${r.type==='rest'?' rest':''}">${r.type==='rest'?'休養':'走行'}</span></div><h3>${r.summary}</h3><p>${r.course}${r.memo?`・${r.memo}`:''}</p><div class="record-actions"><a href="../result-ui-v21/">結果を見る</a><button type="button" data-toast="編集画面への遷移を想定しています。">編集</button></div></article>`).join(''):'<div class="empty-records">条件に合う記録はありません。</div>';
+  $('#recordList').innerHTML=filtered.length?filtered.map(r=>`<article class="record-item"><div class="record-item-head"><time class="${isWeekend(r.date)?'weekend':''}" datetime="${r.date}">${longDate(r.date)}（${weekday(r.date)}）</time><span class="record-kind${r.type==='rest'?' rest':''}">${r.type==='rest'?'休養':'走行'}</span></div><h3>${r.summary}</h3><p>${r.course}${r.memo?`・${r.memo}`:''}</p><div class="record-actions"><a href="../result-ui-v21/">結果を見る</a></div></article>`).join(''):'<div class="empty-records">条件に合う記録はありません。</div>';
   $$('.type-toggle button').forEach(btn=>btn.classList.toggle('active',btn.dataset.type===state.recordType));
 }
 
