@@ -16,7 +16,7 @@ main{width:min(100%,760px);margin:auto;padding:24px 14px 42px}.eyebrow{margin:0;
 <main><section class="head"><p class="eyebrow">MORE</p><h1>その他</h1><p>必要な機能だけ、ここから開きます。</p></section>
 
 <section class="group"><p class="group-title">APP</p><div class="list">
-<a class="row primary" href="../settings-ui-v01/"><span class="icon">⚙</span><span class="copy"><small>APP SETTINGS</small><strong>設定</strong><span>表示・データ管理</span></span><span class="arrow">›</span></a>
+<a class="row primary" href="../settings-ui-v02/"><span class="icon">⚙</span><span class="copy"><small>APP SETTINGS</small><strong>設定</strong><span>表示・データ管理</span></span><span class="arrow">›</span></a>
 <a class="row" href="../consultation-ui-v01/"><span class="icon">⌁</span><span class="copy"><small>CONSULTATION</small><strong>相談</strong><span>見せる内容を整理</span></span><span class="arrow">›</span></a>
 <a class="row" href="../support-guidance-ui-v01/"><span class="icon">＋</span><span class="copy"><small>SUPPORT</small><strong>公的サポート</strong><span>症状や体調の相談先を確認</span></span><span class="arrow">›</span></a>
 </div></section>
@@ -26,7 +26,7 @@ main{width:min(100%,760px);margin:auto;padding:24px 14px 42px}.eyebrow{margin:0;
 <button class="row" type="button" data-pending="読みもの画面は後続工程で設計します。"><span class="icon">≡</span><span class="copy"><small>READ</small><strong>読みもの</strong><span>関連情報を読む</span></span><span class="arrow">›</span></button>
 </div></section>
 </main>
-<nav class="bottom"><a href="../home-ui-v06/"><span>⌂</span><small>Home</small></a><a href="../record-ui-v14/"><span>＋</span><small>記録</small></a><a href="../result-ui-v14/"><span>◉</span><small>結果</small></a><a href="../history-ui-v13/"><span>▤</span><small>履歴</small></a><a class="active" href="./" aria-current="page"><span>•••</span><small>その他</small></a></nav>
+<nav class="bottom"><a href="../home-ui-v11/"><span>⌂</span><small>Home</small></a><a href="../record-ui-v14/"><span>＋</span><small>記録</small></a><a href="../result-ui-v19/"><span>◉</span><small>結果</small></a><a href="../history-ui-v13/"><span>▤</span><small>履歴</small></a><a class="active" href="./" aria-current="page"><span>•••</span><small>その他</small></a></nav>
 </div><div id="toast" class="toast" role="status"></div>
 <script>const t=document.querySelector('#toast');let timer;document.addEventListener('click',e=>{const b=e.target.closest('[data-pending]');if(!b)return;t.textContent=b.dataset.pending;t.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>t.classList.remove('show'),1600)});</script>
 </body></html>
