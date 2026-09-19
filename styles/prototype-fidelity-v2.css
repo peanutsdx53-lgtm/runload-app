@@ -579,8 +579,8 @@ input, select, textarea {
   body {
     background: linear-gradient(90deg,
       color-mix(in srgb, var(--color-paper) 78%, var(--color-surface)),
-      color-mix(in srgb, var(--color-paper) 94%, white) 22%,
-      color-mix(in srgb, var(--color-paper) 94%, white) 78%,
+      color-mix(in srgb, var(--color-paper) 94%, var(--color-surface)) 22%,
+      color-mix(in srgb, var(--color-paper) 94%, var(--color-surface)) 78%,
       color-mix(in srgb, var(--color-paper) 78%, var(--color-surface)));
   }
   .app-shell {
