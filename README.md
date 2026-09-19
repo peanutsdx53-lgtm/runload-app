@@ -21,4 +21,4 @@ RunLoad is a pre-release regular web application for beginner runners to review 
 App records are stored locally in the browser. GPX analysis is local-only in this version.
 
 ## Verification baseline
-Current V1.17 runtime verification: 240/240 tests PASS, 15/15 suites PASS, 78/78 JS/MJS syntax PASS. Protected calculation core hashes are unchanged.
+V1.18 patch verification: 251/251 tests PASS, 16/16 suites PASS, 79/79 JS/MJS syntax PASS. Protected calculation core hashes are unchanged. Reference-100 below/down color uses the defined semantic token `--color-info`.
