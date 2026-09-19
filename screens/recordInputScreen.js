@@ -65,7 +65,7 @@ function renderRunWalkDetails(record = {}) {
       <label class="field"><span>走った時間（分） <strong aria-label="RUN_WALK時は必須">RUN_WALK時は必須</strong></span><input name="runWalkRunningDurationMinutes" type="number" min="0.01" max="100000" step="0.1" value="${escapeHtml(record.runWalkRunningDurationMinutes ?? "")}" placeholder="例：25" data-run-walk-required></label>
     </div>
     <details class="record-run-walk-composition"><summary>走った区間の坂・路面内訳（mixed条件では必須）</summary><p class="field-help">走った区間に複数の坂や路面がある場合は、その割合を合計100%で入力します。歩いた区間は含めません。区間ごとの速度は自動で補いません。</p>${rows}</details>
-    <p class="field-help">殿部・大腿前面・大腿後面・下腿後面は、平均速度2.25〜3.33 m/sで目安を表示します。範囲外では、この4部位は「目安なし」です。ほかの部位は、確認できる条件だけを反映します。</p>
+    <p class="field-help">殿部・大腿前面・大腿後面・下腿後面は、平均速度2.25〜4.50 m/sで目安を表示します。範囲外では、この4部位は「目安なし」です。ほかの部位は、確認できる条件だけを反映します。</p>
   </div>`;
 }
 

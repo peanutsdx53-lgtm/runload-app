@@ -1,25 +1,21 @@
-# RunLoad Mobile Prototype Parity Candidate
+# RunLoad Mobile Prototype Parity Baseline
 
 Date: 2026-09-19
-Status: SMARTPHONE PROTOTYPE PARITY REVIEW CANDIDATE
+Status: SMARTPHONE IMPLEMENTATION BASELINE
 
-The smartphone UI is now based on the frozen 15-screen prototype DOM/layout authority rather than a CSS-only approximation.
+The smartphone UI is based on the frozen 15-screen prototype DOM/layout authority, with later audited smartphone refinements.
 
-## Verification before publication
-- Full integrated regression: 284 / 284 PASS
-- JS/MJS syntax: 80 / 80 PASS
-- Dedicated mobile prototype parity suite: 22 / 22 PASS
-- PWA precache: 70 entries / 0 missing
-- Accepted Formal V1.5R2 recheck: 136 / 136 PASS
-- core/runloadCore.js unchanged from the previously audited V1.1 runtime
-- core/secondPillarRofJ.js unchanged from the accepted/audited runtime
-- Runtime payload SHA-256: 9d5059dcd5fb3511e91e6319b7c244b98d48f60cc5f773767d1dfa733d76c903
+## Verification
+- Current full regression: 240 / 240 PASS
+- 15 / 15 suites PASS
+- JS/MJS syntax: 78 / 78 PASS
+- Protected `core/runloadCore.js` hash unchanged
+- Protected `core/secondPillarRofJ.js` hash unchanged
+- Public Support return-context regression corrected
+- Gazendam explanatory Direct range corrected to 2.25–4.50 m/s
 
 ## Current priority
-Smartphone visual/interaction parity is the approval target.
-PC layout receives a separate parity pass after smartphone approval.
+The smartphone implementation is the current baseline for subsequent visual refinement. PC fine tuning and tutorial work remain separate follow-up tasks.
 
-## Current-only features
-Color/theme customization is retained as an intended product feature.
-Tutorial work is intentionally separated from prototype parity.
-Other current-app-only functions remain subject to later review and are not allowed to distort the frozen mobile layout during this phase.
+## Fixed scientific boundary
+UI refinement must not change Reference-100 semantics, distance separation, missingness handling, ROF-J separation, or the documented Direct/P1/P2 evidence boundaries without a new scientific review.
