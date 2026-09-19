@@ -22,23 +22,23 @@
   --space-7: 3rem;
   --content-width: 72rem;
 
-  /* RunLoad standard: warm neutral base with deep green accents. */
-  --color-paper: #eee9df;
-  --color-surface: #fffdf8;
-  --color-ink: #20231f;
-  --color-muted: #636961;
-  --color-line: #c7c1b5;
-  --color-accent: #1f5948;
-  --color-accent-strong: #164236;
-  --color-accent-soft: #e5efe9;
+  /* RunLoad standard: simple blue-gray palette inherited from the frozen prototype. */
+  --color-paper: #e3ebf1;
+  --color-surface: #fbfdff;
+  --color-ink: #1e2630;
+  --color-muted: #5d6d79;
+  --color-line: #afc4d2;
+  --color-accent: #2f6385;
+  --color-accent-strong: #214964;
+  --color-accent-soft: #e1eef6;
   --color-on-accent: #ffffff;
   --color-on-ink: #ffffff;
   /* Semantic colors are meaning-bearing and remain stable across accent themes. */
-  --color-weekend-saturday: #245fa8;
-  --color-weekend-sunday: #b23a3a;
+  --color-weekend-saturday: #855d4d;
+  --color-weekend-sunday: #855d4d;
   --color-info: #315d7a;
   --color-info-soft: #e8f0f5;
-  --color-neutral-soft: #eceae4;
+  --color-neutral-soft: #e7edf2;
   --color-success: #2f6647;
   --color-success-border: #5f8a6e;
   --color-success-soft: #e7f2ea;
@@ -52,6 +52,47 @@
   --color-danger-border: #a24a36;
   --color-danger-soft: #fbebe6;
   --color-danger-line: #d7a898;
+  --color-surface-warm: #f7fbff;
+  --color-surface-warm-strong: #e7f1f8;
+  --color-map-silhouette: #dce5eb;
+  --color-map-line: #a9bac5;
+  --color-map-low: #dbeaf2;
+  --color-map-middle: #8fb0c4;
+  --color-map-high: #356d8f;
+  --color-meter-track: #dce6ec;
+  --color-rest: #638b87;
+  --color-focus: #1d66b1;
+  --shadow-card: 0 12px 30px rgba(25, 43, 60, 0.08);
+  --shadow-dialog: 0 24px 70px rgba(20, 34, 48, 0.28);
+  --overlay-dialog: rgba(20, 34, 48, 0.58);
+
+  /* Shared theme aliases used across current screen components. */
+  --color-background: var(--color-paper);
+  --color-border: var(--color-line);
+  --color-line-strong: color-mix(in srgb, var(--color-ink) 20%, var(--color-line));
+  --color-surface-muted: color-mix(in srgb, var(--color-surface) 84%, var(--color-neutral-soft));
+  --color-selection-surface: color-mix(in srgb, var(--color-accent-soft) 88%, var(--color-accent));
+  --color-selection-border: color-mix(in srgb, var(--color-accent) 82%, var(--color-line));
+  --color-text: var(--color-ink);
+  --color-text-muted: var(--color-muted);
+  --color-surface-subtle: var(--color-surface-muted);
+  --font-body: var(--font-sans);
+  --radius-md: var(--radius-medium);
+  --radius-lg: var(--radius-large);
+  --shadow-soft: 0 8px 22px color-mix(in srgb, var(--color-ink) 8%, transparent);
+}
+
+html.rl-color-natural {
+  /* Natural: preserves the former production warm-neutral/deep-green design. */
+  --color-paper: #eee9df;
+  --color-surface: #fffdf8;
+  --color-ink: #20231f;
+  --color-muted: #636961;
+  --color-line: #c7c1b5;
+  --color-accent: #1f5948;
+  --color-accent-strong: #164236;
+  --color-accent-soft: #e5efe9;
+  --color-neutral-soft: #eceae4;
   --color-surface-warm: #fffaf2;
   --color-surface-warm-strong: #f7efe4;
   --color-map-silhouette: #e4e1d9;
@@ -64,20 +105,6 @@
   --color-focus: #1d66b1;
   --shadow-card: 0 12px 30px rgba(32, 35, 31, 0.07);
   --shadow-dialog: 0 24px 70px rgba(20, 28, 24, 0.28);
-  --overlay-dialog: rgba(20, 28, 24, 0.58);
-
-  /* Shared theme aliases used across current screen components. */
-  --color-background: var(--color-paper);
-  --color-border: var(--color-line);
-  --color-line-strong: color-mix(in srgb, var(--color-ink) 20%, var(--color-line));
-  --color-surface-muted: color-mix(in srgb, var(--color-surface) 84%, var(--color-neutral-soft));
-  --color-selection-surface: color-mix(in srgb, var(--color-accent-soft) 88%, var(--color-accent));
-  --color-selection-border: color-mix(in srgb, var(--color-accent) 82%, var(--color-line));
-  --color-text: var(--color-ink);
-  --font-body: var(--font-sans);
-  --radius-md: var(--radius-medium);
-  --radius-lg: var(--radius-large);
-  --shadow-soft: 0 8px 22px color-mix(in srgb, var(--color-ink) 8%, transparent);
 }
 
 html.rl-color-green {
@@ -183,8 +210,8 @@ html.rl-appearance-dark {
   --color-danger-border: #d28a73;
   --color-danger-soft: #3f241e;
   --color-danger-line: #7c4a3d;
-  --color-weekend-saturday: #8fc4ff;
-  --color-weekend-sunday: #ff9b93;
+  --color-weekend-saturday: #d8a58f;
+  --color-weekend-sunday: #d8a58f;
   --color-surface-warm: #211d17;
   --color-surface-warm-strong: #2b251e;
   --color-map-silhouette: #26302b;
@@ -289,8 +316,8 @@ html.rl-appearance-dark.rl-color-orange {
     --color-danger-border: #d28a73;
     --color-danger-soft: #3f241e;
     --color-danger-line: #7c4a3d;
-  --color-weekend-saturday: #8fc4ff;
-  --color-weekend-sunday: #ff9b93;
+  --color-weekend-saturday: #d8a58f;
+  --color-weekend-sunday: #d8a58f;
     --color-surface-warm: #211d17;
     --color-surface-warm-strong: #2b251e;
     --color-map-silhouette: #26302b;
