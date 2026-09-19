@@ -1,0 +1,37 @@
+name: Export prototype authority
+
+on:
+  push:
+    branches:
+      - ui-parity/full-reproduction
+    paths:
+      - ".prototype-authority/**"
+      - ".github/workflows/export-prototype-authority.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify authority source count
+        shell: bash
+        run: |
+          set -euo pipefail
+          count="$(find .prototype-authority -type f | wc -l)"
+          test "$count" -eq 24
+      - name: Package authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -czf prototype-authority.tar.gz .prototype-authority
+          sha256sum prototype-authority.tar.gz > prototype-authority.tar.gz.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prototype-authority
+          path: |
+            prototype-authority.tar.gz
+            prototype-authority.tar.gz.sha256
+          if-no-files-found: error
