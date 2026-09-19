@@ -6,6 +6,7 @@ Status: PRE-RELEASE REGULAR APP / DARK MODE THEME INTEGRITY PATCH
 Verification:
 - 302 / 302 tests PASS
 - 18 / 18 suites PASS
+- 81 / 81 JS/MJS syntax PASS
 - protected Primary core hash unchanged
 - protected ROF-J core hash unchanged
 
