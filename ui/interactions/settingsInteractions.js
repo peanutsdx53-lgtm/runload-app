@@ -161,6 +161,26 @@ function bindSavedShoeManagement({ services, router }) {
   });
 }
 
+function bindImmediateDisplaySettings({ services, form }) {
+  const supported = new Set(["textSize", "appearanceMode", "colorTheme"]);
+  form?.querySelectorAll("[data-immediate-display-setting]").forEach((input) => {
+    input.addEventListener("change", () => {
+      if (!input.checked || !supported.has(input.name)) return;
+      const result = saveSettings(services, { [input.name]: input.value });
+      if (!result.ok) {
+        showFormMessages(form, ["表示設定を保存できませんでした。端末の保存状態を確認してください。"]);
+        return;
+      }
+      const current = form.querySelector(`[data-display-setting-value="${input.name}"]`);
+      if (current) current.textContent = input.dataset.settingLabel || input.value;
+      const status = form.querySelector("[data-display-settings-status]");
+      if (status) status.textContent = `${input.dataset.settingLabel || "表示設定"}に変更しました。`;
+      const disclosure = input.closest("details.display-setting");
+      if (disclosure) disclosure.open = false;
+    });
+  });
+}
+
 export function bindSettings({ services, router, rerender }) {
   const form = document.getElementById("journal-settings-form");
   form?.addEventListener("submit", (event) => {
@@ -172,6 +192,7 @@ export function bindSettings({ services, router, rerender }) {
     }
     router.navigateToScreen("settings", { status: "saved" });
   });
+  bindImmediateDisplaySettings({ services, form });
   form?.querySelector('[data-action="reset-journal-settings"]')?.addEventListener("click", () => {
     const result = saveSettings(services, DEFAULT_JOURNAL_SETTINGS);
     if (!result.ok) {
