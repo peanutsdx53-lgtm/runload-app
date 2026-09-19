@@ -20,7 +20,7 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
     ]),
   }),
   Object.freeze({
-    label: "その他",
+    label: "サポート・設定",
     items: Object.freeze([
       Object.freeze({ screen: "consultation", label: "相談", description: "見せる内容を整理" }),
       Object.freeze({ screen: "support-guidance", label: "公的な相談先", description: "119・#7119など公式案内を確認" }),

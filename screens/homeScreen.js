@@ -39,15 +39,12 @@ function renderFocus(experience, draft) {
   const hasCarry = Boolean(String(record?.reflectionContext?.nextCheckPoint || "").trim());
   const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
   const sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "今日の記録から次回へ引き継げます";
-  const resultLink = record?.id
-    ? `<a class="secondary" href="#/result?recordId=${encodeURIComponent(record.id)}">前回の結果</a>`
-    : `<a class="secondary" href="#/history">履歴</a>`;
-  return `<section class="focus"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${hasCarry ? "前回から引き継いだ内容" : "今日の入口"}</small><h2>次のランで確認したいこと</h2><p class="focus-text">${escapeHtml(carryText(experience))}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">次回へ引継ぎ</span></div><div class="focus-actions"><a class="primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a>${resultLink}</div></section>`;
+  return `<section class="focus"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${hasCarry ? "前回から引き継いだ内容" : "今日の入口"}</small><h2>次のランで確認したいこと</h2><p class="focus-text">${escapeHtml(carryText(experience))}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">次回へ引継ぎ</span></div><div class="focus-actions"><a class="primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a></div></section>`;
 }
 
 function renderLatestRecord(experience) {
   if (!experience?.record) {
-    return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>まだありません</strong></div><span class="pill">—</span></div><div class="plan"><small>最初の記録</small><strong>今日の走行または休養</strong><span>記録すると、ここから結果を開けます</span></div><a class="card-link" href="#/record-input"><span>記録を始める</span><span>›</span></a></article>`;
+    return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>まだありません</strong></div><span class="pill">—</span></div><div class="plan"><small>最初の記録</small><strong>今日の走行または休養</strong><span>記録すると、ここから結果を開けます</span></div></article>`;
   }
   const record = experience.record;
   if (record.activityType === "rest") {
@@ -81,6 +78,6 @@ export function renderHomeScreen({ services }) {
     <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div><span class="date-badge">${escapeHtml(today)}</span></section>
     ${renderFocus(latestExperience, draft)}
     <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div><a href="#/history">履歴を見る</a></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
-    <section class="section"><div class="section-head"><div><small>WHEN NEEDED</small><h2>必要なときに開く</h2></div></div><div class="support support--two"><a href="#/history"><span aria-hidden="true">▤</span><div><strong>履歴</strong><small>過去の記録と推移</small></div></a><a href="#/activation"><span aria-hidden="true">◇</span><div><strong>結果の活用</strong><small>振り返る・相談する・次を考える</small></div></a></div></section>
+    ${latestExperience ? `<section class="section"><div class="section-head"><div><small>WHEN NEEDED</small><h2>必要なときに開く</h2></div></div><div class="support support--single"><a href="#/activation?recordId=${encodeURIComponent(latestExperience.record.id)}"><span aria-hidden="true">◇</span><div><strong>結果の活用</strong><small>振り返る・相談する・次を考える</small></div></a></div></section>` : ""}
   </div>`;
 }
