@@ -1527,12 +1527,12 @@ details.ui-motion-details.is-ui-motion-closing > :not(summary) {
   border-color: color-mix(in srgb, var(--color-accent) 46%, var(--color-line));
   background:
     linear-gradient(145deg,
-      color-mix(in srgb, var(--color-surface) 88%, white) 0%,
+      color-mix(in srgb, var(--color-surface) 88%, var(--color-accent-soft)) 0%,
       color-mix(in srgb, var(--color-accent-soft) 72%, var(--color-surface)) 48%,
       color-mix(in srgb, var(--color-accent) 15%, var(--color-surface)) 100%);
   color: var(--color-accent-strong);
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 72%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-accent-strong) 18%, transparent),
     inset 0 -1px 0 color-mix(in srgb, var(--color-accent) 24%, transparent),
     0 0.28rem 0.7rem color-mix(in srgb, var(--color-accent) 12%, transparent);
   font-weight: 900;

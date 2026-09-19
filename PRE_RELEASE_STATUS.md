@@ -1,20 +1,20 @@
 # RunLoad Pre-release Status
 
-Date: 2026-09-19
-Status: PRE-RELEASE REGULAR APP / MOBILE USABILITY PATCH
+Date: 2026-09-20
+Status: PRE-RELEASE REGULAR APP / DARK MODE THEME INTEGRITY PATCH
 
 Verification:
-- 269 / 269 tests PASS
-- 17 / 17 suites PASS
-- 80 / 80 JS/MJS syntax PASS
+- 302 / 302 tests PASS
+- 18 / 18 suites PASS
+- 81 / 81 JS/MJS syntax PASS
 - protected Primary core hash unchanged
 - protected ROF-J core hash unchanged
 
 Audited UI refinements:
-- Display settings are compact/collapsible and apply immediately when selected.
-- Result body silhouette no longer falls back to SVG black; theme map tokens are used.
-- Upper front/back regional overlays received small alignment adjustments.
-- Record Run/Rest and date controls, plus Plan date control, now read clearly as interactive controls in light mode.
-- Previous Reference-100 below/down semantic-color correction remains active.
+- Legacy prototype color aliases now resolve to the current theme-token system.
+- Fixed light-only backgrounds/text in History, Record, Result, Simulation, Course and GPX are replaced by theme-aware semantic tokens.
+- Accent and model actions use theme-appropriate foreground tokens in dark mode.
+- Disabled and placeholder states no longer rely on fixed light-palette colors.
+- Key dark semantic color pairs meet a 4.5:1 contrast gate in the static regression suite.
 
 The app remains a development-stage research application. Scientific interpretation boundaries in the README and Current research package remain controlling.

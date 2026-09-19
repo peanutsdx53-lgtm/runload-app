@@ -1,4 +1,4 @@
-const CACHE_NAME = "runload-app-current-v119-usability-v1";
+const CACHE_NAME = "runload-app-current-v120-dark-v1";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",

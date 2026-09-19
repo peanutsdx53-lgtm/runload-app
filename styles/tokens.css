@@ -44,6 +44,7 @@
   --color-success-soft: #e7f2ea;
   --color-model: #594472;
   --color-model-soft: #eee8f5;
+  --color-on-model: #ffffff;
   --color-attention: #7a3424;
   --color-attention-border: #9a4b34;
   --color-attention-soft: #fbede7;
@@ -80,6 +81,16 @@
   --radius-md: var(--radius-medium);
   --radius-lg: var(--radius-large);
   --shadow-soft: 0 8px 22px color-mix(in srgb, var(--color-ink) 8%, transparent);
+  --color-border-subtle: color-mix(in srgb, var(--color-line) 72%, transparent);
+  --color-surface-soft: var(--color-surface-muted);
+  --color-warning: var(--color-attention);
+  --color-warning-soft: var(--color-attention-soft);
+  --surface-muted: var(--color-surface-muted);
+  --surface-raised: var(--color-surface);
+  --text-muted: var(--color-text-muted);
+  --border-subtle: var(--color-border-subtle);
+  --shadow-sm: var(--shadow-soft);
+  --radius-xl: var(--radius-large);
 }
 
 html.rl-color-natural {
@@ -202,6 +213,7 @@ html.rl-appearance-dark {
   --color-success-soft: #203429;
   --color-model: #cab6e5;
   --color-model-soft: #30243d;
+  --color-on-model: #241a30;
   --color-attention: #efb08f;
   --color-attention-border: #d09572;
   --color-attention-soft: #3e2a20;
@@ -308,6 +320,7 @@ html.rl-appearance-dark.rl-color-orange {
     --color-success-soft: #203429;
     --color-model: #cab6e5;
     --color-model-soft: #30243d;
+    --color-on-model: #241a30;
     --color-attention: #efb08f;
     --color-attention-border: #d09572;
     --color-attention-soft: #3e2a20;
