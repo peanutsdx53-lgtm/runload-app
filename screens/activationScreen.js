@@ -1,5 +1,11 @@
-import { escapeHtml, renderPageHeading, renderStatusLabel } from "../ui/commonComponents.js";
-import { formatActivitySummary, formatLocalDate } from "../ui/recordPresentation.js";
+import { escapeHtml } from "../ui/commonComponents.js";
+import { formatActivitySummary } from "../ui/recordPresentation.js";
+
+function shortDate(dateText = "") {
+  const match = String(dateText).match(/^\d{4}-(\d{2})-(\d{2})$/);
+  if (!match) return dateText || "—";
+  return `${Number(match[1])}月${Number(match[2])}日`;
+}
 
 function href(screen, values = {}) {
   const query = new URLSearchParams();
@@ -9,38 +15,34 @@ function href(screen, values = {}) {
   return `#/${screen}${query.size ? `?${query.toString()}` : ""}`;
 }
 
+function sourceSummary(record = {}) {
+  const pieces = [];
+  if (record.activityType === "rest") return "休養";
+  if (Number(record.distanceKm) > 0) pieces.push(`${Number(record.distanceKm).toLocaleString("ja-JP", { maximumFractionDigits: 2 })} km`);
+  if (Number(record.durationMinutes) > 0) pieces.push(`${Math.round(Number(record.durationMinutes))}分`);
+  if (record.course?.name) pieces.push(record.course.name);
+  return pieces.join("・") || formatActivitySummary(record);
+}
 
-function actionCard({ number, title, description, links }) {
-  return `<article class="activation-card"><span class="activation-card__number">${escapeHtml(number)}</span><div><h2>${escapeHtml(title)}</h2><p>${escapeHtml(description)}</p></div><div class="activation-card__links">${links.map((link, index) => `<a class="button ${index === 0 ? "button--primary" : "button--secondary"}" href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`).join("")}</div></article>`;
+function card(number, title, description, hrefValue, label, primary = false) {
+  return `<article class="card${primary ? " primary" : ""}"><span class="num">${escapeHtml(number)}</span><div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(description)}</p></div><a class="card-action" href="${escapeHtml(hrefValue)}">${escapeHtml(label)}</a></article>`;
 }
 
 export function renderActivationScreen({ services, context }) {
   const requestedRecordId = context.parameters.get("recordId") || "";
-  const experience = requestedRecordId
-    ? services.workflows.records.loadExperience(requestedRecordId)
-    : services.workflows.records.loadLatestExperience();
+  const experience = requestedRecordId ? services.workflows.records.loadExperience(requestedRecordId) : services.workflows.records.loadLatestExperience();
   const record = experience?.record || null;
   const recordId = record?.id || "";
-  const date = record?.date || "";
-  const recordContext = record
-    ? `<section class="activation-source" aria-label="活用する記録"><div>${renderStatusLabel("対象記録", "info")}<h2>${escapeHtml(formatLocalDate(date))}</h2><p>${escapeHtml(formatActivitySummary(record))}</p></div><a class="button button--secondary" href="${escapeHtml(href("result", { recordId }))}">結果へ戻る</a></section>`
-    : `<aside class="screen-role-boundary"><p><strong>まだ対象記録がありません。</strong></p><p>予定と読みものは開けます。結果に結び付く比較や相談は、記録を保存してから対象記録を選びます。</p></aside>`;
-
-  const publicHelpPriority = experience?.supportDecision?.route === "urgent"
-    ? `<section class="next-action next-action--urgent" aria-labelledby="activation-public-help-title"><div>${renderStatusLabel("公的な相談先を確認", "attention")}<h2 id="activation-public-help-title">公的な案内を確認する</h2><p>RunLoadは緊急性を判定しません。公的な相談先は数値結果とは別に確認します。</p></div><a class="button button--primary" href="${escapeHtml(href("support-guidance", { recordId }))}">公的な相談先を確認する</a></section>`
-    : "";
-
-  const cards = [
-    actionCard({ number: "01", title: "条件を比べる", description: "今回と別の条件を、同じ計算モデルで比較します。", links: [{ href: href("simulation", { recordId, from: "activation" }), label: "Simulationを開く" }] }),
-    actionCard({ number: "02", title: "相談用にまとめる", description: "共有する事実と自分の質問を選んで整理します。", links: record ? [{ href: href("consultation", { recordId }), label: "相談用にまとめる" }] : [{ href: href("consultation", { mode: "free", page: "quick" }), label: "相談メモを開く" }] }),
-    actionCard({ number: "03", title: "次の予定を作る", description: "走る・休む、日付、距離、時間などを自分で設定します。", links: [{ href: href("plan", { sourceRecordId: recordId }), label: "予定を作る" }] }),
-    actionCard({ number: "04", title: "読みものを確認する", description: "一般情報を必要な範囲で確認します。", links: [{ href: href("reading", { recordId, origin: record ? "activation" : "" }), label: "読みものを開く" }] }),
-  ];
-
-  return `<section class="screen screen--activation" data-screen-architecture="runload-screen-architecture-current-v1">
-    ${renderPageHeading({ eyebrow: "結果の活用", title: "この結果をどう使うか選ぶ", description: "比較・相談・予定・読みものから選びます。" })}
-    ${recordContext}
-    ${publicHelpPriority}
-    <div class="activation-grid">${cards.join("")}</div>
-  </section>`;
+  return `<div class="screen screen--activation prototype-parity prototype-parity--activation">
+    <section class="head"><p class="eyebrow">RESULT USE</p><h1>結果の活用</h1><p>結果を見たあと、必要な使い方を選びます。</p></section>
+    ${record ? `<section class="source"><div><small>対象の記録</small><strong>${escapeHtml(shortDate(record.date))}</strong><span>${escapeHtml(sourceSummary(record))}</span></div><a href="${escapeHtml(href("result", { recordId }))}">結果へ戻る</a></section>` : `<section class="source"><div><small>対象の記録</small><strong>まだありません</strong><span>記録を保存すると結果に結び付けて使えます</span></div><a href="#/record-input">記録を始める</a></section>`}
+    <section class="intro"><small>NEXT ACTION</small><h2>この結果をどう使うか</h2><p>アプリが次の行動を決めるのではなく、自分で確認したい入口を選びます。</p></section>
+    <div class="actions">
+      ${card("01", "条件を比べる", "前回の走りを基準に、距離・時間・コースなどを変えたときの12部位表示を確認します。", href("simulation", { recordId, from: "activation" }), "シミュレーションを開く", true)}
+      ${card("02", "相談用にまとめる", "走行事実と身体の記録を整理し、相談相手に見せる内容を作ります。", record ? href("consultation", { recordId }) : href("consultation", { mode: "free", page: "quick" }), "相談用に整理する")}
+      ${card("03", "次の予定を作る", "今回の事実を出発点に、次の走行や休養の予定を自分で作ります。", href("plan", { sourceRecordId: recordId }), "予定を作る")}
+      ${card("04", "読みものを確認する", "今回の記録に関連する情報を、読みものから確認します。", href("reading", { recordId, origin: record ? "activation" : "" }), "読みものを開く")}
+    </div>
+    <p class="boundary">距離や速度を増やすこと、安全性、けがリスク、走行可否を判断する画面ではありません。</p>
+  </div>`;
 }

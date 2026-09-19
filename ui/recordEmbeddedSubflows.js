@@ -62,10 +62,10 @@ function renderBodyMap(fields) {
     { key: "back", title: "後面", silhouette: BACK },
     { key: "sole", title: "足裏", silhouette: FOOT },
   ];
-  return `<div class="record-subjective-body-map" data-record-subjective-body-map>${views.map((view) => `<figure><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430" aria-label="${view.title}の身体図"><g class="record-subjective-silhouette">${view.silhouette}</g>${RECORD_REGIONAL_SUBJECTIVE_AREAS.filter((item) => item.view === view.key).map((item) => {
+  return `<div class="subjective-body-map" data-record-subjective-body-map>${views.map((view) => `<figure><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430" aria-label="${view.title}の身体図"><g class="subjective-silhouette">${view.silhouette}</g>${RECORD_REGIONAL_SUBJECTIVE_AREAS.filter((item) => item.view === view.key).map((item) => {
     const area = AREA_BY_ID[item.areaId];
     const intensity = Number(fields[`bodyArea_${area.key}`] || 0);
-    return `<path tabindex="0" role="button" aria-pressed="${intensity > 0}" class="record-subjective-region" data-record-body-region="${escapeHtml(item.areaId)}" data-level="${escapeHtml(intensity)}" d="${item.path}"><title>${escapeHtml(item.label)}</title></path>`;
+    return `<path tabindex="0" role="button" aria-pressed="${intensity > 0}" class="subjective-region-path" data-record-body-region="${escapeHtml(item.areaId)}" data-level="${escapeHtml(intensity)}" d="${item.path}"><title>${escapeHtml(item.label)}</title></path>`;
   }).join("")}</svg></figure>`).join("")}</div>`;
 }
 
@@ -76,7 +76,7 @@ function renderBodyStateInputs(fields) {
 function renderSafetyFlags(fields) {
   const visible = CONSULTATION_FLAG_KEYS.map((flag) => `<label><input type="checkbox" name="safety_${escapeHtml(flag)}" value="1"${checked(fields[`safety_${flag}`])}><span>${escapeHtml(SAFETY_FLAG_LABELS[flag] || flag)}</span></label>`).join("");
   const hidden = SAFETY_FLAG_KEYS.filter((flag) => !CONSULTATION_FLAG_KEYS.includes(flag)).map((flag) => `<input type="hidden" name="safety_${escapeHtml(flag)}" value="">`).join("");
-  return `${hidden}<div class="record-consultation-facts">${visible}</div>`;
+  return `${hidden}<div class="safety-check-grid">${visible}</div>`;
 }
 
 export function renderEmbeddedSubjectiveSubflow(feedback = {}) {
@@ -85,36 +85,13 @@ export function renderEmbeddedSubjectiveSubflow(feedback = {}) {
   const status = String(fields.subjectiveStatus || "deferred");
   const bodyVisible = ["discomfort_reported", "strong_reported"].includes(status);
   const consultVisible = status === "strong_reported";
-  return `<section class="record-subscreen" data-record-subflow="subjective" hidden aria-labelledby="record-body-subflow-title">
-    <header class="record-subscreen__header"><button type="button" class="record-subscreen__back" data-action="close-record-subflow">‹ <span>今日の記録</span></button><strong id="record-body-subflow-title">身体の記録</strong><span></span></header>
-    <div class="record-subscreen__body">
-      <div class="record-subflow-head"><p>BODY RECORD</p><h2>今回の身体記録</h2><span>入力しない状態と、確認した状態を分けて残します。</span></div>
-      <fieldset class="record-sub-choice-grid"><legend>今回の記録</legend>
-        <label><input type="radio" name="subjectiveStatus" value="deferred"${statusChecked(status, "deferred")}><span><strong>今回は確認しない</strong><small>未確認のまま戻る</small></span></label>
-        <label><input type="radio" name="subjectiveStatus" value="none_reported"${statusChecked(status, "none_reported")}><span><strong>確認したが部位は記録しない</strong><small>確認済みとして残す</small></span></label>
-        <label><input type="radio" name="subjectiveStatus" value="discomfort_reported"${statusChecked(status, "discomfort_reported")}><span><strong>気になる場所を残す</strong><small>身体図から部位を選ぶ</small></span></label>
-        <label><input type="radio" name="subjectiveStatus" value="strong_reported"${statusChecked(status, "strong_reported")}><span><strong>相談したい内容を残す</strong><small>部位と伝えたい事実を整理</small></span></label>
-      </fieldset>
-      <input type="hidden" name="subjectiveDetailType" value="">
-      ${renderBodyStateInputs(fields)}
-      <section class="record-body-area-entry" data-record-body-entry${bodyVisible ? "" : " hidden"}>
-        <div class="record-subsection-head"><small>12部位</small><strong>身体図から選ぶ</strong><span>部位を選ぶと程度を入力できます。</span></div>
-        ${renderBodyMap(fields)}
-        <div class="record-selected-body-summary" data-record-selected-body-summary>${escapeHtml(summary.bodyAreas.length ? `${summary.bodyAreas.length}部位を入力中` : "部位は未選択です。")}</div>
-        <div class="record-selected-body-list" data-record-selected-body-list></div>
-        <div class="field-grid field-grid--two">
-          <label class="field"><span>気づいた時点・任意</span><select name="bodyObservationTiming"><option value="UNKNOWN"${selected(fields.bodyObservationTiming || "UNKNOWN", "UNKNOWN")}>未設定</option><option value="PRE_RUN"${selected(fields.bodyObservationTiming, "PRE_RUN")}>走る前から</option><option value="DURING_RUN"${selected(fields.bodyObservationTiming, "DURING_RUN")}>走行中</option><option value="IMMEDIATE_POST"${selected(fields.bodyObservationTiming, "IMMEDIATE_POST")}>走行直後</option><option value="LATER"${selected(fields.bodyObservationTiming, "LATER")}>しばらく後</option></select></label>
-          <label class="field"><span>感じ方・任意</span><select name="bodyObservationSensation"><option value="NOT_SELECTED"${selected(fields.bodyObservationSensation || "NOT_SELECTED", "NOT_SELECTED")}>未設定</option><option value="FATIGUE"${selected(fields.bodyObservationSensation, "FATIGUE")}>疲れ・だるさ</option><option value="TIGHTNESS"${selected(fields.bodyObservationSensation, "TIGHTNESS")}>張り・硬さ</option><option value="DISCOMFORT"${selected(fields.bodyObservationSensation, "DISCOMFORT")}>気になる感じ</option><option value="OTHER"${selected(fields.bodyObservationSensation, "OTHER")}>その他</option></select></label>
-        </div>
-        <label class="field"><span>選択部位の補足・任意</span><textarea name="bodyObservationNote" rows="3" maxlength="240" placeholder="例：走行後に少し張った">${escapeHtml(fields.bodyObservationNote || "")}</textarea></label>
-      </section>
-      <details class="record-consultation-extra" data-record-consultation-extra${consultVisible ? "" : " hidden"}>
-        <summary><span><strong>相談相手に伝えたい事実</strong><small>当てはまる内容がある場合だけ</small></span></summary>
-        <div><p>RunLoadの数値で緊急性を判定せず、本人が伝えたい事実だけを残します。</p>${renderSafetyFlags(fields)}<input type="hidden" name="unexpectedSymptom" value=""><input type="hidden" name="symptomTiming" value=""><input type="hidden" name="symptomStartedWhen" value=""><input type="hidden" name="symptomNote" value=""><label class="field"><span>相談メモ・任意</span><textarea name="consultationNote" rows="3" maxlength="500" placeholder="確認してほしいこと">${escapeHtml(fields.consultationNote || "")}</textarea></label><a class="text-link" href="#/support-guidance">公的サポートを確認</a></div>
-      </details>
-      <div class="record-subflow-actions"><button type="button" class="button button--primary" data-action="apply-body-subflow">この内容で今日の記録へ戻る</button></div>
-    </div>
-  </section>`;
+  return `<div class="subscreen" data-record-subflow="subjective" hidden aria-labelledby="record-body-subflow-title"><header><button type="button" class="record-subscreen__back" data-action="close-record-subflow">‹ <span>今日の記録</span></button><strong id="record-body-subflow-title">身体の記録</strong><span></span></header><main><section class="sub-flow"><div class="sub-flow-head"><p class="eyebrow">BODY RECORD</p><h2>今回の身体記録</h2><p>入力しない状態と、確認した状態を分けて残します。</p></div>
+    <fieldset class="sub-choice-grid"><legend>今回の記録</legend><label><input type="radio" name="subjectiveStatus" value="deferred"${statusChecked(status, "deferred")}><span><strong>今回は確認しない</strong><small>未確認のまま戻る</small></span></label><label><input type="radio" name="subjectiveStatus" value="none_reported"${statusChecked(status, "none_reported")}><span><strong>確認したが部位は記録しない</strong><small>確認済みとして残す</small></span></label><label><input type="radio" name="subjectiveStatus" value="discomfort_reported"${statusChecked(status, "discomfort_reported")}><span><strong>気になる場所を残す</strong><small>身体図から部位を選ぶ</small></span></label><label><input type="radio" name="subjectiveStatus" value="strong_reported"${statusChecked(status, "strong_reported")}><span><strong>相談したい内容を残す</strong><small>部位と伝えたい事実を整理</small></span></label></fieldset>
+    <input type="hidden" name="subjectiveDetailType" value="">${renderBodyStateInputs(fields)}
+    <div class="body-area-entry" data-record-body-entry${bodyVisible ? "" : " hidden"}><div class="sub-section-head"><small>12部位</small><strong>身体図から選ぶ</strong><span>部位をタップして追加します。</span></div>${renderBodyMap(fields)}<div class="selected-body-summary" data-record-selected-body-summary>${escapeHtml(summary.bodyAreas.length ? `${summary.bodyAreas.length}部位を入力中` : "部位は未選択です。")}</div><div class="selected-body-list" data-record-selected-body-list></div><div class="sub-two-fields"><label class="field"><span>気づいた時点・任意</span><select name="bodyObservationTiming"><option value="UNKNOWN"${selected(fields.bodyObservationTiming || "UNKNOWN", "UNKNOWN")}>未設定</option><option value="PRE_RUN"${selected(fields.bodyObservationTiming, "PRE_RUN")}>走る前から</option><option value="DURING_RUN"${selected(fields.bodyObservationTiming, "DURING_RUN")}>走行中</option><option value="IMMEDIATE_POST"${selected(fields.bodyObservationTiming, "IMMEDIATE_POST")}>走行直後</option><option value="LATER"${selected(fields.bodyObservationTiming, "LATER")}>しばらく後</option></select></label><label class="field"><span>感じ方・任意</span><select name="bodyObservationSensation"><option value="NOT_SELECTED"${selected(fields.bodyObservationSensation || "NOT_SELECTED", "NOT_SELECTED")}>未設定</option><option value="FATIGUE"${selected(fields.bodyObservationSensation, "FATIGUE")}>疲れ・だるさ</option><option value="TIGHTNESS"${selected(fields.bodyObservationSensation, "TIGHTNESS")}>張り・硬さ</option><option value="DISCOMFORT"${selected(fields.bodyObservationSensation, "DISCOMFORT")}>気になる感じ</option><option value="OTHER"${selected(fields.bodyObservationSensation, "OTHER")}>その他</option></select></label></div><label class="field"><span>選択部位の補足・任意</span><textarea name="bodyObservationNote" rows="3" maxlength="240" placeholder="例：走行後に少し張った">${escapeHtml(fields.bodyObservationNote || "")}</textarea></label></div>
+    <details class="sub-extra" data-record-consultation-extra${consultVisible ? "" : " hidden"}><summary><span><strong>相談相手に伝えたい事実</strong><small>当てはまる内容がある場合だけ</small></span><i>⌄</i></summary><div class="sub-extra-body"><p>RunLoadの数値で緊急性を判定せず、本人が伝えたい事実だけを残します。</p>${renderSafetyFlags(fields)}<input type="hidden" name="unexpectedSymptom" value=""><input type="hidden" name="symptomTiming" value=""><input type="hidden" name="symptomStartedWhen" value=""><input type="hidden" name="symptomNote" value=""><label class="field"><span>相談メモ・任意</span><textarea name="consultationNote" rows="3" maxlength="500" placeholder="確認してほしいこと">${escapeHtml(fields.consultationNote || "")}</textarea></label><a class="sub-support-link" href="#/support-guidance">公的サポートを確認 <span>›</span></a></div></details>
+    <button type="button" class="sub-flow-save" data-action="apply-body-subflow">この内容で今日の記録へ戻る</button>
+  </section></main></div>`;
 }
 
 function savedShoeOptions(savedShoes = [], currentId = "") {
@@ -125,26 +102,10 @@ export function renderEmbeddedPersonalSubflow(record = {}, settings = {}) {
   const fields = personalContextFieldsFromRecord(record);
   const summary = personalSummaryFromFields(fields);
   const savedShoes = Array.isArray(settings.savedShoes) ? settings.savedShoes : [];
-  return `<section class="record-subscreen" data-record-subflow="personal" hidden aria-labelledby="record-personal-subflow-title">
-    <header class="record-subscreen__header"><button type="button" class="record-subscreen__back" data-action="close-record-subflow">‹ <span>今日の記録</span></button><strong id="record-personal-subflow-title">今回のシューズ</strong><span></span></header>
-    <div class="record-subscreen__body">
-      <div class="record-subflow-head"><p>SHOES</p><h2>今回のシューズ</h2><span>今回使ったシューズと、意識したことだけを残します。</span></div>
-      <section class="record-subcard"><div class="record-subsection-head"><small>SHOES</small><strong>今日使ったもの</strong></div>
-        <label class="field"><span>保存シューズ・任意</span><select name="personalShoeId" data-record-saved-shoe>${savedShoeOptions(savedShoes, fields.personalShoeId || "")}</select></label>
-        <label class="field"><span>シューズ名・呼び名・任意</span><input name="personalShoeLabel" type="text" maxlength="80" value="${escapeHtml(fields.personalShoeLabel || "")}" placeholder="例：いつもの黒い靴"></label>
-        <input type="hidden" name="personalShoeType" value="${escapeHtml(fields.personalShoeType || "")}">
-        <input type="hidden" name="personalShoeSoftness" value="${escapeHtml(fields.personalShoeSoftness || "")}">
-        <input type="hidden" name="personalFreeNote" value="${escapeHtml(fields.personalFreeNote || "")}">
-        <label class="choice-card"><input type="checkbox" name="saveCurrentShoePreset" value="1"><span><strong>今回のシューズを次回も使えるよう保存</strong><small>名称がある場合だけ保存</small></span></label>
-      </section>
-      <section class="record-subcard"><div class="record-subsection-head"><small>FOCUS</small><strong>今日意識したこと</strong><span>複数選択できます。</span></div>
-        <div class="record-focus-tag-grid">${ACTIVE_FOCUS_TAG_OPTIONS.map((option) => `<label><input type="checkbox" name="personalFocus_${escapeHtml(option.value)}" value="1"${checked(fields[`personalFocus_${option.value}`])}><span>${escapeHtml(option.label)}</span></label>`).join("")}</div>
-        <p class="field-help">ここで選んだ内容は数値結果の係数には使いません。自由記述は「気づきと次回」にまとめます。</p>
-      </section>
-      <p class="muted-text" data-record-personal-subflow-summary>${escapeHtml(summary.description)}</p>
-      <div class="record-subflow-actions"><button type="button" class="button button--primary" data-action="apply-personal-subflow">この内容で今日の記録へ戻る</button></div>
-    </div>
-  </section>`;
+  return `<div class="subscreen" data-record-subflow="personal" hidden aria-labelledby="record-personal-subflow-title"><header><button type="button" class="record-subscreen__back" data-action="close-record-subflow">‹ <span>今日の記録</span></button><strong id="record-personal-subflow-title">今回のシューズ</strong><span></span></header><main><section class="sub-flow"><div class="sub-flow-head"><p class="eyebrow">SHOES</p><h2>今回のシューズ</h2><p>今回使ったシューズと、意識したことだけを残します。</p></div>
+    <section class="sub-card"><div class="sub-section-head"><small>SHOES</small><strong>今日使ったもの</strong></div><label class="field"><span>保存シューズ・任意</span><select name="personalShoeId" data-record-saved-shoe>${savedShoeOptions(savedShoes, fields.personalShoeId || "")}</select></label><label class="field"><span>シューズ名・呼び名・任意</span><input name="personalShoeLabel" type="text" maxlength="80" value="${escapeHtml(fields.personalShoeLabel || "")}" placeholder="例：いつもの黒い靴"></label><input type="hidden" name="personalShoeType" value="${escapeHtml(fields.personalShoeType || "")}"><input type="hidden" name="personalShoeSoftness" value="${escapeHtml(fields.personalShoeSoftness || "")}"><input type="hidden" name="personalFreeNote" value="${escapeHtml(fields.personalFreeNote || "")}"><label class="sub-check"><input type="checkbox" name="saveCurrentShoePreset" value="1"><span><strong>今回のシューズを次回も使えるよう保存</strong><small>名称がある場合だけ保存</small></span></label></section>
+    <section class="sub-card"><div class="sub-section-head"><small>FOCUS</small><strong>今日意識したこと</strong><span>複数選択できます。</span></div><div class="focus-tag-grid">${ACTIVE_FOCUS_TAG_OPTIONS.map((option) => `<label><input type="checkbox" name="personalFocus_${escapeHtml(option.value)}" value="1"${checked(fields[`personalFocus_${option.value}`])}><span>${escapeHtml(option.label)}</span></label>`).join("")}</div><p class="sub-note">ここで選んだ内容は数値結果の係数には使いません。自由記述は「気づきと次回」にまとめます。</p></section><p class="sub-note" data-record-personal-subflow-summary>${escapeHtml(summary.description)}</p><button type="button" class="sub-flow-save" data-action="apply-personal-subflow">この内容で今日の記録へ戻る</button>
+  </section></main></div>`;
 }
 
 export const RECORD_CONSULTATION_FLAG_KEYS = CONSULTATION_FLAG_KEYS;

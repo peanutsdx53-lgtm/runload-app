@@ -66,6 +66,7 @@ function navigationClassName(item, className) {
 }
 
 function navigationIcon(screen) {
+  const glyphs = Object.freeze({ home: "⌂", "record-input": "＋", result: "◉", history: "▤", more: "•••" });
   const paths = {
     home: '<path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4Z"/>',
     "record-input": '<path d="M5 19h4l10-10-4-4L5 15v4Zm9-13 4 4"/>',
@@ -73,12 +74,12 @@ function navigationIcon(screen) {
     history: '<path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6M12 8v4l3 2"/>',
     more: '<circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/>',
   };
-  return `<svg class="primary-navigation__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[screen] || paths.more}</svg>`;
+  return `<span class="primary-navigation__glyph" aria-hidden="true">${escapeHtml(glyphs[screen] || glyphs.more)}</span><svg class="primary-navigation__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[screen] || paths.more}</svg>`;
 }
 
 function renderDisabledNavigationItem(item, className, current = false) {
   const resolvedClassName = navigationClassName(item, className);
-  return `<span class="${resolvedClassName} is-disabled${current ? " is-current" : ""}" aria-disabled="true" data-navigation-screen="${escapeHtml(item.screen)}"${current ? ' aria-current="page"' : ""}>${navigationIcon(item.screen)}<span class="primary-navigation__label">${escapeHtml(item.label)}</span><small>記録後</small></span>`;
+  return `<span class="${resolvedClassName} is-disabled${current ? " is-current" : ""}" aria-disabled="true" data-navigation-screen="${escapeHtml(item.screen)}"${current ? ' aria-current="page"' : ""}>${navigationIcon(item.screen)}<span class="primary-navigation__label">${escapeHtml(item.label)}</span></span>`;
 }
 
 function renderNavigationItem(item, currentScreen, className, currentLocation, hasResult, usePrimarySection = false) {
@@ -122,10 +123,19 @@ function renderFeatureMenu({ currentScreen, currentLocation, hasResult }) {
   return `<div class="feature-menu" data-feature-menu><button type="button" id="feature-menu-button" class="app-menu-button" aria-label="メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="feature-menu-panel"><span class="app-menu-button__label">メニュー</span></button><div id="feature-menu-panel" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="feature-menu-title" hidden><header class="feature-menu__header"><p>画面メニュー</p><strong id="feature-menu-title">開く画面を選ぶ</strong></header><nav class="feature-menu__nav" aria-label="行き先">${renderFeatureMenuGroup("基本の流れ", CORE_NAVIGATION, currentScreen, currentLocation, hasResult, true, "feature-menu__group--mobile-core")}${groupedDestinations}${renderFeatureGuideGroup()}</nav></div></div>`;
 }
 
+function renderMobilePrototypeHeader(currentScreen) {
+  if (currentScreen === "settings" || currentScreen === "privacy") {
+    const title = currentScreen === "settings" ? "設定" : "プライバシー";
+    return `<header class="prototype-mobile-topbar prototype-mobile-topbar--context"><a href="#/more">‹ その他</a><strong>${escapeHtml(title)}</strong><span class="prototype-mobile-topbar__badge">PRE-RELEASE</span></header>`;
+  }
+  return `<header class="prototype-mobile-topbar"><a class="prototype-mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></a><span class="prototype-mobile-topbar__badge">PRE-RELEASE</span></header>`;
+}
+
 export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {} }) {
   return `
     <div class="app-shell">
-      <header class="app-header">
+      ${renderMobilePrototypeHeader(currentScreen)}
+      <header class="app-header app-header--desktop">
         <a class="app-brand" href="#/home" aria-label="RunLoad ホーム">
           <span class="app-brand__mark" aria-hidden="true">RL</span>
           <span><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></span>

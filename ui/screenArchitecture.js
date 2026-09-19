@@ -3,7 +3,7 @@ import { escapeHtml } from "./commonComponents.js";
 export const SCREEN_ARCHITECTURE_VERSION = "runload-screen-architecture-current-v1";
 
 export const PRIMARY_DESTINATIONS = Object.freeze([
-  Object.freeze({ screen: "home", label: "ホーム", description: "今日の入口", icon: "home" }),
+  Object.freeze({ screen: "home", label: "Home", description: "今日の入口", icon: "home" }),
   Object.freeze({ screen: "record-input", label: "記録", description: "走行・休養を残す", icon: "record" }),
   Object.freeze({ screen: "result", label: "結果", description: "今回の結果を見る", requiresRecord: true, icon: "result" }),
   Object.freeze({ screen: "history", label: "履歴", description: "保存した記録を比べる", icon: "history" }),
