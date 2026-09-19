@@ -4,6 +4,30 @@ import { FEATURE_DESTINATION_GROUPS, PRIMARY_DESTINATIONS } from "./screenArchit
 
 const CORE_NAVIGATION = PRIMARY_DESTINATIONS;
 
+const TOPBAR_CONTEXT_LABELS = Object.freeze({
+  home: "HOME",
+  "record-input": "RECORD",
+  "course-library": "COURSE",
+  "course-editor": "COURSE EDITOR",
+  "gpx-analysis": "GPX",
+  result: "RESULT",
+  "body-part-detail": "RESULT / REGION",
+  history: "HISTORY",
+  activation: "RESULT USE",
+  simulation: "SIMULATION",
+  plan: "PLAN",
+  consultation: "CONSULTATION",
+  "support-guidance": "SUPPORT",
+  reading: "READING",
+  privacy: "PRIVACY",
+  settings: "SETTINGS",
+  more: "MORE",
+});
+
+function topbarContextLabel(screen = "") {
+  return TOPBAR_CONTEXT_LABELS[screen] || "RUNLOAD";
+}
+
 export const PRIMARY_NAVIGATION = PRIMARY_DESTINATIONS;
 
 const APP_EXPLANATION_NAVIGATION = Object.freeze([
@@ -102,9 +126,9 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
   return `
     <div class="app-shell">
       <header class="app-header">
-        <a class="app-brand" href="#/home" aria-label="RunLoad Journal ホーム">
+        <a class="app-brand" href="#/home" aria-label="RunLoad ホーム">
           <span class="app-brand__mark" aria-hidden="true">RL</span>
-          <span><strong>RunLoad</strong><small>走行記録を自己理解につなげる</small></span>
+          <span><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></span>
         </a>
         <div class="app-header__actions">
           ${renderFeatureMenu({ currentScreen, currentLocation, hasResult })}
