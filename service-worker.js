@@ -1,4 +1,4 @@
-const CACHE_NAME = "runload-app-ui-finish-pass1-v1";
+const CACHE_NAME = "runload-app-ui-finish-pass1-navfix-v2";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -28,7 +28,7 @@ const PRECACHE_URLS = [
   "./styles/components.css",
   "./styles/layout.css",
   "./styles/screens.css",
-  "./styles/prototype-fidelity.css",
+  "./styles/prototype-fidelity-v2.css",
   "./styles/tokens.css",
   "./ui/appRouter.js",
   "./ui/appSettings.js",
