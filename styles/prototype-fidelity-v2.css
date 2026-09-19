@@ -15,10 +15,10 @@
 }
 
 /* --- Global frame / top bar / bottom navigation --- */
-html { background: color-mix(in srgb, var(--color-paper) 88%, #d7e0e6); }
+html { background: color-mix(in srgb, var(--color-paper) 88%, var(--color-surface)); }
 body {
   min-height: 100dvh;
-  background: color-mix(in srgb, var(--color-paper) 92%, #dce4ea);
+  background: color-mix(in srgb, var(--color-paper) 92%, var(--color-surface));
   -webkit-font-smoothing: antialiased;
 }
 
@@ -578,10 +578,10 @@ input, select, textarea {
 @media (min-width: 880px) {
   body {
     background: linear-gradient(90deg,
-      color-mix(in srgb, var(--color-paper) 78%, #c8d2d9),
+      color-mix(in srgb, var(--color-paper) 78%, var(--color-surface)),
       color-mix(in srgb, var(--color-paper) 94%, white) 22%,
       color-mix(in srgb, var(--color-paper) 94%, white) 78%,
-      color-mix(in srgb, var(--color-paper) 78%, #c8d2d9));
+      color-mix(in srgb, var(--color-paper) 78%, var(--color-surface)));
   }
   .app-shell {
     width: min(calc(100% - 32px), var(--prototype-frame-width));
