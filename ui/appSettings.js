@@ -17,7 +17,8 @@ export const APPEARANCE_MODE_OPTIONS = Object.freeze([
 ]);
 
 export const COLOR_THEME_OPTIONS = Object.freeze([
-  Object.freeze({ value: "standard", label: "標準", description: "RunLoadの基本配色で、落ち着いて読みやすい画面にします。" }),
+  Object.freeze({ value: "standard", label: "シンプル", description: "Prototypeを基準にした青灰色の標準配色です。" }),
+  Object.freeze({ value: "natural", label: "ナチュラル", description: "従来の暖色系背景と深い緑を残した配色です。" }),
   Object.freeze({ value: "green", label: "やさしい緑", description: "緑系の配色で、目にやさしく落ち着いた画面にします。" }),
   Object.freeze({ value: "blue", label: "すっきり青", description: "寒色の青系配色で、情報を整理して見やすい画面にします。" }),
   Object.freeze({ value: "orange", label: "あたたかい橙", description: "暖色の橙系配色で、あたたかく前向きな画面にします。" }),
@@ -121,8 +122,8 @@ function resolvedAppearanceIsDark(appearanceMode) {
 
 function themeColorForSettings(settings) {
   const isDark = resolvedAppearanceIsDark(settings.appearanceMode);
-  const lightColors = Object.freeze({ standard: "#f4f1ea", green: "#e7f4df", blue: "#edf3f7", orange: "#f7f0e5" });
-  const darkColors = Object.freeze({ standard: "#111513", green: "#0b1810", blue: "#0e151c", orange: "#18120e" });
+  const lightColors = Object.freeze({ standard: "#e3ebf1", natural: "#eee9df", green: "#e7f4df", blue: "#edf3f7", orange: "#f7f0e5" });
+  const darkColors = Object.freeze({ standard: "#0a1118", natural: "#111513", green: "#0b1810", blue: "#0e151c", orange: "#18120e" });
   const palette = isDark ? darkColors : lightColors;
   return palette[settings.colorTheme] || palette.standard;
 }
