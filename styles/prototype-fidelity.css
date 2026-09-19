@@ -6,7 +6,7 @@
 
 :root {
   --prototype-frame-width: 1180px;
-  --prototype-content-width: 1030px;
+  --prototype-content-width: 1080px;
   --prototype-form-width: 900px;
   --prototype-topbar-height: 60px;
   --prototype-bottom-nav-height: 76px;
@@ -299,7 +299,7 @@ input, select, textarea {
 .workspace-navigation__link.is-current { background: var(--color-surface); }
 
 /* --- Home V0.13 fidelity --- */
-.screen--home { gap: 30px; }
+.screen--home { width: min(100%, 1030px); margin-inline: auto; gap: 30px; }
 .screen--home .lead-action-card {
   position: relative;
   display: grid;
