@@ -1,19 +1,25 @@
 # RunLoad
 
-初心者ランナーが、走行記録と身体の記録を振り返るためのWebアプリです。
+RunLoad is a pre-release regular web application for beginner runners to review their own running records, body-region Reference-100 values, subjective fatigue (ROF-J), history, plans, courses and local GPX information.
 
-## コード構成
+## Status
+- Pre-release regular app for smartphone verification and iterative polish.
+- This repository root is the deployable app, not the former UI/UX prototype.
+- The frozen prototype is preserved in Git history and branch `archive/prototype-freeze-20260918`.
 
-- `app.js` — アプリ起動と画面遷移の入口
-- `screens/` — ホーム、記録、結果、履歴、相談など各画面の組み立て
-- `ui/` — 表示部品、入力操作、結果表示、相談表示など
-- `core/runloadCore.js` + `core/part-*.js` — 計算、保存、履歴、相談、旧記録互換などの内部処理
-- `styles/` — 共通・画面別スタイル
-- `service-worker.js` — オフライン利用と更新
-- `manifest.webmanifest` — PWA設定
+## Fixed interpretation boundaries
+- Reference-100 is for within-region self-understanding; it is not a cross-region ranking.
+- Distance is a separate running fact, not an automatic multiplier of the regional display.
+- Missing or unsupported data is not converted to zero.
+- ROF-J records subjective fatigue at the time of answering; it is not a readiness, recovery, safety or injury-risk score.
+- session-RPE is not implemented.
+- The app does not diagnose, prescribe, score injury risk/readiness/safety, or make automatic run/no-run decisions.
+- Notebook is not part of this version.
+- This version does not migrate or reinterpret old-app records.
 
-`core/part-*.js` は、保存・計算・旧記録互換・相談などの役割ごとに内部処理を分けています。各ファイル内には元のモジュール境界を見出しとして残しています。
-現在の12身体部位の結果生成は `createPrimaryRegionalV2ResultRecord`、保存から結果生成までの流れは `recordWorkflow` / `applicationServices` を起点に追えます。
+## Data
+App records are stored locally in the browser. GPX analysis is local-only in this version.
 
-身体部位名は、生体力学・解剖学上の表現との整合を保つため正式名称を使用しています。
-表示される数値は、診断、けがの確率、安全・危険、走行可否を示すものではありません。
+## Verification baseline
+Pre-release source: RunLoad Formal UI Integrated RC 20260919 V1.1.
+Accepted Formal App Source V1.5R2 remains a separate protected authority.

@@ -1,0 +1,135 @@
+import { escapeHtml } from "./commonComponents.js";
+import { BODY_REGION_TERMINOLOGY } from "../core/runloadCore.js";
+
+export const APP_GUIDE_VERSION = "guide-reference100-frozen-ui-20260919";
+export const DEFAULT_GUIDE_SECTION = "first-use";
+
+export const GUIDE_SECTIONS = Object.freeze([
+  Object.freeze({ id: "first-use", label: "使い方ガイド" }),
+  Object.freeze({ id: "record", label: "今日の記録" }),
+  Object.freeze({ id: "result", label: "結果の読み方" }),
+  Object.freeze({ id: "records", label: "履歴" }),
+  Object.freeze({ id: "safety", label: "限界と相談" }),
+  Object.freeze({ id: "parts", label: "12部位と身体記録" }),
+]);
+
+const GUIDE_SECTION_ALIASES = Object.freeze({
+  steps: "first-use",
+  value: "first-use",
+  scope: "safety",
+  reading: "result",
+  evidence: "safety",
+});
+
+const SCREEN_HINTS = Object.freeze({
+  home: "今日の記録、最新結果、予定から、今行うことを選ぶ入口です。",
+  "record-input": "距離と実走時間を中心に、分かる条件だけを入力します。",
+  result: "12部位のReference-100とROF-Jを別々に確認します。",
+  "body-part-detail": "選んだ部位の目安、関連する一般知識、身体の記録を確認します。",
+  history: "記録一覧と、同じ計算方法・同じ基準で比べられる記録の推移を分けて確認します。",
+  plan: "予定条件から作る参考表示を確認します。保存後の結果とは分けて扱います。",
+  consultation: "身体の記録と数値表示を区別し、相手へ見せる内容を整理します。",
+  reading: "走行条件と身体の使われ方に関する一般知識を、参考資料と一緒に確認します。",
+  more: "設定、相談、公的案内、プライバシー、読みものへの入口です。",
+  simulation: "条件を変えたときの同じ部位のReference-100を比較します。",
+});
+
+const RESULT_REGION_GUIDE = Object.freeze(BODY_REGION_TERMINOLOGY.map((item) => Object.freeze([
+  `${item.formalJa}（${item.familiarJa}）`,
+  `${item.plainMeaningJa}について、記録条件に対応した値を、その部位自身のReference-100と照らして確認します。距離は別の走行事実として扱います。`,
+])));
+
+export function normalizeGuideSection(section) {
+  const normalized = GUIDE_SECTION_ALIASES[section] || section;
+  return GUIDE_SECTIONS.some((item) => item.id === normalized)
+    ? normalized
+    : DEFAULT_GUIDE_SECTION;
+}
+
+export function shouldOpenGuide(settings = {}) {
+  return settings?.guideVersionSeen !== APP_GUIDE_VERSION;
+}
+
+export function withGuideVersionSeen(settings = {}) {
+  const source = settings && typeof settings === "object" ? settings : {};
+  return Object.freeze({ ...source, guideVersionSeen: APP_GUIDE_VERSION });
+}
+
+function renderFirstUse(currentScreen) {
+  const hint = SCREEN_HINTS[currentScreen]
+    || "入力した事実、数値表示、身体の記録を分けて確認します。";
+  const steps = [
+    ["走行を記録", "走行では距離と実走時間が必須です。歩数、走行形式、坂、路面、シューズ等は分かる範囲で追加します。"],
+    ["分かる条件だけ追加", "坂、路面、歩数などは分かる範囲で追加します。分からない内容は、分からないまま記録できます。"],
+    ["12部位の目安を確認", "各部位自身のReference-100に対して、記録条件に対応した値を確認します。距離は別に見て、同じ部位の記録どうしで比べます。"],
+    ["自分の感覚を別に残す", "身体記録は数値結果と分けて保存し、自分で入力した内容として見返します。"],
+    ["表示を区別", "12部位のReference-100、走行事実、ROF-J、履歴を目的別に分けます。"],
+  ];
+  return `<div class="guide-lead"><p>RunLoadは、走行事実・数値結果・身体の記録を分けて見返し、自己理解と自己判断を支援する記録アプリです。</p><p class="guide-screen-hint"><strong>この画面の見方：</strong>${escapeHtml(hint)}</p></div><div class="guide-step-list">${steps.map(([title, body], index) => `<article class="guide-step-card"><span aria-hidden="true">${index + 1}</span><div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(body)}</p></div></article>`).join("")}</div><div class="guide-note"><h3>いつでも見返せます</h3><p>メニューの「アプリ説明」から、入力・結果・履歴・限界・部位の説明を開けます。</p></div>`;
+}
+
+function renderRecordGuide() {
+  return `<div class="guide-lead"><p>必須項目を前面に置き、任意項目は必要なときだけ別画面で追加します。</p></div><div class="guide-card-grid">
+    <article><h3>必須の走行量</h3><p>走行日には距離と実走時間が必要です。休養日は走行による12部位の目安を作成しません。</p></article>
+    <article><h3>歩数・走行形式</h3><p>分かる場合だけ入力します。歩数は取得方法も一緒に残し、後から同じような記録を見分けやすくします。</p></article>
+    <article><h3>坂と路面</h3><p>上り・下りや路面の違いは、身体の使われ方を振り返る手掛かりになります。分からない場合は「不明」のまま残せます。</p></article>
+    <article><h3>シューズ・走り方</h3><p>今回の走りを思い出し、関連する一般説明を読むための補足として残します。自由記述は自分のメモとして扱います。</p></article>
+    <article><h3>身体記録</h3><p>詳細部位、程度、気づいた時点を保存します。走行前からの状態を今回の走行原因として扱いません。</p></article>
+    <article><h3>走る前後の疲労感（ROF-J）</h3><p>入力した時点の主観的な疲労感を、Reference-100とは別の情報として扱います。回復・安全・走行可否の判定には使いません。</p></article>
+  </div><div class="guide-note"><h3>分からない内容はそのままで構いません</h3><p>不明な坂・路面や、確認していない身体の状態を推測で入力する必要はありません。</p></div>`;
+}
+
+function renderResultGuide() {
+  return `<div class="guide-lead"><p>結果画面では、目的の違う情報を分けて表示します。</p></div><ol class="guide-reading-order">
+    <li><strong>12部位のReference-100</strong><span>各部位を、その部位自身の固定基準100に対して確認します。異なる部位どうしの大小順位には使いません。</span></li>
+    <li><strong>距離</strong><span>距離は走行事実として別に表示します。Reference-100へ自動的に掛け合わせません。</span></li>
+    <li><strong>表示できない条件</strong><span>資料上扱えない条件や不足情報は、0や100へ置き換えず、表示できない情報として残します。</span></li>
+    <li><strong>ROF-J</strong><span>走る前・走った後の疲労感は、回答した時点の主観的情報です。回復、readiness、安全、傷害リスクには変換しません。</span></li>
+  </ol><div class="guide-note"><h3>比べるときの注意</h3><p>同じ部位の記録を、その部位自身のReference-100に対して見返します。Reference-100と距離、ROF-Jを一つの総合点にはしません。</p></div>`;
+}
+
+function renderRecordsGuide() {
+  return `<div class="guide-lead"><p>履歴では、保存した事実と比較可能な結果を分けて見返します。</p></div><div class="guide-card-grid">
+    <article><h3>記録一覧</h3><p>走行・休養、距離、時間、コース、保存結果を日付から探します。</p></article>
+    <article><h3>同じ部位を比較</h3><p>同じ部位のReference-100を履歴として見返します。欠測値を0として線でつなぎません。</p></article>
+    <article><h3>距離は別に確認</h3><p>距離は走行事実として確認し、Reference-100へ自動的に掛け合わせません。</p></article>
+    <article><h3>ROF-Jは別の層</h3><p>疲労感は回答時点の主観的情報として保存し、Reference-100と算術統合しません。</p></article>
+    <article><h3>比較できない記録</h3><p>必要な情報がない記録は値を補わず、記録自体は一覧から確認できます。</p></article>
+    <article><h3>バックアップ</h3><p>新しいアプリで作成した記録を対象に、本人の操作で保存・復元します。</p></article>
+  </div>`;
+}
+
+function renderSafetyGuide() {
+  return `<div class="guide-lead"><p>RunLoadは走行条件を整理して振り返るためのアプリで、身体や障害を判定するものではありません。</p></div><div class="guide-scope-grid"><article><h3>支援すること</h3><ul><li>走行・休養・コース事実の保存</li><li>12部位の目安（分かっている条件を使った比較用座標）</li><li>身体の記録と数値結果の区別</li><li>履歴、相談準備、読みもの</li></ul></article><article><h3>主張しないこと</h3><ul><li>実際の筋・腱・関節力</li><li>診断、原因、危険度、傷害確率</li><li>走行可否、受診要否、個別処方</li><li>部位間の物理的な大小順位</li></ul></article></div><div class="guide-card-grid">
+    <article><h3>身体の記録と公的な案内を分ける</h3><p>伝えたい身体情報は数値表示と分けて保存します。公式の救急案内と重なる種類の項目を選んだ場合は、RunLoadが緊急性を判定せず、公的な相談先を確認する導線を先に示します。</p></article>
+    <article><h3>表示できる範囲</h3><p>部位ごとに扱える条件の範囲が異なります。扱えない条件では、数値を無理に示さず「範囲外」などと表示します。</p></article>
+    <article><h3>自動送信しません</h3><p>共有する内容、相手、タイミングは自分で選びます。</p></article>
+    <article><h3>確認できている範囲</h3><p>アプリの動作と表示は確認していますが、利用者を対象にした有効性の検証は行っていません。</p></article>
+  </div>`;
+}
+
+function renderParts() {
+  return `<div class="guide-lead"><p>身体図は結果と身体の記録で同じ12部位を使います。表示にない場所は「その他」から身体の記録として追加できます。</p></div><div class="guide-parts-grid">${RESULT_REGION_GUIDE.map(([title, body]) => `<article><h3>${escapeHtml(title)}</h3><p>${escapeHtml(body)}</p></article>`).join("")}</div><div class="guide-note"><h3>各部位自身のReference-100</h3><p>記録条件に対応した値を、その部位自身の固定基準100に対して表示します。距離は別の走行事実です。100は安全・正常・平均・推奨ではなく、ほかの部位との大小比較にも使いません。扱えない条件や不足情報は0や100へ補いません。</p></div><div class="guide-note"><h3>身体の記録</h3><p>気になる場所は12部位の身体図から選び、必要な場合だけ「その他」を追加します。身体の記録は数値結果と分けて表示します。</p></div>`;
+}
+
+export function renderGuideSection(section, currentScreen) {
+  const normalized = normalizeGuideSection(section);
+  if (normalized === "record") return renderRecordGuide();
+  if (normalized === "result") return renderResultGuide();
+  if (normalized === "records") return renderRecordsGuide();
+  if (normalized === "safety") return renderSafetyGuide();
+  if (normalized === "parts") return renderParts();
+  return renderFirstUse(currentScreen);
+}
+
+export function renderGuideDialog({
+  open = false,
+  section = DEFAULT_GUIDE_SECTION,
+  currentScreen = "home",
+  firstVisit = false,
+} = {}) {
+  if (!open) return "";
+  const normalized = normalizeGuideSection(section);
+  const completeLabel = firstVisit ? "使い始める" : "説明を閉じる";
+  return `<div class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guide-dialog-title" aria-describedby="guide-dialog-description"><button type="button" class="guide-dialog__backdrop" data-guide-close aria-label="アプリ説明を閉じる"></button><section class="guide-dialog__panel" tabindex="-1" data-guide-panel><header class="guide-dialog__header"><div><p>アプリ説明</p><h2 id="guide-dialog-title">${firstVisit ? "はじめての使い方ガイド" : "アプリ説明"}</h2><p id="guide-dialog-description">${firstVisit ? "最初に使い方を確認します。説明は後からメニューで開けます。" : "必要な説明を選んで確認できます。"}</p></div></header><div class="guide-tabs" role="tablist" aria-label="アプリ説明の内容">${GUIDE_SECTIONS.map((item) => `<button type="button" role="tab" id="guide-tab-${item.id}" aria-selected="${item.id === normalized}" aria-controls="guide-panel" tabindex="${item.id === normalized ? "0" : "-1"}" class="guide-tab${item.id === normalized ? " is-current" : ""}" data-guide-section="${item.id}">${escapeHtml(item.label)}</button>`).join("")}</div><div id="guide-panel" class="guide-dialog__body" role="tabpanel" aria-labelledby="guide-tab-${normalized}">${renderGuideSection(normalized, currentScreen)}</div><footer class="guide-dialog__footer"><button type="button" class="button button--primary" data-guide-complete>${completeLabel}</button></footer></section></div>`;
+}
