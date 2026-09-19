@@ -87,13 +87,13 @@ Only the user/assistant review phase changes an item from UNREVIEWED to a produc
 
 | ID | Class | Area | Item | Current treatment | Decision |
 |---|---|---|---|---|---|
-| GAP-001 | C | Settings | Multiple selectable color themes beyond the prototype's simple theme | Preserve implementation; prototype simple palette remains reproducible and selectable | UNREVIEWED |
+| GAP-001 | C | Settings | Multiple selectable color themes beyond the prototype's simple theme | Preserve implementation; prototype simple palette remains reproducible and selectable | ADOPT_IN_UI |
 | GAP-002 | C | Settings | Appearance modes including system/light/dark | Preserve; do not allow appearance controls to change prototype layout geometry | UNREVIEWED |
 | GAP-003 | C | Settings | Result initial-view and previous-comparison settings exposed in the regular app | Preserve implementation outside parity-critical layout until reviewed | UNREVIEWED |
 | GAP-004 | C | Settings | External-link display preference | Preserve implementation; review placement after Settings V0.06 parity | UNREVIEWED |
 | GAP-005 | C | PWA | In-app application-update notice/action | Preserve as required regular-app behavior; integrate without covering prototype navigation or content | UNREVIEWED |
 | GAP-006 | M | All screens | Prototype used mock/static data in places where regular app uses live saved data | Reproduce the same visual structure with real data through existing services | UNREVIEWED |
-| GAP-007 | C | Global shell | Regular app application guide/tutorial infrastructure exceeds the frozen screen prototype | Preserve functionality outside the core prototype geometry; final placement to review | UNREVIEWED |
+| GAP-007 | C | Global shell | Regular app application guide/tutorial infrastructure exceeds the frozen screen prototype | Tutorial is important, but it is designed as a separate workstream after smartphone prototype parity | DEFER |
 | GAP-008 | C | Accessibility | Regular app contains accessibility/focus handling not visibly represented in prototype | Preserve unless it changes visible layout; accessibility is not removed for visual parity | KEEP_CURRENT_ONLY |
 | GAP-009 | C | PWA | Service-worker/cache/version behavior has no prototype equivalent | Preserve as infrastructure; must not alter visible prototype layout except necessary update notice | KEEP_CURRENT_ONLY |
 | GAP-010 | C | Runtime | Formal validation/error states may have no prototype mock equivalent | Preserve semantics; design their presentation only after base prototype state is reproduced | UNREVIEWED |
@@ -126,3 +126,12 @@ During this phase:
 4. Do not delete current-only capabilities merely because the prototype lacks them.
 5. Log all current-only or ambiguous items here.
 6. Review logged items with the user only after a stable parity baseline exists, unless an item blocks safe implementation.
+
+
+## Confirmed product decisions — 2026-09-19
+
+- Color/theme customization is an intended distributed-app feature. The frozen prototype simple palette remains one selectable presentation, not the only palette.
+- Tutorial/onboarding is important, but is intentionally separated from prototype-parity work and will be designed independently.
+- Smartphone and PC expose the same underlying functions, but their layouts may differ.
+- Smartphone prototype parity is the current approval target. PC-specific parity/layout refinement begins after the user approves the smartphone version.
+- Current-app-only items not represented in the prototype are retained as review items and are added to the distributed app only when they are judged necessary.
