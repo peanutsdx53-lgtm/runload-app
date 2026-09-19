@@ -1,0 +1,32 @@
+name: Export product quality workspace
+
+on:
+  push:
+    branches:
+      - ui-polish/product-quality
+    paths:
+      - ".github/workflows/export-product-quality.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Package current source
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar --exclude=.git --exclude=product-quality-workspace.tar.gz -czf product-quality-workspace.tar.gz .
+          sha256sum product-quality-workspace.tar.gz > product-quality-workspace.tar.gz.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: product-quality-workspace
+          path: |
+            product-quality-workspace.tar.gz
+            product-quality-workspace.tar.gz.sha256
+          if-no-files-found: error
