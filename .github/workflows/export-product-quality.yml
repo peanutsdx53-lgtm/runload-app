@@ -21,8 +21,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          tar --exclude=.git --exclude=product-quality-workspace.tar.gz -czf product-quality-workspace.tar.gz .
-          sha256sum product-quality-workspace.tar.gz > product-quality-workspace.tar.gz.sha256
+          tar --exclude=.git -czf /tmp/product-quality-workspace.tar.gz .
+          sha256sum /tmp/product-quality-workspace.tar.gz > /tmp/product-quality-workspace.tar.gz.sha256
+          mv /tmp/product-quality-workspace.tar.gz .
+          mv /tmp/product-quality-workspace.tar.gz.sha256 .
       - uses: actions/upload-artifact@v4
         with:
           name: product-quality-workspace
