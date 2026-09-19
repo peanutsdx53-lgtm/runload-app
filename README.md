@@ -3,14 +3,14 @@
 RunLoad is a pre-release regular web application for beginner runners to review their own running records, body-region Reference-100 values, subjective fatigue (ROF-J), history, plans, courses and local GPX information.
 
 ## Status
-- Pre-release regular app for smartphone verification and iterative polish.
+- Development-stage pre-release app for smartphone verification and iterative polish.
 - This repository root is the deployable app, not the former UI/UX prototype.
 - The frozen prototype is preserved in Git history and branch `archive/prototype-freeze-20260918`.
 
 ## Fixed interpretation boundaries
 - Reference-100 is for within-region self-understanding; it is not a cross-region ranking.
 - Distance is a separate running fact, not an automatic multiplier of the regional display.
-- Missing or unsupported data is not converted to zero.
+- Missing or unsupported data is not converted to zero or fabricated q=1.
 - ROF-J records subjective fatigue at the time of answering; it is not a readiness, recovery, safety or injury-risk score.
 - session-RPE is not implemented.
 - The app does not diagnose, prescribe, score injury risk/readiness/safety, or make automatic run/no-run decisions.
@@ -21,5 +21,4 @@ RunLoad is a pre-release regular web application for beginner runners to review 
 App records are stored locally in the browser. GPX analysis is local-only in this version.
 
 ## Verification baseline
-Pre-release source: RunLoad Formal UI Integrated RC 20260919 V1.1.
-Accepted Formal App Source V1.5R2 remains a separate protected authority.
+Current V1.17 runtime verification: 240/240 tests PASS, 15/15 suites PASS, 78/78 JS/MJS syntax PASS. Protected calculation core hashes are unchanged.
