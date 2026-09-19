@@ -1,95 +1,21 @@
 import { SURFACE_FIELDS } from "../core/runloadCore.js";
-import { escapeHtml, renderPageHeading, renderScreenGuide } from "../ui/commonComponents.js";
-import { renderExternalCourseCheckSupport } from "../ui/externalCourseCheckSupport.js";
+import { escapeHtml } from "../ui/commonComponents.js";
 import { peekGpxCandidate } from "../ui/flowSessionState.js";
+import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js";
 
-function safeReturnTo(context) {
-  const value = String(context?.parameters?.get("returnTo") || "#/record-input");
-  return ["#/record-input", "#/plan", "#/simulation"].some((prefix) => value.startsWith(prefix)) ? value : "#/record-input";
-}
-function selected(value, expected) { return String(value ?? "") === String(expected) ? " selected" : ""; }
-function gradeMode(course = {}) {
-  if (course.gradeInputMode === "SECTIONS" || (Array.isArray(course.sections) && course.sections.length)) return "SECTIONS";
-  if (course.gradeKnowledge === "KNOWN_PROFILE") return "SUMMARY";
-  if (course.gradeKnowledge === "KNOWN_FLAT") return "FLAT";
-  return "UNKNOWN";
-}
-function surfaceMode(course = {}) {
-  const active = SURFACE_FIELDS.filter(({ recordKey }) => Number(course[recordKey] || 0) > 0);
-  if (!active.length) return "UNKNOWN";
-  if (active.length === 1 && Math.abs(Number(course[active[0].recordKey]) - 100) < 0.01) return "SINGLE";
-  return "MIXED";
-}
-function primarySurface(course = {}) {
-  return [...SURFACE_FIELDS].sort((a, b) => Number(course[b.recordKey] || 0) - Number(course[a.recordKey] || 0))[0]?.recordKey || "pavedPercent";
-}
-function renderSurfaceOptions(selectedRecordKey = "") {
-  return SURFACE_FIELDS.map(({ recordKey, label }) => `<option value="${escapeHtml(recordKey)}"${selected(selectedRecordKey, recordKey)}>${escapeHtml(label)}</option>`).join("");
-}
-function surfaceFields(course = {}) {
-  return SURFACE_FIELDS.map(({ recordKey, label }) => `<label class="field field--compact"><span>${escapeHtml(label)}（%）</span><input name="${escapeHtml(recordKey)}" type="number" inputmode="decimal" min="0" max="100" step="1" value="${escapeHtml(course[recordKey] ?? 0)}"></label>`).join("");
-}
-function renderSectionRows(course = {}) {
-  const sections = Array.isArray(course.sections) ? course.sections : [];
-  return Array.from({ length: 5 }, (_, index) => {
-    const item = sections[index] || {};
-    const direction = item.gradeDirection || (Number(item.gradePercent) > 0 ? "UPHILL" : Number(item.gradePercent) < 0 ? "DOWNHILL" : "FLAT");
-    return `<div class="course-section-row" data-course-section-row>
-      <span class="course-section-row__number">区間${index + 1}</span>
-      <label class="field field--compact"><span>割合（%）</span><input name="sectionShare_${index}" type="number" min="0" max="100" step="1" value="${escapeHtml(item.sharePercent ?? "")}"></label>
-      <label class="field field--compact"><span>坂道</span><select name="sectionDirection_${index}"><option value="FLAT"${selected(direction, "FLAT")}>平坦</option><option value="UPHILL"${selected(direction, "UPHILL")}>上り</option><option value="DOWNHILL"${selected(direction, "DOWNHILL")}>下り</option><option value="UNKNOWN"${selected(direction, "UNKNOWN")}>不明</option></select></label>
-      <label class="field field--compact"><span>勾配の大きさ（%）</span><input name="sectionGrade_${index}" type="number" min="0" max="100" step="0.1" value="${escapeHtml(Math.abs(Number(item.gradePercent || 0)) || "")}"></label>
-    </div>`;
-  }).join("");
-}
-function renderCourseEditorGuide({ editing = false } = {}) {
-  return renderScreenGuide({
-    id: "course-editor-guide",
-    summary: "コース名、坂道の混ざり方、路面材質の入力方法を確認できます。",
-    sections: [
-      { title: "まずここでやること", body: editing ? "保存したコースの内容を更新します。" : "次回以降も選べるコースを作ります。" },
-      { title: "坂道", body: "割合入力は上り・下り・平坦の混在を残せます。さらに必要な場合だけ、最大5区間に分けます。" },
-      { title: "路面", body: "材質を1種類または割合で入力すると、路面の違いを同じ基準で見返せます。同じ内容を二重入力する必要はありません。" },
-    ],
-    tutorialId: "course-editor",
-  });
-}
-
-export function renderCourseEditorScreen({ services, context }) {
-  const id = String(context?.parameters?.get("id") || "");
-  const preset = id ? services.storage.courses.findById(id) : null;
-  const gpxCandidate = !preset && context?.parameters?.get("gpx") === "1" ? peekGpxCandidate()?.candidate : null;
-  const course = preset?.course || gpxCandidate || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" };
-  const returnTo = safeReturnTo(context);
-  const settings = services.storage.settings.load();
-  const managerHref = `#/course-library?returnTo=${encodeURIComponent(returnTo)}`;
-  const currentGradeMode = gradeMode(course);
-  const currentSurfaceMode = surfaceMode(course);
-  return `<section class="screen screen--course-editor">
-    <nav class="context-navigation" aria-label="コース設定内の移動"><a class="body-part-detail__back-link" href="${escapeHtml(managerHref)}">保存コース一覧へ戻る</a></nav>
-    ${renderPageHeading({ eyebrow: "コース設定", title: preset ? "保存したコースを編集" : "コースを作る", description: "分かる範囲だけ入力します。GPX候補も、確認して保存するまでは正式なコースにはなりません。" })}
-    ${renderCourseEditorGuide({ editing: Boolean(preset) })}
-    <form id="course-editor-form" class="record-form course-editor-form" novalidate>
-      <input type="hidden" name="courseId" value="${escapeHtml(preset?.id || "")}"><input type="hidden" name="returnTo" value="${escapeHtml(returnTo)}"><input type="hidden" name="fromGpx" value="${gpxCandidate ? "1" : "0"}">
-      <div class="form-messages" data-form-messages tabindex="-1" hidden></div>
-      <section class="form-section" aria-labelledby="course-name-title"><div class="section-heading"><p>1. コース</p><h2 id="course-name-title">コース名</h2></div><label class="field"><span>コース名 <strong aria-label="必須">必須</strong></span><input name="courseName" type="text" maxlength="80" value="${escapeHtml(course.name || "")}" placeholder="例：川沿いの往復コース" required></label><input type="hidden" name="routePattern" value="${escapeHtml(course.routePattern || "UNKNOWN")}"></section>
-      <section class="form-section" aria-labelledby="course-slope-title"><div class="section-heading"><p>2. 坂道</p><h2 id="course-slope-title">坂道の入力方法</h2></div>
-        <label class="field"><span>どの方法で残しますか</span><select name="gradeInputMode"><option value="UNKNOWN"${selected(currentGradeMode, "UNKNOWN")}>分からない</option><option value="FLAT"${selected(currentGradeMode, "FLAT")}>全体がほぼ平坦</option><option value="SUMMARY"${selected(currentGradeMode, "SUMMARY")}>上り・下り・平坦の割合を入力</option><option value="SECTIONS"${selected(currentGradeMode, "SECTIONS")}>区間ごとに詳しく入力</option></select><small>不明を平坦や0%に置き換えません。</small></label>
-        ${renderExternalCourseCheckSupport({ settings })}
-        <div data-course-grade-summary${currentGradeMode === "SUMMARY" ? "" : " hidden"}><p class="inline-helper">上りと下り以外は平坦として自動表示します。</p><div class="field-grid field-grid--four">
-          <label class="field field--compact"><span>上り区間（%）</span><input name="upPercent" type="number" min="0" max="100" step="1" value="${escapeHtml(course.upPercent || 0)}"></label>
-          <label class="field field--compact"><span>上り代表勾配（%）</span><input name="upGradePercent" type="number" min="0" max="100" step="0.1" value="${escapeHtml(course.upGradePercent || 0)}"></label>
-          <label class="field field--compact"><span>下り区間（%）</span><input name="downPercent" type="number" min="0" max="100" step="1" value="${escapeHtml(course.downPercent || 0)}"></label>
-          <label class="field field--compact"><span>下り代表勾配の大きさ（%）</span><input name="downGradePercent" type="number" min="0" max="100" step="0.1" value="${escapeHtml(course.downGradePercent || 0)}"></label>
-        </div><p class="derived-course-fact" role="status">平坦区間：<output data-flat-share>${escapeHtml(Math.max(0, 100 - Number(course.upPercent || 0) - Number(course.downPercent || 0)))}</output>%</p></div>
-        <div data-course-grade-sections${currentGradeMode === "SECTIONS" ? "" : " hidden"}><p class="inline-helper inline-helper--important">入力した区間割合の合計を100%にします。空欄の行は保存しません。</p><div class="course-section-editor">${renderSectionRows(course)}</div><p class="derived-course-fact">区間割合の合計：<output data-section-share-total>0</output>%</p></div>
-      </section>
-      <section class="form-section" aria-labelledby="course-surface-title"><div class="section-heading"><p>3. 路面</p><h2 id="course-surface-title">路面の入力方法</h2></div>
-        <label class="field"><span>どの方法で残しますか</span><select name="surfaceInputMode"><option value="UNKNOWN"${selected(currentSurfaceMode, "UNKNOWN")}>分からない</option><option value="SINGLE"${selected(currentSurfaceMode, "SINGLE")}>1種類の路面</option><option value="MIXED"${selected(currentSurfaceMode, "MIXED")}>複数の路面を割合で入力</option></select><small>材質を選ぶことで、路面の硬さ・凹凸などの違いを同じ基準で扱います。</small></label>
-        <div data-course-surface-single${currentSurfaceMode === "SINGLE" ? "" : " hidden"}><label class="field"><span>今回の主な路面</span><select name="primarySurfaceKey">${renderSurfaceOptions(primarySurface(course))}</select></label></div>
-        <div data-course-surface-mixed${currentSurfaceMode === "MIXED" ? "" : " hidden"}><p class="inline-helper inline-helper--important">使用した材質だけ入力し、合計を100%にします。トレッドミルは屋外路面と混ぜず、トレッドミルのみのコースとして入力します。</p><div class="field-grid field-grid--four">${surfaceFields(course)}</div><p class="derived-course-fact">路面割合の合計：<output data-surface-share-total>0</output>%</p></div>
-      </section>
-      <section class="form-submit-area" aria-labelledby="course-save-title"><div><strong id="course-save-title">入力内容を確認して保存</strong><p>保存後、コース一覧から今回使うコースを選べます。</p></div><div class="form-submit-actions"><button class="button button--primary" type="submit">${preset ? "このコースを更新" : "新しいコースとして保存"}</button><a class="button button--secondary" href="${escapeHtml(managerHref)}">保存せず戻る</a></div></section>
-    </form>
-  </section>`;
+function safeReturnTo(context){const v=String(context?.parameters?.get("returnTo")||"#/record-input");return["#/record-input","#/plan","#/simulation"].some((p)=>v.startsWith(p))?v:"#/record-input";}
+function selected(a,b){return String(a??"")===String(b)?" selected":"";}
+function gradeMode(course={}){if(course.gradeInputMode==="SECTIONS"||(Array.isArray(course.sections)&&course.sections.length))return"SECTIONS";if(course.gradeKnowledge==="KNOWN_PROFILE")return"SUMMARY";if(course.gradeKnowledge==="KNOWN_FLAT")return"FLAT";return"UNKNOWN";}
+function surfaceMode(course={}){const active=SURFACE_FIELDS.filter(({recordKey})=>Number(course[recordKey]||0)>0);if(!active.length)return"UNKNOWN";if(active.length===1&&Math.abs(Number(course[active[0].recordKey])-100)<.01)return"SINGLE";return"MIXED";}
+function primarySurface(course={}){return[...SURFACE_FIELDS].sort((a,b)=>Number(course[b.recordKey]||0)-Number(course[a.recordKey]||0))[0]?.recordKey||"pavedPercent";}
+function surfaceOptions(selectedKey=""){return SURFACE_FIELDS.map(({recordKey,label})=>`<option value="${escapeHtml(recordKey)}"${selected(selectedKey,recordKey)}>${escapeHtml(label)}</option>`).join("");}
+function surfaceMix(course={}){return SURFACE_FIELDS.map(({recordKey,label})=>`<label class="mix-row"><span>${escapeHtml(label)}</span><input name="${escapeHtml(recordKey)}" type="number" min="0" max="100" step="1" value="${escapeHtml(course[recordKey]??0)}"></label>`).join("");}
+function sectionRows(course={}){const sections=Array.isArray(course.sections)?course.sections:[];return Array.from({length:5},(_,i)=>{const item=sections[i]||{};const dir=item.gradeDirection||(Number(item.gradePercent)>0?"UPHILL":Number(item.gradePercent)<0?"DOWNHILL":"FLAT");return`<div class="section-row"><label><span>割合</span><input name="sectionShare_${i}" type="number" min="0" max="100" step="1" value="${escapeHtml(item.sharePercent??"")}"></label><label><span>種類</span><select name="sectionDirection_${i}"><option value="UPHILL"${selected(dir,"UPHILL")}>上り</option><option value="FLAT"${selected(dir,"FLAT")}>平坦</option><option value="DOWNHILL"${selected(dir,"DOWNHILL")}>下り</option><option value="UNKNOWN"${selected(dir,"UNKNOWN")}>不明</option></select></label><label><span>勾配%（任意）</span><input name="sectionGrade_${i}" type="number" min="0" max="100" step="0.1" value="${escapeHtml(Math.abs(Number(item.gradePercent||0))||"")}"></label></div>`;}).join("");}
+export function renderCourseEditorScreen({services,context}){
+  const id=String(context?.parameters?.get("id")||""); const preset=id?services.storage.courses.findById(id):null; const gpxCandidate=!preset&&context?.parameters?.get("gpx")==="1"?peekGpxCandidate()?.candidate:null; const course=preset?.course||gpxCandidate||{gradeKnowledge:"UNKNOWN",modelSurfaceClass:"UNKNOWN"}; const returnTo=safeReturnTo(context); const gm=gradeMode(course); const sm=surfaceMode(course); const manager=`#/course-library?returnTo=${encodeURIComponent(returnTo)}`;
+  return `<div class="screen screen--course-editor prototype-parity prototype-parity--course"><div class="editor prototype-editor-route"><header class="editor-head"><a href="${escapeHtml(manager)}">‹ コース一覧</a><strong>${preset?"コースを編集":"新しいコース"}</strong><span></span></header><main class="editor-main"><p class="eyebrow">COURSE EDITOR</p><h1>${preset?"コースを編集":"新しいコース"}</h1><p>分かる条件だけ入力します。不明は不明のまま残します。</p>${gpxCandidate?`<div class="gpx-prefill"><strong>GPXの候補を入力しました</strong><span>上り・平坦・下りの候補を確認してから保存します。路面は推測しません。</span></div>`:""}<form id="course-editor-form" novalidate><input type="hidden" name="courseId" value="${escapeHtml(preset?.id||"")}"><input type="hidden" name="returnTo" value="${escapeHtml(returnTo)}"><input type="hidden" name="fromGpx" value="${gpxCandidate?"1":"0"}"><input type="hidden" name="routePattern" value="${escapeHtml(course.routePattern||"UNKNOWN")}"><div class="form-messages" data-form-messages tabindex="-1" hidden></div>
+  <section class="e-card"><div class="e-title"><b>1</b><div><small>必須</small><h2>コース名</h2></div></div><label class="field"><span>コース名</span><input name="courseName" maxlength="80" required placeholder="例：川沿いの往復コース" value="${escapeHtml(course.name||"")}"></label></section>
+  <section class="e-card"><div class="e-title"><b>2</b><div><small>分かる範囲で</small><h2>坂道</h2></div></div><select class="visually-hidden" name="gradeInputMode"><option value="UNKNOWN"${selected(gm,"UNKNOWN")}>分からない</option><option value="FLAT"${selected(gm,"FLAT")}>ほぼ平坦</option><option value="SUMMARY"${selected(gm,"SUMMARY")}>かんたん入力</option><option value="SECTIONS"${selected(gm,"SECTIONS")}>詳しく入力</option></select><div class="mode grade-mode"><button type="button" data-course-grade-mode="UNKNOWN" class="${gm==="UNKNOWN"?"active":""}">分からない</button><button type="button" data-course-grade-mode="FLAT" class="${gm==="FLAT"?"active":""}">ほぼ平坦</button><button type="button" data-course-grade-mode="SUMMARY" class="${gm==="SUMMARY"?"active":""}">かんたん入力</button><button type="button" data-course-grade-mode="SECTIONS" class="${gm==="SECTIONS"?"active":""}">詳しく入力</button></div><p class="note">勾配%が分からなくても構いません。不明な値は自動で推測しません。</p><div class="sub" data-course-grade-summary${gm==="SUMMARY"?"":" hidden"}><div class="support-title"><div><small>BEGINNER SUPPORT</small><strong>割合を入力</strong></div><span>勾配%は任意</span></div><div class="inputs"><label class="mfield"><span>上り</span><div><input name="upPercent" type="number" min="0" max="100" step="1" value="${escapeHtml(course.upPercent??0)}"><em>%</em></div></label><label class="mfield"><span>下り</span><div><input name="downPercent" type="number" min="0" max="100" step="1" value="${escapeHtml(course.downPercent??0)}"><em>%</em></div></label><label class="mfield"><span>上り代表勾配</span><div><input name="upGradePercent" type="number" min="0" max="100" step="0.1" value="${escapeHtml(course.upGradePercent??"")}"><em>%</em></div></label><label class="mfield"><span>下り代表勾配</span><div><input name="downGradePercent" type="number" min="0" max="100" step="0.1" value="${escapeHtml(course.downGradePercent??"")}"><em>%</em></div></label></div><div class="easy-result"><div class="comp-head"><span>自動計算した平坦割合</span><strong>平坦 <output data-flat-share>—</output>%</strong></div></div></div><div class="sub" data-course-grade-sections${gm==="SECTIONS"?"":" hidden"}><div class="support-title"><div><small>DETAIL</small><strong>区間ごとに入力</strong></div><span>最大5区間</span></div><p class="support-copy">区間の割合と種類を入力します。勾配が分かる区間だけ数値を入力できます。</p><div class="section-rows">${sectionRows(course)}</div><div class="section-summary">合計 <output data-section-share-total>0</output>%</div></div><a class="gpx-inline" href="#/gpx-analysis?returnTo=${encodeURIComponent(returnTo)}"><span><small>ファイルがある場合</small><strong>GPXから坂道を読み取る</strong></span><i>›</i></a></section>
+  <section class="e-card"><div class="e-title"><b>3</b><div><small>分かる範囲で</small><h2>路面</h2></div></div><select class="visually-hidden" name="surfaceInputMode"><option value="UNKNOWN"${selected(sm,"UNKNOWN")}>分からない</option><option value="SINGLE"${selected(sm,"SINGLE")}>1種類</option><option value="MIXED"${selected(sm,"MIXED")}>割合で入力</option></select><div class="mode three"><button type="button" data-course-surface-mode="UNKNOWN" class="${sm==="UNKNOWN"?"active":""}">分からない</button><button type="button" data-course-surface-mode="SINGLE" class="${sm==="SINGLE"?"active":""}">1種類</button><button type="button" data-course-surface-mode="MIXED" class="${sm==="MIXED"?"active":""}">割合で入力</button></div><div class="sub" data-course-surface-single${sm==="SINGLE"?"":" hidden"}><span class="note">主な路面を選択</span><label class="field"><select name="primarySurfaceKey">${surfaceOptions(primarySurface(course))}</select></label></div><div class="sub" data-course-surface-mixed${sm==="MIXED"?"":" hidden"}><div class="comp-head"><span>路面構成</span><strong>合計 <output data-surface-share-total>0</output>%</strong></div><div class="mix">${surfaceMix(course)}</div><p class="note">使った路面だけ割合を入力し、合計を100%にします。</p></div></section>
+  <section class="preview"><h2>このコースの要約</h2><strong>${escapeHtml(course.name||"コース名未入力")}</strong><div class="preview-grid"><div><small>坂道</small><span>${escapeHtml(slopeSummary(course))}</span></div><div><small>路面</small><span>${escapeHtml(primarySurfaceSummary(course))}</span></div></div></section><div class="editor-actions"><button class="primary" type="submit">保存してこのコースを使う</button><a class="secondary" href="${escapeHtml(manager)}">キャンセル</a></div></form></main></div></div>`;
 }

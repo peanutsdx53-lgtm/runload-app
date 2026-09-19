@@ -36,6 +36,18 @@ function updateRecordSubmitAvailability(form) {
   const duration = Number(form.elements.namedItem("durationMinutes")?.value);
   const ready = Boolean(date) && (activityType === "rest" || (distance > 0 && duration > 0));
   document.querySelectorAll('#record-input-form [type="submit"], [form="record-input-form"][type="submit"]').forEach((button) => { button.disabled = !ready; });
+  const progress = form.querySelector("[data-prototype-required-progress]");
+  if (progress) {
+    if (activityType === "rest") progress.textContent = "休養として保存";
+    else {
+      const count = (distance > 0 ? 1 : 0) + (duration > 0 ? 1 : 0);
+      progress.textContent = `距離・時間 ${count} / 2`;
+    }
+  }
+  const hint = form.querySelector("[data-prototype-save-hint]");
+  if (hint) hint.textContent = activityType === "rest" ? "休養日として保存できます。" : ready ? "必須項目が揃いました。" : "距離と実走時間を入力してください。";
+  const dateDisplay = form.querySelector("[data-prototype-date-display]");
+  if (dateDisplay) dateDisplay.textContent = date ? date.replaceAll("-", "/") : "—";
 }
 
 const SURFACE_CLASS_BY_RECORD_KEY = Object.freeze({
@@ -162,13 +174,21 @@ function updateCourseSummary(form) {
   const distance = Number(form.elements.namedItem("distanceKm")?.value || 0);
   const course = readCourse(new FormData(form), distance);
   const summary = form.querySelector(".record-course-entry .course-summary");
-  if (!summary) return;
-  const heading = summary.querySelector("h4");
-  const paragraphs = summary.querySelectorAll("p");
-  if (heading) heading.textContent = course.name || "コース名なし";
-  if (paragraphs[0]) paragraphs[0].innerHTML = `<strong>主な路面：</strong>${primarySurfaceSummary(course)}`;
-  if (paragraphs[1]) paragraphs[1].innerHTML = `<strong>坂道：</strong>${slopeSummary(course)}`;
-  if (paragraphs[2]) paragraphs[2].innerHTML = `<strong>入力方法：</strong>${course.surfaceInputMode === "MIXED" ? "複数路面の割合" : course.surfaceInputMode === "SINGLE" ? "主な路面1種類" : "路面は未入力"}`;
+  if (summary) {
+    const heading = summary.querySelector("h4");
+    const paragraphs = summary.querySelectorAll("p");
+    if (heading) heading.textContent = course.name || "コース名なし";
+    if (paragraphs[0]) paragraphs[0].innerHTML = `<strong>主な路面：</strong>${primarySurfaceSummary(course)}`;
+    if (paragraphs[1]) paragraphs[1].innerHTML = `<strong>坂道：</strong>${slopeSummary(course)}`;
+    if (paragraphs[2]) paragraphs[2].innerHTML = `<strong>入力方法：</strong>${course.surfaceInputMode === "MIXED" ? "複数路面の割合" : course.surfaceInputMode === "SINGLE" ? "主な路面1種類" : "路面は未入力"}`;
+  }
+  const prototypeSelected = form.querySelector("[data-prototype-selected-course]");
+  const prototypeName = form.querySelector("[data-prototype-course-name]");
+  const prototypeMeta = form.querySelector("[data-prototype-course-meta]");
+  const hasCourse = Boolean(course.name) || String(course.gradeKnowledge || "UNKNOWN") !== "UNKNOWN" || String(course.modelSurfaceClass || "UNKNOWN") !== "UNKNOWN";
+  if (prototypeSelected) prototypeSelected.hidden = !hasCourse;
+  if (prototypeName) prototypeName.textContent = course.name || "名称なし";
+  if (prototypeMeta) prototypeMeta.textContent = [primarySurfaceSummary(course), slopeSummary(course)].filter(Boolean).join("・") || "条件を保存";
 }
 
 function fieldsFromForm(form) {
@@ -378,7 +398,7 @@ function renderRecordSelectedBodyList(form) {
   list.innerHTML = selected.map((item) => {
     const score = Number(recordBodyScore(form, item.areaId)?.value || 1);
     const side = String(recordBodySide(form, item.areaId)?.value || BODY_AREA_LATERALITY.unknown);
-    return `<div class="record-selected-body-row" data-record-selected-row="${item.areaId}"><strong>${item.label}</strong><label><span>程度</span><select data-record-selected-level>${[1,2,3,4,5].map((value) => `<option value="${value}"${score === value ? " selected" : ""}>${value}</option>`).join("")}</select></label><label><span>左右</span><select data-record-selected-side>${Object.values(BODY_AREA_LATERALITY).map((value) => `<option value="${value}"${side === value ? " selected" : ""}>${BODY_AREA_LATERALITY_LABELS[value]}</option>`).join("")}</select></label><button type="button" data-action="remove-record-body" aria-label="${item.label}を削除">×</button></div>`;
+    return `<div class="record-selected-body-row selected-body-row" data-record-selected-row="${item.areaId}"><strong>${item.label}</strong><label><span>程度</span><select data-record-selected-level>${[1,2,3,4,5].map((value) => `<option value="${value}"${score === value ? " selected" : ""}>${value}</option>`).join("")}</select></label><label><span>左右</span><select data-record-selected-side>${Object.values(BODY_AREA_LATERALITY).map((value) => `<option value="${value}"${side === value ? " selected" : ""}>${BODY_AREA_LATERALITY_LABELS[value]}</option>`).join("")}</select></label><button type="button" data-action="remove-record-body" aria-label="${item.label}を削除">×</button></div>`;
   }).join("");
   list.querySelectorAll("[data-record-selected-row]").forEach((row) => {
     const areaId = String(row.dataset.recordSelectedRow || "");
@@ -805,6 +825,16 @@ export function bindRecordInput({ services, router, context, returnState = null 
         returnStatus.textContent = `「${preset.name || "保存済みコース"}」を今回の入力へ反映しました。保存元コースは変更していません。`;
       }
     });
+  });
+  form.querySelector('[data-action="clear-record-course"]')?.addEventListener("click", () => {
+    applyCoursePresetToForm(form, {});
+    updateCourseSummary(form);
+    saveDraftFromForm(form, services, false);
+    refreshActiveRecordInputWorkspace(form);
+    if (returnStatus) {
+      returnStatus.hidden = false;
+      returnStatus.textContent = "今回のコース選択を解除しました。保存元コースは変更していません。";
+    }
   });
   form.querySelector('[data-action="open-course-library"]')?.addEventListener("click", () => {
     const returnTo = recordInputReturnTo(context);

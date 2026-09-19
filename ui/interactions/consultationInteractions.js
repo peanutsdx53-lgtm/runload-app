@@ -12,6 +12,37 @@ function updateCharacterCount(textarea) {
 }
 
 export function bindConsultation() {
+  const prototypeRoot = document.querySelector("[data-prototype-consultation]");
+  if (prototypeRoot) {
+    const panels = [...prototypeRoot.querySelectorAll("[data-consult-panel]")];
+    const routes = [...prototypeRoot.querySelectorAll("[data-consult-open]")];
+    const shortMemo = prototypeRoot.querySelector("[data-consult-short-memo]");
+    const copySource = prototypeRoot.querySelector("#consultation-report-text");
+    const target = prototypeRoot.querySelector("#consultation-target");
+    const question = prototypeRoot.querySelector("#consultation-question");
+    const reportTarget = prototypeRoot.querySelector("#reportTarget");
+    const reportQuestion = prototypeRoot.querySelector("#reportQuestion");
+    const showPanel = (name) => {
+      panels.forEach((panel) => { panel.hidden = panel.dataset.consultPanel !== name; });
+      routes.forEach((route) => route.classList.toggle("primary", route.dataset.consultOpen === name));
+    };
+    const rebuildMemo = () => {
+      const lines = [...prototypeRoot.querySelectorAll("[data-consult-source]:checked")].map((input) => input.dataset.line || "").filter(Boolean);
+      const extras = [];
+      if (target?.value.trim()) extras.push(`相談相手：${target.value.trim()}`);
+      if (question?.value.trim()) extras.push(`相談したいこと：${question.value.trim()}`);
+      const text = [...extras, ...lines].join("\n");
+      if (shortMemo) shortMemo.textContent = text;
+      if (copySource) copySource.value = text;
+      if (reportTarget) reportTarget.textContent = `相談相手：${target?.value.trim() || "未入力"}`;
+      if (reportQuestion) reportQuestion.textContent = question?.value.trim() || "未入力";
+    };
+    routes.forEach((route) => route.addEventListener("click", () => showPanel(route.dataset.consultOpen || "short")));
+    prototypeRoot.querySelectorAll("[data-consult-source]").forEach((input) => input.addEventListener("change", rebuildMemo));
+    target?.addEventListener("input", rebuildMemo);
+    question?.addEventListener("input", rebuildMemo);
+    rebuildMemo();
+  }
   const regionSelector = document.querySelector("[data-consult-region-selector]");
   regionSelector?.addEventListener("change", () => {
     const hash = window.location.hash || "#/consultation";

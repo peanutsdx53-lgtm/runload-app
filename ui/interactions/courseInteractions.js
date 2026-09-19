@@ -48,9 +48,11 @@ function updateVisibility(form) {
   const grade = form.elements.namedItem("gradeInputMode")?.value || "UNKNOWN";
   form.querySelectorAll("[data-course-grade-summary]").forEach((element) => setHidden(element, grade !== "SUMMARY"));
   form.querySelectorAll("[data-course-grade-sections]").forEach((element) => setHidden(element, grade !== "SECTIONS"));
+  form.querySelectorAll("[data-course-grade-mode]").forEach((button) => button.classList.toggle("active", button.dataset.courseGradeMode === grade));
   const surface = form.elements.namedItem("surfaceInputMode")?.value || "UNKNOWN";
   form.querySelectorAll("[data-course-surface-single]").forEach((element) => setHidden(element, surface !== "SINGLE"));
   form.querySelectorAll("[data-course-surface-mixed]").forEach((element) => setHidden(element, surface !== "MIXED"));
+  form.querySelectorAll("[data-course-surface-mode]").forEach((button) => button.classList.toggle("active", button.dataset.courseSurfaceMode === surface));
 }
 function updateTotals(form) {
   const data = new FormData(form); const up = number(data, "upPercent"), down = number(data, "downPercent");
@@ -79,6 +81,8 @@ export function bindCourseLibrary({ services, rerender }) {
 }
 export function bindCourseEditor({ services }) {
   const form = document.getElementById("course-editor-form"); if (!form) return;
+  form.querySelectorAll("[data-course-grade-mode]").forEach((button) => button.addEventListener("click", () => { const select=form.elements.namedItem("gradeInputMode"); if(select) select.value=button.dataset.courseGradeMode; updateVisibility(form); updateTotals(form); }));
+  form.querySelectorAll("[data-course-surface-mode]").forEach((button) => button.addEventListener("click", () => { const select=form.elements.namedItem("surfaceInputMode"); if(select) select.value=button.dataset.courseSurfaceMode; updateVisibility(form); updateTotals(form); }));
   form.addEventListener("input", () => updateTotals(form)); form.addEventListener("change", () => { updateVisibility(form); updateTotals(form); });
   updateVisibility(form); updateTotals(form);
   form.addEventListener("submit", (event) => {

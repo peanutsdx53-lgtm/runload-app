@@ -275,31 +275,46 @@ function renderArticleDetail(article, related, services, origin = "", recordId =
   </article>`;
 }
 
-export function renderReadingScreen({ services, context }) {
-  const articleId = context.parameters.get("articleId") || "";
-  if (articleId) {
-    const article = services.column.findById(articleId);
-    if (!article || DEFERRED_READING_ARTICLE_IDS.has(article.id)) return `<section class="screen">${renderPageHeading({ eyebrow: "読みもの", title: "記事が見つかりません", description: "記事一覧から読みたい内容を選んでください。" })}${renderEmptyState({ title: "指定された記事はありません", description: "指定した記事を確認できません。", actionLabel: "記事一覧へ", actionScreen: "reading" })}</section>`;
-    return `<section class="screen screen--column-detail">${renderArticleDetail(article, services.column.relatedArticle(article), services, context.parameters.get("origin") || "", context.parameters.get("recordId") || "", context.parameters.get("regionId") || "")}</section>`;
-  }
 
-  const query = context.parameters.get("query") || "";
-  const category = context.parameters.get("category") || "all";
-  const allArticles = visibleArticles(services.column.list());
-  const articles = visibleArticles(services.column.list({ query, category }));
+const PROTOTYPE_READING_ITEMS = Object.freeze([
+  Object.freeze({ id: "regional-three-views", filter: "result" }),
+  Object.freeze({ id: "history-compatible", filter: "record" }),
+  Object.freeze({ id: "plan-facts-current", filter: "record" }),
+  Object.freeze({ id: "training-progression-no-universal-rule", filter: "running" }),
+  Object.freeze({ id: "context-not-single-cause", filter: "running" }),
+  Object.freeze({ id: "cooldown-stretching-limits", filter: "after" }),
+  Object.freeze({ id: "hydration-not-more-is-better", filter: "after" }),
+  Object.freeze({ id: "heat-not-temperature-only", filter: "before" }),
+  Object.freeze({ id: "consultation-prep-v27", filter: "share" }),
+]);
+
+function renderPrototypeReadingArticle(article, filter) {
+  return `<article class="article-card" data-reading-card data-cat="${escapeHtml(filter)}"><small>${escapeHtml(article.category || "一般情報")}</small><strong>${escapeHtml(article.title || "読みもの")}</strong><p>${escapeHtml(article.lead || article.summary || "")}</p><button type="button" data-reading-open="${escapeHtml(article.id)}">読む</button></article>`;
+}
+
+function renderPrototypeReadingDetail(article) {
+  return `<article data-reading-detail="${escapeHtml(article.id)}" hidden><div class="sheet-head"><div><small>${escapeHtml(article.category || "一般情報")}</small><strong id="articleTitle-${escapeHtml(article.id)}">${escapeHtml(article.title || "読みもの")}</strong></div><button class="close" type="button" data-reading-close aria-label="閉じる">×</button></div><p class="lead">${escapeHtml(article.lead || article.summary || "")}</p><div class="body-copy">${(article.body || []).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>${(article.practicePoints || []).length ? `<div class="points"><strong>見返すポイント</strong><ul>${article.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></div>` : ""}<p class="caution">${escapeHtml(article.caution || "一般情報であり、個別の診断・処方・走行可否判断には使用しません。")}</p><p class="source-note">Current Appで管理している公開資料・研究文献を背景にした一般情報です。個別の診断・処方ではありません。</p></article>`;
+}
+
+function renderPrototypeReading({ services, context }) {
+  const available = new Map(visibleArticles(services.column.list()).map((article) => [article.id, article]));
+  const items = PROTOTYPE_READING_ITEMS.map((item) => ({ ...item, article: available.get(item.id) })).filter((item) => item.article);
+  const allExperiences = services.workflows.records.loadAllExperiences();
   const target = resolveColumnTargetExperience(services, context);
-  const recommendation = buildColumnRecommendation(services, target.experience, target.allExperiences, context);
-  const featured = recommendation.article;
-  const filterActive = Boolean(query) || category !== "all";
-  const preservedRecordId = target.experience?.record?.id || "";
-  const preservedRegionId = REGION_BY_ID.has(context.parameters.get("regionId") || "")
-    ? context.parameters.get("regionId")
-    : "";
-  return `<section class="screen screen--column">
-    ${renderPageHeading({ eyebrow: "読みもの", title: "記録を理解するための読みもの", description: "必要な記事だけを選び、一般知識として確認します。" })}
-    ${renderFeaturedArticle(recommendation, target.experience, target.targetKind)}
-        <section class="column-finder" aria-labelledby="column-finder-title"><div class="section-heading"><p>記事を探す</p><h2 id="column-finder-title">読みたい内容を探す</h2><p>カテゴリまたはキーワードを使い、必要な記事だけを絞り込みます。</p></div><form id="column-search-form" class="filter-panel" role="search">${preservedRecordId ? `<input type="hidden" name="recordId" value="${escapeHtml(preservedRecordId)}">` : ""}${preservedRegionId ? `<input type="hidden" name="regionId" value="${escapeHtml(preservedRegionId)}">` : ""}<label class="field"><span>記事を検索</span><input name="query" type="search" value="${escapeHtml(query)}" placeholder="例：睡眠、暑さ、坂道"></label><label class="field"><span>カテゴリ</span><select name="category"><option value="all">すべて</option>${services.column.categories.map((item) => `<option value="${escapeHtml(item)}"${item === category ? " selected" : ""}>${escapeHtml(item)}</option>`).join("")}</select></label><button class="button button--primary" type="submit">記事を探す</button></form><p class="article-count">全${allArticles.length}件の記事・表示${articles.length}件</p>${filterActive ? `<a class="text-link" href="#/reading${preservedRecordId ? `?recordId=${encodeURIComponent(preservedRecordId)}${preservedRegionId ? `&regionId=${encodeURIComponent(preservedRegionId)}` : ""}` : ""}">検索条件をクリア</a>` : ""}</section>
-    ${articles.length ? renderArticleSections(articles, services.column.categories, featured?.id || "") : renderEmptyState({ title: "条件に合う記事がありません", description: "検索語やカテゴリを変更してください。", actionLabel: "記事一覧へ戻る", actionScreen: "reading" })}
-    ${renderSourceIndex(allArticles)}
-  </section>`;
+  const recommendation = buildColumnRecommendation(services, target.experience, allExperiences, context);
+  const featured = recommendation.article && available.has(recommendation.article.id) ? recommendation.article : available.get("regional-three-views") || items[0]?.article || null;
+  const initialArticleId = context.parameters.get("articleId") || "";
+  const detailArticles = new Map(items.map((item) => [item.article.id, item.article]));
+  if (featured) detailArticles.set(featured.id, featured);
+  return `<div class="screen screen--reading prototype-parity prototype-parity--reading" data-prototype-reading${initialArticleId ? ` data-reading-initial-article="${escapeHtml(initialArticleId)}"` : ""}>
+    <section class="head"><p class="eyebrow">READING</p><h1>読みもの</h1><p>結果の意味や、走った日の背景を確認するための一般情報です。</p></section>
+    ${featured ? `<section class="recommend"><small>今回の結果から</small><strong>${escapeHtml(featured.title)}</strong><p>${escapeHtml(recommendation.reason || featured.lead || "")}</p><button type="button" data-reading-open="${escapeHtml(featured.id)}">この記事を読む</button></section>` : ""}
+    <div class="filters" role="group" aria-label="読みものの分類"><button class="active" type="button" data-reading-filter="all">すべて</button><button type="button" data-reading-filter="result">結果</button><button type="button" data-reading-filter="record">記録・履歴</button><button type="button" data-reading-filter="running">走りとのつき合い方</button><button type="button" data-reading-filter="after">走った後</button><button type="button" data-reading-filter="before">走る前</button><button type="button" data-reading-filter="share">相談・共有</button></div>
+    <div class="grid">${items.map((item) => renderPrototypeReadingArticle(item.article, item.filter)).join("")}</div>
+    <div class="drawer" data-reading-drawer hidden><section class="sheet" role="dialog" aria-modal="true" aria-label="読みもの本文">${[...detailArticles.values()].map(renderPrototypeReadingDetail).join("")}</section></div>
+  </div>`;
+}
+
+export function renderReadingScreen({ services, context }) {
+  return renderPrototypeReading({ services, context });
 }
