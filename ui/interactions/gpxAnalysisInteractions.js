@@ -1,0 +1,7 @@
+import { analyzeGpx, parseGpxText } from "../gpxLocalAnalysis.js";
+import { saveGpxCandidate } from "../flowSessionState.js";
+export function bindGpxAnalysis(){
+  const file=document.getElementById("gpx-file"),status=document.getElementById("gpx-status"),summary=document.getElementById("gpx-summary"),apply=document.getElementById("gpx-apply"),ret=document.getElementById("gpx-return-to");if(!file||!apply)return;let candidate=null;
+  file.addEventListener("change",async()=>{candidate=null;apply.disabled=true;summary.hidden=true;const f=file.files?.[0];if(!f){status.textContent="ファイルを選択してください。";return;}try{const parsed=parseGpxText(await f.text());candidate=analyzeGpx(parsed,{fallbackName:f.name.replace(/\.gpx$/i,"")||"GPXコース"});status.textContent="端末内の解析が完了しました。";summary.hidden=false;summary.innerHTML=`<dl><div><dt>距離</dt><dd>${candidate.distanceKm} km</dd></div><div><dt>上り</dt><dd>${candidate.elevationGainM} m</dd></div><div><dt>下り</dt><dd>${candidate.elevationLossM} m</dd></div><div><dt>勾配</dt><dd>${candidate.gradeKnowledge==="KNOWN_PROFILE"?`上り ${candidate.upPercent}% / 下り ${candidate.downPercent}%`:"標高情報不足・不明のまま"}</dd></div></dl>`;apply.disabled=false;}catch(error){status.textContent="GPXを解析できませんでした。ファイル内容を確認してください。";summary.hidden=true;}});
+  apply.addEventListener("click",()=>{if(!candidate)return;saveGpxCandidate(candidate);const returnTo=ret?.value||"#/record-input";window.location.hash=`#/course-editor?gpx=1&returnTo=${encodeURIComponent(returnTo)}`;});
+}
