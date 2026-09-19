@@ -15,8 +15,17 @@ function renderSegmentRadios(name, current, options) {
   return `<div class="segment parity-segment" role="group">${options.map((option) => `<label><input type="radio" name="${escapeHtml(name)}" value="${escapeHtml(option.value)}"${checked(current, option.value)}><span>${escapeHtml(option.label)}</span></label>`).join("")}</div>`;
 }
 
-function renderThemeOptions(current) {
-  return `<div class="parity-theme-grid">${COLOR_THEME_OPTIONS.map((option) => `<label class="parity-theme-option"><input type="radio" name="colorTheme" value="${escapeHtml(option.value)}"${checked(current, option.value)}><span class="parity-theme-option__swatch" data-theme-preview="${escapeHtml(option.value)}" aria-hidden="true"></span><span><strong>${escapeHtml(option.label)}</strong><small>${escapeHtml(option.description)}</small></span></label>`).join("")}</div>`;
+function displayOptionLabel(option) {
+  return escapeHtml(option?.label || "");
+}
+
+function renderDisplayChoices(name, current, options, { theme = false } = {}) {
+  return `<div class="display-choice-list">${options.map((option) => `<label class="display-choice${theme ? " display-choice--theme" : ""}"><input type="radio" name="${escapeHtml(name)}" value="${escapeHtml(option.value)}" data-immediate-display-setting data-setting-label="${displayOptionLabel(option)}"${checked(current, option.value)}>${theme ? `<span class="display-choice__swatch" data-theme-preview="${escapeHtml(option.value)}" aria-hidden="true"></span>` : '<span class="display-choice__dot" aria-hidden="true"></span>'}<strong>${displayOptionLabel(option)}</strong></label>`).join("")}</div>`;
+}
+
+function renderDisplaySetting({ eyebrow, title, name, current, options, theme = false }) {
+  const currentLabel = options.find((option) => option.value === current)?.label || options[0]?.label || "";
+  return `<details class="display-setting"><summary><span class="display-setting__title"><small>${escapeHtml(eyebrow)}</small><strong>${escapeHtml(title)}</strong></span><span class="display-setting__current" data-display-setting-value="${escapeHtml(name)}">${escapeHtml(currentLabel)}</span><i aria-hidden="true">⌄</i></summary><div class="display-setting__body">${renderDisplayChoices(name, current, options, { theme })}</div></details>`;
 }
 
 function renderSavedShoes(settings = {}) {
@@ -44,11 +53,12 @@ export function renderSettingsScreen({ services, context }) {
     ${saved ? '<p class="parity-save-message" role="status">設定を保存しました。</p>' : ""}
     <form id="journal-settings-form" novalidate>
       <section class="group"><p class="group-title">DISPLAY</p>
-        <div class="card"><div class="row"><div><small>TEXT SIZE</small><strong>文字サイズ</strong><span>アプリ内の文字を少し大きくできます</span></div><span class="value">${settings.textSize === "large" ? "大きめ" : "標準"}</span></div>${renderSegmentRadios("textSize", settings.textSize, TEXT_SIZE_OPTIONS)}</div>
-        <div class="card parity-display-card"><div class="row"><div><small>APPEARANCE</small><strong>明るさ</strong><span>端末に合わせる・ライト・ダークから選べます</span></div><span class="value">${escapeHtml(APPEARANCE_MODE_OPTIONS.find((x) => x.value === settings.appearanceMode)?.label || "端末に合わせる")}</span></div>${renderSegmentRadios("appearanceMode", settings.appearanceMode, APPEARANCE_MODE_OPTIONS)}</div>
-        <div class="theme-preview"><i></i><div><small>THEME</small><strong>配色</strong><span>prototypeのシンプル配色を含め、利用者が選べます</span></div></div>
-        ${renderThemeOptions(settings.colorTheme)}
-        <p class="note">配色を変えても、画面レイアウトと情報の意味は変わりません。情報の意味は色だけに依存させません。</p>
+        <div class="display-setting-list">
+          ${renderDisplaySetting({ eyebrow: "TEXT SIZE", title: "文字サイズ", name: "textSize", current: settings.textSize, options: TEXT_SIZE_OPTIONS })}
+          ${renderDisplaySetting({ eyebrow: "APPEARANCE", title: "明るさ", name: "appearanceMode", current: settings.appearanceMode, options: APPEARANCE_MODE_OPTIONS })}
+          ${renderDisplaySetting({ eyebrow: "THEME", title: "配色", name: "colorTheme", current: settings.colorTheme, options: COLOR_THEME_OPTIONS, theme: true })}
+        </div>
+        <p class="visually-hidden" data-display-settings-status role="status" aria-live="polite"></p>
       </section>
 
       <section class="group"><p class="group-title">PROFILE</p>
@@ -67,7 +77,7 @@ export function renderSettingsScreen({ services, context }) {
             <label class="field"><span>性別関連入力</span><select name="profileSex"><option value="">未設定・回答しない</option><option value="male"${profile.sex === "male" ? " selected" : ""}>男性区分</option><option value="female"${profile.sex === "female" ? " selected" : ""}>女性区分</option></select></label>
           </div><p class="note">すべて任意です。個人補正、診断、性別判定には使いません。</p></div></details>
           <details class="subdetails"><summary><span><strong>保存シューズ</strong><small>Recordで次回も選べる名称</small></span><span>⌄</span></summary><div class="subdetails-body">${renderSavedShoes(settings)}<p class="visually-hidden">保存候補から削除しても、過去記録に保存されたシューズ情報は変わりません。</p></div></details>
-          <div class="action-row"><button type="submit" class="primary">プロフィールと表示を保存</button><button type="button" data-action="reset-journal-settings">標準設定に戻す</button></div>
+          <div class="action-row"><button type="submit" class="primary">プロフィールを保存</button><button type="button" data-action="reset-journal-settings">標準設定に戻す</button></div>
           <p class="visually-hidden">GPXファイルは端末内で解析し、外部サーバーへ自動送信しません。</p><input type="hidden" name="externalLinkDisplay" value="${escapeHtml(settings.externalLinkDisplay)}">
           <input type="hidden" name="regionalResultInitialView" value="${escapeHtml(settings.regionalResultInitialView)}">
           <input type="hidden" name="showRegionalPreviousComparison" value="${settings.showRegionalPreviousComparison ? "show" : "hide"}">
