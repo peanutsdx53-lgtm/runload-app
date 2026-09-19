@@ -8,7 +8,7 @@ The smartphone UI is based on the frozen 15-screen prototype DOM/layout authorit
 ## Verification
 - Current full regression: 302 / 302 PASS
 - 18 / 18 suites PASS
-- JS/MJS syntax verified
+- JS/MJS syntax: 81 / 81 PASS
 - Protected `core/runloadCore.js` hash unchanged
 - Protected `core/secondPillarRofJ.js` hash unchanged
 - Dark-mode theme aliases are resolved to current semantic tokens
