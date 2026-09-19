@@ -1,17 +1,20 @@
 # RunLoad Pre-release Status
 
 Date: 2026-09-19
-Status: PRE-RELEASE REGULAR APP / V1.18 COLOR TOKEN PATCH
+Status: PRE-RELEASE REGULAR APP / MOBILE USABILITY PATCH
 
 Verification:
-- 251 / 251 tests PASS
-- 16 / 16 suites PASS
-- 79 / 79 JS/MJS syntax PASS
+- 269 / 269 tests PASS
+- 17 / 17 suites PASS
+- 80 / 80 JS/MJS syntax PASS
 - protected Primary core hash unchanged
 - protected ROF-J core hash unchanged
 
-Audited UI correction:
-- Reference-100 values below 100 and Simulation down values now use the defined semantic token `--color-info`; the undefined `--info` reference has been eliminated.
-- PWA cache name is bumped so the corrected stylesheet is fetched after update.
+Audited UI refinements:
+- Display settings are compact/collapsible and apply immediately when selected.
+- Result body silhouette no longer falls back to SVG black; theme map tokens are used.
+- Upper front/back regional overlays received small alignment adjustments.
+- Record Run/Rest and date controls, plus Plan date control, now read clearly as interactive controls in light mode.
+- Previous Reference-100 below/down semantic-color correction remains active.
 
 The app remains a development-stage research application. Scientific interpretation boundaries in the README and Current research package remain controlling.
