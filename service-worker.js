@@ -1,4 +1,4 @@
-const CACHE_NAME = "runload-app-ui-parity-mobile-v1";
+const CACHE_NAME = "runload-app-product-quality-nav-v1";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -30,6 +30,7 @@ const PRECACHE_URLS = [
   "./styles/screens.css",
   "./styles/prototype-fidelity-v2.css",
   "./styles/prototype-mobile-parity.css",
+  "./styles/product-quality.css",
   "./styles/tokens.css",
   "./ui/appRouter.js",
   "./ui/appSettings.js",

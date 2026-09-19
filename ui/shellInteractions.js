@@ -50,37 +50,37 @@ function bindGuideTabKeyboard(dialog, onSelectGuideSection) {
 }
 
 function bindFeatureMenu(root) {
-  const menu = root.querySelector("[data-feature-menu]");
-  const button = menu?.querySelector("#feature-menu-button");
-  const panel = menu?.querySelector("#feature-menu-panel");
-  if (!menu || !button || !panel) return;
+  root.querySelectorAll("[data-feature-menu]").forEach((menu) => {
+    const button = menu.querySelector(".app-menu-button");
+    const panel = menu.querySelector(".feature-menu__panel");
+    if (!button || !panel) return;
 
-  const setOpen = (open, { restoreFocus = false } = {}) => {
-    menu.classList.toggle("is-open", open);
-    button.setAttribute("aria-expanded", open ? "true" : "false");
-    panel.hidden = !open;
-    if (restoreFocus) button.focus();
-  };
+    const setOpen = (open, { restoreFocus = false } = {}) => {
+      menu.classList.toggle("is-open", open);
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+      panel.hidden = !open;
+      if (restoreFocus) button.focus();
+    };
 
-  button.addEventListener("click", (event) => {
-    event.preventDefault();
-    setOpen(panel.hidden);
-  });
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      setOpen(panel.hidden);
+    });
 
-  menu.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || panel.hidden) return;
-    event.preventDefault();
-    setOpen(false, { restoreFocus: true });
-  });
+    menu.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || panel.hidden) return;
+      event.preventDefault();
+      setOpen(false, { restoreFocus: true });
+    });
 
-  root.addEventListener("click", (event) => {
-    if (panel.hidden) return;
-    if (menu.contains(event.target)) return;
-    setOpen(false);
-  });
+    root.addEventListener("click", (event) => {
+      if (panel.hidden || menu.contains(event.target)) return;
+      setOpen(false);
+    });
 
-  panel.querySelectorAll("a[href]").forEach((link) => {
-    link.addEventListener("click", () => setOpen(false));
+    panel.querySelectorAll("a[href]").forEach((link) => {
+      link.addEventListener("click", () => setOpen(false));
+    });
   });
 }
 
@@ -88,8 +88,8 @@ export function bindAppShellInteractions({ root, onOpenGuide, onCloseGuide, onSe
   root.querySelectorAll("[data-open-guide]").forEach((button) => {
     button.addEventListener("click", () => {
       const featureMenu = button.closest(".feature-menu");
-      const menuButton = featureMenu?.querySelector("#feature-menu-button");
-      const menuPanel = featureMenu?.querySelector("#feature-menu-panel");
+      const menuButton = featureMenu?.querySelector(".app-menu-button");
+      const menuPanel = featureMenu?.querySelector(".feature-menu__panel");
       if (featureMenu && menuButton && menuPanel) {
         featureMenu.classList.remove("is-open");
         menuButton.setAttribute("aria-expanded", "false");

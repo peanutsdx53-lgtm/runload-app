@@ -57,7 +57,20 @@ function navigationHref(item) {
   return `#/${item.screen}`;
 }
 
-export function resolveCurrentPrimaryScreen(currentScreen) {
+export function resolveCurrentPrimaryScreen(currentScreen, currentLocation = null) {
+  const parameter = (name) => String(currentLocation?.parameters?.get?.(name) || "");
+  if (["course-library", "course-editor", "gpx-analysis"].includes(currentScreen)) {
+    const returnTo = parameter("returnTo");
+    if (returnTo.startsWith("#/plan")) return "home";
+    if (returnTo.startsWith("#/simulation")) return "result";
+    return "record-input";
+  }
+  if (currentScreen === "simulation") {
+    const from = parameter("from");
+    if (from === "history") return "history";
+    if (from === "plan") return "home";
+    return "result";
+  }
   return PRIMARY_SECTION_BY_SCREEN[currentScreen] || currentScreen;
 }
 
@@ -83,24 +96,31 @@ function renderDisabledNavigationItem(item, className, current = false) {
 }
 
 function renderNavigationItem(item, currentScreen, className, currentLocation, hasResult, usePrimarySection = false) {
-  const activeScreen = usePrimarySection ? resolveCurrentPrimaryScreen(currentScreen) : currentScreen;
+  const activeScreen = usePrimarySection ? resolveCurrentPrimaryScreen(currentScreen, currentLocation) : currentScreen;
   const current = item.screen === activeScreen;
   if (item.requiresRecord && !hasResult) return renderDisabledNavigationItem(item, className, current);
   const resolvedClassName = navigationClassName(item, className);
-  return `<a class="${resolvedClassName}${current ? " is-current" : ""}" href="${escapeHtml(navigationHref(item))}" data-navigation-screen="${escapeHtml(item.screen)}"${current ? ' aria-current="page"' : ""}>${navigationIcon(item.screen)}<span class="primary-navigation__label">${escapeHtml(item.label)}</span></a>`;
+  const content = `${navigationIcon(item.screen)}<span class="primary-navigation__label">${escapeHtml(item.label)}</span>`;
+  if (current) {
+    return `<span class="${resolvedClassName} is-current" data-navigation-screen="${escapeHtml(item.screen)}" aria-current="page">${content}</span>`;
+  }
+  return `<a class="${resolvedClassName}" href="${escapeHtml(navigationHref(item))}" data-navigation-screen="${escapeHtml(item.screen)}">${content}</a>`;
 }
 
 function renderFeatureMenuLink(item, currentScreen, currentLocation, hasResult, usePrimarySection = false) {
-  const activeScreen = usePrimarySection ? resolveCurrentPrimaryScreen(currentScreen) : currentScreen;
+  const activeScreen = usePrimarySection ? resolveCurrentPrimaryScreen(currentScreen, currentLocation) : currentScreen;
   const current = item.screen === activeScreen;
   const status = item.requiresRecord && !hasResult ? "記録後" : "";
-  const description = status || item.description || "";
+  const description = current ? "現在の画面" : status || item.description || "";
   const labelHtml = `<span class="feature-menu__item-title">${escapeHtml(item.label)}</span><span class="feature-menu__item-description">${escapeHtml(description)}</span>`;
   const itemClass = item.desktopPrimary ? " feature-menu__link--desktop-primary" : "";
-  if (item.requiresRecord && !hasResult) {
-    return `<span class="feature-menu__link${itemClass} is-disabled${current ? " is-current" : ""}" aria-disabled="true" data-navigation-screen="${escapeHtml(item.screen)}"${current ? ' aria-current="page"' : ""} aria-label="${escapeHtml(`${item.label}: 記録後に開けます`)}">${labelHtml}</span>`;
+  if (current) {
+    return `<span class="feature-menu__link${itemClass} is-current feature-menu__link--current" data-navigation-screen="${escapeHtml(item.screen)}" aria-current="page">${labelHtml}</span>`;
   }
-  return `<a class="feature-menu__link${itemClass}${current ? " is-current" : ""}" href="${escapeHtml(navigationHref(item))}" data-navigation-screen="${escapeHtml(item.screen)}"${current ? ' aria-current="page"' : ""} aria-label="${escapeHtml(`${item.label}: ${item.description || ""}`)}">${labelHtml}</a>`;
+  if (item.requiresRecord && !hasResult) {
+    return `<span class="feature-menu__link${itemClass} is-disabled" aria-disabled="true" data-navigation-screen="${escapeHtml(item.screen)}" aria-label="${escapeHtml(`${item.label}: 記録後に開けます`)}">${labelHtml}</span>`;
+  }
+  return `<a class="feature-menu__link${itemClass}" href="${escapeHtml(navigationHref(item))}" data-navigation-screen="${escapeHtml(item.screen)}" aria-label="${escapeHtml(`${item.label}: ${item.description || ""}`)}">${labelHtml}</a>`;
 }
 
 function renderFeatureMenuGroup(label, items, currentScreen, currentLocation, hasResult, usePrimarySection, extraClass = "") {
@@ -118,30 +138,34 @@ function renderFeatureGuideGroup() {
   return `<section class="feature-menu__group feature-menu__group--guide" aria-label="アプリ説明"><p class="feature-menu__group-label">アプリ説明</p><div class="feature-menu__links feature-menu__links--guide">${APP_EXPLANATION_NAVIGATION.map((item, index) => renderGuideMenuLink(item, index)).join("")}</div></section>`;
 }
 
-function renderFeatureMenu({ currentScreen, currentLocation, hasResult }) {
+function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix = "global" }) {
+  const buttonId = `feature-menu-button-${idSuffix}`;
+  const panelId = `feature-menu-panel-${idSuffix}`;
+  const titleId = `feature-menu-title-${idSuffix}`;
   const groupedDestinations = FEATURE_DESTINATION_GROUPS.map((group) => renderFeatureMenuGroup(group.label, group.items, currentScreen, currentLocation, hasResult, false)).join("");
-  return `<div class="feature-menu" data-feature-menu><button type="button" id="feature-menu-button" class="app-menu-button" aria-label="メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="feature-menu-panel"><span class="app-menu-button__label">メニュー</span></button><div id="feature-menu-panel" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="feature-menu-title" hidden><header class="feature-menu__header"><p>画面メニュー</p><strong id="feature-menu-title">開く画面を選ぶ</strong></header><nav class="feature-menu__nav" aria-label="行き先">${renderFeatureMenuGroup("基本の流れ", CORE_NAVIGATION, currentScreen, currentLocation, hasResult, true, "feature-menu__group--mobile-core")}${groupedDestinations}${renderFeatureGuideGroup()}</nav></div></div>`;
+  return `<div class="feature-menu" data-feature-menu><button type="button" id="${escapeHtml(buttonId)}" class="app-menu-button" aria-label="画面メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="${escapeHtml(panelId)}"><span class="app-menu-button__label">メニュー</span></button><div id="${escapeHtml(panelId)}" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="${escapeHtml(titleId)}" hidden><header class="feature-menu__header"><p>画面メニュー</p><strong id="${escapeHtml(titleId)}">補助画面を開く</strong></header><nav class="feature-menu__nav" aria-label="補助画面">${groupedDestinations}</nav></div></div>`;
 }
 
-function renderMobilePrototypeHeader(currentScreen) {
+function renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult) {
+  const menu = renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "mobile" });
   if (currentScreen === "settings" || currentScreen === "privacy") {
     const title = currentScreen === "settings" ? "設定" : "プライバシー";
-    return `<header class="prototype-mobile-topbar prototype-mobile-topbar--context"><a href="#/more">‹ その他</a><strong>${escapeHtml(title)}</strong><span class="prototype-mobile-topbar__badge">PRE-RELEASE</span></header>`;
+    return `<header class="prototype-mobile-topbar prototype-mobile-topbar--context"><a href="#/more">‹ その他</a><strong>${escapeHtml(title)}</strong><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
   }
-  return `<header class="prototype-mobile-topbar"><a class="prototype-mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></a><span class="prototype-mobile-topbar__badge">PRE-RELEASE</span></header>`;
+  return `<header class="prototype-mobile-topbar"><a class="prototype-mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></a><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
 }
 
 export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {} }) {
   return `
     <div class="app-shell">
-      ${renderMobilePrototypeHeader(currentScreen)}
+      ${renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult)}
       <header class="app-header app-header--desktop">
         <a class="app-brand" href="#/home" aria-label="RunLoad ホーム">
           <span class="app-brand__mark" aria-hidden="true">RL</span>
           <span><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></span>
         </a>
         <div class="app-header__actions">
-          ${renderFeatureMenu({ currentScreen, currentLocation, hasResult })}
+          ${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}
         </div>
       </header>
 
