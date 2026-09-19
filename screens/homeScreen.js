@@ -1,14 +1,7 @@
-import { escapeHtml, renderFeatureLinks, renderPageHeading, renderStatusLabel } from "../ui/commonComponents.js";
-import {
-  SUBJECTIVE_STATUS_LABELS,
-  createNeutralResultSummary,
-  formatActivitySummary,
-  formatLocalDate,
-  formatNumber,
-  getEnteredBodyAreaObservations,
-} from "../ui/recordPresentation.js";
+import { escapeHtml } from "../ui/commonComponents.js";
+import { formatNumber } from "../ui/recordPresentation.js";
 
-function localToday() {
+function localTodayIso() {
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -16,103 +9,78 @@ function localToday() {
   return `${year}-${month}-${day}`;
 }
 
-function renderPrimaryAction(experience, draft) {
-  if (!experience) {
-    return `<section class="lead-action-card" aria-labelledby="home-primary-action-title"><div>${renderStatusLabel(draft ? "入力途中あり" : "はじめの一歩", "info")}<h2 id="home-primary-action-title">まずは今日の記録から</h2><p>基本5項目、または休養から。</p></div><div class="lead-action-card__actions"><a class="button button--primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a>${draft ? `<a class="button button--secondary" href="#/record-input?new=1">新しい記録を入力する</a>` : ""}</div></section>`;
-  }
-  const route = experience.supportDecision?.route || "normal";
-  const recordId = experience.record.id;
-  if (route === "urgent") {
-    return `<section class="lead-action-card lead-action-card--attention" aria-labelledby="home-primary-action-title"><div>${renderStatusLabel("公的な相談先を確認", "attention")}<h2 id="home-primary-action-title">身体の記録を確認し、必要なら公的な窓口へ</h2><p>RunLoadは緊急性を判定しません。入力した項目と公式の救急案内を分けて確認します。</p></div><div class="lead-action-card__actions"><a class="button button--primary" href="#/support-guidance?recordId=${encodeURIComponent(recordId)}">公的な相談先を確認する</a><a class="button button--secondary" href="#/consultation?recordId=${encodeURIComponent(recordId)}">相談用に整理する</a></div></section>`;
-  }
-  if (route === "consult") {
-    return `<section class="lead-action-card lead-action-card--attention" aria-labelledby="home-primary-action-title"><div>${renderStatusLabel("相談準備を優先", "attention")}<h2 id="home-primary-action-title">身体の記録を先に確認する</h2><p>数値表示による判定ではなく、身体の記録を整理して相談準備へ進みます。</p></div><a class="button button--primary" href="#/consultation?recordId=${encodeURIComponent(recordId)}">相談内容を開く</a></section>`;
-  }
-  const feedbackStatus = experience.feedback?.checkStatus || "not_asked";
-  if (["not_asked", "deferred"].includes(feedbackStatus)) {
-    return `<section class="lead-action-card" aria-labelledby="home-primary-action-title"><div>${renderStatusLabel("次に確認", "info")}<h2 id="home-primary-action-title">今回の身体記録</h2><p>身体記録なし／気になる部位／相談したい内容。</p></div><a class="button button--primary" href="#/record-input?recordId=${encodeURIComponent(recordId)}&focus=subjective">身体記録を確認する</a></section>`;
-  }
-  if (experience.record.date === localToday()) {
-    return `<section class="lead-action-card" aria-labelledby="home-primary-action-title"><div>${renderStatusLabel("今日の記録あり", "success")}<h2 id="home-primary-action-title">今日の結果</h2><p>記録した内容と目安を確認します。</p></div><a class="button button--primary" href="#/result?recordId=${encodeURIComponent(recordId)}">今日の結果を開く</a></section>`;
-  }
-  return `<section class="lead-action-card" aria-labelledby="home-primary-action-title"><div>${renderStatusLabel("今日の入口", "info")}<h2 id="home-primary-action-title">今日の記録</h2><p>走行または休養を残す。</p></div><a class="button button--primary" href="#/record-input">今日の記録を始める</a></section>`;
+function shortDate(dateText = "") {
+  const match = String(dateText).match(/^\d{4}-(\d{2})-(\d{2})$/);
+  if (!match) return dateText || "—";
+  return `${Number(match[1])}月${Number(match[2])}日`;
 }
 
-function renderBeginnerSteps() {
-  return `<section class="home-start-steps" aria-labelledby="home-start-steps-title"><div class="section-heading"><p>3つの基本ステップ</p><h2 id="home-start-steps-title">記録から振り返りまで</h2></div><ol><li><span>1</span><div><strong>記録する</strong><p>距離・実走時間を中心に、分かる条件だけ入力。</p></div></li><li><span>2</span><div><strong>結果を見る</strong><p>12部位のReference-100と疲労感の記録を確認します。</p></div></li><li><span>3</span><div><strong>結果を活用する</strong><p>理解・共有・予定から次の行動を選ぶ。</p></div></li></ol><div class="home-start-steps__links"><a class="text-link" href="#/activation">活用の入口を開く</a><a class="text-link" href="#/plan">次の予定を作る</a><a class="text-link" href="#/consultation">相談内容を整理する</a><a class="text-link" href="#/reading">読みものを開く</a></div></section>`;
+function paceLabel(record = {}) {
+  const distance = Number(record.distanceKm || 0);
+  const minutes = Number(record.durationMinutes || 0);
+  if (!(distance > 0) || !(minutes > 0)) return "—";
+  const seconds = Math.round((minutes * 60) / distance);
+  const mm = Math.floor(seconds / 60);
+  const ss = String(seconds % 60).padStart(2, "0");
+  return `${mm}:${ss}`;
+}
+
+function activityPill(record = {}) {
+  return record.activityType === "rest" ? "REST" : "RUN";
+}
+
+function carryText(experience) {
+  const text = String(experience?.record?.reflectionContext?.nextCheckPoint || "").trim();
+  return text || "今日の記録で、次に確認したいことを残せます";
+}
+
+function renderFocus(experience, draft) {
+  const record = experience?.record || null;
+  const hasCarry = Boolean(String(record?.reflectionContext?.nextCheckPoint || "").trim());
+  const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
+  const sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "今日の記録から次回へ引き継げます";
+  const resultLink = record?.id
+    ? `<a class="secondary" href="#/result?recordId=${encodeURIComponent(record.id)}">前回の結果</a>`
+    : `<a class="secondary" href="#/history">履歴</a>`;
+  return `<section class="focus"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${hasCarry ? "前回から引き継いだ内容" : "今日の入口"}</small><h2>次のランで確認したいこと</h2><p class="focus-text">${escapeHtml(carryText(experience))}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">次回へ引継ぎ</span></div><div class="focus-actions"><a class="primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a>${resultLink}</div></section>`;
 }
 
 function renderLatestRecord(experience) {
-  if (!experience) return "";
-  const exactAreas = getEnteredBodyAreaObservations(experience.feedback || {});
-  const subjective = exactAreas.length
-    ? `<p class="home-summary-card__meta">記録した部位：${exactAreas.slice(0, 3).map((item) => escapeHtml(item.label || "詳細部位")).join("、")}${exactAreas.length > 3 ? `ほか${exactAreas.length - 3}部位` : ""}</p>`
-    : `<p class="home-summary-card__meta">身体の記録：${escapeHtml(SUBJECTIVE_STATUS_LABELS[experience.feedback?.checkStatus] || "未確認")}</p>`;
-  return `<section class="home-summary-card" aria-labelledby="latest-record-title"><div class="home-summary-card__header"><div><p>最新の保存記録</p><h2 id="latest-record-title">最新の記録</h2></div><span>${escapeHtml(formatLocalDate(experience.record.date))}</span></div><div class="home-summary-card__body"><p class="home-summary-card__lead">${escapeHtml(formatActivitySummary(experience.record))}</p><p>${escapeHtml(createNeutralResultSummary(experience))}</p>${subjective}</div><a class="button button--secondary" href="#/result?recordId=${encodeURIComponent(experience.record.id)}">結果を開く</a></section>`;
-}
-
-function planPolicyLabel(plan = {}) {
-  if (plan.planType === "rest" || plan.plannedSession?.activityType === "rest") return "休養を予定する";
-  if (plan.sourceCandidateId === "lighter-session") return "保存済みの予定";
-  if (plan.sourceCandidateId === "same-conditions") return "同じ条件を基準にした予定";
-  if (plan.sourceCandidateId === "rest-day") return "休養を予定する";
-  if (plan.sourceCandidateId === "custom") return "自分で調整した予定";
-  return "保存済みの予定";
-}
-
-function nextPlanDetailItems(plan = {}) {
-  const planned = plan.plannedSession || {};
-  if (plan.planType === "rest" || planned.activityType === "rest") return ["休養予定"];
-  const items = [];
-  const distance = Number(planned.distanceKm || 0);
-  const duration = Number(planned.durationMinutes || 0);
-  const amount = [
-    distance > 0 ? `${formatNumber(distance, 2)}km` : "",
-    duration > 0 ? `${formatNumber(duration, 0)}分` : "",
-  ].filter(Boolean).join("・");
-  if (amount) items.push(amount);
-  const courseName = String(planned.course?.name || "").trim();
-  if (courseName) items.push(`コース：${courseName}`);
-  return items;
-}
-
-function renderNextPlan(services, latestExperience) {
-  const route = latestExperience?.supportDecision?.route || "normal";
-  if (["consult", "urgent"].includes(route)) return "";
-  const today = localToday();
-  const nextPlan = services.storage.plans.loadAll().find((plan) => plan.scheduledDate >= today);
-  if (!nextPlan) {
-    return `<section class="home-compact-card home-next-plan-card" aria-labelledby="home-next-plan-title"><div class="home-next-plan-card__content"><p>次の予定</p><h2 id="home-next-plan-title">次の予定はまだありません</h2><p>必要なときだけ、次の走り方や休養予定を考えます。</p><ul class="home-next-plan-card__notes"><li>今日の記録を残してから使えます</li><li>予定はあとで変更できます</li></ul></div><a class="button button--secondary" href="#/plan">次の予定を作る</a></section>`;
+  if (!experience?.record) {
+    return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>まだありません</strong></div><span class="pill">—</span></div><div class="plan"><small>最初の記録</small><strong>今日の走行または休養</strong><span>記録すると、ここから結果を開けます</span></div><a class="card-link" href="#/record-input"><span>記録を始める</span><span>›</span></a></article>`;
   }
-  const policy = planPolicyLabel(nextPlan);
-  const details = nextPlanDetailItems(nextPlan);
-  return `<section class="home-compact-card home-next-plan-card" aria-labelledby="home-next-plan-title"><div class="home-next-plan-card__content"><p>次の予定</p><h2 id="home-next-plan-title">${escapeHtml(formatLocalDate(nextPlan.scheduledDate))}</h2><p class="home-next-plan-card__policy">${escapeHtml(policy)}</p>${details.length ? `<ul class="home-next-plan-card__notes">${details.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}</ul>` : ""}</div><a class="button button--secondary" href="#/plan?planId=${encodeURIComponent(nextPlan.id)}">予定を開く</a></section>`;
+  const record = experience.record;
+  if (record.activityType === "rest") {
+    return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">REST</span></div><div class="plan"><small>保存した内容</small><strong>休養</strong><span>走行による12部位結果は作成しません</span></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>記録を開く</span><span>›</span></a></article>`;
+  }
+  return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実走時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を開く</span><span>›</span></a></article>`;
 }
 
+function nextPlan(services) {
+  const today = localTodayIso();
+  return services.storage.plans.loadAll().filter((plan) => String(plan.scheduledDate || "") >= today).sort((a,b) => String(a.scheduledDate).localeCompare(String(b.scheduledDate)))[0] || null;
+}
+
+function renderPlanCard(services) {
+  const plan = nextPlan(services);
+  if (!plan) {
+    return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>未設定</strong></div><span class="pill">—</span></div><div class="plan"><small>予定している内容</small><strong>まだありません</strong><span>必要なときに作成できます</span></div><a class="card-link" href="#/plan"><span>予定を作る</span><span>›</span></a></article>`;
+  }
+  const planned = plan.plannedSession || {};
+  const rest = plan.planType === "rest" || planned.activityType === "rest";
+  const main = rest ? "休養" : (Number(planned.distanceKm) > 0 ? `${formatNumber(planned.distanceKm, 2)} km` : "走行予定");
+  const details = rest ? "内容はあとで変更できます" : [planned.course?.name, Number(planned.durationMinutes) > 0 ? `${formatNumber(planned.durationMinutes,0)}分` : ""].filter(Boolean).join("・") || "内容はあとで変更できます";
+  return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong></div><span class="pill">保存済み</span></div><div class="plan"><small>予定している内容</small><strong>${escapeHtml(main)}</strong><span>${escapeHtml(details)}</span></div><a class="card-link" href="#/plan?planId=${encodeURIComponent(plan.id)}"><span>予定を開く</span><span>›</span></a></article>`;
+}
 
 export function renderHomeScreen({ services }) {
   const latestExperience = services.workflows.records.loadLatestExperience();
   const draft = services.storage.draft.load();
-  const supportRoute = latestExperience?.supportDecision?.route || "normal";
-  const supportLinks = [
-    { number: "01", screen: "history", title: "履歴", description: "保存した記録と比べられる推移を見る" },
-    { number: "02", screen: "activation", title: "結果の活用", description: "比較・相談・予定・読みものへ進む" },
-    { number: "03", screen: "consultation", title: "相談", description: "相手に見せる内容を整理する" },
-  ];
-  if (["consult", "urgent"].includes(supportRoute)) {
-    supportLinks.unshift(supportLinks.pop());
-  }
-  return `<section class="screen screen--home">
-    ${renderPageHeading({
-      eyebrow: "今日の入口",
-      title: latestExperience ? "今日することから始める" : "まずは今日の記録から",
-      description: latestExperience
-        ? "最初に一つの行動を示し、記録・予定・振り返りは必要なときに開きます。"
-        : "基本項目または休養を記録すると、結果と振り返りへ進めます。",
-    })}
-    ${renderPrimaryAction(latestExperience, draft)}
-    ${latestExperience ? "" : renderBeginnerSteps()}
-    ${latestExperience ? `<section class="content-section home-current-state" aria-labelledby="home-current-state-title"><div class="section-heading"><p>現在の記録</p><h2 id="home-current-state-title">最近の記録と次の予定</h2><p>今回の結果と、保存済みの予定を別々に確認します。</p></div><div class="home-two-column">${renderLatestRecord(latestExperience)}${renderNextPlan(services, latestExperience)}</div></section>` : ""}
-    <section class="content-section home-support-links" aria-labelledby="home-support-links-title"><div class="section-heading"><p>補助機能</p><h2 id="home-support-links-title">必要なときに開く</h2><p>履歴・結果の活用・相談を、必要なときに開きます。</p></div>${renderFeatureLinks(supportLinks)}</section>
-  </section>`;
+  const today = shortDate(localTodayIso());
+  return `<div class="screen screen--home prototype-parity prototype-parity--home">
+    <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div><span class="date-badge">${escapeHtml(today)}</span></section>
+    ${renderFocus(latestExperience, draft)}
+    <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div><a href="#/history">履歴を見る</a></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
+    <section class="section"><div class="section-head"><div><small>WHEN NEEDED</small><h2>必要なときに開く</h2></div></div><div class="support support--two"><a href="#/history"><span aria-hidden="true">▤</span><div><strong>履歴</strong><small>過去の記録と推移</small></div></a><a href="#/activation"><span aria-hidden="true">◇</span><div><strong>結果の活用</strong><small>振り返る・相談する・次を考える</small></div></a></div></section>
+  </div>`;
 }

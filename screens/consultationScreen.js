@@ -1,6 +1,7 @@
 import { escapeHtml, renderPageHeading, renderStatusLabel } from "../ui/commonComponents.js";
 import { SAFETY_FLAG_LABELS, formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
 import { registerConsultationDraft } from "../ui/consultationDraftState.js";
+import { bodyRegionFormalName } from "../core/runloadCore.js";
 import {
   buildReportPresentation,
   createPlanShareMemo,
@@ -230,6 +231,81 @@ function renderReportPage({ services, experience, format, regionId }) {
   </section>`;
 }
 
+
+function prototypeConsultationFacts(experience) {
+  const record = experience?.record || {};
+  if (!record.id) return "記録なし";
+  const parts = [];
+  if (Number(record.distanceKm) > 0) parts.push(`${formatNumber(record.distanceKm, 2)} km`);
+  if (Number(record.durationMinutes) > 0) parts.push(`${formatNumber(record.durationMinutes, 0)}分`);
+  if (record.course?.name) parts.push(record.course.name);
+  return parts.join("・") || formatActivitySummary(record);
+}
+
+function prototypeConsultationRofLine(services, experience) {
+  const record = experience?.record || {};
+  if (!record.id || record.activityType !== "run" || !services?.secondPillar) return "疲労感：未記録";
+  const summary = services.secondPillar.summarizeRun(record.id);
+  const pre = Number.isFinite(Number(summary?.pre)) ? Number(summary.pre) : null;
+  const post = Number.isFinite(Number(summary?.post)) ? Number(summary.post) : null;
+  if (pre == null && post == null) return "疲労感：未記録";
+  return `走る前の疲労感 ${pre == null ? "未記録" : pre} → 走った後 ${post == null ? "未記録" : post}`;
+}
+
+function prototypeNextCheck(experience) {
+  const reflection = experience?.record?.reflectionContext || {};
+  return reflection.nextCheckPoint || reflection.nextCheck || experience?.feedback?.nextCheckPoint || "未記録";
+}
+
+function prototypeRegionalSummary(presentation) {
+  const regional = presentation?.report?.modelReference?.regional || {};
+  const regionName = bodyRegionFormalName(regional.regionId, regional.regionLabel || "選択した部位");
+  const value = regional.value !== null && regional.value !== "" && Number.isFinite(Number(regional.value))
+    ? formatNumber(regional.value, 1)
+    : "数値なし";
+  return `${regionName} ${value}`;
+}
+
+function renderPrototypeConsultation({ services, experience, regionId = "" }) {
+  if (!experience?.record) {
+    return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation"><section class="head"><p class="eyebrow">CONSULTATION</p><h1>相談用にまとめる</h1><p>保存した記録があると、見せる情報を整理できます。</p></section><section class="panel"><div class="panel-head"><div><small>RECORD</small><strong>対象の記録がありません</strong></div></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div>`;
+  }
+  const record = experience.record;
+  const presentation = buildReportPresentation({ services, experience, regionId });
+  const regional = presentation.report.modelReference?.regional || {};
+  const facts = prototypeConsultationFacts(experience);
+  const rof = prototypeConsultationRofLine(services, experience);
+  const next = prototypeNextCheck(experience);
+  const resultLine = prototypeRegionalSummary(presentation);
+  const shortLines = [
+    `今回の走行事実：${facts}`,
+    `身体の記録：${rof}`,
+    `今回の部位結果：${resultLine}（この部位自身の固定基準100との比較）`,
+    `次に確認したいこと：${next}`,
+  ];
+  const shortMemo = shortLines.join("\n");
+  const exposure = regional.exposure || {};
+  const distance = Number(record.distanceKm) > 0 ? `${formatNumber(record.distanceKm, 2)} km` : (Number(exposure.qEquivalent) > 0 ? `${formatNumber(exposure.qEquivalent, 2)} km` : "未記録");
+  const courseName = record.course?.name || "コース未設定";
+  const pace = Number(record.distanceKm) > 0 && Number(record.durationMinutes) > 0
+    ? `${Math.floor((Number(record.durationMinutes) * 60 / Number(record.distanceKm)) / 60)}:${String(Math.round(Number(record.durationMinutes) * 60 / Number(record.distanceKm)) % 60).padStart(2, "0")} /km`
+    : "平均ペース未記録";
+  return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation" data-prototype-consultation>
+    <section class="head"><p class="eyebrow">CONSULTATION</p><h1>相談用にまとめる</h1><p>保存した内容から、見せる情報だけを自分で選びます。</p></section>
+    <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果へ戻る</a></section>
+    <section class="section"><div class="section-head"><small>QUESTION</small><h2>何を相談したいですか</h2><p>相談相手や確認したいことは、この画面だけで扱います。</p></div><label class="field"><span>相談相手・任意</span><input id="consultation-target" type="text" maxlength="80" placeholder="例：医療機関、指導者、家族"></label><label class="field"><span>相談したいこと・任意</span><textarea id="consultation-question" maxlength="400" placeholder="例：今回の身体の記録について確認したい"></textarea></label></section>
+    <section class="section"><div class="section-head"><small>FORMAT</small><h2>見せ方を選ぶ</h2><p>短く見せるか、文書としてまとめるかを選びます。</p></div><div class="share-grid"><button class="route primary" type="button" data-consult-open="short"><span class="icon">短</span><span><small>QUICK SHARE</small><strong>短く見せる</strong><span>画面を見せる・短文をコピーする</span></span><i>›</i></button><button class="route" type="button" data-consult-open="report"><span class="icon">文</span><span><small>REPORT</small><strong>文書でまとめる</strong><span>項目を分けた相談用資料を作る</span></span><i>›</i></button></div></section>
+    <section id="shortPanel" class="panel" data-consult-panel="short"><div class="panel-head"><div><small>SHORT SHARE</small><strong>短く見せる内容</strong></div><span class="status">自動送信しません</span></div><div class="select-list">
+      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[0])}" checked><span><strong>今回の走行事実</strong><span>距離・時間・コース</span></span></label>
+      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[1])}" checked><span><strong>身体の記録</strong><span>本人が記録した疲労感・気づき</span></span></label>
+      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[2])}" checked><span><strong>今回の部位結果</strong><span>選択した部位のReference-100</span></span></label>
+      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[3])}" checked><span><strong>次に確認したいこと</strong><span>本人が残した確認点</span></span></label>
+    </div><div id="shortMemo" class="memo" data-consult-short-memo>${escapeHtml(shortMemo)}</div><textarea id="consultation-report-text" class="visually-hidden" readonly>${escapeHtml(shortMemo)}</textarea><div class="actions"><button class="primary" type="button" data-action="copy-consultation-report">短文をコピー</button></div></section>
+    <section id="reportPanel" class="panel" data-consult-panel="report" hidden><div class="panel-head"><div><small>REPORT</small><strong>文書でまとめる内容</strong></div><span class="status">印刷・PDF向け</span></div><article class="report" id="reportSheet"><header><small>RUNLOAD CONSULTATION</small><strong>相談用メモ</strong><span>${escapeHtml(formatLocalDate(record.date))}の記録</span></header><section><small>01 / 相談したいこと</small><strong id="reportQuestion">未入力</strong><p id="reportTarget">相談相手：未入力</p></section><section><small>02 / 今回の走り</small><strong>${escapeHtml(facts)}</strong><p>${escapeHtml(pace)}</p></section><section><small>03 / 身体の記録</small><strong>${escapeHtml(rof)}</strong><p>次に確認したいこと：${escapeHtml(next)}</p></section><section><small>04 / 部位の目安</small><strong>${escapeHtml(resultLine)}</strong><p>この部位自身の固定基準100との比較。別部位との順位付けではありません。</p></section><section><small>05 / 走行距離</small><strong>${escapeHtml(distance)}</strong><p>走行距離は部位の数値へ掛けず、別の走行事実として扱います。</p></section></article><div class="actions"><button class="primary" type="button" data-action="print-consultation-report">印刷・PDF</button></div></section>
+    <p class="boundary">RunLoadの数値は診断・安全性・けがリスクの判定ではありません。共有する相手と内容は本人が選びます。</p><a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}"><span><small>症状や体調について相談先を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
+  </div>`;
+}
+
 export function renderConsultationScreen({ services, context }) {
   const requestedRecordId = context.parameters.get("recordId") || "";
   const requestedPlanId = context.parameters.get("planId") || "";
@@ -271,5 +347,5 @@ export function renderConsultationScreen({ services, context }) {
     purpose,
     a4RegionId,
   });
-  return renderConsultationHub({ experience, plan });
+  return renderPrototypeConsultation({ services, experience, regionId });
 }

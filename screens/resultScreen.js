@@ -1,231 +1,145 @@
-import {
-  escapeHtml,
-  renderPageHeading,
-  renderScreenGuide,
-  renderStatusLabel,
-} from "../ui/commonComponents.js";
-import {
-  SAFETY_FLAG_LABELS,
-  SUBJECTIVE_STATUS_LABELS,
-  formatActivitySummary,
-  formatLocalDate,
-  formatNumber,
-} from "../ui/recordPresentation.js";
-import { personalContextDisplayItems } from "../ui/personalContextPresentation.js";
+import { escapeHtml } from "../ui/commonComponents.js";
+import { formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
 import { courseSummaryText } from "../ui/coursePresentation.js";
-import { normalizeJournalSettings } from "../ui/appSettings.js";
-import { renderBodyRegionResultCard } from "../ui/bodyRegionResultPresentation.js";
-import { PRIMARY_REGIONAL_V2_MODEL_VERSION } from "../core/runloadCore.js";
-import { renderResultWorkspaceNavigation } from "../ui/screenArchitecture.js";
-import { bodyAreaLateralityLabel } from "../core/runloadCore.js";
+import {
+  bodyRegionFormalName,
+  PRIMARY_REGIONAL_V2_MODEL_VERSION,
+  PRIMARY_REGIONAL_V2_REGION_DEFS,
+} from "../core/runloadCore.js";
 import { officialRofJDescriptor } from "../core/secondPillarRofJ.js";
 
-function runningFormatLabel(value) {
-  return {
-    CONTINUOUS_RUN: "途中で歩かず走った",
-    RUN_WALK: "走りと歩きを混ぜた",
-    UNKNOWN: "未設定",
-  }[String(value || "UNKNOWN")] || "未設定";
+const FRONT = '<circle cx="150" cy="36" r="20"></circle><path d="M110 78 C120 66 135 60 150 60 C165 60 180 66 190 78 L204 126 C208 138 204 150 196 160 L182 176 L188 212 C192 228 190 246 184 262 L172 308 C168 324 166 340 166 356 L166 400 C166 410 158 418 148 418 C138 418 130 410 130 400 L130 356 C130 340 128 324 124 308 L112 262 C106 246 104 228 108 212 L114 176 L100 160 C92 150 88 138 92 126 Z"></path>';
+const BACK = '<circle cx="150" cy="36" r="20"></circle><path d="M112 76 C122 66 136 60 150 60 C164 60 178 66 188 76 L202 124 C206 136 202 150 194 160 L182 174 L188 212 C192 228 190 244 184 262 L172 310 C168 326 166 342 166 358 L166 402 C166 412 158 420 148 420 C138 420 130 412 130 402 L130 358 C130 342 128 326 124 310 L112 262 C106 244 104 228 108 212 L114 174 L102 160 C94 150 90 136 94 124 Z"></path>';
+const FOOT = '<path d="M114 78 C126 66 140 60 154 60 C172 60 186 72 194 92 C198 102 200 116 200 132 L200 238 C200 274 186 306 160 320 C150 326 140 326 130 320 C108 306 96 274 96 238 L96 132 C96 112 102 90 114 78 Z"></path>';
+const VIEWS = Object.freeze([
+  Object.freeze({ key: "front", title: "前面", silhouette: FRONT, paths: Object.freeze([
+    ["BA-DISP-014", "M120 142 C130 132 140 128 150 128 C160 128 170 132 180 142 L178 178 C168 184 160 188 150 188 C140 188 132 184 122 178 Z"],
+    ["BA-DISP-016", "M122 190 C132 198 141 202 150 202 C159 202 168 198 178 190 L174 266 C164 274 158 278 150 278 C142 278 136 274 126 266 Z"],
+    ["BA-DISP-019", "M126 270 C136 278 142 281 150 281 C158 281 164 278 174 270 L170 300 C162 306 157 309 150 309 C143 309 138 306 130 300 Z"],
+    ["BA-DISP-021", "M130 306 C138 314 144 318 150 318 C156 318 162 314 170 306 L166 382 C160 390 156 394 150 394 C144 394 140 390 134 382 Z"],
+    ["BA-DISP-024", "M135 386 L165 386 L166 416 L134 416 Z"],
+  ]) }),
+  Object.freeze({ key: "back", title: "後面", silhouette: BACK, paths: Object.freeze([
+    ["BA-DISP-015", "M120 138 C130 150 139 158 150 158 C161 158 170 150 180 138 L180 190 C170 200 160 205 150 205 C140 205 130 200 120 190 Z"],
+    ["BA-DISP-018", "M122 196 C132 204 141 209 150 209 C159 209 168 204 178 196 L174 274 C164 282 158 286 150 286 C142 286 136 282 126 274 Z"],
+    ["BA-DISP-023", "M128 288 C136 298 143 302 150 302 C157 302 164 298 172 288 L166 368 C160 378 156 383 150 383 C144 383 140 378 134 368 Z"],
+    ["BA-DISP-025", "M142 370 C146 378 148 382 150 382 C152 382 154 378 158 370 L158 416 H142 Z"],
+  ]) }),
+  Object.freeze({ key: "sole", title: "足裏", silhouette: FOOT, paths: Object.freeze([
+    ["BA-DISP-029", "M112 92 C124 84 138 80 154 80 C174 80 188 94 190 120 L190 164 C174 170 158 172 140 168 C126 165 114 158 106 148 L106 120 C107 108 109 99 112 92 Z"],
+    ["BA-DISP-028", "M106 154 C120 166 136 172 154 172 C170 172 182 168 190 164 L190 252 C176 260 162 264 148 262 C130 260 116 252 104 240 L104 176 Z"],
+    ["BA-DISP-027", "M104 240 C118 254 132 262 148 264 C164 266 178 260 190 252 C186 282 174 304 158 314 C148 320 138 318 128 312 C112 300 104 274 104 240 Z"],
+  ]) }),
+]);
+
+function finite(value) { return value !== null && value !== "" && Number.isFinite(Number(value)); }
+function fmt(value, digits = 1) { return finite(value) ? Number(value).toFixed(digits).replace(/\.0$/, "") : "—"; }
+function signed(value, digits = 1) { if (!finite(value)) return "—"; const n = Number(value); return `${n > 0 ? "+" : ""}${fmt(n, digits)}`; }
+function direction(value) { if (!finite(value)) return "unavailable"; const delta = Number(value) - 100; return Math.abs(delta) < 1 ? "reference" : delta > 0 ? "above" : "below"; }
+function position(value) { if (!finite(value) || Number(value) <= 0) return 50; return Math.max(4, Math.min(96, 50 + Math.log2(Number(value) / 100) * 20)); }
+function modelCurrent(resultRecord = null) { return resultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION; }
+function signatureFor(record = {}, regionId = "") { return record?.comparison_signatures?.[regionId] || null; }
+function signaturesComparable(a, b) { return Boolean(a && b && a.modelVersion === b.modelVersion && a.outputSemanticVersion === b.outputSemanticVersion && a.regionId === b.regionId && a.constructId === b.constructId && a.referenceId === b.referenceId); }
+function formatPace(record = {}) { const distance = Number(record.distanceKm); const duration = Number(record.durationMinutes); if (!(distance > 0) || !(duration > 0)) return "—"; const seconds = Math.round(duration * 60 / distance); return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; }
+function runFormatLabel(record = {}) { return String(record.runningFormat || "").toUpperCase() === "RUN_WALK" ? "RUN/WALK" : "RUN"; }
+function regionRows(resultRecord = null) { const rows = resultRecord?.result?.regions || []; const byId = new Map(rows.map((row) => [row.regionId, row])); return PRIMARY_REGIONAL_V2_REGION_DEFS.map((def) => byId.get(def.displayId) || { regionId: def.displayId, regionName: def.name, value: null }); }
+
+function latestComparablePrevious(resultRecord, experiences, regionId) {
+  const signature = signatureFor(resultRecord, regionId);
+  if (!signature) return null;
+  const currentExperience = experiences.find((item) => item.regionalV2ResultRecord?.id === resultRecord?.id);
+  const currentDate = String(currentExperience?.record?.date || "");
+  return experiences
+    .filter((item) => modelCurrent(item.regionalV2ResultRecord) && item.regionalV2ResultRecord?.id !== resultRecord?.id)
+    .filter((item) => !currentDate || String(item.record?.date || "") < currentDate)
+    .map((item) => ({ experience: item, row: item.regionalV2Result?.regions?.find((candidate) => candidate.regionId === regionId), signature: signatureFor(item.regionalV2ResultRecord, regionId) }))
+    .filter((item) => item.row && signaturesComparable(signature, item.signature) && finite(item.row.value))
+    .sort((a, b) => String(b.experience.record?.date || "").localeCompare(String(a.experience.record?.date || "")))[0] || null;
 }
 
-function stepsSourceLabel(value) {
-  return {
-    DEVICE_MEASURED: "端末・時計で計測",
-    DEVICE_SYNCED: "端末連携",
-    ESTIMATED: "手入力・おおよそ",
-    UNKNOWN: "未設定",
-  }[String(value || "UNKNOWN")] || "未設定";
+function rowInfo(resultRecord, experiences, row, index) {
+  const previous = latestComparablePrevious(resultRecord, experiences, row.regionId);
+  const prev = previous?.row?.value;
+  const delta = finite(row.value) && finite(prev) ? Number(row.value) - Number(prev) : null;
+  const conditionUp = finite(row.value) && Number(row.value) - 100 >= 1;
+  const previousUp = finite(delta) && delta >= 1;
+  return Object.freeze({ row, index, previous, prev, delta, focus: conditionUp || previousUp, focusPriority: conditionUp && previousUp ? 1 : conditionUp ? 2 : 3 });
 }
 
-
-function regionalModelSpeedMps(record = {}) {
-  const runWalk = String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK";
-  const distanceKm = Number(runWalk ? record.runWalkRunningDistanceKm : record.distanceKm);
-  const durationMinutes = Number(runWalk ? record.runWalkRunningDurationMinutes : record.durationMinutes);
-  return distanceKm > 0 && durationMinutes > 0 ? distanceKm * 1000 / (durationMinutes * 60) : null;
-}
-
-function renderModelFamilyBoundary(record = {}, regionalV2ResultRecord = null) {
-  const notes = [];
-  if (String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK") notes.push("走りと歩きを混ぜた記録では、12部位の目安は走った区間だけを使います。歩いた区間は含めません。");
-  if (regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION) {
-    notes.push("部位ごとに目安を出せる条件が異なります。分からない条件は0にせず、確認できる条件だけを反映します。");
-    if (regionalV2ResultRecord?.result?.combinedConditionState === "AXES_PRESERVED_NOT_COMBINED") notes.push("複数の条件を一緒に確認できない場合は、別々の目安として表示します。");
+function locatorSvg(regionId) {
+  for (const view of VIEWS) {
+    const match = view.paths.find(([id]) => id === regionId);
+    if (!match) continue;
+    return `<svg viewBox="70 10 160 430" aria-hidden="true"><g class="mini-silhouette">${view.silhouette}</g><path class="mini-region" d="${match[1]}"></path></svg>`;
   }
-  return `<aside class="safety-notice model-family-boundary" aria-label="表示の読み方"><p><strong>12部位の目安は、各部位自身の基準条件を100としたReference-100です。</strong> 距離そのものを数値へ掛けません。100は安全・正常・平均・おすすめを示す数値ではありません。別の部位どうしは比べません。</p>${notes.map((note) => `<p>${escapeHtml(note)}</p>`).join("")}</aside>`;
+  return "";
 }
 
-function signedNumber(value) {
-  if (!Number.isFinite(Number(value))) return "—";
-  const n = Number(value);
-  return `${n > 0 ? "+" : ""}${formatNumber(n, 0)}`;
+function bodyMap(resultRecord, infos) {
+  const byId = new Map(infos.map((info) => [info.row.regionId, info]));
+  return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430" aria-label="${view.title}の部位図"><defs><pattern id="hatch-${view.key}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="currentColor" opacity=".08"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern></defs><g class="body-silhouette">${view.silhouette}</g>${view.paths.map(([id, d]) => {
+    const info = byId.get(id); const value = info?.row?.value; const name = bodyRegionFormalName(id, info?.row?.regionName || id); const state = direction(value);
+    const label = `${name}：${finite(value) ? `今回の目安 ${fmt(value, 1)}` : "今回の目安は数値なし"}`;
+    return `<a class="region-link" href="#/body-part-detail?recordId=${encodeURIComponent(resultRecord?.record_id || "")}&regionId=${encodeURIComponent(id)}" aria-label="${escapeHtml(`${label}。詳細を開く`)}"><path class="region-path" data-direction="${state}" data-region-id="${escapeHtml(id)}"${state === "unavailable" ? ` style="fill:url(#hatch-${view.key})"` : ""} d="${d}"><title>${escapeHtml(label)}</title></path></a>`;
+  }).join("")}</svg></figure>`).join("");
 }
 
-function renderRofJPosition(value) {
-  if (value === null || value === undefined || value === "" || !Number.isFinite(Number(value))) return "未記録";
-  const descriptor = officialRofJDescriptor(Number(value));
-  return `${formatNumber(Number(value), 0)} / 10${descriptor ? ` — ${escapeHtml(descriptor)}` : ""}`;
+function regionRow(resultRecord, info) {
+  const row = info.row; const name = bodyRegionFormalName(row.regionId, row.regionName || row.regionId);
+  return `<a class="region-row" href="#/body-part-detail?recordId=${encodeURIComponent(resultRecord?.record_id || "")}&regionId=${encodeURIComponent(row.regionId)}"><span class="locator">${locatorSvg(row.regionId)}</span><span class="region-copy"><strong>${escapeHtml(name)}</strong><small>${info.previous ? `${escapeHtml(formatLocalDate(info.previous.experience.record.date))}・前回 ${fmt(info.prev, 1)}` : "前回比較なし"}</small></span><span class="region-metric"><strong>${fmt(row.value, 1)}</strong><small>${finite(info.delta) ? `前回差 ${signed(info.delta, 1)}` : "比較なし"}</small></span>${finite(row.value) ? `<span class="region-scale"><i style="--pos:${position(row.value)}%"></i></span>` : ""}</a>`;
 }
 
-function renderSecondPillarResultCard(services, record = {}) {
-  if (record.activityType !== "run" || !services?.secondPillar) return "";
-  const summary = services.secondPillar.summarizeRun(record.id);
-  if (!summary?.available) {
-    return `<section class="result-card result-card--second-pillar frozen-fatigue-card" data-information-role="second-pillar" aria-labelledby="second-pillar-title"><div class="result-card__heading"><div><p>TIME CHANGE / ROF-J</p><h2 id="second-pillar-title">疲労感の変化から見る</h2></div>${renderStatusLabel("未記録", "neutral")}</div><p>今回はROF-Jを記録していません。12部位のReference-100とは別の任意記録です。</p></section>`;
+function regionList(resultRecord, infos, mode) {
+  const sortedFocus = infos.filter((item) => item.focus).sort((a, b) => a.focusPriority - b.focusPriority || a.index - b.index);
+  const rows = mode === "focus" ? sortedFocus : infos;
+  const summary = mode === "focus" ? `<div class="focus-summary"><strong>基準または前回より上 ${sortedFocus.length}件</strong><br>絞り込み表示であり、危険度や重要度を示すものではありません。</div>` : "";
+  if (!rows.length) return `${summary}<div class="focus-summary">この条件に当てはまる部位はありません。全12部位で確認できます。</div>`;
+  return `${summary}${rows.map((item) => regionRow(resultRecord, item)).join("")}`;
+}
+
+function renderRunSummary(record = {}) {
+  if (record.activityType === "rest") return `<div class="run-summary" aria-label="今回の記録"><div><strong>休養</strong><span></span><small>記録</small></div></div>`;
+  return `<div class="run-summary" aria-label="今回の走行概要"><div><strong>${escapeHtml(fmt(record.distanceKm, 2))}</strong><span>km</span><small>距離</small></div><i></i><div><strong>${escapeHtml(fmt(record.durationMinutes, 1))}</strong><span>分</span><small>走行時間</small></div><i></i><div><strong>${escapeHtml(formatPace(record))}</strong><span>/km</span><small>平均ペース</small></div></div>`;
+}
+
+function renderFacts(record = {}) {
+  const course = record.course || {};
+  return `<details class="facts-details"><summary><span>算出に使った走行事実</span><i>⌄</i></summary><div class="facts-grid"><div><span>平均ペース</span><strong>${escapeHtml(formatPace(record))} / km</strong></div><div><span>走行形式</span><strong>${escapeHtml(runFormatLabel(record))}</strong></div><div><span>コース</span><strong>${escapeHtml(course.name || "未設定")}</strong></div><div><span>条件</span><strong>${escapeHtml(courseSummaryText(course))}</strong></div></div></details>`;
+}
+
+function renderFatigue(services, record = {}) {
+  const summary = record.activityType === "run" && services?.secondPillar ? services.secondPillar.summarizeRun(record.id) : null;
+  const pre = summary?.available && finite(summary.pre) ? Number(summary.pre) : null;
+  const post = summary?.available && finite(summary.post) ? Number(summary.post) : null;
+  const delta = finite(pre) && finite(post) ? post - pre : null;
+  const prePos = finite(pre) ? Number(pre) * 10 : 0;
+  const postPos = finite(post) ? Number(post) * 10 : 0;
+  const rofLabel = (value) => {
+    if (!finite(value)) return "未記録";
+    const descriptor = officialRofJDescriptor(Number(value));
+    return `${fmt(value, 0)} / 10${descriptor ? ` — ${descriptor}` : ""}`;
+  };
+  const preLabel = finite(pre) ? fmt(pre, 0) : "—";
+  const postLabel = finite(post) ? fmt(post, 0) : "—";
+  const descriptor = finite(post) ? officialRofJDescriptor(post) : "";
+  const deltaLabel = finite(delta) ? signed(delta, 0) : "—";
+  return `<section class="fatigue-section"><div class="section-heading"><span class="section-index">02</span><div><small>TIME CHANGE / ROF-J</small><h2>疲労感の変化から見る</h2></div></div><div class="fatigue-card"><div class="fatigue-values"><div><small>走る前</small><strong>${preLabel}</strong></div><div class="delta"><span></span><strong>${deltaLabel}</strong><small>前後差</small></div><div class="post"><small>走った後</small><strong>${postLabel}</strong></div></div><div class="fatigue-track">${finite(pre) && finite(post) ? `<i class="fatigue-range" style="--pre:${prePos}%;--post:${postPos}%"></i><b class="pre" style="left:${prePos}%"><em>前</em></b><b class="post-point" style="left:${postPos}%"><em>後</em></b>` : ""}</div><div class="fatigue-axis"><span>0</span><span>5</span><span>10</span></div>${descriptor ? `<p class="candidate-note">走った後：${escapeHtml(descriptor)}</p>` : ""}</div><dl class="visually-hidden"><div><dt>走る前</dt><dd>${escapeHtml(rofLabel(pre))}</dd></div><div><dt>走った後</dt><dd>${escapeHtml(rofLabel(post))}</dd></div><div><dt>POST − PRE</dt><dd>${escapeHtml(deltaLabel)}</dd></div></dl><p class="compact-boundary">ROF-Jはその時点の主観的な疲労感です。12部位のReference-100とは別の情報です。前後差は良し悪しへ置き換えません。回復度、準備状態、傷害リスク、安全性を判定する数値ではありません。</p></section>`;
+}
+
+function renderRegional(resultRecord, allExperiences, record) {
+  if (!modelCurrent(resultRecord) || record.activityType !== "run") {
+    return `<section class="regional-section" data-primary-regional-card><div class="section-heading"><span class="section-index">01</span><div><small>BODY REGION / REFERENCE-100</small><h2>身体の部位から見る</h2></div></div><div class="regional-shell"><div class="regional-topline"><p>12部位のReference-100</p><span>表示なし</span></div><p class="map-note">この記録には12部位の数値を表示できません。数値なしを0として扱いません。</p></div></section>`;
   }
-  return `<section class="result-card result-card--second-pillar frozen-fatigue-card" data-information-role="second-pillar" aria-labelledby="second-pillar-title"><div class="result-card__heading"><div><p>TIME CHANGE / ROF-J</p><h2 id="second-pillar-title">疲労感の変化から見る</h2></div>${renderStatusLabel("ROF-J", "info")}</div><p class="source-boundary">ROF-Jはその時点の主観的な疲労感です。12部位のReference-100とは別の情報で、回復度、準備状態、傷害リスク、安全性を判定する数値ではありません。</p><dl class="frozen-fatigue-values"><div><dt>走る前</dt><dd>${renderRofJPosition(summary.pre)}</dd></div><div><dt>前後差</dt><dd>${Number.isFinite(summary.delta) ? escapeHtml(signedNumber(summary.delta)) : "—"}</dd><small>POST − PRE</small></div><div><dt>走った後</dt><dd>${renderRofJPosition(summary.post)}</dd></div></dl><p class="muted-text">値の高低や前後差を良し悪しへ置き換えません。</p></section>`;
-}
-
-function formatPace(record = {}) {
-  const distance = Number(record.distanceKm);
-  const duration = Number(record.durationMinutes);
-  if (!(distance > 0) || !(duration > 0)) return "—";
-  const seconds = Math.round((duration * 60) / distance);
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-}
-
-function renderFrozenRunSummary(record = {}) {
-  if (record.activityType === "rest") return `<section class="frozen-run-summary frozen-run-summary--rest"><strong>休養日</strong><span>${escapeHtml(formatLocalDate(record.date))}</span></section>`;
-  return `<section class="frozen-run-summary" aria-label="今回の走行概要"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))}</strong><span>km</span><small>距離</small></div><i></i><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 1))}</strong><span>分</span><small>実走時間</small></div><i></i><div><strong>${escapeHtml(formatPace(record))}</strong><span>/km</span><small>平均ペース</small></div></section>`;
-}
-
-function renderRecordFacts(record = {}) {
-  return `<dl class="fact-grid">
-    <div><dt>日付</dt><dd>${escapeHtml(formatLocalDate(record.date))}</dd></div>
-    <div><dt>種類</dt><dd>${record.activityType === "rest" ? "休養" : "走行"}</dd></div>
-    <div><dt>記録内容</dt><dd>${escapeHtml(formatActivitySummary(record))}</dd></div>
-    ${record.activityType === "run" ? `<div><dt>走行形式</dt><dd>${escapeHtml(runningFormatLabel(record.runningFormat))}</dd></div><div><dt>歩数の取得元</dt><dd>${escapeHtml(stepsSourceLabel(record.stepsProvenance))}</dd></div>` : ""}
-    <div class="fact-grid__wide"><dt>コース条件</dt><dd>${escapeHtml(courseSummaryText(record.course || {}))}</dd></div>
-    ${record.memo ? `<div class="fact-grid__wide"><dt>メモ</dt><dd>${escapeHtml(record.memo).replaceAll("\n", "<br>")}</dd></div>` : ""}
-  </dl>`;
-}
-
-function renderRecordFactsCard(record = {}) {
-  return `<section class="result-card" data-information-role="fact" aria-labelledby="record-facts-title"><div class="result-card__heading"><div><p>保存した事実</p><h2 id="record-facts-title">今回の記録</h2></div>${renderStatusLabel(record.activityType === "rest" ? "休養" : "走行", "neutral")}</div>${renderRecordFacts(record)}</section>`;
-}
-
-function renderPersonalContext(record = {}) {
-  const items = personalContextDisplayItems(record.personalContext || {});
-  if (!items.length) return "";
-  return `<section class="result-card result-card--personal-context" data-information-role="personal" aria-labelledby="personal-context-title">
-    <div class="result-card__heading"><div><p>自分で残した補足</p><h2 id="personal-context-title">走り方メモ</h2></div>${renderStatusLabel("走り方の記録", "info")}</div>
-    <dl class="fact-grid">${items.map(([label, value]) => `<div${String(value).length > 36 ? ' class="fact-grid__wide"' : ""}><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value).replaceAll("\n", "<br>")}</dd></div>`).join("")}</dl>
-    <p class="muted-text">自由記述は自分のメモとして保存します。選択項目は、今回の走りを振り返り、関連する一般説明を探す手掛かりになります。</p>
-  </section>`;
-}
-
-function subjectiveObservationHistory(experiences = [], record = {}, observation = {}) {
-  const areaId = String(observation.areaId || "");
-  const laterality = String(observation.laterality || "");
-  if (!areaId) return Object.freeze({ count: 0, previousDate: "" });
-  const matches = experiences
-    .filter((experience) => experience?.record?.id && experience.record.id !== record.id)
-    .filter((experience) => String(experience.record.date || "") < String(record.date || ""))
-    .flatMap((experience) => (experience.feedback?.bodyAreaObservations || []).map((item) => ({
-      recordId: experience.record.id,
-      date: experience.record.date,
-      item,
-    })))
-    .filter(({ item }) => String(item.areaId || "") === areaId)
-    .filter(({ item }) => !laterality || !item.laterality || String(item.laterality) === laterality)
-    .filter(({ item }) => Number(item.intensity) > 0)
-    .sort((left, right) => String(left.date || "").localeCompare(String(right.date || "")));
-  return Object.freeze({
-    count: matches.length,
-    previousDate: matches.at(-1)?.date || "",
-  });
-}
-
-function renderSubjectiveFeedback(feedback = {}, record = {}, experiences = []) {
-  const status = feedback?.checkStatus || "not_asked";
-  const exactObservations = Array.isArray(feedback?.bodyAreaObservations)
-    ? feedback.bodyAreaObservations.filter((item) => Number(item?.intensity) > 0)
-    : [];
-  const activeFlags = Object.entries(feedback?.safetyFlags || {}).filter(([, active]) => active);
-  const hasNarrative = Boolean(feedback?.unexpectedSymptom || feedback?.consultationNote || activeFlags.length);
-  const hasBodyEntry = exactObservations.length > 0;
-  if (!hasBodyEntry && !hasNarrative && ["deferred", "not_asked"].includes(status)) return "";
-
-  const exactMarkup = exactObservations.length
-    ? `<div class="subjective-entry-list">${exactObservations.map((item) => {
-      const history = subjectiveObservationHistory(experiences, record, item);
-      const historyHref = `#/history?view=trends&metric=subjective&period=90&anchorDate=${encodeURIComponent(record.date || "")}&recordId=${encodeURIComponent(record.id || "")}&areaId=${encodeURIComponent(item.areaId || "")}&laterality=${encodeURIComponent(item.laterality || "")}`;
-      return `<article><h3>${escapeHtml(item.label || "詳細部位")}</h3><p>${escapeHtml(bodyAreaLateralityLabel(item.laterality))}・気になる程度 ${escapeHtml(formatNumber(item.intensity, 0))} / 5</p><small>${history.count ? `同じ部位の過去記録 ${history.count}件${history.previousDate ? `・前回 ${formatLocalDate(history.previousDate)}` : ""}` : "同じ部位の過去記録はまだありません"}</small><a class="text-link" href="${escapeHtml(historyHref)}">同じ部位の記録を見る</a></article>`;
-    }).join("")}</div>`
-    : "";
-  const emptyMarkup = `<p class="muted-text">${status === "none_reported" ? "今回は身体の記録を残していません。「問題なし」とは置き換えません。" : record.activityType === "rest" ? "休養日の部位入力はありません。" : "部位ごとの入力はありません。"}</p>`;
-  return `<section id="subjective-feedback" class="result-card result-card--subjective${hasBodyEntry || hasNarrative ? "" : " result-card--subjective-compact"}" data-information-role="personal" aria-labelledby="subjective-result-title">
-    <div class="result-card__heading"><div><p>身体の記録</p><h2 id="subjective-result-title">身体の記録</h2></div>${renderStatusLabel(SUBJECTIVE_STATUS_LABELS[status] || "身体の記録", status === "strong_reported" ? "attention" : "info")}</div>
-    ${exactMarkup || emptyMarkup}
-    ${activeFlags.length ? `<div class="safety-flag-summary"><h3>体調確認で選んだ内容</h3><ul>${activeFlags.map(([flag]) => `<li>${escapeHtml(SAFETY_FLAG_LABELS[flag] || flag)}</li>`).join("")}</ul></div>` : ""}
-    ${feedback?.unexpectedSymptom ? '<p class="notice-text">「いつもと違う、説明しにくい症状がある」と入力されています。</p>' : ""}
-    ${feedback?.consultationNote ? `<div class="consultation-note"><h3>コーチや指導者へ伝えたいこと</h3><p>${escapeHtml(feedback.consultationNote).replaceAll("\n", "<br>")}</p></div>` : ""}
-    <p class="source-boundary">ここは自分で入力した記録です。12部位の目安とは分けて表示し、改善・悪化を自動判定しません。</p>
-  </section>`;
-}
-
-function renderUnavailableRunSummaryCard() {
-  return `<section class="result-card result-card--model" data-information-role="model" aria-labelledby="recent-comparison-title">
-    <div class="result-card__heading"><div><p>12部位の目安</p><h2 id="recent-comparison-title">この記録ではReference-100を表示できません</h2></div>${renderStatusLabel("保存内容は確認できます", "neutral")}</div>
-    <p>この保存記録では、走った内容と身体の記録をそのまま確認できます。目安は表示されません。</p>
-  </section>`;
-}
-
-function renderRestRegionalCard() {
-  return `<section class="result-card result-card--distribution" data-information-role="model" aria-labelledby="distribution-title"><div class="result-card__heading"><div><p>12部位の目安</p><h2 id="distribution-title">走行による12部位の目安はありません</h2></div>${renderStatusLabel("休養記録", "neutral")}</div><div class="rest-distribution"><p>休養日には走行距離と走行条件に基づく12部位の目安を作成しません。</p></div></section>`;
-}
-
-function renderResultGuide() {
-  return renderScreenGuide({
-    id: "result-guide",
-    summary: "走った内容、12部位のReference-100、ROF-Jを順に確認できます。",
-    sections: [
-      { title: "まずここでやること", body: "今回の記録、12部位の目安、過去記録との比較を順に見返します。" },
-      { title: "12部位の目安", body: "身体図と部位カードで確認します。12部位を固定順で表示します。絞り込み表示は見やすくするための機能で、安全・危険を示すものではありません。" },
-      { title: "表示できる範囲", body: "部位ごとに目安を出せる条件が異なります。分からない条件は0にせず、確認できる条件だけを反映します。" },
-      { title: "主観的疲労・変化", body: "ROF-Jを使った記録では、走る前・走った後・前後差を表示します。12部位のReference-100とは別の情報です。" },
-    ],
-    tutorialId: "result",
-  });
+  const infos = regionRows(resultRecord).map((row, index) => rowInfo(resultRecord, allExperiences, row, index));
+  const focusCount = infos.filter((item) => item.focus).length;
+  return `<section class="regional-section" data-primary-regional-card><div class="section-heading"><span class="section-index">01</span><div><small>BODY REGION / REFERENCE-100</small><h2>身体の部位から見る</h2></div></div><div class="regional-shell"><div class="regional-topline"><p>12部位のReference-100</p><span>部位ごとの表示</span></div><ul class="direction-legend" aria-label="身体図の色"><li><i class="legend-dot above"></i><span>基準100より上</span></li><li><i class="legend-dot reference"></i><span>基準100付近</span></li><li><i class="legend-dot below"></i><span>基準100より下</span></li><li><i class="legend-dot unavailable"></i><span>表示なし</span></li></ul><div class="regional-layout"><div class="map-column"><div class="body-map" aria-label="前面・後面・足裏の12部位図">${bodyMap(resultRecord, infos)}</div><p class="map-note">色で12部位を確認。部位をタップすると詳細・推移を開きます。</p><button class="mobile-region-trigger" type="button" data-action="open-prototype-region-sheet"><span><small>12部位比較</small><strong>数値・前回差を見る</strong></span><i>›</i></button></div><aside class="desktop-region-panel" aria-label="部位一覧"><div class="desktop-panel-heading"><div><small>12 REGIONS</small><strong>12部位比較</strong></div><span>数値・前回差</span></div><div class="view-toggle" role="group" aria-label="表示する部位"><button class="active" type="button" data-prototype-result-view="focus">基準・前回より上 <b>(${focusCount})</b></button><button type="button" data-prototype-result-view="all">全12部位</button></div><div class="region-list" data-prototype-region-list="focus">${regionList(resultRecord, infos, "focus")}</div><div class="region-list" data-prototype-region-list="all" hidden>${regionList(resultRecord, infos, "all")}</div></aside></div>${renderFacts(record)}<p class="compact-boundary">100は各部位自身の固定基準です。距離は別の走行事実で、部位値へ掛けません。別部位どうしを順位付けしません。</p><p class="visually-hidden">12部位の目安は、各部位自身の基準条件を100としたReference-100です。走行距離は別の記録事実であり、距離そのものを数値へ掛けません。100は安全値・正常値・初心者平均ではありません。</p></div><div class="sheet-overlay" data-prototype-region-sheet hidden><section class="region-sheet" role="dialog" aria-modal="true" aria-labelledby="region-sheet-title"><div class="grip"></div><div class="sheet-head"><div><p class="eyebrow">BODY REGION</p><h2 id="region-sheet-title">12部位比較</h2></div><button type="button" data-action="close-prototype-region-sheet" aria-label="閉じる">×</button></div><div class="sheet-tabs" role="tablist"><button class="active" type="button" data-prototype-result-mobile-view="focus" aria-selected="true">基準・前回より上 <b>(${focusCount})</b></button><button type="button" data-prototype-result-mobile-view="all" aria-selected="false">全12部位</button></div><div class="region-list mobile-list" data-prototype-region-mobile-list="focus">${regionList(resultRecord, infos, "focus")}</div><div class="region-list mobile-list" data-prototype-region-mobile-list="all" hidden>${regionList(resultRecord, infos, "all")}</div></section></div></section>`;
 }
 
 export function renderResultScreen({ services, context }) {
   const requestedRecordId = context.parameters.get("recordId") || "";
-  const experience = requestedRecordId
-    ? services.workflows.records.loadExperience(requestedRecordId)
-    : services.workflows.records.loadLatestExperience();
-  if (!experience) {
-    return `<section class="screen screen--result">${renderPageHeading({ eyebrow: "RESULT", title: "今回の走り", description: "保存した走行の結果を確認します。" })}<section class="empty-state" aria-labelledby="empty-result-title"><p class="empty-state__label">現在の状態</p><h2 id="empty-result-title">表示できる記録がありません</h2><p>走行記録を保存すると結果を確認できます。</p><div class="screen-actions"><a class="button button--primary" href="#/record-input">記録する</a></div></section></section>`;
-  }
-
+  const experience = requestedRecordId ? services.workflows.records.loadExperience(requestedRecordId) : services.workflows.records.loadLatestExperience();
+  if (!experience?.record) return `<div class="screen screen--result prototype-parity prototype-parity--result"><section class="intro"><div class="intro-heading"><div><p class="eyebrow">RESULT</p><h1>今回の走り</h1></div></div><p>保存した記録がまだありません。</p><a class="activation-link" href="#/record-input"><span><small>最初の記録</small><strong>記録を始める</strong></span><i>›</i></a></section></div>`;
+  const { record, regionalV2ResultRecord } = experience;
   const allExperiences = services.workflows.records.loadAllExperiences();
-  const { record, feedback, regionalV2ResultRecord } = experience;
-  const settings = normalizeJournalSettings(services.storage.settings.load());
-  const regionalInitialView = settings.regionalResultInitialView === "remember"
-    ? settings.regionalResultLastView
-    : settings.regionalResultInitialView;
-  const regionalCard = regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION
-    ? renderBodyRegionResultCard({ resultRecord: regionalV2ResultRecord, experiences: allExperiences, initialView: regionalInitialView, showPreviousComparison: settings.showRegionalPreviousComparison })
-    : record.activityType === "rest"
-      ? renderRestRegionalCard()
-      : renderUnavailableRunSummaryCard();
-  const secondPillarCard = renderSecondPillarResultCard(services, record);
-  const recordCard = renderRecordFactsCard(record);
-  const personalContextCard = renderPersonalContext(record);
-  const subjectiveCard = renderSubjectiveFeedback(feedback || {}, record, allExperiences);
-
-  return `<section class="screen screen--result frozen-result-screen">
-    ${renderPageHeading({ eyebrow: "RESULT", title: "今回の走り", description: formatLocalDate(record.date) })}
-    ${renderFrozenRunSummary(record)}
-    ${record.activityType === "run" ? renderModelFamilyBoundary(record, regionalV2ResultRecord) : ""}
-    ${regionalCard}
-    ${secondPillarCard}
-    <section class="frozen-result-next-links" aria-label="この結果の次の使い方">
-      <a class="result-activation-hub__item" href="#/activation?recordId=${encodeURIComponent(record.id)}"><strong>この結果を次に使う</strong><small>振り返る・相談する・次を考える</small><span aria-hidden="true">→</span></a>
-      <a class="result-activation-hub__item" href="#/history?view=trends&metric=region&period=28&anchorDate=${encodeURIComponent(record.date)}&recordId=${encodeURIComponent(record.id)}"><strong>履歴で見る</strong><small>同じ部位の保存記録と比べる</small><span aria-hidden="true">→</span></a>
-    </section>
-    <details class="result-compact-details"><summary>算出に使った走行事実・身体の記録を見る</summary><div class="result-compact-details__content">${[recordCard, personalContextCard, subjectiveCard].filter(Boolean).join("")}</div></details>
-    ${renderResultGuide()}
-  </section>`;
+  return `<div class="screen screen--result prototype-parity prototype-parity--result"><section class="intro"><div class="intro-heading"><div><p class="eyebrow">RESULT</p><h1>今回の走り</h1></div><span>${escapeHtml(formatLocalDate(record.date))}</span></div>${renderRunSummary(record)}</section>${renderRegional(regionalV2ResultRecord, allExperiences, record)}${renderFatigue(services, record)}<section class="activation-link-wrap"><a class="activation-link" href="#/activation?recordId=${encodeURIComponent(record.id)}"><span><small>この結果を次に使う</small><strong>振り返る・相談する・次を考える</strong></span><i>›</i></a></section><section class="history-link-wrap"><a class="history-link" href="#/history?view=trends&metric=region&period=28&anchorDate=${encodeURIComponent(record.date)}&recordId=${encodeURIComponent(record.id)}"><span><small>この日の記録</small><strong>履歴で見る</strong></span><i>›</i></a></section></div>`;
 }
-

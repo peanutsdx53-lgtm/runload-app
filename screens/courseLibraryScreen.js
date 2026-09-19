@@ -1,37 +1,15 @@
-import { escapeHtml, renderEmptyState, renderPageHeading } from "../ui/commonComponents.js";
-import { renderCourseSummary } from "../ui/coursePresentation.js";
+import { escapeHtml } from "../ui/commonComponents.js";
+import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js";
+import { peekCourseSelection } from "../ui/flowSessionState.js";
 
-function safeReturnTo(context) {
-  const value = String(context?.parameters?.get("returnTo") || "#/record-input");
-  return ["#/record-input", "#/plan", "#/simulation"].some((prefix) => value.startsWith(prefix)) ? value : "#/record-input";
-}
-function callerLabel(returnTo="") {
-  if (returnTo.startsWith("#/plan")) return "予定";
-  if (returnTo.startsWith("#/simulation")) return "条件比較";
-  return "今日の記録";
-}
+function safeReturnTo(context) { const value=String(context?.parameters?.get("returnTo")||"#/record-input"); return ["#/record-input","#/plan","#/simulation"].some((prefix)=>value.startsWith(prefix))?value:"#/record-input"; }
+function callerLabel(returnTo="") { if(returnTo.startsWith("#/plan"))return"予定"; if(returnTo.startsWith("#/simulation"))return"シミュレーション"; return"今日の記録"; }
+function selectedPreset(returnTo="") { if(returnTo.startsWith("#/plan"))return peekCourseSelection("plan")?.preset||null; if(returnTo.startsWith("#/simulation"))return peekCourseSelection("simulation")?.preset||null; return null; }
+function courseMeta(preset={}) { return `${slopeSummary(preset.course||{})}・${primarySurfaceSummary(preset.course||{})}`; }
+function glyph(index){return ["○","↔","⌁","◇","▱"][index%5];}
+function card(preset,returnTo,selectedId="") { return `<article class="card"><div class="card-main"><div class="card-head"><strong>${escapeHtml(preset.name||preset.course?.name||"名称なし")}</strong><span>${preset.id===selectedId?"使用中":"保存済み"}</span></div><div class="facts"><div class="fact"><small>坂道</small><strong>${escapeHtml(slopeSummary(preset.course||{}))}</strong></div><div class="fact"><small>路面</small><strong>${escapeHtml(primarySurfaceSummary(preset.course||{}))}</strong></div></div></div><div class="actions"><button class="use" type="button" data-action="use-course" data-course-id="${escapeHtml(preset.id||"")}" data-return-to="${escapeHtml(returnTo)}">このコースを使う</button><a class="edit" href="#/course-editor?id=${encodeURIComponent(preset.id||"")}&returnTo=${encodeURIComponent(returnTo)}">編集</a><button class="edit" type="button" data-action="delete-course" data-course-id="${escapeHtml(preset.id||"")}">削除</button></div></article>`; }
+
 export function renderCourseLibraryScreen({ services, context }) {
-  const courses = services.storage.courses.loadAll();
-  const returnTo = safeReturnTo(context);
-  const notice = context?.parameters?.get("notice") || "";
-  const label = callerLabel(returnTo);
-  const gpxHref = `#/gpx-analysis?returnTo=${encodeURIComponent(returnTo)}`;
-  return `<section class="screen screen--course-library course-flow-frozen">
-    <nav class="context-navigation" aria-label="コース設定内の移動"><a class="body-part-detail__back-link" href="${escapeHtml(returnTo)}">${escapeHtml(label)}へ戻る</a></nav>
-    ${renderPageHeading({ eyebrow: "コース設定", title: "使うコースを選ぶ", description: "保存コースを選ぶか、新しく作ります。坂・路面が分からない場合は不明のまま使えます。" })}
-    ${notice ? `<p class="editing-banner" role="status">${escapeHtml(notice)}</p>` : ""}
-    <section class="course-flow-actions" aria-label="コースを追加">
-      <a class="button button--primary" href="#/course-editor?returnTo=${encodeURIComponent(returnTo)}">手動でコースを作る</a>
-      <a class="button button--secondary" href="${escapeHtml(gpxHref)}">GPXから候補を作る</a>
-    </section>
-    <p class="inline-helper"><strong>GPXは端末内で解析します。</strong> 候補を確認して保存するまで、保存コースには追加されません。</p>
-    ${courses.length ? `<section aria-labelledby="saved-course-list-title"><div class="section-heading"><p>最近・保存済み</p><h2 id="saved-course-list-title">保存したコース</h2></div><div class="course-card-grid">${courses.map((preset) => `<article class="course-manager-card" aria-labelledby="course-${escapeHtml(preset.id)}-title">
-      ${renderCourseSummary(preset.course, { headingLevel: 3, headingId: `course-${preset.id}-title` })}
-      <div class="course-manager-card__actions">
-        <button class="button button--primary" type="button" data-action="use-course" data-course-id="${escapeHtml(preset.id)}" data-return-to="${escapeHtml(returnTo)}">このコースを使う</button>
-        <a class="button button--secondary" href="#/course-editor?id=${encodeURIComponent(preset.id)}&returnTo=${encodeURIComponent(returnTo)}">編集</a>
-        <button class="button button--danger" type="button" data-action="delete-course" data-course-id="${escapeHtml(preset.id)}">削除</button>
-      </div>
-    </article>`).join("")}</div><p class="course-library-status" data-course-manager-status role="status" aria-live="polite"></p></section>` : renderEmptyState({ title: "保存したコースはまだありません", description: "手動入力またはGPX候補から作成できます。", actionLabel: "コースを作る", actionScreen: `course-editor?returnTo=${encodeURIComponent(returnTo)}` })}
-  </section>`;
+  const courses=services.storage.courses.loadAll(); const returnTo=safeReturnTo(context); const label=callerLabel(returnTo); const selected=selectedPreset(returnTo); const selectedId=selected?.id||""; const recent=courses.slice(-3).reverse();
+  return `<div class="screen screen--course-library prototype-parity prototype-parity--course"><a class="back" href="${escapeHtml(returnTo)}">‹ ${escapeHtml(label)}へ戻る</a><section class="head clean-head"><div><p class="eyebrow">COURSE</p><h1>コース設定</h1></div></section><section class="current"><div><small>現在選択中</small><strong>${escapeHtml(selected?.name||selected?.course?.name||"未選択")}</strong><span>${escapeHtml(selected?courseMeta(selected):"コースは任意です")}</span></div><b>${selected?"選択中":"未選択"}</b></section><section class="section recent-section"><div class="section-head"><div><small>RECENT</small><h2>最近使ったコース</h2></div><a class="new" href="#/course-editor?returnTo=${encodeURIComponent(returnTo)}">＋ 新しいコース</a></div><div class="strip">${recent.length?recent.map((preset,index)=>`<button class="quick${preset.id===selectedId?" active":""}" type="button" data-action="use-course" data-course-id="${escapeHtml(preset.id)}" data-return-to="${escapeHtml(returnTo)}"><i>${glyph(index)}</i><strong>${escapeHtml(preset.name||preset.course?.name||"名称なし")}</strong><small>${escapeHtml(courseMeta(preset))}</small></button>`).join(""):'<a class="quick" href="#/course-editor?returnTo='+encodeURIComponent(returnTo)+'"><i>＋</i><strong>新しいコース</strong><small>まだ保存コースはありません</small></a>'}</div></section><section class="section assist-section"><div class="section-head"><div><small>ASSIST</small><h2>入力を補助する</h2></div></div><div class="import-helper"><div><small>GPX・任意</small><strong>ファイルから坂道を読み取る</strong><span>標高入りGPXを持っている場合だけ使用</span></div><a href="#/gpx-analysis?returnTo=${encodeURIComponent(returnTo)}">GPXを読み込む <i>›</i></a></div></section><section class="section saved-section"><div class="section-head"><div><small>SAVED COURSES</small><h2>保存したコース</h2></div><span>${courses.length}件</span></div><div class="list">${courses.length?courses.map((preset)=>card(preset,returnTo,selectedId)).join(""):'<article class="card"><div class="card-main"><div class="card-head"><strong>保存したコースはまだありません</strong><span>0件</span></div><p>新しいコースを作るか、GPXから候補を作れます。</p></div></article>'}</div><p class="course-library-status" data-course-manager-status role="status" aria-live="polite"></p></section><p class="boundary">坂や路面が分からない場合は、不明のまま保存できます。分からない値を0や平坦へ置き換えません。</p></div>`;
 }

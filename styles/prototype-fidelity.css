@@ -501,6 +501,36 @@ input, select, textarea {
   background: var(--color-surface);
 }
 
+
+/* --- PWA update notice must remain operable above the fixed mobile nav --- */
+.pwa-update-notice {
+  z-index: 80;
+}
+@media (max-width: 879px) {
+  .pwa-update-notice {
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(var(--prototype-bottom-nav-height) + env(safe-area-inset-bottom) + 10px);
+    max-height: calc(100dvh - var(--prototype-topbar-height) - var(--prototype-bottom-nav-height) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px);
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+  .pwa-update-notice__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+  }
+  .pwa-update-notice__button {
+    min-width: 68px;
+    flex: 0 0 auto;
+  }
+}
+@media (max-width: 340px) {
+  .pwa-update-notice__inner { grid-template-columns: 1fr; }
+  .pwa-update-notice__button { width: 100%; }
+}
+
 /* --- Mobile --- */
 @media (max-width: 620px) {
   .app-header {

@@ -1,20 +1,16 @@
-import { escapeHtml, renderPageHeading } from "../ui/commonComponents.js";
+import { escapeHtml } from "../ui/commonComponents.js";
 import { peekCourseSelection } from "../ui/flowSessionState.js";
 import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js";
+import { formatLocalDate } from "../ui/recordPresentation.js";
 
-function today() { return new Date().toISOString().slice(0,10); }
+function localTodayIso() { const d = new Date(); const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,"0"); const day=String(d.getDate()).padStart(2,"0"); return `${y}-${m}-${day}`; }
 function courseFromPlan(plan) { return plan?.plannedSession?.course || { name:"", gradeKnowledge:"UNKNOWN", modelSurfaceClass:"UNKNOWN" }; }
-function latestRunRecord(services) {
-  return services.storage.records.loadAll().filter((r)=>r.activityType === "run").sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0] || null;
-}
-function courseSummary(course={}) {
-  if (!course.name) return "未選択";
-  return `${course.name}・${slopeSummary(course)}・${primarySurfaceSummary(course)}`;
-}
-function planCard(plan) {
-  const session=plan.plannedSession||{}; const rest=plan.planType === "rest";
-  return `<article class="frozen-plan-card"><div><small>${escapeHtml(plan.scheduledDate||"")}</small><strong>${escapeHtml(plan.title || (rest?"休養予定":"走行予定"))}</strong><span>${rest?"休養":`${escapeHtml(session.distanceKm||"—")} km・${escapeHtml(session.durationMinutes||"—")}分`}</span>${!rest&&session.course?.name?`<em>${escapeHtml(session.course.name)}</em>`:""}</div><div class="frozen-plan-card__actions"><a class="button button--secondary" href="#/plan?planId=${encodeURIComponent(plan.id)}">編集</a><a class="button button--primary" href="#/record-input?planId=${encodeURIComponent(plan.id)}">この予定で記録</a><button class="button button--danger" type="button" data-action="delete-plan" data-plan-id="${escapeHtml(plan.id)}">削除</button></div></article>`;
-}
+function latestRunRecord(services) { return services.storage.records.loadAll().filter((r)=>r.activityType === "run").sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0] || null; }
+function courseSummary(course={}) { if (!course.name) return "未選択のままでも保存できます"; return `${slopeSummary(course)}・${primarySurfaceSummary(course)}`; }
+function planTitle(plan={}) { const session=plan.plannedSession||{}; if(plan.planType==="rest"||session.activityType==="rest")return "休養予定"; const parts=[]; if(Number(session.distanceKm)>0)parts.push(`${Number(session.distanceKm).toFixed(1)} km`); if(Number(session.durationMinutes)>0)parts.push(`${Math.round(Number(session.durationMinutes))}分`); parts.push(session.course?.name||"コース未選択"); return parts.join("・"); }
+function savedPlanCard(plan={}) { const rest=plan.planType==="rest"||plan.plannedSession?.activityType==="rest"; return `<article class="saved-card" data-plan-id="${escapeHtml(plan.id||"")}"><small>${escapeHtml(formatLocalDate(plan.scheduledDate||""))}・${rest?"休養予定":"走行予定"}</small><strong>${escapeHtml(planTitle(plan))}</strong><span>保存済み</span><div class="saved-actions">${rest?"":`<a href="#/record-input?planId=${encodeURIComponent(plan.id||"")}">この予定で記録</a>`}<a href="#/plan?planId=${encodeURIComponent(plan.id||"")}">編集</a><button type="button" data-action="delete-plan" data-plan-id="${escapeHtml(plan.id||"")}">削除</button></div></article>`; }
+function dateDisplay(iso="") { return String(iso||"").replaceAll("-","/") || "未設定"; }
+
 export function renderPlanScreen({ services, context }) {
   const planId=String(context?.parameters?.get("planId")||"");
   const editing=planId?services.storage.plans.findById(planId):null;
@@ -23,21 +19,31 @@ export function renderPlanScreen({ services, context }) {
   const session=editing?.plannedSession||{};
   const planType=editing?.planType||"run";
   const recent=latestRunRecord(services);
-  const plans=services.storage.plans.loadAll();
-  const scheduledDate=editing?.scheduledDate||today();
-  return `<section class="screen screen--plan frozen-plan-screen">
-    ${renderPageHeading({ eyebrow:"PLAN", title:"次の予定", description:"走る予定も休む予定も、本人が決めた内容を保存します。" })}
-    <div class="frozen-plan-toolbar"><a class="button button--secondary" href="#/simulation?from=plan">条件を比べる</a></div>
-    ${recent?`<section class="frozen-plan-reference"><div><small>前回の記録</small><strong>${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分</strong></div><button type="button" class="button button--text" data-action="use-previous-facts" data-distance="${escapeHtml(recent.distanceKm||"")}" data-duration="${escapeHtml(recent.durationMinutes||"")}">入力の出発点にする</button></section>`:""}
-    <form id="plan-form" class="record-form frozen-plan-form" novalidate>
+  const plans=services.storage.plans.loadAll().sort((a,b)=>String(a.scheduledDate||"").localeCompare(String(b.scheduledDate||"")));
+  const scheduledDate=editing?.scheduledDate||localTodayIso();
+  const nextCheck=recent?.reflectionContext?.nextCheckPoint || recent?.reflectionContext?.nextCheck || "";
+  const distance=session.distanceKm ?? ""; const duration=session.durationMinutes ?? "";
+  return `<div class="screen screen--plan prototype-parity prototype-parity--plan">
+    <section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">${escapeHtml(formatLocalDate(scheduledDate))}</span></section><p class="visually-hidden">予定条件は利用者が入力した事実であり、数値スコアではなく入力した予定事実として扱います。おすすめ・安全判断・自動処方ではありません。</p>
+    ${nextCheck?`<section class="carry"><i></i><div><small>前回から引き継いだ内容</small><strong>次のランで確認したいこと</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
+    <form id="plan-form" class="layout" novalidate>
       <input type="hidden" name="planId" value="${escapeHtml(editing?.id||"")}"><input type="hidden" name="courseJson" value="${escapeHtml(JSON.stringify(course))}"><input type="hidden" name="routePattern" value="${escapeHtml(course.routePattern||"UNKNOWN")}">
-      <div class="form-messages" data-form-messages tabindex="-1" hidden></div>
-      <section class="form-section"><div class="section-heading"><p>予定</p><h2>日付と種類</h2></div><div class="field-grid field-grid--two"><label class="field"><span>予定日</span><input type="date" name="scheduledDate" required value="${escapeHtml(scheduledDate)}"></label><fieldset class="field fieldset-field"><legend>予定の種類</legend><div class="segmented-control"><label><input type="radio" name="planType" value="run"${planType==="run"?" checked":""}><span>走る</span></label><label><input type="radio" name="planType" value="rest"${planType==="rest"?" checked":""}><span>休む</span></label></div></fieldset></div></section>
-      <section class="form-section"><div class="section-heading"><p>CONDITIONS</p><h2>予定条件</h2><p>数値スコアではなく入力した予定事実を確認します。</p></div></section>
-      <section class="form-section" data-plan-run-fields${planType==="rest"?" hidden":""}><div class="section-heading"><p>走る内容</p><h2>距離と予定時間</h2></div><div class="field-grid field-grid--two"><label class="field"><span>距離（km）</span><input name="distanceKm" type="number" min="0.01" step="0.01" value="${escapeHtml(session.distanceKm||"")}"></label><label class="field"><span>予定の実走時間（分）</span><input name="durationMinutes" type="number" min="0.01" step="0.1" value="${escapeHtml(session.durationMinutes||"")}"></label></div><label class="field"><span>走行形式（任意）</span><select name="runningFormat"><option value="UNKNOWN"${session.runningFormat==="UNKNOWN"||!session.runningFormat?" selected":""}>未設定</option><option value="CONTINUOUS_RUN"${session.runningFormat==="CONTINUOUS_RUN"?" selected":""}>途中で歩かず走る</option><option value="RUN_WALK"${session.runningFormat==="RUN_WALK"?" selected":""}>走りと歩きを混ぜる</option></select></label>
-      <div class="frozen-plan-course"><div><small>コース・任意</small><strong>${escapeHtml(course.name||"未選択")}</strong><span>${escapeHtml(courseSummary(course))}</span></div><a class="button button--secondary" href="#/course-library?returnTo=${encodeURIComponent(`#/plan${planId?`?planId=${encodeURIComponent(planId)}`:""}`)}">選ぶ・作る</a></div></section>
-      <section class="form-section"><label class="field"><span>メモ（任意）</span><textarea name="memo" rows="3" maxlength="500">${escapeHtml(editing?.memo||"")}</textarea></label><div class="form-submit-area"><button class="button button--primary" type="submit">${editing?"変更を保存":"予定を保存"}</button></div></section>
+      <input class="visually-hidden" type="radio" name="planType" value="run"${planType==="run"?" checked":""}><input class="visually-hidden" type="radio" name="planType" value="rest"${planType==="rest"?" checked":""}>
+      <section class="panel"><div class="panel-head"><small>PLAN</small><h2>予定内容</h2><p>予定日・距離・時間を入力します。コースは任意です。</p></div><div class="panel-body">
+        <div class="seg" role="group" aria-label="予定の種類"><button type="button" class="${planType==="run"?"active":""}" data-plan-type-button="run">走行</button><button type="button" class="${planType==="rest"?"active":""}" data-plan-type-button="rest">休養</button></div>
+        <div class="plan-date-field"><div class="plan-date-label"><span>予定日</span><b>必須</b></div><label class="plan-date-control"><span data-plan-date-display aria-hidden="true">${escapeHtml(dateDisplay(scheduledDate))}</span><input name="scheduledDate" type="date" required value="${escapeHtml(scheduledDate)}" aria-label="予定日"></label></div>
+        <div data-plan-run-fields${planType==="rest"?" hidden":""}>
+          <div class="two"><label class="metric-field"><span>距離</span><div><input name="distanceKm" type="number" min="0.01" step="0.1" value="${escapeHtml(distance)}"><em>km</em></div></label><label class="metric-field"><span>実走予定時間</span><div><input name="durationMinutes" type="number" min="0.1" step="1" value="${escapeHtml(duration)}"><em>分</em></div></label></div>
+          <div class="course-choice"><div><small>コース・任意</small><strong data-plan-course-name>${escapeHtml(course.name||"未選択")}</strong><span>${escapeHtml(courseSummary(course))}</span></div><a href="#/course-library?returnTo=${encodeURIComponent(`#/plan${planId?`?planId=${encodeURIComponent(planId)}`:""}`)}">選ぶ・作る</a></div>
+          ${recent?`<details class="details"><summary><div><strong>前回の距離・時間を使う</strong><span>${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分を入力</span></div><i>⌄</i></summary><div class="details-body"><div class="quick quick--single"><button type="button" data-action="use-previous-facts" data-distance="${escapeHtml(recent.distanceKm||"")}" data-duration="${escapeHtml(recent.durationMinutes||"")}"><small>前回の記録</small><strong>${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分を入力</strong></button></div><p class="note">入力後に変更できます。自動提案ではありません。</p></div></details>`:""}
+          <details class="details"><summary><div><strong>走る／歩くの予定</strong><span>途中で歩く場合だけ選択</span></div><i>⌄</i></summary><div class="details-body"><label class="field"><span>予定の走り方 <b>任意</b></span><select name="runningFormat"><option value="UNKNOWN"${!session.runningFormat||session.runningFormat==="UNKNOWN"?" selected":""}>未設定</option><option value="CONTINUOUS_RUN"${session.runningFormat==="CONTINUOUS_RUN"?" selected":""}>途中で歩かず走る予定</option><option value="RUN_WALK"${session.runningFormat==="RUN_WALK"?" selected":""}>走りと歩きを混ぜる予定</option></select></label></div></details>
+          <a class="assist-link" href="#/simulation?from=plan"><div><small>任意</small><strong>前回と条件を比べる</strong><span>条件を変えたときの12部位表示を確認</span></div><i>›</i></a>
+        </div>
+        <div data-plan-rest-fields${planType==="rest"?"":" hidden"}><div class="summary-card" style="margin-top:13px"><small>休養予定</small><strong>走行条件は入力しません</strong><span>予定日だけを確認して保存します。</span></div></div>
+        <label class="field" style="margin-top:13px"><span>メモ <b>任意</b></span><textarea name="memo" rows="3" maxlength="500">${escapeHtml(editing?.memo||"")}</textarea></label>
+      </div></section>
+      <aside class="panel confirm-panel"><div class="panel-head"><small>CHECK</small><h2>保存前の確認</h2><p>入力した予定だけを確認します。</p></div><div class="confirm"><div class="summary-card"><small data-plan-summary-kind>${planType==="rest"?"休養予定":"走行予定"}</small><strong data-plan-summary-date>${escapeHtml(formatLocalDate(scheduledDate))}</strong><span data-plan-summary-line>${planType==="rest"?"走行条件なし":`${distance||"—"} km・${duration||"—"}分・${course.name||"コース未選択"}`}</span></div><div class="summary-row" data-plan-summary-metrics${planType==="rest"?" hidden":""}><div><small>距離</small><strong data-plan-summary-distance>${escapeHtml(distance||"—")} km</strong></div><div><small>時間</small><strong data-plan-summary-duration>${escapeHtml(duration||"—")}分</strong></div><div><small>コース</small><strong data-plan-summary-course>${escapeHtml(course.name||"未選択")}</strong></div></div><div class="form-messages" data-form-messages tabindex="-1" hidden></div><button class="save" type="submit">${editing?"変更を保存する":"予定を保存する"}</button></div></aside>
     </form>
-    <section class="frozen-saved-plans"><div class="section-heading"><p>SAVED</p><h2>保存した予定</h2></div>${plans.length?plans.map(planCard).join(""):'<p class="muted-text">保存した予定はまだありません。</p>'}</section>
-  </section>`;
+    <details class="saved"><summary><div><strong>保存した予定</strong><span>予定内容と実施状況を見る</span></div><span>${plans.length}件</span></summary><div class="saved-list">${plans.length?plans.map(savedPlanCard).join(""):'<div class="saved-card"><strong>保存した予定はありません。</strong></div>'}</div></details>
+  </div>`;
 }
