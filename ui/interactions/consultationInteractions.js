@@ -13,7 +13,80 @@ function updateCharacterCount(textarea) {
 
 export function bindConsultation() {
   const prototypeRoot = document.querySelector("[data-prototype-consultation]");
-  if (prototypeRoot) {
+  if (prototypeRoot?.matches("[data-prototype-share-prep]")) {
+    const sourceInputs = [...prototypeRoot.querySelectorAll("[data-consult-source]")];
+    const target = prototypeRoot.querySelector("[data-consult-target]");
+    const question = prototypeRoot.querySelector("[data-consult-question]");
+    const copySource = prototypeRoot.querySelector("#consultation-report-text");
+    const viewer = prototypeRoot.querySelector("[data-consult-viewer]");
+
+    const writeText = (selector, value) => {
+      prototypeRoot.querySelectorAll(selector).forEach((element) => { element.textContent = value; });
+    };
+
+    const activeKeys = () => new Set(sourceInputs.filter((input) => input.checked && !input.disabled).map((input) => input.dataset.shareKey || ""));
+
+    const syncVisibility = (keys) => {
+      ["preview", "viewer", "document"].forEach((targetName) => {
+        prototypeRoot.querySelectorAll(`[data-consult-${targetName}-key]`).forEach((element) => {
+          const key = element.dataset[`consult${targetName[0].toUpperCase()}${targetName.slice(1)}Key`] || "";
+          element.hidden = !keys.has(key);
+        });
+      });
+      const region = prototypeRoot.querySelector("[data-consult-document-region]");
+      if (region) {
+        const hasRegion = [...region.querySelectorAll("[data-consult-document-key]")].some((row) => !row.hidden);
+        region.hidden = !hasRegion;
+      }
+    };
+
+    const rebuild = () => {
+      const keys = activeKeys();
+      const recipient = target?.value.trim() || "未入力";
+      const purpose = question?.value.trim() || "未入力";
+
+      writeText("[data-consult-preview-target]", recipient);
+      writeText("[data-consult-preview-question]", `確認したいこと：${purpose}`);
+      writeText("[data-consult-viewer-target]", recipient);
+      writeText("[data-consult-viewer-question]", `確認したいこと：${purpose}`);
+      writeText("[data-consult-document-target]", `共有先：${recipient}`);
+      writeText("[data-consult-document-question]", purpose);
+      syncVisibility(keys);
+
+      const lines = [];
+      if (target?.value.trim()) lines.push(`見せる相手：${target.value.trim()}`);
+      if (question?.value.trim()) lines.push(`確認したいこと：${question.value.trim()}`);
+      sourceInputs.filter((input) => input.checked && !input.disabled).forEach((input) => {
+        lines.push(`${input.dataset.shareLabel || "項目"}：${input.dataset.shareValue || ""}`);
+      });
+      if (copySource) copySource.value = lines.join("\n");
+    };
+
+    sourceInputs.forEach((input) => input.addEventListener("change", rebuild));
+    target?.addEventListener("input", rebuild);
+    question?.addEventListener("input", rebuild);
+
+    prototypeRoot.querySelector('[data-action="open-consult-viewer"]')?.addEventListener("click", () => {
+      rebuild();
+      if (viewer) {
+        viewer.hidden = false;
+        document.documentElement.classList.add("consult-viewer-open");
+        viewer.querySelector('[data-action="close-consult-viewer"]')?.focus();
+      }
+    });
+    prototypeRoot.querySelector('[data-action="close-consult-viewer"]')?.addEventListener("click", () => {
+      if (viewer) viewer.hidden = true;
+      document.documentElement.classList.remove("consult-viewer-open");
+    });
+    viewer?.addEventListener("click", (event) => {
+      if (event.target === viewer) {
+        viewer.hidden = true;
+        document.documentElement.classList.remove("consult-viewer-open");
+      }
+    });
+
+    rebuild();
+  } else if (prototypeRoot) {
     const panels = [...prototypeRoot.querySelectorAll("[data-consult-panel]")];
     const routes = [...prototypeRoot.querySelectorAll("[data-consult-open]")];
     const shortMemo = prototypeRoot.querySelector("[data-consult-short-memo]");
