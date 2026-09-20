@@ -88,14 +88,16 @@ Implemented:
 Commits:
 - Core: `98faf526165a5078e0a783aabe77aa705befa121`
 - Tests: `f9fe57cd46530df952726c5d6044723a5d176007`
+- Existing next-check exposure: `58847ab13b0ec5c31ca103978e61eb88b471b686`
+- Existing next-check coverage: `c23c845e01546adee275e575e016b9a4c93e4ad1`
 
 Local verification against audited App Source:
 - Interpretation Core dedicated suite: **24/24 PASS**
 - Existing baseline verifier: **273/273 PASS**
 - Existing suites: **17/17 PASS**
 - JS/MJS syntax scan: **79 files / 0 failures**
-- `core/interpretationCore.js` SHA-256: `22b6a8d3353276b9c0dcdda4d7296690c6c5df1c6be9ba4c2d6a30d158cbac43`
-- dedicated test SHA-256: `2bffccebe4de55b8de8b2ca13e02709951e76463e92fa67c20caa6ca6dc2cf55`
+- current `core/interpretationCore.js` SHA-256 after existing-next-check exposure: `e04eb0f1e8e0655c4cc0fb08a264d59aa393655a850cf8ce8458bfbba31d64f8`
+- current dedicated test SHA-256 after next-check coverage: `91e9eb39e47d6795ce4d3e4d42f360a288a541e1a3846cf997867f6f6c92fd4f`
 - protected Primary core SHA unchanged
 - protected ROF-J core SHA unchanged
 
@@ -171,12 +173,31 @@ Verification against audited App Source:
 - Stage 3 launch integration test SHA-256: `5dea4ad98ae1c7e0d91b1e31cb289d99932db046db328b3cae249b9718acaf90`
 
 ### Stage 4 — PWA/runtime integration
-Status: NOT STARTED
-Planned:
-- service-worker precache additions/removals
-- index stylesheet inclusion
-- runtime hash manifest regeneration
-- CSP/static-resource checks
+Status: COMPLETE
+Implemented:
+- [x] Interpretation Core added to Service Worker precache
+- [x] Interpretation Room screen added to Service Worker precache
+- [x] Interpretation Room presentation module added to Service Worker precache
+- [x] Interpretation Room stylesheet added to Service Worker precache
+- [x] retired Activation screen removed from active precache
+- [x] stable cache identifier `runload-app-current` retained
+- [x] activate phase now prunes stale resources that remain inside the same cache name
+- [x] `RUNTIME_SHA256SUMS.txt` regenerated from the feature branch runtime state (79 entries)
+- [x] existing CSP supports the new same-origin external JS/CSS; no CSP relaxation or inline script was added
+- [x] dedicated PWA/runtime suite `tests/interpretationRoomPwaIntegrationV1.test.mjs`
+
+Stage 4 commits:
+- PWA cache integration: `6f909cbcdac867a67e8399fa629ff21c8f754206`
+- Runtime SHA-256 manifest: `0a6a411b539d2ce3dc9c6b7f3ff14004a7b3dcbd`
+- PWA integration tests: `4b8aa58b2411c5c10ae3492ba5e76ebc473e40bd`
+
+Verification:
+- Interpretation Room PWA integration suite: **7/7 PASS**
+- Service Worker syntax: **PASS**
+- Service Worker SHA-256: `604a1e3f9e03d0fc1566f51bd3457d67bd8a106e1978855356dd5ee000c44771`
+- runtime manifest contains current Interpretation Core SHA-256 `e04eb0f1e8e0655c4cc0fb08a264d59aa393655a850cf8ce8458bfbba31d64f8`
+- branch compare against audited base shows **no changes** to protected Primary or ROF-J core files
+- Stage 3 full baseline regression remains **273/273 PASS**; final combined regression is reserved for Stage 5
 
 ### Stage 5 — Full regression and scientific-boundary audit
 Status: NOT STARTED
@@ -191,7 +212,7 @@ Required:
 
 ## Current next action
 
-Begin Stage 4. Integrate Interpretation Room resources into PWA/runtime packaging: update service-worker precache, reconcile obsolete Activation runtime resources only where safe, regenerate runtime integrity metadata, and run CSP/static-resource/PWA checks. Do not alter protected calculation cores.
+Begin Stage 5. Perform the full regression and scientific-boundary audit against the complete feature-branch state. Inspect every changed runtime file, verify forbidden-claim boundaries, re-check Interpretation Core/Room/launch/PWA suites, verify protected core hashes, and keep PR #49 draft until final acceptance.
 
 ## Stop conditions
 
