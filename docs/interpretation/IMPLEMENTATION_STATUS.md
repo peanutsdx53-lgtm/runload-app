@@ -1,7 +1,7 @@
 # RunLoad Interpretation Room — Implementation Status
 
 Date: 2026-09-20
-Status: SAFELY STOPPED — STAGE 5 AUDIT NOT YET EXECUTED
+Status: SAFELY STOPPED — STAGE 5 BLOCKED BY RUNTIME MANIFEST MISMATCH
 Branch: `feature/runload-interpretation-room-v1`
 Draft PR: #49
 Base commit: `8d2937c7bbfe3a7094601628a109d31309edd775`
@@ -200,8 +200,17 @@ Verification:
 - Stage 3 full baseline regression remains **273/273 PASS**; final combined regression is reserved for Stage 5
 
 ### Stage 5 — Full regression and scientific-boundary audit
-Status: NOT STARTED
-Required:
+Status: BLOCKED — AUDIT FINDING REQUIRES CORRECTION BEFORE CONTINUATION
+
+Audit finding 2026-09-21:
+- live feature-branch `screens/homeScreen.js` SHA-256: `8a1bea7b7d85698487e2417ea1ccb6c31afb3128a05253475b270c2f27ec83b1`
+- feature-branch `RUNTIME_SHA256SUMS.txt` entry for `screens/homeScreen.js`: `0d1f3d56751e19c427397d35865b038c21b350216688b435457d04cc3d830ae6`
+- result: **MISMATCH**
+- scope: runtime integrity metadata only; no evidence at this checkpoint of a protected calculation-core or ROF-J-core change
+- no corrective runtime/code change was made after detecting the mismatch
+- PR #49 remains draft; main and formal Current remain untouched
+
+Required before Stage 5 can continue:
 - existing baseline tests remain green
 - new interpretation tests pass
 - protected core hashes unchanged
@@ -227,7 +236,7 @@ Confirmed state at stop:
 
 ## Current next action
 
-Resume at Stage 5 only. First verify PR #49, branch HEAD, and this ledger. Then perform the full regression and scientific-boundary audit against the complete feature-branch state. Inspect every changed runtime file, verify forbidden-claim boundaries, re-check Interpretation Core/Room/launch/PWA suites, verify protected core hashes, and keep PR #49 draft until final acceptance.
+Do not continue Stage 5 until the runtime-integrity mismatch is corrected. On user authorization, regenerate `RUNTIME_SHA256SUMS.txt` from the final live feature-branch runtime state, verify every manifest entry (not only Home), then restart the complete Stage 5 regression/scientific-boundary audit. Keep PR #49 draft and leave main/formal Current untouched.
 
 ## Stop conditions
 
