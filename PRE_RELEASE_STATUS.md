@@ -1,25 +1,24 @@
 # RunLoad Pre-release Status
 
 Date: 2026-09-20
-Status: PRE-RELEASE REGULAR APP / UI ALIGNMENT V1.28
+Status: PRE-RELEASE REGULAR APP / USER LANGUAGE V1.29
 
 Verification:
-- retained V1.6R2 regression harness with release cache literal updated: 251 / 251 PASS
-- retained suites: 16 / 16 PASS
-- retained JS/MJS syntax: 79 / 79 PASS
-- modified JavaScript syntax: 6 / 6 PASS
-- dedicated V1.28 UI alignment audit: 20 / 20 PASS
-- protected Primary core hash unchanged
-- protected ROF-J core hash unchanged
+- final syntax audit for all modified JavaScript: 27 / 27 PASS
+- user-facing legacy-term residual audit: PASS
+- balanced line-replacement diff audit: PASS
+- protected Primary core unchanged
+- protected ROF-J core unchanged
+- storage implementation unchanged
+- exact-branch retained 251-test regression was not rerun; prior release regression evidence is not claimed as V1.29 evidence
 
-Audited UI refinements:
-- Course detailed-section percentage/type/grade controls are aligned and use the same mobile control geometry.
-- Environment temperature and memo controls are stacked at equal width and equal initial height.
-- Body-region input cards use a stable region header plus aligned intensity/laterality fields.
-- ROF-J result content is centered with the main result column; its long interpretation boundary is collapsed by default.
-- Orphan “01” labels are removed from History.
-- Reading category filters display an explicit horizontal-scroll cue.
-- No storage shape, calculation model, source evidence, or scientific interpretation is changed.
+Audited wording refinements:
+- Research/implementation terms are no longer primary user-facing labels.
+- ROF-J is presented as 疲労感, with the formal scale name retained only in explanatory text.
+- Reference-100 is presented as 部位ごとの目安, with its research name retained only in detailed explanation.
+- RUN_WALK, simulation, slope, GPX, time, risk, and comparison terminology are rewritten in direct user-facing language.
+- Help, tutorials, consultation/report output, validation messages, History, Result, Course, Privacy, and Condition Compare use the same terminology.
+- No calculation, storage, model, source, routing, or interaction behavior is changed.
 - PWA cache is bumped for deployment.
 
 The app remains a development-stage research application. Scientific interpretation boundaries in the README and Current research package remain controlling.
