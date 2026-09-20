@@ -186,7 +186,8 @@ function actionHref(action, roomOrigin = "") {
   Object.entries(action.parameters || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") query.set(key, String(value));
   });
-  if (action.destination === "simulation" && !query.has("from")) query.set("from", "interpretation-room");\n  if (action.destination === "simulation" && roomOrigin && !query.has("roomOrigin")) query.set("roomOrigin", roomOrigin);
+  if (action.destination === "simulation" && !query.has("from")) query.set("from", "interpretation-room");
+  if (action.destination === "simulation" && roomOrigin && !query.has("roomOrigin")) query.set("roomOrigin", roomOrigin);
   return `#/${action.destination}${query.size ? `?${query.toString()}` : ""}`;
 }
 
