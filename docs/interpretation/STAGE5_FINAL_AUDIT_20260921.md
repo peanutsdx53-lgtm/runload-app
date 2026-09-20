@@ -58,12 +58,12 @@ Existing App Source regression, after updating the two App-Source-only legacy te
 
 Dedicated Interpretation suites:
 - Interpretation Core V1: **24 / 24 PASS**
-- Interpretation Room Integration V1: **17 / 17 PASS**
+- Interpretation Room Integration V1: **18 / 18 PASS**
 - Interpretation Room Launch Integration V1: **11 / 11 PASS**
 - Interpretation Room PWA Integration V1: **7 / 7 PASS**
 
 Combined:
-- **332 / 332 PASS**
+- **333 / 333 PASS**
 
 Syntax:
 - **84 JS/MJS files / 0 failures**
@@ -158,11 +158,43 @@ The public GitHub runtime does not contain the pre-existing 273-test App Source 
 
 These test-contract edits do not alter runtime behavior.
 
-## Visual acceptance limitation
+## Automated visual / mobile audit
 
-Supplemental headless-browser checks could not be completed in the audit container: direct Chromium did not terminate reliably, and the Playwright retry was blocked from local/file navigation by the execution-environment policy. No visual PASS is claimed from those attempts.
+A later network-free Playwright `set_content` route successfully rendered the production Presentation output with production CSS, avoiding the environment's local/file navigation restriction.
 
-Static layout integration, CSS inclusion, routing, rendering-output, CSP, and syntax tests passed. Final visual/mobile acceptance should therefore be performed separately before production/Current promotion.
+Audit record:
+- `docs/interpretation/VISUAL_MOBILE_AUDIT_20260921.md`
+
+Viewports:
+- mobile: 390 × 844
+- desktop: 1280 × 900
+
+Views:
+- Summary
+- Detail
+- Evidence
+- Next
+- contextual launch points on Home / Result / Body-part detail / History
+
+Finding:
+- the mobile Detail table initially expanded the page from 390 px to 666 px;
+- corrected by adding `min-width: 0` to the Interpretation Room grid/table containment chain;
+- CSS correction commit: `8d00e8883f977832eb9fde54a2329670f836b07b`;
+- corrected stylesheet SHA-256: `89a45320c3a8a1f580627c37549d62c15d5c68ee9cdfcbc912bc5c6d719c7033`;
+- post-fix all four Room views have no page-level horizontal overflow at 390 px or 1280 px;
+- the Detail table now scrolls only inside its intended wrapper.
+
+Post-fix regression:
+- existing App Source: **273/273 PASS**
+- Interpretation Core: **24/24 PASS**
+- Interpretation Room Integration: **18/18 PASS**
+- Launch Integration: **11/11 PASS**
+- PWA Integration: **7/7 PASS**
+- combined: **333/333 PASS**
+- syntax: **84/84 PASS**
+- runtime manifest: **79/79 PASS**
+
+Automated visual/mobile layout audit is therefore **PASS**. User-visible acceptance remains the final pre-merge/pre-Current gate.
 
 ## Final state
 
