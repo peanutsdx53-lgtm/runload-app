@@ -4,7 +4,7 @@ import { formatNumber } from "./recordPresentation.js";
 const CONDITION_DEFINITIONS = Object.freeze([
   Object.freeze({ key: "distance", label: "距離" }),
   Object.freeze({ key: "duration", label: "実走予定時間" }),
-  Object.freeze({ key: "runningFormat", label: "走行形式" }),
+  Object.freeze({ key: "runningFormat", label: "走り方" }),
   Object.freeze({ key: "courseName", label: "コース名" }),
   Object.freeze({ key: "grade", label: "坂道" }),
   Object.freeze({ key: "surface", label: "路面" }),
@@ -23,10 +23,10 @@ function gradeLabel(course = {}) {
   if (course.gradeKnowledge !== "KNOWN_PROFILE") return "不明";
   const values = [];
   if (Number(course.upPercent || 0) > 0) {
-    values.push(`上り${formatNumber(course.upPercent, 1)}%区間・勾配${formatNumber(course.upGradePercent, 1)}%`);
+    values.push(`上り${formatNumber(course.upPercent, 1)}%区間・坂の傾き${formatNumber(course.upGradePercent, 1)}%`);
   }
   if (Number(course.downPercent || 0) > 0) {
-    values.push(`下り${formatNumber(course.downPercent, 1)}%区間・勾配${formatNumber(course.downGradePercent, 1)}%`);
+    values.push(`下り${formatNumber(course.downPercent, 1)}%区間・坂の傾き${formatNumber(course.downGradePercent, 1)}%`);
   }
   const flat = 100 - Number(course.upPercent || 0) - Number(course.downPercent || 0);
   if (flat > 0) values.unshift(`平坦${formatNumber(flat, 1)}%区間`);
@@ -105,7 +105,7 @@ export function buildPlanModelSession(session = {}) {
 export function describePlanModelAssumptions(session = {}) {
   const normalized = normalizePlanFactSession(session);
   if (normalized.activityType === "rest") return "休養予定は、休養という予定事実だけを保存します。";
-  return "予定で入力した距離・時間・走行形式・コース条件を事実として確認します。分からない内容は、分からないまま残します。";
+  return "予定で入力した距離・時間・走り方・コース条件を事実として確認します。分からない内容は、分からないまま残します。";
 }
 
 export function buildPlanReference(sourceExperience = null) {
