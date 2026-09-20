@@ -25,7 +25,7 @@ function updateInputFormVisibility(form) {
   const runWalk = activityType === "run" && runningFormat === "RUN_WALK";
   form.querySelectorAll("[data-run-fields]").forEach((element) => setHidden(element, activityType === "rest"));
   form.querySelectorAll("[data-rest-fields]").forEach((element) => setHidden(element, activityType !== "rest"));
-  form.querySelectorAll("[data-run-walk-fields]").forEach((element) => setHidden(element, !runWalk));
+  form.querySelectorAll("[data-run-walk-fields], [data-run-walk-container]").forEach((element) => setHidden(element, !runWalk));
   form.querySelectorAll("[data-run-walk-required]").forEach((element) => { element.required = runWalk; });
 }
 
