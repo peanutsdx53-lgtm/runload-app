@@ -74,14 +74,6 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     };
   }
 
-  if (screen === "activation") {
-    return {
-      title: "結果の活用",
-      backHref: screenHref("result", { recordId }),
-      backLabel: "結果",
-    };
-  }
-
   if (screen === "interpretation-room") {
     const origin = parameter("origin");
     const regionId = parameter("regionId");
@@ -104,11 +96,19 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     const from = parameter("from");
     if (from === "plan") return { title: "条件比較", backHref: "#/plan", backLabel: "予定" };
     if (from === "history") return { title: "条件比較", backHref: "#/history", backLabel: "履歴" };
+    if (from === "interpretation-room") {
+      const roomOrigin = parameter("roomOrigin");
+      return {
+        title: "条件比較",
+        backHref: screenHref("interpretation-room", { recordId, origin: roomOrigin || "result", view: "next", intent: "condition" }),
+        backLabel: "RunLoad解釈",
+      };
+    }
     if (from === "activation") {
       return {
         title: "条件比較",
-        backHref: screenHref("activation", { recordId }),
-        backLabel: "結果の活用",
+        backHref: screenHref("interpretation-room", { recordId, origin: "result", view: "next", intent: "condition" }),
+        backLabel: "RunLoad解釈",
       };
     }
     return {
@@ -161,7 +161,7 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
   Object.freeze({
     label: "結果を使う",
     items: Object.freeze([
-      Object.freeze({ screen: "activation", label: "結果の活用", description: "比較・共有準備・予定・読みものへ進む" }),
+      Object.freeze({ screen: "interpretation-room", label: "RunLoad解釈", description: "最新の結果を整理して確認", requiresRecord: true }),
       Object.freeze({ screen: "simulation", label: "条件を比べる", description: "条件を変えて同じ計算モデルで確認" }),
       Object.freeze({ screen: "plan", label: "予定", description: "次の走行・休養予定を作る" }),
     ]),
@@ -186,7 +186,6 @@ const WORKSPACE_BY_SCREEN = Object.freeze({
   "gpx-analysis": "record",
   result: "result",
   "body-part-detail": "result",
-  activation: "result",
   "interpretation-room": "result",
   simulation: "result",
   history: "records",
@@ -220,7 +219,7 @@ export function renderResultWorkspaceNavigation({ recordId = "", date = "", regi
     { key: "overview", href: route("result", { recordId }), label: "今回の結果", description: "記録と12部位の結果" },
     ...(regionId ? [{ key: "region", href: route("body-part-detail", { recordId, regionId }), label: "選択した部位", description: "この部位の見方" }] : []),
     { key: "history", href: route("history", { view: "trends", period: 28, anchorDate: date, recordId, regionId }), label: "履歴", description: regionId ? "同じ部位の過去記録" : "保存した記録を見返す" },
-    { key: "use", href: route("activation", { recordId }), label: "結果の活用", description: "比較・共有準備・予定・読みもの" },
+    { key: "use", href: route("interpretation-room", { recordId, origin: "result" }), label: "RunLoad解釈", description: "今回と過去の結果を整理して確認" },
   ];
   return `<nav class="workspace-navigation" data-screen-architecture="${SCREEN_ARCHITECTURE_VERSION}" aria-label="結果の関連画面">${items.map((item) => workspaceLink({ ...item, current: item.key === active })).join("")}</nav>`;
 }
