@@ -217,7 +217,7 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
         <header class="share-viewer-head"><div><small>RUNLOAD SHARE</small><strong>共有内容</strong></div><button type="button" data-action="close-consult-viewer" aria-label="共有表示を閉じる">×</button></header>
         <section class="share-viewer-purpose"><small>見せる相手</small><strong data-consult-viewer-target>${escapeHtml(initialTarget || "未入力")}</strong><p data-consult-viewer-question>確認したいこと：${escapeHtml(initialQuestion || "未入力")}</p></section>
         <div class="share-viewer-grid">${viewerCards}</div>
-        <footer>部位の目安は診断や安全性を判定する数値ではありません。</footer>
+        <footer>走行距離は部位の数値へ掛けず、別の走行事実として扱います。部位の目安は診断や安全性を判定する数値ではありません。</footer>
       </div>
     </div>
 
@@ -226,7 +226,7 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
       <section class="share-document-purpose"><small>確認したいこと</small><strong data-consult-document-question>${escapeHtml(initialQuestion || "未入力")}</strong></section>
       <div class="share-document-grid">${documentCards}</div>
       <section class="share-document-region" data-consult-document-region><div><small>関連する部位</small><h2>部位の目安と最近の変化</h2></div><table><tbody>${regionRows}</tbody></table></section>
-      <footer><strong>RunLoadの表示について</strong><p>部位の目安は記録を振り返るための参考です。診断や安全性、けがの危険性、走行可否を判定する数値ではありません。</p></footer>
+      <footer><strong>RunLoadの表示について</strong><p>部位の目安は記録を振り返るための参考です。走行距離は部位の数値へ掛けず、別の走行事実として扱います。診断や安全性、けがの危険性、走行可否を判定する数値ではありません。</p></footer>
     </article>
 
     <p class="boundary">共有する相手と内容は本人が選びます。個人的なメモなどは、必要な場合だけ含めてください。</p>
