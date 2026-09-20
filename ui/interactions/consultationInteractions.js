@@ -10,7 +10,6 @@ export function bindConsultation() {
   if (!root) return;
 
   const sourceInputs = [...root.querySelectorAll("[data-consult-source]")];
-  const target = root.querySelector("[data-consult-target]");
   const question = root.querySelector("[data-consult-question]");
   const copySource = root.querySelector("#consultation-report-text");
   const viewer = root.querySelector("[data-consult-viewer]");
@@ -34,57 +33,40 @@ export function bindConsultation() {
       });
     });
 
-    const region = root.querySelector("[data-consult-document-region]");
-    if (region) {
-      const hasRegion = [...region.querySelectorAll("[data-consult-document-key]")].some((row) => !row.hidden);
-      region.hidden = !hasRegion;
-    }
   };
 
-  const updateShareItem = (key, value, available) => {
-    const input = sourceInputs.find((item) => item.dataset.shareKey === key);
-    if (!input) return;
+  const updateRegionalItem = (option) => {
+    const input = sourceInputs.find((item) => item.dataset.shareKey === "regional");
+    if (!input || !option) return;
+    const available = option.dataset.regionalAvailable === "true";
     const wasDisabled = input.disabled;
     const wasChecked = input.checked;
-    input.dataset.shareValue = value;
+    input.dataset.shareValue = option.dataset.regionalValue || "表示できません";
     input.disabled = !available;
     input.checked = available ? (wasDisabled ? true : wasChecked) : false;
 
     const label = input.closest(".share-source");
     label?.classList.toggle("is-unavailable", !available);
-    const summary = label?.querySelector("em");
-    if (summary) summary.textContent = available ? value : "今回は表示できません";
 
-    ["preview", "viewer"].forEach((targetName) => {
-      const card = root.querySelector(`[data-consult-${targetName}-key="${key}"]`);
-      const strong = card?.querySelector("strong");
-      if (strong) strong.textContent = value;
-    });
-
-    const documentItem = root.querySelector(`[data-consult-document-key="${key}"]`);
-    if (documentItem) {
-      const valueElement = documentItem.matches("tr")
-        ? documentItem.querySelector("td")
-        : documentItem.querySelector("strong");
-      if (valueElement) valueElement.textContent = value;
-    }
+    const values = {
+      "[data-consult-regional-name]": option.dataset.regionalName || "選択した部位",
+      "[data-consult-regional-relation]": option.dataset.regionalRelation || "表示できません",
+      "[data-consult-regional-current]": option.dataset.regionalCurrent || "今回の数値なし",
+      "[data-consult-regional-previous]": option.dataset.regionalPrevious || "比較できる過去記録なし",
+    };
+    Object.entries(values).forEach(([selector, value]) => writeText(selector, value));
   };
 
   const rebuild = () => {
     const keys = activeKeys();
-    const recipient = target?.value.trim() || "未入力";
     const purpose = question?.value.trim() || "未入力";
 
-    writeText("[data-consult-preview-target]", recipient);
-    writeText("[data-consult-preview-question]", `確認内容：${purpose}`);
-    writeText("[data-consult-viewer-target]", recipient);
-    writeText("[data-consult-viewer-question]", `確認内容：${purpose}`);
-    writeText("[data-consult-document-target]", `共有先：${recipient}`);
+    writeText("[data-consult-preview-question]", purpose);
+    writeText("[data-consult-viewer-question]", purpose);
     writeText("[data-consult-document-question]", purpose);
     syncVisibility(keys);
 
     const lines = [];
-    if (target?.value.trim()) lines.push(`見せる相手：${target.value.trim()}`);
     if (question?.value.trim()) lines.push(`確認内容：${question.value.trim()}`);
     sourceInputs
       .filter((input) => input.checked && !input.disabled)
@@ -100,21 +82,11 @@ export function bindConsultation() {
   };
 
   sourceInputs.forEach((input) => input.addEventListener("change", rebuild));
-  target?.addEventListener("input", rebuild);
   question?.addEventListener("input", rebuild);
   regionSelector?.addEventListener("change", () => {
     const option = regionSelector.selectedOptions?.[0];
     if (!option) return;
-    updateShareItem(
-      "regional",
-      option.dataset.regionalValue || "数値なし",
-      option.dataset.regionalAvailable === "true",
-    );
-    updateShareItem(
-      "recent",
-      option.dataset.recentValue || "比較できる過去記録なし",
-      option.dataset.recentAvailable === "true",
-    );
+    updateRegionalItem(option);
     rebuild();
   });
 
