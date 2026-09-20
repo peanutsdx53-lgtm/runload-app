@@ -301,7 +301,8 @@ function prototypeRecentChangeSummary(presentation, record) {
   return `${previous.date} ${formatNumber(previousValue, 1)} → 今回 ${formatNumber(current, 1)}（${signed}）`;
 }
 
-function prototypeShareItems({ facts, fatigue, bodyRecord, regional, recent, next }) {
+function prototypeShareItems({ facts, fatigue, bodyRecord, regional, recent, next, plan }) {
+  const hasPlan = Boolean(plan && plan !== "未設定");
   return [
     { key: "run", label: "今回の走行", value: facts, note: "距離・時間・コース", checked: true, available: true },
     { key: "fatigue", label: "疲労感", value: fatigue, note: "走る前と走った後", checked: !fatigue.includes("未記録"), available: !fatigue.includes("未記録") },
@@ -309,6 +310,7 @@ function prototypeShareItems({ facts, fatigue, bodyRecord, regional, recent, nex
     { key: "regional", label: "関連する部位の目安", value: regional, note: "その部位自身の基準との比較", checked: !regional.includes("数値なし"), available: !regional.includes("数値なし") },
     { key: "recent", label: "最近の変化", value: recent, note: "同じ部位で比較できる場合のみ", checked: recent !== "比較できる過去記録なし", available: recent !== "比較できる過去記録なし" },
     { key: "next", label: "次に確認したいこと", value: next, note: "本人が記録した確認点", checked: true, available: true },
+    { key: "plan", label: "次の予定", value: plan || "未設定", note: "保存済みの次回方針", checked: hasPlan, available: hasPlan },
   ];
 }
 
@@ -320,7 +322,7 @@ function prototypeShareCards(items, target) {
   return items.map((item) => `<section class="share-card" data-consult-${target}-key="${escapeHtml(item.key)}"${item.checked ? "" : " hidden"}><small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.value)}</strong></section>`).join("");
 }
 
-function renderPrototypeConsultation({ services, experience, regionId = "" }) {
+function renderPrototypeConsultation({ services, experience, plan, regionId = "" }) {
   if (!experience?.record) {
     return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation"><section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel"><div class="panel-head"><div><small>RECORD</small><strong>対象の記録がありません</strong></div></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div>`;
   }
@@ -333,7 +335,7 @@ function renderPrototypeConsultation({ services, experience, regionId = "" }) {
   const next = prototypeNextCheck(experience);
   const resultLine = prototypeRegionalSummary(presentation);
   const recent = prototypeRecentChangeSummary(presentation, record);
-  const items = prototypeShareItems({ facts, fatigue, bodyRecord, regional: resultLine, recent, next });
+  const items = prototypeShareItems({ facts, fatigue, bodyRecord, regional: resultLine, recent, next, plan: plan ? `${formatLocalDate(plan.scheduledDate)}・${planSummary(plan)}` : "未設定" });
   const previewCards = prototypeShareCards(items, "preview");
   const viewerCards = prototypeShareCards(items, "viewer");
   const selector = prototypeShareSelector(items);
@@ -399,44 +401,11 @@ function renderPrototypeConsultation({ services, experience, regionId = "" }) {
 
 export function renderConsultationScreen({ services, context }) {
   const requestedRecordId = context.parameters.get("recordId") || "";
-  const requestedPlanId = context.parameters.get("planId") || "";
   const experience = requestedRecordId
     ? services.workflows.records.loadExperience(requestedRecordId)
     : services.workflows.records.loadLatestExperience();
   const plans = services.storage.plans.loadAll();
-  const plan = requestedPlanId ? services.storage.plans.findById(requestedPlanId) : latestPlan(plans);
-  const requestedMode = ["result", "plan", "free"].includes(context.parameters.get("mode"))
-    ? context.parameters.get("mode")
-    : experience ? "result" : plan ? "plan" : "free";
-  const mode = requestedMode === "result" && !experience
-    ? plan ? "plan" : "free"
-    : requestedMode === "plan" && !plan
-      ? experience ? "result" : "free"
-      : requestedMode;
-  const format = ["standard", "detailed"].includes(context.parameters.get("format"))
-    ? context.parameters.get("format")
-    : "standard";
-  const requestedPage = context.parameters.get("page") || "";
+  const plan = latestPlan(plans);
   const regionId = context.parameters.get("regionId") || "";
-  const purpose = context.parameters.get("purpose") || "";
-  const a4RegionId = context.parameters.get("a4RegionId") || "";
-  const reportPage = Boolean(experience) && mode === "result" && requestedPage === "report";
-  const quickPage = requestedPage === "quick" || context.parameters.has("mode");
-
-  if (reportPage) return renderReportPage({
-    services,
-    experience,
-    format,
-    regionId,
-  });
-  if (quickPage) return renderQuickPage({
-    services,
-    experience,
-    plan,
-    mode,
-    regionId,
-    purpose,
-    a4RegionId,
-  });
-  return renderPrototypeConsultation({ services, experience, regionId });
+  return renderPrototypeConsultation({ services, experience, plan, regionId });
 }
