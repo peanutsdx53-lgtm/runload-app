@@ -29,7 +29,7 @@ export function bindConsultation() {
     const syncVisibility = (keys) => {
       ["preview", "viewer", "document"].forEach((targetName) => {
         prototypeRoot.querySelectorAll(`[data-consult-${targetName}-key]`).forEach((element) => {
-          const key = element.dataset[`consult${targetName[0].toUpperCase()}${targetName.slice(1)}Key`] || "";
+          const key = element.getAttribute(`data-consult-${targetName}-key`) || "";
           element.hidden = !keys.has(key);
         });
       });
@@ -80,6 +80,12 @@ export function bindConsultation() {
     });
     viewer?.addEventListener("click", (event) => {
       if (event.target === viewer) {
+        viewer.hidden = true;
+        document.documentElement.classList.remove("consult-viewer-open");
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && viewer && !viewer.hidden) {
         viewer.hidden = true;
         document.documentElement.classList.remove("consult-viewer-open");
       }
