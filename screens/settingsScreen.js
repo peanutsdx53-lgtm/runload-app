@@ -78,7 +78,7 @@ export function renderSettingsScreen({ services, context }) {
           </div><p class="note">すべて任意です。個人補正、診断、性別判定には使いません。</p></div></details>
           <details class="subdetails"><summary><span><strong>保存シューズ</strong><small>Recordで次回も選べる名称</small></span><span>⌄</span></summary><div class="subdetails-body">${renderSavedShoes(settings)}<p class="visually-hidden">保存候補から削除しても、過去記録に保存されたシューズ情報は変わりません。</p></div></details>
           <div class="action-row"><button type="submit" class="primary">プロフィールを保存</button><button type="button" data-action="reset-journal-settings">標準設定に戻す</button></div>
-          <p class="visually-hidden">ルートファイル（GPX）は端末内で読み取り、外部サービスへ自動送信しません。</p><input type="hidden" name="externalLinkDisplay" value="${escapeHtml(settings.externalLinkDisplay)}">
+          <p class="visually-hidden">ルートファイル（GPX）は端末内で読み取り、外部サービスへ自動送信しません。</p>
           <input type="hidden" name="regionalResultInitialView" value="${escapeHtml(settings.regionalResultInitialView)}">
           <input type="hidden" name="showRegionalPreviousComparison" value="${settings.showRegionalPreviousComparison ? "show" : "hide"}">
           <div class="form-messages" data-form-messages tabindex="-1" hidden></div>
