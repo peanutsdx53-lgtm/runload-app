@@ -163,6 +163,26 @@ function renderScreen(location) {
   renderCurrentLocation();
 }
 
+function reconcileTransientBodyState() {
+  const blockingDialogOpen = Boolean(document.querySelector(".guide-dialog, .screen-tutorial"));
+  document.body.classList.toggle("has-open-dialog", blockingDialogOpen);
+
+  const recordOverlayOpen = Boolean(document.querySelector("[data-record-rof-overlay]:not([hidden])"));
+  document.body.classList.toggle("record-overlay-open", recordOverlayOpen);
+
+  const recordSubflowOpen = Boolean(document.querySelector("[data-record-subflow]:not([hidden])"));
+  document.body.classList.toggle("record-subflow-open", recordSubflowOpen);
+}
+
+function reconcileAfterAppResume() {
+  window.requestAnimationFrame(reconcileTransientBodyState);
+}
+
+window.addEventListener("pageshow", reconcileAfterAppResume);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") reconcileAfterAppResume();
+});
+
 router = createAppRouter({
   availableScreens: Object.keys(screenRenderers),
   routeAliases,
