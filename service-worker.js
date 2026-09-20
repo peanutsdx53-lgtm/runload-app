@@ -1,4 +1,4 @@
-const CACHE_NAME = "runload-app-current-v124-ios-scroll-recovery-v1";
+const CACHE_NAME = "runload-app-current-v125-course-single-scroll-v1";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
