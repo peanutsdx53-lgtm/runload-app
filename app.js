@@ -21,7 +21,6 @@ import { renderPlanScreen } from "./screens/planScreen.js";
 import { renderConsultationScreen } from "./screens/consultationScreen.js";
 import { renderReadingScreen } from "./screens/readingScreen.js";
 import { renderSettingsScreen } from "./screens/settingsScreen.js";
-import { renderActivationScreen } from "./screens/activationScreen.js";
 import { renderInterpretationRoomScreen } from "./screens/interpretationRoomScreen.js";
 import { renderSupportGuidanceScreen } from "./screens/supportGuidanceScreen.js";
 import { renderPrivacyScreen } from "./screens/privacyScreen.js";
@@ -37,7 +36,6 @@ const screenRenderers = {
   result: renderResultScreen,
   "body-part-detail": renderBodyPartDetailScreen,
   history: renderHistoryScreen,
-  activation: renderActivationScreen,
   "interpretation-room": renderInterpretationRoomScreen,
   "support-guidance": renderSupportGuidanceScreen,
   privacy: renderPrivacyScreen,
@@ -50,7 +48,13 @@ const screenRenderers = {
   settings: renderSettingsScreen,
 };
 
-const routeAliases = Object.freeze({});
+const routeAliases = Object.freeze({
+  activation: (parameters) => {
+    const nextParameters = new URLSearchParams(parameters);
+    if (!nextParameters.has("origin")) nextParameters.set("origin", "result");
+    return Object.freeze({ screen: "interpretation-room", parameters: nextParameters });
+  },
+});
 
 const appRoot = document.getElementById("app");
 const baseApplicationServices = createApplicationServices();
