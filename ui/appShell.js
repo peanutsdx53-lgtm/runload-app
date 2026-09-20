@@ -16,7 +16,7 @@ const TOPBAR_CONTEXT_LABELS = Object.freeze({
   activation: "RESULT USE",
   simulation: "SIMULATION",
   plan: "PLAN",
-  consultation: "CONSULTATION",
+  consultation: "SHARE PREP",
   "support-guidance": "SUPPORT",
   reading: "READING",
   privacy: "PRIVACY",
