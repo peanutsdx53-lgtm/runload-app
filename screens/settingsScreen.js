@@ -94,7 +94,7 @@ export function renderSettingsScreen({ services, context }) {
         <div class="restore-preview" data-restore-preview-host aria-live="polite"><p class="muted-text">ファイルを選ぶと、内容を確認してから復元できます。</p></div>
         <div class="danger-box"><strong>この端末内のRunLoadデータを削除</strong><p>記録、結果、予定、保存コース、プロフィール、設定、保存シューズ、下書きなどを削除します。端末へ書き出したバックアップファイルは削除しません。</p><label class="field"><span>確認のため「削除」と入力</span><input id="clear-data-confirmation" autocomplete="off"></label><div class="action-row"><button type="button" class="danger" data-action="clear-all-user-data">すべて削除</button></div></div>
         <div class="form-messages" data-data-management-messages role="status" aria-live="polite" tabindex="-1" hidden></div>
-        <div class="action-row"><a href="#/privacy">データの扱いを確認 <span style="margin-left:8px">›</span></a></div>
+        <div class="action-row"><a href="#/privacy?returnTo=%23%2Fsettings">データの扱いを確認 <span style="margin-left:8px">›</span></a></div>
       </div></details>
     </section>
 
