@@ -5,7 +5,7 @@ const GROUPS = Object.freeze([
     label: "APP",
     items: Object.freeze([
       Object.freeze({ screen: "settings", icon: "⚙", eyebrow: "APP SETTINGS", title: "設定", description: "表示・データ管理", primary: true }),
-      Object.freeze({ screen: "consultation", icon: "⌁", eyebrow: "CONSULTATION", title: "相談", description: "見せる内容を整理" }),
+      Object.freeze({ screen: "consultation", icon: "⌁", eyebrow: "SHARE PREP", title: "共有用にまとめる", description: "指導者などに見せる内容を整理" }),
       Object.freeze({ screen: "support-guidance", icon: "＋", eyebrow: "SUPPORT", title: "公的サポート", description: "症状や体調の相談先を確認" }),
     ]),
   }),

@@ -1,38 +1,47 @@
 # RunLoad Mobile Prototype Parity Baseline
 
 Date: 2026-09-20
-Status: SMARTPHONE IMPLEMENTATION BASELINE / USER LANGUAGE V1.29 VERIFIED
+Status: SMARTPHONE IMPLEMENTATION BASELINE / SHARE PREPARATION V1.30 VERIFIED
 
-The smartphone UI is based on the frozen prototype authority, with later audited smartphone refinements.
+## Share Preparation V1.30
+The former 「相談」 feature is redefined as 「共有用にまとめる」.
 
-## User-language rule
-- User-facing labels lead with meaning rather than research or implementation terminology.
-- ROF-J is shown primarily as 「疲労感」.
-- Reference-100 is shown primarily as 「部位ごとの目安」.
-- Formal names remain only in explanatory/detail text where provenance matters.
-- Internal identifiers and calculation/storage terminology remain unchanged.
+Purpose:
+- RunLoad prepares a factual base that the user can show to an instructor, coach, medical professional, family member, or another person.
+- The recipient views the material; RunLoad does not send it automatically.
+- One common selected data set feeds on-screen viewing, text copy, and print/PDF output.
+
+Shared candidate information:
+- target person
+- what the user wants checked
+- current run facts
+- fatigue before/after
+- body-record observations
+- selected body-region indicator
+- directly comparable recent change when available
+- next item to check
+- saved next plan when available
+
+## UI / output rules
+- The flow is one sequence: recipient/purpose -> included information -> preview -> output method.
+- The old split between short memo and report is retired from the runtime route.
+- Changing the selected body region updates only the region indicator and comparable recent change; typed recipient/purpose text remains in place.
+- Screen viewing uses a dedicated full-screen read-only presentation.
+- Print/PDF uses A4 portrait, card-level page-break protection, and a compact region table.
+- Body-record summaries are capped to the first three displayed items plus a remaining-count summary so the document does not become unnecessarily dense.
+- Distance remains a separate run fact and is not multiplied into the body-region indicator.
 
 ## Verification
-- Final syntax audit for all 27 modified JavaScript files: 27 / 27 PASS
-- User-facing legacy-term residual audit: PASS
-- Diff-shape audit: all 27 implementation files are balanced line-for-line replacements; no new control-flow, event, storage, routing, or calculation logic was added
-- Protected `core/runloadCore.js` unchanged
-- Protected `core/secondPillarRofJ.js` unchanged
+- Modified JavaScript syntax: 10 / 10 PASS
+- Final Share Preparation audit: 38 / 38 PASS
+- Existing consultation-boundary compatibility audit: 13 / 13 PASS
+- Dynamic region-selection synchronization audit: 6 / 6 PASS
+- Retained V1.6R2 harness environment itself: 251 / 251 PASS
+- The 251-test harness was not rerun with the exact V1.30 branch overlaid, so 251/251 is not claimed as V1.30 regression evidence
+- Protected calculation cores unchanged
 - Storage implementation unchanged
-- The retained 251-test V1.6R2 harness was not rerun against the exact V1.29 branch because the repository has no CI and the retained harness is stored separately in Library; prior regression evidence remains previous-release evidence only
-- PWA cache is bumped so existing installations receive the wording update
-
-## Main wording changes
-- ROF-J -> 疲労感
-- Reference-100 -> 部位ごとの目安
-- 基準100 -> その部位の基準
-- RUN_WALK -> 走りと歩きを混ぜた場合
-- シミュレーション -> 条件比較
-- 勾配 -> 坂の傾き
-- GPX-facing labels -> ルートファイル（GPX）
-- 実走時間 -> 実際に走った時間
-- 走行形式 -> 走り方
-- けがリスク / 傷害リスク -> けがの危険性
+- Scientific source/model files unchanged
+- PWA cache bumped for deployment
 
 ## Fixed scientific boundary
-This release changes presentation wording only. It does not change ROF-J descriptors, scale values, Reference-100 mathematics, calculation inputs, course semantics, source evidence, storage shape, or the documented Direct/P1/P2 boundaries.
+This release changes sharing workflow, presentation, and output only. It does not change calculation inputs, Reference-100 mathematics, fatigue-scale values, storage shape, scientific source evidence, or the documented Direct/P1/P2 boundaries.

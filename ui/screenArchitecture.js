@@ -1,13 +1,13 @@
 import { escapeHtml } from "./commonComponents.js";
 
-export const SCREEN_ARCHITECTURE_VERSION = "runload-screen-architecture-current-v2";
+export const SCREEN_ARCHITECTURE_VERSION = "runload-screen-architecture-current-v3";
 
 export const PRIMARY_DESTINATIONS = Object.freeze([
   Object.freeze({ screen: "home", label: "Home", description: "今日の入口", icon: "home" }),
   Object.freeze({ screen: "record-input", label: "記録", description: "走行・休養を残す", icon: "record" }),
   Object.freeze({ screen: "result", label: "結果", description: "今回の結果を見る", requiresRecord: true, icon: "result" }),
   Object.freeze({ screen: "history", label: "履歴", description: "保存した記録を比べる", icon: "history" }),
-  Object.freeze({ screen: "more", label: "その他", description: "設定・相談・読みもの", icon: "more" }),
+  Object.freeze({ screen: "more", label: "その他", description: "設定・共有・読みもの", icon: "more" }),
 ]);
 
 
@@ -105,14 +105,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   }
 
   if (screen === "consultation") {
-    const page = parameter("page");
-    if (page === "quick" || parameter("mode")) {
-      return { title: "共有メモ", backHref: "#/consultation", backLabel: "相談" };
-    }
-    if (page === "report") {
-      return { title: "資料レポート", backHref: "#/consultation", backLabel: "相談" };
-    }
-    return { title: "相談", backHref: "#/more", backLabel: "その他" };
+    return { title: "共有用にまとめる", backHref: "#/more", backLabel: "その他" };
   }
 
   if (screen === "support-guidance") {
@@ -121,7 +114,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
       return { title: "公的サポート", backHref: returnTo, backLabel: "身体の記録" };
     }
     if (returnTo.startsWith("#/consultation")) {
-      return { title: "公的サポート", backHref: returnTo, backLabel: "相談" };
+      return { title: "公的サポート", backHref: returnTo, backLabel: "共有用にまとめる" };
     }
     return { title: "公的サポート", backHref: "#/more", backLabel: "その他" };
   }
@@ -150,7 +143,7 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
   Object.freeze({
     label: "結果を使う",
     items: Object.freeze([
-      Object.freeze({ screen: "activation", label: "結果の活用", description: "比較・相談・予定・読みものへ進む" }),
+      Object.freeze({ screen: "activation", label: "結果の活用", description: "比較・共有準備・予定・読みものへ進む" }),
       Object.freeze({ screen: "simulation", label: "条件を比べる", description: "条件を変えて同じ計算モデルで確認" }),
       Object.freeze({ screen: "plan", label: "予定", description: "次の走行・休養予定を作る" }),
     ]),
@@ -158,7 +151,7 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
   Object.freeze({
     label: "サポート・設定",
     items: Object.freeze([
-      Object.freeze({ screen: "consultation", label: "相談", description: "見せる内容を整理" }),
+      Object.freeze({ screen: "consultation", label: "共有用にまとめる", description: "指導者などに見せる内容を整理" }),
       Object.freeze({ screen: "support-guidance", label: "公的な相談先", description: "119・#7119など公式案内を確認" }),
       Object.freeze({ screen: "reading", label: "読みもの", description: "結果を理解する一般情報" }),
       Object.freeze({ screen: "privacy", label: "プライバシー", description: "保存と外部との境界を確認" }),
@@ -208,7 +201,7 @@ export function renderResultWorkspaceNavigation({ recordId = "", date = "", regi
     { key: "overview", href: route("result", { recordId }), label: "今回の結果", description: "記録と12部位の結果" },
     ...(regionId ? [{ key: "region", href: route("body-part-detail", { recordId, regionId }), label: "選択した部位", description: "この部位の見方" }] : []),
     { key: "history", href: route("history", { view: "trends", period: 28, anchorDate: date, recordId, regionId }), label: "履歴", description: regionId ? "同じ部位の過去記録" : "保存した記録を見返す" },
-    { key: "use", href: route("activation", { recordId }), label: "結果の活用", description: "比較・相談・予定・読みもの" },
+    { key: "use", href: route("activation", { recordId }), label: "結果の活用", description: "比較・共有準備・予定・読みもの" },
   ];
   return `<nav class="workspace-navigation" data-screen-architecture="${SCREEN_ARCHITECTURE_VERSION}" aria-label="結果の関連画面">${items.map((item) => workspaceLink({ ...item, current: item.key === active })).join("")}</nav>`;
 }
