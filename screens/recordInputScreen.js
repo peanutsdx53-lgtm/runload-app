@@ -173,7 +173,7 @@ function renderRecordInputGuide({ selectedPlan = null, editing = false } = {}) {
 
 function renderEnvironmentContext(record = {}) {
   const context = record.environmentContext || {};
-  return `<details class="inner-details"><summary><span>環境を残す<small>気温・環境メモ</small></span><i>⌄</i></summary><div class="inner-body two-fields"><input type="hidden" name="weather" value="${escapeHtml(context.weather || "")}"><input type="hidden" name="windSummary" value="${escapeHtml(context.windSummary || "")}"><label class="field"><span>気温（℃）</span><input name="temperatureC" type="number" inputmode="decimal" min="-50" max="60" step="0.1" value="${escapeHtml(context.temperatureC ?? "")}" placeholder="例：24"></label><label class="field"><span>環境メモ</span><textarea name="environmentNote" maxlength="500" rows="3" placeholder="天候、風、暑さ、湿り、混雑など">${escapeHtml(context.environmentNote || "")}</textarea></label></div></details>`;
+  return `<details class="inner-details"><summary><span>環境を残す<small>気温・環境メモ</small></span><i>⌄</i></summary><div class="inner-body environment-fields"><input type="hidden" name="weather" value="${escapeHtml(context.weather || "")}"><input type="hidden" name="windSummary" value="${escapeHtml(context.windSummary || "")}"><label class="field"><span>気温（℃）</span><input name="temperatureC" type="number" inputmode="decimal" min="-50" max="60" step="0.1" value="${escapeHtml(context.temperatureC ?? "")}" placeholder="例：24"></label><label class="field"><span>環境メモ</span><textarea name="environmentNote" maxlength="500" rows="1" placeholder="例：暑い、向かい風、湿度が高い">${escapeHtml(context.environmentNote || "")}</textarea></label></div></details>`;
 }
 
 function renderRecoveryAndReflection(record = {}) {

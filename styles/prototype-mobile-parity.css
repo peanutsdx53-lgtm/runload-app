@@ -2576,3 +2576,261 @@
     -webkit-overflow-scrolling:touch;
   }
 }
+
+
+/* ===== V1.28 smartphone alignment refinements ===== */
+/* Course detail inputs: one visual grammar for percentage, type, and grade. */
+.prototype-parity--course .section-row{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  padding:11px;
+  align-items:stretch;
+}
+.prototype-parity--course .section-row-head{
+  grid-column:1/-1;
+  justify-content:flex-start;
+  padding-bottom:1px;
+}
+.prototype-parity--course .section-row-head strong{font-size:10px}
+.prototype-parity--course .section-field{
+  min-width:0;
+  display:grid;
+  gap:5px;
+}
+.prototype-parity--course .section-field>span:first-child{
+  color:var(--muted);
+  font-size:8px;
+  font-weight:850;
+}
+.prototype-parity--course .section-row .percent-control,
+.prototype-parity--course .section-row select{
+  width:100%;
+  height:48px;
+  min-height:48px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:var(--s);
+  color:var(--ink);
+  box-sizing:border-box;
+}
+.prototype-parity--course .section-row .percent-control{padding:6px 11px}
+.prototype-parity--course .section-row .percent-control input{
+  font-size:16px;
+  text-align:left;
+}
+.prototype-parity--course .section-row .percent-control em{font-size:9px}
+.prototype-parity--course .section-row select{
+  padding:0 11px;
+  font-size:16px;
+  outline:none;
+}
+.prototype-parity--course .section-row .percent-control:focus-within,
+.prototype-parity--course .section-row select:focus{
+  border-color:var(--a);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--a) 12%,transparent);
+}
+
+/* Record form: aligned full-width environment controls and shared mobile field geometry. */
+.prototype-parity--record .environment-fields{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+.prototype-parity--record .environment-fields .field{margin:0}
+.prototype-parity--record .environment-fields .field input,
+.prototype-parity--record .environment-fields .field textarea{
+  width:100%;
+  height:50px;
+  min-height:50px;
+  box-sizing:border-box;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--surface);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.35;
+}
+.prototype-parity--record .environment-fields .field textarea{resize:vertical}
+
+/* Body record: title/delete first, then full-width aligned controls. */
+.prototype-parity--record .selected-body-row{
+  padding:10px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:9px;
+  align-items:stretch;
+}
+.prototype-parity--record .selected-body-row-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.prototype-parity--record .selected-body-row-head strong{
+  min-width:0;
+  font-size:10px;
+  line-height:1.4;
+}
+.prototype-parity--record .selected-body-row-head button{
+  flex:0 0 auto;
+  width:36px;
+  height:36px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface);
+  color:var(--muted);
+  font-size:18px;
+  font-weight:900;
+}
+.prototype-parity--record .selected-body-controls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.prototype-parity--record .selected-body-controls label{
+  min-width:0;
+  display:grid;
+  gap:5px;
+}
+.prototype-parity--record .selected-body-controls label>span{
+  color:var(--muted);
+  font-size:8px;
+  font-weight:850;
+}
+.prototype-parity--record .selected-body-controls select{
+  width:100%;
+  min-width:0;
+  height:48px;
+  min-height:48px;
+  padding:0 11px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:var(--surface);
+  color:var(--ink);
+  font-size:16px;
+  outline:none;
+}
+.prototype-parity--record .selected-body-controls select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent);
+}
+
+/* Result: align ROF-J block with the main content column and demote its boundary note. */
+.prototype-parity--result .fatigue-section{
+  margin-top:36px;
+  margin-inline:0;
+  padding:0;
+  border:0;
+  background:transparent;
+}
+.prototype-parity--result .fatigue-inner{
+  width:min(100%,840px);
+  margin:0 auto;
+}
+.prototype-parity--result .fatigue-inner>.section-heading{
+  width:100%;
+  margin-left:0;
+  margin-right:0;
+}
+.prototype-parity--result .fatigue-card{
+  width:100%;
+  max-width:none;
+  margin:0;
+  box-sizing:border-box;
+}
+.prototype-parity--result .rof-boundary-details{
+  margin:10px 2px 0;
+  border-top:1px solid color-mix(in srgb,var(--line) 74%,transparent);
+}
+.prototype-parity--result .rof-boundary-details summary{
+  min-height:38px;
+  display:flex;
+  align-items:center;
+  list-style:none;
+  cursor:pointer;
+  color:var(--muted);
+  font-size:8px;
+  font-weight:850;
+}
+.prototype-parity--result .rof-boundary-details summary::-webkit-details-marker{display:none}
+.prototype-parity--result .rof-boundary-details summary::after{
+  content:"＋";
+  margin-left:auto;
+  color:var(--accent-strong);
+  font-size:12px;
+}
+.prototype-parity--result .rof-boundary-details[open] summary::after{content:"−"}
+.prototype-parity--result .rof-boundary-details p{
+  margin:0 0 8px;
+  color:var(--muted);
+  font-size:8px;
+  line-height:1.55;
+}
+
+/* History: no orphan numeric section marker. */
+.prototype-parity--history .comparison-title--plain{
+  grid-template-columns:minmax(0,1fr);
+  gap:0;
+}
+
+/* Reading: make horizontal filter scrolling explicit before the user swipes. */
+.prototype-parity--reading .filter-strip{
+  position:relative;
+  margin-top:18px;
+}
+.prototype-parity--reading .filter-strip-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:0 2px;
+}
+.prototype-parity--reading .filter-strip-head span{
+  color:var(--muted);
+  font-size:8px;
+  font-weight:850;
+}
+.prototype-parity--reading .filter-strip-head small{
+  color:var(--accent-strong);
+  font-size:7.5px;
+  font-weight:850;
+}
+.prototype-parity--reading .filter-strip-head b{
+  margin-left:3px;
+  font-size:11px;
+}
+.prototype-parity--reading .filter-strip .filters{
+  margin-top:7px;
+  padding-right:42px;
+  scroll-snap-type:x proximity;
+  overscroll-behavior-x:contain;
+}
+.prototype-parity--reading .filter-strip .filters button{scroll-snap-align:start}
+.prototype-parity--reading .filter-strip::after{
+  content:"";
+  position:absolute;
+  right:0;
+  bottom:0;
+  width:38px;
+  height:38px;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--paper));
+}
+
+@media (max-width:620px){
+  .prototype-parity--course .section-row{grid-template-columns:1fr}
+  .prototype-parity--course .section-row-head,
+  .prototype-parity--course .section-row .section-grade{grid-column:auto}
+  .prototype-parity--record .selected-body-controls{grid-template-columns:1fr}
+}
+
+@media (max-width:54.99rem){
+  .prototype-parity--record .field input,
+  .prototype-parity--record .field select,
+  .prototype-parity--record .field textarea{
+    min-height:48px;
+    border-radius:12px;
+    font-size:16px;
+  }
+}

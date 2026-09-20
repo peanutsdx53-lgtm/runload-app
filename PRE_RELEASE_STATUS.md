@@ -1,25 +1,25 @@
 # RunLoad Pre-release Status
 
 Date: 2026-09-20
-Status: PRE-RELEASE REGULAR APP / MOBILE FORM POLISH V1.27
+Status: PRE-RELEASE REGULAR APP / UI ALIGNMENT V1.28
 
 Verification:
 - retained V1.6R2 regression harness with release cache literal updated: 251 / 251 PASS
 - retained suites: 16 / 16 PASS
 - retained JS/MJS syntax: 79 / 79 PASS
-- modified JavaScript syntax: 5 / 5 PASS
-- dedicated mobile form/UI audit: 18 / 18 PASS
+- modified JavaScript syntax: 6 / 6 PASS
+- dedicated V1.28 UI alignment audit: 20 / 20 PASS
 - protected Primary core hash unchanged
 - protected ROF-J core hash unchanged
 
 Audited UI refinements:
-- Compact Record return notice spacing prevents restored-input text from colliding visually with neighboring controls.
-- Inactive RUN_WALK controls no longer leave an empty bordered container.
-- Slope, detailed-section, and surface percentage controls share a common mobile input pattern.
-- Detailed sections begin with one visible row and add rows explicitly up to the existing maximum of five.
-- Saved Course actions follow a primary/secondary hierarchy comparable to saved-record actions in History.
-- Empty Course guidance is shortened for smartphone width.
-- No course storage shape, validation semantics, calculation model, or scientific interpretation is changed.
+- Course detailed-section percentage/type/grade controls are aligned and use the same mobile control geometry.
+- Environment temperature and memo controls are stacked at equal width and equal initial height.
+- Body-region input cards use a stable region header plus aligned intensity/laterality fields.
+- ROF-J result content is centered with the main result column; its long interpretation boundary is collapsed by default.
+- Orphan “01” labels are removed from History.
+- Reading category filters display an explicit horizontal-scroll cue.
+- No storage shape, calculation model, source evidence, or scientific interpretation is changed.
 - PWA cache is bumped for deployment.
 
 The app remains a development-stage research application. Scientific interpretation boundaries in the README and Current research package remain controlling.
