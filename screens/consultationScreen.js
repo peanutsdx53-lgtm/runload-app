@@ -168,7 +168,7 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
     : "未設定";
   const items = prototypeShareItems({ facts, fatigue, bodyRecord, regional: resultLine, recent, next, plan: planValue });
   const regionOptions = prototypeRegionOptions({ services, experience, allExperiences, decision });
-  const initialTarget = decision?.audience || "";
+  const initialTarget = "";
   const initialQuestion = "";
   const previewCards = prototypeShareCards(items, "preview");
   const viewerCards = prototypeShareCards(items, "viewer");
