@@ -172,6 +172,12 @@ await test('STYLESHEET-IS-DECLARED',()=>{
   assert.match(index,/styles\/interpretation-room\.css/);
 });
 
+await test('MOBILE-DETAIL-TABLE-STAYS-WITHIN-ROOM-VIEWPORT',()=>{
+  const css=read('styles/interpretation-room.css');
+  assert.match(css,/\.interpretation-table-wrap\s*\{[^}]*overflow-x:\s*auto/s);
+  assert.match(css,/\.screen--interpretation-room,[\s\S]*\.interpretation-table-wrap\s*\{\s*min-width:\s*0;/);
+});
+
 const failed=results.filter(x=>x.status==='FAIL');
 console.log(JSON.stringify({suite:'Interpretation Room Integration V1',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
