@@ -82,6 +82,24 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     };
   }
 
+  if (screen === "interpretation-room") {
+    const origin = parameter("origin");
+    const regionId = parameter("regionId");
+    if (origin === "history") {
+      return { title: "RunLoad解釈", backHref: screenHref("history", { recordId }), backLabel: "履歴" };
+    }
+    if (origin === "body-part-detail" && regionId) {
+      return { title: "RunLoad解釈", backHref: screenHref("body-part-detail", { recordId, regionId }), backLabel: "部位詳細" };
+    }
+    if (origin === "simulation") {
+      return { title: "RunLoad解釈", backHref: screenHref("simulation", { recordId, from: "interpretation-room" }), backLabel: "条件比較" };
+    }
+    if (origin === "home") {
+      return { title: "RunLoad解釈", backHref: "#/home", backLabel: "Home" };
+    }
+    return { title: "RunLoad解釈", backHref: screenHref("result", { recordId }), backLabel: "結果" };
+  }
+
   if (screen === "simulation") {
     const from = parameter("from");
     if (from === "plan") return { title: "条件比較", backHref: "#/plan", backLabel: "予定" };
@@ -169,6 +187,7 @@ const WORKSPACE_BY_SCREEN = Object.freeze({
   result: "result",
   "body-part-detail": "result",
   activation: "result",
+  "interpretation-room": "result",
   simulation: "result",
   history: "records",
   plan: "plan",
