@@ -90,7 +90,7 @@ Commits:
 - Tests: `f9fe57cd46530df952726c5d6044723a5d176007`
 
 Local verification against audited App Source:
-- Interpretation Core dedicated suite: **23/23 PASS**
+- Interpretation Core dedicated suite: **24/24 PASS**
 - Existing baseline verifier: **273/273 PASS**
 - Existing suites: **17/17 PASS**
 - JS/MJS syntax scan: **79 files / 0 failures**
@@ -100,16 +100,41 @@ Local verification against audited App Source:
 - protected ROF-J core SHA unchanged
 
 ### Stage 2 — Independent Room route and presentation
-Status: NOT STARTED
-Planned:
-- new `interpretation-room` route
-- Interpretation-first main view
-- detail/evidence/next views
-- guided maximum-four-choice navigator
-- ROF-J + regional + history presentation with layer separation
-- contextual return handling
-- immersive shell mode / ordinary bottom navigation hidden in Room
-- presentation tests
+Status: COMPLETE
+Implemented:
+- [x] canonical `interpretation-room` route
+- [x] Interpretation-first summary view
+- [x] detail / evidence / next views
+- [x] guided first level limited to four choices
+- [x] ROF-J and regional outputs kept as separate information layers
+- [x] compatible-history display only
+- [x] factual condition-difference display with explicit non-causal boundary
+- [x] persisted-evidence view with incomplete-bibliography boundary
+- [x] existing support/safety route precedence in the Room
+- [x] existing `nextCheckPoint` display without new storage
+- [x] contextual return handling for result/history/body-part-detail/simulation/home
+- [x] immersive shell with ordinary bottom navigation and feature menu omitted
+- [x] dedicated integration suite `tests/interpretationRoomIntegrationV1.test.mjs`
+
+Stage 2 commits:
+- Presentation: `a93992d422e6dafc681c6416e3abb46a395ec947`
+- Screen: `835464623dd901a4694a77070f78d8842d14402d`
+- Styles: `baf3f455da1a02c41cba30d4c286d3786ea475c8`
+- App route: `5b134a41a948419c09f181965fc83f0d4b03f0ce`
+- Screen architecture: `5684463624993be716c40c16a8f4404fc3eb361a`
+- Immersive shell: `885096c8ea754a8a5f8cfe7bad7a7313815699c8`
+- Stylesheet declaration: `6d5a2e3b43806fe9e1c8f3914c1a828ef9fc82a3`
+- Integration tests: `73fd02a92ebb58354bf4d1625da39c5986698f6b`
+
+Verification against audited App Source:
+- Interpretation Room integration suite: **17/17 PASS**
+- Interpretation Core suite: **24/24 PASS**
+- Existing baseline verifier: **273/273 PASS**
+- JS/MJS syntax scan: **80 files / 0 failures**
+- protected Primary core SHA unchanged
+- protected ROF-J core SHA unchanged
+- Stage 2 integration test SHA-256: `49bf0addf2e6f77db9061764a9df81a25ffa43352fa13b916083b023761b48d2`
+- branch compare to audited base contains no changes to protected calculation cores
 
 ### Stage 3 — Existing-screen launch points and legacy activation compatibility
 Status: NOT STARTED
@@ -143,7 +168,7 @@ Required:
 
 ## Current next action
 
-Begin Stage 2. Inspect the current shell/navigation and presentation conventions, then add the independent Interpretation Room presentation module and screen route without modifying protected cores.
+Begin Stage 3. Add compact contextual launch points on existing screens and implement legacy `#/activation` compatibility without introducing large cards. Re-run dedicated tests, existing 273-test regression, syntax checks, and protected-core hash checks before marking Stage 3 complete.
 
 ## Stop conditions
 
