@@ -179,3 +179,12 @@
   .interpretation-inline-actions { display: grid; }
   .interpretation-inline-actions .button { width: 100%; }
 }
+
+
+/* Keep wide detail tables inside the Room viewport; the table wrapper owns horizontal scrolling. */
+.screen--interpretation-room,
+.interpretation-room-view,
+.interpretation-panel,
+.interpretation-table-wrap {
+  min-width: 0;
+}
