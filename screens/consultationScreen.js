@@ -266,43 +266,134 @@ function prototypeRegionalSummary(presentation) {
   return `${regionName} ${value}`;
 }
 
+function prototypeBodyRecordSummary(presentation) {
+  const report = presentation?.report || {};
+  const rows = [];
+  report.exactBodyObservations?.forEach((item) => {
+    const values = [];
+    if (item.lateralityLabel) values.push(item.lateralityLabel);
+    if (item.intensity != null) values.push(`程度 ${item.intensity}/5`);
+    if (item.sensation) values.push(item.sensation);
+    rows.push(`${item.label}：${values.join("・") || "記録あり"}`);
+  });
+  report.subjectiveParts?.forEach((item) => {
+    const values = [];
+    if (Number(item.fatigue) > 0) values.push(`疲れ・だるさ ${item.fatigue}/5`);
+    if (Number(item.discomfort) > 0) values.push(`気になる感じ ${item.discomfort}/5`);
+    rows.push(`${item.label}：${values.join("・") || "確認済み"}`);
+  });
+  return rows.length ? rows.join("／") : "未記録";
+}
+
+function prototypeRecentChangeSummary(presentation, record) {
+  const report = presentation?.report || {};
+  const regional = report.modelReference?.regional || {};
+  const current = Number(regional.value);
+  if (!Number.isFinite(current)) return "比較できる過去記録なし";
+  const currentDate = String(record?.date || "");
+  const previous = [...(Array.isArray(report.recent) ? report.recent : [])]
+    .filter((row) => row?.regionalDirectComparable && Number.isFinite(Number(row.regionalValue)) && String(row.date || "") < currentDate)
+    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0];
+  if (!previous) return "比較できる過去記録なし";
+  const previousValue = Number(previous.regionalValue);
+  const delta = current - previousValue;
+  const signed = `${delta >= 0 ? "+" : ""}${formatNumber(delta, 1)}`;
+  return `${previous.date} ${formatNumber(previousValue, 1)} → 今回 ${formatNumber(current, 1)}（${signed}）`;
+}
+
+function prototypeShareItems({ facts, fatigue, bodyRecord, regional, recent, next }) {
+  return [
+    { key: "run", label: "今回の走行", value: facts, note: "距離・時間・コース", checked: true, available: true },
+    { key: "fatigue", label: "疲労感", value: fatigue, note: "走る前と走った後", checked: !fatigue.includes("未記録"), available: !fatigue.includes("未記録") },
+    { key: "body", label: "身体の記録", value: bodyRecord, note: "本人が入力した部位・程度", checked: bodyRecord !== "未記録", available: bodyRecord !== "未記録" },
+    { key: "regional", label: "関連する部位の目安", value: regional, note: "その部位自身の基準との比較", checked: !regional.includes("数値なし"), available: !regional.includes("数値なし") },
+    { key: "recent", label: "最近の変化", value: recent, note: "同じ部位で比較できる場合のみ", checked: recent !== "比較できる過去記録なし", available: recent !== "比較できる過去記録なし" },
+    { key: "next", label: "次に確認したいこと", value: next, note: "本人が記録した確認点", checked: true, available: true },
+  ];
+}
+
+function prototypeShareSelector(items) {
+  return items.map((item) => `<label class="share-source${item.available ? "" : " is-unavailable"}"><input type="checkbox" data-consult-source data-share-key="${escapeHtml(item.key)}" data-share-label="${escapeHtml(item.label)}" data-share-value="${escapeHtml(item.value)}"${item.checked ? " checked" : ""}${item.available ? "" : " disabled"}><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.note)}</small><em>${escapeHtml(item.available ? item.value : "今回は表示できません")}</em></span></label>`).join("");
+}
+
+function prototypeShareCards(items, target) {
+  return items.map((item) => `<section class="share-card" data-consult-${target}-key="${escapeHtml(item.key)}"${item.checked ? "" : " hidden"}><small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.value)}</strong></section>`).join("");
+}
+
 function renderPrototypeConsultation({ services, experience, regionId = "" }) {
   if (!experience?.record) {
-    return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation"><section class="head"><p class="eyebrow">CONSULTATION</p><h1>相談用にまとめる</h1><p>保存した記録があると、見せる情報を整理できます。</p></section><section class="panel"><div class="panel-head"><div><small>RECORD</small><strong>対象の記録がありません</strong></div></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div>`;
+    return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation"><section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel"><div class="panel-head"><div><small>RECORD</small><strong>対象の記録がありません</strong></div></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div>`;
   }
+
   const record = experience.record;
   const presentation = buildReportPresentation({ services, experience, regionId });
-  const regional = presentation.report.modelReference?.regional || {};
   const facts = prototypeConsultationFacts(experience);
-  const rof = prototypeConsultationRofLine(services, experience);
+  const fatigue = prototypeConsultationRofLine(services, experience);
+  const bodyRecord = prototypeBodyRecordSummary(presentation);
   const next = prototypeNextCheck(experience);
   const resultLine = prototypeRegionalSummary(presentation);
-  const shortLines = [
-    `今回の走行事実：${facts}`,
-    `身体の記録：${rof}`,
-    `今回の部位結果：${resultLine}（この部位自身の基準との比較）`,
-    `次に確認したいこと：${next}`,
-  ];
-  const shortMemo = shortLines.join("\n");
-  const exposure = regional.exposure || {};
-  const distance = Number(record.distanceKm) > 0 ? `${formatNumber(record.distanceKm, 2)} km` : (Number(exposure.qEquivalent) > 0 ? `${formatNumber(exposure.qEquivalent, 2)} km` : "未記録");
-  const courseName = record.course?.name || "コース未設定";
-  const pace = Number(record.distanceKm) > 0 && Number(record.durationMinutes) > 0
-    ? `${Math.floor((Number(record.durationMinutes) * 60 / Number(record.distanceKm)) / 60)}:${String(Math.round(Number(record.durationMinutes) * 60 / Number(record.distanceKm)) % 60).padStart(2, "0")} /km`
-    : "平均ペース未記録";
-  return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation" data-prototype-consultation>
-    <section class="head"><p class="eyebrow">CONSULTATION</p><h1>相談用にまとめる</h1><p>保存した内容から、見せる情報だけを自分で選びます。</p></section>
-    <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果へ戻る</a></section>
-    <section class="section"><div class="section-head"><small>QUESTION</small><h2>何を相談したいですか</h2><p>相談相手や確認したいことは、この画面だけで扱います。</p></div><label class="field"><span>相談相手・任意</span><input id="consultation-target" type="text" maxlength="80" placeholder="例：医療機関、指導者、家族"></label><label class="field"><span>相談したいこと・任意</span><textarea id="consultation-question" maxlength="400" placeholder="例：今回の身体の記録について確認したい"></textarea></label></section>
-    <section class="section"><div class="section-head"><small>FORMAT</small><h2>見せ方を選ぶ</h2><p>短く見せるか、文書としてまとめるかを選びます。</p></div><div class="share-grid"><button class="route primary" type="button" data-consult-open="short"><span class="icon">短</span><span><small>QUICK SHARE</small><strong>短く見せる</strong><span>画面を見せる・短文をコピーする</span></span><i>›</i></button><button class="route" type="button" data-consult-open="report"><span class="icon">文</span><span><small>REPORT</small><strong>文書でまとめる</strong><span>項目を分けた相談用資料を作る</span></span><i>›</i></button></div></section>
-    <section id="shortPanel" class="panel" data-consult-panel="short"><div class="panel-head"><div><small>SHORT SHARE</small><strong>短く見せる内容</strong></div><span class="status">自動送信しません</span></div><div class="select-list">
-      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[0])}" checked><span><strong>今回の走行事実</strong><span>距離・時間・コース</span></span></label>
-      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[1])}" checked><span><strong>身体の記録</strong><span>本人が記録した疲労感・気づき</span></span></label>
-      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[2])}" checked><span><strong>今回の部位結果</strong><span>選択した部位の目安</span></span></label>
-      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[3])}" checked><span><strong>次に確認したいこと</strong><span>本人が残した確認点</span></span></label>
-    </div><div id="shortMemo" class="memo" data-consult-short-memo>${escapeHtml(shortMemo)}</div><textarea id="consultation-report-text" class="visually-hidden" readonly>${escapeHtml(shortMemo)}</textarea><div class="actions"><button class="primary" type="button" data-action="copy-consultation-report">短文をコピー</button></div></section>
-    <section id="reportPanel" class="panel" data-consult-panel="report" hidden><div class="panel-head"><div><small>REPORT</small><strong>文書でまとめる内容</strong></div><span class="status">印刷・PDF向け</span></div><article class="report" id="reportSheet"><header><small>RUNLOAD CONSULTATION</small><strong>相談用メモ</strong><span>${escapeHtml(formatLocalDate(record.date))}の記録</span></header><section><small>01 / 相談したいこと</small><strong id="reportQuestion">未入力</strong><p id="reportTarget">相談相手：未入力</p></section><section><small>02 / 今回の走り</small><strong>${escapeHtml(facts)}</strong><p>${escapeHtml(pace)}</p></section><section><small>03 / 身体の記録</small><strong>${escapeHtml(rof)}</strong><p>次に確認したいこと：${escapeHtml(next)}</p></section><section><small>04 / 部位の目安</small><strong>${escapeHtml(resultLine)}</strong><p>この部位自身の基準との比較。別部位との順位付けではありません。</p></section><section><small>05 / 走行距離</small><strong>${escapeHtml(distance)}</strong><p>走行距離は部位の数値へ掛けず、別の走行事実として扱います。</p></section></article><div class="actions"><button class="primary" type="button" data-action="print-consultation-report">印刷・PDF</button></div></section>
-    <p class="boundary">RunLoadの数値は診断・安全性・けがの危険性の判定ではありません。共有する相手と内容は本人が選びます。</p><a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}&returnTo=${encodeURIComponent(`#/consultation?recordId=${record.id}`)}"><span><small>症状や体調について相談先を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
+  const recent = prototypeRecentChangeSummary(presentation, record);
+  const items = prototypeShareItems({ facts, fatigue, bodyRecord, regional: resultLine, recent, next });
+  const previewCards = prototypeShareCards(items, "preview");
+  const viewerCards = prototypeShareCards(items, "viewer");
+  const selector = prototypeShareSelector(items);
+  const regionRows = items
+    .filter((item) => item.key === "regional" || item.key === "recent")
+    .map((item) => `<tr data-consult-document-key="${escapeHtml(item.key)}"${item.checked ? "" : " hidden"}><th>${escapeHtml(item.label)}</th><td>${escapeHtml(item.value)}</td></tr>`)
+    .join("");
+  const documentCards = items
+    .filter((item) => item.key !== "regional" && item.key !== "recent")
+    .map((item) => `<section class="share-document-card" data-consult-document-key="${escapeHtml(item.key)}"${item.checked ? "" : " hidden"}><small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.value)}</strong></section>`)
+    .join("");
+
+  return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation" data-prototype-consultation data-prototype-share-prep>
+    <section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録から、指導者などに見せる内容を整理します。RunLoadから相手へ自動送信はしません。</p></section>
+
+    <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果を確認</a></section>
+
+    <section class="section share-step"><div class="section-head"><small>STEP 1</small><h2>誰に、何を確認してもらいますか</h2><p>共有先と、今回いちばん確認したいことを入力します。</p></div>
+      <label class="field"><span>見せる相手・任意</span><input type="text" maxlength="80" placeholder="例：A先生、コーチ、医療機関" data-consult-target></label>
+      <label class="field"><span>確認したいこと・任意</span><textarea maxlength="400" placeholder="例：右膝の違和感について、次回の走り方を確認したい" data-consult-question></textarea></label>
+    </section>
+
+    <section class="section share-step"><div class="section-head"><small>STEP 2</small><h2>見せる情報を選ぶ</h2><p>RunLoadが関連情報を候補として並べます。見せたくない項目は外せます。</p></div><div class="share-source-list">${selector}</div></section>
+
+    <section class="section share-step"><div class="section-head"><small>STEP 3</small><h2>内容を確認する</h2><p>この内容が、画面表示と印刷・PDFの共通元になります。</p></div>
+      <article class="share-preview" data-consult-share-preview>
+        <header><small>見せる相手</small><strong data-consult-preview-target>未入力</strong><span data-consult-preview-question>確認したいこと：未入力</span></header>
+        <div class="share-preview-grid">${previewCards}</div>
+      </article>
+    </section>
+
+    <section class="section share-step"><div class="section-head"><small>STEP 4</small><h2>見せ方を選ぶ</h2><p>確定した同じ内容を、画面または文書で見せます。</p></div>
+      <div class="share-output-actions">
+        <button class="output primary" type="button" data-action="open-consult-viewer"><span><strong>画面で見せる</strong><small>その場で見せる表示を開く</small></span><i>›</i></button>
+        <button class="output" type="button" data-action="print-consultation-report"><span><strong>印刷・PDF</strong><small>A4の共有資料を開く</small></span><i>›</i></button>
+        <button class="output secondary" type="button" data-action="copy-consultation-report"><span><strong>テキストをコピー</strong><small>同じ内容を文章としてコピー</small></span><i>›</i></button>
+      </div>
+    </section>
+
+    <textarea id="consultation-report-text" class="visually-hidden" readonly></textarea>
+
+    <div class="share-viewer" data-consult-viewer hidden>
+      <div class="share-viewer-shell">
+        <header class="share-viewer-head"><div><small>RUNLOAD SHARE</small><strong>共有内容</strong></div><button type="button" data-action="close-consult-viewer" aria-label="共有表示を閉じる">×</button></header>
+        <section class="share-viewer-purpose"><small>見せる相手</small><strong data-consult-viewer-target>未入力</strong><p data-consult-viewer-question>確認したいこと：未入力</p></section>
+        <div class="share-viewer-grid">${viewerCards}</div>
+        <footer>部位の目安は診断や安全性を判定する数値ではありません。</footer>
+      </div>
+    </div>
+
+    <article class="share-print-document" data-consult-share-document>
+      <header class="share-document-head"><div><small>RUNLOAD SHARE</small><h1>共有資料</h1></div><div><span>${escapeHtml(formatLocalDate(record.date))}</span><strong data-consult-document-target>共有先：未入力</strong></div></header>
+      <section class="share-document-purpose"><small>確認したいこと</small><strong data-consult-document-question>未入力</strong></section>
+      <div class="share-document-grid">${documentCards}</div>
+      <section class="share-document-region" data-consult-document-region><div><small>関連する部位</small><h2>部位の目安と最近の変化</h2></div><table><tbody>${regionRows}</tbody></table></section>
+      <footer><strong>RunLoadの表示について</strong><p>部位の目安は記録を振り返るための参考です。診断や安全性、けがの危険性、走行可否を判定する数値ではありません。</p></footer>
+    </article>
+
+    <p class="boundary">共有する相手と内容は本人が選びます。個人的なメモなどは、必要な場合だけ含めてください。</p>
+    <a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}&returnTo=${encodeURIComponent(`#/consultation?recordId=${record.id}`)}"><span><small>症状や体調について公的な案内を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
   </div>`;
 }
 
