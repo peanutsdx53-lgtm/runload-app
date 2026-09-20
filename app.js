@@ -22,6 +22,7 @@ import { renderConsultationScreen } from "./screens/consultationScreen.js";
 import { renderReadingScreen } from "./screens/readingScreen.js";
 import { renderSettingsScreen } from "./screens/settingsScreen.js";
 import { renderActivationScreen } from "./screens/activationScreen.js";
+import { renderInterpretationRoomScreen } from "./screens/interpretationRoomScreen.js";
 import { renderSupportGuidanceScreen } from "./screens/supportGuidanceScreen.js";
 import { renderPrivacyScreen } from "./screens/privacyScreen.js";
 import { renderMoreScreen } from "./screens/moreScreen.js";
@@ -37,6 +38,7 @@ const screenRenderers = {
   "body-part-detail": renderBodyPartDetailScreen,
   history: renderHistoryScreen,
   activation: renderActivationScreen,
+  "interpretation-room": renderInterpretationRoomScreen,
   "support-guidance": renderSupportGuidanceScreen,
   privacy: renderPrivacyScreen,
   plan: renderPlanScreen,
