@@ -21,4 +21,4 @@ RunLoad is a pre-release regular web application for beginner runners to review 
 App records are stored locally in the browser. GPX analysis is local-only in this version.
 
 ## Verification baseline
-History interaction patch verification: dedicated 4/4 interaction regression plus 251/251 tests, 16/16 suites and 79/79 JS/MJS syntax in the retained V1.6R2 full-regression harness. Protected calculation core hashes are unchanged. The prior V1.20 dark-mode run (302/302 tests, 18/18 suites, 81/81 syntax) remains previous-release evidence and was not rerun for this patch.
+Latest Record bottom-clearance patch: 251/251 tests, 16/16 retained suites and 79/79 JS/MJS syntax PASS using the retained V1.6R2 regression harness with its cache-version literal updated for the current release. Protected calculation core hashes are unchanged.

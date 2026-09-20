@@ -62,7 +62,7 @@
     padding-bottom: 42px;
   }
   .prototype-parity--home { padding-top: 24px; }
-  .prototype-parity--record { padding-top: 20px; }
+  .prototype-parity--record { padding-top: 20px; padding-bottom: 68px; }
   .prototype-parity--result { padding-top: 20px; }
   .prototype-parity--history { padding-top: 20px; }
   .prototype-parity--plan { padding-top: 20px; }
