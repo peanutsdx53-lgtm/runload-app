@@ -123,6 +123,7 @@ function currentFacts(record = {}) {
     gradeSummary: gradeSummary(record),
     surfaceSummary: surfaceSummary(record),
     averageCadenceSpm: finite(record.averageCadenceSpm) ? Number(record.averageCadenceSpm) : null,
+    nextCheckPoint: String(record.reflectionContext?.nextCheckPoint || ""),
   });
 }
 
