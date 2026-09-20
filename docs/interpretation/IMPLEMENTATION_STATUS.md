@@ -1,7 +1,7 @@
 # RunLoad Interpretation Room — Implementation Status
 
 Date: 2026-09-20
-Status: SAFELY STOPPED — STAGE 5 BLOCKED BY RUNTIME MANIFEST MISMATCH
+Status: SAFELY STOPPED — STAGE 5 BLOCKED BY PRESENTATION SYNTAX DEFECT
 Branch: `feature/runload-interpretation-room-v1`
 Draft PR: #49
 Base commit: `8d2937c7bbfe3a7094601628a109d31309edd775`
@@ -202,12 +202,20 @@ Verification:
 ### Stage 5 — Full regression and scientific-boundary audit
 Status: BLOCKED — AUDIT FINDING REQUIRES CORRECTION BEFORE CONTINUATION
 
-Audit finding 2026-09-21:
-- live feature-branch `screens/homeScreen.js` SHA-256: `8a1bea7b7d85698487e2417ea1ccb6c31afb3128a05253475b270c2f27ec83b1`
-- feature-branch `RUNTIME_SHA256SUMS.txt` entry for `screens/homeScreen.js`: `0d1f3d56751e19c427397d35865b038c21b350216688b435457d04cc3d830ae6`
-- result: **MISMATCH**
-- scope: runtime integrity metadata only; no evidence at this checkpoint of a protected calculation-core or ROF-J-core change
-- no corrective runtime/code change was made after detecting the mismatch
+Audit finding 2026-09-21 (runtime manifest):
+- live feature-branch `screens/homeScreen.js` SHA-256 before correction: `8a1bea7b7d85698487e2417ea1ccb6c31afb3128a05253475b270c2f27ec83b1`
+- stale manifest entry: `0d1f3d56751e19c427397d35865b038c21b350216688b435457d04cc3d830ae6`
+- correction commit: `3551bb7d56381fd7616653fdfd97e60b562d7b6e`
+- post-correction verification: branch manifest **79/79 logically consistent**; audited base 75/75 local SHA verification PASS; all changed/new runtime entries match live branch content.
+
+Audit finding 2026-09-21 (blocking syntax defect):
+- live feature-branch `ui/interpretationRoomPresentation.js` SHA-256: `f582f4b6d29a1f45885d179c5a1688545581b9563f765089951d9c74b44d07d7`
+- exact branch bytes contain a literal backslash+n sequence immediately after `query.set("from", "interpretation-room");`
+- reconstructed byte-identical candidate SHA-256: `f582f4b6d29a1f45885d179c5a1688545581b9563f765089951d9c74b44d07d7`
+- executing the byte-identical candidate with Node fails with `SyntaxError: Invalid or unexpected token` at that literal `\\n`
+- result: **BLOCKING RUNTIME SYNTAX DEFECT**
+- no corrective Presentation/code change was made after detecting the defect
+- protected calculation and ROF-J cores remain outside the changed-file set
 - PR #49 remains draft; main and formal Current remain untouched
 
 Required before Stage 5 can continue:
@@ -236,7 +244,7 @@ Confirmed state at stop:
 
 ## Current next action
 
-Do not continue Stage 5 until the runtime-integrity mismatch is corrected. On user authorization, regenerate `RUNTIME_SHA256SUMS.txt` from the final live feature-branch runtime state, verify every manifest entry (not only Home), then restart the complete Stage 5 regression/scientific-boundary audit. Keep PR #49 draft and leave main/formal Current untouched.
+Do not continue Stage 5 until the Presentation syntax defect is corrected. On user authorization, replace the literal `\\n` in `ui/interpretationRoomPresentation.js` with a real line break only, verify the repaired file syntax and behavior, regenerate `RUNTIME_SHA256SUMS.txt` for the repaired runtime, then restart the complete Stage 5 regression/scientific-boundary audit from the branch state. Keep PR #49 draft and leave main/formal Current untouched.
 
 ## Stop conditions
 
