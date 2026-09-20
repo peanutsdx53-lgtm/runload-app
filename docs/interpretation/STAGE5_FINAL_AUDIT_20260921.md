@@ -160,7 +160,7 @@ These test-contract edits do not alter runtime behavior.
 
 ## Visual acceptance limitation
 
-A supplemental headless Chromium screenshot check was attempted in the audit container, but the installed Chromium process did not terminate reliably in that environment. No visual PASS is claimed from that attempt.
+Supplemental headless-browser checks could not be completed in the audit container: direct Chromium did not terminate reliably, and the Playwright retry was blocked from local/file navigation by the execution-environment policy. No visual PASS is claimed from those attempts.
 
 Static layout integration, CSS inclusion, routing, rendering-output, CSP, and syntax tests passed. Final visual/mobile acceptance should therefore be performed separately before production/Current promotion.
 
