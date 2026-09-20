@@ -243,6 +243,13 @@ await test('REST-RECORD-DOES-NOT-FABRICATE-REGIONAL-NUMBERS',()=>{
   assert.equal(out.actions.some(x=>x.actionId==='simulation'),false);
 });
 
+await test('EXISTING-NEXT-CHECK-IS-READ-WITHOUT-NEW-STORAGE',()=>{
+  const target=fakeExperience({id:'target',value:110});
+  target.record.reflectionContext={nextCheckPoint:'坂の少ない条件で確認'};
+  const out=buildRunLoadInterpretation({targetExperience:target,allExperiences:[target]});
+  assert.equal(out.current.facts.nextCheckPoint,'坂の少ない条件で確認');
+});
+
 await test('BUILD-IS-READ-ONLY',()=>{
   const prior=fakeExperience({id:'prior',date:'2026-09-19',value:100});
   const target=fakeExperience({id:'target',value:110});
