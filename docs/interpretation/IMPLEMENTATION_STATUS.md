@@ -137,15 +137,38 @@ Verification against audited App Source:
 - branch compare to audited base contains no changes to protected calculation cores
 
 ### Stage 3 — Existing-screen launch points and legacy activation compatibility
-Status: NOT STARTED
-Planned:
-- Result compact launch point
-- Home compact launch point
-- Body-part detail contextual launch point
-- History selected-record launch point
-- Simulation return context
-- `#/activation` compatibility alias
-- retire duplicate public Activation UI after compatibility gate
+Status: COMPLETE
+Implemented:
+- [x] Result compact launch point reuses the existing result-use slot and opens RunLoad Interpretation
+- [x] Home reuses the existing result-use slot without adding a large card
+- [x] Body-part detail adds a compact contextual RunLoad Interpretation launch
+- [x] History selected-record detail adds a compact contextual launch
+- [x] Simulation preserves the selected source record when entered from RunLoad Interpretation
+- [x] Simulation preserves the Interpretation Room return context across course-selection round trips
+- [x] legacy `#/activation` is retained only as a compatibility alias to `interpretation-room`
+- [x] duplicate public Activation renderer/menu/workspace entry retired
+- [x] dedicated launch integration suite `tests/interpretationRoomLaunchIntegrationV1.test.mjs`
+
+Stage 3 commits:
+- Result launch: `288bc2c773b99acb5263caff9458d8db5a7cfa91`
+- Home launch: `4c38ce85a431732ceeb5f88ec9a2ccd360fb91e0`
+- Body-region launch: `c7d81cc86170eb3420cbfc701760fe264b3b6402`
+- History launch: `2b78c250a166c3f6955e210ac564a142df6e96d7`
+- Simulation source-record preservation: `2b8dd1a002aef4d81646984218420991e6727dfe`
+- Interpretation→Simulation origin preservation: `6f881716471739889553bb83f32ca88bd47e696f`
+- Public navigation replacement: `e45197abf3a69c26ae32c27f0b14c5ca414312b7`
+- Activation compatibility alias: `d29451349636cb758b9da6a3bf60b0122e6e8f7c`
+- App-shell stale-label removal: `6bf9d79d8074d41a505d486f25e96c95dfcabf1a`
+- Launch integration tests: `ebb91c187def689dd8681376f54570b4cc3d7b29`
+
+Verification against audited App Source:
+- Interpretation Room launch integration suite: **11/11 PASS**
+- Interpretation Room integration suite: **17/17 PASS**
+- Existing baseline verifier: **273/273 PASS**
+- JS/MJS syntax scan: **81 files / 0 failures**
+- protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
+- protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
+- Stage 3 launch integration test SHA-256: `5dea4ad98ae1c7e0d91b1e31cb289d99932db046db328b3cae249b9718acaf90`
 
 ### Stage 4 — PWA/runtime integration
 Status: NOT STARTED
@@ -168,7 +191,7 @@ Required:
 
 ## Current next action
 
-Begin Stage 3. Add compact contextual launch points on existing screens and implement legacy `#/activation` compatibility without introducing large cards. Re-run dedicated tests, existing 273-test regression, syntax checks, and protected-core hash checks before marking Stage 3 complete.
+Begin Stage 4. Integrate Interpretation Room resources into PWA/runtime packaging: update service-worker precache, reconcile obsolete Activation runtime resources only where safe, regenerate runtime integrity metadata, and run CSP/static-resource/PWA checks. Do not alter protected calculation cores.
 
 ## Stop conditions
 
