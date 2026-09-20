@@ -4,7 +4,7 @@ export const INPUT_PURPOSE_GUIDANCE = Object.freeze([
   Object.freeze({
     key: "run-facts",
     title: "今回の走行量を残す",
-    description: "日付、距離、実走時間は、今回の記録をあとから同じ意味で見返すための基本情報です。",
+    description: "日付、距離、実際に走った時間は、今回の記録をあとから同じ意味で見返すための基本情報です。",
   }),
   Object.freeze({
     key: "course-conditions",
@@ -41,11 +41,11 @@ const CONDITION_DEFINITIONS = Object.freeze({
   }),
   "grade-speed": Object.freeze({
     title: "坂道と走行ペースの組み合わせ",
-    description: "坂の向きや勾配、走行ペースの組み合わせによって、身体の使い方が変わることがあります。",
+    description: "坂の向きや傾き、走行ペースの組み合わせによって、身体の使い方が変わることがあります。",
     articleId: "slope-endpoints",
   }),
   grade: Object.freeze({
-    title: "坂道の向きと勾配",
+    title: "坂道の向きと傾き",
     description: "上り・下り・平坦では、身体の使い方や各部位へのかかり方が同じとは限りません。",
     articleId: "grade-and-coverage",
   }),
