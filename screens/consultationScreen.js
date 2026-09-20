@@ -148,7 +148,7 @@ function prototypeRegionOptions({ services, experience, allExperiences, decision
 }
 
 function prototypeRegionalMarkup(regional) {
-  return `<span class="share-region-detail"><b data-consult-regional-relation>${escapeHtml(regional.relation)}</b><span data-consult-regional-name>${escapeHtml(regional.regionName)}</span><span data-consult-regional-current>${escapeHtml(regional.current)}</span><span data-consult-regional-previous>${escapeHtml(regional.previous)}</span></span>`;
+  return `<span class="share-region-detail"><span class="share-region-name" data-consult-regional-name>${escapeHtml(regional.regionName)}</span><b data-consult-regional-relation>${escapeHtml(regional.relation)}</b><span data-consult-regional-current>${escapeHtml(regional.current)}</span><span data-consult-regional-previous>${escapeHtml(regional.previous)}</span></span>`;
 }
 
 function prototypeShareSelector(items) {
