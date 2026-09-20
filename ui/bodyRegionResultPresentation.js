@@ -55,7 +55,7 @@ function directionStateValue(value, referenceValue = 100, tolerance = 0.05) {
   return delta > 0 ? "above" : "below";
 }
 function directionSymbol(value, referenceValue = 100, tolerance = 0.05) { return ({ above: "↑", below: "↓", reference: "=", unavailable: "—" })[directionStateValue(value, referenceValue, tolerance)]; }
-function direction(value, referenceValue = 100, label = "同じ部位の基準100", tolerance = 0.05) {
+function direction(value, referenceValue = 100, label = "同じ部位の基準", tolerance = 0.05) {
   if (!finite(value) || !finite(referenceValue)) return "数値なし";
   const delta = deltaFromComparison(value, referenceValue);
   if (Math.abs(delta) < tolerance) return Math.abs(delta) < 0.05 ? `${label}と同じ` : `${label}付近（${delta > 0 ? "+" : ""}${fmt(delta, 1)}ポイント）`;
@@ -92,7 +92,7 @@ function compareReference100Signatures(a,b){ const same=Boolean(a&&b&&a.modelVer
 function optionalLabels(row = {}) {
   const text = JSON.stringify(row.optionalApplied || []).toLowerCase();
   const labels = [];
-  if (text.includes("grade")) labels.push("勾配");
+  if (text.includes("grade")) labels.push("坂の傾き");
   if (text.includes("cadence")) labels.push("1分あたりの歩数");
   if (text.includes("surface") || text.includes("grass")) labels.push("路面");
   return labels;
@@ -150,7 +150,7 @@ function focusSignal(resultRecord, row, experiences) {
   if (!conditionUp && !previousUp) return null;
   const priority = conditionUp && previousUp ? 1 : conditionUp ? 2 : 3;
   const reasons = [];
-  if (conditionUp) reasons.push("基準100より上向き");
+  if (conditionUp) reasons.push("その部位の基準より上");
   if (previousUp) reasons.push("前回より上向き");
   return Object.freeze({ priority, conditionUp, previousUp, conditionDelta, previousDelta: previous.delta, reasons });
 }
@@ -172,7 +172,7 @@ function renderList(resultRecord, rows, experiences, showPreviousComparison, foc
       ? `<strong><span aria-hidden="true">${directionSymbol(row.value, referenceValue, displaySalienceThreshold(referenceValue))}</span> ${escapeHtml(fmt(row.value, 1))}</strong>`
       : '<span class="regional-result-row__building">数値なし</span>';
     const meter = finite(row.value) && finite(referenceValue)
-      ? `<span class="regional-result-row__scale" aria-label="同じ部位の基準100を中央とする表示位置"><i aria-hidden="true"><em>基準100</em></i><b style="--regional-position:${visualPosition(row.value, referenceValue)}%"></b></span>`
+      ? `<span class="regional-result-row__scale" aria-label="同じ部位の基準を中央とする表示位置"><i aria-hidden="true"><em>基準</em></i><b style="--regional-position:${visualPosition(row.value, referenceValue)}%"></b></span>`
       : "";
     const focusChip = signal ? `<small data-focus-reason="${escapeHtml(signal.reasons.join("+"))}">基準・前回：${escapeHtml(signal.reasons.join("・"))}</small>` : "";
     return `<li class="regional-result-card" data-direction="${state}"><a href="#/body-part-detail?recordId=${encodeURIComponent(resultRecord.record_id)}&regionId=${encodeURIComponent(row.regionId)}" aria-label="${escapeHtml(`${formal}の詳細を開く`)}"><span class="regional-result-row__name"><strong>${escapeHtml(formal)}</strong></span><span class="regional-result-row__value">${value}</span>${meter}<span class="regional-result-row__direction">${escapeHtml(compactSameDistanceDirection(resultRecord, row.value))}</span>${previousMarkup(resultRecord, experiences, row, showPreviousComparison)}<span class="regional-result-row__chips">${focusChip}<small>${escapeHtml(provenanceLabel(row))}</small>${optional.length ? `<small>${escapeHtml(`${optional.join("・")}の条件を反映`)}</small>` : ""}</span></a></li>`;
@@ -211,19 +211,19 @@ export function renderBodyRegionResultCard({ resultRecord, experiences = [], ini
   const referenceText = finite(referenceValue) ? fmt(referenceValue, 1) : "—";
   const focusContent = renderFocusContent(resultRecord, candidates, experiences, showPreviousComparison);
   return `<section class="result-card result-card--distribution result-card--regional-v27" data-primary-regional-card data-regional-v2-card data-regional-v2-view="${resolvedView}" data-information-role="model" aria-labelledby="distribution-title">
-    <div class="result-card__heading"><div><p>今回の走行条件に対応する部位別Reference-100</p><h2 id="distribution-title">12部位の目安</h2></div>${renderStatusLabel("部位ごとの表示", "model")}</div>
-    <p class="inline-helper"><strong>100は各部位自身の基準条件です。</strong> 距離そのものは数値へ掛けません。矢印・バー・身体図の色は基準100に対する方向を示します。部位間の順位や危険度を示すものではありません。</p>
-    ${resultRecord?.result?.combinedConditionState === "AXES_PRESERVED_NOT_COMBINED" ? '<p class="source-boundary"><strong>複数の条件は一つの値へ無理に掛け合わせていません。</strong> 勾配・路面・1分あたりの歩数などは、一緒に扱えない場合は別々の目安として表示します。部位詳細で確認できます。</p>' : ""}
+    <div class="result-card__heading"><div><p>今回の走行条件に対応する部位ごとの目安</p><h2 id="distribution-title">12部位の目安</h2></div>${renderStatusLabel("部位ごとの表示", "model")}</div>
+    <p class="inline-helper"><strong>100は各部位自身の基準条件です。</strong> 距離そのものは数値へ掛けません。矢印・バー・身体図の色は、その部位の基準に対する方向を示します。部位間の順位や危険度を示すものではありません。</p>
+    ${resultRecord?.result?.combinedConditionState === "AXES_PRESERVED_NOT_COMBINED" ? '<p class="source-boundary"><strong>複数の条件は一つの値へ無理に掛け合わせていません。</strong> 坂の傾き・路面・1分あたりの歩数などは、一緒に扱えない場合は別々の目安として表示します。部位詳細で確認できます。</p>' : ""}
     <div class="regional-v2-view-toggle" role="group" aria-label="表示する部位"><button type="button" data-regional-v2-view-button="focus" aria-pressed="${resolvedView === "focus"}"${hasFocus ? "" : " disabled"}>基準・前回より上${hasFocus ? ` (${candidates.length})` : ""}</button><button type="button" data-regional-v2-view-button="all" aria-pressed="${resolvedView === "all"}">全12部位</button></div>
-    <ul class="regional-direction-legend" aria-label="身体図の色と記号"><li data-direction="above"><span aria-hidden="true">↑</span>基準100より上</li><li data-direction="reference"><span aria-hidden="true">=</span>基準100付近</li><li data-direction="below"><span aria-hidden="true">↓</span>基準100より下</li><li data-direction="unavailable"><span aria-hidden="true">—</span>表示なし</li></ul>
+    <ul class="regional-direction-legend" aria-label="身体図の色と記号"><li data-direction="above"><span aria-hidden="true">↑</span>その部位の基準より上</li><li data-direction="reference"><span aria-hidden="true">=</span>その部位の基準付近</li><li data-direction="below"><span aria-hidden="true">↓</span>その部位の基準より下</li><li data-direction="unavailable"><span aria-hidden="true">—</span>表示なし</li></ul>
     <div class="regional-v2-overview">
-      <div class="regional-v2-overview__map">${renderMap(resultRecord, rows)}<p class="muted-text">色は同じ部位の基準100に対する方向です。部位を選ぶと詳細を開けます。</p></div>
+      <div class="regional-v2-overview__map">${renderMap(resultRecord, rows)}<p class="muted-text">色は同じ部位の基準に対する方向です。部位を選ぶと詳細を開けます。</p></div>
       <div class="regional-v2-overview__feedback">
         <div class="regional-result-list" data-regional-v2-panel="focus"${resolvedView === "focus" ? "" : " hidden"}>${focusContent}</div>
         <div class="regional-result-list" data-regional-v2-panel="all"${resolvedView === "all" ? "" : " hidden"}>${renderList(resultRecord, rows, experiences, showPreviousComparison)}</div>
       </div>
     </div>
-    <details class="regional-claim-boundary"><summary>この値と過去比較の読み方</summary><div><h3>目安と基準100</h3><p>100は各部位自身の基準条件です。走行距離そのものを数値へ掛けません。矢印・バー・身体図の色は、各部位のReference-100に対する方向を示します。</p><h3>「基準・前回より上」の見方</h3><p>${escapeHtml(focusReasonText(candidates))}</p><h3>過去記録との比較</h3><p>過去比較は、同じ部位・同じ計算方法・同じ基準で比べられる保存記録がある場合だけ表示します。比較できる過去記録がない場合は「前回比較なし」と表示します。</p>${hasFallback ? '<h3>任意条件を数値化できない場合</h3><p>情報がない条件や扱えない条件は0として加えず、確認できる条件だけで表示します。</p>' : ""}<h3>この表示が意味しないこと</h3><p>100は安全値・正常値・初心者平均・推奨値ではありません。部位ごとに値の意味が異なるため、別部位どうしの数値を順位付けしたり、異なる部位の数値差や上向き幅を共通の物理量として扱ったりしません。値の増減は傷害リスク、危険度、改善・悪化、走行可否を意味しません。</p><p>身体の記録は、この目安とは別の情報として保存・表示します。</p></div></details>
+    <details class="regional-claim-boundary"><summary>この値と過去比較の読み方</summary><div><h3>目安と基準</h3><p>各部位では、その部位自身の基準を100として比べます。走行距離そのものを数値へ掛けません。矢印・バー・身体図の色は、その部位の基準に対する方向を示します。</p><h3>「基準または前回より上」の見方</h3><p>${escapeHtml(focusReasonText(candidates))}</p><h3>過去記録との比較</h3><p>過去比較は、同じ部位・同じ計算方法・同じ基準で比べられる保存記録がある場合だけ表示します。比較できる過去記録がない場合は「前回比較なし」と表示します。</p>${hasFallback ? '<h3>任意条件を数値化できない場合</h3><p>情報がない条件や扱えない条件は0として加えず、確認できる条件だけで表示します。</p>' : ""}<h3>この表示が意味しないこと</h3><p>100は安全値・正常値・初心者平均・推奨値ではありません。部位ごとに値の意味が異なるため、別部位どうしの数値を順位付けしたり、異なる部位の数値差や上向き幅を共通の物理量として扱ったりしません。値の増減はけがの危険性、危険度、改善・悪化、走行可否を意味しません。</p><p>身体の記録は、この目安とは別の情報として保存・表示します。</p></div></details>
   </section>`;
 }
 function sourceLabels(resultRecord, row) { const registry = resultRecord?.source_registry || {}; return (row?.sourceIds || []).map((id) => registry[id]?.label || id); }
@@ -247,7 +247,7 @@ function renderObservations(experience, regionId) {
   return `<div class="subjective-entry-list">${observations.map((item) => `<article><h3>${escapeHtml(item.label || bodyRegionFormalName(regionId))}</h3><p>${escapeHtml(bodyAreaLateralityLabel(item.laterality))}・程度 ${escapeHtml(fmt(item.intensity, 0))}/5${item.noticedTiming ? `・${escapeHtml(observationTimingLabel(item.noticedTiming))}` : ""}</p>${item.note ? `<small>${escapeHtml(item.note)}</small>` : ""}</article>`).join("")}</div>`;
 }
 
-function axisLabel(axis="") { return ({grade:"勾配",surface:"路面",cadence:"1分あたりの歩数"})[String(axis||"").toLowerCase()] || String(axis||"条件"); }
+function axisLabel(axis="") { return ({grade:"坂の傾き",surface:"路面",cadence:"1分あたりの歩数"})[String(axis||"").toLowerCase()] || String(axis||"条件"); }
 function renderAxisEstimates(row={}) {
   const axes=Array.isArray(row.axisEstimates)?row.axisEstimates:[];
   if(!axes.length) return "";
@@ -268,7 +268,7 @@ export function renderBodyRegionResultDetail({ experience, regionId, experiences
   return `<section class="screen screen--body-part-detail" data-primary-regional-detail>
     ${renderPageHeading({ eyebrow: "結果の詳細", title: formal, description: `${formatLocalDate(experience.record.date)}の保存結果です。` })}
     ${renderResultWorkspaceNavigation({ recordId: experience.record.id, date: experience.record.date, regionId, active: "region" })}
-    <section class="result-card" data-information-role="model"><div class="result-card__heading"><div><p>今回の目安</p><h2>${escapeHtml(fmt(row.value, 1))}</h2></div>${renderStatusLabel(sameDistanceDirection(resultRecord, row.value), "model")}</div><p><strong>100の意味：</strong>この部位自身の基準条件に対応するReference-100です。安全・正常・平均・推奨を意味しません。</p><p><strong>この部位で表すこと：</strong>${escapeHtml(bodyRegionPlainMeaning(row.regionId, row.regionName))}</p><p><strong>今回の表示範囲：</strong>${escapeHtml(provenanceLabel(row))}${optional.length ? `。${escapeHtml(optional.join("・"))}の条件を、確認できる範囲で反映しています。` : "。"}</p><p><strong>参考資料：</strong>${escapeHtml(sources.join("、") || "参考資料を確認できません")}</p><p class="source-boundary">この値は同じ部位の記録を振り返るための目安です。別部位との順位付け、診断、傷害予測、危険判定には使いません。</p></section>
+    <section class="result-card" data-information-role="model"><div class="result-card__heading"><div><p>今回の目安</p><h2>${escapeHtml(fmt(row.value, 1))}</h2></div>${renderStatusLabel(sameDistanceDirection(resultRecord, row.value), "model")}</div><p><strong>基準の意味：</strong>この部位自身の基準条件を100として比べています。安全・正常・平均・推奨を意味しません。</p><p><strong>この部位で表すこと：</strong>${escapeHtml(bodyRegionPlainMeaning(row.regionId, row.regionName))}</p><p><strong>今回の表示範囲：</strong>${escapeHtml(provenanceLabel(row))}${optional.length ? `。${escapeHtml(optional.join("・"))}の条件を、確認できる範囲で反映しています。` : "。"}</p><p><strong>参考資料：</strong>${escapeHtml(sources.join("、") || "参考資料を確認できません")}</p><p class="source-boundary">この値は同じ部位の記録を振り返るための目安です。別部位との順位付け、診断、けがの予測、危険判定には使いません。</p></section>
     ${renderAxisEstimates(row)}
     <section class="result-card" data-information-role="fact"><div class="result-card__heading"><div><p>過去記録との比較</p><h2>同じ部位・同じ計算方法の記録</h2></div>${renderStatusLabel(`比較できる記録 ${history.length}件`, "info")}</div>${previous ? `<p><strong>前回との差：</strong>${delta >= 0 ? "+" : ""}${escapeHtml(fmt(delta, 1))}ポイント（${escapeHtml(formatLocalDate(previous.experience.record.date))}）</p><p class="muted-text">同じ部位・同じ計算方法・同じ基準で直接比較できる最新の過去記録です。</p>` : '<p>同じ計算方法で比べられる過去記録はまだありません。</p>'}</section>
     <section class="result-card" data-information-role="condition"><div class="result-card__heading"><div><p>理解を助ける読みもの</p><h2>今回の記録を振り返るヒント</h2></div></div><p>読みものは、走行条件や身体の使われ方を振り返るための補助情報です。今回の目安そのものを説明するものではありません。</p><a class="button button--secondary" href="#/reading?recordId=${encodeURIComponent(experience.record.id)}&regionId=${encodeURIComponent(regionId)}">関連する読みものを開く</a></section>
