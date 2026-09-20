@@ -21,4 +21,4 @@ RunLoad is a pre-release regular web application for beginner runners to review 
 App records are stored locally in the browser. GPX analysis is local-only in this version.
 
 ## Verification baseline
-Latest navigation architecture update: 251/251 tests, 16/16 retained suites and 80/80 JS/MJS syntax PASS using the retained V1.6R2 regression harness with its cache-version literal updated for the current release. Dedicated navigation architecture audit: 29/29 PASS. Protected calculation core hashes are unchanged.
+Latest mobile form polish: 251/251 tests and 16/16 retained suites PASS in the retained V1.6R2 regression harness with its cache-version literal updated for this release; retained syntax is 79/79 PASS, modified JavaScript syntax is 5/5 PASS, and the dedicated mobile form/UI audit is 18/18 PASS. Protected calculation core hashes are unchanged.
