@@ -21,7 +21,7 @@ await test('RESULT-REPLACES-ACTIVATION-WITH-INTERPRETATION-LAUNCH',()=>{
 await test('HOME-REUSES-EXISTING-WHEN-NEEDED-SLOT',()=>{
   const s=read('screens/homeScreen.js');
   assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(latestExperience\.record\.id\)\}&origin=home/);
-  assert.match(s,/最新の結果を整理して確認/);
+  assert.match(s,/最新の結果を確認/);
   assert.doesNotMatch(s,/>結果の活用</);
 });
 
