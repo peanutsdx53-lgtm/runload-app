@@ -44,6 +44,29 @@ function readCourseEditor(data) {
     sections, surfaceInputMode, modelSurfaceClass, modelSurfaceProfile, ...shares,
   };
 }
+function initialVisibleSectionCount(form) {
+  let lastUsed = -1;
+  for (let index = 0; index < 5; index += 1) {
+    const share = Number(form.elements.namedItem(`sectionShare_${index}`)?.value || 0);
+    const grade = String(form.elements.namedItem(`sectionGrade_${index}`)?.value || "").trim();
+    if (share > 0 || grade !== "") lastUsed = index;
+  }
+  return Math.min(5, Math.max(1, lastUsed + 1));
+}
+
+function updateSectionRows(form) {
+  const rows = [...form.querySelectorAll("[data-course-section-row]")];
+  if (!rows.length) return;
+  let visibleCount = Number(form.dataset.visibleCourseSections || 0);
+  if (!(visibleCount >= 1 && visibleCount <= 5)) {
+    visibleCount = initialVisibleSectionCount(form);
+    form.dataset.visibleCourseSections = String(visibleCount);
+  }
+  rows.forEach((row, index) => setHidden(row, index >= visibleCount));
+  const addButton = form.querySelector('[data-action="add-course-section"]');
+  if (addButton) setHidden(addButton, visibleCount >= rows.length);
+}
+
 function updateVisibility(form) {
   const grade = form.elements.namedItem("gradeInputMode")?.value || "UNKNOWN";
   form.querySelectorAll("[data-course-grade-summary]").forEach((element) => setHidden(element, grade !== "SUMMARY"));
@@ -53,6 +76,7 @@ function updateVisibility(form) {
   form.querySelectorAll("[data-course-surface-single]").forEach((element) => setHidden(element, surface !== "SINGLE"));
   form.querySelectorAll("[data-course-surface-mixed]").forEach((element) => setHidden(element, surface !== "MIXED"));
   form.querySelectorAll("[data-course-surface-mode]").forEach((button) => button.classList.toggle("active", button.dataset.courseSurfaceMode === surface));
+  if (grade === "SECTIONS") updateSectionRows(form);
 }
 function updateTotals(form) {
   const data = new FormData(form); const up = number(data, "upPercent"), down = number(data, "downPercent");
@@ -83,6 +107,11 @@ export function bindCourseEditor({ services }) {
   const form = document.getElementById("course-editor-form"); if (!form) return;
   form.querySelectorAll("[data-course-grade-mode]").forEach((button) => button.addEventListener("click", () => { const select=form.elements.namedItem("gradeInputMode"); if(select) select.value=button.dataset.courseGradeMode; updateVisibility(form); updateTotals(form); }));
   form.querySelectorAll("[data-course-surface-mode]").forEach((button) => button.addEventListener("click", () => { const select=form.elements.namedItem("surfaceInputMode"); if(select) select.value=button.dataset.courseSurfaceMode; updateVisibility(form); updateTotals(form); }));
+  form.querySelector('[data-action="add-course-section"]')?.addEventListener("click", () => {
+    const current = Number(form.dataset.visibleCourseSections || initialVisibleSectionCount(form));
+    form.dataset.visibleCourseSections = String(Math.min(5, current + 1));
+    updateSectionRows(form);
+  });
   form.addEventListener("input", () => updateTotals(form)); form.addEventListener("change", () => { updateVisibility(form); updateTotals(form); });
   updateVisibility(form); updateTotals(form);
   form.addEventListener("submit", (event) => {
