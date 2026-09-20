@@ -127,7 +127,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   }
 
   if (screen === "reading") {
-    if (parameter("articleId")) return { title: "読みもの", backHref: "#/reading", backLabel: "読みもの" };
+    if (parameter("articleId")) return { title: "記事", backHref: "#/reading", backLabel: "読みもの" };
     return { title: "読みもの", backHref: "#/more", backLabel: "その他" };
   }
 
