@@ -2,7 +2,6 @@ export const DEFAULT_JOURNAL_SETTINGS = Object.freeze({
   appearanceMode: "system",
   colorTheme: "standard",
   textSize: "standard",
-  externalLinkDisplay: "as-needed",
   resultDisplayMode: "standard",
   selectedRegionalView: "WITHIN_RUN_REGIONAL_EMPHASIS",
   regionalResultInitialView: "all",
@@ -50,12 +49,6 @@ export const REGIONAL_PREVIOUS_COMPARISON_OPTIONS = Object.freeze([
   Object.freeze({ value: "hide", label: "表示しない", description: "各部位の目安を表示し、今回と同じ距離にそろえたその部位自身の基準との関係を示します。保存結果や履歴は変更しません。" }),
 ]);
 
-export const EXTERNAL_LINK_DISPLAY_OPTIONS = Object.freeze([
-  Object.freeze({ value: "as-needed", label: "必要なときだけ", description: "RunLoadは、コース入力画面とプラン作成画面で外部確認リンクを折りたたんで表示します。" }),
-  Object.freeze({ value: "always", label: "いつも表示", description: "RunLoadは、外部確認リンクの説明を最初から開いた状態で表示します。" }),
-  Object.freeze({ value: "hidden", label: "表示しない", description: "RunLoadは、外部地図サービスへのリンクをコース入力画面とプラン作成画面に表示しません。" }),
-]);
-
 function optionValues(options) {
   return new Set(options.map((option) => option.value));
 }
@@ -64,7 +57,6 @@ const APPEARANCE_VALUES = optionValues(APPEARANCE_MODE_OPTIONS);
 const COLOR_VALUES = optionValues(COLOR_THEME_OPTIONS);
 const TEXT_SIZE_VALUES = optionValues(TEXT_SIZE_OPTIONS);
 const RESULT_DISPLAY_VALUES = optionValues(RESULT_DISPLAY_MODE_OPTIONS);
-const EXTERNAL_LINK_VALUES = optionValues(EXTERNAL_LINK_DISPLAY_OPTIONS);
 const REGIONAL_RESULT_INITIAL_VIEW_VALUES = optionValues(REGIONAL_RESULT_INITIAL_VIEW_OPTIONS);
 const REGIONAL_RESULT_VIEW_VALUES = new Set(["focus", "all"]);
 const REGIONAL_VIEW_VALUES = new Set([
@@ -85,7 +77,6 @@ export function normalizeJournalSettings(settings = {}) {
     appearanceMode: pick(source.appearanceMode, APPEARANCE_VALUES, DEFAULT_JOURNAL_SETTINGS.appearanceMode),
     colorTheme: pick(source.colorTheme, COLOR_VALUES, DEFAULT_JOURNAL_SETTINGS.colorTheme),
     textSize: pick(source.textSize, TEXT_SIZE_VALUES, DEFAULT_JOURNAL_SETTINGS.textSize),
-    externalLinkDisplay: pick(source.externalLinkDisplay, EXTERNAL_LINK_VALUES, DEFAULT_JOURNAL_SETTINGS.externalLinkDisplay),
     resultDisplayMode: pick(source.resultDisplayMode, RESULT_DISPLAY_VALUES, DEFAULT_JOURNAL_SETTINGS.resultDisplayMode),
     selectedRegionalView: pick(source.selectedRegionalView, REGIONAL_VIEW_VALUES, DEFAULT_JOURNAL_SETTINGS.selectedRegionalView),
     regionalResultInitialView: pick(source.regionalResultInitialView, REGIONAL_RESULT_INITIAL_VIEW_VALUES, DEFAULT_JOURNAL_SETTINGS.regionalResultInitialView),
@@ -97,14 +88,6 @@ export function normalizeJournalSettings(settings = {}) {
 export function mergeJournalSettings(currentSettings = {}, settingsUpdate = {}) {
   const current = currentSettings && typeof currentSettings === "object" ? currentSettings : {};
   return normalizeJournalSettings({ ...current, ...settingsUpdate });
-}
-
-export function shouldRenderExternalCourseCheck(settings = {}) {
-  return normalizeJournalSettings(settings).externalLinkDisplay !== "hidden";
-}
-
-export function shouldOpenExternalCourseCheck(settings = {}) {
-  return normalizeJournalSettings(settings).externalLinkDisplay === "always";
 }
 
 function replaceClassByPrefix(element, prefix, nextClass) {
@@ -135,7 +118,6 @@ export function applyJournalSettings(settings = {}) {
   replaceClassByPrefix(root, "rl-appearance-", `rl-appearance-${normalized.appearanceMode}`);
   replaceClassByPrefix(root, "rl-color-", `rl-color-${normalized.colorTheme}`);
   replaceClassByPrefix(root, "rl-text-", `rl-text-${normalized.textSize}`);
-  root.dataset.externalLinkDisplay = normalized.externalLinkDisplay;
   root.dataset.resultDisplayMode = normalized.resultDisplayMode;
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColorForSettings(normalized));
 }

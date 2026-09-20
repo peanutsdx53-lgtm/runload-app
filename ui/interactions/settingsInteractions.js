@@ -12,7 +12,6 @@ function readSettingsForm(form) {
     appearanceMode: String(data.get("appearanceMode") || "system"),
     colorTheme: String(data.get("colorTheme") || "standard"),
     textSize: String(data.get("textSize") || "standard"),
-    externalLinkDisplay: String(data.get("externalLinkDisplay") || "as-needed"),
     regionalResultInitialView: String(data.get("regionalResultInitialView") || "all"),
     showRegionalPreviousComparison: String(data.get("showRegionalPreviousComparison") || "show") === "show",
   };

@@ -1,4 +1,4 @@
-const CACHE_NAME = "runload-app-current-v132-share-readability-v1";
+const CACHE_NAME = "runload-app-current";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -35,12 +35,9 @@ const PRECACHE_URLS = [
   "./ui/appRouter.js",
   "./ui/appSettings.js",
   "./ui/appShell.js",
-  "./ui/bodyRegionResultPresentation.js",
   "./ui/commonComponents.js",
-  "./ui/consultationDraftState.js",
   "./ui/consultationPresentation.js",
   "./ui/coursePresentation.js",
-  "./ui/externalCourseCheckSupport.js",
   "./ui/guideContent.js",
   "./ui/hierarchicalExplanation.js",
   "./ui/historyPresentation.js",

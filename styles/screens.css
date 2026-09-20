@@ -3813,25 +3813,6 @@ a.history-calendar__day-content:focus-visible {
   line-height: 1.65;
 }
 
-.course-external-support {
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-large);
-  background: var(--color-surface);
-  padding: var(--space-3);
-}
-.course-external-support summary {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-.course-external-support summary span:first-child { display: grid; gap: var(--space-1); }
-.course-external-support summary small { color: var(--color-muted); }
-.course-external-support__body { display: grid; gap: var(--space-3); margin-top: var(--space-3); }
-.course-external-support__links { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
-.course-external-support__links .button { align-items: flex-start; display: grid; gap: var(--space-1); justify-content: start; min-height: 100%; text-align: left; white-space: normal; }
-.course-external-support__links .button span { font-size: 0.82rem; font-weight: 500; line-height: 1.5; opacity: 0.84; }
 
 .screen--settings .settings-form { gap: var(--space-5); }
 .settings-fieldset { display: grid; gap: var(--space-3); margin-block: var(--space-4); }
@@ -3865,53 +3846,6 @@ a.history-calendar__day-content:focus-visible {
 }
 
 
-.course-external-support {
-  border: 1px solid color-mix(in srgb, var(--color-accent) 42%, var(--color-line));
-  border-left: 6px solid var(--color-accent);
-  border-radius: var(--radius-large);
-  background: color-mix(in srgb, var(--color-surface) 88%, var(--color-accent-soft));
-  color: var(--color-ink);
-  box-shadow: var(--shadow-card);
-}
-.course-external-support > summary {
-  padding: var(--space-4);
-  border-radius: calc(var(--radius-large) - 4px);
-}
-.course-external-support[open] > summary {
-  border-bottom: 1px solid var(--color-line);
-}
-.course-external-support summary strong { color: var(--color-ink); }
-.course-external-support summary small { color: var(--color-muted); }
-.course-external-support .disclosure-status {
-  flex: 0 0 auto;
-  padding: 0.35rem 0.7rem;
-  border: 1px solid color-mix(in srgb, var(--color-accent) 42%, var(--color-line));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--color-surface) 66%, var(--color-accent-soft));
-  color: var(--color-accent-strong);
-  font-weight: 850;
-}
-.course-external-support__body {
-  padding: 0 var(--space-4) var(--space-4);
-}
-.course-external-support__body > p { color: var(--color-ink); }
-.course-external-support__notice {
-  border: 1px solid var(--color-line);
-  border-left: 5px solid var(--color-accent);
-  border-radius: var(--radius-medium);
-  background: color-mix(in srgb, var(--color-surface) 82%, var(--color-neutral-soft));
-  color: var(--color-muted);
-  padding: var(--space-3) var(--space-4);
-}
-.course-external-support__links .button {
-  border-color: color-mix(in srgb, var(--color-accent) 48%, var(--color-line));
-  background: color-mix(in srgb, var(--color-surface) 74%, var(--color-accent-soft));
-  color: var(--color-accent-strong);
-}
-.course-external-support__links .button span {
-  color: var(--color-muted);
-  opacity: 1;
-}
 
 
 
@@ -3946,21 +3880,6 @@ a.history-calendar__day-content:focus-visible {
   box-shadow: 0 8px 18px color-mix(in srgb, var(--color-accent) 16%, transparent);
 }
 
-.course-external-support {
-  border: 1px solid color-mix(in srgb, var(--color-accent) 44%, var(--color-line));
-  border-left: 6px solid var(--color-accent);
-  background: color-mix(in srgb, var(--color-surface) 84%, var(--color-accent-soft));
-}
-.course-external-support > summary {
-  outline: none;
-}
-.course-external-support > summary:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--color-accent) 36%, transparent);
-  outline-offset: 4px;
-}
-.course-external-support__body {
-  border-top: 1px solid color-mix(in srgb, var(--color-accent) 18%, var(--color-line));
-}
 
 
 
