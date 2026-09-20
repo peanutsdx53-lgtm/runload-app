@@ -14,7 +14,8 @@ function item({ type, eyebrow, title, description, body, open = false }) {
   return `<details class="item"${open ? " open" : ""}><summary><span class="icon" aria-hidden="true">${icon(type)}</span><span class="copy"><small>${eyebrow}</small><strong>${title}</strong><span>${description}</span></span><i class="arrow">⌄</i></summary><div class="body">${body}</div></details>`;
 }
 
-export function renderPrivacyScreen() {
+export function renderPrivacyScreen({ context } = {}) {
+  const fromSettings = String(context?.parameters?.get?.("returnTo") || "").startsWith("#/settings");
   return `<div class="screen screen--privacy prototype-parity prototype-parity--privacy">
     <section class="head"><p class="eyebrow">PRIVACY</p><h1>データの扱い</h1><p>何を端末に保存し、いつ外部機能を開くかを確認します。</p></section><p class="visually-hidden">旧版の端末内データは自動移行・自動削除せず、このアプリからは読み込みません。バックアップは平文JSONで、RunLoadによるパスワード保護や暗号化はありません。</p>
     <section class="lead"><strong>記録は、この端末のブラウザー内で扱う設計です。</strong> 自分で外部リンク、電話、コピー、バックアップ保存を選ばない限り、保存した記録を外部へ自動送信しません。</section>
@@ -27,6 +28,6 @@ export function renderPrivacyScreen() {
       ${item({ type: "delete", eyebrow: "DELETE", title: "端末内データを削除する", description: "アプリ内保存データをまとめて消去", body: '<p>アプリ内の削除操作では、RunLoadがこのブラウザーに保存した記録・結果・予定・プロフィール・設定・保存コースなどを削除します。</p><p>すでに端末へ書き出したバックアップファイルは、RunLoad側の削除では消えません。</p>' })}
     </div>
     <p class="warning">この画面は現在のRunLoad設計上の保存・通信境界を説明するものです。医療情報管理制度への適合や法的評価を示すものではありません。</p>
-    <div class="actions"><a href="#/settings?section=data"><span>バックアップ・削除の設定へ</span><span>›</span></a></div>
+    ${fromSettings ? "" : '<div class="actions"><a href="#/settings?section=data"><span>バックアップ・削除の設定へ</span><span>›</span></a></div>'}
   </div>`;
 }
