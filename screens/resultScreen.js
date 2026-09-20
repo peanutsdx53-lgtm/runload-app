@@ -86,7 +86,7 @@ function bodyMap(resultRecord, infos) {
 
 function regionRow(resultRecord, info) {
   const row = info.row; const name = bodyRegionFormalName(row.regionId, row.regionName || row.regionId);
-  return `<a class="region-row" href="#/body-part-detail?recordId=${encodeURIComponent(resultRecord?.record_id || "")}&regionId=${encodeURIComponent(row.regionId)}"><span class="locator">${locatorSvg(row.regionId)}</span><span class="region-copy"><strong>${escapeHtml(name)}</strong><small>${info.previous ? `${escapeHtml(formatLocalDate(info.previous.experience.record.date))}・前回 ${fmt(info.prev, 1)}` : "前回比較なし"}</small></span><span class="region-metric"><strong>${fmt(row.value, 1)}</strong><small>${finite(info.delta) ? `前回差 ${signed(info.delta, 1)}` : "比較なし"}</small></span>${finite(row.value) ? `<span class="region-scale"><i style="--pos:${position(row.value)}%"></i></span>` : ""}</a>`;
+  return `<div class="region-row" role="group" aria-label="${escapeHtml(name)}"><span class="locator">${locatorSvg(row.regionId)}</span><span class="region-copy"><strong>${escapeHtml(name)}</strong><small>${info.previous ? `${escapeHtml(formatLocalDate(info.previous.experience.record.date))}・前回 ${fmt(info.prev, 1)}` : "前回比較なし"}</small></span><span class="region-metric"><strong>${fmt(row.value, 1)}</strong><small>${finite(info.delta) ? `前回差 ${signed(info.delta, 1)}` : "比較なし"}</small></span>${finite(row.value) ? `<span class="region-scale"><i style="--pos:${position(row.value)}%"></i></span>` : ""}</div>`;
 }
 
 function regionList(resultRecord, infos, mode) {
