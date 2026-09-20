@@ -12,13 +12,13 @@ export function primarySurfaceSummary(course = {}) {
 
 export function slopeSummary(course = {}) {
   const knowledge = String(course.gradeKnowledge || "UNKNOWN");
-  if (knowledge === "UNKNOWN") return "勾配不明";
+  if (knowledge === "UNKNOWN") return "坂の傾き不明";
   if (knowledge === "KNOWN_FLAT") return "平坦と記録";
   const uphill = Number(course.upPercent || 0) > 0
-    ? `上り ${Number(course.upPercent || 0)}%・勾配${Number(course.upGradePercent || 0)}%`
+    ? `上り ${Number(course.upPercent || 0)}%・坂の傾き${Number(course.upGradePercent || 0)}%`
     : "上りなし";
   const downhill = Number(course.downPercent || 0) > 0
-    ? `下り ${Number(course.downPercent || 0)}%・勾配${Number(course.downGradePercent || 0)}%`
+    ? `下り ${Number(course.downPercent || 0)}%・坂の傾き${Number(course.downGradePercent || 0)}%`
     : "下りなし";
   return `${uphill} ／ ${downhill}`;
 }

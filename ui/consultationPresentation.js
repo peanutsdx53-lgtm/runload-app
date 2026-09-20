@@ -50,10 +50,10 @@ function gradeLabel(course = {}) {
   if (course.gradeKnowledge !== "KNOWN_PROFILE") return "不明";
   const values = [];
   if (Number(course.upPercent || 0) > 0) {
-    values.push(`上り${formatNumber(course.upPercent, 1)}%区間・勾配${formatNumber(course.upGradePercent, 1)}%`);
+    values.push(`上り${formatNumber(course.upPercent, 1)}%区間・坂の傾き${formatNumber(course.upGradePercent, 1)}%`);
   }
   if (Number(course.downPercent || 0) > 0) {
-    values.push(`下り${formatNumber(course.downPercent, 1)}%区間・勾配${formatNumber(course.downGradePercent, 1)}%`);
+    values.push(`下り${formatNumber(course.downPercent, 1)}%区間・坂の傾き${formatNumber(course.downGradePercent, 1)}%`);
   }
   const flat = 100 - Number(course.upPercent || 0) - Number(course.downPercent || 0);
   if (flat > 0) values.unshift(`平坦${formatNumber(flat, 1)}%区間`);
@@ -101,7 +101,7 @@ export function createPlanShareMemo(_services, plan) {
     lines.push(
       `距離：${values.distance}`,
       `実走予定時間：${values.duration}`,
-      `走行形式：${values.runningFormat}`,
+      `走り方：${values.runningFormat}`,
       `コース名：${values.courseName}`,
       `坂道：${values.grade}`,
       `路面：${values.surface}`,
@@ -118,8 +118,8 @@ function conditionRows(record = {}) {
   const course = record.course || {};
   return [
     ["距離", hasFiniteValue(record.distanceKm) ? `${formatNumber(record.distanceKm, 2)} km` : "未入力"],
-    ["実走時間", hasFiniteValue(record.durationMinutes) ? `${formatNumber(record.durationMinutes, 1)} 分` : "未入力"],
-    ["走行形式", runningFormatLabel(record.runningFormat)],
+    ["実際に走った時間", hasFiniteValue(record.durationMinutes) ? `${formatNumber(record.durationMinutes, 1)} 分` : "未入力"],
+    ["走り方", runningFormatLabel(record.runningFormat)],
     ["歩数", Number(record.steps) > 0 ? `${formatNumber(record.steps, 0)} 歩（${stepsSourceLabel(record.stepsProvenance)}）` : "未入力"],
     ["コース名", course.name || "未設定"],
     ["坂道", gradeLabel(course)],
@@ -211,7 +211,7 @@ function conditionValueMarkup(regional = {}) {
   }
   const delta = Number(regional.delta || 0);
   const deltaText = Math.abs(delta) < 0.05 ? "±0" : `${delta > 0 ? "+" : ""}${formatNumber(delta, 1)}`;
-  return `<strong>${escapeHtml(formatNumber(regional.value, 1))}</strong><small>基準100との差 ${escapeHtml(deltaText)}ポイント</small>`;
+  return `<strong>${escapeHtml(formatNumber(regional.value, 1))}</strong><small>基準からの差 ${escapeHtml(deltaText)}ポイント</small>`;
 }
 
 function exposureValueMarkup(exposure = {}) {
@@ -222,20 +222,20 @@ function exposureValueMarkup(exposure = {}) {
 function modelSection(presentation) {
   const model = presentation.report.modelReference;
   if (model.state === "REST") {
-    return reportSection({ id: "report-model-title", kicker: "03 / アプリの目安", title: "走行の目安なし", body: "<p>休養記録には12部位のReference-100を表示しません。</p>" });
+    return reportSection({ id: "report-model-title", kicker: "03 / アプリの目安", title: "走行の目安なし", body: "<p>休養記録には12部位の目安を表示しません。</p>" });
   }
   if (model.state !== "RUN") {
-    return reportSection({ id: "report-model-title", kicker: "03 / アプリの目安", title: "目安なし", body: "<p>この記録では12部位のReference-100を表示できません。</p>" });
+    return reportSection({ id: "report-model-title", kicker: "03 / アプリの目安", title: "目安なし", body: "<p>この記録では12部位の目安を表示できません。</p>" });
   }
   const regional = model.regional;
   const regionName = bodyRegionFormalName(regional.regionId, regional.regionLabel);
   return reportSection({
     id: "report-model-title",
     kicker: "03 / アプリの目安",
-    title: "選択した部位のReference-100",
-    body: `<div class="report-model-total"><span>${escapeHtml(regionName)}の部位の目安</span>${conditionValueMarkup(regional)}<em>${escapeHtml(regional.reference)}</em><p>この部位自身の固定基準100と比較します。別部位とのランキングには使いません。</p></div>
-      <div class="report-model-total"><span>走行距離</span>${exposureValueMarkup(regional.exposure)}<em>今回の走行事実</em><p>走行距離はReference-100へ掛けず、別の走行事実として扱います。</p></div>
-      <p class="report-print-note">基準100は安全値・正常値・初心者平均・推奨値ではありません。数値は実測した力や傷害確率を表しません。</p>`,
+    title: "選択した部位の目安",
+    body: `<div class="report-model-total"><span>${escapeHtml(regionName)}の部位の目安</span>${conditionValueMarkup(regional)}<em>${escapeHtml(regional.reference)}</em><p>この部位自身の基準と比較します。別部位とのランキングには使いません。</p></div>
+      <div class="report-model-total"><span>走行距離</span>${exposureValueMarkup(regional.exposure)}<em>今回の走行事実</em><p>走行距離は部位の目安へ掛けず、別の走行事実として扱います。</p></div>
+      <p class="report-print-note">基準として使う100は、安全値・正常値・初心者平均・推奨値ではありません。数値は実測した力やけがの確率を表しません。</p>`,
   });
 }
 
@@ -258,7 +258,7 @@ function detailedHistorySection(presentation) {
   if (!rows.length) return `<section class="report-period-section report-period-section--printable"><div class="report-section__heading"><p>05 / 最近の記録</p><h2>比べられる記録なし</h2></div><p>比べられる過去記録はまだありません。</p></section>`;
   const regionName = bodyRegionFormalName(presentation.report.modelReference.regional.regionId, presentation.report.modelReference.regional.regionLabel);
   const counts = presentation.report.comparisonCounts;
-  const regionalLabel = "Reference-100";
+  const regionalLabel = "部位の目安";
   return `<section class="report-period-section report-period-section--printable" aria-labelledby="report-period-title"><div class="report-section__heading"><p>05 / 最近の記録</p><h2 id="report-period-title">同じ部位で比べられる記録を確認</h2></div>
     <p><strong>${escapeHtml(regionName)}／${escapeHtml(regionalLabel)}</strong><br>${escapeHtml(presentation.report.modelReference.regional.reference)}</p>
     <div class="report-period-summary"><div><strong>${escapeHtml(String(counts.direct))}件</strong><span>比べられる</span></div><div><strong>${escapeHtml(String(counts.excluded))}件</strong><span>比べない</span></div><div><strong>${escapeHtml(String(counts.nonnumeric))}件</strong><span>数値なし</span></div></div>
@@ -284,15 +284,15 @@ function createPublicConsultationText({ report, experience, detailed = false }) 
   if (report.modelReference?.state === "RUN") {
     const regionName = bodyRegionFormalName(regional.regionId, regional.regionLabel || "選択した部位");
     lines.push(hasFiniteValue(regional.value)
-      ? `${regionName}のReference-100：${formatNumber(regional.value, 1)}（基準100との差 ${Number(regional.delta || 0) >= 0 ? "+" : ""}${formatNumber(Number(regional.delta || 0), 1)}ポイント）`
-      : `${regionName}のReference-100：数値なし`);
+      ? `${regionName}の部位の目安：${formatNumber(regional.value, 1)}（基準からの差 ${Number(regional.delta || 0) >= 0 ? "+" : ""}${formatNumber(Number(regional.delta || 0), 1)}ポイント）`
+      : `${regionName}の部位の目安：数値なし`);
     const exposure = regional.exposure || {};
-    if (hasFiniteValue(exposure.qEquivalent)) lines.push(`走行距離：${formatNumber(exposure.qEquivalent, 2)} km（Reference-100とは別の走行事実）`);
-    lines.push("Reference-100は同じ部位自身の基準100との比較で、別部位の順位、安全値、正常値、推奨値ではありません。");
+    if (hasFiniteValue(exposure.qEquivalent)) lines.push(`走行距離：${formatNumber(exposure.qEquivalent, 2)} km（部位の目安とは別の走行事実）`);
+    lines.push("部位の目安は、同じ部位自身の基準との比較です。別部位の順位、安全値、正常値、推奨値ではありません。");
   } else if (report.modelReference?.state === "REST") {
-    lines.push("Reference-100：休養記録のため表示なし");
+    lines.push("部位の目安：休養記録のため表示なし");
   } else {
-    lines.push("Reference-100：この保存記録では表示できません");
+    lines.push("部位の目安：この保存記録では表示できません");
   }
   if (detailed && Array.isArray(report.recent) && report.recent.length) {
     const regionName = bodyRegionFormalName(regional.regionId, regional.regionLabel || "選択した部位");
@@ -305,7 +305,7 @@ function createPublicConsultationText({ report, experience, detailed = false }) 
     });
     lines.push("同じ部位・同じ計算方法・同じ基準で比べられる記録だけを比較します。");
   }
-  lines.push("身体の記録、ROF-J、Reference-100は別に扱います。診断、傷害予測、安全性、回復度、走行可否の判定には使いません。");
+  lines.push("身体の記録、疲労感、部位の目安は別に扱います。診断、けがの予測、安全性、回復度、走行可否の判定には使いません。");
   return lines.join("\n");
 }
 

@@ -78,7 +78,7 @@ export function renderSettingsScreen({ services, context }) {
           </div><p class="note">すべて任意です。個人補正、診断、性別判定には使いません。</p></div></details>
           <details class="subdetails"><summary><span><strong>保存シューズ</strong><small>Recordで次回も選べる名称</small></span><span>⌄</span></summary><div class="subdetails-body">${renderSavedShoes(settings)}<p class="visually-hidden">保存候補から削除しても、過去記録に保存されたシューズ情報は変わりません。</p></div></details>
           <div class="action-row"><button type="submit" class="primary">プロフィールを保存</button><button type="button" data-action="reset-journal-settings">標準設定に戻す</button></div>
-          <p class="visually-hidden">GPXファイルは端末内で解析し、外部サーバーへ自動送信しません。</p><input type="hidden" name="externalLinkDisplay" value="${escapeHtml(settings.externalLinkDisplay)}">
+          <p class="visually-hidden">ルートファイル（GPX）は端末内で読み取り、外部サービスへ自動送信しません。</p><input type="hidden" name="externalLinkDisplay" value="${escapeHtml(settings.externalLinkDisplay)}">
           <input type="hidden" name="regionalResultInitialView" value="${escapeHtml(settings.regionalResultInitialView)}">
           <input type="hidden" name="showRegionalPreviousComparison" value="${settings.showRegionalPreviousComparison ? "show" : "hide"}">
           <div class="form-messages" data-form-messages tabindex="-1" hidden></div>
@@ -100,7 +100,7 @@ export function renderSettingsScreen({ services, context }) {
 
     <section class="group"><p class="group-title">ABOUT</p><details class="disclosure"><summary><span><small>ABOUT RUNLOAD</small><strong>このアプリについて</strong><span>目的と扱わない範囲</span></span><i>⌄</i></summary><div class="disclosure-body"><div class="about-grid">
       <div><small>目的</small><strong>初心者ランナーが、自分の記録を理解し自分で判断するための材料を整理する</strong></div>
-      <div><small>扱わないこと</small><strong>診断、処方、傷害リスク、安全性、走行可否の自動判断</strong></div>
+      <div><small>扱わないこと</small><strong>診断、処方、けがの危険性、安全性、走行可否の自動判断</strong></div>
       <div><small>データ</small><strong>新アプリ公開後に作成した記録だけを対象とする</strong></div>
       <div><small>現在の段階</small><strong>リリース前正規版。スマートフォンUI/UXを仕上げています</strong></div>
     </div></div></details></section>

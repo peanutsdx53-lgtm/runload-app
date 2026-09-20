@@ -45,7 +45,7 @@ function updateRecordSubmitAvailability(form) {
     }
   }
   const hint = form.querySelector("[data-prototype-save-hint]");
-  if (hint) hint.textContent = activityType === "rest" ? "休養日として保存できます。" : ready ? "必須項目が揃いました。" : "距離と実走時間を入力してください。";
+  if (hint) hint.textContent = activityType === "rest" ? "休養日として保存できます。" : ready ? "必須項目が揃いました。" : "距離と実際に走った時間を入力してください。";
   const dateDisplay = form.querySelector("[data-prototype-date-display]");
   if (dateDisplay) dateDisplay.textContent = date ? date.replaceAll("-", "/") : "—";
 }
@@ -716,7 +716,7 @@ function validateUiRecord(record) {
   if (!record.date) messages.push("日付を入力してください。");
   if (record.activityType === "run") {
     if (!(record.distanceKm > 0)) messages.push("走行記録では、0より大きい距離を入力してください。");
-    if (!(record.durationMinutes > 0)) messages.push("走行記録では、0より大きい実走時間を入力してください。");
+    if (!(record.durationMinutes > 0)) messages.push("走行記録では、0より大きい実際に走った時間を入力してください。");
     const surfaceSum = SURFACE_FIELDS.reduce((sum, { recordKey }) => sum + Number(record.course[recordKey] || 0), 0);
     if (surfaceSum > 0 && Math.abs(surfaceSum - 100) > 1e-9) messages.push(`路面割合を入力する場合は、合計を100%にしてください。現在は${surfaceSum}%です。`);
     if (hasTreadmillOutdoorSurfaceMixFromCourse(record.course || {})) messages.push("トレッドミルと屋外路面は、同じ走行の路面割合として混ぜて入力できません。トレッドミルは単独の路面として記録してください。");
@@ -727,12 +727,12 @@ function validateUiRecord(record) {
       messages.push("上り区間と下り区間の合計は100%以下にしてください。");
     }
     if (String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK") {
-      if (!(Number(record.runWalkRunningDistanceKm) > 0) || !(Number(record.runWalkRunningDistanceKm) < Number(record.distanceKm))) messages.push("RUN_WALKでは、走った距離を0より大きく、全体距離より小さい値で入力してください。");
-      if (!(Number(record.runWalkRunningDurationMinutes) > 0) || !(Number(record.runWalkRunningDurationMinutes) < Number(record.durationMinutes))) messages.push("RUN_WALKでは、走った時間を0より大きく、全体の実走時間より短い値で入力してください。");
+      if (!(Number(record.runWalkRunningDistanceKm) > 0) || !(Number(record.runWalkRunningDistanceKm) < Number(record.distanceKm))) messages.push("走りと歩きを混ぜた場合は、走った距離を0より大きく、全体距離より小さい値で入力してください。");
+      if (!(Number(record.runWalkRunningDurationMinutes) > 0) || !(Number(record.runWalkRunningDurationMinutes) < Number(record.durationMinutes))) messages.push("走りと歩きを混ぜた場合は、走った時間を0より大きく、全体の走行・歩行時間より短い値で入力してください。");
       if (recordHasMixedA9Conditions(record)) {
         const runningSections = Array.isArray(record.runWalkRunningSections) ? record.runWalkRunningSections : [];
         const total = runningSections.reduce((sum, section) => sum + Number(section.sharePercent || 0), 0);
-        if (!runningSections.length || Math.abs(total - 100) > 0.01) messages.push("mixed条件のRUN_WALKでは、走った区間の坂・路面内訳を合計100%で入力してください。");
+        if (!runningSections.length || Math.abs(total - 100) > 0.01) messages.push("複数の坂・路面がある場合は、走った区間の内訳を合計100%で入力してください。");
         if (runningSections.some((section) => !Array.isArray(section.surfaceComponents) || !section.surfaceComponents.length)) messages.push("走った区間の内訳では、各区間の路面を選んでください。");
         const runningSurfaceComponents = runningSections.flatMap((section) => Array.isArray(section.surfaceComponents) ? section.surfaceComponents : []);
         if (hasTreadmillOutdoorSurfaceMixFromComponents(runningSurfaceComponents)) messages.push("RUN_WALKの走った区間でも、トレッドミルと屋外路面を同じ走行内で混ぜることはできません。");
@@ -894,7 +894,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
     const postSaveWarnings = [];
     if (recordInput.id && services.secondPillar?.getPendingRun?.(result.record.id)) {
       const lifecycleResult = services.secondPillar.finalizeSavedRun(result.record.id);
-      if (!lifecycleResult.ok) postSaveWarnings.push("記録は保存しましたが、ROF-Jの進行中状態を閉じられませんでした。データ本体は同じrunIdで保持されています。");
+      if (!lifecycleResult.ok) postSaveWarnings.push("記録は保存しましたが、疲労感の入力状態を終了できませんでした。保存した記録は保持されています。");
     }
     const courseLibraryResult = savePlanCourseToLibraryIfRequested(formData, services, recordInput);
     if (!courseLibraryResult.ok) {

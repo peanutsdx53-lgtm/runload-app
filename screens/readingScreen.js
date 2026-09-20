@@ -89,7 +89,7 @@ function buildColumnRecommendation(services, experience, allExperiences = [], co
   const find = (id) => { const article = services.column.findById(id); return article && !DEFERRED_READING_ARTICLE_IDS.has(article.id) ? article : all[0] || null; };
   const recommendation = (id, reason) => Object.freeze({ article: find(id), reason });
   if (!experience) {
-    return recommendation("regional-three-views", "まだ記録がないため、12部位のReference-100の読み方を説明する基礎記事を表示しています。");
+    return recommendation("regional-three-views", "まだ記録がないため、12部位の目安の読み方を説明する基礎記事を表示しています。");
   }
 
   const { record, feedback = {}, supportDecision = {} } = experience;
@@ -199,8 +199,8 @@ function renderArticleSections(articles, categories, featuredId) {
     const categoryArticles = articles.filter((article) => article.category === category && article.id !== featuredId);
     if (!categoryArticles.length) return "";
     const descriptions = {
-      "結果の読み方": "12部位のReference-100、身体の記録、疲労感の記録の違いを説明します。",
-      "入力と振り返り": "本人が記録した事実や主観的情報、過去比較、予定値を分けて見返します。",
+      "結果の読み方": "12部位の目安、身体の記録、疲労感の記録の違いを説明します。",
+      "入力と振り返り": "本人が記録した事実や自分で感じたこと、過去比較、予定を分けて見返します。",
       "走りとのつき合い方": "練習量、目標、生活や環境の背景を、一つの正解や評価に変えずに考えます。",
       "走る前・走っている間": "睡眠、暑さ、会話のしやすさを、一つの数値や基準だけで決めずに考えます。",
       "走った後の整え方": "クールダウン、水分、食事を、一つの方法や量だけで決めずに考えます。",

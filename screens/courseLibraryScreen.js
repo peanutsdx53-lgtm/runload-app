@@ -3,7 +3,7 @@ import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js
 import { peekCourseSelection } from "../ui/flowSessionState.js";
 
 function safeReturnTo(context) { const value=String(context?.parameters?.get("returnTo")||"#/record-input"); return ["#/record-input","#/plan","#/simulation"].some((prefix)=>value.startsWith(prefix))?value:"#/record-input"; }
-function callerLabel(returnTo="") { if(returnTo.startsWith("#/plan"))return"予定"; if(returnTo.startsWith("#/simulation"))return"シミュレーション"; return"今日の記録"; }
+function callerLabel(returnTo="") { if(returnTo.startsWith("#/plan"))return"予定"; if(returnTo.startsWith("#/simulation"))return"条件比較"; return"今日の記録"; }
 function selectedPreset(returnTo="") { if(returnTo.startsWith("#/plan"))return peekCourseSelection("plan")?.preset||null; if(returnTo.startsWith("#/simulation"))return peekCourseSelection("simulation")?.preset||null; return null; }
 function courseMeta(preset={}) { return `${slopeSummary(preset.course||{})}・${primarySurfaceSummary(preset.course||{})}`; }
 function glyph(index){return ["○","↔","⌁","◇","▱"][index%5];}

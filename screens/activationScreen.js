@@ -38,11 +38,11 @@ export function renderActivationScreen({ services, context }) {
     ${record ? `<section class="source"><div><small>対象の記録</small><strong>${escapeHtml(shortDate(record.date))}</strong><span>${escapeHtml(sourceSummary(record))}</span></div><a data-context-back-duplicate href="${escapeHtml(href("result", { recordId }))}">結果へ戻る</a></section>` : `<section class="source"><div><small>対象の記録</small><strong>まだありません</strong><span>記録を保存すると結果に結び付けて使えます</span></div><a href="#/record-input">記録を始める</a></section>`}
     <section class="intro"><small>NEXT ACTION</small><h2>この結果をどう使うか</h2><p>アプリが次の行動を決めるのではなく、自分で確認したい入口を選びます。</p></section>
     <div class="actions">
-      ${card("01", "条件を比べる", "前回の走りを基準に、距離・時間・コースなどを変えたときの12部位表示を確認します。", href("simulation", { recordId, from: "activation" }), "シミュレーションを開く", true)}
+      ${card("01", "条件を比べる", "前回の走りを基準に、距離・時間・コースなどを変えたときの12部位表示を確認します。", href("simulation", { recordId, from: "activation" }), "条件比較を開く", true)}
       ${card("02", "相談用にまとめる", "走行事実と身体の記録を整理し、相談相手に見せる内容を作ります。", record ? href("consultation", { recordId }) : href("consultation", { mode: "free", page: "quick" }), "相談用に整理する")}
       ${card("03", "次の予定を作る", "今回の事実を出発点に、次の走行や休養の予定を自分で作ります。", href("plan", { sourceRecordId: recordId }), "予定を作る")}
       ${card("04", "読みものを確認する", "今回の記録に関連する情報を、読みものから確認します。", href("reading", { recordId, origin: record ? "activation" : "" }), "読みものを開く")}
     </div>
-    <p class="boundary">距離や速度を増やすこと、安全性、けがリスク、走行可否を判断する画面ではありません。</p>
+    <p class="boundary">距離や速度を増やすこと、安全性、けがの危険性、走行可否を判断する画面ではありません。</p>
   </div>`;
 }
