@@ -68,7 +68,7 @@ function renderPurposeNavigation({ services, decision, experience, regionId }) {
 
 function renderA4RegionSelector(decision) {
   const options = decision.regionOptions.map((item) => `<option value="${escapeHtml(item.id)}"${item.id === decision.regionId ? " selected" : ""}>${escapeHtml(item.label)}</option>`).join("");
-  return `<section class="consult-region-selector" aria-labelledby="consult-region-title"><div class="section-heading section-heading--compact"><p>3. 部位</p><h2 id="consult-region-title">確認する部位を1つ選ぶ</h2></div><label class="field"><span>確認する部位</span><select data-consult-region-selector>${options}</select><small>部位間の順位付けではありません。選んだ部位で部位の目安を数値化できる場合だけ、その部位固有の基準100と比較します。</small></label></section>`;
+  return `<section class="consult-region-selector" aria-labelledby="consult-region-title"><div class="section-heading section-heading--compact"><p>3. 部位</p><h2 id="consult-region-title">確認する部位を1つ選ぶ</h2></div><label class="field"><span>確認する部位</span><select data-consult-region-selector>${options}</select><small>部位間の順位付けではありません。選んだ部位で部位の目安を数値化できる場合だけ、その部位自身の基準と比較します。</small></label></section>`;
 }
 
 function renderDecisionSources(decision) {
@@ -141,7 +141,7 @@ function renderResultQuick({ services, experience, regionId, purpose, a4RegionId
     regionId: report.modelReference.regional.regionId,
   }).toString();
   const reportAction = priority
-    ? `<section class="consult-priority-report"><div><p>${report.supportRoute === "urgent" ? "公的な案内とは別に作る資料" : "身体の記録を先に確認する資料"}</p><h2>${report.supportRoute === "urgent" ? "相談メモも準備する" : "相談メモを優先"}</h2><p>身体の記録、今回の条件、部位の目安の順でまとめます。数値化できる場合は基準100の意味も明記します。公的な窓口の確認を置き換える資料ではありません。</p></div><a class="button button--primary" href="#/consultation?${reportQuery}">相談メモを開く</a></section>`
+    ? `<section class="consult-priority-report"><div><p>${report.supportRoute === "urgent" ? "公的な案内とは別に作る資料" : "身体の記録を先に確認する資料"}</p><h2>${report.supportRoute === "urgent" ? "相談メモも準備する" : "相談メモを優先"}</h2><p>身体の記録、今回の条件、部位の目安の順でまとめます。数値化できる場合は、その部位の基準との関係も明記します。公的な窓口の確認を置き換える資料ではありません。</p></div><a class="button button--primary" href="#/consultation?${reportQuery}">相談メモを開く</a></section>`
     : "";
   const comparisonNotice = decision.purpose === "previous_comparison" && decision.regional.previousComparable?.status !== "COMPARABLE"
     ? `<aside class="editorial-boundary"><p>同じ部位・同じ基準など、同じ意味で比べられる過去記録がないため、差は表示せず、その理由をメモへ記載します。</p></aside>`
@@ -280,7 +280,7 @@ function renderPrototypeConsultation({ services, experience, regionId = "" }) {
   const shortLines = [
     `今回の走行事実：${facts}`,
     `身体の記録：${rof}`,
-    `今回の部位結果：${resultLine}（この部位自身の固定基準100との比較）`,
+    `今回の部位結果：${resultLine}（この部位自身の基準との比較）`,
     `次に確認したいこと：${next}`,
   ];
   const shortMemo = shortLines.join("\n");
@@ -298,10 +298,10 @@ function renderPrototypeConsultation({ services, experience, regionId = "" }) {
     <section id="shortPanel" class="panel" data-consult-panel="short"><div class="panel-head"><div><small>SHORT SHARE</small><strong>短く見せる内容</strong></div><span class="status">自動送信しません</span></div><div class="select-list">
       <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[0])}" checked><span><strong>今回の走行事実</strong><span>距離・時間・コース</span></span></label>
       <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[1])}" checked><span><strong>身体の記録</strong><span>本人が記録した疲労感・気づき</span></span></label>
-      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[2])}" checked><span><strong>今回の部位結果</strong><span>選択した部位のReference-100</span></span></label>
+      <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[2])}" checked><span><strong>今回の部位結果</strong><span>選択した部位の目安</span></span></label>
       <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[3])}" checked><span><strong>次に確認したいこと</strong><span>本人が残した確認点</span></span></label>
     </div><div id="shortMemo" class="memo" data-consult-short-memo>${escapeHtml(shortMemo)}</div><textarea id="consultation-report-text" class="visually-hidden" readonly>${escapeHtml(shortMemo)}</textarea><div class="actions"><button class="primary" type="button" data-action="copy-consultation-report">短文をコピー</button></div></section>
-    <section id="reportPanel" class="panel" data-consult-panel="report" hidden><div class="panel-head"><div><small>REPORT</small><strong>文書でまとめる内容</strong></div><span class="status">印刷・PDF向け</span></div><article class="report" id="reportSheet"><header><small>RUNLOAD CONSULTATION</small><strong>相談用メモ</strong><span>${escapeHtml(formatLocalDate(record.date))}の記録</span></header><section><small>01 / 相談したいこと</small><strong id="reportQuestion">未入力</strong><p id="reportTarget">相談相手：未入力</p></section><section><small>02 / 今回の走り</small><strong>${escapeHtml(facts)}</strong><p>${escapeHtml(pace)}</p></section><section><small>03 / 身体の記録</small><strong>${escapeHtml(rof)}</strong><p>次に確認したいこと：${escapeHtml(next)}</p></section><section><small>04 / 部位の目安</small><strong>${escapeHtml(resultLine)}</strong><p>この部位自身の固定基準100との比較。別部位との順位付けではありません。</p></section><section><small>05 / 走行距離</small><strong>${escapeHtml(distance)}</strong><p>走行距離は部位の数値へ掛けず、別の走行事実として扱います。</p></section></article><div class="actions"><button class="primary" type="button" data-action="print-consultation-report">印刷・PDF</button></div></section>
+    <section id="reportPanel" class="panel" data-consult-panel="report" hidden><div class="panel-head"><div><small>REPORT</small><strong>文書でまとめる内容</strong></div><span class="status">印刷・PDF向け</span></div><article class="report" id="reportSheet"><header><small>RUNLOAD CONSULTATION</small><strong>相談用メモ</strong><span>${escapeHtml(formatLocalDate(record.date))}の記録</span></header><section><small>01 / 相談したいこと</small><strong id="reportQuestion">未入力</strong><p id="reportTarget">相談相手：未入力</p></section><section><small>02 / 今回の走り</small><strong>${escapeHtml(facts)}</strong><p>${escapeHtml(pace)}</p></section><section><small>03 / 身体の記録</small><strong>${escapeHtml(rof)}</strong><p>次に確認したいこと：${escapeHtml(next)}</p></section><section><small>04 / 部位の目安</small><strong>${escapeHtml(resultLine)}</strong><p>この部位自身の基準との比較。別部位との順位付けではありません。</p></section><section><small>05 / 走行距離</small><strong>${escapeHtml(distance)}</strong><p>走行距離は部位の数値へ掛けず、別の走行事実として扱います。</p></section></article><div class="actions"><button class="primary" type="button" data-action="print-consultation-report">印刷・PDF</button></div></section>
     <p class="boundary">RunLoadの数値は診断・安全性・けがリスクの判定ではありません。共有する相手と内容は本人が選びます。</p><a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}&returnTo=${encodeURIComponent(`#/consultation?recordId=${record.id}`)}"><span><small>症状や体調について相談先を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
   </div>`;
 }
