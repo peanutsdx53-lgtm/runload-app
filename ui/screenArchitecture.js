@@ -105,13 +105,6 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   }
 
   if (screen === "consultation") {
-    const page = parameter("page");
-    if (page === "quick" || parameter("mode")) {
-      return { title: "共有メモ", backHref: "#/consultation", backLabel: "共有用にまとめる" };
-    }
-    if (page === "report") {
-      return { title: "共有資料", backHref: "#/consultation", backLabel: "共有用にまとめる" };
-    }
     return { title: "共有用にまとめる", backHref: "#/more", backLabel: "その他" };
   }
 
