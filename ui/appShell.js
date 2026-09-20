@@ -1,6 +1,6 @@
 import { escapeHtml } from "./commonComponents.js";
 import { renderGuideDialog } from "./guideContent.js";
-import { FEATURE_DESTINATION_GROUPS, PRIMARY_DESTINATIONS } from "./screenArchitecture.js";
+import { FEATURE_DESTINATION_GROUPS, PRIMARY_DESTINATIONS, resolveScreenContextNavigation } from "./screenArchitecture.js";
 
 const CORE_NAVIGATION = PRIMARY_DESTINATIONS;
 
@@ -148,9 +148,9 @@ function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix
 
 function renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult) {
   const menu = renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "mobile" });
-  if (currentScreen === "settings" || currentScreen === "privacy") {
-    const title = currentScreen === "settings" ? "設定" : "プライバシー";
-    return `<header class="prototype-mobile-topbar prototype-mobile-topbar--context"><a href="#/more">‹ その他</a><strong>${escapeHtml(title)}</strong><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
+  const context = resolveScreenContextNavigation(currentScreen, currentLocation);
+  if (context) {
+    return `<header class="prototype-mobile-topbar prototype-mobile-topbar--context"><a class="prototype-mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong>${escapeHtml(context.title)}</strong><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
   }
   return `<header class="prototype-mobile-topbar"><a class="prototype-mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></a><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
 }
