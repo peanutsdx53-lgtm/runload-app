@@ -85,7 +85,10 @@ function prototypeBodyRecordSummary(presentation) {
     if (Number(item.discomfort) > 0) values.push(`気になる感じ ${item.discomfort}/5`);
     rows.push(`${item.label}：${values.join("・") || "確認済み"}`);
   });
-  return rows.length ? rows.join("／") : "未記録";
+  if (!rows.length) return "未記録";
+  const visible = rows.slice(0, 3);
+  const remaining = rows.length - visible.length;
+  return `${visible.join("／")}${remaining > 0 ? `／ほか${remaining}件` : ""}`;
 }
 
 function prototypeRecentChangeSummary(presentation, record) {
