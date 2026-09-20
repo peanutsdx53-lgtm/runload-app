@@ -40,6 +40,15 @@ Shared candidate information:
 - Dedicated V1.31 audit: 18 / 18 PASS.
 - Modified JavaScript syntax: 2 / 2 PASS.
 
+## Share Readability V1.32
+- 「見せる相手」 is removed because it did not change shared content or output behavior.
+- Shared content order is: confirmation content -> body record -> current run -> fatigue -> related body-region indicator -> next check -> next plan.
+- The body-region indicator and recent comparable change are combined into one meaning-first item.
+- Regional presentation order is: body region -> relation to its own baseline -> current value and baseline 100 -> previous comparable record when available.
+- The regional relation uses the same threshold rule as the Result screen; no new interpretation threshold is introduced.
+- Dedicated V1.32 audit: 22 / 22 PASS.
+- Modified JavaScript syntax: 2 / 2 PASS.
+
 ## Verification
 - Modified JavaScript syntax: 10 / 10 PASS
 - Final Share Preparation audit: 38 / 38 PASS

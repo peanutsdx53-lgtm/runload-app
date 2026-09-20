@@ -2891,6 +2891,13 @@
 .prototype-parity--consultation .share-source strong{font-size:10px}
 .prototype-parity--consultation .share-source small{margin-top:2px;color:var(--muted);font-size:7px}
 .prototype-parity--consultation .share-source em{margin-top:5px;color:var(--ink);font-size:8px;font-style:normal;line-height:1.45}
+.prototype-parity--consultation .share-region-detail{margin-top:6px;display:grid!important;gap:2px}
+.prototype-parity--consultation .share-region-detail b,
+.prototype-parity--consultation .share-region-detail span{display:block}
+.prototype-parity--consultation .share-region-detail .share-region-name{font-weight:850;color:var(--ink)}
+.prototype-parity--consultation .share-region-detail b{font-size:9px;color:var(--accent-strong)}
+.prototype-parity--consultation .share-region-detail span{font-size:8px;line-height:1.45}
+.prototype-parity--consultation .share-region-detail span:last-child{color:var(--muted)}
 .prototype-parity--consultation .share-source:has(input:checked){
   border-color:var(--color-selection-border);
   background:var(--color-selection-surface);
@@ -2924,6 +2931,9 @@
 .prototype-parity--consultation .share-card strong{display:block}
 .prototype-parity--consultation .share-card small{color:var(--muted);font-size:7px;font-weight:850}
 .prototype-parity--consultation .share-card strong{margin-top:3px;font-size:9px;line-height:1.5}
+.prototype-parity--consultation .share-card--regional .share-region-detail{margin-top:7px}
+.prototype-parity--consultation .share-card--regional .share-region-detail b{font-size:11px}
+.prototype-parity--consultation .share-card--regional .share-region-detail span{font-size:9px}
 .prototype-parity--consultation .share-output-actions{margin-top:11px;display:grid;gap:8px}
 .prototype-parity--consultation .share-output-actions .output{
   width:100%;
@@ -3004,6 +3014,7 @@ html.consult-viewer-open{overflow:hidden}
 @media (min-width:760px){
   .prototype-parity--consultation .share-source-list{grid-template-columns:1fr 1fr}
   .prototype-parity--consultation .share-preview-grid{grid-template-columns:1fr 1fr}
+  .prototype-parity--consultation .share-preview-grid .share-card--regional{grid-column:1/-1}
   .prototype-parity--consultation .share-output-actions{grid-template-columns:repeat(3,1fr)}
 }
 
@@ -3046,12 +3057,13 @@ html.consult-viewer-open{overflow:hidden}
   .prototype-parity--consultation .share-document-purpose strong{display:block}
   .prototype-parity--consultation .share-document-purpose small{font-size:8pt;color:#64727d;font-weight:700}
   .prototype-parity--consultation .share-document-purpose strong{margin-top:2mm;font-size:13pt;line-height:1.45}
-  .prototype-parity--consultation .share-document-grid{
+  .prototype-parity--consultation .share-document-flow{
     margin-top:5mm;
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:4mm;
   }
+  .prototype-parity--consultation .share-document-card[data-consult-document-key="fatigue"]{grid-column:1/-1;min-height:0}
   .prototype-parity--consultation .share-document-card{
     min-height:24mm;
     padding:4mm 5mm;
@@ -3065,20 +3077,20 @@ html.consult-viewer-open{overflow:hidden}
   .prototype-parity--consultation .share-document-card small{font-size:8pt;color:#64727d;font-weight:700}
   .prototype-parity--consultation .share-document-card strong{margin-top:2mm;font-size:10pt;line-height:1.45}
   .prototype-parity--consultation .share-document-region{
-    margin-top:5mm;
+    grid-column:1/-1;
     padding:5mm;
     border:1pt solid #b6c8d3;
     border-radius:4mm;
     break-inside:avoid;
+    background:#f8fbfc;
   }
   .prototype-parity--consultation .share-document-region[hidden]{display:none!important}
   .prototype-parity--consultation .share-document-region small{font-size:8pt;color:#64727d;font-weight:700}
-  .prototype-parity--consultation .share-document-region h2{margin:1.5mm 0 3mm;font-size:12pt}
-  .prototype-parity--consultation .share-document-region table{width:100%;border-collapse:collapse;font-size:9pt}
-  .prototype-parity--consultation .share-document-region th,
-  .prototype-parity--consultation .share-document-region td{padding:2.5mm 2mm;border-top:.7pt solid #d5dfe5;text-align:left;vertical-align:top}
-  .prototype-parity--consultation .share-document-region th{width:30%;color:#52636e}
-  .prototype-parity--consultation .share-document-region tr[hidden]{display:none!important}
+  .prototype-parity--consultation .share-document-region h2{margin:1.5mm 0 0;font-size:12pt}
+  .prototype-parity--consultation .share-document-region-meaning{margin-top:3mm;display:grid;gap:1.5mm}
+  .prototype-parity--consultation .share-document-region-meaning strong{font-size:11pt}
+  .prototype-parity--consultation .share-document-region-meaning span{display:block;font-size:9pt;line-height:1.45}
+  .prototype-parity--consultation .share-document-region-meaning span:last-child{color:#64727d}
   .prototype-parity--consultation .share-print-document>footer{
     margin-top:5mm;
     padding-top:3mm;

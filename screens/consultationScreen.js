@@ -63,10 +63,40 @@ function prototypeNextCheck(experience) {
 function prototypeRegionalSummary(decision) {
   const regional = decision?.regional || {};
   const regionName = bodyRegionFormalName(regional.regionId, regional.regionLabel || "選択した部位");
-  const value = Number.isFinite(Number(regional.displayIndex))
-    ? formatNumber(Number(regional.displayIndex), 1)
-    : "数値なし";
-  return `${regionName} ${value}`;
+  const numericValue = Number(regional.displayIndex);
+  const available = Number.isFinite(numericValue);
+  const value = available ? formatNumber(numericValue, 1) : "数値なし";
+  const relation = !available
+    ? "表示できません"
+    : Math.abs(numericValue - 100) < 1
+      ? "その部位自身の基準付近"
+      : numericValue > 100
+        ? "その部位自身の基準より上"
+        : "その部位自身の基準より下";
+  const comparison = regional.previousComparable;
+  let previous = "比較できる過去記録なし";
+  if (available && comparison?.status === "COMPARABLE") {
+    const previousValue = Number(comparison.previous?.displayConditionIndex);
+    if (Number.isFinite(previousValue)) {
+      const delta = Number.isFinite(Number(comparison.pointDelta))
+        ? Number(comparison.pointDelta)
+        : numericValue - previousValue;
+      const signed = `${delta >= 0 ? "+" : ""}${formatNumber(delta, 1)}`;
+      const previousDate = comparison.previous?.date ? formatLocalDate(comparison.previous.date) : "前回";
+      previous = `${previousDate} ${formatNumber(previousValue, 1)} → 今回 ${value}（${signed}）`;
+    }
+  }
+  return {
+    regionName,
+    value,
+    relation,
+    current: available ? `今回 ${value}｜基準 100` : "今回の数値なし",
+    previous,
+    available,
+    copyValue: available
+      ? `${regionName}｜${relation}｜今回 ${value}・基準 100｜${previous}`
+      : `${regionName}｜表示できません`,
+  };
 }
 
 function prototypeBodyRecordSummary(presentation) {
@@ -91,28 +121,13 @@ function prototypeBodyRecordSummary(presentation) {
   return `${visible.join("／")}${remaining > 0 ? `／ほか${remaining}件` : ""}`;
 }
 
-function prototypeRecentChangeSummary(decision) {
-  const regional = decision?.regional || {};
-  const comparison = regional.previousComparable;
-  const current = Number(regional.displayIndex);
-  if (!Number.isFinite(current) || comparison?.status !== "COMPARABLE") return "比較できる過去記録なし";
-  const previousValue = Number(comparison.previous?.displayConditionIndex);
-  if (!Number.isFinite(previousValue)) return "比較できる過去記録なし";
-  const delta = Number.isFinite(Number(comparison.pointDelta))
-    ? Number(comparison.pointDelta)
-    : current - previousValue;
-  const signed = `${delta >= 0 ? "+" : ""}${formatNumber(delta, 1)}`;
-  return `${comparison.previous?.date || "前回"} ${formatNumber(previousValue, 1)} → 今回 ${formatNumber(current, 1)}（${signed}）`;
-}
-
-function prototypeShareItems({ facts, fatigue, bodyRecord, regional, recent, next, plan }) {
+function prototypeShareItems({ facts, fatigue, bodyRecord, regional, next, plan }) {
   const hasPlan = Boolean(plan && plan !== "未設定");
   return [
+    { key: "body", label: "身体の記録", value: bodyRecord, note: "本人が入力した部位・程度", checked: bodyRecord !== "未記録", available: bodyRecord !== "未記録" },
     { key: "run", label: "今回の走行", value: facts, note: "距離・時間・コース", checked: true, available: true },
     { key: "fatigue", label: "疲労感", value: fatigue, note: "走る前と走った後", checked: !fatigue.includes("未記録"), available: !fatigue.includes("未記録") },
-    { key: "body", label: "身体の記録", value: bodyRecord, note: "本人が入力した部位・程度", checked: bodyRecord !== "未記録", available: bodyRecord !== "未記録" },
-    { key: "regional", label: "関連する部位の目安", value: regional, note: "その部位自身の基準との比較", checked: !regional.includes("数値なし"), available: !regional.includes("数値なし") },
-    { key: "recent", label: "最近の変化", value: recent, note: "同じ部位で比較できる場合のみ", checked: recent !== "比較できる過去記録なし", available: recent !== "比較できる過去記録なし" },
+    { key: "regional", label: "関連する部位の目安", value: regional.copyValue, note: "意味・今回値・前回比較", checked: regional.available, available: regional.available, regional },
     { key: "next", label: "次に確認したいこと", value: next, note: "本人が記録した確認点", checked: true, available: true },
     { key: "plan", label: "次の予定", value: plan || "未設定", note: "保存済みの次回方針", checked: hasPlan, available: hasPlan },
   ];
@@ -127,20 +142,41 @@ function prototypeRegionOptions({ services, experience, allExperiences, decision
       purpose: decision?.purpose || "",
       regionId: option.id,
     });
-    const regionalValue = prototypeRegionalSummary(optionDecision);
-    const recentValue = prototypeRecentChangeSummary(optionDecision);
-    const regionalAvailable = !regionalValue.includes("数値なし");
-    const recentAvailable = recentValue !== "比較できる過去記録なし";
-    return `<option value="${escapeHtml(option.id)}" data-regional-value="${escapeHtml(regionalValue)}" data-regional-available="${regionalAvailable ? "true" : "false"}" data-recent-value="${escapeHtml(recentValue)}" data-recent-available="${recentAvailable ? "true" : "false"}"${option.id === decision?.regionId ? " selected" : ""}>${escapeHtml(option.label)}</option>`;
+    const summary = prototypeRegionalSummary(optionDecision);
+    return `<option value="${escapeHtml(option.id)}" data-regional-value="${escapeHtml(summary.copyValue)}" data-regional-name="${escapeHtml(summary.regionName)}" data-regional-relation="${escapeHtml(summary.relation)}" data-regional-current="${escapeHtml(summary.current)}" data-regional-previous="${escapeHtml(summary.previous)}" data-regional-available="${summary.available ? "true" : "false"}"${option.id === decision?.regionId ? " selected" : ""}>${escapeHtml(option.label)}</option>`;
   }).join("");
 }
 
+function prototypeRegionalMarkup(regional) {
+  return `<span class="share-region-detail"><span class="share-region-name" data-consult-regional-name>${escapeHtml(regional.regionName)}</span><b data-consult-regional-relation>${escapeHtml(regional.relation)}</b><span data-consult-regional-current>${escapeHtml(regional.current)}</span><span data-consult-regional-previous>${escapeHtml(regional.previous)}</span></span>`;
+}
+
 function prototypeShareSelector(items) {
-  return items.map((item) => `<label class="share-source${item.available ? "" : " is-unavailable"}"><input type="checkbox" data-consult-source data-share-key="${escapeHtml(item.key)}" data-share-label="${escapeHtml(item.label)}" data-share-value="${escapeHtml(item.value)}"${item.checked ? " checked" : ""}${item.available ? "" : " disabled"}><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.note)}</small><em>${escapeHtml(item.available ? item.value : "今回は表示できません")}</em></span></label>`).join("");
+  return items.map((item) => {
+    const value = item.available ? item.value : "今回は表示できません";
+    const detail = item.key === "regional" && item.regional
+      ? prototypeRegionalMarkup(item.regional)
+      : `<em>${escapeHtml(value)}</em>`;
+    return `<label class="share-source${item.available ? "" : " is-unavailable"}"><input type="checkbox" data-consult-source data-share-key="${escapeHtml(item.key)}" data-share-label="${escapeHtml(item.label)}" data-share-value="${escapeHtml(item.value)}"${item.checked ? " checked" : ""}${item.available ? "" : " disabled"}><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.note)}</small>${detail}</span></label>`;
+  }).join("");
 }
 
 function prototypeShareCards(items, target) {
-  return items.map((item) => `<section class="share-card" data-consult-${target}-key="${escapeHtml(item.key)}"${item.checked ? "" : " hidden"}><small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.value)}</strong></section>`).join("");
+  return items.map((item) => {
+    if (item.key === "regional" && item.regional) {
+      return `<section class="share-card share-card--regional" data-consult-${target}-key="regional"${item.checked ? "" : " hidden"}><small>${escapeHtml(item.label)}</small>${prototypeRegionalMarkup(item.regional)}</section>`;
+    }
+    return `<section class="share-card" data-consult-${target}-key="${escapeHtml(item.key)}"${item.checked ? "" : " hidden"}><small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.value)}</strong></section>`;
+  }).join("");
+}
+
+function prototypeDocumentBlocks(items) {
+  return items.map((item) => {
+    if (item.key === "regional" && item.regional) {
+      return `<section class="share-document-region" data-consult-document-key="regional"${item.checked ? "" : " hidden"}><div><small>関連する部位の目安</small><h2 data-consult-regional-name>${escapeHtml(item.regional.regionName)}</h2></div><div class="share-document-region-meaning"><strong data-consult-regional-relation>${escapeHtml(item.regional.relation)}</strong><span data-consult-regional-current>${escapeHtml(item.regional.current)}</span><span data-consult-regional-previous>${escapeHtml(item.regional.previous)}</span></div></section>`;
+    }
+    return `<section class="share-document-card" data-consult-document-key="${escapeHtml(item.key)}"${item.checked ? "" : " hidden"}><small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.value)}</strong></section>`;
+  }).join("");
 }
 
 function renderPrototypeConsultation({ services, experience, plan, regionId = "" }) {
@@ -161,26 +197,17 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
   const fatigue = prototypeConsultationRofLine(services, experience);
   const bodyRecord = prototypeBodyRecordSummary(presentation);
   const next = prototypeNextCheck(experience);
-  const resultLine = prototypeRegionalSummary(decision);
-  const recent = prototypeRecentChangeSummary(decision);
+  const regional = prototypeRegionalSummary(decision);
   const planValue = plan
     ? `${plan.scheduledDate ? formatLocalDate(plan.scheduledDate) : "日付未設定"}・${planSummary(plan)}`
     : "未設定";
-  const items = prototypeShareItems({ facts, fatigue, bodyRecord, regional: resultLine, recent, next, plan: planValue });
+  const items = prototypeShareItems({ facts, fatigue, bodyRecord, regional, next, plan: planValue });
   const regionOptions = prototypeRegionOptions({ services, experience, allExperiences, decision });
-  const initialTarget = "";
   const initialQuestion = "";
   const previewCards = prototypeShareCards(items, "preview");
   const viewerCards = prototypeShareCards(items, "viewer");
   const selector = prototypeShareSelector(items);
-  const regionRows = items
-    .filter((item) => item.key === "regional" || item.key === "recent")
-    .map((item) => `<tr data-consult-document-key="${escapeHtml(item.key)}"${item.checked ? "" : " hidden"}><th>${escapeHtml(item.label)}</th><td>${escapeHtml(item.value)}</td></tr>`)
-    .join("");
-  const documentCards = items
-    .filter((item) => item.key !== "regional" && item.key !== "recent")
-    .map((item) => `<section class="share-document-card" data-consult-document-key="${escapeHtml(item.key)}"${item.checked ? "" : " hidden"}><small>${escapeHtml(item.label)}</small><strong>${escapeHtml(item.value)}</strong></section>`)
-    .join("");
+  const documentBlocks = prototypeDocumentBlocks(items);
 
   return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation" data-prototype-consultation data-prototype-share-prep>
     <section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録から、指導者などに見せる内容を整理します。RunLoadから相手へ自動送信はしません。</p></section>
@@ -188,8 +215,7 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
     <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果を確認</a></section>
 
     <section class="section share-step share-purpose-step"><div class="section-head"><small>STEP 1</small><h2>共有の目的</h2></div>
-      <label class="field"><span>見せる相手（任意）</span><input type="text" maxlength="80" value="${escapeHtml(initialTarget)}" placeholder="名前や関係を入力" data-consult-target></label>
-      <label class="field"><span>確認内容（任意）</span><textarea maxlength="400" placeholder="共有相手に確認してほしい内容を入力" data-consult-question>${escapeHtml(initialQuestion)}</textarea></label>
+      <label class="field"><span>確認内容（任意）</span><textarea maxlength="400" placeholder="確認してほしい内容を入力" data-consult-question>${escapeHtml(initialQuestion)}</textarea></label>
     </section>
 
     <section class="section share-step"><div class="section-head"><small>STEP 2</small><h2>見せる情報を選ぶ</h2><p>必要な情報だけを選びます。</p></div>
@@ -199,7 +225,7 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
 
     <section class="section share-step"><div class="section-head"><small>STEP 3</small><h2>内容を確認する</h2><p>この内容が、画面表示と印刷・PDFの共通元になります。</p></div>
       <article class="share-preview" data-consult-share-preview>
-        <header><small>見せる相手</small><strong data-consult-preview-target>${escapeHtml(initialTarget || "未入力")}</strong><span data-consult-preview-question>確認内容：${escapeHtml(initialQuestion || "未入力")}</span></header>
+        <header><small>確認内容</small><strong data-consult-preview-question>${escapeHtml(initialQuestion || "未入力")}</strong></header>
         <div class="share-preview-grid">${previewCards}</div>
       </article>
     </section>
@@ -217,21 +243,20 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
     <div class="share-viewer" data-consult-viewer hidden>
       <div class="share-viewer-shell">
         <header class="share-viewer-head"><div><small>RUNLOAD SHARE</small><strong>共有内容</strong></div><button type="button" data-action="close-consult-viewer" aria-label="共有表示を閉じる">×</button></header>
-        <section class="share-viewer-purpose"><small>見せる相手</small><strong data-consult-viewer-target>${escapeHtml(initialTarget || "未入力")}</strong><p data-consult-viewer-question>確認内容：${escapeHtml(initialQuestion || "未入力")}</p></section>
+        <section class="share-viewer-purpose"><small>確認内容</small><strong data-consult-viewer-question>${escapeHtml(initialQuestion || "未入力")}</strong></section>
         <div class="share-viewer-grid">${viewerCards}</div>
         <footer>走行距離は部位の数値へ掛けず、別の走行事実として扱います。部位の目安は診断や安全性を判定する数値ではありません。</footer>
       </div>
     </div>
 
     <article class="share-print-document" data-consult-share-document>
-      <header class="share-document-head"><div><small>RUNLOAD SHARE</small><h1>共有資料</h1></div><div><span>${escapeHtml(formatLocalDate(record.date))}</span><strong data-consult-document-target>共有先：${escapeHtml(initialTarget || "未入力")}</strong></div></header>
+      <header class="share-document-head"><div><small>RUNLOAD SHARE</small><h1>共有資料</h1></div><div><span>${escapeHtml(formatLocalDate(record.date))}</span></div></header>
       <section class="share-document-purpose"><small>確認内容</small><strong data-consult-document-question>${escapeHtml(initialQuestion || "未入力")}</strong></section>
-      <div class="share-document-grid">${documentCards}</div>
-      <section class="share-document-region" data-consult-document-region><div><small>関連する部位</small><h2>部位の目安と最近の変化</h2></div><table><tbody>${regionRows}</tbody></table></section>
+      <div class="share-document-flow">${documentBlocks}</div>
       <footer><strong>RunLoadの表示について</strong><p>部位の目安は記録を振り返るための参考です。走行距離は部位の数値へ掛けず、別の走行事実として扱います。診断や安全性、けがの危険性、走行可否を判定する数値ではありません。</p></footer>
     </article>
 
-    <p class="boundary">共有する相手と内容は本人が選びます。個人的なメモなどは、必要な場合だけ含めてください。</p>
+    <p class="boundary">共有する内容は本人が選びます。個人的なメモなどは、必要な場合だけ含めてください。</p>
     <a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}&returnTo=${encodeURIComponent(`#/consultation?recordId=${record.id}`)}"><span><small>症状や体調について公的な案内を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
   </div>`;
 }

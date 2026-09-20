@@ -21,4 +21,4 @@ RunLoad is a pre-release regular web application for beginner runners to review 
 App records are stored locally in the browser. GPX analysis is local-only in this version.
 
 ## Verification baseline
-Latest Share Purpose refinement: dedicated V1.31 audit 18/18 PASS and modified JavaScript syntax 2/2 PASS. STEP 1 now contains only user-entered recipient/confirmation content, while body-region selection is part of STEP 2. The V1.30 Share Preparation workflow, protected calculation cores, storage implementation, and scientific source/model files are unchanged.
+Latest Share Readability refinement: dedicated V1.32 audit 22/22 PASS and modified JavaScript syntax 2/2 PASS. The Share Preparation output no longer asks for a recipient, and the selected body-region indicator is presented as one meaning-first block with its comparable prior change. The Result screen's existing baseline-direction rule is reused. Protected calculation cores, storage implementation, and scientific source/model files are unchanged.
