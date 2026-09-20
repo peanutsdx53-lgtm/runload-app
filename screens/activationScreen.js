@@ -39,7 +39,7 @@ export function renderActivationScreen({ services, context }) {
     <section class="intro"><small>NEXT ACTION</small><h2>この結果をどう使うか</h2><p>アプリが次の行動を決めるのではなく、自分で確認したい入口を選びます。</p></section>
     <div class="actions">
       ${card("01", "条件を比べる", "前回の走りを基準に、距離・時間・コースなどを変えたときの12部位表示を確認します。", href("simulation", { recordId, from: "activation" }), "条件比較を開く", true)}
-      ${card("02", "相談用にまとめる", "走行事実と身体の記録を整理し、相談相手に見せる内容を作ります。", record ? href("consultation", { recordId }) : href("consultation", { mode: "free", page: "quick" }), "相談用に整理する")}
+      ${card("02", "共有用にまとめる", "走行事実・身体の記録・次の予定などを整理し、指導者などに見せる内容を作ります。", href("consultation", { recordId }), "共有内容をまとめる")}
       ${card("03", "次の予定を作る", "今回の事実を出発点に、次の走行や休養の予定を自分で作ります。", href("plan", { sourceRecordId: recordId }), "予定を作る")}
       ${card("04", "読みものを確認する", "今回の記録に関連する情報を、読みものから確認します。", href("reading", { recordId, origin: record ? "activation" : "" }), "読みものを開く")}
     </div>
