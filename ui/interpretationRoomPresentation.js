@@ -180,13 +180,13 @@ function renderChoice(href, title, description = "", disabled = false) {
   return `<a class="interpretation-choice" href="${escapeHtml(href)}"><strong>${escapeHtml(title)}</strong>${description ? `<span>${escapeHtml(description)}</span>` : ""}<i aria-hidden="true">›</i></a>`;
 }
 
-function actionHref(action) {
+function actionHref(action, roomOrigin = "") {
   if (!action?.destination) return "#/home";
   const query = new URLSearchParams();
   Object.entries(action.parameters || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") query.set(key, String(value));
   });
-  if (action.destination === "simulation" && !query.has("from")) query.set("from", "interpretation-room");
+  if (action.destination === "simulation" && !query.has("from")) query.set("from", "interpretation-room");\n  if (action.destination === "simulation" && roomOrigin && !query.has("roomOrigin")) query.set("roomOrigin", roomOrigin);
   return `#/${action.destination}${query.size ? `?${query.toString()}` : ""}`;
 }
 
@@ -302,7 +302,7 @@ function renderEvidence(output, intent, origin) {
 function renderAction(output, id, description = "") {
   const action = findAction(output, id);
   if (!action) return "";
-  return renderChoice(actionHref(action), ACTION_LABELS[action.labelToken] || action.labelToken, description, !action.enabled);
+  return renderChoice(actionHref(action, output?.context?.origin || "result"), ACTION_LABELS[action.labelToken] || action.labelToken, description, !action.enabled);
 }
 
 function renderNext(output, intent, origin) {
