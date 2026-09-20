@@ -43,6 +43,6 @@ export function renderActivationScreen({ services, context }) {
       ${card("03", "次の予定を作る", "今回の事実を出発点に、次の走行や休養の予定を自分で作ります。", href("plan", { sourceRecordId: recordId }), "予定を作る")}
       ${card("04", "読みものを確認する", "今回の記録に関連する情報を、読みものから確認します。", href("reading", { recordId, origin: record ? "activation" : "" }), "読みものを開く")}
     </div>
-    <p class="boundary">距離や速度を増やすこと、安全性、けがリスク、走行可否を判断する画面ではありません。</p>
+    <p class="boundary">距離や速度を増やすこと、安全性、けがの危険性、走行可否を判断する画面ではありません。</p>
   </div>`;
 }
