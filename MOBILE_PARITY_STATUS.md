@@ -32,8 +32,8 @@ Shared candidate information:
 - Distance remains a separate run fact and is not multiplied into the body-region indicator.
 
 ## Verification
-- Modified JavaScript syntax: 9 / 9 PASS
-- Dedicated Share Preparation audit: 34 / 34 PASS
+- Modified JavaScript syntax: 10 / 10 PASS
+- Final Share Preparation audit: 38 / 38 PASS
 - Existing consultation-boundary compatibility audit: 13 / 13 PASS
 - Dynamic region-selection synchronization audit: 6 / 6 PASS
 - Retained V1.6R2 harness environment itself: 251 / 251 PASS
