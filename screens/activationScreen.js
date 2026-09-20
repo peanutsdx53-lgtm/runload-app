@@ -35,7 +35,7 @@ export function renderActivationScreen({ services, context }) {
   const recordId = record?.id || "";
   return `<div class="screen screen--activation prototype-parity prototype-parity--activation">
     <section class="head"><p class="eyebrow">RESULT USE</p><h1>結果の活用</h1><p>結果を見たあと、必要な使い方を選びます。</p></section>
-    ${record ? `<section class="source"><div><small>対象の記録</small><strong>${escapeHtml(shortDate(record.date))}</strong><span>${escapeHtml(sourceSummary(record))}</span></div><a href="${escapeHtml(href("result", { recordId }))}">結果へ戻る</a></section>` : `<section class="source"><div><small>対象の記録</small><strong>まだありません</strong><span>記録を保存すると結果に結び付けて使えます</span></div><a href="#/record-input">記録を始める</a></section>`}
+    ${record ? `<section class="source"><div><small>対象の記録</small><strong>${escapeHtml(shortDate(record.date))}</strong><span>${escapeHtml(sourceSummary(record))}</span></div><a data-context-back-duplicate href="${escapeHtml(href("result", { recordId }))}">結果へ戻る</a></section>` : `<section class="source"><div><small>対象の記録</small><strong>まだありません</strong><span>記録を保存すると結果に結び付けて使えます</span></div><a href="#/record-input">記録を始める</a></section>`}
     <section class="intro"><small>NEXT ACTION</small><h2>この結果をどう使うか</h2><p>アプリが次の行動を決めるのではなく、自分で確認したい入口を選びます。</p></section>
     <div class="actions">
       ${card("01", "条件を比べる", "前回の走りを基準に、距離・時間・コースなどを変えたときの12部位表示を確認します。", href("simulation", { recordId, from: "activation" }), "シミュレーションを開く", true)}

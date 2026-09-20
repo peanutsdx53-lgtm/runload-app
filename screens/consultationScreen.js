@@ -109,7 +109,7 @@ function renderExperienceSource(experience, route) {
   const recordId = experience.record.id;
   const status = route === "urgent" ? "公的な窓口も確認" : route === "consult" ? "相談準備を優先" : "対象記録";
   const actions = route === "urgent"
-    ? `<div class="next-action__actions"><a class="button button--primary" href="#/support-guidance?recordId=${encodeURIComponent(recordId)}">公的な相談先を確認</a><a class="button button--secondary" href="#/result?recordId=${encodeURIComponent(recordId)}">結果へ戻る</a></div>`
+    ? `<div class="next-action__actions"><a class="button button--primary" href="#/support-guidance?recordId=${encodeURIComponent(recordId)}&returnTo=${encodeURIComponent(`#/consultation?recordId=${recordId}`)}">公的な相談先を確認</a><a class="button button--secondary" href="#/result?recordId=${encodeURIComponent(recordId)}">結果へ戻る</a></div>`
     : `<a class="button button--secondary" href="#/result?recordId=${encodeURIComponent(recordId)}">結果へ戻る</a>`;
   return `<section class="next-action${route === "urgent" ? " next-action--urgent" : route === "consult" ? " next-action--consult" : ""}"><div>${renderStatusLabel(status, route === "normal" ? "info" : "attention")}<h2>${escapeHtml(formatLocalDate(experience.record.date))}の記録</h2><p>${escapeHtml(formatActivitySummary(experience.record))}</p></div>${actions}</section>`;
 }
@@ -200,7 +200,7 @@ function renderQuickPage({ services, experience, plan, mode, regionId, purpose, 
       : renderFreeQuick();
   return `<section class="screen screen--consultation screen--quick-share">
     ${renderPageHeading({ eyebrow: "短い共有メモ", title: "短い共有メモを作る", description: "見せたい内容を選び、自分の言葉へ直してコピーします。" })}
-    <div class="page-heading-actions"><a class="button button--text" href="#/consultation">見せる内容の選択へ戻る</a></div>
+    <div class="page-heading-actions"><a class="button button--text" data-context-back-duplicate href="#/consultation">見せる内容の選択へ戻る</a></div>
     <section class="consult-selector" data-information-role="personal" aria-labelledby="consult-selector-title"><div class="section-heading"><p>1. 見せる内容</p><h2 id="consult-selector-title">何を見せますか</h2></div>${renderModeNavigation({ mode, experience, plan })}</section>
     ${body}
     
@@ -219,7 +219,7 @@ function renderReportPage({ services, experience, format, regionId }) {
   const documentTitle = format === "detailed" ? "詳細資料：最近の流れを追加" : "標準資料：今回1件・1ページ";
   return `<section class="screen screen--consultation screen--share-report">
     ${renderPageHeading({ eyebrow: priority ? "相談用の資料" : "共有用の資料", title: priority ? "相談メモ" : "資料レポート", description: priority ? "身体の記録を先に置き、必要な記録だけをまとめます。" : "今回の記録を、印刷・PDF・コピー用にまとめます。" })}
-    <div class="page-heading-actions"><a class="button button--text" href="#/consultation">見せる内容の選択へ戻る</a></div>
+    <div class="page-heading-actions"><a class="button button--text" data-context-back-duplicate href="#/consultation">見せる内容の選択へ戻る</a></div>
     <div class="report-screen-tools">
       ${renderExperienceSource(experience, report.supportRoute)}
       ${renderConditionNotice(report)}
@@ -302,7 +302,7 @@ function renderPrototypeConsultation({ services, experience, regionId = "" }) {
       <label><input type="checkbox" data-consult-source data-line="${escapeHtml(shortLines[3])}" checked><span><strong>次に確認したいこと</strong><span>本人が残した確認点</span></span></label>
     </div><div id="shortMemo" class="memo" data-consult-short-memo>${escapeHtml(shortMemo)}</div><textarea id="consultation-report-text" class="visually-hidden" readonly>${escapeHtml(shortMemo)}</textarea><div class="actions"><button class="primary" type="button" data-action="copy-consultation-report">短文をコピー</button></div></section>
     <section id="reportPanel" class="panel" data-consult-panel="report" hidden><div class="panel-head"><div><small>REPORT</small><strong>文書でまとめる内容</strong></div><span class="status">印刷・PDF向け</span></div><article class="report" id="reportSheet"><header><small>RUNLOAD CONSULTATION</small><strong>相談用メモ</strong><span>${escapeHtml(formatLocalDate(record.date))}の記録</span></header><section><small>01 / 相談したいこと</small><strong id="reportQuestion">未入力</strong><p id="reportTarget">相談相手：未入力</p></section><section><small>02 / 今回の走り</small><strong>${escapeHtml(facts)}</strong><p>${escapeHtml(pace)}</p></section><section><small>03 / 身体の記録</small><strong>${escapeHtml(rof)}</strong><p>次に確認したいこと：${escapeHtml(next)}</p></section><section><small>04 / 部位の目安</small><strong>${escapeHtml(resultLine)}</strong><p>この部位自身の固定基準100との比較。別部位との順位付けではありません。</p></section><section><small>05 / 走行距離</small><strong>${escapeHtml(distance)}</strong><p>走行距離は部位の数値へ掛けず、別の走行事実として扱います。</p></section></article><div class="actions"><button class="primary" type="button" data-action="print-consultation-report">印刷・PDF</button></div></section>
-    <p class="boundary">RunLoadの数値は診断・安全性・けがリスクの判定ではありません。共有する相手と内容は本人が選びます。</p><a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}"><span><small>症状や体調について相談先を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
+    <p class="boundary">RunLoadの数値は診断・安全性・けがリスクの判定ではありません。共有する相手と内容は本人が選びます。</p><a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}&returnTo=${encodeURIComponent(`#/consultation?recordId=${record.id}`)}"><span><small>症状や体調について相談先を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
   </div>`;
 }
 

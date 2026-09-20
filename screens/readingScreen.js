@@ -19,7 +19,7 @@ function articleHref(articleId, origin = "") {
 }
 
 function renderArticleCard(article, { compact = false } = {}) {
-  return `<article class="article-card${compact ? " article-card--compact" : ""}"><p>${escapeHtml(article.category)}</p><h3><a href="${escapeHtml(articleHref(article.id))}">${escapeHtml(article.title)}</a></h3><p>${escapeHtml(article.lead)}</p><div class="article-card__tags">${(article.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div><a class="text-link" href="${escapeHtml(articleHref(article.id))}">記事を読む</a></article>`;
+  return `<article class="article-card${compact ? " article-card--compact" : ""}"><p>${escapeHtml(article.category)}</p><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(article.lead)}</p><div class="article-card__tags">${(article.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div><a class="text-link" href="${escapeHtml(articleHref(article.id))}">記事を読む</a></article>`;
 }
 
 function numberValue(value, fallback = 0) {
@@ -271,7 +271,7 @@ function renderArticleDetail(article, related, services, origin = "", recordId =
     ${(article.practicePoints || []).length ? `<section><h2>記録へ生かすヒント</h2><ul>${article.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></section>` : ""}
     ${publicSources.length ? `<section class="article-sources"><h2>参考資料</h2><p class="source-boundary">この記事の背景として参照した公開資料です。個別の身体状態を決めるものではありません。</p>${publicSources.map((source) => `<article><p>${renderStatusLabel(sourceBeginnerLabel(source), "neutral")}</p><h3>${escapeHtml(source.title)}</h3><p>${escapeHtml(source.organization)}・${escapeHtml(source.year)}</p><p>${escapeHtml(sourceBeginnerNote(source))}</p>${source.url ? `<a class="text-link" href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">資料ページを開く<span class="visually-hidden external-link-note">（新しいタブで開きます）</span></a>` : ""}</article>`).join("")}</section>` : ""}
     ${related ? `<aside class="related-article"><p>関連する読みもの</p><h2>${escapeHtml(related.title)}</h2><p>${escapeHtml(related.lead)}</p><a class="button button--secondary" href="${escapeHtml(articleHref(related.id))}">関連記事を読む</a></aside>` : ""}
-    <a class="button button--text" href="#/reading">記事一覧へ戻る</a>
+    <a class="button button--text" data-context-back-duplicate href="#/reading">記事一覧へ戻る</a>
   </article>`;
 }
 

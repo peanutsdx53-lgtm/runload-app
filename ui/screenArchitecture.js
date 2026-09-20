@@ -1,6 +1,6 @@
 import { escapeHtml } from "./commonComponents.js";
 
-export const SCREEN_ARCHITECTURE_VERSION = "runload-screen-architecture-current-v1";
+export const SCREEN_ARCHITECTURE_VERSION = "runload-screen-architecture-current-v2";
 
 export const PRIMARY_DESTINATIONS = Object.freeze([
   Object.freeze({ screen: "home", label: "Home", description: "今日の入口", icon: "home" }),
@@ -9,6 +9,142 @@ export const PRIMARY_DESTINATIONS = Object.freeze([
   Object.freeze({ screen: "history", label: "履歴", description: "保存した記録を比べる", icon: "history" }),
   Object.freeze({ screen: "more", label: "その他", description: "設定・相談・読みもの", icon: "more" }),
 ]);
+
+
+const PRIMARY_SCREEN_IDS = new Set(PRIMARY_DESTINATIONS.map((item) => item.screen));
+
+function locationParameter(currentLocation, name) {
+  return String(currentLocation?.parameters?.get?.(name) || "");
+}
+
+function screenHref(screen, values = {}) {
+  const query = new URLSearchParams();
+  Object.entries(values).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") query.set(key, String(value));
+  });
+  return `#/${screen}${query.size ? `?${query.toString()}` : ""}`;
+}
+
+function safeWorkflowReturn(value = "") {
+  return ["#/record-input", "#/plan", "#/simulation"].some((prefix) => value.startsWith(prefix))
+    ? value
+    : "#/record-input";
+}
+
+function workflowReturnLabel(href = "") {
+  if (href.startsWith("#/plan")) return "予定";
+  if (href.startsWith("#/simulation")) return "条件比較";
+  return "記録";
+}
+
+export function resolveScreenContextNavigation(screen = "", currentLocation = null) {
+  if (PRIMARY_SCREEN_IDS.has(screen)) return null;
+
+  const parameter = (name) => locationParameter(currentLocation, name);
+  const recordId = parameter("recordId");
+
+  if (screen === "course-library") {
+    const backHref = safeWorkflowReturn(parameter("returnTo"));
+    return { title: "コース設定", backHref, backLabel: workflowReturnLabel(backHref) };
+  }
+
+  if (screen === "course-editor") {
+    const returnTo = safeWorkflowReturn(parameter("returnTo"));
+    return {
+      title: parameter("id") ? "コースを編集" : "新しいコース",
+      backHref: screenHref("course-library", { returnTo }),
+      backLabel: "コース設定",
+    };
+  }
+
+  if (screen === "gpx-analysis") {
+    const returnTo = safeWorkflowReturn(parameter("returnTo"));
+    return {
+      title: "GPX入力",
+      backHref: screenHref("course-library", { returnTo }),
+      backLabel: "コース設定",
+    };
+  }
+
+  if (screen === "body-part-detail") {
+    return {
+      title: "部位詳細",
+      backHref: screenHref("result", { recordId }),
+      backLabel: "結果",
+    };
+  }
+
+  if (screen === "activation") {
+    return {
+      title: "結果の活用",
+      backHref: screenHref("result", { recordId }),
+      backLabel: "結果",
+    };
+  }
+
+  if (screen === "simulation") {
+    const from = parameter("from");
+    if (from === "plan") return { title: "条件比較", backHref: "#/plan", backLabel: "予定" };
+    if (from === "history") return { title: "条件比較", backHref: "#/history", backLabel: "履歴" };
+    if (from === "activation") {
+      return {
+        title: "条件比較",
+        backHref: screenHref("activation", { recordId }),
+        backLabel: "結果の活用",
+      };
+    }
+    return {
+      title: "条件比較",
+      backHref: screenHref("result", { recordId }),
+      backLabel: "結果",
+    };
+  }
+
+  if (screen === "plan") {
+    return { title: "次の予定", backHref: "#/home", backLabel: "Home" };
+  }
+
+  if (screen === "consultation") {
+    const page = parameter("page");
+    if (page === "quick" || parameter("mode")) {
+      return { title: "共有メモ", backHref: "#/consultation", backLabel: "相談" };
+    }
+    if (page === "report") {
+      return { title: "資料レポート", backHref: "#/consultation", backLabel: "相談" };
+    }
+    return { title: "相談", backHref: "#/more", backLabel: "その他" };
+  }
+
+  if (screen === "support-guidance") {
+    const returnTo = parameter("returnTo");
+    if (returnTo.startsWith("#/record-input")) {
+      return { title: "公的サポート", backHref: returnTo, backLabel: "身体の記録" };
+    }
+    if (returnTo.startsWith("#/consultation")) {
+      return { title: "公的サポート", backHref: returnTo, backLabel: "相談" };
+    }
+    return { title: "公的サポート", backHref: "#/more", backLabel: "その他" };
+  }
+
+  if (screen === "reading") {
+    if (parameter("articleId")) return { title: "記事", backHref: "#/reading", backLabel: "読みもの" };
+    return { title: "読みもの", backHref: "#/more", backLabel: "その他" };
+  }
+
+  if (screen === "privacy") {
+    const returnTo = parameter("returnTo");
+    if (returnTo.startsWith("#/settings")) {
+      return { title: "プライバシー", backHref: "#/settings", backLabel: "設定" };
+    }
+    return { title: "プライバシー", backHref: "#/more", backLabel: "その他" };
+  }
+
+  if (screen === "settings") {
+    return { title: "設定", backHref: "#/more", backLabel: "その他" };
+  }
+
+  return null;
+}
 
 export const FEATURE_DESTINATION_GROUPS = Object.freeze([
   Object.freeze({

@@ -17,6 +17,6 @@ export function renderSupportGuidanceScreen({ context } = {}) {
       <article class="card warn"><small>判断に迷うとき</small><strong>救急車や受診の判断を相談する</strong><p>#7119は、実施地域で救急車を呼ぶべきか、すぐ受診すべきか迷う場合の電話相談窓口です。利用可否は地域によって異なります。</p><a href="https://www.fdma.go.jp/mission/enrichment/appropriate/appropriate007.html" target="_blank" rel="noreferrer"><span>#7119の案内を確認</span><span>›</span></a></article>
       <article class="card"><small>医療機関を探す</small><strong>医療情報ネット（ナビイ）</strong><p>厚生労働省の全国医療機関検索です。診療科目、場所、受付日時などから検索できます。</p><a href="https://www.iryou.teikyouseido.mhlw.go.jp/znk-web/juminkanja/S2300/initialize" target="_blank" rel="noreferrer"><span>医療機関を探す</span><span>›</span></a></article>
     </div>
-    <a class="back" href="${backHref}">‹ ${backLabel}</a>
+    <a class="back" data-context-back-duplicate href="${backHref}">‹ ${backLabel}</a>
   </div>`;
 }
