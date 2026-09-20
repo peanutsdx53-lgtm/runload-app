@@ -2838,6 +2838,13 @@
 
 /* ===== V1.30 share preparation redesign ===== */
 .prototype-parity--consultation .share-step{margin-top:24px}
+.prototype-parity--consultation .share-purpose-step .section-head h2{font-size:15px}
+.prototype-parity--consultation .share-purpose-step .field{margin-top:12px}
+.prototype-parity--consultation .share-purpose-step .field span{font-size:9px}
+.prototype-parity--consultation .share-purpose-step .field input{min-height:48px}
+.prototype-parity--consultation .share-purpose-step .field textarea{min-height:72px}
+.prototype-parity--consultation .share-region-field{margin-top:12px}
+
 .prototype-parity--consultation .field select{
   width:100%;
   min-width:0;

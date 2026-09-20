@@ -168,8 +168,8 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
     : "未設定";
   const items = prototypeShareItems({ facts, fatigue, bodyRecord, regional: resultLine, recent, next, plan: planValue });
   const regionOptions = prototypeRegionOptions({ services, experience, allExperiences, decision });
-  const initialTarget = decision?.audience || "";
-  const initialQuestion = decision?.question || "";
+  const initialTarget = "";
+  const initialQuestion = "";
   const previewCards = prototypeShareCards(items, "preview");
   const viewerCards = prototypeShareCards(items, "viewer");
   const selector = prototypeShareSelector(items);
@@ -187,17 +187,19 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
 
     <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果を確認</a></section>
 
-    <section class="section share-step"><div class="section-head"><small>STEP 1</small><h2>誰に、何を確認してもらいますか</h2><p>共有先と、今回いちばん確認したいことを入力します。</p></div>
-      <label class="field"><span>関連する部位</span><select data-consult-region-selector>${regionOptions}</select><small>共有する部位の目安を選びます。部位間の順位付けではありません。</small></label>
-      <label class="field"><span>見せる相手・任意</span><input type="text" maxlength="80" value="${escapeHtml(initialTarget)}" placeholder="例：A先生、コーチ、医療機関" data-consult-target></label>
-      <label class="field"><span>確認したいこと・任意</span><textarea maxlength="400" placeholder="例：右膝の違和感について、次回の走り方を確認したい" data-consult-question>${escapeHtml(initialQuestion)}</textarea></label>
+    <section class="section share-step share-purpose-step"><div class="section-head"><small>STEP 1</small><h2>共有の目的</h2></div>
+      <label class="field"><span>見せる相手（任意）</span><input type="text" maxlength="80" value="${escapeHtml(initialTarget)}" placeholder="名前や関係を入力" data-consult-target></label>
+      <label class="field"><span>確認内容（任意）</span><textarea maxlength="400" placeholder="共有相手に確認してほしい内容を入力" data-consult-question>${escapeHtml(initialQuestion)}</textarea></label>
     </section>
 
-    <section class="section share-step"><div class="section-head"><small>STEP 2</small><h2>見せる情報を選ぶ</h2><p>RunLoadが関連情報を候補として並べます。見せたくない項目は外せます。</p></div><div class="share-source-list">${selector}</div></section>
+    <section class="section share-step"><div class="section-head"><small>STEP 2</small><h2>見せる情報を選ぶ</h2><p>必要な情報だけを選びます。</p></div>
+      <label class="field share-region-field"><span>関連する部位</span><select data-consult-region-selector>${regionOptions}</select></label>
+      <div class="share-source-list">${selector}</div>
+    </section>
 
     <section class="section share-step"><div class="section-head"><small>STEP 3</small><h2>内容を確認する</h2><p>この内容が、画面表示と印刷・PDFの共通元になります。</p></div>
       <article class="share-preview" data-consult-share-preview>
-        <header><small>見せる相手</small><strong data-consult-preview-target>${escapeHtml(initialTarget || "未入力")}</strong><span data-consult-preview-question>確認したいこと：${escapeHtml(initialQuestion || "未入力")}</span></header>
+        <header><small>見せる相手</small><strong data-consult-preview-target>${escapeHtml(initialTarget || "未入力")}</strong><span data-consult-preview-question>確認内容：${escapeHtml(initialQuestion || "未入力")}</span></header>
         <div class="share-preview-grid">${previewCards}</div>
       </article>
     </section>
@@ -215,7 +217,7 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
     <div class="share-viewer" data-consult-viewer hidden>
       <div class="share-viewer-shell">
         <header class="share-viewer-head"><div><small>RUNLOAD SHARE</small><strong>共有内容</strong></div><button type="button" data-action="close-consult-viewer" aria-label="共有表示を閉じる">×</button></header>
-        <section class="share-viewer-purpose"><small>見せる相手</small><strong data-consult-viewer-target>${escapeHtml(initialTarget || "未入力")}</strong><p data-consult-viewer-question>確認したいこと：${escapeHtml(initialQuestion || "未入力")}</p></section>
+        <section class="share-viewer-purpose"><small>見せる相手</small><strong data-consult-viewer-target>${escapeHtml(initialTarget || "未入力")}</strong><p data-consult-viewer-question>確認内容：${escapeHtml(initialQuestion || "未入力")}</p></section>
         <div class="share-viewer-grid">${viewerCards}</div>
         <footer>走行距離は部位の数値へ掛けず、別の走行事実として扱います。部位の目安は診断や安全性を判定する数値ではありません。</footer>
       </div>
@@ -223,7 +225,7 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
 
     <article class="share-print-document" data-consult-share-document>
       <header class="share-document-head"><div><small>RUNLOAD SHARE</small><h1>共有資料</h1></div><div><span>${escapeHtml(formatLocalDate(record.date))}</span><strong data-consult-document-target>共有先：${escapeHtml(initialTarget || "未入力")}</strong></div></header>
-      <section class="share-document-purpose"><small>確認したいこと</small><strong data-consult-document-question>${escapeHtml(initialQuestion || "未入力")}</strong></section>
+      <section class="share-document-purpose"><small>確認内容</small><strong data-consult-document-question>${escapeHtml(initialQuestion || "未入力")}</strong></section>
       <div class="share-document-grid">${documentCards}</div>
       <section class="share-document-region" data-consult-document-region><div><small>関連する部位</small><h2>部位の目安と最近の変化</h2></div><table><tbody>${regionRows}</tbody></table></section>
       <footer><strong>RunLoadの表示について</strong><p>部位の目安は記録を振り返るための参考です。走行距離は部位の数値へ掛けず、別の走行事実として扱います。診断や安全性、けがの危険性、走行可否を判定する数値ではありません。</p></footer>

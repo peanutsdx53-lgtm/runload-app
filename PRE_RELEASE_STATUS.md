@@ -4,6 +4,8 @@ Date: 2026-09-20
 Status: PRE-RELEASE REGULAR APP / SHARE PREPARATION V1.30
 
 Verification:
+- V1.31 Share Purpose audit: 18 / 18 PASS
+- V1.31 modified JavaScript syntax: 2 / 2 PASS
 - modified JavaScript syntax: 10 / 10 PASS
 - final Share Preparation audit: 38 / 38 PASS
 - consultation-boundary compatibility audit: 13 / 13 PASS

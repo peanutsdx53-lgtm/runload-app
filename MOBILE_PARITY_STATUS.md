@@ -31,6 +31,15 @@ Shared candidate information:
 - Body-record summaries are capped to the first three displayed items plus a remaining-count summary so the document does not become unnecessarily dense.
 - Distance remains a separate run fact and is not multiplied into the body-region indicator.
 
+## Share Purpose V1.31
+- STEP 1 is reduced to 「共有の目的」 with only recipient and confirmation-content fields.
+- Recipient and confirmation content are user-entered only; generated consultation text is not prefilled.
+- The body-region selector is moved to STEP 2 because it controls which information is shared, not the sharing purpose.
+- Example/suggestive question text is removed; placeholders only describe what to enter.
+- Preview, viewer, PDF, and copied text use the common label 「確認内容」.
+- Dedicated V1.31 audit: 18 / 18 PASS.
+- Modified JavaScript syntax: 2 / 2 PASS.
+
 ## Verification
 - Modified JavaScript syntax: 10 / 10 PASS
 - Final Share Preparation audit: 38 / 38 PASS

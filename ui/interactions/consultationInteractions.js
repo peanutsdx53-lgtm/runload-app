@@ -76,16 +76,16 @@ export function bindConsultation() {
     const purpose = question?.value.trim() || "未入力";
 
     writeText("[data-consult-preview-target]", recipient);
-    writeText("[data-consult-preview-question]", `確認したいこと：${purpose}`);
+    writeText("[data-consult-preview-question]", `確認内容：${purpose}`);
     writeText("[data-consult-viewer-target]", recipient);
-    writeText("[data-consult-viewer-question]", `確認したいこと：${purpose}`);
+    writeText("[data-consult-viewer-question]", `確認内容：${purpose}`);
     writeText("[data-consult-document-target]", `共有先：${recipient}`);
     writeText("[data-consult-document-question]", purpose);
     syncVisibility(keys);
 
     const lines = [];
     if (target?.value.trim()) lines.push(`見せる相手：${target.value.trim()}`);
-    if (question?.value.trim()) lines.push(`確認したいこと：${question.value.trim()}`);
+    if (question?.value.trim()) lines.push(`確認内容：${question.value.trim()}`);
     sourceInputs
       .filter((input) => input.checked && !input.disabled)
       .forEach((input) => {
