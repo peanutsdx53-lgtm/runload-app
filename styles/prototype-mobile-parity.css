@@ -2480,3 +2480,29 @@
     z-index: 80 !important;
   }
 }
+
+/* ===== Shared segmented selection state ===== */
+/*
+ * Selected options use the same semantic theme tokens across prototype-parity
+ * segmented controls. This keeps light/dark and accent themes consistent and
+ * prevents a selected option from blending into its surrounding surface.
+ */
+.prototype-parity--record .activity-toggle input:checked + span,
+.prototype-parity--result .view-toggle button.active,
+.prototype-parity--result .sheet-tabs button.active,
+.prototype-parity--history .history-mode button.active,
+.prototype-parity--history .period-control button.active,
+.prototype-parity--history .display-toggle button.active,
+.prototype-parity--history .type-toggle button.active,
+.prototype-parity--plan .seg button.active,
+.prototype-parity--course .mode button.active,
+.prototype-parity--reading .filters button.active,
+.prototype-parity--settings .segment button.active {
+  border-color: var(--color-selection-border);
+  background: var(--color-selection-surface);
+  color: var(--color-accent-strong);
+  box-shadow:
+    inset 0 0 0 1px var(--color-selection-border),
+    0 3px 10px color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
