@@ -233,8 +233,8 @@ Final verification:
 - PWA/CSP/static-resource audit: PASS
 
 Visual acceptance:
-- automated headless Chromium screenshot verification could not be completed reliably in the audit container;
-- no visual PASS is claimed from that attempt;
+- automated headless-browser screenshot verification could not be completed in the audit container (direct Chromium did not terminate reliably; Playwright local/file navigation was blocked by environment policy);
+- no visual PASS is claimed from those attempts;
 - static rendering/layout integration tests passed;
 - visual/mobile acceptance remains a separate pre-merge/pre-Current gate.
 
