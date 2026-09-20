@@ -163,6 +163,19 @@ function renderScreen(location) {
   renderCurrentLocation();
 }
 
+const RESUME_SCROLL_SURFACE_SELECTOR = [
+  ".prototype-parity--course .editor",
+  ".prototype-parity--record .subscreen",
+  ".prototype-parity--record .sheet",
+  ".prototype-parity--result .detail-screen",
+  ".prototype-parity--result .region-sheet",
+  ".prototype-parity--history .region-sheet",
+  ".prototype-parity--reading .sheet",
+  ".feature-menu__panel",
+  ".guide-dialog__body",
+  ".screen-tutorial__panel",
+].join(",");
+
 function reconcileTransientBodyState() {
   const blockingDialogOpen = Boolean(document.querySelector(".guide-dialog, .screen-tutorial"));
   document.body.classList.toggle("has-open-dialog", blockingDialogOpen);
@@ -174,8 +187,56 @@ function reconcileTransientBodyState() {
   document.body.classList.toggle("record-subflow-open", recordSubflowOpen);
 }
 
+function isVisibleScrollSurface(element) {
+  if (!(element instanceof HTMLElement)) return false;
+  const style = window.getComputedStyle(element);
+  if (style.display === "none" || style.visibility === "hidden") return false;
+  return element.getClientRects().length > 0;
+}
+
+function refreshScrollSurface(element) {
+  if (!isVisibleScrollSurface(element)) return;
+  const style = window.getComputedStyle(element);
+  if (![style.overflow, style.overflowY].some((value) => value === "auto" || value === "scroll")) return;
+
+  const scrollTop = element.scrollTop;
+  const scrollLeft = element.scrollLeft;
+  const previousOverflowY = element.style.overflowY;
+  element.style.overflowY = "hidden";
+  void element.offsetHeight;
+  window.requestAnimationFrame(() => {
+    element.style.overflowY = previousOverflowY;
+    element.scrollTop = scrollTop;
+    element.scrollLeft = scrollLeft;
+  });
+}
+
+function refreshDocumentScrollSurface() {
+  if (document.body.classList.contains("has-open-dialog")) return;
+  const root = document.scrollingElement;
+  if (!(root instanceof HTMLElement)) return;
+
+  const scrollTop = root.scrollTop;
+  const scrollLeft = root.scrollLeft;
+  const previousOverflowY = root.style.overflowY;
+  root.style.overflowY = "hidden";
+  void root.offsetHeight;
+  window.requestAnimationFrame(() => {
+    root.style.overflowY = previousOverflowY;
+    root.scrollTop = scrollTop;
+    root.scrollLeft = scrollLeft;
+  });
+}
+
+let resumeRecoveryFrame = 0;
 function reconcileAfterAppResume() {
-  window.requestAnimationFrame(reconcileTransientBodyState);
+  if (resumeRecoveryFrame) window.cancelAnimationFrame(resumeRecoveryFrame);
+  resumeRecoveryFrame = window.requestAnimationFrame(() => {
+    resumeRecoveryFrame = 0;
+    reconcileTransientBodyState();
+    document.querySelectorAll(RESUME_SCROLL_SURFACE_SELECTOR).forEach(refreshScrollSurface);
+    refreshDocumentScrollSurface();
+  });
 }
 
 window.addEventListener("pageshow", reconcileAfterAppResume);

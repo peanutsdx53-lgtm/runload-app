@@ -1,4 +1,4 @@
-const CACHE_NAME = "runload-app-current-v123-mobile-resume-v1";
+const CACHE_NAME = "runload-app-current-v124-ios-scroll-recovery-v1";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
