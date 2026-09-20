@@ -216,10 +216,10 @@ Corrections made during Stage 5:
 Final verification:
 - existing App Source regression: **273/273 PASS**
 - Interpretation Core V1: **24/24 PASS**
-- Interpretation Room Integration V1: **17/17 PASS**
+- Interpretation Room Integration V1: **18/18 PASS**
 - Interpretation Room Launch Integration V1: **11/11 PASS**
 - Interpretation Room PWA Integration V1: **7/7 PASS**
-- combined assertions: **332/332 PASS**
+- combined assertions: **333/333 PASS**
 - JS/MJS syntax: **84 files / 0 failures**
 - runtime manifest: **79/79 SHA-256 matches in reconstructed audited runtime**
 - protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
@@ -233,10 +233,13 @@ Final verification:
 - PWA/CSP/static-resource audit: PASS
 
 Visual acceptance:
-- automated headless-browser screenshot verification could not be completed in the audit container (direct Chromium did not terminate reliably; Playwright local/file navigation was blocked by environment policy);
-- no visual PASS is claimed from those attempts;
-- static rendering/layout integration tests passed;
-- visual/mobile acceptance remains a separate pre-merge/pre-Current gate.
+- automated production-CSS rendering was completed using a network-free Playwright `set_content` route;
+- mobile/desktop Summary, Detail, Evidence, and Next views were checked;
+- existing-screen launch points on Home, Result, Body-part detail, and History were checked;
+- one mobile Detail horizontal-overflow defect was found and corrected;
+- post-fix automated visual/mobile layout audit: **PASS**;
+- durable visual audit: `docs/interpretation/VISUAL_MOBILE_AUDIT_20260921.md`;
+- user-visible acceptance remains the final pre-merge/pre-Current gate.
 
 App Source packaging note:
 - when formal App Source/Current is regenerated, update the two App-Source-only legacy test contracts (Stage4 Result-use and Stage6 route alias), include all four new Interpretation suites, regenerate verification metadata, and re-run packaged-copy verification.
