@@ -1,4 +1,4 @@
-const CACHE_NAME = "runload-app-current-v126-navigation-architecture-v1";
+const CACHE_NAME = "runload-app-current-v127-form-polish-v1";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
