@@ -78,6 +78,6 @@ export function renderHomeScreen({ services }) {
     <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div><span class="date-badge">${escapeHtml(today)}</span></section>
     ${renderFocus(latestExperience, draft)}
     <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div><a href="#/history">履歴を見る</a></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
-    ${latestExperience ? `<section class="section"><div class="section-head"><div><small>WHEN NEEDED</small><h2>必要なときに開く</h2></div></div><div class="support support--single"><a href="#/interpretation-room?recordId=${encodeURIComponent(latestExperience.record.id)}&origin=home"><span aria-hidden="true">◇</span><div><strong>RunLoad解釈</strong><small>最新の結果を整理して確認</small></div></a></div></section>` : ""}
+    ${latestExperience ? `<section class="section"><div class="section-head"><div><small>WHEN NEEDED</small><h2>必要なときに開く</h2></div></div><div class="support support--single"><a href="#/interpretation-room?recordId=${encodeURIComponent(latestExperience.record.id)}&origin=home"><span aria-hidden="true">◇</span><div><strong>RunLoad解釈</strong><small>最新の結果を確認</small></div></a></div></section>` : ""}
   </div>`;
 }
