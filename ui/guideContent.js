@@ -30,7 +30,7 @@ const SCREEN_HINTS = Object.freeze({
   plan: "予定条件から作る参考表示を確認します。保存後の結果とは分けて扱います。",
   consultation: "身体の記録と数値表示を区別し、相手へ見せる内容を整理します。",
   reading: "走行条件と身体の使われ方に関する一般知識を、参考資料と一緒に確認します。",
-  more: "設定、相談、公的案内、プライバシー、読みものへの入口です。",
+  more: "設定、共有準備、公的案内、プライバシー、読みものへの入口です。",
   simulation: "条件を変えたときの同じ部位の目安を比較します。",
 });
 
@@ -100,7 +100,7 @@ function renderRecordsGuide() {
 }
 
 function renderSafetyGuide() {
-  return `<div class="guide-lead"><p>RunLoadは走行条件を整理して振り返るためのアプリで、身体や障害を判定するものではありません。</p></div><div class="guide-scope-grid"><article><h3>支援すること</h3><ul><li>走行・休養・コース事実の保存</li><li>12部位の目安（分かっている条件を使った比較用座標）</li><li>身体の記録と数値結果の区別</li><li>履歴、相談準備、読みもの</li></ul></article><article><h3>主張しないこと</h3><ul><li>実際の筋・腱・関節力</li><li>診断、原因、危険度、傷害確率</li><li>走行可否、受診要否、個別処方</li><li>部位間の物理的な大小順位</li></ul></article></div><div class="guide-card-grid">
+  return `<div class="guide-lead"><p>RunLoadは走行条件を整理して振り返るためのアプリで、身体や障害を判定するものではありません。</p></div><div class="guide-scope-grid"><article><h3>支援すること</h3><ul><li>走行・休養・コース事実の保存</li><li>12部位の目安（分かっている条件を使った比較用座標）</li><li>身体の記録と数値結果の区別</li><li>履歴、共有準備、読みもの</li></ul></article><article><h3>主張しないこと</h3><ul><li>実際の筋・腱・関節力</li><li>診断、原因、危険度、傷害確率</li><li>走行可否、受診要否、個別処方</li><li>部位間の物理的な大小順位</li></ul></article></div><div class="guide-card-grid">
     <article><h3>身体の記録と公的な案内を分ける</h3><p>伝えたい身体情報は数値表示と分けて保存します。公式の救急案内と重なる種類の項目を選んだ場合は、RunLoadが緊急性を判定せず、公的な相談先を確認する導線を先に示します。</p></article>
     <article><h3>表示できる範囲</h3><p>部位ごとに扱える条件の範囲が異なります。扱えない条件では、数値を無理に示さず「範囲外」などと表示します。</p></article>
     <article><h3>自動送信しません</h3><p>共有する内容、相手、タイミングは自分で選びます。</p></article>
