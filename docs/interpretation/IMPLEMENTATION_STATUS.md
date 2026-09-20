@@ -1,7 +1,7 @@
 # RunLoad Interpretation Room — Implementation Status
 
 Date: 2026-09-20
-Status: SAFELY STOPPED — STAGE 5 BLOCKED BY PRESENTATION SYNTAX DEFECT
+Status: IMPLEMENTATION AUDIT COMPLETE — AWAITING VISUAL / USER ACCEPTANCE
 Branch: `feature/runload-interpretation-room-v1`
 Draft PR: #49
 Base commit: `8d2937c7bbfe3a7094601628a109d31309edd775`
@@ -200,51 +200,65 @@ Verification:
 - Stage 3 full baseline regression remains **273/273 PASS**; final combined regression is reserved for Stage 5
 
 ### Stage 5 — Full regression and scientific-boundary audit
-Status: BLOCKED — AUDIT FINDING REQUIRES CORRECTION BEFORE CONTINUATION
+Status: **COMPLETE — PASS**
 
-Audit finding 2026-09-21 (runtime manifest):
-- live feature-branch `screens/homeScreen.js` SHA-256 before correction: `8a1bea7b7d85698487e2417ea1ccb6c31afb3128a05253475b270c2f27ec83b1`
-- stale manifest entry: `0d1f3d56751e19c427397d35865b038c21b350216688b435457d04cc3d830ae6`
-- correction commit: `3551bb7d56381fd7616653fdfd97e60b562d7b6e`
-- post-correction verification: branch manifest **79/79 logically consistent**; audited base 75/75 local SHA verification PASS; all changed/new runtime entries match live branch content.
+Durable audit record:
+- `docs/interpretation/STAGE5_FINAL_AUDIT_20260921.md`
+- audited implementation head before audit-document-only commits: `4b0230dda4c57f2d7c22244c1c6a1e3b89869935`
 
-Audit finding 2026-09-21 (blocking syntax defect):
-- live feature-branch `ui/interpretationRoomPresentation.js` SHA-256: `f582f4b6d29a1f45885d179c5a1688545581b9563f765089951d9c74b44d07d7`
-- exact branch bytes contain a literal backslash+n sequence immediately after `query.set("from", "interpretation-room");`
-- reconstructed byte-identical candidate SHA-256: `f582f4b6d29a1f45885d179c5a1688545581b9563f765089951d9c74b44d07d7`
-- executing the byte-identical candidate with Node fails with `SyntaxError: Invalid or unexpected token` at that literal `\\n`
-- result: **BLOCKING RUNTIME SYNTAX DEFECT**
-- no corrective Presentation/code change was made after detecting the defect
-- protected calculation and ROF-J cores remain outside the changed-file set
-- PR #49 remains draft; main and formal Current remain untouched
+Corrections made during Stage 5:
+- Home runtime-manifest mismatch corrected: `3551bb7d56381fd7616653fdfd97e60b562d7b6e`
+- Presentation literal-`\\n` syntax defect corrected: `4490622cab7fbf1be5a806b6a6893dd6346c9ce1`
+- repaired Presentation runtime SHA recorded: `30269ea4bf142ec53a04cd13adcda2ba2f70d447`
+- Home launch test wording contract aligned: `61a5b17e93401be1d80a4885abc88b3388167894`
+- PWA test repaired-Presentation SHA aligned: `4b0230dda4c57f2d7c22244c1c6a1e3b89869935`
 
-Required before Stage 5 can continue:
-- existing baseline tests remain green
-- new interpretation tests pass
-- protected core hashes unchanged
-- syntax/PWA checks pass
-- no forbidden wording/claims
-- compare branch to base and inspect every changed file
-- PR remains draft until final acceptance
+Final verification:
+- existing App Source regression: **273/273 PASS**
+- Interpretation Core V1: **24/24 PASS**
+- Interpretation Room Integration V1: **17/17 PASS**
+- Interpretation Room Launch Integration V1: **11/11 PASS**
+- Interpretation Room PWA Integration V1: **7/7 PASS**
+- combined assertions: **332/332 PASS**
+- JS/MJS syntax: **84 files / 0 failures**
+- runtime manifest: **79/79 SHA-256 matches in reconstructed audited runtime**
+- protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
+- protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
+- GitHub compare contains no protected-core changes
+- scientific boundaries: PASS
+- public wording boundary: PASS
+- no new persistent Interpretation datastore
+- no generative-AI/free-text implementation
+- no new Interpretation network/API dependency
+- PWA/CSP/static-resource audit: PASS
 
-## Safe stop checkpoint — 2026-09-21
+Visual acceptance:
+- automated headless Chromium screenshot verification could not be completed reliably in the audit container;
+- no visual PASS is claimed from that attempt;
+- static rendering/layout integration tests passed;
+- visual/mobile acceptance remains a separate pre-merge/pre-Current gate.
 
-Work was stopped safely at the user's request before Stage 5 audit execution.
+App Source packaging note:
+- when formal App Source/Current is regenerated, update the two App-Source-only legacy test contracts (Stage4 Result-use and Stage6 route alias), include all four new Interpretation suites, regenerate verification metadata, and re-run packaged-copy verification.
+## Resolved Stage 5 safe-stop findings
 
-Confirmed state at stop:
-- Stage 0: COMPLETE
-- Stage 1: COMPLETE
-- Stage 2: COMPLETE
-- Stage 3: COMPLETE
-- Stage 4: COMPLETE
-- Stage 5: NOT YET EXECUTED
-- no Stage 5 code or test changes have been made
-- PR #49 remains draft
-- main and formal Current remain untouched
+The earlier Stage 5 safe stops were resolved under explicit user authorization:
+- runtime Home hash mismatch: corrected and reverified;
+- Presentation literal-`\\n` syntax defect: corrected and reverified;
+- dedicated test expectations affected by those corrections: aligned and re-run.
+
+See `docs/interpretation/STAGE5_FINAL_AUDIT_20260921.md` for the final audit trail.
 
 ## Current next action
 
-Do not continue Stage 5 until the Presentation syntax defect is corrected. On user authorization, replace the literal `\\n` in `ui/interpretationRoomPresentation.js` with a real line break only, verify the repaired file syntax and behavior, regenerate `RUNTIME_SHA256SUMS.txt` for the repaired runtime, then restart the complete Stage 5 regression/scientific-boundary audit from the branch state. Keep PR #49 draft and leave main/formal Current untouched.
+Do **not** merge PR #49 and do **not** modify formal Current yet.
+
+Next gate:
+1. perform user-visible visual/mobile acceptance of the Interpretation Room and its contextual launch points;
+2. if accepted, perform the merge/release preparation step;
+3. regenerate formal App Source/Public App/Current artifacts only after that acceptance, carrying forward the App Source test-contract updates described in the Stage 5 audit.
+
+PR #49 remains Draft until that gate is explicitly passed.
 
 ## Stop conditions
 
