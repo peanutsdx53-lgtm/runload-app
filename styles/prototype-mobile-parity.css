@@ -2507,3 +2507,15 @@
     0 3px 10px color-mix(in srgb, var(--color-accent) 10%, transparent);
 }
 
+/* ===== iOS resume scroll-surface resilience ===== */
+@media (max-width:54.99rem){
+  .prototype-parity--course .editor,
+  .prototype-parity--record .subscreen,
+  .prototype-parity--record .sheet,
+  .prototype-parity--result .detail-screen,
+  .prototype-parity--result .region-sheet,
+  .prototype-parity--history .region-sheet,
+  .prototype-parity--reading .sheet{
+    -webkit-overflow-scrolling:touch;
+  }
+}
