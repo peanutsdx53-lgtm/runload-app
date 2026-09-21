@@ -1,5 +1,5 @@
-// Runtime revision: desktop-record-polish-20260921-14
-const CACHE_NAME = "runload-app-current-20260921-14";
+// Runtime revision: derived-record-surfaces-20260921-15
+const CACHE_NAME = "runload-app-current-20260921-15";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -38,6 +38,7 @@ const PRECACHE_URLS = [
   "./styles/desktop-shell-v4.css",
   "./styles/desktop-record-refine.css",
   "./styles/desktop-record-polish-v2.css",
+  "./styles/desktop-record-derived-v1.css",
   "./styles/tokens.css",
   "./ui/pwaUpdateBootstrapV1.js",
   "./ui/appRouter.js",
