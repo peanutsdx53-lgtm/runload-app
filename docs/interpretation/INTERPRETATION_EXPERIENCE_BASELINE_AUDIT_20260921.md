@@ -180,7 +180,7 @@ This baseline does not:
 - infer causation from condition/result co-change;
 - rank different body regions by physical magnitude;
 - create a new interpretation datastore;
-- add generative AI or external API dependency.
+- add unconstrained text generation or external API dependency.
 
 ## Status after this audit
 

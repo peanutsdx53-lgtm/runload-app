@@ -106,7 +106,7 @@ Confirmed:
 - existing support/safety decision has precedence over normal Simulation/Plan routing
 - high regional values alone do not escalate Safety
 - evidence display uses persisted provenance and explicitly avoids a complete-bibliography claim
-- no generative-AI/free-text interpretation was introduced
+- no unconstrained free-text interpretation was introduced
 - no new Interpretation Room storage namespace or persistent datastore was introduced
 - no new network/API call was introduced by Interpretation Core/Room
 

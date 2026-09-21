@@ -94,7 +94,7 @@ The interaction is chat-like in sequence but remains deterministic.
 
 Not introduced:
 - free-text chat input;
-- generative AI;
+- unconstrained text generation;
 - AI avatar;
 - typing indicator;
 - persistent dialogue history;
