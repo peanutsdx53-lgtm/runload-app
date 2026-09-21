@@ -1410,3 +1410,13 @@
     display: grid;
   }
 }
+
+/* Cross-screen select alignment: desktop native selects stay centered inside their controls. */
+@media (min-width: 80rem) {
+  .screen--record-input.prototype-parity--record .field select,
+  .screen--plan.prototype-parity--plan .field select,
+  .screen--simulation.prototype-parity--simulation .field select {
+    text-align: center;
+    text-align-last: center;
+  }
+}
