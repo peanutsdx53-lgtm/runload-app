@@ -75,6 +75,7 @@
 
   /* Remaining desktop microcopy found by Chromium visual-state audit. */
   .screen--settings.prototype-parity--settings .sub-section-head strong,
+  .screen--consultation.prototype-parity--consultation .share-source strong,
   .screen--consultation.prototype-parity--consultation .share-card strong,
   .screen--consultation.prototype-parity--consultation .share-output-actions .output strong {
     font-size: 0.88rem !important;
