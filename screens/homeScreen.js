@@ -44,7 +44,7 @@ function homeState(experience, draft) {
   return "history";
 }
 
-function renderFocus(experience, draft) {
+function renderPcFocus(experience, draft) {
   const record = experience?.record || null;
   const state = homeState(experience, draft);
   const hasCarry = Boolean(String(record?.reflectionContext?.nextCheckPoint || "").trim());
@@ -86,7 +86,15 @@ function renderFocus(experience, draft) {
     actions = `<a class="primary" href="#/result?recordId=${encodeURIComponent(record.id)}">休養記録を見る</a>`;
   }
 
-  return `<section class="focus focus--${escapeHtml(state)}"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${escapeHtml(eyebrow)}</small><h2>${escapeHtml(title)}</h2><p class="focus-text">${escapeHtml(body)}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">${escapeHtml(badge)}</span></div><div class="focus-actions">${actions}</div></section>`;
+  return `<section class="focus home-focus--pc focus--${escapeHtml(state)}"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${escapeHtml(eyebrow)}</small><h2>${escapeHtml(title)}</h2><p class="focus-text">${escapeHtml(body)}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">${escapeHtml(badge)}</span></div><div class="focus-actions">${actions}</div></section>`;
+}
+
+function renderMobileFocus(experience, draft) {
+  const record = experience?.record || null;
+  const hasCarry = Boolean(String(record?.reflectionContext?.nextCheckPoint || "").trim());
+  const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
+  const sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "今日の記録から次回へ引き継げます";
+  return `<section class="focus home-focus--mobile"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${hasCarry ? "前回から引き継いだ内容" : "今日の入口"}</small><h2>次のランで確認したいこと</h2><p class="focus-text">${escapeHtml(carryText(experience))}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">次回へ引継ぎ</span></div><div class="focus-actions"><a class="primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a></div></section>`;
 }
 
 function renderLatestRecord(experience) {
@@ -124,7 +132,8 @@ export function renderHomeScreen({ services }) {
   const state = homeState(latestExperience, draft);
   return `<div class="screen screen--home prototype-parity prototype-parity--home home-state--${escapeHtml(state)}" data-home-state="${escapeHtml(state)}">
     <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div><span class="date-badge">${escapeHtml(today)}</span></section>
-    ${renderFocus(latestExperience, draft)}
+    ${renderMobileFocus(latestExperience, draft)}
+    ${renderPcFocus(latestExperience, draft)}
     <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div><a href="#/history">履歴を見る</a></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
   </div>`;
 }
