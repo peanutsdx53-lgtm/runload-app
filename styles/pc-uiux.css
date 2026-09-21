@@ -248,3 +248,276 @@
     box-shadow: inset 0.28rem 0 0 color-mix(in srgb, var(--color-accent) 72%, transparent);
   }
 }
+
+
+/* Record: PC-only workspace. Existing record/save logic is unchanged. */
+@media (min-width: 80rem) {
+  .screen--record-input.prototype-parity--record {
+    width: min(100%, 74rem);
+    margin-inline: auto;
+    padding-bottom: 0;
+  }
+
+  .screen--record-input.prototype-parity--record > .page-head,
+  .screen--record-input.prototype-parity--record > .parity-record-banner {
+    width: min(100%, 72rem);
+    margin-inline: auto;
+  }
+
+  .screen--record-input.prototype-parity--record > .page-head h1 {
+    font-size: clamp(2.2rem, 2.8vw, 3.15rem);
+  }
+
+  .screen--record-input.prototype-parity--record .record-form {
+    width: min(100%, 72rem);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 19rem;
+    gap: 1.2rem 1.5rem;
+    align-items: start;
+  }
+
+  .screen--record-input.prototype-parity--record .record-form > .core-card,
+  .screen--record-input.prototype-parity--record .record-form > .optional-stack {
+    grid-column: 1;
+  }
+
+  .screen--record-input.prototype-parity--record .record-form > .core-card {
+    margin-top: 0;
+    padding: 1.5rem 1.6rem;
+    display: grid;
+    gap: 0;
+  }
+
+  .screen--record-input.prototype-parity--record .core-heading { order: 1; }
+  .screen--record-input.prototype-parity--record .activity-toggle { order: 2; }
+  .screen--record-input.prototype-parity--record .date-field { order: 3; }
+  .screen--record-input.prototype-parity--record .core-card > [data-run-fields] { order: 4; }
+  .screen--record-input.prototype-parity--record .core-card > [data-rest-fields] { order: 4; }
+  .screen--record-input.prototype-parity--record .fatigue-inline { order: 5; }
+
+  .screen--record-input.prototype-parity--record .core-heading {
+    grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .screen--record-input.prototype-parity--record .core-stage-icon,
+  .screen--record-input.prototype-parity--record .stage-icon {
+    display: grid;
+    place-items: center;
+    text-align: center;
+  }
+
+  .screen--record-input.prototype-parity--record .core-stage-icon {
+    width: 2.45rem;
+    height: 2.45rem;
+  }
+
+  .screen--record-input.prototype-parity--record .activity-toggle {
+    width: min(100%, 29rem);
+    margin-top: 1.2rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+    padding: 0.35rem;
+    overflow: hidden;
+  }
+
+  .screen--record-input.prototype-parity--record .activity-toggle label {
+    min-width: 0;
+  }
+
+  .screen--record-input.prototype-parity--record .activity-toggle span {
+    width: 100%;
+    min-width: 0;
+    min-height: 3rem;
+    padding-inline: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .screen--record-input.prototype-parity--record .date-field {
+    width: min(100%, 26rem);
+    margin-top: 1rem;
+    grid-template-columns: 7rem 12rem;
+    justify-content: start;
+    align-items: center;
+  }
+
+  .screen--record-input.prototype-parity--record .date-control,
+  .screen--record-input.prototype-parity--record .date-field input[type="date"] {
+    width: 12rem;
+    min-width: 12rem;
+    max-width: 12rem;
+  }
+
+  .screen--record-input.prototype-parity--record .measure-grid {
+    width: max-content;
+    max-width: 100%;
+    margin-top: 1rem;
+    grid-template-columns: 10.5rem 13.5rem;
+    gap: 1rem;
+  }
+
+  .screen--record-input.prototype-parity--record .measure-field > div {
+    width: 100%;
+    height: 3.5rem;
+  }
+
+  .screen--record-input.prototype-parity--record .measure-field input {
+    text-align: center;
+  }
+
+  .screen--record-input.prototype-parity--record .fatigue-inline {
+    width: min(100%, 34rem);
+    margin-top: 1.15rem;
+    min-height: 4.6rem;
+    padding: 0.85rem 0.95rem;
+    grid-template-columns: minmax(0, 1fr) 10rem;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .screen--record-input.prototype-parity--record .fatigue-inline strong {
+    font-size: 0.98rem;
+  }
+
+  .screen--record-input.prototype-parity--record .fatigue-inline span {
+    font-size: 0.78rem;
+  }
+
+  .screen--record-input.prototype-parity--record .fatigue-inline button {
+    width: 10rem;
+    min-height: 2.9rem;
+    padding-inline: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.82rem;
+  }
+
+  .screen--record-input.prototype-parity--record .rest-note {
+    width: min(100%, 34rem);
+    margin-top: 1rem;
+  }
+
+  .screen--record-input.prototype-parity--record .optional-stack {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-top: 0;
+  }
+
+  .screen--record-input.prototype-parity--record .stage-card:first-child {
+    grid-column: auto;
+  }
+
+  .screen--record-input.prototype-parity--record .stage-card > summary {
+    min-height: 4.45rem;
+    grid-template-columns: 2.45rem minmax(0, 1fr) auto;
+    gap: 0.85rem;
+    padding: 0.7rem 0.95rem;
+  }
+
+  .screen--record-input.prototype-parity--record .stage-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    justify-self: center;
+  }
+
+  .screen--record-input.prototype-parity--record .summary-copy strong {
+    font-size: 0.92rem;
+  }
+
+  .screen--record-input.prototype-parity--record .summary-copy em {
+    font-size: 0.72rem;
+  }
+
+  .screen--record-input.prototype-parity--record .stage-body {
+    padding: 1rem;
+  }
+
+  .screen--record-input.prototype-parity--record .two-fields {
+    grid-template-columns: max-content max-content;
+    gap: 1rem;
+    justify-content: start;
+    align-items: end;
+  }
+
+  .screen--record-input.prototype-parity--record input[name="steps"] {
+    width: 10rem;
+    max-width: 100%;
+  }
+
+  .screen--record-input.prototype-parity--record select[name="stepsProvenance"] {
+    width: 16rem;
+    max-width: 100%;
+  }
+
+  .screen--record-input.prototype-parity--record select[name="runningFormat"] {
+    width: 18rem;
+    max-width: 100%;
+  }
+
+  .screen--record-input.prototype-parity--record input[name="temperatureC"] {
+    width: 8rem;
+    max-width: 100%;
+  }
+
+  .screen--record-input.prototype-parity--record :is(
+    textarea[name="environmentNote"],
+    textarea[name="postRunReflection"],
+    textarea[name="perceivedDifference"],
+    textarea[name="nextCheckPoint"]
+  ) {
+    width: min(100%, 42rem);
+  }
+
+  .screen--record-input.prototype-parity--record .desktop-save-area {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 6.2rem;
+    margin: 0;
+    padding: 1.1rem;
+    display: grid;
+    gap: 1rem;
+    align-items: start;
+    border-radius: 1.2rem;
+  }
+
+  .screen--record-input.prototype-parity--record .desktop-save-area strong {
+    font-size: 1rem;
+  }
+
+  .screen--record-input.prototype-parity--record .desktop-save-area span {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
+
+  .screen--record-input.prototype-parity--record .desktop-save-area .primary-save {
+    width: 100%;
+    min-width: 0;
+    min-height: 3.15rem;
+    padding-inline: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.84rem;
+  }
+
+  .screen--record-input.prototype-parity--record .record-form > .subscreen {
+    grid-column: 1 / -1;
+  }
+
+  .screen--record-input.prototype-parity--record .mobile-save-bar {
+    display: none;
+  }
+}
