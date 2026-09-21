@@ -1,7 +1,7 @@
 # RunLoad Interpretation Room — Implementation Status
 
 Date: 2026-09-20
-Status: IMPLEMENTATION AUDIT COMPLETE — AWAITING VISUAL / USER ACCEPTANCE
+Status: STAGE 6 INTERPRETATION EXPERIENCE UPGRADE IN PROGRESS
 Branch: `feature/runload-interpretation-room-v1`
 Draft PR: #49
 Base commit: `8d2937c7bbfe3a7094601628a109d31309edd775`
@@ -252,16 +252,32 @@ The earlier Stage 5 safe stops were resolved under explicit user authorization:
 
 See `docs/interpretation/STAGE5_FINAL_AUDIT_20260921.md` for the final audit trail.
 
+## Stage 6 — Interpretation Experience Upgrade
+Status: IN PROGRESS
+
+Controlling delta:
+- `docs/interpretation/STAGE6_INTERPRETATION_EXPERIENCE_DESIGN_20260921.md`
+
+Goal:
+- change the Room from result reorganization to deterministic meaning delivery;
+- add alternative explanation forms for users who still do not understand;
+- preserve all Stage 5 scientific and safety boundaries.
+
+Sequence:
+- Stage 6A: structured Meaning Core
+- Stage 6B: Simple / Visual / Difference explanation modes
+- Stage 6C: meaning-first Summary redesign
+- Stage 6D: full regression + visual/mobile audit
+
+Baseline before Stage 6:
+- combined regression: **333/333 PASS**
+- syntax: **84/84 PASS**
+- runtime manifest: **79/79 PASS**
+- protected cores unchanged
+
 ## Current next action
 
-Do **not** merge PR #49 and do **not** modify formal Current yet.
-
-Next gate:
-1. perform user-visible visual/mobile acceptance of the Interpretation Room and its contextual launch points;
-2. if accepted, perform the merge/release preparation step;
-3. regenerate formal App Source/Public App/Current artifacts only after that acceptance, carrying forward the App Source test-contract updates described in the Stage 5 audit.
-
-PR #49 remains Draft until that gate is explicitly passed.
+Implement Stage 6A only: add the structured deterministic meaning frame and tests. Do not modify protected calculation or ROF-J cores. Do not merge PR #49 or alter formal Current.
 
 ## Stop conditions
 
