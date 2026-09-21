@@ -115,14 +115,6 @@
 }
 
 
-/* PC Home: remove redundant top-right date and history shortcut. */
-@media (min-width: 80rem) {
-  .screen--home.prototype-parity--home > .page-head .date-badge,
-  .screen--home.prototype-parity--home > .section .section-head > a[href="#/history"] {
-    display: none;
-  }
-}
-
 /* Home: PC-only adaptive dashboard. */
 @media (min-width: 80rem) {
   .screen--home.prototype-parity--home {
