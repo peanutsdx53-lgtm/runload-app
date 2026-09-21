@@ -1,0 +1,281 @@
+/*
+ * Desktop course-derived screens v3.
+ * Final unification with the BODY RECORD / SHOES derived-panel pattern.
+ * The course editor frame is never a scroll surface; only .course-derived-body scrolls.
+ */
+
+@media (min-width: 80rem) {
+  /* Same overlay treatment as the body/shoes derived screens. */
+  .course-derived-screen {
+    left: 0 !important;
+    right: 0 !important;
+    padding:
+      1.25rem
+      max(2rem, env(safe-area-inset-right))
+      1.35rem
+      max(var(--pc-content-left), env(safe-area-inset-left)) !important;
+    background: color-mix(in srgb, var(--color-ink) 16%, transparent) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+  }
+
+  .course-derived-frame {
+    width: min(74rem, 100%) !important;
+    max-width: 74rem !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+    border: 2px solid var(--color-line) !important;
+    border-radius: 1.35rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: 0 1.35rem 3.4rem color-mix(in srgb, var(--color-ink) 20%, transparent) !important;
+  }
+
+  /* Header dimensions exactly match the BODY RECORD derived header. */
+  .course-derived-head {
+    height: 4rem !important;
+    min-height: 4rem !important;
+    padding: 0.7rem 1.05rem !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    gap: 0.9rem !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--color-line) !important;
+    border-radius: 0 !important;
+    background: var(--color-surface) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .course-derived-head > a,
+  .course-derived-back,
+  .course-derived-head .editor-back-link,
+  .course-derived-head .editor-manager-link {
+    width: max-content !important;
+    max-width: 100% !important;
+    min-height: 2.45rem !important;
+    padding: 0 0.8rem !important;
+    justify-self: start !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.7rem !important;
+    background: var(--color-surface-muted) !important;
+    color: var(--color-accent-strong) !important;
+    font-size: 0.84rem !important;
+    font-weight: 850 !important;
+    text-decoration: none !important;
+  }
+
+  .course-derived-head .editor-manager-link {
+    justify-self: end !important;
+  }
+
+  .course-derived-head > strong {
+    justify-self: center !important;
+    font-size: 1rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Critical fix: eliminate the legacy .editor scroll container.
+     The header is a non-scrolling grid row and only editor-main scrolls. */
+  .screen--course-editor.prototype-parity--course .editor.course-derived-frame {
+    position: relative !important;
+    inset: auto !important;
+    z-index: auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+    overscroll-behavior: contain !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .editor-head.course-derived-head {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--color-line) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .editor-head.course-derived-head a {
+    width: max-content !important;
+    min-height: 2.45rem !important;
+    padding: 0 0.8rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.7rem !important;
+    background: var(--color-surface-muted) !important;
+    font-size: 0.84rem !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .editor-main.course-derived-body {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 1.35rem 1.5rem 1.65rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: var(--color-surface) !important;
+    box-shadow: none !important;
+  }
+
+  /* Course Library typography: remove the remaining mobile-size text. */
+  .screen--course-library.prototype-parity--course .head .eyebrow,
+  .screen--course-editor.prototype-parity--course .editor-main > .eyebrow,
+  .screen--gpx-analysis.prototype-parity--gpx .intro .eyebrow {
+    font-size: 0.75rem !important;
+  }
+
+  .screen--course-library.prototype-parity--course .head p:last-child,
+  .screen--course-editor.prototype-parity--course .editor-main > p,
+  .screen--gpx-analysis.prototype-parity--gpx .intro p:last-child {
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--course-library.prototype-parity--course .current small,
+  .screen--course-library.prototype-parity--course .section-head small,
+  .screen--course-library.prototype-parity--course .import-helper small,
+  .screen--course-library.prototype-parity--course .card-head span,
+  .screen--course-library.prototype-parity--course .fact small {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--course-library.prototype-parity--course .current strong {
+    font-size: 1.15rem !important;
+  }
+
+  .screen--course-library.prototype-parity--course .current span,
+  .screen--course-library.prototype-parity--course .current b,
+  .screen--course-library.prototype-parity--course .empty-course-card p,
+  .screen--course-library.prototype-parity--course .boundary {
+    font-size: 0.8rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--course-library.prototype-parity--course .section-head h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .screen--course-library.prototype-parity--course .card-head strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--course-library.prototype-parity--course .fact strong {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--course-library.prototype-parity--course .new,
+  .screen--course-library.prototype-parity--course .use,
+  .screen--course-library.prototype-parity--course .edit,
+  .screen--course-library.prototype-parity--course .delete,
+  .screen--course-library.prototype-parity--course .import-helper a {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--course-library.prototype-parity--course .import-helper strong {
+    font-size: 0.96rem !important;
+  }
+
+  .screen--course-library.prototype-parity--course .import-helper span {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Course Editor typography and controls. */
+  .screen--course-editor.prototype-parity--course .e-title small,
+  .screen--course-editor.prototype-parity--course .support-title small,
+  .screen--course-editor.prototype-parity--course .gpx-inline small,
+  .screen--course-editor.prototype-parity--course .preview-grid small {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .e-title h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .field > span,
+  .screen--course-editor.prototype-parity--course .mfield > span,
+  .screen--course-editor.prototype-parity--course .section-field > span {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .field input,
+  .screen--course-editor.prototype-parity--course .field select,
+  .screen--course-editor.prototype-parity--course .section-field select,
+  .screen--course-editor.prototype-parity--course .percent-control {
+    font-size: 0.96rem !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .mode button {
+    font-size: 0.9rem !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .note,
+  .screen--course-editor.prototype-parity--course .support-copy,
+  .screen--course-editor.prototype-parity--course .support-title span {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .support-title strong,
+  .screen--course-editor.prototype-parity--course .gpx-inline strong {
+    font-size: 0.92rem !important;
+  }
+
+  .screen--course-editor.prototype-parity--course .preview-grid span {
+    font-size: 0.86rem !important;
+  }
+
+  /* GPX typography. */
+  .screen--gpx-analysis.prototype-parity--gpx .import-copy small,
+  .screen--gpx-analysis.prototype-parity--gpx .result-head small,
+  .screen--gpx-analysis.prototype-parity--gpx .profile-heading small,
+  .screen--gpx-analysis.prototype-parity--gpx .candidate-heading small,
+  .screen--gpx-analysis.prototype-parity--gpx .import-meta span {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--gpx-analysis.prototype-parity--gpx .import-copy p,
+  .screen--gpx-analysis.prototype-parity--gpx .status-card {
+    font-size: 0.84rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--gpx-analysis.prototype-parity--gpx .gpx-help summary strong {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--gpx-analysis.prototype-parity--gpx .gpx-help summary small,
+  .screen--gpx-analysis.prototype-parity--gpx .file-note,
+  .screen--gpx-analysis.prototype-parity--gpx .gpx-help-body p,
+  .screen--gpx-analysis.prototype-parity--gpx .summary-grid small,
+  .screen--gpx-analysis.prototype-parity--gpx .summary-grid span,
+  .screen--gpx-analysis.prototype-parity--gpx .candidate-values small,
+  .screen--gpx-analysis.prototype-parity--gpx .candidate-values span,
+  .screen--gpx-analysis.prototype-parity--gpx .compact-boundary {
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--gpx-analysis.prototype-parity--gpx .summary-grid strong,
+  .screen--gpx-analysis.prototype-parity--gpx .candidate-values strong {
+    font-size: 1.05rem !important;
+  }
+}
