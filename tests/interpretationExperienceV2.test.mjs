@@ -108,6 +108,12 @@ await test('VISUAL-MODE-KEEPS-ROF-ON-SEPARATE-SCALE',()=>{
   assert.match(html,/部位別の基準100とは別の尺度です/);
 });
 
+await test('VISUAL-MODE-STAGGERS-NEARBY-REGIONAL-LABELS',()=>{
+  const html=renderInterpretationRoom({output:baseOutput(),view:'explain',mode:'visual'});
+  assert.match(html,/marker-previous[^>]*data-label-side="below"/);
+  assert.match(html,/marker-reference[^>]*data-label-side="above"/);
+});
+
 await test('DIFFERENCE-MODE-SEPARATES-THREE-INFORMATION-LAYERS',()=>{
   const html=renderInterpretationRoom({output:baseOutput(),view:'explain',mode:'difference'});
   assert.match(html,/部位別結果/);
