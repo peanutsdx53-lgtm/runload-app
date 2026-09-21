@@ -23,12 +23,20 @@
   }
 
   .app-shell:not(.app-shell--immersive) .app-header--desktop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 40;
     min-height: 4.75rem;
     padding:
       max(var(--space-3), env(safe-area-inset-top))
       max(var(--pc-content-right), env(safe-area-inset-right))
       var(--space-3)
       max(var(--pc-content-left), env(safe-area-inset-left));
+    background: color-mix(in srgb, var(--color-paper) 96%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 
   .app-shell:not(.app-shell--immersive) .app-main {
@@ -36,7 +44,7 @@
     max-width: none;
     margin: 0;
     padding:
-      var(--space-7)
+      calc(4.75rem + var(--space-7))
       max(var(--pc-content-right), env(safe-area-inset-right))
       var(--space-7)
       max(var(--pc-content-left), env(safe-area-inset-left));
@@ -81,43 +89,39 @@
     text-align: center;
   }
 
-  .app-shell:not(.app-shell--immersive) .app-brand {
-    gap: 0.75rem;
-    color: var(--color-ink);
-  }
-
-  .app-shell:not(.app-shell--immersive) .app-brand__mark {
-    width: 2.55rem;
-    height: 2.55rem;
+  .app-shell:not(.app-shell--immersive) .app-screen-context {
+    min-width: 0;
     display: grid;
-    place-items: center;
-    flex: 0 0 auto;
-    border: 1px solid var(--color-line);
-    border-radius: 0.8rem;
-    background: color-mix(in srgb, var(--color-surface) 92%, var(--color-accent-soft));
-    color: var(--color-accent-strong);
+    gap: 0.1rem;
+    align-content: center;
   }
 
-  .app-shell:not(.app-shell--immersive) .app-brand__mark svg {
-    width: 1.65rem;
-    height: 1.65rem;
-    display: block;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.9;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .app-shell:not(.app-shell--immersive) .app-brand strong {
-    color: var(--color-ink);
-  }
-
-  .app-shell:not(.app-shell--immersive) .app-brand small {
+  .app-shell:not(.app-shell--immersive) .app-screen-context small {
+    margin: 0;
     color: var(--color-muted);
+    font-size: 0.66rem;
+    line-height: 1.1;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+  }
+
+  .app-shell:not(.app-shell--immersive) .app-screen-context strong {
+    color: var(--color-ink);
+    font-size: 1.35rem;
+    line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: -0.025em;
   }
 }
 
+
+/* PC Home: remove redundant top-right date and history shortcut. */
+@media (min-width: 80rem) {
+  .screen--home.prototype-parity--home > .page-head .date-badge,
+  .screen--home.prototype-parity--home > .section .section-head > a[href="#/history"] {
+    display: none;
+  }
+}
 
 /* Home: PC-only adaptive dashboard. */
 @media (min-width: 80rem) {
