@@ -422,7 +422,7 @@ function visualDomain(values) {
 }
 
 function visualX(value, domain) {
-  if (!Number.isFinite(Number(value))) return null;
+  if (value === null || value === undefined || value === "" || !Number.isFinite(Number(value))) return null;
   const span = Math.max(1e-9, domain.max - domain.min);
   const fraction = Math.max(0, Math.min(1, (Number(value) - domain.min) / span));
   return 36 + fraction * 248;
