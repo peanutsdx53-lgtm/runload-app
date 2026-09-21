@@ -770,3 +770,35 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
   font-size: 13px;
   line-height: 1.65;
 }
+
+
+/* Stage 8B: separated condition context. */
+.interpretation-condition-context {
+  padding: 14px 16px;
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  background: var(--color-paper);
+}
+
+.interpretation-condition-context small {
+  color: var(--color-muted);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .06em;
+}
+
+.interpretation-condition-context p {
+  margin: 5px 0 0;
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.55;
+}
+
+.interpretation-condition-context span {
+  display: block;
+  margin-top: 5px;
+  color: var(--color-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
