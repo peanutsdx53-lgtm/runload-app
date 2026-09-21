@@ -366,7 +366,7 @@ Release state:
 - no merge or Current promotion has been performed
 
 ## Stage 8 — Understanding-Focused Visual Interpretation
-Status: **STAGE 8B IN PROGRESS — CURRENT_SHIFT_WITH_HISTORY AND CONDITION_AND_RESULT_CHANGED MAPPED AND VERIFIED**
+Status: **STAGE 8B IN PROGRESS — CURRENT_SHIFT_WITH_HISTORY / CONDITION_AND_RESULT_CHANGED / MULTI_LAYER_CHANGE MAPPED AND VERIFIED**
 
 Controlling work plan:
 - `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
@@ -509,15 +509,39 @@ Verification:
 - `MULTI_LAYER_CHANGE` remains unmapped/general at this checkpoint;
 - runtime/PWA hash contracts updated.
 
+## Stage 8B mapping checkpoint — MULTI_LAYER_CHANGE
+
+Durable audit:
+- `docs/interpretation/STAGE8B_MULTI_LAYER_AUDIT_20260921.md`
+
+Mapped so far:
+- `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
+- `CONDITION_AND_RESULT_CHANGED` → Locate + Compare + separated factual condition card;
+- `MULTI_LAYER_CHANGE` → regional lane + separate ROF-J lane.
+
+Multi-layer rules:
+- explicit `情報1 · 部位別結果` and `情報2 · 主観情報`;
+- static `別の尺度` separator;
+- no inter-layer arrow or causal connector;
+- one understanding note;
+- regional Reference-100 and ROF-J 0–10 remain separate.
+
+Verification:
+- multi-layer focused checks: **10/10 PASS**;
+- prior Stage 8B mappings remained intact;
+- targeted 390 px layout review found both lanes inside the canvas;
+- runtime/PWA hash contracts updated.
+
 ## Current next action
 
 Continue Stage 8B with **one Meaning Core code only**:
 
-- `MULTI_LAYER_CHANGE`;
-- regional lane + separate ROF-J 0–10 lane;
-- no causal arrow between the two information layers;
-- one sentence stating that both contain a difference while remaining separate;
-- do not map `REPEATED_OBSERVATION` or `CURRENT_REFERENCE_PATTERN` in the same implementation batch.
+- `REPEATED_OBSERVATION`;
+- one body-region focus;
+- compact explicit record-count visualization;
+- no `傾向`, `体質`, `なりやすい` or similar trait/proneness interpretation;
+- no animation intensity based on repeated count;
+- do not map `CURRENT_REFERENCE_PATTERN` in the same implementation batch.
 
 ## Stop conditions
 
