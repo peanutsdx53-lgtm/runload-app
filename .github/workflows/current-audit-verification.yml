@@ -49,3 +49,15 @@ jobs:
         run: |
           set -euo pipefail
           sha256sum -c RUNTIME_SHA256SUMS.txt
+
+      - name: Build repository snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          zip -qr runload-audit-snapshot.zip . -x '.git/*'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: runload-audit-snapshot
+          path: runload-audit-snapshot.zip
+          if-no-files-found: error
