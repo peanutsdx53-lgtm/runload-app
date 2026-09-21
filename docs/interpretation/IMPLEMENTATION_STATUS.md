@@ -366,7 +366,7 @@ Release state:
 - no merge or Current promotion has been performed
 
 ## Stage 8 — Understanding-Focused Visual Interpretation
-Status: **STAGE 8A FIRST BATCH IMPLEMENTED AND VERIFIED — AWAITING USER VISUAL ACCEPTANCE**
+Status: **STAGE 8B IN PROGRESS — CURRENT_SHIFT_WITH_HISTORY MAPPED AND VERIFIED**
 
 Controlling work plan:
 - `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
@@ -460,13 +460,41 @@ Release state:
 - formal Current remains untouched;
 - Stage 8B has not started.
 
+## Stage 8B mapping checkpoint — CURRENT_SHIFT_WITH_HISTORY
+
+User acceptance:
+- Stage 8A static visual was accepted as a compromise-line baseline and Stage 8B was authorized to proceed.
+
+Durable audit:
+- `docs/interpretation/STAGE8B_CURRENT_SHIFT_AUDIT_20260921.md`
+
+Mapped:
+- `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
+- one body region only;
+- strict compatible previous → current;
+- Reference-100 remains visible as the local regional reference;
+- one short `この図で分かること` sentence;
+- ROF-J is intentionally omitted from this step even if available, because it is not the primary meaning here.
+
+Verification:
+- focused production-source checks: **11/11 PASS**;
+- target code uses `data-visual-pattern="locate-compare"`;
+- unmapped Meaning Core codes remain on general visual behavior;
+- Stage 7 two-choice entry remains unchanged;
+- no new route or downstream-function duplication;
+- runtime hash manifest and PWA hash contract updated for the changed presentation/CSS;
+- targeted 390 px layout review found no new horizontal-layout issue;
+- fresh production-browser visual audit remains reserved for Stage 8E.
+
 ## Current next action
 
-Present the 390 px Stage 8A first-batch visual for user review.
+Continue Stage 8B with **one Meaning Core code only**:
 
-Do **not** begin Stage 8B until that visual result is reviewed and accepted.
-
-If accepted, Stage 8B may then map one Meaning Core context at a time to the approved visual primitives. Do not bulk-map all meaning codes in one implementation batch.
+- `CONDITION_AND_RESULT_CHANGED`;
+- Locate + Compare + separated factual condition card;
+- no connecting causal arrow;
+- explicit non-causal boundary;
+- do not change `MULTI_LAYER_CHANGE`, `REPEATED_OBSERVATION`, or `CURRENT_REFERENCE_PATTERN` in the same implementation batch.
 
 ## Stop conditions
 
