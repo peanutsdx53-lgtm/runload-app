@@ -531,6 +531,11 @@
   display: none;
 }
 
+.screen--body-part-detail .trend-svg--pc,
+.screen--history .chart-svg--pc {
+  display: none;
+}
+
 /* Result: PC-only body map and compact comparison cards. */
 @media (min-width: 80rem) {
   .screen--result.prototype-parity--result {
@@ -827,6 +832,16 @@
 
 /* Body-region detail and History: wide charts, readable non-chart content. */
 @media (min-width: 80rem) {
+  .screen--body-part-detail.prototype-parity--result .trend-svg--mobile,
+  .screen--history.prototype-parity--history .chart-svg--mobile {
+    display: none;
+  }
+
+  .screen--body-part-detail.prototype-parity--result .trend-svg--pc,
+  .screen--history.prototype-parity--history .chart-svg--pc {
+    display: block;
+  }
+
   .screen--body-part-detail.prototype-parity--result .detail-main {
     width: min(100%, 76rem);
     margin-inline: auto;
