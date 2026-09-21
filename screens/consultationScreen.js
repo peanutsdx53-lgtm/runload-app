@@ -181,7 +181,7 @@ function prototypeDocumentBlocks(items) {
 
 function renderPrototypeConsultation({ services, experience, plan, regionId = "", backHref = "#/more", backLabel = "その他へ戻る" }) {
   if (!experience?.record) {
-    return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation secondary-derived-screen"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel"><div class="panel-head"><div><small>RECORD</small><strong>対象の記録がありません</strong></div></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div>`;
+    return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation secondary-derived-screen"><header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>共有用にまとめる</strong><span aria-hidden="true"></span></header><div class="secondary-derived-body"><section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel"><div class="panel-head"><div><small>RECORD</small><strong>対象の記録がありません</strong></div></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div></div>`;
   }
 
   const record = experience.record;
@@ -210,7 +210,8 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
   const documentBlocks = prototypeDocumentBlocks(items);
 
   return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation secondary-derived-screen" data-prototype-consultation data-prototype-share-prep>
-    <a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a>
+    <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>共有用にまとめる</strong><span aria-hidden="true"></span></header>
+    <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録から、指導者などに見せる内容を整理します。RunLoadから相手へ自動送信はしません。</p></section>
 
     <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果を確認</a></section>
@@ -259,6 +260,7 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
 
     <p class="boundary">共有する内容は本人が選びます。個人的なメモなどは、必要な場合だけ含めてください。</p>
     <a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}&returnTo=${encodeURIComponent(`#/consultation?recordId=${record.id}`)}"><span><small>症状や体調について公的な案内を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
+    </div>
   </div>`;
 }
 
