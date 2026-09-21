@@ -617,15 +617,69 @@ function renderRofVisual(output) {
     <p class="source-boundary">疲労感は本人が記録した主観情報です。部位別の基準100とは別の尺度です。</p></article>`;
 }
 
-function renderCurrentShiftContinuation(output) {
-  if (meaning(output).primaryCode !== "CURRENT_SHIFT_WITH_HISTORY") return "";
+const CONTINUATION_CODES = new Set([
+  "CURRENT_SHIFT_WITH_HISTORY",
+  "CONDITION_AND_RESULT_CHANGED",
+  "MULTI_LAYER_CHANGE",
+  "REPEATED_OBSERVATION",
+  "CURRENT_REFERENCE_PATTERN",
+]);
+
+function continuationKey(code = "") {
+  if (code === "CURRENT_SHIFT_WITH_HISTORY") return "current-shift";
+  if (code === "CONDITION_AND_RESULT_CHANGED") return "condition-result";
+  if (code === "MULTI_LAYER_CHANGE") return "multi-layer";
+  if (code === "REPEATED_OBSERVATION") return "repeated-observation";
+  if (code === "CURRENT_REFERENCE_PATTERN") return "current-reference";
+  return "";
+}
+
+function nextObservationText(output) {
+  const code = meaning(output).primaryCode || "";
   const region = focusRegion(output);
-  if (!region) return "";
-  return `<section class="interpretation-continuation" data-continuation="current-shift" data-reveal-step="continuation">
+  const regionName = region?.label || "選択した部位";
+  if (code === "CURRENT_SHIFT_WITH_HISTORY") {
+    return `次の比較可能な記録で、${regionName}の今回との差と基準100との位置をもう一度確認できます。`;
+  }
+  if (code === "CONDITION_AND_RESULT_CHANGED") {
+    return `次の比較可能な記録でも、${regionName}の部位別表示と走行条件を別々に確認すると、今回との違いを更新できます。`;
+  }
+  if (code === "MULTI_LAYER_CHANGE") {
+    return `次の比較可能な記録で、${regionName}の部位別表示と走行前後の疲労感を別々の尺度としてもう一度確認できます。`;
+  }
+  if (code === "REPEATED_OBSERVATION") {
+    return `比較可能な記録が増えたとき、${regionName}で今回と同じ方向が何件確認されるかを件数として更新できます。`;
+  }
+  if (code === "CURRENT_REFERENCE_PATTERN") {
+    return `次の比較可能な記録で、${regionName}が今回の基準100との位置からどう変わったかを確認できます。`;
+  }
+  return "";
+}
+
+function renderSelfManagementContinuation(output) {
+  const code = meaning(output).primaryCode || "";
+  if (!CONTINUATION_CODES.has(code)) return "";
+  const key = continuationKey(code);
+  const next = nextObservationText(output);
+  if (!key || !next) return "";
+  return `<section class="interpretation-continuation" data-continuation="${escapeHtml(key)}" data-reveal-step="continuation">
     <div><small>今回理解したこと</small><p>${escapeHtml(simpleKnownText(output))}</p></div>
     <div><small>まだ分からないこと</small><p>${escapeHtml(currentBoundaryText(output))}</p></div>
-    <div><small>次に確認すること</small><p>${escapeHtml(`次の比較可能な記録で、${region.label}の今回との差と基準100との位置をもう一度確認できます。`)}</p></div>
+    <div><small>次に確認すること</small><p>${escapeHtml(next)}</p></div>
   </section>`;
+}
+
+function continuationAction(output) {
+  const code = meaning(output).primaryCode || "";
+  if (code === "CONDITION_AND_RESULT_CHANGED") {
+    const simulation = enabledAction(output, "simulation");
+    if (simulation) return { action: simulation, title: "条件を分けて確認", description: "Simulationで条件を個別に確認" };
+  }
+  if (CONTINUATION_CODES.has(code)) {
+    const history = enabledAction(output, "history");
+    if (history) return { action: history, title: "過去の比較可能な記録を確認", description: "Historyで同じ部位の記録を見る" };
+  }
+  return null;
 }
 
 function renderVisualExplanation(output, origin) {
@@ -674,7 +728,7 @@ function renderVisualExplanation(output, origin) {
   return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual" data-visual-pattern="${visualPattern}" data-guided-stage="understand-visual">
     <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>${escapeHtml(lead)}</p></header>
     <section class="interpretation-visual-stack" data-reveal-step="visual">${visualBody}</section>
-    ${renderCurrentShiftContinuation(output)}
+    ${renderSelfManagementContinuation(output)}
     ${renderExplanationFollowup(output, origin)}
     <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">最初の確認へ戻る</a></div>
   </div>`;
@@ -710,9 +764,9 @@ function renderDifferenceExplanation(output, origin) {
 function renderExplanationFollowup(output, origin) {
   const recordId = output?.targetRecordId || "";
   const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
-  const history = meaning(output).primaryCode === "CURRENT_SHIFT_WITH_HISTORY" ? enabledAction(output, "history") : null;
-  const continuationChoice = history
-    ? renderDialogueChoice(actionHref(history, output?.context?.origin || origin), "過去の比較可能な記録を確認", "Historyで同じ部位の記録を見る")
+  const bridge = continuationAction(output);
+  const continuationChoice = bridge
+    ? renderDialogueChoice(actionHref(bridge.action, output?.context?.origin || origin), bridge.title, bridge.description)
     : renderDialogueChoice(route(recordId, origin, { view: "dialogue", topic: "manage", regionId }), "次にどう活かすか考える", "自己管理に使う機能を絞る");
   return `<section class="interpretation-dialogue-followup" data-reveal-step="choices"><h2>次に確認するなら</h2><div class="interpretation-dialogue-choice-list">
     ${renderDialogueChoice(route(recordId, origin, { view: "evidence", regionId }), "なぜこの解釈なのか確認", "保存結果の根拠を見る")}
