@@ -95,6 +95,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
   applyJournalSettings(applicationServices.storage.settings.load());
   const screenName = currentLocation.screen;
   document.body.classList.toggle("course-derived-open", ["course-library", "course-editor", "gpx-analysis"].includes(screenName));
+  document.body.classList.toggle("secondary-derived-open", ["plan", "consultation", "support-guidance", "reading", "privacy", "settings"].includes(screenName));
   const recordInputReturnState = screenName === "record-input"
     ? resolveRecordInputReturnState(currentLocation)
     : null;
