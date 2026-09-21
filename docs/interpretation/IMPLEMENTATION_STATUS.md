@@ -1,7 +1,7 @@
 # RunLoad Interpretation Room — Implementation Status
 
 Date: 2026-09-21
-Status: STAGE 7 GUIDED DIALOGUE BASELINE COMPLETE — ITERATIVE REFINEMENT NEXT
+Status: STAGE 8 UNDERSTANDING-FOCUSED VISUAL WORK PLAN APPROVED — IMPLEMENTATION NOT YET STARTED
 Branch: `feature/runload-interpretation-room-v1`
 Draft PR: #49
 Base commit: `8d2937c7bbfe3a7094601628a109d31309edd775`
@@ -365,20 +365,79 @@ Release state:
 - formal Current remains untouched
 - no merge or Current promotion has been performed
 
+## Stage 8 — Understanding-Focused Visual Interpretation
+Status: **WORK PLAN APPROVED — IMPLEMENTATION NOT YET STARTED**
+
+Controlling work plan:
+- `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
+
+Mandatory distinction:
+- Result screen = display recorded/result information.
+- Interpretation engine = help users understand what to look at, how to read it, what can be understood, what cannot be determined, and what to check next.
+- Interpretation must not become a second Result screen.
+
+User-approved direction:
+- pursue an understanding-specialized Interpretation experience;
+- go several explanatory steps deeper than Result;
+- upgrade figures/diagrams rather than only adding prose;
+- use motion when it communicates meaning;
+- examples include arrows that grow to show direction and one-time focus glow for the item being explained;
+- keep progressive disclosure and avoid information overload.
+
+Implementation principles:
+- one main interpretation + one main visual per ordinary step;
+- normally two choices, never more than three ordinary choices;
+- focus one region/information layer at a time;
+- regional Reference-100 and ROF-J remain separate visual scales;
+- no cross-region ranking;
+- no danger/safety/goodness meaning from ordinary emphasis colors;
+- use normal accent color for focus, not danger red;
+- motion must never loop or flash;
+- reduced-motion mode must show the same information in a static final state;
+- reuse existing `ui/prototypeBodyRegionVisuals.js`, `ui/uiMotion.js`, and theme tokens;
+- do not add an animation library or external asset dependency unless separately authorized;
+- downstream History / Simulation / Plan / Consultation / Reading functions remain separate and are only bridged to.
+
+Planned sequence:
+- Stage 8A: reusable visual primitives — body-region focus, comparison arrow, Reference-100/current markers, ROF-J lane;
+- Stage 8B: map Meaning Core codes to visual explanation patterns;
+- Stage 8C: integrate visuals into the Stage 7 guided dialogue;
+- Stage 8D: strengthen explanation → next self-management observation/function bridge;
+- Stage 8E: mobile/desktop/theme/dark/reduced-motion visual audit + full regression.
+
+Stage 8 work-order rule:
+1. identify the exact comprehension problem;
+2. select one Meaning Core context;
+3. select one visual transformation;
+4. define what the motion means;
+5. define the reduced-motion end state;
+6. implement only that batch;
+7. run regression and visual review;
+8. record findings before the next batch.
+
+Baseline before Stage 8:
+- Stage 7 guided dialogue: **371/371 PASS**
+- runtime manifest: **79/79 PASS**
+- protected Primary and ROF-J cores unchanged
+- PR #49 remains Draft
+- main and formal Current remain untouched
+
 ## Current next action
 
-Use Stage 7 as the new development baseline.
+Do not begin broad visual implementation from memory or ad-hoc ideas.
 
-Future refinement should focus on:
-1. the quality and brevity of each RunLoad interpretation;
-2. context-sensitive ordering of the two/three offered questions;
-3. visual hierarchy, wording, diagrams, and color use;
-4. transitions into and back from History / Simulation / Plan / Consultation / Reading;
-5. whether additional deterministic dialogue paths materially improve self-management without increasing confusion.
+When implementation resumes, read the Stage 8 work plan first and start with **Stage 8A only**. Build and visually review the reusable understanding primitives before connecting them to all Meaning Core cases.
 
-Keep the progressive-disclosure rule: one question at a time, normally two choices and never more than three ordinary choices per step.
+The first recommended implementation batch is:
+- one focus-body-region visual;
+- one local previous/reference/current arrow visual;
+- one-time accent focus emphasis;
+- reduced-motion static equivalent;
+- no route redesign and no downstream-function changes in the same batch.
 
-Do not merge PR #49 and do not promote formal Current solely because Stage 7 baseline passed. Re-run regression and visual audit after substantive refinement batches.
+After that batch, run regression and 390 px visual review before proceeding to Stage 8B.
+
+Do not merge PR #49 and do not promote formal Current during Stage 8 development.
 
 ## Stop conditions
 
