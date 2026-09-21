@@ -1,4 +1,4 @@
-// Runtime revision: interpretation-final-cleanup-v1
+// Runtime revision: current-resource-refresh-20260921
 const CACHE_NAME = "runload-app-current";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [

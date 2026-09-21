@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 const source=async(path)=>readFile(new URL(`../${path}`,import.meta.url),'utf8');
+const sha256=(text)=>createHash('sha256').update(text).digest('hex');
 function precache(sw){const block=sw.slice(sw.indexOf('const PRECACHE_URLS = ['),sw.indexOf('];',sw.indexOf('const PRECACHE_URLS = ['))+2);return [...block.matchAll(/"(\.\/[^\"]+)"/g)].map(m=>m[1]);}
 
 await test('PWA-PRECACHE-INCLUDES-INTERPRETATION-RUNTIME',async()=>{
@@ -40,19 +42,24 @@ await test('PWA-INTERPRETATION-STYLESHEET-IS-SAME-ORIGIN-EXTERNAL',async()=>{
 
 await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
   const manifest=await source('RUNTIME_SHA256SUMS.txt');
-  const expected=[
-    '20fc3b838f4251d08c765c46fa07d29b905e38e2b38474cea85bcf0dd77845a8  core/interpretationCore.js',
-    '56eb4ff3d5e4c826d45bd283f6b7378ba2e50632e380b9d37bc238ddcc73cd34  screens/interpretationRoomScreen.js',
-    '5a6358fb9b1556c8e5787f6755ac27a1be231a8082243394017bf0c58b67b5f7  styles/interpretation-room.css',
-    '40f1bd61d27b96efdfcdceda5233e4a7b7b68511b60ac5d7ef4f1eed4911a265  ui/interpretationRoomPresentation.js',
-    '044d9a07dfda7cf01c6b98088892d2ef2f8a057595bf43fc3a9d68d637c039d4  ui/prototypeBodyRegionVisuals.js',
+  const paths=[
+    'core/interpretationCore.js',
+    'screens/interpretationRoomScreen.js',
+    'styles/interpretation-room.css',
+    'ui/interpretationRoomPresentation.js',
+    'ui/prototypeBodyRegionVisuals.js',
   ];
-  for(const line of expected) assert.ok(manifest.includes(line),line);
+  for(const path of paths){
+    const hash=sha256(await source(path));
+    assert.ok(manifest.includes(`${hash}  ${path}`),path);
+  }
 });
 
 await test('RUNTIME-HASH-MANIFEST-TRACKS-CURRENT-SERVICE-WORKER',async()=>{
   const manifest=await source('RUNTIME_SHA256SUMS.txt');
-  assert.match(manifest,/1b8bea4d03298290352915fa2721642980ecb3148dee61c79501456d2aab87de  service-worker\.js/);
+  const path='service-worker.js';
+  const hash=sha256(await source(path));
+  assert.ok(manifest.includes(`${hash}  ${path}`),path);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');

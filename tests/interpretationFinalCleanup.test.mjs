@@ -54,8 +54,8 @@ await test('UNUSED-SCREEN-ARCHITECTURE-EXPORTS-REMOVED',()=>{
   assert.match(architecture,/renderRecordsWorkspaceNavigation/);
 });
 
-await test('FINAL-CLEANUP-PWA-REVISION-IS-PRESENT',()=>{
-  assert.match(read('service-worker.js'),/interpretation-final-cleanup-v1/);
+await test('PWA-RUNTIME-REVISION-IS-PRESENT',()=>{
+  assert.match(read('service-worker.js'),/^\/\/ Runtime revision: [a-z0-9][a-z0-9._-]+$/m);
 });
 
 await test('PUBLIC-UI-OMITS-INTERNAL-INTERPRETATION-NAME',()=>{
