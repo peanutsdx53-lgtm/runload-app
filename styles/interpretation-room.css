@@ -953,3 +953,61 @@ html.ui-motion-reduced .interpretation-room-view--visual [data-reveal-step="choi
     transform: none;
   }
 }
+
+
+/* Stage 8D: current-shift self-management continuation. */
+.interpretation-continuation {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.interpretation-continuation > div {
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: 13px;
+  background: var(--color-surface);
+}
+
+.interpretation-continuation small {
+  color: var(--color-muted);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .05em;
+}
+
+.interpretation-continuation p {
+  margin: 5px 0 0;
+  color: var(--color-ink);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .interpretation-continuation {
+    grid-template-columns: 1fr;
+  }
+}
+
+.interpretation-room-view--visual [data-reveal-step="continuation"] {
+  animation: interpretation-stage8-guided-reveal 160ms ease-out 540ms 1 both;
+}
+
+.interpretation-room-view--visual [data-reveal-step="choices"] {
+  animation-delay: 660ms;
+}
+
+html.ui-motion-reduced .interpretation-room-view--visual [data-reveal-step="continuation"] {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interpretation-room-view--visual [data-reveal-step="continuation"] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
