@@ -279,7 +279,31 @@ export function renderRecordInputScreen({ services, context }) {
       </section>
 
       ${renderEmbeddedSubjectiveSubflow(feedback)}${renderEmbeddedPersonalSubflow(record, settings)}
-      <div class="desktop-save-area"><div><strong>${editing ? "入力内容を確認して更新" : "必須項目を確認して保存"}</strong><span data-prototype-save-hint>${isRest ? "休養日として保存できます。" : "距離と実際に走った時間を入力してください。"}</span><span class="draft-status" data-draft-status role="status" aria-live="polite"></span></div><button class="primary-save" type="submit">${editing ? "記録を更新して結果を見る" : "記録を保存して結果を見る"}</button></div>
+      <aside class="desktop-save-area" aria-label="保存状況">
+        <div class="desktop-save-area__intro">
+          <strong>${editing ? "入力内容を確認して更新" : "必須項目を確認して保存"}</strong>
+          <span data-prototype-save-hint>${isRest ? "休養日として保存できます。" : "距離と実際に走った時間を入力してください。"}</span>
+        </div>
+        <div class="save-readiness" data-save-readiness>
+          <div class="save-readiness__summary">
+            <span>保存まで</span>
+            <strong data-save-readiness-progress>${isRest ? "保存可" : "0 / 2"}</strong>
+          </div>
+          <div class="save-readiness__bar" aria-hidden="true"><i data-save-readiness-bar style="width:${isRest ? "100" : "0"}%"></i></div>
+          <dl class="save-context">
+            <div><dt>記録</dt><dd data-save-context-activity>${isRest ? "休養" : "走行"}</dd></div>
+            <div><dt>日付</dt><dd data-save-context-date>${escapeHtml(prototypeDateLabel(record.date))}</dd></div>
+          </dl>
+          <div class="save-checklist" data-save-run-checklist${isRest ? " hidden" : ""}>
+            <div data-save-check="distance"><span>距離</span><b data-save-check-state="distance">未入力</b></div>
+            <div data-save-check="duration"><span>実際に走った時間</span><b data-save-check-state="duration">未入力</b></div>
+          </div>
+          <p class="save-readiness__note">任意項目は空欄のままでも保存できます。</p>
+          ${editing ? "" : '<p class="save-readiness__draft">入力途中は、この端末に下書きとして保存されます。</p>'}
+        </div>
+        <span class="draft-status" data-draft-status role="status" aria-live="polite"></span>
+        <button class="primary-save" type="submit">${editing ? "記録を更新して結果を見る" : "記録を保存して結果を見る"}</button>
+      </aside>
     </form>
     <div class="mobile-save-bar" data-record-mobile-save-bar>${editing ? "" : '<button class="draft-button" type="button" data-action="save-record-draft">下書き</button>'}<button class="primary-save" type="submit" form="record-input-form">${editing ? "更新して結果を見る" : "保存して結果を見る"}</button></div>
   </div>`;
