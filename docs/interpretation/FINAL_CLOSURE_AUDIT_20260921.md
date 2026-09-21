@@ -119,7 +119,7 @@ PASS:
 - no unsupported causal inference;
 - no cross-region physical ranking;
 - no new persistent interpretation datastore;
-- no external/generative-AI dependency.
+- no external service or unconstrained text-generation dependency.
 
 ## Release decision
 
