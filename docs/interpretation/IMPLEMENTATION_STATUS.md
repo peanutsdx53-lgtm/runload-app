@@ -366,7 +366,7 @@ Release state:
 - no merge or Current promotion has been performed
 
 ## Stage 8 — Understanding-Focused Visual Interpretation
-Status: **STAGE 8B COMPLETE — FIVE PRIMARY VISUAL MAPPINGS VERIFIED; STAGE 8C NEXT**
+Status: **STAGE 8C COMPLETE — GUIDED VISUAL INTEGRATION VERIFIED; STAGE 8D NEXT**
 
 Controlling work plan:
 - `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
@@ -581,17 +581,39 @@ Visual-audit boundary:
 - targeted 390 px static-layout review completed for all five patterns;
 - full production-browser mobile/desktop/theme/dark/reduced-motion audit remains Stage 8E.
 
+## Stage 8C completion checkpoint
+
+Durable audit:
+- `docs/interpretation/STAGE8C_GUIDED_VISUAL_INTEGRATION_AUDIT_20260921.md`
+
+Completed:
+- Entry remains one interpretation + exactly two intent choices;
+- Understand step offers up to three representation choices and does not render Stage 8 visuals yet;
+- Stage 8 main visual appears only in the selected Visual explanation step;
+- one main visual stack per Visual explanation;
+- understanding note follows the visual;
+- follow-up remains exactly two downstream choices: Evidence / management narrowing;
+- short non-looping reveal timing added for explanation and choices;
+- Reduced Motion shows the complete static state immediately.
+
+Verification:
+- Stage 8C focused checks: **9/9 PASS**;
+- no route redesign;
+- no downstream-function duplication;
+- runtime/PWA hash contracts updated;
+- Stage 8B 390 px layouts remain the geometry baseline;
+- full production-browser animation/theme audit remains Stage 8E.
+
 ## Current next action
 
-Begin **Stage 8C — Guided-dialogue integration** with one limited batch.
+Begin **Stage 8D — understanding → self-management continuation** with one limited batch.
 
-First Stage 8C target:
-- verify that visual explanation appears only after the user chooses the understanding branch and then `図で確認`;
-- keep one main visual per step;
-- keep Evidence and self-management bridges downstream;
-- add only short sequential reveal if it improves reading order;
-- Reduced Motion must show the complete state immediately;
-- do not redesign routes or downstream functions.
+Target:
+- after an explanation, summarize what was understood;
+- state what is still unknown;
+- show one next observation to check;
+- bridge to an existing function rather than implementing that function inside Interpretation Room;
+- no training prescription, run/rest decision, causal claim, or new persistent data.
 
 ## Stop conditions
 
