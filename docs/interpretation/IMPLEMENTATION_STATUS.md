@@ -1,7 +1,7 @@
 # RunLoad Interpretation Room — Implementation Status
 
-Date: 2026-09-20
-Status: STAGE 6 INTERPRETATION EXPERIENCE UPGRADE IN PROGRESS
+Date: 2026-09-21
+Status: STAGE 6 BASELINE COMPLETE — ITERATIVE UX REFINEMENT NEXT
 Branch: `feature/runload-interpretation-room-v1`
 Draft PR: #49
 Base commit: `8d2937c7bbfe3a7094601628a109d31309edd775`
@@ -253,31 +253,69 @@ The earlier Stage 5 safe stops were resolved under explicit user authorization:
 See `docs/interpretation/STAGE5_FINAL_AUDIT_20260921.md` for the final audit trail.
 
 ## Stage 6 — Interpretation Experience Upgrade
-Status: IN PROGRESS
+Status: **BASELINE COMPLETE — PASS**
 
 Controlling delta:
 - `docs/interpretation/STAGE6_INTERPRETATION_EXPERIENCE_DESIGN_20260921.md`
 
-Goal:
-- change the Room from result reorganization to deterministic meaning delivery;
-- add alternative explanation forms for users who still do not understand;
-- preserve all Stage 5 scientific and safety boundaries.
+Durable audit:
+- `docs/interpretation/STAGE6_BASELINE_AUDIT_20260921.md`
 
-Sequence:
-- Stage 6A: structured Meaning Core
-- Stage 6B: Simple / Visual / Difference explanation modes
-- Stage 6C: meaning-first Summary redesign
-- Stage 6D: full regression + visual/mobile audit
+User-approved direction:
+- Interpretation must answer what the user should understand from the record, not merely reorganize Result-screen values.
+- The current Stage 6 implementation is accepted as the development baseline.
+- Exact interpretation content, presentation method, and the route/sequence used to reach explanations remain intentional future refinement areas.
 
-Baseline before Stage 6:
-- combined regression: **333/333 PASS**
-- syntax: **84/84 PASS**
-- runtime manifest: **79/79 PASS**
-- protected cores unchanged
+Implemented:
+- [x] structured deterministic Meaning Core
+- [x] meaning-first Summary: `今回の読み方`
+- [x] supporting observations: `そう読める理由`
+- [x] relevant limitation block: `この記録だけでは決められないこと`
+- [x] alternative representation routes: Simple / Visual / Difference / Evidence
+- [x] single-region Reference-100 visual with no cross-region ranking
+- [x] separate ROF-J 0–10 visual
+- [x] condition/result non-causal boundary
+- [x] repeated-observation explicit-count wording
+- [x] nearby visual-label staggering at mobile width
+- [x] no new persistence, external API, or generative AI
+- [x] protected Primary and ROF-J cores unchanged
+
+Final verification:
+- existing App Source verifier: **273/273 PASS**
+- Interpretation Core: **24/24 PASS**
+- Meaning V2: **13/13 PASS**
+- Room Integration: **18/18 PASS**
+- Launch Integration: **11/11 PASS**
+- PWA Integration: **7/7 PASS**
+- Experience V2: **11/11 PASS**
+- combined: **357/357 PASS**
+- GitHub/App JS/MJS syntax target: **86/86 PASS**
+- reconstructed runtime manifest: **79/79 PASS**
+- protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
+- protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
+- GitHub compare contains no protected-core changes
+- principal Stage 6 GitHub files were byte-verified against the validated local audit copy
+
+Meaning V2 SHA clarification:
+- previous apparent mismatch was not a file mismatch;
+- `eec517d...` was a commit SHA;
+- correct Git blob SHA is `7fe16486365d8eacfd19ea8144f66378d1041e1a`, identical locally and on GitHub.
+
+Release state:
+- PR #49 remains Draft
+- main remains at audited base
+- formal Current remains untouched
+- no merge or Current promotion has been performed
 
 ## Current next action
 
-Implement Stage 6A only: add the structured deterministic meaning frame and tests. Do not modify protected calculation or ROF-J cores. Do not merge PR #49 or alter formal Current.
+Use Stage 6 as the new development baseline and continue iterative refinement of:
+1. interpretation content quality;
+2. amount/timing of information shown;
+3. visual hierarchy, diagrams, and color use;
+4. entry and transition routes between existing screens and Interpretation Room.
+
+Do not merge PR #49 and do not promote formal Current merely because Stage 6 baseline passed. Re-run regression and visual audit after each substantive refinement batch.
 
 ## Stop conditions
 
