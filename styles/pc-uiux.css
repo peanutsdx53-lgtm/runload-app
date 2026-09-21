@@ -12,8 +12,14 @@
   }
 
   .app-shell:not(.app-shell--immersive) {
+    width: 100%;
     min-height: 100dvh;
+    margin: 0;
     padding-bottom: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .app-shell:not(.app-shell--immersive) .app-header--desktop {
@@ -37,17 +43,22 @@
   }
 
   .app-shell:not(.app-shell--immersive) .primary-navigation {
+    position: fixed;
     top: 50%;
     bottom: auto;
     left: var(--pc-nav-left);
     width: var(--pc-nav-width);
+    height: auto;
     max-height: calc(100dvh - 3.5rem);
     transform: translateY(-50%);
     grid-template-columns: 1fr;
     gap: 0.3rem;
     padding: 0.5rem;
     overflow-y: auto;
+    border: 1px solid var(--color-line);
     border-radius: 1.4rem;
+    background: var(--color-surface);
+    box-shadow: 0 0.8rem 1.8rem color-mix(in srgb, var(--color-ink) 7%, transparent);
     scrollbar-width: thin;
   }
 
