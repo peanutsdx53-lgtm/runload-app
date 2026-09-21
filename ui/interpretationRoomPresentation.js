@@ -1,4 +1,5 @@
 import { escapeHtml } from "./commonComponents.js";
+import { PROTOTYPE_BODY_VIEWS } from "./prototypeBodyRegionVisuals.js";
 
 const VIEW_SET = new Set(["summary", "detail", "evidence", "next", "explain", "dialogue"]);
 const MODE_SET = new Set(["simple", "visual", "difference"]);
@@ -439,6 +440,44 @@ function svgMarker(x, y, label, value, className, side = "above") {
   return `<g class="${escapeHtml(className)}" data-label-side="${escapeHtml(side)}"><circle cx="${x.toFixed(1)}" cy="${y}" r="6"></circle><text x="${x.toFixed(1)}" y="${labelY}" text-anchor="middle">${escapeHtml(label)}</text><text x="${x.toFixed(1)}" y="${valueY}" text-anchor="middle">${escapeHtml(number(value))}</text></g>`;
 }
 
+function prototypeViewForRegion(regionId = "") {
+  return PROTOTYPE_BODY_VIEWS.find((view) => view.paths.some(([id]) => id === regionId)) || null;
+}
+
+function renderBodyRegionLocator(output, region) {
+  const view = prototypeViewForRegion(region?.regionId || "");
+  if (!view || !region) return "";
+  const regionLabels = new Map((output?.current?.regions || []).map((item) => [item.regionId, item.label]));
+  const paths = view.paths.map(([regionId, d]) => {
+    const isFocus = regionId === region.regionId;
+    const label = regionLabels.get(regionId) || regionId;
+    return \`<path class="interpretation-body-region \${isFocus ? "is-focus" : "is-muted"}" data-region-id="\${escapeHtml(regionId)}" d="\${escapeHtml(d)}"><title>\${escapeHtml(isFocus ? \`注目: \${label}\` : label)}</title></path>\`;
+  }).join("");
+  return \`<figure class="interpretation-body-locator" data-focus-region="\${escapeHtml(region.regionId)}">
+    <svg class="interpretation-body-locator-svg" viewBox="70 8 160 424" role="img" aria-label="\${escapeHtml(\`人体図で\${region.label}を強調\`)}">
+      <g class="interpretation-body-silhouette">\${view.silhouette}</g>
+      <g class="interpretation-body-regions">\${paths}</g>
+    </svg>
+    <figcaption><small>\${escapeHtml(view.title)}で位置を確認</small><strong>注目: \${escapeHtml(region.label)}</strong></figcaption>
+  </figure>\`;
+}
+
+function renderComparisonArrow(fromX, toX, y, originLabel) {
+  if (fromX == null || toX == null) return "";
+  if (Math.abs(toX - fromX) < 2) {
+    return \`<g class="interpretation-comparison-same-position" data-arrow-origin="\${escapeHtml(originLabel)}"><circle cx="\${toX.toFixed(1)}" cy="\${y}" r="11"></circle></g>\`;
+  }
+  const direction = toX > fromX ? 1 : -1;
+  const startX = fromX + direction * 10;
+  const endX = toX - direction * 10;
+  const backX = endX - direction * 8;
+  const headPath = \`M \${endX.toFixed(1)} \${y} L \${backX.toFixed(1)} \${(y - 5).toFixed(1)} L \${backX.toFixed(1)} \${(y + 5).toFixed(1)} Z\`;
+  return \`<g class="interpretation-comparison-direction" data-arrow-origin="\${escapeHtml(originLabel)}">
+    <line class="interpretation-comparison-arrow" x1="\${startX.toFixed(1)}" y1="\${y}" x2="\${endX.toFixed(1)}" y2="\${y}" pathLength="1"></line>
+    <path class="interpretation-comparison-arrowhead" d="\${headPath}"></path>
+  </g>\`;
+}
+
 function renderRegionalVisual(output) {
   const region = focusRegion(output);
   if (!region) return '<p>図にできる部位別結果がありません。</p>';
@@ -450,16 +489,25 @@ function renderRegionalVisual(output) {
   const xPrevious = visualX(previous, domain);
   const previousSide = markerSide(xPrevious, xRef, "above");
   const currentSide = markerSide(xCurrent, xRef, previousSide === "below" ? "above" : "below");
-  return `<article class="interpretation-visual-card"><div class="interpretation-visual-card__head"><small>選択した1部位の中で比較</small><h2>${escapeHtml(region.label)}</h2></div>
-    <svg class="interpretation-comparison-svg" viewBox="0 0 320 132" role="img" aria-label="${escapeHtml(`${region.label}の前回・基準100・今回の位置`)}">
-      <line class="interpretation-comparison-axis" x1="36" y1="64" x2="284" y2="64"></line>
-      ${svgMarker(xPrevious, 64, "前回", previous, "marker-previous", previousSide)}
-      ${svgMarker(xRef, 64, "基準", 100, "marker-reference", "above")}
-      ${svgMarker(xCurrent, 64, "今回", region.value, "marker-current", currentSide)}
-    </svg>
-    <p class="source-boundary">この図は${escapeHtml(region.label)}の中だけで比較します。別の部位との大小比較には使いません。</p></article>`;
+  const arrowOriginX = xPrevious ?? xRef;
+  const arrowOriginLabel = xPrevious == null ? "reference" : "previous";
+  const directionLabel = xPrevious == null ? "基準100 → 今回" : "前回 → 今回";
+  return \`<article class="interpretation-visual-card interpretation-visual-card--regional"><div class="interpretation-visual-card__head"><small>選択した1部位の中で比較</small><h2>\${escapeHtml(region.label)}</h2></div>
+    <div class="interpretation-regional-visual">
+      \${renderBodyRegionLocator(output, region)}
+      <div class="interpretation-local-comparison">
+        <div class="interpretation-visual-direction"><small>比較方向</small><strong>\${escapeHtml(directionLabel)}</strong><span>矢印は比較の向きだけを示します。</span></div>
+        <svg class="interpretation-comparison-svg interpretation-comparison-svg--directional" viewBox="0 0 320 132" role="img" aria-label="\${escapeHtml(\`\${region.label}の前回・基準100・今回の位置。矢印は\${directionLabel}の比較方向を示す\`)}">
+          <line class="interpretation-comparison-axis" x1="36" y1="64" x2="284" y2="64"></line>
+          \${renderComparisonArrow(arrowOriginX, xCurrent, 64, arrowOriginLabel)}
+          \${svgMarker(xPrevious, 64, "前回", previous, "marker-previous", previousSide)}
+          \${svgMarker(xRef, 64, "基準100", 100, "marker-reference", "above")}
+          \${svgMarker(xCurrent, 64, "今回", region.value, "marker-current", currentSide)}
+        </svg>
+      </div>
+    </div>
+    <p class="source-boundary">人体図の強調は注目する位置を示します。比較図は\${escapeHtml(region.label)}の中だけで読み、色や矢印から危険・安全・改善・悪化を判断しません。別の部位との大小比較にも使いません。</p></article>\`;
 }
-
 function renderRofVisual(output) {
   const rof = output?.current?.rof || {};
   if (!Number.isFinite(rof.pre) || !Number.isFinite(rof.post)) return "";
