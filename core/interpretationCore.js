@@ -2,8 +2,8 @@
 // Deterministic, read-only interpretation of persisted RunLoad outputs.
 // This module does not calculate or modify Primary Regional Reference-100 or ROF-J values.
 
-export const INTERPRETATION_CORE_VERSION = "runload-interpretation-core-v1.0";
-export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V1";
+export const INTERPRETATION_CORE_VERSION = "runload-interpretation-core-v1.1";
+export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V2";
 export const INTERPRETATION_EVIDENCE_CONTRACT = "PERSISTED_RESULT_PROVENANCE_V1";
 
 const NORMAL_PLAN_BLOCK = "normal_plan_suggestions";
@@ -421,6 +421,204 @@ function buildSummaryTokens(currentRegions, regionalById, conditionSummary, rof)
   ]);
 }
 
+
+function meaningDirectionKey(direction = "") {
+  if (direction === "ABOVE_REFERENCE") return "above";
+  if (direction === "REFERENCE_VICINITY") return "near";
+  if (direction === "BELOW_REFERENCE") return "below";
+  return "";
+}
+
+function orderedRegionCandidates(currentRegions = [], predicate = () => true) {
+  return currentRegions
+    .filter((region) => finite(region.value))
+    .filter(predicate)
+    .sort((a, b) => a.formalOrder - b.formalOrder || String(a.regionId).localeCompare(String(b.regionId)));
+}
+
+function firstRegionId(currentRegions = [], predicate = () => true) {
+  return orderedRegionCandidates(currentRegions, predicate)[0]?.regionId || "";
+}
+
+function regionalDifferenceIds(currentRegions = [], regionalById = {}) {
+  return Object.freeze(orderedRegionCandidates(
+    currentRegions,
+    (region) => ["UP", "DOWN"].includes(regionalById[region.regionId]?.previousDirection),
+  ).map((region) => region.regionId));
+}
+
+function repeatedObservationCandidate(currentRegions = [], regionalById = {}) {
+  for (const region of orderedRegionCandidates(
+    currentRegions,
+    (candidate) => ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(candidate.referenceDirection),
+  )) {
+    const comparison = regionalById[region.regionId];
+    const key = meaningDirectionKey(region.referenceDirection);
+    const pastMatchingCount = Number(comparison?.historyReferenceDirectionCounts?.[key] || 0);
+    if (comparison?.historyComparableCount >= 2 && pastMatchingCount >= 2) {
+      return Object.freeze({
+        regionId: region.regionId,
+        currentDirection: region.referenceDirection,
+        pastMatchingCount,
+        pastComparableCount: Number(comparison.historyComparableCount || 0),
+      });
+    }
+  }
+  return null;
+}
+
+function focusRegionIdForMeaning(currentRegions = [], regionalById = {}, selectedRegionId = "") {
+  if (selectedRegionId && currentRegions.some((region) => region.regionId === selectedRegionId && finite(region.value))) {
+    return selectedRegionId;
+  }
+  const repeated = repeatedObservationCandidate(currentRegions, regionalById);
+  if (repeated?.regionId) return repeated.regionId;
+  const changed = firstRegionId(currentRegions, (region) => ["UP", "DOWN"].includes(regionalById[region.regionId]?.previousDirection));
+  if (changed) return changed;
+  const referenceDifference = firstRegionId(currentRegions, (region) => ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(region.referenceDirection));
+  if (referenceDifference) return referenceDifference;
+  return firstRegionId(currentRegions);
+}
+
+function buildMeaningFacts({ currentRegions, regionalById, conditionSummary, rof, focusRegionId, repeated }) {
+  const facts = [];
+  const region = currentRegions.find((item) => item.regionId === focusRegionId) || null;
+  const comparison = focusRegionId ? regionalById[focusRegionId] : null;
+
+  if (region) {
+    facts.push(Object.freeze({
+      type: "REGION_CURRENT_REFERENCE",
+      regionId: region.regionId,
+      label: region.label,
+      value: region.value,
+      referenceDirection: region.referenceDirection,
+    }));
+  }
+
+  if (region && comparison?.comparablePreviousRecordId && finite(comparison.delta)) {
+    facts.push(Object.freeze({
+      type: "REGION_PREVIOUS_DIFFERENCE",
+      regionId: region.regionId,
+      label: region.label,
+      currentValue: region.value,
+      previousValue: comparison.previousValue,
+      delta: comparison.delta,
+      direction: comparison.previousDirection,
+      previousRecordId: comparison.comparablePreviousRecordId,
+      previousDate: comparison.comparablePreviousDate,
+    }));
+  }
+
+  if (repeated && repeated.regionId === focusRegionId) {
+    facts.push(Object.freeze({
+      type: "REGION_REPEATED_DIRECTION",
+      regionId: repeated.regionId,
+      currentDirection: repeated.currentDirection,
+      pastMatchingCount: repeated.pastMatchingCount,
+      pastComparableCount: repeated.pastComparableCount,
+    }));
+  }
+
+  if (finite(rof?.pre) && finite(rof?.post) && finite(rof?.delta)) {
+    facts.push(Object.freeze({
+      type: "ROF_PRE_POST",
+      pre: Number(rof.pre),
+      post: Number(rof.post),
+      delta: Number(rof.delta),
+      direction: String(rof.direction || ""),
+    }));
+  }
+
+  if (conditionSummary?.differences?.length) {
+    facts.push(Object.freeze({
+      type: "CONDITION_DIFFERENCES",
+      count: conditionSummary.differences.length,
+      labels: Object.freeze(conditionSummary.differences.map((item) => String(item.labelToken || item.id || "")).filter(Boolean)),
+      previousRecordId: String(conditionSummary.previousRecordId || ""),
+      previousDate: String(conditionSummary.previousDate || ""),
+    }));
+  }
+
+  return Object.freeze(facts.slice(0, 5));
+}
+
+function meaningBoundaryCodes(primaryCode, rof, conditionSummary) {
+  const codes = ["NO_DIAGNOSIS", "NO_INJURY_RISK", "NO_SAFETY_OR_RUN_PERMISSION", "NO_CROSS_REGION_RANKING"];
+  const regionalAndCondition = primaryCode === "CONDITION_AND_RESULT_CHANGED" || Boolean(conditionSummary?.differences?.length);
+  if (regionalAndCondition) codes.push("NO_CAUSAL_INFERENCE");
+  if (finite(rof?.pre) && finite(rof?.post)) codes.push("ROF_SEPARATE_SUBJECTIVE_LAYER");
+  return Object.freeze(codes);
+}
+
+export function buildMeaningFrame({ targetExperience = null, currentRegions = [], regionalById = {}, conditionSummary = null, rof = null, safety = null, availability = null, selectedRegionId = "" } = {}) {
+  if (!targetExperience?.record) {
+    return Object.freeze({
+      primaryCode: "NO_TARGET_RECORD",
+      secondaryCodes: Object.freeze([]),
+      focusRegionIds: Object.freeze([]),
+      availableModes: Object.freeze([]),
+      factsUsed: Object.freeze([]),
+      boundaryCodes: Object.freeze([]),
+    });
+  }
+
+  const resolvedSafety = safety || { route: "normal" };
+  const resolvedAvailability = availability || {};
+  const semanticState = String(targetExperience?.regionalSemanticState || "");
+  const differenceIds = regionalDifferenceIds(currentRegions, regionalById);
+  const hasRegionalDifference = differenceIds.length > 0;
+  const hasRofDifference = finite(rof?.delta) && Math.abs(Number(rof.delta)) >= 1;
+  const hasConditionDifference = Boolean(conditionSummary?.differences?.length);
+  const repeated = repeatedObservationCandidate(currentRegions, regionalById);
+  const focusRegionId = focusRegionIdForMeaning(currentRegions, regionalById, selectedRegionId);
+
+  let primaryCode = "COMPARISON_BASELINE";
+  if (resolvedSafety.route && resolvedSafety.route !== "normal") {
+    primaryCode = "SUPPORT_PRIORITY";
+  } else if (!resolvedAvailability.regional || semanticState.startsWith("LEGACY")) {
+    primaryCode = "LIMITED_RESULT";
+  } else if (repeated) {
+    primaryCode = "REPEATED_OBSERVATION";
+  } else if (hasRegionalDifference && hasConditionDifference) {
+    primaryCode = "CONDITION_AND_RESULT_CHANGED";
+  } else if (hasRegionalDifference && hasRofDifference) {
+    primaryCode = "MULTI_LAYER_CHANGE";
+  } else if (hasRegionalDifference) {
+    primaryCode = "CURRENT_SHIFT_WITH_HISTORY";
+  } else if (currentRegions.some((region) => ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(region.referenceDirection))) {
+    primaryCode = "CURRENT_REFERENCE_PATTERN";
+  }
+
+  const secondaryCodes = [];
+  if (primaryCode !== "REPEATED_OBSERVATION" && repeated) secondaryCodes.push("REPEATED_OBSERVATION");
+  if (primaryCode !== "CONDITION_AND_RESULT_CHANGED" && hasRegionalDifference && hasConditionDifference) secondaryCodes.push("CONDITION_AND_RESULT_CHANGED");
+  if (primaryCode !== "MULTI_LAYER_CHANGE" && hasRegionalDifference && hasRofDifference) secondaryCodes.push("MULTI_LAYER_CHANGE");
+  if (primaryCode !== "CURRENT_SHIFT_WITH_HISTORY" && hasRegionalDifference) secondaryCodes.push("CURRENT_SHIFT_WITH_HISTORY");
+  if (hasRofDifference) secondaryCodes.push("ROF_PRE_POST_CHANGE");
+  if (hasConditionDifference) secondaryCodes.push("CONDITION_DIFFERENCES_PRESENT");
+
+  const availableModes = ["simple"];
+  if (focusRegionId) availableModes.push("visual");
+  if (hasRegionalDifference || hasRofDifference || hasConditionDifference) availableModes.push("difference");
+  if (resolvedAvailability.persistedEvidence) availableModes.push("evidence");
+
+  return Object.freeze({
+    primaryCode,
+    secondaryCodes: uniqueStrings(secondaryCodes),
+    focusRegionIds: Object.freeze(focusRegionId ? [focusRegionId] : []),
+    availableModes: uniqueStrings(availableModes),
+    factsUsed: buildMeaningFacts({
+      currentRegions,
+      regionalById,
+      conditionSummary,
+      rof,
+      focusRegionId,
+      repeated,
+    }),
+    boundaryCodes: meaningBoundaryCodes(primaryCode, rof, conditionSummary),
+  });
+}
+
 function limitationCodes(targetExperience, evidence) {
   const codes = [
     "NO_DIAGNOSIS",
@@ -453,8 +651,18 @@ export function buildInterpretationContext({ targetExperience = null, allExperie
   });
   const selectedRegionIds = selectCompactRegions(currentRegions, regionalById, selectedRegionId);
   const evidence = buildEvidenceInterpretation(targetExperience, currentRegions);
+  const meaning = buildMeaningFrame({
+    targetExperience,
+    currentRegions,
+    regionalById,
+    conditionSummary,
+    rof,
+    safety,
+    availability,
+    selectedRegionId,
+  });
   const actions = resolveInterpretationActions({ targetExperience, availability, safety, origin, selectedRegionId });
-  return Object.freeze({ currentRegions, regionalById, conditionSummary, rof, safety, availability, selectedRegionIds, evidence, actions });
+  return Object.freeze({ currentRegions, regionalById, conditionSummary, rof, safety, availability, selectedRegionIds, evidence, meaning, actions });
 }
 
 export function buildCurrentRunInterpretation(context = {}) {
@@ -481,7 +689,7 @@ export function buildRunLoadInterpretation({ targetExperience = null, allExperie
       availability: Object.freeze({ regional: false, previousRegional: false, regionalHistory: false, rofPair: false, rofRecentPre: false, rofRecentPost: false, rofRecentDelta: false, conditionComparison: false, persistedEvidence: false }),
       current: Object.freeze({ facts: Object.freeze({}), regions: Object.freeze([]), rof: buildRofJInterpretation(null, {}) }),
       comparison: Object.freeze({ stableTargetKey: "", regionalById: Object.freeze({}), conditionDifferences: Object.freeze([]), conditionPreviousRecordId: "", conditionPreviousDate: "", rofRecentReferences: Object.freeze({ pre: null, post: null, delta: null }) }),
-      interpretation: Object.freeze({ summaryCodes: Object.freeze(["NO_TARGET_RECORD"]), summaryTokens: Object.freeze([]), selectedRegionIds: Object.freeze([]), limitationCodes: Object.freeze([]) }),
+      interpretation: Object.freeze({ summaryCodes: Object.freeze(["NO_TARGET_RECORD"]), summaryTokens: Object.freeze([]), selectedRegionIds: Object.freeze([]), limitationCodes: Object.freeze([]), meaning: buildMeaningFrame() }),
       evidence: Object.freeze({ contract: INTERPRETATION_EVIDENCE_CONTRACT, regions: Object.freeze({}), completeness: Object.freeze({ completePerContributionTrace: false, wordingCode: "DO_NOT_CLAIM_FULL_BIBLIOGRAPHY" }) }),
       safety,
       actions: Object.freeze([action("record", "RECORD", "record-input")]),
@@ -540,6 +748,7 @@ export function buildRunLoadInterpretation({ targetExperience = null, allExperie
       summaryTokens,
       selectedRegionIds: ctx.selectedRegionIds,
       limitationCodes: limitationCodes(targetExperience, ctx.evidence),
+      meaning: ctx.meaning,
     }),
     evidence: ctx.evidence,
     safety: ctx.safety,
