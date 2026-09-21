@@ -543,6 +543,30 @@ function renderCurrentShiftUnderstanding(output) {
   return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`${region.label}は、比較可能な前回${number(comparison.previousValue)}から今回${number(region.value)}へ、同じ部位内で表示位置が変わっています。`)}</p></div>`;
 }
 
+function renderMultiLayerVisual(output) {
+  const regional = renderRegionalVisual(output);
+  const rof = renderRofVisual(output);
+  if (!rof) return regional;
+  return `<div class="interpretation-layer-pair" data-layer-pair="separate-scales">
+    <section class="interpretation-layer-lane" data-information-layer="regional">
+      <small>情報1 · 部位別結果</small>
+      ${regional}
+    </section>
+    <div class="interpretation-layer-separator">別の尺度</div>
+    <section class="interpretation-layer-lane" data-information-layer="rof">
+      <small>情報2 · 主観情報</small>
+      ${rof}
+    </section>
+  </div>`;
+}
+
+function renderMultiLayerUnderstanding(output) {
+  if (meaning(output).primaryCode !== "MULTI_LAYER_CHANGE") return "";
+  const region = focusRegion(output);
+  if (!region) return "";
+  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`今回は、${region.label}の部位別表示と走行前後の疲労感の両方に違いがあります。2つは別の尺度で、どちらか一方をもう一方の原因として扱いません。`)}</p></div>`;
+}
+
 function renderRofVisual(output) {
   const rof = output?.current?.rof || {};
   if (!Number.isFinite(rof.pre) || !Number.isFinite(rof.post)) return "";
@@ -563,21 +587,28 @@ function renderVisualExplanation(output, origin) {
   const region = focusRegion(output);
   const currentShiftPattern = code === "CURRENT_SHIFT_WITH_HISTORY";
   const conditionResultPattern = code === "CONDITION_AND_RESULT_CHANGED";
+  const multiLayerPattern = code === "MULTI_LAYER_CHANGE";
   const lead = currentShiftPattern && region
     ? `まず${region.label}の位置を確認し、比較可能な前回から今回への違いだけを見ます。`
     : conditionResultPattern && region
       ? `まず${region.label}の前回との差を確認し、走行条件の違いは別枠で確認します。`
-      : "同じ解釈を、数値の位置関係に変えて確認します。";
+      : multiLayerPattern && region
+        ? `${region.label}の部位別表示と主観的な疲労感を、別の尺度として順に確認します。`
+        : "同じ解釈を、数値の位置関係に変えて確認します。";
   const visualPattern = currentShiftPattern
     ? "locate-compare"
     : conditionResultPattern
       ? "condition-result-separated"
-      : "general";
+      : multiLayerPattern
+        ? "separate-layers"
+        : "general";
   const visualBody = currentShiftPattern
     ? `${renderRegionalVisual(output)}${renderCurrentShiftUnderstanding(output)}`
     : conditionResultPattern
       ? `${renderRegionalVisual(output)}${renderConditionContext(output)}${renderConditionResultUnderstanding(output)}`
-      : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
+      : multiLayerPattern
+        ? `${renderMultiLayerVisual(output)}${renderMultiLayerUnderstanding(output)}`
+        : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
   return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual" data-visual-pattern="${visualPattern}">
     <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>${escapeHtml(lead)}</p></header>
     <section class="interpretation-visual-stack">${visualBody}</section>
