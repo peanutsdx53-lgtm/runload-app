@@ -180,7 +180,6 @@
   .interpretation-inline-actions .button { width: 100%; }
 }
 
-
 /* Keep wide detail tables inside the Room viewport; the table wrapper owns horizontal scrolling. */
 .screen--interpretation-room,
 .interpretation-room-view,
@@ -188,7 +187,6 @@
 .interpretation-table-wrap {
   min-width: 0;
 }
-
 
 /* Stage 6: meaning-first explanation surfaces. */
 .interpretation-primary--meaning h1 {
