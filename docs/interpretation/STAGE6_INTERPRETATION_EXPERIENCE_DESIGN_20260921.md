@@ -64,19 +64,19 @@ The first matching code wins in deterministic priority order:
    - wording must use explicit record counts;
    - do not label it as a personal trait/tendency.
 
-4. `CURRENT_SHIFT_WITH_HISTORY`
-   - compatible previous record exists and one or more focus regions changed by >=1 point;
-   - meaning is "this run differs from the comparable previous run", not "it got better/worse".
+4. `CONDITION_AND_RESULT_CHANGED`
+   - regional difference and factual running-condition difference coexist;
+   - meaning is that cause cannot be isolated from this comparison;
+   - user can separate conditions in a later comparison.
 
 5. `MULTI_LAYER_CHANGE`
    - regional difference and ROF-J pre/post difference are both available;
    - meaning is that objective-model output and subjective fatigue both changed in this record;
    - no causal connection.
 
-6. `CONDITION_AND_RESULT_CHANGED`
-   - regional difference and factual running-condition difference coexist;
-   - meaning is that cause cannot be isolated from this comparison;
-   - user can separate conditions in a later comparison.
+6. `CURRENT_SHIFT_WITH_HISTORY`
+   - compatible previous record exists and one or more focus regions changed by >=1 point;
+   - meaning is "this run differs from the comparable previous run", not "it got better/worse".
 
 7. `CURRENT_REFERENCE_PATTERN`
    - current regional values are available but compatible history is insufficient;
