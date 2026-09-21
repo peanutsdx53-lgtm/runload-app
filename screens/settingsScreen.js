@@ -30,7 +30,7 @@ function renderDisplaySetting({ eyebrow, title, name, current, options, theme = 
 
 function renderSavedShoes(settings = {}) {
   const savedShoes = Array.isArray(settings.savedShoes) ? settings.savedShoes : [];
-  if (!savedShoes.length) return '<p class="note">保存シューズはありません。</p>';
+  if (!savedShoes.length) return '<div class="settings-empty-state"><strong>保存シューズはまだありません</strong><span>記録画面の「今回のシューズ」で保存すると、ここで管理できます。</span></div>';
   return `<div class="shoes">${savedShoes.map((shoe) => `<div class="shoe"><span><strong>${escapeHtml(shoe.label || "名称なし")}</strong><small>${escapeHtml([shoe.type, shoe.softness].filter(Boolean).join("・") || "保存済み")}</small></span><button type="button" data-action="remove-saved-shoe" data-shoe-id="${escapeHtml(shoe.id || "")}">削除</button></div>`).join("")}</div>`;
 }
 
