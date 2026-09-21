@@ -15,12 +15,12 @@ const TOPBAR_CONTEXT_LABELS = Object.freeze({
   history: "HISTORY",
   "interpretation-room": "RESULT REVIEW",
   simulation: "SIMULATION",
-  plan: "PLAN",
-  consultation: "SHARE PREP",
-  "support-guidance": "SUPPORT",
-  reading: "READING",
-  privacy: "PRIVACY",
-  settings: "SETTINGS",
+  plan: "HOME",
+  consultation: "MORE",
+  "support-guidance": "MORE",
+  reading: "MORE",
+  privacy: "MORE",
+  settings: "MORE",
   more: "MORE",
 });
 
