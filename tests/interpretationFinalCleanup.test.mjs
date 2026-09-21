@@ -23,7 +23,7 @@ await test('LEGACY-ACTIVATION-URL-REDIRECT-RETAINED',()=>{
 await test('GLOBAL-FEATURE-MENU-DOES-NOT-DUPLICATE-UNDERSTANDING-ENTRY',()=>{
   const architecture=read('ui/screenArchitecture.js');
   const start=architecture.indexOf('export const FEATURE_DESTINATION_GROUPS');
-  const end=architecture.indexOf('const WORKSPACE_BY_SCREEN',start);
+  const end=architecture.indexOf('function route(',start);
   const block=architecture.slice(start,end);
   assert.ok(start>=0 && end>start);
   assert.doesNotMatch(block,/screen:\s*"interpretation-room"|label:\s*"結果を理解する"/);
@@ -46,6 +46,12 @@ await test('RETIRED-ACTIVATION-STYLES-REMOVED',()=>{
   const mobile=read('styles/prototype-mobile-parity.css');
   assert.doesNotMatch(screens,/\.activation-(?:intro|grid|source|card)|\.result-activation-hub/);
   assert.doesNotMatch(mobile,/prototype-parity--activation|\.activation-link(?:-wrap)?/);
+});
+
+await test('UNUSED-SCREEN-ARCHITECTURE-EXPORTS-REMOVED',()=>{
+  const architecture=read('ui/screenArchitecture.js');
+  assert.doesNotMatch(architecture,/renderResultWorkspaceNavigation|resolveScreenWorkspace|renderManagementBoundary/);
+  assert.match(architecture,/renderRecordsWorkspaceNavigation/);
 });
 
 await test('FINAL-CLEANUP-PWA-REVISION-IS-PRESENT',()=>{
