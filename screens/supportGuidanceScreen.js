@@ -9,7 +9,8 @@ function supportReturnTarget(context) {
 export function renderSupportGuidanceScreen({ context } = {}) {
   const backHref = supportReturnTarget(context);
   const backLabel = backHref.startsWith("#/record-input") ? "身体の記録へ戻る" : "その他へ戻る";
-  return `<div class="screen screen--support-guidance prototype-parity prototype-parity--support">
+  return `<div class="screen screen--support-guidance prototype-parity prototype-parity--support secondary-derived-screen">
+    <a class="secondary-derived-back" href="${backHref}">← ${backLabel}</a>
     <section class="head"><p class="eyebrow">PUBLIC SUPPORT</p><h1>公的サポート</h1><p>症状や体調について、RunLoadとは別の公的な窓口を確認します。</p></section>
     <p class="notice">この画面はRunLoadの部位ごとの目安や疲労感の値から緊急性を判定するものではありません。</p><p class="visually-hidden">RunLoadの数値表示ではなく、本人の症状や体調をもとに公的窓口を選びます。RunLoadは緊急性、診断、受診要否を判定しません。</p>
     <div class="cards">
