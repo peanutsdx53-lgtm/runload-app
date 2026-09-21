@@ -1156,3 +1156,38 @@
     max-width: 100%;
   }
 }
+
+/* GPX: keep explanatory content readable while allowing the elevation chart to use width. */
+@media (min-width: 80rem) {
+  .screen--gpx-analysis.prototype-parity--gpx {
+    width: min(100%, 72rem);
+    margin-inline: auto;
+  }
+
+  .screen--gpx-analysis.prototype-parity--gpx :is(
+    .intro,
+    .import-card,
+    .status-card,
+    .candidate-card,
+    .compact-boundary
+  ) {
+    width: min(100%, 54rem);
+  }
+
+  .screen--gpx-analysis.prototype-parity--gpx .file-button {
+    width: 15rem;
+    max-width: 100%;
+  }
+
+  .screen--gpx-analysis.prototype-parity--gpx .profile-card,
+  .screen--gpx-analysis.prototype-parity--gpx .summary-grid {
+    width: 100%;
+  }
+
+  .screen--gpx-analysis.prototype-parity--gpx .profile-frame #gpx-profile-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 18rem;
+  }
+}
