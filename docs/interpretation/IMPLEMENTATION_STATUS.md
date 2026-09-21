@@ -366,7 +366,7 @@ Release state:
 - no merge or Current promotion has been performed
 
 ## Stage 8 — Understanding-Focused Visual Interpretation
-Status: **WORK PLAN APPROVED — IMPLEMENTATION NOT YET STARTED**
+Status: **STAGE 8A FIRST BATCH IMPLEMENTED AND VERIFIED — AWAITING USER VISUAL ACCEPTANCE**
 
 Controlling work plan:
 - `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
@@ -399,7 +399,7 @@ Implementation principles:
 - downstream History / Simulation / Plan / Consultation / Reading functions remain separate and are only bridged to.
 
 Planned sequence:
-- Stage 8A: reusable visual primitives — body-region focus, comparison arrow, Reference-100/current markers, ROF-J lane;
+- Stage 8A: first reusable visual batch — **implemented**: one body-region focus, local previous/Reference-100/current direction, one-time accent emphasis, reduced-motion static equivalent. ROF-J remains separate and unchanged in this batch;
 - Stage 8B: map Meaning Core codes to visual explanation patterns;
 - Stage 8C: integrate visuals into the Stage 7 guided dialogue;
 - Stage 8D: strengthen explanation → next self-management observation/function bridge;
@@ -422,22 +422,51 @@ Baseline before Stage 8:
 - PR #49 remains Draft
 - main and formal Current remain untouched
 
+## Stage 8A first-batch checkpoint — 2026-09-21
+
+Durable audit:
+- `docs/interpretation/STAGE8A_VISUAL_FOUNDATION_AUDIT_20260921.md`
+
+Implemented:
+- one selected body region is located using the existing prototype body-region visual definitions;
+- non-selected paths are muted and the focus region uses the ordinary theme accent;
+- the local comparison shows previous → current when strict compatible history exists;
+- when compatible previous is unavailable, the visual correctly falls back to Reference-100 → current;
+- the arrow communicates comparison direction only;
+- one-time focus/current emphasis is short and non-looping;
+- Reduced Motion shows the same final focus, markers and complete arrow with no animation;
+- the existing ROF-J 0–10 visual remains a separate scale;
+- the reused body-region visual module is included in the PWA precache set.
+
+Verification at this checkpoint:
+- pre-Stage-8 durable branch baseline: 371/371 PASS;
+- audited Current/local baseline verification: 273/273 PASS, 17 suites, 77 syntax files, 0 syntax failures;
+- current Stage 8A production-source focused checks: 8/8 PASS;
+- current Stage 7/Stage 6/Stage 8A/PWA cross-surface checks: 15/15 PASS;
+- 390 px render: viewport 390 px / scroll width 390 px, no horizontal overflow;
+- comparison label overlap count: 0;
+- exactly one body region focused;
+- Reduced Motion: arrow final state visible immediately, focus/current animations disabled;
+- protected Primary SHA-256 unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`;
+- protected ROF-J SHA-256 unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`.
+
+Important verification boundary:
+- the 273/273 result is the independently verified audited Current/main baseline, not a claim that the full feature branch was rerun locally;
+- the full Stage 8E regression remains a later mandatory gate.
+
+Release state:
+- PR #49 remains intended to stay Draft;
+- no merge to main has been performed;
+- formal Current remains untouched;
+- Stage 8B has not started.
+
 ## Current next action
 
-Do not begin broad visual implementation from memory or ad-hoc ideas.
+Present the 390 px Stage 8A first-batch visual for user review.
 
-When implementation resumes, read the Stage 8 work plan first and start with **Stage 8A only**. Build and visually review the reusable understanding primitives before connecting them to all Meaning Core cases.
+Do **not** begin Stage 8B until that visual result is reviewed and accepted.
 
-The first recommended implementation batch is:
-- one focus-body-region visual;
-- one local previous/reference/current arrow visual;
-- one-time accent focus emphasis;
-- reduced-motion static equivalent;
-- no route redesign and no downstream-function changes in the same batch.
-
-After that batch, run regression and 390 px visual review before proceeding to Stage 8B.
-
-Do not merge PR #49 and do not promote formal Current during Stage 8 development.
+If accepted, Stage 8B may then map one Meaning Core context at a time to the approved visual primitives. Do not bulk-map all meaning codes in one implementation batch.
 
 ## Stop conditions
 
