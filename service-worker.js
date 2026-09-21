@@ -1,5 +1,5 @@
-// Runtime revision: pwa-delivery-refresh-20260921-12
-const CACHE_NAME = "runload-app-current-20260921-12";
+// Runtime revision: required-controls-unified-20260921-13
+const CACHE_NAME = "runload-app-current-20260921-13";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
