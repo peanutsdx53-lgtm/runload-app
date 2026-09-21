@@ -1,14 +1,22 @@
 function supportReturnTarget(context) {
   const recordId = String(context?.parameters?.get?.("recordId") || "");
   const returnTo = String(context?.parameters?.get?.("returnTo") || "");
-  if (returnTo === "#/record-input?subflow=subjective") return returnTo;
+  if (
+    returnTo.startsWith("#/consultation")
+    || returnTo.startsWith("#/record-input")
+    || returnTo.startsWith("#/more")
+  ) return returnTo;
   if (recordId) return `#/record-input?recordId=${encodeURIComponent(recordId)}&subflow=subjective`;
   return "#/more";
 }
 
 export function renderSupportGuidanceScreen({ context } = {}) {
   const backHref = supportReturnTarget(context);
-  const backLabel = backHref.startsWith("#/record-input") ? "身体の記録へ戻る" : "その他へ戻る";
+  const backLabel = backHref.startsWith("#/record-input")
+    ? "身体の記録へ戻る"
+    : backHref.startsWith("#/consultation")
+      ? "共有用の整理へ戻る"
+      : "その他へ戻る";
   return `<div class="screen screen--support-guidance prototype-parity prototype-parity--support secondary-derived-screen">
     <a class="secondary-derived-back" href="${backHref}">← ${backLabel}</a>
     <section class="head"><p class="eyebrow">PUBLIC SUPPORT</p><h1>公的サポート</h1><p>症状や体調について、RunLoadとは別の公的な窓口を確認します。</p></section>
