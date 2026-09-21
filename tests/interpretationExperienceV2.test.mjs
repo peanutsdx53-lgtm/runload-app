@@ -61,9 +61,10 @@ function baseOutput(primaryCode='CONDITION_AND_RESULT_CHANGED'){
 
 await test('SUMMARY-ANSWERS-WHAT-TO-UNDERSTAND-FIRST',()=>{
   const html=renderInterpretationRoom({output:baseOutput(),view:'summary',origin:'result'});
-  assert.match(html,/今回の読み方/);
+  assert.match(html,/今回のRunLoad解釈/);
   assert.match(html,/股関節部の表示と坂の条件の両方が変わっています/);
-  assert.match(html,/どの条件が結果の違いに関係したかは分けられません/);
+  assert.match(html,/原因として結び付けません/);
+  assert.match(html,/今、確認したいことはどちらですか/);
   assert.doesNotMatch(html,/今回の12部位では/);
   assert.doesNotMatch(html,/基準より上が\d+部位/);
 });
@@ -73,7 +74,6 @@ await test('REPEATED-OBSERVATION-USES-COUNTS-NOT-TRAIT-LANGUAGE',()=>{
   out.interpretation.meaning.factsUsed.splice(2,0,{type:'REGION_REPEATED_DIRECTION',regionId:'BA-DISP-014',currentDirection:'ABOVE_REFERENCE',pastMatchingCount:3,pastComparableCount:4});
   const html=renderInterpretationRoom({output:out,view:'summary'});
   assert.match(html,/過去4件のうち3件/);
-  assert.match(html,/今回だけの表示ではなく/);
   assert.doesNotMatch(html,/あなたは[^。]*(?:傾向|体質)|負担がかかりやすい/);
 });
 
@@ -81,7 +81,7 @@ await test('MULTI-LAYER-MEANING-KEEPS-SUBJECTIVE-AND-REGIONAL-SEPARATE',()=>{
   const out=baseOutput('MULTI_LAYER_CHANGE');
   out.comparison.conditionDifferences=[];
   const html=renderInterpretationRoom({output:out,view:'summary'});
-  assert.match(html,/2つを別の情報として確認する記録/);
+  assert.match(html,/部位別表示と走行前後の疲労感の両方に違いがあります/);
   assert.match(html,/原因として扱いません/);
 });
 
@@ -122,11 +122,13 @@ await test('DIFFERENCE-MODE-SEPARATES-THREE-INFORMATION-LAYERS',()=>{
   assert.match(html,/原因として結び付けません/);
 });
 
-await test('SUMMARY-OFFERS-FOUR-REPRESENTATION-CHANGES',()=>{
+await test('SUMMARY-NARROWS-TO-TWO-INTENTS-BEFORE-REPRESENTATION-CHOICES',()=>{
   const html=renderInterpretationRoom({output:baseOutput(),view:'summary'});
-  const count=(html.match(/class="interpretation-view-choice"/g)||[]).length;
-  assert.equal(count,4);
-  for(const text of ['簡単に見る','図で見る','違いだけ見る','根拠を見る']) assert.match(html,new RegExp(text));
+  const count=(html.match(/class="interpretation-dialogue-choice"/g)||[]).length;
+  assert.equal(count,2);
+  assert.match(html,/この結果を理解したい/);
+  assert.match(html,/次にどう活かすか考えたい/);
+  assert.doesNotMatch(html,/簡単に見る|図で見る|違いだけ見る|根拠を見る/);
 });
 
 await test('SUPPORT-PRIORITY-HIDES-ORDINARY-EXPLANATION-MODES',()=>{
@@ -142,11 +144,12 @@ await test('SUPPORT-PRIORITY-HIDES-ORDINARY-EXPLANATION-MODES',()=>{
   assert.doesNotMatch(html,/別の見方で確認/);
 });
 
-await test('SCREEN-ALLOWS-EXPLAIN-VIEW-AND-MODE-ONLY',()=>{
+await test('SCREEN-ALLOWS-EXPLAIN-AND-GUIDED-DIALOGUE-STATE',()=>{
   const screen=read('screens/interpretationRoomScreen.js');
-  assert.match(screen,/"explain"/);
+  assert.match(screen,/"dialogue"/);
+  assert.match(screen,/"understand", "manage", "next-use"/);
+  assert.match(screen,/safeParameter\(parameters, "topic", ALLOWED_TOPICS, "understand"\)/);
   assert.match(screen,/"simple", "visual", "difference"/);
-  assert.match(screen,/safeParameter\(parameters, "mode", ALLOWED_MODES, "simple"\)/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
