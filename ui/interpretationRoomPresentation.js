@@ -85,9 +85,9 @@ function route(recordId, origin, values = {}) {
 }
 
 function directionText(direction = "") {
-  if (direction === "ABOVE_REFERENCE") return "基準より上";
-  if (direction === "BELOW_REFERENCE") return "基準より下";
-  if (direction === "REFERENCE_VICINITY") return "基準付近";
+  if (direction === "ABOVE_REFERENCE") return "基準100より上";
+  if (direction === "BELOW_REFERENCE") return "基準100より下";
+  if (direction === "REFERENCE_VICINITY") return "基準100付近";
   return "数値なし";
 }
 
@@ -120,6 +120,7 @@ function primaryMeaningText(output) {
   const region = focusRegion(output);
   const comparison = focusComparison(output);
   const repeated = meaningFact(output, "REGION_REPEATED_DIRECTION");
+  const rof = output?.current?.rof || {};
   const conditions = conditionLabels(output);
   const regionName = region?.label || "選択した部位";
 
@@ -264,8 +265,8 @@ function simpleKnownText(output) {
   const code = meaning(output).primaryCode || "";
   const region = focusRegion(output);
   if (code === "REPEATED_OBSERVATION") return `${region?.label || "選択した部位"}は、今回だけでなく比較可能な過去記録でも同じ方向が複数回あります。`;
-  if (code === "CONDITION_AND_RESULT_CHANGED") return "今回は、部位別結果と走行条件の両方に前回との違いがあります。";
-  if (code === "MULTI_LAYER_CHANGE") return "今回は、部位別結果と主観的な疲労感の両方に違いがあります。";
+  if (code === "CONDITION_AND_RESULT_CHANGED") return `今回は、部位別結果と走行条件の両方に前回との違いがあります。`;
+  if (code === "MULTI_LAYER_CHANGE") return `今回は、部位別結果と主観的な疲労感の両方に違いがあります。`;
   if (code === "CURRENT_SHIFT_WITH_HISTORY") return `${region?.label || "選択した部位"}は、比較可能な前回記録と同じ表示ではありません。`;
   if (code === "CURRENT_REFERENCE_PATTERN") return `${region?.label || "選択した部位"}の今回の位置を、自分の次回比較の出発点にできます。`;
   if (code === "LIMITED_RESULT") return "今回は、直接比較できる情報が十分ではありません。";
@@ -323,7 +324,7 @@ function svgMarker(x, y, label, value, className) {
 
 function renderRegionalVisual(output) {
   const region = focusRegion(output);
-  if (!region) return "<p>図にできる部位別結果がありません。</p>";
+  if (!region) return '<p>図にできる部位別結果がありません。</p>';
   const comparison = focusComparison(output);
   const previous = comparison?.comparablePreviousRecordId ? comparison.previousValue : null;
   const domain = visualDomain([100, region.value, previous]);
