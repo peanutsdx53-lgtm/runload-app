@@ -34,20 +34,55 @@ function updateRecordSubmitAvailability(form) {
   const date = String(form.elements.namedItem("date")?.value || "").trim();
   const distance = Number(form.elements.namedItem("distanceKm")?.value);
   const duration = Number(form.elements.namedItem("durationMinutes")?.value);
-  const ready = Boolean(date) && (activityType === "rest" || (distance > 0 && duration > 0));
+  const distanceReady = distance > 0;
+  const durationReady = duration > 0;
+  const requiredCount = (distanceReady ? 1 : 0) + (durationReady ? 1 : 0);
+  const ready = Boolean(date) && (activityType === "rest" || (distanceReady && durationReady));
   document.querySelectorAll('#record-input-form [type="submit"], [form="record-input-form"][type="submit"]').forEach((button) => { button.disabled = !ready; });
+
   const progress = form.querySelector("[data-prototype-required-progress]");
   if (progress) {
-    if (activityType === "rest") progress.textContent = "休養として保存";
-    else {
-      const count = (distance > 0 ? 1 : 0) + (duration > 0 ? 1 : 0);
-      progress.textContent = `距離・時間 ${count} / 2`;
-    }
+    progress.textContent = activityType === "rest"
+      ? "休養として保存"
+      : `距離・時間 ${requiredCount} / 2`;
   }
+
   const hint = form.querySelector("[data-prototype-save-hint]");
-  if (hint) hint.textContent = activityType === "rest" ? "休養日として保存できます。" : ready ? "必須項目が揃いました。" : "距離と実際に走った時間を入力してください。";
+  if (hint) {
+    hint.textContent = activityType === "rest"
+      ? "休養日として保存できます。"
+      : ready
+        ? "必須項目が揃いました。"
+        : "距離と実際に走った時間を入力してください。";
+  }
+
   const dateDisplay = form.querySelector("[data-prototype-date-display]");
-  if (dateDisplay) dateDisplay.textContent = date ? date.replaceAll("-", "/") : "—";
+  const readableDate = date ? date.replaceAll("-", "/") : "—";
+  if (dateDisplay) dateDisplay.textContent = readableDate;
+
+  const readinessProgress = form.querySelector("[data-save-readiness-progress]");
+  if (readinessProgress) readinessProgress.textContent = activityType === "rest" ? "保存可" : `${requiredCount} / 2`;
+
+  const readinessBar = form.querySelector("[data-save-readiness-bar]");
+  if (readinessBar) readinessBar.style.width = activityType === "rest" ? "100%" : `${requiredCount * 50}%`;
+
+  const activitySummary = form.querySelector("[data-save-context-activity]");
+  if (activitySummary) activitySummary.textContent = activityType === "rest" ? "休養" : "走行";
+
+  const dateSummary = form.querySelector("[data-save-context-date]");
+  if (dateSummary) dateSummary.textContent = readableDate;
+
+  const runChecklist = form.querySelector("[data-save-run-checklist]");
+  if (runChecklist) runChecklist.hidden = activityType === "rest";
+
+  const setChecklistState = (key, complete) => {
+    const row = form.querySelector(`[data-save-check="${key}"]`);
+    const state = form.querySelector(`[data-save-check-state="${key}"]`);
+    if (row) row.classList.toggle("is-complete", complete);
+    if (state) state.textContent = complete ? "入力済み" : "未入力";
+  };
+  setChecklistState("distance", distanceReady);
+  setChecklistState("duration", durationReady);
 }
 
 const SURFACE_CLASS_BY_RECORD_KEY = Object.freeze({
