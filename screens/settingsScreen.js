@@ -49,7 +49,8 @@ export function renderSettingsScreen({ services, context }) {
   const goalValues = new Set(Array.isArray(profile.runningGoalTags) ? profile.runningGoalTags : []);
   const goals = ["健康づくり", "習慣化", "距離を伸ばす", "大会参加", "気分転換", "その他"];
   return `<div class="screen screen--settings prototype-parity prototype-parity--settings secondary-derived-screen">
-    <a class="secondary-derived-back" href="#/more">← その他へ戻る</a>
+    <header class="secondary-derived-head"><a class="secondary-derived-back" href="#/more">← その他へ戻る</a><strong>設定</strong><span aria-hidden="true"></span></header>
+    <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">SETTINGS</p><h1>設定</h1><p>表示、使い回す情報、端末内データをまとめます。</p></section>
     ${saved ? '<p class="parity-save-message" role="status">設定を保存しました。</p>' : ""}
     <form id="journal-settings-form" novalidate>
@@ -105,5 +106,6 @@ export function renderSettingsScreen({ services, context }) {
       <div><small>データ</small><strong>新アプリ公開後に作成した記録だけを対象とする</strong></div>
       <div><small>現在の段階</small><strong>リリース前正規版。スマートフォンUI/UXを仕上げています</strong></div>
     </div></div></details></section>
+    </div>
   </div>`;
 }
