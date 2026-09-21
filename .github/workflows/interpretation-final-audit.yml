@@ -1,6 +1,9 @@
 name: Interpretation Final Audit
 
 on:
+  push:
+    branches:
+      - feature/runload-interpretation-room-v1
   pull_request:
     branches:
       - main
