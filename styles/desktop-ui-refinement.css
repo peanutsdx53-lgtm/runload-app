@@ -1535,3 +1535,170 @@
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: state completeness and odd-card balance ===== */
+@media (min-width: 80rem) {
+  /* History: make the first-use state actionable rather than a large blank card. */
+  .screen--history.prototype-parity--history .empty-records--initial {
+    min-height: 14rem;
+    padding: 1.4rem;
+    display: grid;
+    grid-template-columns: minmax(0, 34rem);
+    place-content: center;
+    justify-content: center;
+    gap: 0.35rem;
+    text-align: center;
+  }
+
+  .screen--history.prototype-parity--history .empty-records--initial small {
+    color: var(--accent);
+    font-size: 0.76rem !important;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+  }
+
+  .screen--history.prototype-parity--history .empty-records--initial strong {
+    margin-top: 0.15rem;
+    color: var(--ink);
+    font-size: 1.12rem !important;
+    line-height: 1.35;
+  }
+
+  .screen--history.prototype-parity--history .empty-records--initial p {
+    margin: 0.15rem 0 0;
+    color: var(--muted);
+    font-size: 0.84rem !important;
+    line-height: 1.55;
+  }
+
+  .screen--history.prototype-parity--history .empty-records--initial a {
+    width: max-content;
+    min-height: 2.75rem;
+    margin: 0.7rem auto 0;
+    padding: 0 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.72rem;
+    background: var(--accent);
+    color: var(--color-on-accent);
+    font-size: 0.84rem !important;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .screen--history.prototype-parity--history .empty-records:not(.empty-records--initial) {
+    min-height: 8rem;
+  }
+
+  /* History: an odd final record becomes an intentional full-width row. */
+  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) {
+    width: 100% !important;
+    grid-column: 1 / -1 !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "head actions"
+      "summary actions"
+      "memo actions";
+    column-gap: 1.2rem;
+    align-items: center;
+  }
+
+  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) .record-item-head {
+    grid-area: head;
+  }
+
+  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) h3 {
+    grid-area: summary;
+  }
+
+  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) > p {
+    grid-area: memo;
+  }
+
+  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) .record-actions {
+    grid-area: actions;
+    margin-top: 0 !important;
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  /* Reading: avoid a centered half-width orphan when the article count is odd. */
+  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+    width: 100% !important;
+    grid-column: 1 / -1 !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1.2rem;
+    align-items: center;
+  }
+
+  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) > :not(.text-link) {
+    grid-column: 1;
+  }
+
+  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) .text-link {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    align-self: center;
+    white-space: nowrap;
+  }
+
+  /* Consultation: the no-record state should read as a deliberate state, not a small leftover panel. */
+  .screen--consultation.prototype-parity--consultation .consultation-empty-state {
+    width: min(100%, 52rem) !important;
+    min-height: 13rem !important;
+    margin: 1.25rem auto 0 !important;
+    padding: 1.2rem 1.25rem !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem 1.5rem;
+    align-items: center;
+  }
+
+  .screen--consultation.prototype-parity--consultation .consultation-empty-state__copy {
+    min-width: 0;
+  }
+
+  .screen--consultation.prototype-parity--consultation .consultation-empty-state__copy small {
+    color: var(--accent);
+    font-size: 0.76rem !important;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+  }
+
+  .screen--consultation.prototype-parity--consultation .consultation-empty-state__copy strong {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--ink);
+    font-size: 1.05rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--consultation.prototype-parity--consultation .consultation-empty-state__copy p {
+    margin: 0.4rem 0 0;
+    color: var(--muted);
+    font-size: 0.82rem !important;
+    line-height: 1.55;
+  }
+
+  .screen--consultation.prototype-parity--consultation .consultation-empty-state .actions {
+    margin: 0 !important;
+    align-self: center;
+  }
+
+  .screen--consultation.prototype-parity--consultation .consultation-empty-state .actions a {
+    min-height: 2.8rem;
+    padding-inline: 1rem;
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd),
+  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
