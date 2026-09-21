@@ -1,0 +1,92 @@
+/*
+ * Desktop UI refinement pass v6.
+ * State-aware layout and light/dark readability audit.
+ * Record-input and Result families remain outside this pass.
+ */
+
+@media (min-width: 80rem) {
+  /* Strengthen secondary text without hard-coding a light or dark color. */
+  .screen--history.prototype-parity--history,
+  .screen--more.prototype-parity--more,
+  .secondary-derived-screen {
+    --muted: color-mix(in srgb, var(--color-muted) 88%, var(--color-ink));
+  }
+
+  /*
+   * The previous derived-screen overlay used --color-ink as a shadow source.
+   * In dark mode that becomes a light halo. Use the theme's dedicated dialog
+   * shadow/overlay tokens instead.
+   */
+  .secondary-derived-screen {
+    box-shadow:
+      var(--shadow-dialog),
+      0 0 0 100vmax var(--overlay-dialog) !important;
+  }
+
+  /* ===== History states ===== */
+  .screen--history.prototype-parity--history .empty-records {
+    width: 100%;
+    min-height: 12rem;
+    margin-top: 1rem;
+    padding: 1.25rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.9rem !important;
+    line-height: 1.55;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+
+  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: calc(50% - 0.45rem);
+    justify-self: center;
+  }
+
+  /* ===== Reading states =====
+   * Two equal columns avoid the visually awkward 3 + 1 desktop pattern.
+   */
+  .screen--reading.prototype-parity--reading .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: calc(50% - 0.4rem);
+    justify-self: center;
+  }
+
+  /* ===== Consultation empty state ===== */
+  .screen--consultation.prototype-parity--consultation .secondary-derived-body > .panel {
+    width: min(100%, 46rem);
+    min-height: 11rem;
+    margin: 1rem auto 0;
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+
+  .screen--consultation.prototype-parity--consultation .secondary-derived-body > .panel .actions {
+    margin-top: 0.9rem;
+  }
+
+  /* Empty/save-status copy must remain readable in both appearance modes. */
+  .screen--history.prototype-parity--history :is(.empty-records, .screen-footnote),
+  .screen--plan.prototype-parity--plan :is(.note, .saved-card span),
+  .screen--settings.prototype-parity--settings :is(.note, .muted-text),
+  .screen--privacy.prototype-parity--privacy :is(.body, .warning),
+  .screen--reading.prototype-parity--reading :is(.article-card p, .source-note),
+  .screen--consultation.prototype-parity--consultation :is(.boundary, .memo),
+  .screen--support-guidance.prototype-parity--support :is(.notice, .card p) {
+    color: var(--muted) !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--reading.prototype-parity--reading .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
