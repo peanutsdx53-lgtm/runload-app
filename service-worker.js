@@ -1,5 +1,5 @@
-// Runtime revision: desktop-workspace-refresh-20260921-06
-const CACHE_NAME = "runload-app-current-20260921-06";
+// Runtime revision: desktop-shell-v2-refresh-20260921-07
+const CACHE_NAME = "runload-app-current-20260921-07";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -35,6 +35,7 @@ const PRECACHE_URLS = [
   "./styles/interpretation-room.css",
   "./styles/product-quality.css",
   "./styles/desktop-workspace.css",
+  "./styles/desktop-shell-v2.css",
   "./styles/tokens.css",
   "./ui/appRouter.js",
   "./ui/appSettings.js",
