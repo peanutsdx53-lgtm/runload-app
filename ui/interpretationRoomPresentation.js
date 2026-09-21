@@ -314,12 +314,19 @@ function visualX(value, domain) {
   if (!Number.isFinite(Number(value))) return null;
   const span = Math.max(1e-9, domain.max - domain.min);
   const fraction = Math.max(0, Math.min(1, (Number(value) - domain.min) / span));
-  return 24 + fraction * 272;
+  return 36 + fraction * 248;
 }
 
-function svgMarker(x, y, label, value, className) {
+function markerSide(x, otherX, fallback = "above") {
+  if (x == null || otherX == null) return fallback;
+  return Math.abs(x - otherX) < 56 ? "below" : fallback;
+}
+
+function svgMarker(x, y, label, value, className, side = "above") {
   if (x == null) return "";
-  return `<g class="${escapeHtml(className)}"><circle cx="${x.toFixed(1)}" cy="${y}" r="6"></circle><text x="${x.toFixed(1)}" y="${y - 14}" text-anchor="middle">${escapeHtml(label)}</text><text x="${x.toFixed(1)}" y="${y + 24}" text-anchor="middle">${escapeHtml(number(value))}</text></g>`;
+  const labelY = side === "below" ? y + 27 : y - 38;
+  const valueY = side === "below" ? y + 45 : y - 20;
+  return `<g class="${escapeHtml(className)}" data-label-side="${escapeHtml(side)}"><circle cx="${x.toFixed(1)}" cy="${y}" r="6"></circle><text x="${x.toFixed(1)}" y="${labelY}" text-anchor="middle">${escapeHtml(label)}</text><text x="${x.toFixed(1)}" y="${valueY}" text-anchor="middle">${escapeHtml(number(value))}</text></g>`;
 }
 
 function renderRegionalVisual(output) {
@@ -331,12 +338,14 @@ function renderRegionalVisual(output) {
   const xRef = visualX(100, domain);
   const xCurrent = visualX(region.value, domain);
   const xPrevious = visualX(previous, domain);
+  const previousSide = markerSide(xPrevious, xRef, "above");
+  const currentSide = markerSide(xCurrent, xRef, previousSide === "below" ? "above" : "below");
   return `<article class="interpretation-visual-card"><div class="interpretation-visual-card__head"><small>選択した1部位の中で比較</small><h2>${escapeHtml(region.label)}</h2></div>
-    <svg class="interpretation-comparison-svg" viewBox="0 0 320 112" role="img" aria-label="${escapeHtml(`${region.label}の前回・基準100・今回の位置`)}">
-      <line class="interpretation-comparison-axis" x1="24" y1="58" x2="296" y2="58"></line>
-      ${svgMarker(xPrevious, 58, "前回", previous, "marker-previous")}
-      ${svgMarker(xRef, 58, "基準", 100, "marker-reference")}
-      ${svgMarker(xCurrent, 58, "今回", region.value, "marker-current")}
+    <svg class="interpretation-comparison-svg" viewBox="0 0 320 132" role="img" aria-label="${escapeHtml(`${region.label}の前回・基準100・今回の位置`)}">
+      <line class="interpretation-comparison-axis" x1="36" y1="64" x2="284" y2="64"></line>
+      ${svgMarker(xPrevious, 64, "前回", previous, "marker-previous", previousSide)}
+      ${svgMarker(xRef, 64, "基準", 100, "marker-reference", "above")}
+      ${svgMarker(xCurrent, 64, "今回", region.value, "marker-current", currentSide)}
     </svg>
     <p class="source-boundary">この図は${escapeHtml(region.label)}の中だけで比較します。別の部位との大小比較には使いません。</p></article>`;
 }
@@ -346,10 +355,10 @@ function renderRofVisual(output) {
   if (!Number.isFinite(rof.pre) || !Number.isFinite(rof.post)) return "";
   const domain = { min: 0, max: 10 };
   return `<article class="interpretation-visual-card interpretation-visual-card--rof"><div class="interpretation-visual-card__head"><small>主観的な疲労感 0–10</small><h2>走行前後の疲労感</h2></div>
-    <svg class="interpretation-comparison-svg" viewBox="0 0 320 112" role="img" aria-label="走行前後の疲労感の位置">
-      <line class="interpretation-comparison-axis" x1="24" y1="58" x2="296" y2="58"></line>
-      ${svgMarker(visualX(rof.pre, domain), 58, "走行前", rof.pre, "marker-previous")}
-      ${svgMarker(visualX(rof.post, domain), 58, "走行後", rof.post, "marker-current")}
+    <svg class="interpretation-comparison-svg" viewBox="0 0 320 132" role="img" aria-label="走行前後の疲労感の位置">
+      <line class="interpretation-comparison-axis" x1="36" y1="64" x2="284" y2="64"></line>
+      ${svgMarker(visualX(rof.pre, domain), 64, "走行前", rof.pre, "marker-previous", markerSide(visualX(rof.pre, domain), visualX(rof.post, domain), "above"))}
+      ${svgMarker(visualX(rof.post, domain), 64, "走行後", rof.post, "marker-current", "above")}
     </svg>
     <p class="source-boundary">疲労感は本人が記録した主観情報です。部位別の基準100とは別の尺度です。</p></article>`;
 }
