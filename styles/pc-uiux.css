@@ -1,0 +1,108 @@
+/*
+ * PC-only UI/UX foundation.
+ * Mobile/tablet presentation is intentionally left to the existing styles.
+ */
+@media (min-width: 80rem) {
+  :root {
+    --pc-nav-left: 1.75rem;
+    --pc-nav-width: 5.5rem;
+    --pc-nav-gap: 2.25rem;
+    --pc-content-right: 2.25rem;
+    --pc-content-left: calc(var(--pc-nav-left) + var(--pc-nav-width) + var(--pc-nav-gap));
+  }
+
+  .app-shell:not(.app-shell--immersive) {
+    min-height: 100dvh;
+    padding-bottom: 0;
+  }
+
+  .app-shell:not(.app-shell--immersive) .app-header--desktop {
+    min-height: 4.75rem;
+    padding:
+      max(var(--space-3), env(safe-area-inset-top))
+      max(var(--pc-content-right), env(safe-area-inset-right))
+      var(--space-3)
+      max(var(--pc-content-left), env(safe-area-inset-left));
+  }
+
+  .app-shell:not(.app-shell--immersive) .app-main {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding:
+      var(--space-7)
+      max(var(--pc-content-right), env(safe-area-inset-right))
+      var(--space-7)
+      max(var(--pc-content-left), env(safe-area-inset-left));
+  }
+
+  .app-shell:not(.app-shell--immersive) .primary-navigation {
+    top: 50%;
+    bottom: auto;
+    left: var(--pc-nav-left);
+    width: var(--pc-nav-width);
+    max-height: calc(100dvh - 3.5rem);
+    transform: translateY(-50%);
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+    padding: 0.5rem;
+    overflow-y: auto;
+    border-radius: 1.4rem;
+    scrollbar-width: thin;
+  }
+
+  .app-shell:not(.app-shell--immersive) .primary-navigation__link {
+    min-height: 4.15rem;
+    padding: 0.5rem 0.25rem;
+    place-items: center;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .app-shell:not(.app-shell--immersive) .primary-navigation__icon {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .app-shell:not(.app-shell--immersive) .primary-navigation__label {
+    width: 100%;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .app-shell:not(.app-shell--immersive) .app-brand {
+    gap: 0.75rem;
+    color: var(--color-ink);
+  }
+
+  .app-shell:not(.app-shell--immersive) .app-brand__mark {
+    width: 2.55rem;
+    height: 2.55rem;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border: 1px solid var(--color-line);
+    border-radius: 0.8rem;
+    background: color-mix(in srgb, var(--color-surface) 92%, var(--color-accent-soft));
+    color: var(--color-accent-strong);
+  }
+
+  .app-shell:not(.app-shell--immersive) .app-brand__mark svg {
+    width: 1.65rem;
+    height: 1.65rem;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .app-shell:not(.app-shell--immersive) .app-brand strong {
+    color: var(--color-ink);
+  }
+
+  .app-shell:not(.app-shell--immersive) .app-brand small {
+    color: var(--color-muted);
+  }
+}
