@@ -115,6 +115,27 @@
 }
 
 
+
+/* Desktop viewport header: always pin SCREEN / current screen and Menu to the browser viewport. */
+@media (min-width: 80rem) {
+  #app {
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
+    contain: none !important;
+  }
+
+  #app > .app-header--desktop.app-header--viewport-fixed {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    width: 100% !important;
+    transform: none !important;
+  }
+}
+
 /* Home: PC-only adaptive dashboard. */
 @media (min-width: 80rem) {
   .screen--home.prototype-parity--home {
@@ -260,40 +281,27 @@
 /* Record: PC-only workspace. Existing record/save logic is unchanged. */
 @media (min-width: 80rem) {
   .screen--record-input.prototype-parity--record {
-    width: min(100%, 86rem);
+    width: min(100%, 74rem);
     margin-inline: auto;
     padding-bottom: 0;
-    gap: 1rem;
   }
 
   .screen--record-input.prototype-parity--record > .page-head,
   .screen--record-input.prototype-parity--record > .parity-record-banner {
-    width: min(100%, 84rem);
+    width: min(100%, 72rem);
     margin-inline: auto;
-  }
-
-  .screen--record-input.prototype-parity--record > .page-head {
-    min-height: 3.2rem;
-    align-items: end;
-  }
-
-  .screen--record-input.prototype-parity--record > .page-head .eyebrow {
-    font-size: 0.76rem;
-    line-height: 1.15;
   }
 
   .screen--record-input.prototype-parity--record > .page-head h1 {
-    margin-top: 0.25rem;
-    font-size: clamp(2.2rem, 2.55vw, 2.75rem);
-    line-height: 1.05;
+    font-size: clamp(2.2rem, 2.8vw, 3.15rem);
   }
 
   .screen--record-input.prototype-parity--record .record-form {
-    width: min(100%, 84rem);
+    width: min(100%, 72rem);
     margin-inline: auto;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 20.5rem;
-    gap: 1rem 1.25rem;
+    grid-template-columns: minmax(0, 1fr) 19rem;
+    gap: 1.2rem 1.5rem;
     align-items: start;
   }
 
@@ -304,30 +312,22 @@
 
   .screen--record-input.prototype-parity--record .record-form > .core-card {
     margin-top: 0;
-    padding: 1.15rem 1.25rem;
+    padding: 1.5rem 1.6rem;
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
-    column-gap: 1.15rem;
-    row-gap: 0.8rem;
-    border-radius: 1.25rem;
+    gap: 0;
   }
 
+  .screen--record-input.prototype-parity--record .core-heading { order: 1; }
+  .screen--record-input.prototype-parity--record .activity-toggle { order: 2; }
+  .screen--record-input.prototype-parity--record .date-field { order: 3; }
+  .screen--record-input.prototype-parity--record .core-card > [data-run-fields] { order: 4; }
+  .screen--record-input.prototype-parity--record .core-card > [data-rest-fields] { order: 4; }
+  .screen--record-input.prototype-parity--record .fatigue-inline { order: 5; }
+
   .screen--record-input.prototype-parity--record .core-heading {
-    order: 1;
-    grid-column: 1 / -1;
     grid-template-columns: 2.6rem minmax(0, 1fr) auto;
     gap: 0.8rem;
     align-items: center;
-  }
-
-  .screen--record-input.prototype-parity--record .core-heading h2 {
-    font-size: 1.28rem;
-    line-height: 1.2;
-  }
-
-  .screen--record-input.prototype-parity--record .stage-label,
-  .screen--record-input.prototype-parity--record .core-heading > span:last-child {
-    font-size: 0.75rem;
   }
 
   .screen--record-input.prototype-parity--record .core-stage-icon,
@@ -340,17 +340,14 @@
   .screen--record-input.prototype-parity--record .core-stage-icon {
     width: 2.45rem;
     height: 2.45rem;
-    font-size: 0.82rem;
   }
 
   .screen--record-input.prototype-parity--record .activity-toggle {
-    order: 2;
-    grid-column: 1;
-    width: 100%;
-    margin: 0;
+    width: min(100%, 29rem);
+    margin-top: 1.2rem;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.4rem;
-    padding: 0.32rem;
+    padding: 0.35rem;
     overflow: hidden;
   }
 
@@ -362,321 +359,174 @@
     width: 100%;
     min-width: 0;
     min-height: 3rem;
-    padding-inline: 0.8rem;
+    padding-inline: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
     text-align: center;
     white-space: nowrap;
-    font-size: 0.92rem;
   }
 
   .screen--record-input.prototype-parity--record .date-field {
-    order: 2;
-    grid-column: 2;
-    width: 100%;
-    margin: 0;
-    grid-template-columns: 4.5rem minmax(0, 1fr);
-    gap: 0.65rem;
-    justify-content: stretch;
+    width: min(100%, 26rem);
+    margin-top: 1rem;
+    grid-template-columns: 7rem 12rem;
+    justify-content: start;
     align-items: center;
-  }
-
-  .screen--record-input.prototype-parity--record .date-label {
-    font-size: 0.82rem;
   }
 
   .screen--record-input.prototype-parity--record .date-control,
   .screen--record-input.prototype-parity--record .date-field input[type="date"] {
-    width: 100%;
-    min-width: 0;
-    max-width: none;
-  }
-
-  .screen--record-input.prototype-parity--record .date-control {
-    height: 3rem;
-  }
-
-  .screen--record-input.prototype-parity--record .date-control > span {
-    font-size: 1rem;
-    line-height: 3rem;
-  }
-
-  .screen--record-input.prototype-parity--record .core-card > [data-run-fields] {
-    order: 3;
-    grid-column: 1;
-    min-width: 0;
-  }
-
-  .screen--record-input.prototype-parity--record .core-card > [data-rest-fields] {
-    order: 3;
-    grid-column: 1 / -1;
+    width: 12rem;
+    min-width: 12rem;
+    max-width: 12rem;
   }
 
   .screen--record-input.prototype-parity--record .measure-grid {
-    width: 100%;
-    max-width: none;
-    margin-top: 0;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem;
-  }
-
-  .screen--record-input.prototype-parity--record .measure-field {
-    gap: 0.38rem;
-  }
-
-  .screen--record-input.prototype-parity--record .measure-field > span {
-    font-size: 0.82rem;
+    width: max-content;
+    max-width: 100%;
+    margin-top: 1rem;
+    grid-template-columns: 10.5rem 13.5rem;
+    gap: 1rem;
   }
 
   .screen--record-input.prototype-parity--record .measure-field > div {
     width: 100%;
-    height: 3.2rem;
+    height: 3.5rem;
   }
 
   .screen--record-input.prototype-parity--record .measure-field input {
     text-align: center;
-    font-size: 1.35rem;
-  }
-
-  .screen--record-input.prototype-parity--record .measure-field b {
-    font-size: 0.78rem;
-  }
-
-  .screen--record-input.prototype-parity--record .micro-note {
-    margin-top: 0.45rem;
-    font-size: 0.77rem;
-    line-height: 1.45;
   }
 
   .screen--record-input.prototype-parity--record .fatigue-inline {
-    order: 3;
-    grid-column: 2;
-    width: 100%;
-    margin: 0;
-    min-height: 5.15rem;
-    padding: 0.8rem 0.9rem;
-    grid-template-columns: minmax(0, 1fr) 8.5rem;
-    gap: 0.75rem;
+    width: min(100%, 34rem);
+    margin-top: 1.15rem;
+    min-height: 4.6rem;
+    padding: 0.85rem 0.95rem;
+    grid-template-columns: minmax(0, 1fr) 10rem;
+    gap: 1rem;
     align-items: center;
-    align-self: stretch;
-  }
-
-  .screen--record-input.prototype-parity--record .fatigue-inline small {
-    font-size: 0.72rem;
   }
 
   .screen--record-input.prototype-parity--record .fatigue-inline strong {
-    font-size: 0.96rem;
+    font-size: 0.98rem;
   }
 
   .screen--record-input.prototype-parity--record .fatigue-inline span {
     font-size: 0.78rem;
-    line-height: 1.35;
   }
 
   .screen--record-input.prototype-parity--record .fatigue-inline button {
-    width: 8.5rem;
-    min-height: 2.75rem;
-    padding-inline: 0.7rem;
+    width: 10rem;
+    min-height: 2.9rem;
+    padding-inline: 0.8rem;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 0.84rem;
+    font-size: 0.82rem;
   }
 
   .screen--record-input.prototype-parity--record .rest-note {
-    width: 100%;
-    margin-top: 0;
+    width: min(100%, 34rem);
+    margin-top: 1rem;
   }
 
   .screen--record-input.prototype-parity--record .optional-stack {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 0.75rem;
     margin-top: 0;
-    align-items: start;
   }
 
-  .screen--record-input.prototype-parity--record .stage-card {
-    min-width: 0;
-    border-radius: 1rem;
-  }
-
-  .screen--record-input.prototype-parity--record .stage-card[open] {
-    grid-column: 1 / -1;
+  .screen--record-input.prototype-parity--record .stage-card:first-child {
+    grid-column: auto;
   }
 
   .screen--record-input.prototype-parity--record .stage-card > summary {
-    min-height: 4.35rem;
-    grid-template-columns: 2.35rem minmax(0, 1fr) auto;
-    gap: 0.7rem;
-    padding: 0.65rem 0.8rem;
+    min-height: 4.45rem;
+    grid-template-columns: 2.45rem minmax(0, 1fr) auto;
+    gap: 0.85rem;
+    padding: 0.7rem 0.95rem;
   }
 
   .screen--record-input.prototype-parity--record .stage-icon {
     width: 2.25rem;
     height: 2.25rem;
     justify-self: center;
-    font-size: 0.76rem;
-  }
-
-  .screen--record-input.prototype-parity--record .summary-copy small {
-    font-size: 0.72rem;
   }
 
   .screen--record-input.prototype-parity--record .summary-copy strong {
-    margin-top: 0.15rem;
-    font-size: 0.98rem;
-    line-height: 1.25;
+    font-size: 0.92rem;
   }
 
   .screen--record-input.prototype-parity--record .summary-copy em {
-    margin-top: 0.18rem;
-    font-size: 0.76rem;
+    font-size: 0.72rem;
   }
 
   .screen--record-input.prototype-parity--record .stage-body {
-    padding: 1rem 1.05rem 1.05rem;
-  }
-
-  .screen--record-input.prototype-parity--record .stage-intro,
-  .screen--record-input.prototype-parity--record .snapshot-note,
-  .screen--record-input.prototype-parity--record .record-return-status {
-    font-size: 0.8rem;
-    line-height: 1.5;
-  }
-
-  .screen--record-input.prototype-parity--record .field {
-    gap: 0.4rem;
-  }
-
-  .screen--record-input.prototype-parity--record .field > span {
-    font-size: 0.82rem;
-  }
-
-  .screen--record-input.prototype-parity--record .field input,
-  .screen--record-input.prototype-parity--record .field select,
-  .screen--record-input.prototype-parity--record .field textarea {
-    min-height: 3rem;
-    padding: 0.72rem 0.85rem;
-    border-radius: 0.75rem;
-    font-size: 1rem;
-    line-height: 1.35;
+    padding: 1rem;
   }
 
   .screen--record-input.prototype-parity--record .two-fields {
-    width: min(100%, 44rem);
-    grid-template-columns: minmax(12rem, 0.8fr) minmax(18rem, 1.2fr);
-    gap: 0.85rem;
+    grid-template-columns: max-content max-content;
+    gap: 1rem;
     justify-content: start;
     align-items: end;
   }
 
-  .screen--record-input.prototype-parity--record input[name="steps"],
-  .screen--record-input.prototype-parity--record select[name="stepsProvenance"],
-  .screen--record-input.prototype-parity--record select[name="runningFormat"],
+  .screen--record-input.prototype-parity--record input[name="steps"] {
+    width: 10rem;
+    max-width: 100%;
+  }
+
+  .screen--record-input.prototype-parity--record select[name="stepsProvenance"] {
+    width: 16rem;
+    max-width: 100%;
+  }
+
+  .screen--record-input.prototype-parity--record select[name="runningFormat"] {
+    width: 18rem;
+    max-width: 100%;
+  }
+
   .screen--record-input.prototype-parity--record input[name="temperatureC"] {
-    width: 100%;
-    max-width: none;
+    width: 8rem;
+    max-width: 100%;
   }
 
-  .screen--record-input.prototype-parity--record .field:has(select[name="runningFormat"]) {
-    width: min(100%, 44rem);
-    margin-top: 0.8rem;
-  }
-
-  .screen--record-input.prototype-parity--record .environment-fields {
-    width: min(100%, 44rem);
-    grid-template-columns: 10rem minmax(0, 1fr);
-    gap: 0.85rem;
-  }
-
-  .screen--record-input.prototype-parity--record .environment-fields .field input,
-  .screen--record-input.prototype-parity--record .environment-fields .field textarea {
-    height: 3rem;
-    min-height: 3rem;
-    font-size: 1rem;
-  }
-
-  .screen--record-input.prototype-parity--record .route-button,
-  .screen--record-input.prototype-parity--record .linked-card {
-    min-height: 4rem;
-    padding: 0.75rem 0.9rem;
-  }
-
-  .screen--record-input.prototype-parity--record .route-button small,
-  .screen--record-input.prototype-parity--record .linked-card small {
-    font-size: 0.72rem;
-  }
-
-  .screen--record-input.prototype-parity--record .route-button strong,
-  .screen--record-input.prototype-parity--record .linked-card strong {
-    font-size: 0.96rem;
-  }
-
-  .screen--record-input.prototype-parity--record .linked-card em {
-    font-size: 0.76rem;
-  }
-
-  .screen--record-input.prototype-parity--record .linked-records {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem;
-    margin-top: 0;
-  }
-
-  .screen--record-input.prototype-parity--record .reflection-fields {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.8rem;
-    margin-top: 0.9rem;
-  }
-
-  .screen--record-input.prototype-parity--record .reflection-fields .field:first-child {
-    grid-column: auto;
-  }
-
-  .screen--record-input.prototype-parity--record .reflection-fields textarea,
-  .screen--record-input.prototype-parity--record .reflection-fields .field:first-child textarea {
-    width: 100%;
-    min-height: 7.2rem;
-  }
-
-  .screen--record-input.prototype-parity--record .inner-details > summary {
-    min-height: 3.6rem;
-  }
-
-  .screen--record-input.prototype-parity--record .inner-details > summary strong {
-    font-size: 0.94rem;
-  }
-
-  .screen--record-input.prototype-parity--record .inner-details > summary small {
-    font-size: 0.74rem;
+  .screen--record-input.prototype-parity--record :is(
+    textarea[name="environmentNote"],
+    textarea[name="postRunReflection"],
+    textarea[name="perceivedDifference"],
+    textarea[name="nextCheckPoint"]
+  ) {
+    width: min(100%, 42rem);
   }
 
   .screen--record-input.prototype-parity--record .desktop-save-area {
     grid-column: 2;
     grid-row: 1 / span 2;
     position: sticky;
-    top: 5.75rem;
+    top: 6.2rem;
     margin: 0;
-    padding: 1.05rem;
+    padding: 1.1rem;
     display: grid;
-    gap: 0.85rem;
+    gap: 1rem;
     align-items: start;
-    border-radius: 1.1rem;
+    border-radius: 1.2rem;
   }
 
   .screen--record-input.prototype-parity--record .desktop-save-area strong {
-    font-size: 1.02rem;
-    line-height: 1.35;
+    font-size: 1rem;
   }
 
   .screen--record-input.prototype-parity--record .desktop-save-area span {
-    margin-top: 0.35rem;
-    font-size: 0.82rem;
-    line-height: 1.5;
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    line-height: 1.55;
   }
 
   .screen--record-input.prototype-parity--record .desktop-save-area .primary-save {
@@ -688,7 +538,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.84rem;
   }
 
   .screen--record-input.prototype-parity--record .record-form > .subscreen {
@@ -697,67 +547,6 @@
 
   .screen--record-input.prototype-parity--record .mobile-save-bar {
     display: none;
-  }
-
-  /* Fatigue dialog: keep it compact and readable on desktop. */
-  .screen--record-input.prototype-parity--record .overlay {
-    align-items: center;
-    padding: 1.5rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-sheet {
-    width: min(44rem, calc(100vw - 3rem));
-    max-height: min(48rem, calc(100dvh - 3rem));
-    padding: 1.1rem 1.35rem 1.25rem;
-    border-radius: 1.5rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-sheet .sheet-head h2 {
-    font-size: 1.75rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-question {
-    margin: 1rem 0 0.9rem;
-    font-size: 1rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-scale-panel {
-    padding: 1.1rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-current > span {
-    font-size: 0.78rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-current > strong {
-    font-size: 2.25rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-current > em {
-    font-size: 0.92rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-ticks {
-    font-size: 0.72rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-anchor-guide small {
-    font-size: 0.74rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-anchor-guide div {
-    font-size: 0.9rem;
-  }
-
-  .screen--record-input.prototype-parity--record .primary-sheet-action,
-  .screen--record-input.prototype-parity--record .text-action {
-    font-size: 0.88rem;
-  }
-
-  .screen--record-input.prototype-parity--record .rof-about summary,
-  .screen--record-input.prototype-parity--record .rof-about p,
-  .screen--record-input.prototype-parity--record .rof-about small {
-    font-size: 0.78rem;
   }
 }
 
