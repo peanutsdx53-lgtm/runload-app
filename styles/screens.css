@@ -5265,75 +5265,6 @@ button.result-reading-summary__item {
   cursor: pointer;
 }
 button.result-reading-summary__item:active { transform: translateY(1px); }
-.result-activation-hub,
-.activation-intro {
-  display: grid;
-  gap: var(--space-4);
-  padding: clamp(1rem, 3vw, 1.6rem);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, var(--color-line));
-  border-radius: var(--radius-large);
-  background: color-mix(in srgb, var(--color-accent-soft) 48%, var(--color-surface));
-  box-shadow: var(--shadow-card);
-}
-.result-activation-hub__grid,
-.activation-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
-}
-.result-activation-hub__item {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0.35rem var(--space-3);
-  min-width: 0;
-  padding: var(--space-4);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 32%, var(--color-line));
-  border-radius: var(--radius-medium);
-  background: var(--color-surface);
-  color: inherit;
-  text-decoration: none;
-}
-.result-activation-hub__item strong { font-size: 1.04rem; }
-.result-activation-hub__item small { grid-column: 1; color: var(--color-muted); line-height: 1.55; }
-.result-activation-hub__item > span { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--color-accent); font-size: 1.3rem; }
-.result-activation-hub__item:hover,
-.result-activation-hub__item:focus-visible { border-color: var(--color-accent); background: color-mix(in srgb, var(--color-accent-soft) 62%, var(--color-surface)); }
-.activation-source {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-4);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-large);
-  background: var(--color-surface);
-}
-.activation-source h2 { margin-top: var(--space-2); font-family: var(--font-editorial); }
-.activation-source p { color: var(--color-muted); }
-.activation-card {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: var(--space-4);
-  min-width: 0;
-  padding: clamp(1rem, 3vw, 1.5rem);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-large);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-}
-.activation-card__number { color: var(--color-accent); font-size: 0.75rem; font-weight: 900; letter-spacing: 0.12em; }
-.activation-card h2 { margin-bottom: var(--space-2); font-family: var(--font-editorial); font-size: clamp(1.35rem, 3vw, 1.8rem); }
-.activation-card p { color: var(--color-muted); line-height: 1.7; }
-.activation-card__links { display: grid; gap: var(--space-2); }
-@media (max-width: 52rem) {
-  .result-activation-hub__grid,
-  .activation-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 35rem) {
-  .activation-source { align-items: stretch; flex-direction: column; }
-}
-
-
 .consultation-compose-grid {
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
@@ -6034,7 +5965,6 @@ button.result-reading-summary__item:active { transform: translateY(1px); }
 
 :is(
   .feature-link-card,
-  .activation-card,
   .goal-support-card,
   .public-help-options__grid article,
   .article-card,
@@ -6043,14 +5973,12 @@ button.result-reading-summary__item:active { transform: translateY(1px); }
   .guide-parts-grid article,
   .privacy-storage-card,
   .privacy-explanation-grid > article,
-  .record-course-shortcut,
-  .result-activation-hub__item
+  .record-course-shortcut
 ) :is(h2, h3, strong, p, small, span) {
   overflow-wrap: anywhere;
 }
 :is(
   .feature-link-card,
-  .activation-card,
   .goal-support-card,
   .public-help-options__grid article,
   .article-card,
@@ -6058,8 +5986,7 @@ button.result-reading-summary__item:active { transform: translateY(1px); }
   .guide-scope-grid article,
   .guide-parts-grid article,
   .privacy-storage-card,
-  .privacy-explanation-grid > article,
-  .result-activation-hub__item
+  .privacy-explanation-grid > article
 ) :is(h2, h3, strong) {
   text-wrap: balance;
 }
@@ -6091,14 +6018,6 @@ button.result-reading-summary__item:active { transform: translateY(1px); }
   }
 }
 
-
-@media (min-width: 52.01rem) {
-  .activation-card h2,
-  .result-activation-hub__item strong {
-    min-block-size: 3em;
-    line-height: 1.45;
-  }
-}
 
 @media (min-width: 64.01rem) {
   .public-help-options__grid article h3 {

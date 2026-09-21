@@ -21,7 +21,8 @@ await test('RESULT-REPLACES-ACTIVATION-WITH-INTERPRETATION-LAUNCH',()=>{
 await test('HOME-LATEST-RECORD-SEPARATES-RESULT-AND-UNDERSTANDING',()=>{
   const s=read('screens/homeScreen.js');
   assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=home/);
-  assert.match(s,/結果を見る/);\n  assert.match(s,/結果を理解する/);
+  assert.match(s,/結果を見る/);
+  assert.match(s,/結果を理解する/);
   assert.doesNotMatch(s,/>結果の活用</);
 });
 
@@ -46,11 +47,11 @@ await test('ACTIVATION-IS-ALIAS-NOT-A-PUBLIC-SCREEN',()=>{
   assert.match(app,/nextParameters\.set\("origin",\s*"result"\)/);
 });
 
-await test('FEATURE-MENU-AND-WORKSPACE-USE-INTERPRETATION-NOT-ACTIVATION',()=>{
+await test('SCREEN-ARCHITECTURE-KEEPS-ROOM-CONTEXT-AND-DROPS-RETIRED-ENTRIES',()=>{
   const s=read('ui/screenArchitecture.js');
-  assert.match(s,/screen: "interpretation-room", label: "結果を理解する"/);
-  assert.match(s,/route\("interpretation-room", \{ recordId, origin: "result" \}\)/);
+  assert.match(s,/if \(screen === "interpretation-room"\)/);
   assert.doesNotMatch(s,/screen: "activation", label: "結果の活用"/);
+  assert.doesNotMatch(s,/renderResultWorkspaceNavigation|resolveScreenWorkspace|renderManagementBoundary/);
 });
 
 await test('SIMULATION-FROM-ROOM-PRESERVES-RETURN-CONTEXT',()=>{

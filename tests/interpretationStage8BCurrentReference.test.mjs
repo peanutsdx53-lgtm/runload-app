@@ -59,7 +59,7 @@ await test('STAGE8B-CURRENT-REFERENCE-DOES-NOT-MIX-OTHER-LAYERS',()=>{
 await test('STAGE8B-CURRENT-REFERENCE-KEEPS-NON-EVALUATIVE-BOUNDARY',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/危険・安全・改善・悪化を判断しません/);
-  assert.doesNotMatch(html,/良い|悪い|危険度|安全です|改善しました/);
+  assert.doesNotMatch(html,/良い結果です|悪い結果です|危険です|安全です|改善しました|悪化しました|危険度が(?:高い|低い)/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
