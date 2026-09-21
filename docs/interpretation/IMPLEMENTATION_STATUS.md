@@ -1,7 +1,7 @@
 # RunLoad Interpretation Room — Implementation Status
 
 Date: 2026-09-21
-Status: STAGE 8 UNDERSTANDING-FOCUSED VISUAL WORK PLAN APPROVED — IMPLEMENTATION NOT YET STARTED
+Status: STAGE 8D + ENTRY GATES COMPLETE — STAGE 8E FINAL CLOSURE AUDIT REMAINS
 Branch: `feature/runload-interpretation-room-v1`
 Draft PR: #49
 Base commit: `8d2937c7bbfe3a7094601628a109d31309edd775`
@@ -366,7 +366,7 @@ Release state:
 - no merge or Current promotion has been performed
 
 ## Stage 8 — Understanding-Focused Visual Interpretation
-Status: **STAGE 8C COMPLETE — GUIDED VISUAL INTEGRATION VERIFIED; STAGE 8D NEXT**
+Status: **STAGE 8D COMPLETE — ENTRY GATES COMPLETE; STAGE 8E FINAL AUDIT NEXT**
 
 Controlling work plan:
 - `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
@@ -624,6 +624,36 @@ Completed:
 Verification:
 - Stage 8D completion focused checks: **13/13 PASS**;
 - runtime manifest/PWA hash expectations were corrected to the actual Stage 8D presentation/CSS files.
+
+## Entry gate completion checkpoint — 2026-09-21
+
+Durable audit:
+- `docs/interpretation/ENTRY_GATE_DESIGN_IMPLEMENTATION_AUDIT_20260921.md`
+
+Fixed information architecture:
+- Result screen keeps its two result layers as the primary content;
+- the understanding route appears only after those result layers;
+- Result wording uses plain language: `今回の結果を理解する`;
+- Home latest run record exposes `結果を見る` first and `結果を理解する` second;
+- the previous separate `必要なときに開く / RunLoad解釈` promotional block was removed;
+- rest records do not expose the understanding route;
+- no global-navigation entry was added;
+- future PC layout may change geometry but must preserve this hierarchy.
+
+Verification:
+- dedicated entry-gate suite: **8/8 PASS**;
+- current GitHub source cross-check: **15/15 PASS**;
+- 390 px layout: horizontal overflow **0**, order PASS;
+- 1280 px layout: horizontal overflow **0**, order PASS;
+- runtime manifest aligned for Home / Result / shared mobile CSS / Service Worker;
+- PWA cache refresh source updated while stable cache name is retained;
+- protected Primary core SHA unchanged;
+- protected ROF-J core SHA unchanged.
+
+Audit tooling note:
+- a temporary GitHub Actions workflow was attempted for final Stage 8E execution;
+- no workflow run was generated in this environment;
+- the temporary workflow was removed and is not part of the final branch tree.
 
 ## Current next action
 
