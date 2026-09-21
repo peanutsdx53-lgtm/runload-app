@@ -48,7 +48,7 @@ await test('STAGE8D-CURRENT-SHIFT-BRIDGES-DIRECTLY-TO-EXISTING-HISTORY',()=>{
   const follow=html.match(/<section class="interpretation-dialogue-followup"[^>]*>[\s\S]*?<\/section>/)?.[0] || '';
   assert.ok(follow);
   assert.equal(choiceCount(follow),2);
-  assert.match(follow,/なぜこの解釈なのか確認/);
+  assert.match(follow,/なぜこの読み方なのか確認/);
   assert.match(follow,/過去の比較可能な記録を確認/);
   assert.match(follow,/#\/history/);
   assert.doesNotMatch(follow,/topic=manage/);
