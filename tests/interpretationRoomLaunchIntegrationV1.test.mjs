@@ -13,28 +13,28 @@ async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catc
 await test('RESULT-REPLACES-ACTIVATION-WITH-INTERPRETATION-LAUNCH',()=>{
   const s=read('screens/resultScreen.js');
   assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=result/);
-  assert.match(s,/RunLoad解釈/);
-  assert.match(s,/今回の結果を整理して確認/);
+  assert.match(s,/今回の結果を理解する/);
+  assert.match(s,/表示された内容を順番に整理して確認します/);
   assert.doesNotMatch(s,/#\/activation\?recordId=\$\{encodeURIComponent\(record\.id\)\}/);
 });
 
-await test('HOME-REUSES-EXISTING-WHEN-NEEDED-SLOT',()=>{
+await test('HOME-LATEST-RECORD-SEPARATES-RESULT-AND-UNDERSTANDING',()=>{
   const s=read('screens/homeScreen.js');
-  assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(latestExperience\.record\.id\)\}&origin=home/);
-  assert.match(s,/最新の結果を確認/);
+  assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=home/);
+  assert.match(s,/結果を見る/);\n  assert.match(s,/結果を理解する/);
   assert.doesNotMatch(s,/>結果の活用</);
 });
 
 await test('BODY-DETAIL-HAS-CONTEXTUAL-COMPACT-LAUNCH',()=>{
   const s=read('screens/bodyPartDetailScreen.js');
   assert.match(s,/origin=body-part-detail&regionId=\$\{encodeURIComponent\(regionId\)\}/);
-  assert.match(s,/この部位をRunLoad解釈で確認/);
+  assert.match(s,/この部位の結果を理解する/);
 });
 
 await test('HISTORY-SELECTED-RECORD-HAS-CONTEXTUAL-LAUNCH',()=>{
   const s=read('screens/historyScreen.js');
   assert.match(s,/origin=history&regionId=\$\{encodeURIComponent\(workspace\.regionId\)\}/);
-  assert.match(s,/この記録をRunLoad解釈で確認/);
+  assert.match(s,/この記録の結果を理解する/);
 });
 
 await test('ACTIVATION-IS-ALIAS-NOT-A-PUBLIC-SCREEN',()=>{
@@ -48,7 +48,7 @@ await test('ACTIVATION-IS-ALIAS-NOT-A-PUBLIC-SCREEN',()=>{
 
 await test('FEATURE-MENU-AND-WORKSPACE-USE-INTERPRETATION-NOT-ACTIVATION',()=>{
   const s=read('ui/screenArchitecture.js');
-  assert.match(s,/screen: "interpretation-room", label: "RunLoad解釈"/);
+  assert.match(s,/screen: "interpretation-room", label: "結果を理解する"/);
   assert.match(s,/route\("interpretation-room", \{ recordId, origin: "result" \}\)/);
   assert.doesNotMatch(s,/screen: "activation", label: "結果の活用"/);
 });
@@ -66,7 +66,7 @@ await test('SIMULATION-FROM-ROOM-PRESERVES-RETURN-CONTEXT',()=>{
   assert.match(html,/value="3\.0"/);
   assert.doesNotMatch(html,/value="9\.0"/);
   assert.match(html,/#\/interpretation-room\?recordId=old&amp;origin=history&amp;view=next&amp;intent=condition/);
-  assert.match(html,/RunLoad解釈へ戻る/);
+  assert.match(html,/結果の理解へ戻る/);
 });
 
 await test('SIMULATION-COURSE-ROUNDTRIP-PRESERVES-SOURCE-RECORD',()=>{
@@ -87,7 +87,7 @@ await test('INTERPRETATION-SIMULATION-LINK-CARRIES-ROOM-ORIGIN-WITHOUT-CORE-MUTA
 await test('SIMULATION-SCREEN-ARCHITECTURE-RETURNS-TO-ROOM',()=>{
   const s=read('ui/screenArchitecture.js');
   assert.match(s,/from === "interpretation-room"/);
-  assert.match(s,/backLabel: "RunLoad解釈"/);
+  assert.match(s,/backLabel: "結果の理解"/);
   assert.match(s,/view: "next", intent: "condition"/);
 });
 
