@@ -75,29 +75,31 @@ function output(overrides={}){
 
 await test('SUMMARY-IS-INTERPRETATION-FIRST',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  assert.match(html,/今回の読み方/);
+  assert.match(html,/今回のRunLoad解釈/);
   assert.match(html,/股関節部の表示と坂の条件の両方が変わっています/);
-  assert.match(html,/そう読める理由/);
-  assert.ok(html.indexOf('今回の読み方')<html.indexOf('別の見方で確認'));
+  assert.match(html,/今、確認したいことはどちらですか/);
+  assert.doesNotMatch(html,/そう読める理由/);
   assert.doesNotMatch(html,/今回の12部位では/);
 });
 
-await test('SUMMARY-HAS-AT-MOST-FOUR-ALTERNATIVE-VIEWS',()=>{
+await test('SUMMARY-HAS-EXACTLY-TWO-INTENT-CHOICES',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  const count=(html.match(/class="interpretation-view-choice"/g)||[]).length;
-  assert.equal(count,4);
+  const count=(html.match(/class="interpretation-dialogue-choice"/g)||[]).length;
+  assert.equal(count,2);
+  assert.match(html,/この結果を理解したい/);
+  assert.match(html,/次にどう活かすか考えたい/);
 });
 
-await test('SUMMARY-CHANGES-REPRESENTATION-INSTEAD-OF-REPEATING-FEATURE-MENU',()=>{
+await test('SUMMARY-DOES-NOT-EXPOSE-DETAIL-MODES-OR-FUNCTION-MENU',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  for(const text of ['簡単に見る','図で見る','違いだけ見る','根拠を見る']) assert.match(html,new RegExp(text));
-  assert.doesNotMatch(html,/今回の結果を詳しく確認|過去記録との違いを確認|相談・読みものへ進む/);
+  assert.doesNotMatch(html,/簡単に見る|図で見る|違いだけ見る|根拠を見る/);
+  assert.doesNotMatch(html,/過去にも同じことがあるか確認|条件を変えて比べる|次の予定に反映/);
   assert.doesNotMatch(html,/どうしますか|気になりますね|おすすめです/);
 });
 
 await test('SUMMARY-KEEPS-NONCAUSAL-BOUNDARY',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  assert.match(html,/どの条件が結果の違いに関係したかは分けられません/);
+  assert.match(html,/原因として結び付けません/);
 });
 
 await test('DETAIL-SEPARATES-REGIONAL-AND-ROF',()=>{
@@ -135,9 +137,11 @@ await test('NEXT-SUPPORT-BRIDGES-TO-SHARE-AND-READING',()=>{
   assert.match(html,/#\/reading\?/);
 });
 
-await test('NEXT-SHOWS-EXISTING-NEXT-CHECK',()=>{
-  const html=renderInterpretationRoom({output:output(),view:'next',intent:'current',origin:'result'});
-  assert.match(html,/記録した「次回確認したいこと」/);
+await test('NEXT-USE-SHOWS-EXISTING-NEXT-CHECK-ONLY-AFTER-NARROWING',()=>{
+  const summary=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
+  assert.doesNotMatch(summary,/坂の少ない条件で確認/);
+  const html=renderInterpretationRoom({output:output(),view:'dialogue',topic:'next-use',origin:'result'});
+  assert.match(html,/前回から引き継いだ内容/);
   assert.match(html,/坂の少ない条件で確認/);
 });
 
