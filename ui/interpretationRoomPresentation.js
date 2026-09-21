@@ -478,11 +478,11 @@ function renderComparisonArrow(fromX, toX, y, originLabel) {
   </g>`;
 }
 
-function renderRegionalVisual(output) {
+function renderRegionalVisual(output, { usePrevious = true } = {}) {
   const region = focusRegion(output);
   if (!region) return '<p>図にできる部位別結果がありません。</p>';
   const comparison = focusComparison(output);
-  const previous = comparison?.comparablePreviousRecordId ? comparison.previousValue : null;
+  const previous = usePrevious && comparison?.comparablePreviousRecordId ? comparison.previousValue : null;
   const domain = visualDomain([100, region.value, previous]);
   const xRef = visualX(100, domain);
   const xCurrent = visualX(region.value, domain);
@@ -541,6 +541,13 @@ function renderCurrentShiftUnderstanding(output) {
   const comparison = focusComparison(output);
   if (!region || !comparison?.comparablePreviousRecordId) return "";
   return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`${region.label}は、比較可能な前回${number(comparison.previousValue)}から今回${number(region.value)}へ、同じ部位内で表示位置が変わっています。`)}</p></div>`;
+}
+
+function renderCurrentReferenceUnderstanding(output) {
+  if (meaning(output).primaryCode !== "CURRENT_REFERENCE_PATTERN") return "";
+  const region = focusRegion(output);
+  if (!region) return "";
+  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`${region.label}は今回${number(region.value)}で、${directionText(region.referenceDirection)}に表示されています。この位置は、次回以降に同じ部位を比べるための比較点として使えます。`)}</p></div>`;
 }
 
 function renderRepeatedObservationVisual(output) {
@@ -619,6 +626,7 @@ function renderVisualExplanation(output, origin) {
   const conditionResultPattern = code === "CONDITION_AND_RESULT_CHANGED";
   const multiLayerPattern = code === "MULTI_LAYER_CHANGE";
   const repeatedPattern = code === "REPEATED_OBSERVATION";
+  const currentReferencePattern = code === "CURRENT_REFERENCE_PATTERN";
   const lead = currentShiftPattern && region
     ? `まず${region.label}の位置を確認し、比較可能な前回から今回への違いだけを見ます。`
     : conditionResultPattern && region
@@ -627,7 +635,9 @@ function renderVisualExplanation(output, origin) {
         ? `${region.label}の部位別表示と主観的な疲労感を、別の尺度として順に確認します。`
         : repeatedPattern && region
           ? `${region.label}について、比較可能な過去記録で今回と同じ方向が何件あったかを確認します。`
-          : "同じ解釈を、数値の位置関係に変えて確認します。";
+          : currentReferencePattern && region
+            ? `${region.label}について、基準100から今回の位置だけを確認します。`
+            : "同じ解釈を、数値の位置関係に変えて確認します。";
   const visualPattern = currentShiftPattern
     ? "locate-compare"
     : conditionResultPattern
@@ -636,7 +646,9 @@ function renderVisualExplanation(output, origin) {
         ? "separate-layers"
         : repeatedPattern
           ? "repeated-count"
-          : "general";
+          : currentReferencePattern
+            ? "reference-current"
+            : "general";
   const visualBody = currentShiftPattern
     ? `${renderRegionalVisual(output)}${renderCurrentShiftUnderstanding(output)}`
     : conditionResultPattern
@@ -645,7 +657,9 @@ function renderVisualExplanation(output, origin) {
         ? `${renderMultiLayerVisual(output)}${renderMultiLayerUnderstanding(output)}`
         : repeatedPattern
           ? `${renderRepeatedObservationVisual(output)}${renderRepeatedObservationUnderstanding(output)}`
-          : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
+          : currentReferencePattern
+            ? `${renderRegionalVisual(output, { usePrevious: false })}${renderCurrentReferenceUnderstanding(output)}`
+            : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
   return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual" data-visual-pattern="${visualPattern}">
     <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>${escapeHtml(lead)}</p></header>
     <section class="interpretation-visual-stack">${visualBody}</section>
