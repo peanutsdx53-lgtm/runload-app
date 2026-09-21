@@ -69,7 +69,6 @@
   .prototype-parity--simulation { padding-top: 18px; }
   .prototype-parity--course { padding-top: 18px; }
   .prototype-parity--gpx { padding-top: 18px; }
-  .prototype-parity--activation,
   .prototype-parity--consultation,
   .prototype-parity--support,
   .prototype-parity--reading,
@@ -953,12 +952,6 @@
 .prototype-parity--result .trend-card{grid-column:2;grid-row:2;margin-top:0;padding:20px 22px}
 .prototype-parity--result .trend-svg{margin-top:10px}
 .prototype-parity--result .detail-return{grid-column:1/-1;width:260px;justify-self:center;margin-top:0}}
-.prototype-parity--result .activation-link-wrap{margin-top:18px}
-.prototype-parity--result .activation-link{min-height:68px;padding:13px 14px;border:1px solid color-mix(in srgb,var(--accent) 55%,var(--line));border-radius:17px;background:linear-gradient(135deg,var(--accent-soft),var(--surface));color:var(--ink);display:flex;align-items:center;justify-content:space-between;text-decoration:none;box-shadow:var(--shadow2)}
-.prototype-parity--result .activation-link small,.prototype-parity--result .activation-link strong{display:block}
-.prototype-parity--result .activation-link small{font-size:7px;color:var(--muted);font-weight:850}
-.prototype-parity--result .activation-link strong{margin-top:3px;font-size:11px}
-.prototype-parity--result .activation-link i{font-style:normal;color:var(--accent-strong);font-size:20px}
 .prototype-parity--result .understanding-link-wrap{max-width:840px;margin:18px auto 0}
 .prototype-parity--result .understanding-link{width:100%;min-height:64px;padding:12px 14px;border:1px solid var(--line);border-radius:17px;background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:space-between;text-align:left;text-decoration:none;box-shadow:var(--shadow-soft)}
 .prototype-parity--result .understanding-link small,.prototype-parity--result .understanding-link strong,.prototype-parity--result .understanding-link em{display:block}
@@ -2055,40 +2048,6 @@
 .prototype-parity--gpx .priority-import{margin-top:8px}
 .prototype-parity--gpx .import-copy p{font-size:7.5px}
 .prototype-parity--gpx .file-note{margin-top:6px}}
-
-
-/* ===== Frozen prototype: activation ===== */
-.prototype-parity--activation a,.prototype-parity--activation button{font:inherit;-webkit-tap-highlight-color:transparent}
-.prototype-parity--activation a{text-decoration:none;color:inherit}
-.prototype-parity--activation button{touch-action:manipulation}
-.prototype-parity--activation .eyebrow{margin:0;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.16em}
-.prototype-parity--activation .head h1{margin:4px 0 0;font-size:30px;letter-spacing:-.04em}
-.prototype-parity--activation .head p:last-child{margin:7px 0 0;color:var(--muted);font-size:9px;line-height:1.55}
-.prototype-parity--activation .source{margin-top:18px;padding:13px 14px;border:1px solid var(--line);border-radius:17px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:var(--shadow)}
-.prototype-parity--activation .source small,.prototype-parity--activation .source strong,.prototype-parity--activation .source span{display:block}
-.prototype-parity--activation .source small{font-size:7px;color:var(--muted);font-weight:850}
-.prototype-parity--activation .source strong{margin-top:3px;font-size:14px}
-.prototype-parity--activation .source span{margin-top:3px;color:var(--muted);font-size:8px}
-.prototype-parity--activation .source a{flex:0 0 auto;min-height:38px;padding:0 11px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);color:var(--accent2);font-size:8px;font-weight:900;display:grid;place-items:center}
-.prototype-parity--activation .intro{margin-top:20px}
-.prototype-parity--activation .intro small{display:block;color:var(--muted);font-size:7px;font-weight:900;letter-spacing:.12em}
-.prototype-parity--activation .intro h2{margin:3px 0 0;font-size:18px}
-.prototype-parity--activation .intro p{margin:5px 0 0;color:var(--muted);font-size:8px;line-height:1.5}
-.prototype-parity--activation .actions{margin-top:10px;display:grid;gap:10px}
-.prototype-parity--activation .card{padding:15px;border:1px solid var(--line);border-radius:19px;background:var(--surface);box-shadow:var(--shadow);display:grid;grid-template-columns:42px 1fr;gap:12px}
-.prototype-parity--activation .num{width:42px;height:42px;border-radius:13px;background:var(--soft);color:var(--accent2);display:grid;place-items:center;font-size:10px;font-weight:900}
-.prototype-parity--activation .card h3{margin:1px 0 0;font-size:15px}
-.prototype-parity--activation .card p{margin:5px 0 0;color:var(--muted);font-size:8.5px;line-height:1.55}
-.prototype-parity--activation .card-action{grid-column:1/-1;min-height:44px;border:1px solid var(--accent);border-radius:11px;background:var(--surface);color:var(--accent2);font-size:9px;font-weight:900;display:grid;place-items:center;text-align:center}
-.prototype-parity--activation .card.primary{border-color:color-mix(in srgb,var(--violet) 30%,var(--line));background:linear-gradient(135deg,var(--violetSoft),var(--surface))}
-.prototype-parity--activation .card.primary .num{background:var(--violet);color:var(--color-on-model)}
-.prototype-parity--activation .card.primary .card-action{background:var(--violet);border-color:var(--violet);color:var(--color-on-model)}
-.prototype-parity--activation .boundary{margin-top:13px;padding:11px 12px;border-left:3px solid var(--accent);background:color-mix(in srgb,var(--soft) 58%,transparent);border-radius:0 11px 11px 0;color:var(--muted);font-size:8px;line-height:1.55}
-.prototype-parity--activation .toast.show{opacity:1;transform:translate(-50%,0)}
-@media (min-width:760px){.prototype-parity--activation .actions{grid-template-columns:repeat(2,1fr)}
-.prototype-parity--activation .card{grid-template-columns:42px 1fr;align-content:start}
-.prototype-parity--activation .card-action{margin-top:auto}}
-@media (prefers-reduced-motion:reduce){.prototype-parity--activation *:before,.prototype-parity--activation *:after{transition-duration:.001ms!important;animation-duration:.001ms!important}}
 
 
 /* ===== Frozen prototype: consultation ===== */
