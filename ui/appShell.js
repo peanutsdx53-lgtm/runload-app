@@ -7,9 +7,9 @@ const CORE_NAVIGATION = PRIMARY_DESTINATIONS;
 const TOPBAR_CONTEXT_LABELS = Object.freeze({
   home: "HOME",
   "record-input": "RECORD",
-  "course-library": "COURSE",
-  "course-editor": "COURSE EDITOR",
-  "gpx-analysis": "GPX",
+  "course-library": "RECORD",
+  "course-editor": "RECORD",
+  "gpx-analysis": "RECORD",
   result: "RESULT",
   "body-part-detail": "RESULT / REGION",
   history: "HISTORY",
