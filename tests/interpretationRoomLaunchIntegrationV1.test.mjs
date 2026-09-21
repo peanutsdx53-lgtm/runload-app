@@ -21,7 +21,8 @@ await test('RESULT-REPLACES-ACTIVATION-WITH-INTERPRETATION-LAUNCH',()=>{
 await test('HOME-LATEST-RECORD-SEPARATES-RESULT-AND-UNDERSTANDING',()=>{
   const s=read('screens/homeScreen.js');
   assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=home/);
-  assert.match(s,/結果を見る/);\n  assert.match(s,/結果を理解する/);
+  assert.match(s,/結果を見る/);
+  assert.match(s,/結果を理解する/);
   assert.doesNotMatch(s,/>結果の活用</);
 });
 
