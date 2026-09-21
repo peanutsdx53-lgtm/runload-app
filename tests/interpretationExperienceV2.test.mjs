@@ -99,11 +99,14 @@ await test('VISUAL-MODE-SHOWS-ONLY-ONE-REGIONAL-COMPARISON-LINE',()=>{
   assert.match(html,/>基準</);
   assert.match(html,/>今回</);
   assert.doesNotMatch(html,/殿部/);
-  assert.match(html,/別の部位との大小比較には使いません/);
+  assert.match(html,/別の部位との大小比較にも使いません/);
 });
 
-await test('VISUAL-MODE-KEEPS-ROF-ON-SEPARATE-SCALE',()=>{
-  const html=renderInterpretationRoom({output:baseOutput(),view:'explain',mode:'visual'});
+await test('MULTI-LAYER-VISUAL-KEEPS-ROF-ON-SEPARATE-SCALE',()=>{
+  const out=baseOutput('MULTI_LAYER_CHANGE');
+  out.comparison.conditionDifferences=[];
+  const html=renderInterpretationRoom({output:out,view:'explain',mode:'visual'});
+  assert.match(html,/data-visual-pattern="separate-layers"/);
   assert.match(html,/主観的な疲労感 0–10/);
   assert.match(html,/部位別の基準100とは別の尺度です/);
 });
