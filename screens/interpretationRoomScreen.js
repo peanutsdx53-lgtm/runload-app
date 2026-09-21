@@ -1,7 +1,8 @@
 import { buildRunLoadInterpretation } from "../core/interpretationCore.js";
 import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
 
-const ALLOWED_VIEWS = new Set(["summary", "detail", "evidence", "next"]);
+const ALLOWED_VIEWS = new Set(["summary", "detail", "evidence", "next", "explain"]);
+const ALLOWED_MODES = new Set(["simple", "visual", "difference"]);
 const ALLOWED_INTENTS = new Set(["", "current", "history", "condition", "support"]);
 const ALLOWED_ORIGINS = new Set(["result", "history", "body-part-detail", "simulation", "home"]);
 
@@ -31,6 +32,7 @@ export function renderInterpretationRoomScreen({ services, context }) {
   const origin = safeParameter(parameters, "origin", ALLOWED_ORIGINS, "result");
   const view = safeParameter(parameters, "view", ALLOWED_VIEWS, "summary");
   const intent = safeParameter(parameters, "intent", ALLOWED_INTENTS, "");
+  const mode = safeParameter(parameters, "mode", ALLOWED_MODES, "simple");
   const regionId = String(parameters.get("regionId") || "").slice(0, 80);
 
   const targetExperience = requestedRecordId
@@ -48,5 +50,5 @@ export function renderInterpretationRoomScreen({ services, context }) {
     supportDecision: targetExperience?.supportDecision || null,
   });
 
-  return `<section class="screen screen--interpretation-room" data-interpretation-room data-view="${view}" data-origin="${origin}">${renderInterpretationRoom({ output, view, intent, origin })}</section>`;
+  return `<section class="screen screen--interpretation-room" data-interpretation-room data-view="${view}" data-origin="${origin}">${renderInterpretationRoom({ output, view, mode, intent, origin })}</section>`;
 }
