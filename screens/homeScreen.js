@@ -128,12 +128,11 @@ function renderPlanCard(services) {
 export function renderHomeScreen({ services }) {
   const latestExperience = services.workflows.records.loadLatestExperience();
   const draft = services.storage.draft.load();
-  const today = shortDate(localTodayIso());
   const state = homeState(latestExperience, draft);
   return `<div class="screen screen--home prototype-parity prototype-parity--home home-state--${escapeHtml(state)}" data-home-state="${escapeHtml(state)}">
-    <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div><span class="date-badge">${escapeHtml(today)}</span></section>
+    <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div></section>
     ${renderMobileFocus(latestExperience, draft)}
     ${renderPcFocus(latestExperience, draft)}
-    <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div><a href="#/history">履歴を見る</a></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
+    <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
   </div>`;
 }
