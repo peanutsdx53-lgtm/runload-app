@@ -1,0 +1,89 @@
+/*
+ * Desktop UI refinement pass v5.
+ * Unified secondary-screen frame: fixed toolbar + independently scrolling body.
+ * Matches the interaction pattern established for BODY RECORD / SHOES.
+ */
+
+@media (min-width: 80rem) {
+  .secondary-derived-screen {
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+
+  .secondary-derived-head {
+    width: 100%;
+    min-width: 0;
+    height: 4rem;
+    min-height: 4rem;
+    padding: 0.7rem 1.05rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: center;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-surface);
+  }
+
+  .secondary-derived-head > strong {
+    justify-self: center;
+    min-width: 0;
+    color: var(--color-ink);
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: 900;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .secondary-derived-head > span:last-child {
+    justify-self: end;
+  }
+
+  .secondary-derived-head .secondary-derived-back {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    min-height: 2.45rem !important;
+    margin: 0 !important;
+    padding: 0 0.8rem !important;
+    justify-self: start;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.7rem !important;
+    background: var(--color-surface-muted) !important;
+    color: var(--color-accent-strong) !important;
+    font-size: 0.84rem !important;
+    line-height: 1.2;
+    font-weight: 850 !important;
+    text-decoration: none !important;
+    white-space: nowrap;
+  }
+
+  .secondary-derived-body {
+    min-width: 0;
+    min-height: 0;
+    padding: 1.15rem 1.35rem 1.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    background: var(--color-surface);
+  }
+
+  .secondary-derived-body > :first-child {
+    margin-top: 0 !important;
+  }
+
+  .secondary-derived-body :is(
+    .source,
+    .carry,
+    .recommend,
+    .lead,
+    .notice
+  ) {
+    max-width: 100%;
+  }
+}
