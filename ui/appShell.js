@@ -172,17 +172,18 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
       </div>`;
   }
   return `
+    <header class="app-header app-header--desktop app-header--viewport-fixed">
+      <div class="app-screen-context" aria-label="現在の画面">
+        <small>SCREEN</small>
+        <strong>${escapeHtml(topbarContextLabel(currentScreen))}</strong>
+      </div>
+      <div class="app-header__actions">
+        ${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}
+      </div>
+    </header>
+
     <div class="app-shell">
       ${renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult)}
-      <header class="app-header app-header--desktop">
-        <div class="app-screen-context" aria-label="現在の画面">
-          <small>SCREEN</small>
-          <strong>${escapeHtml(topbarContextLabel(currentScreen))}</strong>
-        </div>
-        <div class="app-header__actions">
-          ${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}
-        </div>
-      </header>
 
       <main id="main-content" class="app-main" tabindex="-1">
         ${screenContent}
