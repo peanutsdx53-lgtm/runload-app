@@ -1236,3 +1236,65 @@
     max-width: 100%;
   }
 }
+
+/* Consultation and Reading: keep text-oriented content at readable desktop widths. */
+@media (min-width: 80rem) {
+  .screen--consultation.prototype-parity--consultation {
+    width: min(100%, 62rem);
+    margin-inline: auto;
+  }
+
+  .screen--consultation.prototype-parity--consultation :is(
+    .head,
+    .source,
+    .share-step,
+    .boundary,
+    .support-link
+  ) {
+    width: min(100%, 54rem);
+  }
+
+  .screen--consultation.prototype-parity--consultation .share-purpose-step textarea[data-consult-question] {
+    width: min(100%, 42rem);
+  }
+
+  .screen--consultation.prototype-parity--consultation .share-region-field {
+    width: 22rem;
+    max-width: 100%;
+  }
+
+  .screen--consultation.prototype-parity--consultation .share-region-field select {
+    text-align: center;
+    text-align-last: center;
+  }
+
+  .screen--consultation.prototype-parity--consultation .share-viewer-shell {
+    width: min(100%, 45rem);
+  }
+
+  .screen--reading.prototype-parity--reading {
+    width: min(100%, 66rem);
+    margin-inline: auto;
+  }
+
+  .screen--reading.prototype-parity--reading :is(
+    .head,
+    .recommend,
+    .filter-strip
+  ) {
+    width: min(100%, 50rem);
+  }
+
+  .screen--reading.prototype-parity--reading .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .screen--reading.prototype-parity--reading .article-card {
+    min-width: 0;
+  }
+
+  .screen--reading.prototype-parity--reading .sheet {
+    width: min(100%, 44rem);
+  }
+}
