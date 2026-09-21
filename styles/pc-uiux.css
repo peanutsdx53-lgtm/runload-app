@@ -1395,3 +1395,18 @@
     width: min(100%, 28rem);
   }
 }
+
+/* Home variant switch: preserve the existing mobile focus card unchanged. */
+.screen--home.prototype-parity--home .home-focus--pc {
+  display: none;
+}
+
+@media (min-width: 80rem) {
+  .screen--home.prototype-parity--home > .focus.home-focus--mobile {
+    display: none;
+  }
+
+  .screen--home.prototype-parity--home > .focus.home-focus--pc {
+    display: grid;
+  }
+}
