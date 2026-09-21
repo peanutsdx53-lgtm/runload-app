@@ -509,6 +509,14 @@ function renderRegionalVisual(output) {
     </div>
     <p class="source-boundary">人体図の強調は注目する位置を示します。比較図は${escapeHtml(region.label)}の中だけで読み、色や矢印から危険・安全・改善・悪化を判断しません。別の部位との大小比較にも使いません。</p></article>`;
 }
+function renderCurrentShiftUnderstanding(output) {
+  if (meaning(output).primaryCode !== "CURRENT_SHIFT_WITH_HISTORY") return "";
+  const region = focusRegion(output);
+  const comparison = focusComparison(output);
+  if (!region || !comparison?.comparablePreviousRecordId) return "";
+  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`${region.label}は、比較可能な前回${number(comparison.previousValue)}から今回${number(region.value)}へ、同じ部位内で表示位置が変わっています。`)}</p></div>`;
+}
+
 function renderRofVisual(output) {
   const rof = output?.current?.rof || {};
   if (!Number.isFinite(rof.pre) || !Number.isFinite(rof.post)) return "";
@@ -525,9 +533,18 @@ function renderRofVisual(output) {
 function renderVisualExplanation(output, origin) {
   const recordId = output?.targetRecordId || "";
   const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
-  return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual">
-    <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>同じ解釈を、数値の位置関係に変えて確認します。</p></header>
-    <section class="interpretation-visual-stack">${renderRegionalVisual(output)}${renderRofVisual(output)}</section>
+  const code = meaning(output).primaryCode || "";
+  const region = focusRegion(output);
+  const currentShiftPattern = code === "CURRENT_SHIFT_WITH_HISTORY";
+  const lead = currentShiftPattern && region
+    ? `まず${region.label}の位置を確認し、比較可能な前回から今回への違いだけを見ます。`
+    : "同じ解釈を、数値の位置関係に変えて確認します。";
+  const visualBody = currentShiftPattern
+    ? `${renderRegionalVisual(output)}${renderCurrentShiftUnderstanding(output)}`
+    : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
+  return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual" data-visual-pattern="${currentShiftPattern ? "locate-compare" : "general"}">
+    <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>${escapeHtml(lead)}</p></header>
+    <section class="interpretation-visual-stack">${visualBody}</section>
     ${renderExplanationFollowup(output, origin)}
     <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">最初の確認へ戻る</a></div>
   </div>`;
