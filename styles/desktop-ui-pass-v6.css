@@ -73,6 +73,22 @@
     margin-top: 0.9rem;
   }
 
+  /* Remaining desktop microcopy found by Chromium visual-state audit. */
+  .screen--settings.prototype-parity--settings .sub-section-head strong,
+  .screen--consultation.prototype-parity--consultation .share-card strong,
+  .screen--consultation.prototype-parity--consultation .share-output-actions .output strong {
+    font-size: 0.88rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--history.prototype-parity--history .chart-wrap svg text {
+    font-size: 0.75rem !important;
+  }
+
+  .screen--support-guidance.prototype-parity--support .secondary-derived-body > .back[data-context-back-duplicate] {
+    display: none !important;
+  }
+
   /* Empty/save-status copy must remain readable in both appearance modes. */
   .screen--history.prototype-parity--history :is(.empty-records, .screen-footnote),
   .screen--plan.prototype-parity--plan :is(.note, .saved-card span),
