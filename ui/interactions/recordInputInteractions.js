@@ -558,15 +558,19 @@ function bindEmbeddedRecordSubflows(form, services) {
     closeRecordSubflow(form);
   });
 
-  refreshRecordBodyUi(form);
+  normalizeEmbeddedBodyStatus(form);
   updateSubjectiveSummary(form);
   updatePersonalSummary(form);
 }
 
 export function readSubjectiveFeedback(formData) {
-  const safetyFlags = Object.fromEntries(SAFETY_FLAG_KEYS.map((flag) => [flag, booleanValue(formData, `safety_${flag}`)]));
-  const hasSafetyFlag = Object.values(safetyFlags).some(Boolean);
   const primaryStatus = String(formData.get("subjectiveStatus") || "deferred");
+  const consultationFactsActive = primaryStatus === "strong_reported";
+  const safetyFlags = Object.fromEntries(SAFETY_FLAG_KEYS.map((flag) => [
+    flag,
+    consultationFactsActive ? booleanValue(formData, `safety_${flag}`) : false,
+  ]));
+  const hasSafetyFlag = Object.values(safetyFlags).some(Boolean);
   const checkStatus = primaryStatus === "body_reported"
     ? String(formData.get("subjectiveDetailType") || "")
     : primaryStatus;
@@ -591,8 +595,8 @@ export function readSubjectiveFeedback(formData) {
   return {
     checkStatus,
     bodyAreaObservations,
-    consultationNote: String(formData.get("consultationNote") || ""),
-    unexpectedSymptom: booleanValue(formData, "unexpectedSymptom"),
+    consultationNote: consultationFactsActive ? String(formData.get("consultationNote") || "") : "",
+    unexpectedSymptom: consultationFactsActive ? booleanValue(formData, "unexpectedSymptom") : false,
     symptomContext: {
       timing: String(formData.get("symptomTiming") || ""),
       startedWhen: String(formData.get("symptomStartedWhen") || ""),

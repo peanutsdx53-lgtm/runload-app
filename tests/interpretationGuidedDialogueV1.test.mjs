@@ -34,7 +34,7 @@ function countChoices(html){return (html.match(/class="interpretation-dialogue-c
 
 await test('ENTRY-SHOWS-ONE-MEANING-AND-TWO-INTENTS',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  assert.match(html,/今回のRunLoad解釈/);
+  assert.match(html,/今回の確認/);
   assert.equal(countChoices(html),2);
   assert.match(html,/この結果を理解したい/);
   assert.match(html,/次にどう活かすか考えたい/);
@@ -67,7 +67,7 @@ await test('UNDERSTAND-STEP-OMITS-UNAVAILABLE-MODES',()=>{
 
 await test('EXPLANATION-OFFERS-EVIDENCE-AND-MANAGEMENT-AFTER-EXPLANATION',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'simple',origin:'result'});
-  assert.match(html,/なぜこの解釈なのか確認/);
+  assert.match(html,/なぜこの読み方なのか確認/);
   assert.match(html,/次にどう活かすか考える/);
   assert.match(html,/view=evidence/);
   assert.match(html,/topic=manage/);

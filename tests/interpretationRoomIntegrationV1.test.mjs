@@ -75,7 +75,7 @@ function output(overrides={}){
 
 await test('SUMMARY-IS-INTERPRETATION-FIRST',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  assert.match(html,/今回のRunLoad解釈/);
+  assert.match(html,/今回の確認/);
   assert.match(html,/股関節部の表示と坂の条件の両方が変わっています/);
   assert.match(html,/今、確認したいことはどちらですか/);
   assert.doesNotMatch(html,/そう読める理由/);

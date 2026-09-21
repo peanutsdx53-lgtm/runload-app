@@ -12,7 +12,7 @@ export function renderSimulationScreen({ services, context }) {
   const safeRoomOrigin=["result","history","body-part-detail","home"].includes(roomOrigin)?roomOrigin:"result";
   const roomBack=`#/interpretation-room?recordId=${encodeURIComponent(recordId)}&origin=${encodeURIComponent(safeRoomOrigin)}&view=next&intent=condition`;
   const back=from==="plan"?"#/plan":from==="interpretation-room"?roomBack:from==="activation"?"#/activation":"#/home";
-  const backLabel=from==="plan"?"予定へ戻る":from==="interpretation-room"?"RunLoad解釈へ戻る":from==="activation"?"結果の活用へ戻る":"Homeへ戻る";
+  const backLabel=from==="plan"?"予定へ戻る":from==="interpretation-room"?"結果の理解へ戻る":from==="activation"?"結果の活用へ戻る":"Homeへ戻る";
   const recent=sourceRun(services,recordId); const distance=Number(recent?.distanceKm)>0?Number(recent.distanceKm):5; const duration=Number(recent?.durationMinutes)>0?Number(recent.durationMinutes):32;
   const nextCheck=recent?.reflectionContext?.nextCheckPoint||recent?.reflectionContext?.nextCheck||"";
   const sourceLabel=recordId?"選択した記録":"前回の記録"; const comparisonTitle=recordId?"保存記録と条件を比べる":"前回と条件を比べる";

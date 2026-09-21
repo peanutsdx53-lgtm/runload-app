@@ -1,4 +1,4 @@
-// Runtime revision: interpretation-entry-gates-v1
+// Runtime revision: interpretation-safety-hotfix-v1
 const CACHE_NAME = "runload-app-current";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [

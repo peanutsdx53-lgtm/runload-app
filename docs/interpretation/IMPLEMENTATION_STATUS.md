@@ -699,6 +699,25 @@ Mandatory completion checks:
 
 Do not merge PR #49 or promote formal Current as part of Stage 8E.
 
+
+## Post-merge hotfix — stale hidden safety state
+
+Status: **COMPLETE — PASS**
+
+Durable audit:
+- `docs/interpretation/INTERPRETATION_SAFETY_STALE_STATE_HOTFIX_AUDIT_20260921.md`
+
+Fixed:
+- hidden safety/consultation facts can no longer affect a saved record unless the current subjective status is `strong_reported`;
+- stale hidden facts are normalized on record-form initialization;
+- public understanding surfaces no longer display `RunLoad解釈` / `RUNLOAD INTERPRETATION`;
+- Service Worker and runtime hashes updated for immediate public refresh.
+
+Verification:
+- exact current save-reader behavior: **4/4 PASS**;
+- hotfix source/runtime checks: **23/23 PASS**;
+- protected calculation and ROF-J cores unchanged.
+
 ## Stop conditions
 
 Stop safely and report before proceeding if any of the following occur:
