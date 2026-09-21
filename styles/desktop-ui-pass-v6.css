@@ -82,6 +82,12 @@
     line-height: 1.4 !important;
   }
 
+  .screen--plan.prototype-parity--plan .saved-card strong,
+  .screen--privacy.prototype-parity--privacy .lead strong {
+    font-size: 0.92rem !important;
+    line-height: 1.4 !important;
+  }
+
   .screen--history.prototype-parity--history .chart-wrap svg text {
     font-size: 0.75rem !important;
   }
