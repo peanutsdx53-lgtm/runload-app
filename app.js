@@ -85,12 +85,34 @@ let guideSection = DEFAULT_GUIDE_SECTION;
 let guideFirstVisit = guideOpen;
 let router;
 
+const GLOBAL_DESKTOP_HEADER_SELECTOR = '[data-global-desktop-header="true"]';
+
+function removeMountedDesktopHeader() {
+  document.querySelectorAll(GLOBAL_DESKTOP_HEADER_SELECTOR).forEach((header) => header.remove());
+}
+
+function mountDesktopHeaderToViewport() {
+  const header = appRoot.querySelector(".app-header--desktop.app-header--viewport-fixed");
+  if (!header) return;
+  header.dataset.globalDesktopHeader = "true";
+  header.style.position = "fixed";
+  header.style.top = "0";
+  header.style.right = "0";
+  header.style.bottom = "auto";
+  header.style.left = "0";
+  header.style.width = "100%";
+  header.style.zIndex = "200";
+  header.style.transform = "none";
+  document.body.insertBefore(header, appRoot);
+}
+
 function saveGuideVersionSeen() {
   const currentSettings = applicationServices.storage.settings.load();
   applicationServices.storage.settings.save(withGuideVersionSeen(currentSettings));
 }
 
 function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {}) {
+  removeMountedDesktopHeader();
   applyJournalSettings(applicationServices.storage.settings.load());
   const screenName = currentLocation.screen;
   const recordInputReturnState = screenName === "record-input"
@@ -136,6 +158,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       renderCurrentLocation({ focusHeading: false, focusSelector: `#guide-tab-${guideSection}` });
     },
   });
+  mountDesktopHeaderToViewport();
   bindScreenInteractions({
     screenName,
     services: applicationServices,
