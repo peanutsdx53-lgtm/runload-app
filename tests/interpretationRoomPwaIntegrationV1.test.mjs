@@ -42,9 +42,9 @@ await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
   const manifest=await source('RUNTIME_SHA256SUMS.txt');
   const expected=[
     '20fc3b838f4251d08c765c46fa07d29b905e38e2b38474cea85bcf0dd77845a8  core/interpretationCore.js',
-    '2cf8624fb993ef7913635180030131ab030652aefc4330da1508b1de6eb97d15  screens/interpretationRoomScreen.js',
-    '89a45320c3a8a1f580627c37549d62c15d5c68ee9cdfcbc912bc5c6d719c7033  styles/interpretation-room.css',
-    '956d92781c64d0898a014a9bf57f568367dd228206e01698dcc81de891fdf49f  ui/interpretationRoomPresentation.js',
+    'b39550a16827bd88669e8fcca3c9fc97362cdf417a65d1c6cde59e88fba9cee8  screens/interpretationRoomScreen.js',
+    'e0ceb5f65c3aa9620c3697cb52b31575e4d1cb651a6abdaa136fd91c9091e87b  styles/interpretation-room.css',
+    'da10c17ba7c25721eff8601cccd636d54238bb52a20f92878a7a53ac07710cd8  ui/interpretationRoomPresentation.js',
   ];
   for(const line of expected) assert.ok(manifest.includes(line),line);
 });
