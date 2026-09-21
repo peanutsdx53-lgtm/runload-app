@@ -11,13 +11,14 @@ import { officialRofJDescriptor } from "../core/secondPillarRofJ.js";
 const FRONT = '<circle cx="150" cy="36" r="20"></circle><path d="M110 78 C120 66 135 60 150 60 C165 60 180 66 190 78 L204 126 C208 138 204 150 196 160 L182 176 L188 212 C192 228 190 246 184 262 L172 308 C168 324 166 340 166 356 L166 400 C166 410 158 418 148 418 C138 418 130 410 130 400 L130 356 C130 340 128 324 124 308 L112 262 C106 246 104 228 108 212 L114 176 L100 160 C92 150 88 138 92 126 Z"></path>';
 const BACK = '<circle cx="150" cy="36" r="20"></circle><path d="M112 76 C122 66 136 60 150 60 C164 60 178 66 188 76 L202 124 C206 136 202 150 194 160 L182 174 L188 212 C192 228 190 244 184 262 L172 310 C168 326 166 342 166 358 L166 402 C166 412 158 420 148 420 C138 420 130 412 130 402 L130 358 C130 342 128 326 124 310 L112 262 C106 244 104 228 108 212 L114 174 L102 160 C94 150 90 136 94 124 Z"></path>';
 const FOOT = '<path d="M114 78 C126 66 140 60 154 60 C172 60 186 72 194 92 C198 102 200 116 200 132 L200 238 C200 274 186 306 160 320 C150 326 140 326 130 320 C108 306 96 274 96 238 L96 132 C96 112 102 90 114 78 Z"></path>';
+const FRONT_LOWER_PC = "M135 382 C140 390 145 394 150 394 C155 394 160 390 165 382 L166 402 C166 410 159 416 150 416 C141 416 134 410 134 402 Z";
 const VIEWS = Object.freeze([
   Object.freeze({ key: "front", title: "前面", silhouette: FRONT, paths: Object.freeze([
     ["BA-DISP-014", "M120 148 C130 138 140 134 150 134 C160 134 170 138 180 148 L178 184 C168 190 160 194 150 194 C140 194 132 190 122 184 Z"],
     ["BA-DISP-016", "M122 194 C132 202 141 206 150 206 C159 206 168 202 178 194 L174 270 C164 278 158 282 150 282 C142 282 136 278 126 270 Z"],
     ["BA-DISP-019", "M126 270 C136 278 142 281 150 281 C158 281 164 278 174 270 L170 300 C162 306 157 309 150 309 C143 309 138 306 130 300 Z"],
     ["BA-DISP-021", "M130 306 C138 314 144 318 150 318 C156 318 162 314 170 306 L166 382 C160 390 156 394 150 394 C144 394 140 390 134 382 Z"],
-    ["BA-DISP-024", "M135 382 C140 390 145 394 150 394 C155 394 160 390 165 382 L166 402 C166 410 159 416 150 416 C141 416 134 410 134 402 Z"],
+    ["BA-DISP-024", "M135 386 L165 386 L166 416 L134 416 Z"],
   ]) }),
   Object.freeze({ key: "back", title: "後面", silhouette: BACK, paths: Object.freeze([
     ["BA-DISP-015", "M120 146 C130 158 139 166 150 166 C161 166 170 158 180 146 L180 198 C170 208 160 213 150 213 C140 213 130 208 120 198 Z"],
@@ -77,10 +78,15 @@ function locatorSvg(regionId) {
 
 function bodyMap(resultRecord, infos) {
   const byId = new Map(infos.map((info) => [info.row.regionId, info]));
-  return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430" aria-label="${view.title}の部位図"><defs><pattern id="hatch-${view.key}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="currentColor" opacity=".08"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern><clipPath id="body-clip-${view.key}">${view.silhouette}</clipPath></defs><g class="body-silhouette">${view.silhouette}</g><g class="region-layer" clip-path="url(#body-clip-${view.key})">${view.paths.map(([id, d]) => {
+  return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430" aria-label="${view.title}の部位図"><defs><pattern id="hatch-${view.key}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="currentColor" opacity=".08"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern><clipPath id="body-clip-${view.key}">${view.silhouette}</clipPath></defs><g class="body-silhouette">${view.silhouette}</g><g class="region-layer">${view.paths.map(([id, d]) => {
     const info = byId.get(id); const value = info?.row?.value; const name = bodyRegionFormalName(id, info?.row?.regionName || id); const state = direction(value);
     const label = `${name}：${finite(value) ? `今回の目安 ${fmt(value, 1)}` : "今回の目安は数値なし"}`;
-    return `<a class="region-link" href="#/body-part-detail?recordId=${encodeURIComponent(resultRecord?.record_id || "")}&regionId=${encodeURIComponent(id)}" aria-label="${escapeHtml(`${label}。詳細を開く`)}"><path class="region-path" data-direction="${state}" data-region-id="${escapeHtml(id)}"${state === "unavailable" ? ` style="fill:url(#hatch-${view.key})"` : ""} d="${d}"><title>${escapeHtml(label)}</title></path></a>`;
+    const unavailableStyle = state === "unavailable" ? ` style="fill:url(#hatch-${view.key})"` : "";
+    const mobilePath = `<path class="region-path${id === "BA-DISP-024" && view.key === "front" ? " region-path--mobile-shape" : ""}" data-direction="${state}" data-region-id="${escapeHtml(id)}"${unavailableStyle} d="${d}"><title>${escapeHtml(label)}</title></path>`;
+    const pcPath = id === "BA-DISP-024" && view.key === "front"
+      ? `<path class="region-path region-path--pc-shape" data-direction="${state}" data-region-id="${escapeHtml(id)}"${unavailableStyle} d="${FRONT_LOWER_PC}" aria-hidden="true"></path>`
+      : "";
+    return `<a class="region-link" href="#/body-part-detail?recordId=${encodeURIComponent(resultRecord?.record_id || "")}&regionId=${encodeURIComponent(id)}" aria-label="${escapeHtml(`${label}。詳細を開く`)}">${mobilePath}${pcPath}</a>`;
   }).join("")}</g></svg></figure>`).join("");
 }
 
@@ -88,13 +94,16 @@ function regionRow(resultRecord, info) {
   const row = info.row; const name = bodyRegionFormalName(row.regionId, row.regionName || row.regionId);
   const current = finite(row.value) ? fmt(row.value, 1) : "—";
   const referenceDelta = finite(row.value) ? Number(row.value) - 100 : null;
-  const previousLine = info.previous
+  const originalPrevious = info.previous ? `${escapeHtml(formatLocalDate(info.previous.experience.record.date))}・前回 ${fmt(info.prev, 1)}` : "前回比較なし";
+  const originalDelta = finite(info.delta) ? `前回からの変化 ${signed(info.delta, 1)}` : "比較なし";
+  const pcPrevious = info.previous
     ? `前回（${escapeHtml(formatLocalDate(info.previous.experience.record.date))}） ${fmt(info.prev, 1)} → 今回 ${current}`
     : `前回比較なし・今回 ${current}`;
-  const scale = finite(row.value)
-    ? `<span class="region-scale" aria-label="基準100に対する今回値${current}${finite(info.prev) ? `、前回値${fmt(info.prev, 1)}` : ""}"><span class="region-baseline-label">基準100</span><i class="region-current-marker" style="--pos:${position(row.value)}%"></i>${finite(info.prev) ? `<b class="region-previous-marker" style="--prev:${position(info.prev)}%"></b>` : ""}</span>`
+  const mobileScale = finite(row.value) ? `<span class="region-scale region-scale--mobile"><i style="--pos:${position(row.value)}%"></i></span>` : "";
+  const pcScale = finite(row.value)
+    ? `<span class="region-scale-pc" aria-label="基準100に対する今回値${current}${finite(info.prev) ? `、前回値${fmt(info.prev, 1)}` : ""}"><span class="region-baseline-label">基準100</span><i class="region-current-marker" style="--pos:${position(row.value)}%"></i>${finite(info.prev) ? `<b class="region-previous-marker" style="--prev:${position(info.prev)}%"></b>` : ""}</span>`
     : "";
-  return `<div class="region-row" role="group" aria-label="${escapeHtml(name)}"><span class="locator">${locatorSvg(row.regionId)}</span><span class="region-copy"><strong>${escapeHtml(name)}</strong><small>${previousLine}</small></span><span class="region-metric"><strong>${current}</strong><small>${finite(referenceDelta) ? `基準100との差 ${signed(referenceDelta, 1)}` : "数値なし"}</small></span>${scale}</div>`;
+  return `<div class="region-row" role="group" aria-label="${escapeHtml(name)}"><span class="locator">${locatorSvg(row.regionId)}</span><span class="region-copy"><strong>${escapeHtml(name)}</strong><small class="region-copy-mobile">${originalPrevious}</small><small class="region-copy-pc">${pcPrevious}</small></span><span class="region-metric"><strong>${current}</strong><small class="region-metric-mobile">${originalDelta}</small><small class="region-metric-pc">${finite(referenceDelta) ? `基準100との差 ${signed(referenceDelta, 1)}` : "数値なし"}</small></span>${mobileScale}${pcScale}</div>`;
 }
 
 function regionList(resultRecord, infos, mode) {
