@@ -604,16 +604,45 @@ Verification:
 - Stage 8B 390 px layouts remain the geometry baseline;
 - full production-browser animation/theme audit remains Stage 8E.
 
+## Stage 8D completion checkpoint
+
+Durable audit:
+- `docs/interpretation/STAGE8D_SELF_MANAGEMENT_CONTINUATION_AUDIT_20260921.md`
+
+Completed:
+- all five Stage 8B primary Meaning Core patterns now carry the three-part self-management continuation:
+  - 今回理解したこと
+  - まだ分からないこと
+  - 次に確認すること
+- History is used directly when appropriate and available;
+- `CONDITION_AND_RESULT_CHANGED` prefers existing Simulation when available;
+- unavailable direct routes fall back to the existing management-narrowing dialogue;
+- explanation follow-up remains exactly two choices;
+- no downstream function is recreated inside Interpretation Room;
+- no prescription, run/rest decision, causal inference, or new persistence was introduced.
+
+Verification:
+- Stage 8D completion focused checks: **13/13 PASS**;
+- runtime manifest/PWA hash expectations were corrected to the actual Stage 8D presentation/CSS files.
+
 ## Current next action
 
-Begin **Stage 8D — understanding → self-management continuation** with one limited batch.
+Run **Stage 8E — final visual/motion/runtime/scientific audit**.
 
-Target:
-- after an explanation, summarize what was understood;
-- state what is still unknown;
-- show one next observation to check;
-- bridge to an existing function rather than implementing that function inside Interpretation Room;
-- no training prescription, run/rest decision, causal claim, or new persistent data.
+Mandatory completion checks:
+- 390 px mobile;
+- desktop;
+- light/dark;
+- standard and alternate theme semantics;
+- Reduced Motion;
+- horizontal overflow and label collision;
+- short one-shot motion timing;
+- no false danger/goodness cue;
+- regression/integration verification;
+- PWA/runtime integrity;
+- protected scientific-core integrity.
+
+Do not merge PR #49 or promote formal Current as part of Stage 8E.
 
 ## Stop conditions
 
