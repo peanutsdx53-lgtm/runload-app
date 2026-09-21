@@ -71,7 +71,7 @@ await test('STAGE8B-CURRENT-SHIFT-KEEPS-SCIENTIFIC-BOUNDARY',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/危険・安全・改善・悪化を判断しません/);
   assert.match(html,/別の部位との大小比較にも使いません/);
-  assert.doesNotMatch(html,/走るべき|休むべき|原因です|危険度/);
+  assert.doesNotMatch(html,/走るべき|休むべき|原因です|危険です|安全です|危険度が(?:高い|低い)/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
