@@ -150,8 +150,8 @@ Confirmed:
 
 The public GitHub runtime does not contain the pre-existing 273-test App Source suite. When a new formal App Source / Current package is produced, the following must be carried forward:
 
-1. update `tests/uiIntegrationStage4ResultHistory.test.mjs` so the result-use contract expects `#/interpretation-room?...&origin=result` instead of the old Activation screen;
-2. update `tests/uiIntegrationStage6ReleaseAudit.test.mjs` so Activation is validated as a compatibility alias and `renderActivationScreen` is absent;
+1. update the result/history integration test so the result-use contract expects `#/interpretation-room?...&origin=result` instead of the old Activation screen;
+2. update the release-audit integration test so Activation is validated as a compatibility alias and `renderActivationScreen` is absent;
 3. include the four new Interpretation test suites;
 4. regenerate the App Source verification result and runtime SHA manifest;
 5. re-run the full packaged-copy verification before Current promotion.
@@ -198,11 +198,11 @@ Automated visual/mobile layout audit is therefore **PASS**. User-visible accepta
 
 ## Final state
 
-- Stage 0: COMPLETE
-- Stage 1: COMPLETE
-- Stage 2: COMPLETE
-- Stage 3: COMPLETE
-- Stage 4: COMPLETE
+- Durable restart mechanism: COMPLETE
+- Interpretation Core implementation: COMPLETE
+- Independent room route/presentation: COMPLETE
+- Existing-screen launch compatibility: COMPLETE
+- PWA/runtime integration: COMPLETE
 - full-regression checkpoint: **COMPLETE — PASS**
 - PR #49: keep **Draft** until user visual/functional acceptance
 - main: unchanged
