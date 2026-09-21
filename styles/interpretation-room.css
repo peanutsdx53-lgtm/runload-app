@@ -188,3 +188,222 @@
 .interpretation-table-wrap {
   min-width: 0;
 }
+
+
+/* Stage 6: meaning-first explanation surfaces. */
+.interpretation-primary--meaning h1 {
+  margin-top: 8px;
+  max-width: 34em;
+  font-size: clamp(21px, 3.8vw, 30px);
+  line-height: 1.55;
+  letter-spacing: -.02em;
+}
+
+.interpretation-meaning-label,
+.interpretation-section-head small,
+.interpretation-simple-grid small,
+.interpretation-visual-card__head small,
+.interpretation-difference-card small,
+.interpretation-boundary-card small {
+  color: var(--color-accent-strong);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+
+.interpretation-meaning-label { margin: 22px 0 0; }
+
+.interpretation-reasons {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-line);
+}
+
+.interpretation-reasons h2,
+.interpretation-section-head h2 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.interpretation-reasons ul {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding-left: 1.35em;
+}
+
+.interpretation-reasons li {
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.interpretation-boundary-card {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--color-paper);
+}
+
+.interpretation-boundary-card p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.interpretation-explanation-section {
+  display: grid;
+  gap: 12px;
+}
+
+.interpretation-section-head {
+  display: grid;
+  gap: 4px;
+}
+
+.interpretation-view-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.interpretation-view-choice {
+  min-width: 0;
+  min-height: 86px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.interpretation-view-choice__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.interpretation-view-choice strong,
+.interpretation-view-choice small {
+  display: block;
+}
+
+.interpretation-view-choice strong { font-size: 14px; }
+.interpretation-view-choice small { margin-top: 4px; color: var(--color-muted); font-size: 11px; line-height: 1.45; }
+.interpretation-view-choice i { color: var(--color-accent-strong); font-style: normal; font-size: 20px; }
+
+.interpretation-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.interpretation-simple-grid,
+.interpretation-difference-grid,
+.interpretation-visual-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.interpretation-simple-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.interpretation-simple-grid article,
+.interpretation-visual-card,
+.interpretation-difference-card {
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+
+.interpretation-simple-grid p,
+.interpretation-difference-card p,
+.interpretation-visual-card p {
+  margin: 8px 0 0;
+  line-height: 1.7;
+}
+
+.interpretation-simple-grid p { font-size: 14px; }
+
+.interpretation-visual-card__head h2,
+.interpretation-difference-card h2 {
+  margin: 4px 0 0;
+  font-size: 18px;
+}
+
+.interpretation-comparison-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 12px;
+  overflow: visible;
+}
+
+.interpretation-comparison-axis {
+  stroke: var(--color-line);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.interpretation-comparison-svg circle {
+  fill: var(--color-surface);
+  stroke-width: 4;
+}
+
+.interpretation-comparison-svg text {
+  fill: var(--color-ink);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.interpretation-comparison-svg .marker-reference circle { stroke: var(--color-muted); }
+.interpretation-comparison-svg .marker-previous circle { stroke: var(--color-line-strong, var(--color-muted)); }
+.interpretation-comparison-svg .marker-current circle { stroke: var(--color-accent-strong); }
+.interpretation-comparison-svg .marker-current text { fill: var(--color-accent-strong); }
+
+.interpretation-difference-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.interpretation-difference-card strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--color-accent-strong);
+}
+
+.interpretation-difference-boundary { margin: 0; }
+.interpretation-empty-note { margin: 0; color: var(--color-muted); }
+
+@media (max-width: 640px) {
+  .interpretation-view-choice-grid,
+  .interpretation-simple-grid,
+  .interpretation-difference-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .interpretation-summary-actions {
+    display: grid;
+  }
+
+  .interpretation-summary-actions .button {
+    width: 100%;
+  }
+
+  .interpretation-primary--meaning h1 {
+    font-size: 20px;
+    line-height: 1.6;
+  }
+}
