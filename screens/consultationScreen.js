@@ -179,9 +179,9 @@ function prototypeDocumentBlocks(items) {
   }).join("");
 }
 
-function renderPrototypeConsultation({ services, experience, plan, regionId = "" }) {
+function renderPrototypeConsultation({ services, experience, plan, regionId = "", backHref = "#/more", backLabel = "その他へ戻る" }) {
   if (!experience?.record) {
-    return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation"><section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel"><div class="panel-head"><div><small>RECORD</small><strong>対象の記録がありません</strong></div></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div>`;
+    return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation secondary-derived-screen"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel"><div class="panel-head"><div><small>RECORD</small><strong>対象の記録がありません</strong></div></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div>`;
   }
 
   const record = experience.record;
@@ -209,7 +209,8 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
   const selector = prototypeShareSelector(items);
   const documentBlocks = prototypeDocumentBlocks(items);
 
-  return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation" data-prototype-consultation data-prototype-share-prep>
+  return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation secondary-derived-screen" data-prototype-consultation data-prototype-share-prep>
+    <a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a>
     <section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録から、指導者などに見せる内容を整理します。RunLoadから相手へ自動送信はしません。</p></section>
 
     <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果を確認</a></section>
@@ -269,5 +270,7 @@ export function renderConsultationScreen({ services, context }) {
   const plans = services.storage.plans.loadAll();
   const plan = latestPlan(plans);
   const regionId = context.parameters.get("regionId") || "";
-  return renderPrototypeConsultation({ services, experience, plan, regionId });
+  const backHref = requestedRecordId ? `#/result?recordId=${encodeURIComponent(requestedRecordId)}` : "#/more";
+  const backLabel = requestedRecordId ? "結果へ戻る" : "その他へ戻る";
+  return renderPrototypeConsultation({ services, experience, plan, regionId, backHref, backLabel });
 }
