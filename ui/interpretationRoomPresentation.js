@@ -532,7 +532,7 @@ function renderConditionResultUnderstanding(output) {
   const region = focusRegion(output);
   const text = compactConditionText(output);
   if (!region || !text) return "";
-  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`今回は、${region.label}の表示と${text}の両方が前回と異なります。ただし、この比較だけで走行条件を部位別結果の原因とは判断できません。`)}</p></div>`;
+  return `<div class="interpretation-visual-insight" data-reveal-step="explanation"><small>この図で分かること</small><p>${escapeHtml(`今回は、${region.label}の表示と${text}の両方が前回と異なります。ただし、この比較だけで走行条件を部位別結果の原因とは判断できません。`)}</p></div>`;
 }
 
 function renderCurrentShiftUnderstanding(output) {
@@ -540,14 +540,14 @@ function renderCurrentShiftUnderstanding(output) {
   const region = focusRegion(output);
   const comparison = focusComparison(output);
   if (!region || !comparison?.comparablePreviousRecordId) return "";
-  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`${region.label}は、比較可能な前回${number(comparison.previousValue)}から今回${number(region.value)}へ、同じ部位内で表示位置が変わっています。`)}</p></div>`;
+  return `<div class="interpretation-visual-insight" data-reveal-step="explanation"><small>この図で分かること</small><p>${escapeHtml(`${region.label}は、比較可能な前回${number(comparison.previousValue)}から今回${number(region.value)}へ、同じ部位内で表示位置が変わっています。`)}</p></div>`;
 }
 
 function renderCurrentReferenceUnderstanding(output) {
   if (meaning(output).primaryCode !== "CURRENT_REFERENCE_PATTERN") return "";
   const region = focusRegion(output);
   if (!region) return "";
-  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`${region.label}は今回${number(region.value)}で、${directionText(region.referenceDirection)}に表示されています。この位置は、次回以降に同じ部位を比べるための比較点として使えます。`)}</p></div>`;
+  return `<div class="interpretation-visual-insight" data-reveal-step="explanation"><small>この図で分かること</small><p>${escapeHtml(`${region.label}は今回${number(region.value)}で、${directionText(region.referenceDirection)}に表示されています。この位置は、次回以降に同じ部位を比べるための比較点として使えます。`)}</p></div>`;
 }
 
 function renderRepeatedObservationVisual(output) {
@@ -577,7 +577,7 @@ function renderRepeatedObservationUnderstanding(output) {
   if (meaning(output).primaryCode !== "REPEATED_OBSERVATION") return "";
   const repeated = meaningFact(output, "REGION_REPEATED_DIRECTION");
   if (!repeated) return "";
-  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`今回は、比較可能な過去${repeated.pastComparableCount}件のうち${repeated.pastMatchingCount}件でも同じ方向が確認されています。ここから体質や将来の結果までは判断しません。`)}</p></div>`;
+  return `<div class="interpretation-visual-insight" data-reveal-step="explanation"><small>この図で分かること</small><p>${escapeHtml(`今回は、比較可能な過去${repeated.pastComparableCount}件のうち${repeated.pastMatchingCount}件でも同じ方向が確認されています。ここから体質や将来の結果までは判断しません。`)}</p></div>`;
 }
 
 function renderMultiLayerVisual(output) {
@@ -601,7 +601,7 @@ function renderMultiLayerUnderstanding(output) {
   if (meaning(output).primaryCode !== "MULTI_LAYER_CHANGE") return "";
   const region = focusRegion(output);
   if (!region) return "";
-  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`今回は、${region.label}の部位別表示と走行前後の疲労感の両方に違いがあります。2つは別の尺度で、どちらか一方をもう一方の原因として扱いません。`)}</p></div>`;
+  return `<div class="interpretation-visual-insight" data-reveal-step="explanation"><small>この図で分かること</small><p>${escapeHtml(`今回は、${region.label}の部位別表示と走行前後の疲労感の両方に違いがあります。2つは別の尺度で、どちらか一方をもう一方の原因として扱いません。`)}</p></div>`;
 }
 
 function renderRofVisual(output) {
@@ -660,9 +660,9 @@ function renderVisualExplanation(output, origin) {
           : currentReferencePattern
             ? `${renderRegionalVisual(output, { usePrevious: false })}${renderCurrentReferenceUnderstanding(output)}`
             : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
-  return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual" data-visual-pattern="${visualPattern}">
+  return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual" data-visual-pattern="${visualPattern}" data-guided-stage="understand-visual">
     <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>${escapeHtml(lead)}</p></header>
-    <section class="interpretation-visual-stack">${visualBody}</section>
+    <section class="interpretation-visual-stack" data-reveal-step="visual">${visualBody}</section>
     ${renderExplanationFollowup(output, origin)}
     <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">最初の確認へ戻る</a></div>
   </div>`;
@@ -698,7 +698,7 @@ function renderDifferenceExplanation(output, origin) {
 function renderExplanationFollowup(output, origin) {
   const recordId = output?.targetRecordId || "";
   const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
-  return `<section class="interpretation-dialogue-followup"><h2>次に確認するなら</h2><div class="interpretation-dialogue-choice-list">
+  return `<section class="interpretation-dialogue-followup" data-reveal-step="choices"><h2>次に確認するなら</h2><div class="interpretation-dialogue-choice-list">
     ${renderDialogueChoice(route(recordId, origin, { view: "evidence", regionId }), "なぜこの解釈なのか確認", "保存結果の根拠を見る")}
     ${renderDialogueChoice(route(recordId, origin, { view: "dialogue", topic: "manage", regionId }), "次にどう活かすか考える", "自己管理に使う機能を絞る")}
   </div></section>`;
