@@ -502,7 +502,7 @@ function renderRegionalVisual(output) {
           <line class="interpretation-comparison-axis" x1="36" y1="64" x2="284" y2="64"></line>
           ${renderComparisonArrow(arrowOriginX, xCurrent, 64, arrowOriginLabel)}
           ${svgMarker(xPrevious, 64, "前回", previous, "marker-previous", previousSide)}
-          ${svgMarker(xRef, 64, "基準100", 100, "marker-reference", "above")}
+          ${svgMarker(xRef, 64, "基準", 100, "marker-reference", "above")}
           ${svgMarker(xCurrent, 64, "今回", region.value, "marker-current", currentSide)}
         </svg>
       </div>
