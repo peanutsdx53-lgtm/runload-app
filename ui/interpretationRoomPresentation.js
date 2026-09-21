@@ -1,7 +1,8 @@
 import { escapeHtml } from "./commonComponents.js";
 
-const VIEW_SET = new Set(["summary", "detail", "evidence", "next", "explain"]);
+const VIEW_SET = new Set(["summary", "detail", "evidence", "next", "explain", "dialogue"]);
 const MODE_SET = new Set(["simple", "visual", "difference"]);
+const TOPIC_SET = new Set(["understand", "manage", "next-use"]);
 const INTENT_SET = new Set(["", "current", "history", "condition", "support"]);
 
 const REGION_PLAIN_WORDING = Object.freeze({
@@ -72,6 +73,10 @@ function normalizeMode(value = "simple") {
   return MODE_SET.has(value) ? value : "simple";
 }
 
+function normalizeTopic(value = "understand") {
+  return TOPIC_SET.has(value) ? value : "understand";
+}
+
 function normalizeIntent(value = "") {
   return INTENT_SET.has(value) ? value : "";
 }
@@ -131,14 +136,14 @@ function primaryMeaningText(output) {
     return "今回は、現在のルールで直接比較できる結果が十分ではありません。意味を広げず、確認できる範囲だけを扱います。";
   }
   if (code === "REPEATED_OBSERVATION" && repeated) {
-    return `${regionName}は、比較可能な過去${repeated.pastComparableCount}件のうち${repeated.pastMatchingCount}件でも今回と同じ方向に表示されています。今回だけの表示ではなく、保存記録の中で繰り返し確認されている点として読めます。`;
+    return `${regionName}は、比較可能な過去${repeated.pastComparableCount}件のうち${repeated.pastMatchingCount}件でも今回と同じ方向に表示されています。`;
   }
   if (code === "CONDITION_AND_RESULT_CHANGED") {
     const conditionText = conditions.length ? conditions.join("、") : "走行条件";
-    return `今回は、前回と比べて${regionName}の表示と${conditionText}の両方が変わっています。この比較だけでは、どの条件が結果の違いに関係したかは分けられません。`;
+    return `今回は、前回と比べて${regionName}の表示と${conditionText}の両方が変わっています。`;
   }
   if (code === "MULTI_LAYER_CHANGE") {
-    return `今回は、${regionName}の部位別表示に前回との差があり、走行前後の疲労感にも差があります。どちらか一方だけでなく、2つを別の情報として確認する記録です。`;
+    return `今回は、${regionName}の部位別表示と走行前後の疲労感の両方に違いがあります。`;
   }
   if (code === "CURRENT_SHIFT_WITH_HISTORY") {
     return `今回は、前回と同じ状態の繰り返しではなく、${regionName}に前回との差がある記録として読めます。`;
@@ -219,6 +224,117 @@ function renderExplanationChoices(output, origin) {
   </div></section>`;
 }
 
+function renderDialogueChoice(href, title, description = "") {
+  return `<a class="interpretation-dialogue-choice" href="${escapeHtml(href)}"><span><strong>${escapeHtml(title)}</strong>${description ? `<small>${escapeHtml(description)}</small>` : ""}</span><i aria-hidden="true">›</i></a>`;
+}
+
+function renderDialogueFrame({ output, title, message, prompt, choices = [], origin, topic = "", contextNote = "", showBoundary = false }) {
+  const recordId = output?.targetRecordId || "";
+  const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
+  return `<div class="interpretation-room-view interpretation-room-view--dialogue" data-dialogue-topic="${escapeHtml(topic)}">
+    <section class="interpretation-dialogue-thread">
+      <div class="interpretation-dialogue-meta"><small>RUNLOAD INTERPRETATION</small><span>${escapeHtml(formatDate(output?.context?.recordDate || ""))}</span></div>
+      <article class="interpretation-turn interpretation-turn--runload"><small>${escapeHtml(title)}</small><p>${escapeHtml(message)}</p></article>
+      ${contextNote ? `<aside class="interpretation-dialogue-context"><small>前回から引き継いだ内容</small><p>${escapeHtml(contextNote)}</p></aside>` : ""}
+      ${showBoundary ? `<p class="interpretation-dialogue-boundary">${escapeHtml(currentBoundaryText(output))}</p>` : ""}
+      <section class="interpretation-dialogue-prompt"><h2>${escapeHtml(prompt)}</h2><div class="interpretation-dialogue-choice-list">${choices.join("")}</div></section>
+    </section>
+    ${topic ? `<div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">最初の確認へ戻る</a></div>` : ""}
+  </div>`;
+}
+
+function renderEntryDialogue(output, origin) {
+  if (output?.safety?.route !== "normal") {
+    return `<div class="interpretation-room-view interpretation-room-view--summary"><section class="interpretation-dialogue-thread"><div class="interpretation-dialogue-meta"><small>RUNLOAD INTERPRETATION</small><span>${escapeHtml(formatDate(output?.context?.recordDate || ""))}</span></div><article class="interpretation-turn interpretation-turn--runload"><small>今回の確認</small><p>${escapeHtml(primaryMeaningText(output))}</p></article><p class="interpretation-dialogue-boundary">${escapeHtml(currentBoundaryText(output))}</p>${renderSafetyChoices(output)}</section></div>`;
+  }
+  const recordId = output?.targetRecordId || "";
+  const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
+  const choices = [
+    renderDialogueChoice(route(recordId, origin, { view: "dialogue", topic: "understand", regionId }), "この結果を理解したい", "意味や違いを必要な範囲で確認"),
+    renderDialogueChoice(route(recordId, origin, { view: "dialogue", topic: "manage", regionId }), "次にどう活かすか考えたい", "自己管理に使う次の機能を絞る"),
+  ];
+  return renderDialogueFrame({
+    output,
+    title: "今回のRunLoad解釈",
+    message: primaryMeaningText(output),
+    prompt: "今、確認したいことはどちらですか？",
+    choices,
+    origin,
+    showBoundary: true,
+  });
+}
+
+function renderUnderstandDialogue(output, origin) {
+  const recordId = output?.targetRecordId || "";
+  const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
+  const modes = new Set(meaning(output).availableModes || []);
+  const choices = [];
+  if (modes.has("difference")) choices.push(renderDialogueChoice(route(recordId, origin, { view: "explain", mode: "difference", regionId }), "何が違うか確認", "変わった内容だけを見る"));
+  if (modes.has("visual")) choices.push(renderDialogueChoice(route(recordId, origin, { view: "explain", mode: "visual", regionId }), "図で確認", "位置関係に変えて見る"));
+  choices.push(renderDialogueChoice(route(recordId, origin, { view: "explain", mode: "simple", regionId }), "もっと簡単に", "短い3項目に分けて見る"));
+  return renderDialogueFrame({
+    output,
+    title: "結果を理解する",
+    message: "同じ情報を一度に増やさず、知りたい形に変えて確認できます。",
+    prompt: "どの見方なら確認しやすいですか？",
+    choices: choices.slice(0, 3),
+    origin,
+    topic: "understand",
+  });
+}
+
+function enabledAction(output, id) {
+  const item = findAction(output, id);
+  return item?.enabled ? item : null;
+}
+
+function renderManageDialogue(output, origin) {
+  const recordId = output?.targetRecordId || "";
+  const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
+  const choices = [];
+  const history = enabledAction(output, "history");
+  const simulation = enabledAction(output, "simulation");
+  if (history) choices.push(renderDialogueChoice(actionHref(history, output?.context?.origin || origin), "過去にも同じことがあるか確認", "履歴で比較可能な記録を確認"));
+  if (simulation) choices.push(renderDialogueChoice(actionHref(simulation, output?.context?.origin || origin), "条件を変えて比べる", "Simulationで条件比較へ進む"));
+  choices.push(renderDialogueChoice(route(recordId, origin, { view: "dialogue", topic: "next-use", regionId }), "次回に活かす", "予定・共有・背景確認から選ぶ"));
+  return renderDialogueFrame({
+    output,
+    title: "次にどう活かすか",
+    message: "次に知りたいことに合わせて、確認方法を選べます。",
+    prompt: "次に確認したいことは何ですか？",
+    choices: choices.slice(0, 3),
+    origin,
+    topic: "manage",
+  });
+}
+
+function renderNextUseDialogue(output, origin) {
+  const choices = [];
+  const plan = enabledAction(output, "plan");
+  const share = enabledAction(output, "share");
+  const reading = enabledAction(output, "reading");
+  if (plan) choices.push(renderDialogueChoice(actionHref(plan, output?.context?.origin || origin), "次の予定に反映", "Planで自分の予定を入力"));
+  if (share) choices.push(renderDialogueChoice(actionHref(share, output?.context?.origin || origin), "誰かに共有する内容を整理", "Consultationで共有内容を選ぶ"));
+  if (reading) choices.push(renderDialogueChoice(actionHref(reading, output?.context?.origin || origin), "関連する背景を確認", "Readingで一般的な研究背景を見る"));
+  return renderDialogueFrame({
+    output,
+    title: "次回に活かす",
+    message: "次回に向けて、予定・共有・背景確認のどれを使うか選べます。",
+    prompt: "どの方法で続けますか？",
+    choices: choices.slice(0, 3),
+    origin,
+    topic: "next-use",
+    contextNote: output?.current?.facts?.nextCheckPoint || "",
+  });
+}
+
+function renderDialogue(output, topic, origin) {
+  const resolvedTopic = normalizeTopic(topic);
+  if (resolvedTopic === "manage") return renderManageDialogue(output, origin);
+  if (resolvedTopic === "next-use") return renderNextUseDialogue(output, origin);
+  return renderUnderstandDialogue(output, origin);
+}
+
 function renderChoice(href, title, description = "", disabled = false) {
   if (disabled) return `<span class="interpretation-choice is-disabled" aria-disabled="true"><strong>${escapeHtml(title)}</strong>${description ? `<span>${escapeHtml(description)}</span>` : ""}</span>`;
   return `<a class="interpretation-choice" href="${escapeHtml(href)}"><strong>${escapeHtml(title)}</strong>${description ? `<span>${escapeHtml(description)}</span>` : ""}<i aria-hidden="true">›</i></a>`;
@@ -251,14 +367,7 @@ function renderSafetyChoices(output) {
 }
 
 function renderSummary(output, origin) {
-  const recordId = output?.targetRecordId || "";
-  const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
-  const normal = output?.safety?.route === "normal";
-  return `<div class="interpretation-room-view interpretation-room-view--summary">
-    ${renderMeaningPanel(output)}
-    ${normal ? renderExplanationChoices(output, origin) : renderSafetyChoices(output)}
-    ${normal ? `<div class="interpretation-summary-actions"><a class="button button--secondary" href="${escapeHtml(route(recordId, origin, { view: "detail", intent: "current", regionId }))}">12部位の数値をすべて確認</a><a class="button button--primary" href="${escapeHtml(route(recordId, origin, { view: "next", regionId }))}">次に確認する内容</a></div>` : ""}
-  </div>`;
+  return renderEntryDialogue(output, origin);
 }
 
 function simpleKnownText(output) {
@@ -296,7 +405,8 @@ function renderSimpleExplanation(output, origin) {
       <article><small>前回と違うこと</small><p>${escapeHtml(simpleDifferenceText(output))}</p></article>
       <article><small>ここからは判断できないこと</small><p>${escapeHtml(currentBoundaryText(output))}</p></article>
     </section>
-    <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">今回の読み方へ戻る</a></div>
+    ${renderExplanationFollowup(output, origin)}
+    <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">最初の確認へ戻る</a></div>
   </div>`;
 }
 
@@ -369,7 +479,8 @@ function renderVisualExplanation(output, origin) {
   return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual">
     <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>同じ解釈を、数値の位置関係に変えて確認します。</p></header>
     <section class="interpretation-visual-stack">${renderRegionalVisual(output)}${renderRofVisual(output)}</section>
-    <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">今回の読み方へ戻る</a></div>
+    ${renderExplanationFollowup(output, origin)}
+    <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">最初の確認へ戻る</a></div>
   </div>`;
 }
 
@@ -395,8 +506,18 @@ function renderDifferenceExplanation(output, origin) {
   return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--difference">
     <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>違いだけ見る</h1><p>前回や走行前後と比べて、変わった内容だけを分けて表示します。</p></header>
     <section class="interpretation-difference-grid">${body}</section>${nonCausal}
-    <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">今回の読み方へ戻る</a></div>
+    ${renderExplanationFollowup(output, origin)}
+    <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">最初の確認へ戻る</a></div>
   </div>`;
+}
+
+function renderExplanationFollowup(output, origin) {
+  const recordId = output?.targetRecordId || "";
+  const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
+  return `<section class="interpretation-dialogue-followup"><h2>次に確認するなら</h2><div class="interpretation-dialogue-choice-list">
+    ${renderDialogueChoice(route(recordId, origin, { view: "evidence", regionId }), "なぜこの解釈なのか確認", "保存結果の根拠を見る")}
+    ${renderDialogueChoice(route(recordId, origin, { view: "dialogue", topic: "manage", regionId }), "次にどう活かすか考える", "自己管理に使う機能を絞る")}
+  </div></section>`;
 }
 
 function renderExplanation(output, mode, origin) {
@@ -480,41 +601,16 @@ function renderAction(output, id, description = "") {
 }
 
 function renderNext(output, intent, origin) {
-  const recordId = output?.targetRecordId || "";
-  const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
-  let title = "次に確認する内容";
-  let body = "確認する内容に応じてRunLoadの既存機能へ進みます。";
-  let choices = "";
-  if (output?.safety?.route !== "normal") {
-    title = "確認できる内容";
-    body = "既存のサポート判定を優先して表示します。";
-    const preferred = output.safety.route === "urgent" ? ["official-help", "share", "review-input"] : output.safety.route === "consult" ? ["share", "review-input"] : ["review-input"];
-    choices = preferred.map((id) => renderAction(output, id)).join("");
-  } else if (intent === "condition") {
-    title = "条件を変えた場合を確認";
-    body = "保存済みの走行を基に、条件を変更した場合を同じ計算モデルで比較します。完了した走行記録とは分けて扱います。";
-    choices = `${renderAction(output, "simulation", "条件を変更した場合の12部位を確認")}${renderAction(output, "plan", "次の走行・休養予定を作成")}`;
-  } else if (intent === "support") {
-    title = "相談・読みものへ進む";
-    body = "共有する内容の整理または関連する一般情報の確認へ進みます。";
-    choices = `${renderAction(output, "share", "自分で選んだ内容を共有用に整理")}${renderAction(output, "reading", "関連する研究背景を一般情報として確認")}`;
-  } else if (intent === "history") {
-    title = "過去記録を確認";
-    body = "保存された比較可能な記録を履歴で確認します。";
-    choices = renderAction(output, "history", "同じ部位・同じ計算方法・同じ基準の記録を確認");
-  } else {
-    choices = `${renderAction(output, "history", "過去記録を確認")}${renderAction(output, "simulation", "条件を変更した場合を確認")}${renderAction(output, "reading", "関連する読みものを確認")}${renderAction(output, "share", "共有する内容を整理")}`;
-  }
-  const nextCheck = output?.current?.facts?.nextCheckPoint || "";
-  return `<div class="interpretation-room-view interpretation-room-view--next"><header class="interpretation-view-head"><p>RunLoad解釈</p><h1>${escapeHtml(title)}</h1><p>${escapeHtml(body)}</p></header>${nextCheck ? `<section class="interpretation-carry"><small>記録した「次回確認したいこと」</small><p>${escapeHtml(nextCheck)}</p></section>` : ""}<section class="interpretation-choice-section"><div class="interpretation-choice-list">${choices}</div></section><div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">今回の読み方へ戻る</a></div></div>`;
+  return renderDialogue(output, intent === "support" ? "next-use" : "manage", origin);
 }
 
-export function renderInterpretationRoom({ output, view = "summary", mode = "simple", intent = "", origin = "result" } = {}) {
+export function renderInterpretationRoom({ output, view = "summary", mode = "simple", topic = "understand", intent = "", origin = "result" } = {}) {
   const resolvedView = normalizeView(view);
   const resolvedIntent = normalizeIntent(intent);
   if (!output?.targetRecordId) {
     return '<div class="interpretation-room-view interpretation-room-view--empty"><header class="interpretation-view-head"><p>RunLoad解釈</p><h1>対象の保存記録がありません。</h1></header><a class="button button--primary" href="#/record-input">記録を始める</a></div>';
   }
+  if (resolvedView === "dialogue") return renderDialogue(output, topic, origin);
   if (resolvedView === "explain") return renderExplanation(output, mode, origin);
   if (resolvedView === "detail") return renderDetail(output, resolvedIntent, origin);
   if (resolvedView === "evidence") return renderEvidence(output, resolvedIntent, origin);
