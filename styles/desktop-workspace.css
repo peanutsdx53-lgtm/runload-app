@@ -118,7 +118,7 @@
 
 /* Desktop header is mounted directly under body and pinned to the browser viewport. */
 @media (min-width: 55rem) {
-  body > body > .app-header--desktop.app-header--viewport-fixed {
+  body > .app-header--desktop.app-header--viewport-fixed {
     position: fixed !important;
     top: 0 !important;
     right: 0 !important;
