@@ -201,16 +201,16 @@ Verification:
 - Service Worker SHA-256: `604a1e3f9e03d0fc1566f51bd3457d67bd8a106e1978855356dd5ee000c44771`
 - runtime manifest contains current Interpretation Core SHA-256 `e04eb0f1e8e0655c4cc0fb08a264d59aa393655a850cf8ce8458bfbba31d64f8`
 - branch compare against audited base shows **no changes** to protected Primary or ROF-J core files
-- Stage 3 full baseline regression remains **273/273 PASS**; final combined regression is reserved for Stage 5
+- Previous full baseline regression remains **273/273 PASS**; final combined regression is reserved for the full-regression audit
 
-### Stage 5 — Full regression and scientific-boundary audit
+### Full regression and scientific-boundary audit
 Status: **COMPLETE — PASS**
 
 Durable audit record:
-- `docs/interpretation/STAGE5_FINAL_AUDIT_20260921.md`
+- `docs/interpretation/FULL_REGRESSION_SCIENTIFIC_BOUNDARY_AUDIT_20260921.md`
 - audited implementation head before audit-document-only commits: `4b0230dda4c57f2d7c22244c1c6a1e3b89869935`
 
-Corrections made during Stage 5:
+Corrections made during full regression:
 - Home runtime-manifest mismatch corrected: `3551bb7d56381fd7616653fdfd97e60b562d7b6e`
 - Presentation literal-`\\n` syntax defect corrected: `4490622cab7fbf1be5a806b6a6893dd6346c9ce1`
 - repaired Presentation runtime SHA recorded: `30269ea4bf142ec53a04cd13adcda2ba2f70d447`
@@ -246,28 +246,28 @@ Visual acceptance:
 - user-visible acceptance remains the final pre-merge/pre-Current gate.
 
 App Source packaging note:
-- when formal App Source/Current is regenerated, update the two App-Source-only legacy test contracts (Stage4 Result-use and Stage6 route alias), include all four new Interpretation suites, regenerate verification metadata, and re-run packaged-copy verification.
-## Resolved Stage 5 safe-stop findings
+- when formal App Source/Current is regenerated, update the two App-Source-only legacy test contracts (Result-use and route-alias coverage), include all four new Interpretation suites, regenerate verification metadata, and re-run packaged-copy verification.
+## Resolved full-regression safe-stop findings
 
-The earlier Stage 5 safe stops were resolved under explicit user authorization:
+The earlier full-regression safe stops were resolved under explicit user authorization:
 - runtime Home hash mismatch: corrected and reverified;
 - Presentation literal-`\\n` syntax defect: corrected and reverified;
 - dedicated test expectations affected by those corrections: aligned and re-run.
 
-See `docs/interpretation/STAGE5_FINAL_AUDIT_20260921.md` for the final audit trail.
+See `docs/interpretation/FULL_REGRESSION_SCIENTIFIC_BOUNDARY_AUDIT_20260921.md` for the final audit trail.
 
-## Stage 6 — Interpretation Experience Upgrade
+## Interpretation Experience Upgrade
 Status: **BASELINE COMPLETE — PASS**
 
 Controlling delta:
-- `docs/interpretation/STAGE6_INTERPRETATION_EXPERIENCE_DESIGN_20260921.md`
+- `docs/interpretation/INTERPRETATION_EXPERIENCE_DESIGN_20260921.md`
 
 Durable audit:
-- `docs/interpretation/STAGE6_BASELINE_AUDIT_20260921.md`
+- `docs/interpretation/INTERPRETATION_EXPERIENCE_BASELINE_AUDIT_20260921.md`
 
 User-approved direction:
 - Interpretation must answer what the user should understand from the record, not merely reorganize Result-screen values.
-- The current Stage 6 implementation is accepted as the development baseline.
+- The current interpretation-experience implementation is accepted as the development baseline.
 - Exact interpretation content, presentation method, and the route/sequence used to reach explanations remain intentional future refinement areas.
 
 Implemented:
@@ -298,7 +298,7 @@ Final verification:
 - protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
 - protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
 - GitHub compare contains no protected-core changes
-- principal Stage 6 GitHub files were byte-verified against the validated local audit copy
+- principal interpretation-experience GitHub files were byte-verified against the validated local audit copy
 
 Meaning V2 SHA clarification:
 - previous apparent mismatch was not a file mismatch;
@@ -311,14 +311,14 @@ Release state:
 - formal Current remains untouched
 - no merge or Current promotion has been performed
 
-## Stage 7 — Guided Interpretation Dialogue
+## Guided Interpretation Dialogue
 Status: **BASELINE COMPLETE — PASS**
 
 Controlling design:
-- `docs/interpretation/STAGE7_GUIDED_DIALOGUE_DESIGN_20260921.md`
+- `docs/interpretation/GUIDED_INTERPRETATION_DIALOGUE_DESIGN_20260921.md`
 
 Durable audit:
-- `docs/interpretation/STAGE7_GUIDED_DIALOGUE_AUDIT_20260921.md`
+- `docs/interpretation/GUIDED_INTERPRETATION_DIALOGUE_AUDIT_20260921.md`
 
 User-approved direction:
 - do not expose many interpretation items at once;
@@ -354,7 +354,7 @@ Final verification:
 - protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
 - protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
 - GitHub compare contains no protected-core changes
-- principal Stage 7 GitHub files byte-match the validated local audit copy
+- principal guided-dialogue GitHub files byte-match the validated local audit copy
 
 Visual audit:
 - 390 px and 1280 px;
@@ -405,7 +405,7 @@ Implementation principles:
 Planned sequence:
 - Stage 8A: first reusable visual batch — **implemented**: one body-region focus, local previous/Reference-100/current direction, one-time accent emphasis, reduced-motion static equivalent. ROF-J remains separate and unchanged in this batch;
 - Stage 8B: map Meaning Core codes to visual explanation patterns;
-- Stage 8C: integrate visuals into the Stage 7 guided dialogue;
+- Stage 8C: integrate visuals into the guided dialogue;
 - Stage 8D: strengthen explanation → next self-management observation/function bridge;
 - Stage 8E: mobile/desktop/theme/dark/reduced-motion visual audit + full regression.
 
@@ -420,7 +420,7 @@ Stage 8 work-order rule:
 8. record findings before the next batch.
 
 Baseline before Stage 8:
-- Stage 7 guided dialogue: **371/371 PASS**
+- Guided-dialogue baseline: **371/371 PASS**
 - runtime manifest: **79/79 PASS**
 - protected Primary and ROF-J cores unchanged
 - PR #49 remains Draft
@@ -446,7 +446,7 @@ Verification at this checkpoint:
 - pre-Stage-8 durable branch baseline: 371/371 PASS;
 - audited Current/local baseline verification: 273/273 PASS, 17 suites, 77 syntax files, 0 syntax failures;
 - current Stage 8A production-source focused checks: 8/8 PASS;
-- current Stage 7/Stage 6/Stage 8A/PWA cross-surface checks: 15/15 PASS;
+- current guided-dialogue / interpretation-experience / Stage 8A / PWA cross-surface checks: 15/15 PASS;
 - 390 px render: viewport 390 px / scroll width 390 px, no horizontal overflow;
 - comparison label overlap count: 0;
 - exactly one body region focused;
@@ -484,7 +484,7 @@ Verification:
 - focused production-source checks: **11/11 PASS**;
 - target code uses `data-visual-pattern="locate-compare"`;
 - unmapped Meaning Core codes remain on general visual behavior;
-- Stage 7 two-choice entry remains unchanged;
+- Guided-dialogue two-choice entry remains unchanged;
 - no new route or downstream-function duplication;
 - runtime hash manifest and PWA hash contract updated for the changed presentation/CSS;
 - targeted 390 px layout review found no new horizontal-layout issue;
@@ -574,8 +574,8 @@ Completed mappings:
 
 Combined Stage 8B integrity checkpoint:
 - **21/21 PASS**;
-- Stage 7 entry remains exactly two ordinary choices;
-- Stage 7 understand step remains at most three choices;
+- Guided-dialogue entry remains exactly two ordinary choices;
+- Guided-dialogue understand step remains at most three choices;
 - runtime/PWA visual-file contracts aligned;
 - protected Primary and ROF-J core hashes unchanged;
 - PR #49 remains Draft and unmerged;
@@ -752,7 +752,7 @@ Verification:
 
 Current update requirement:
 - do not reuse the 2026-09-20 verification report unchanged;
-- the next Current App Source must include the updated Stage 4 / Stage 6 regression tests, the 19 result-understanding suites, required ROF-J provenance, and the integrated verifier;
+- the next Current App Source must include the updated result-use and route-alias regression tests, the 19 result-understanding suites, required ROF-J provenance, and the integrated verifier;
 - Current documentation must explicitly state why the feature is necessary, what it does, and what it does not do.
 
 Next application phase after merge/Current promotion:
