@@ -38,7 +38,7 @@ What it does not do:
 - training prescription;
 - causal inference;
 - cross-region physical ranking;
-- generative-AI free text.
+- unconstrained free-text generation.
 
 ## Publication note
 
