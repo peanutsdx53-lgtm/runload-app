@@ -1298,3 +1298,76 @@
     width: min(100%, 44rem);
   }
 }
+
+/* Settings and More: compact desktop controls and readable navigation widths. */
+@media (min-width: 80rem) {
+  .screen--settings.prototype-parity--settings {
+    width: min(100%, 60rem);
+    margin-inline: auto;
+  }
+
+  .screen--settings.prototype-parity--settings .head,
+  .screen--settings.prototype-parity--settings .group {
+    width: min(100%, 54rem);
+  }
+
+  .screen--settings.prototype-parity--settings .display-setting-list {
+    width: min(100%, 36rem);
+  }
+
+  .screen--settings.prototype-parity--settings .two-fields {
+    grid-template-columns: repeat(2, minmax(0, 20rem));
+    justify-content: start;
+  }
+
+  .screen--settings.prototype-parity--settings input[name="runningStartDateOrBand"] {
+    width: 20rem;
+    max-width: 100%;
+  }
+
+  .screen--settings.prototype-parity--settings select[name="experienceSelfAssessment"] {
+    width: 18rem;
+    max-width: 100%;
+  }
+
+  .screen--settings.prototype-parity--settings :is(
+    input[name="profileHeightCm"],
+    input[name="profileWeightKg"]
+  ) {
+    width: 8rem;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .screen--settings.prototype-parity--settings :is(
+    select[name="profileAgeBand"],
+    select[name="profileSex"]
+  ) {
+    width: 16rem;
+    max-width: 100%;
+  }
+
+  .screen--settings.prototype-parity--settings .field select {
+    text-align: center;
+    text-align-last: center;
+  }
+
+  .screen--settings.prototype-parity--settings #clear-data-confirmation {
+    width: 10rem;
+    max-width: 100%;
+  }
+
+  .screen--settings.prototype-parity--settings .data-overview {
+    width: min(100%, 32rem);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .screen--settings.prototype-parity--settings .about-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .screen--more.prototype-parity--more {
+    width: min(100%, 42rem);
+    margin-inline: auto;
+  }
+}
