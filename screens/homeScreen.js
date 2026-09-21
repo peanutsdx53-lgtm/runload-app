@@ -34,12 +34,59 @@ function carryText(experience) {
   return text || "今日の記録で、次に確認したいことを残せます";
 }
 
+function homeState(experience, draft) {
+  if (draft) return "draft";
+  const record = experience?.record || null;
+  if (!record) return "first";
+  if (String(record.date || "") === localTodayIso()) {
+    return record.activityType === "rest" ? "saved-rest" : "saved-run";
+  }
+  return "history";
+}
+
 function renderFocus(experience, draft) {
   const record = experience?.record || null;
+  const state = homeState(experience, draft);
   const hasCarry = Boolean(String(record?.reflectionContext?.nextCheckPoint || "").trim());
   const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
-  const sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "今日の記録から次回へ引き継げます";
-  return `<section class="focus"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${hasCarry ? "前回から引き継いだ内容" : "今日の入口"}</small><h2>次のランで確認したいこと</h2><p class="focus-text">${escapeHtml(carryText(experience))}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">次回へ引継ぎ</span></div><div class="focus-actions"><a class="primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a></div></section>`;
+
+  let eyebrow = hasCarry ? "前回から引き継いだ内容" : "今日の入口";
+  let title = "次のランで確認したいこと";
+  let body = carryText(experience);
+  let sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "今日の記録から次回へ引き継げます";
+  let badge = "次回へ引継ぎ";
+  let actions = `<a class="primary" href="#/record-input">今日の記録を始める</a>`;
+
+  if (state === "first") {
+    eyebrow = "最初の記録";
+    title = "今日の記録から始めます";
+    body = "走行または休養を記録すると、結果と履歴につながります";
+    sourceText = "まだ保存記録はありません";
+    badge = "はじめる";
+  } else if (state === "draft") {
+    eyebrow = "入力途中";
+    title = "入力途中の記録があります";
+    body = hasCarry ? carryText(experience) : "保存前の入力を続きから再開できます";
+    sourceText = "保存済み記録とは分けて扱います";
+    badge = "下書き";
+    actions = `<a class="primary" href="#/record-input">入力を再開する</a>`;
+  } else if (state === "saved-run") {
+    eyebrow = "今日の記録";
+    title = "今日の走行を保存しました";
+    body = "今回の結果を確認し、必要な部位を詳しく見られます";
+    sourceText = "今日保存した走行記録";
+    badge = "保存済み";
+    actions = `<a class="primary" href="#/result?recordId=${encodeURIComponent(record.id)}">今回の結果を見る</a>`;
+  } else if (state === "saved-rest") {
+    eyebrow = "今日の記録";
+    title = "今日の休養を保存しました";
+    body = "保存した休養記録を確認できます";
+    sourceText = "今日保存した休養記録";
+    badge = "保存済み";
+    actions = `<a class="primary" href="#/result?recordId=${encodeURIComponent(record.id)}">休養記録を見る</a>`;
+  }
+
+  return `<section class="focus focus--${escapeHtml(state)}"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${escapeHtml(eyebrow)}</small><h2>${escapeHtml(title)}</h2><p class="focus-text">${escapeHtml(body)}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">${escapeHtml(badge)}</span></div><div class="focus-actions">${actions}</div></section>`;
 }
 
 function renderLatestRecord(experience) {
@@ -74,7 +121,8 @@ export function renderHomeScreen({ services }) {
   const latestExperience = services.workflows.records.loadLatestExperience();
   const draft = services.storage.draft.load();
   const today = shortDate(localTodayIso());
-  return `<div class="screen screen--home prototype-parity prototype-parity--home">
+  const state = homeState(latestExperience, draft);
+  return `<div class="screen screen--home prototype-parity prototype-parity--home home-state--${escapeHtml(state)}" data-home-state="${escapeHtml(state)}">
     <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div><span class="date-badge">${escapeHtml(today)}</span></section>
     ${renderFocus(latestExperience, draft)}
     <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div><a href="#/history">履歴を見る</a></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
