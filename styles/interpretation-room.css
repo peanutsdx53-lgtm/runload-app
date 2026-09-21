@@ -546,3 +546,204 @@
   font-size: 13px;
   line-height: 1.6;
 }
+
+
+/* Stage 8A: understanding-focused regional visual foundation. */
+.interpretation-regional-visual {
+  display: grid;
+  grid-template-columns: minmax(126px, .42fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.interpretation-body-locator {
+  min-width: 0;
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.interpretation-body-locator-svg {
+  display: block;
+  width: min(100%, 156px);
+  height: auto;
+  overflow: visible;
+}
+
+.interpretation-body-silhouette > * {
+  fill: var(--color-map-silhouette);
+  stroke: var(--color-map-line);
+  stroke-width: 2;
+}
+
+.interpretation-body-region {
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+}
+
+.interpretation-body-region.is-muted {
+  fill: color-mix(in srgb, var(--color-map-silhouette) 70%, var(--color-accent-soft));
+  stroke: var(--color-map-line);
+  stroke-width: 1.5;
+  opacity: .42;
+}
+
+.interpretation-body-region.is-focus {
+  fill: color-mix(in srgb, var(--color-accent) 68%, var(--color-surface));
+  stroke: var(--color-accent-strong);
+  stroke-width: 3;
+  opacity: 1;
+  animation: interpretation-stage8-focus 280ms ease-out 1 both;
+}
+
+.interpretation-body-locator figcaption {
+  display: grid;
+  gap: 2px;
+  text-align: center;
+}
+
+.interpretation-body-locator figcaption small {
+  color: var(--color-muted);
+  font-size: 10px;
+}
+
+.interpretation-body-locator figcaption strong {
+  color: var(--color-accent-strong);
+  font-size: 12px;
+}
+
+.interpretation-local-comparison {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.interpretation-visual-direction {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 9px;
+}
+
+.interpretation-visual-direction small {
+  color: var(--color-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.interpretation-visual-direction strong {
+  color: var(--color-accent-strong);
+  font-size: 13px;
+}
+
+.interpretation-visual-direction span {
+  flex-basis: 100%;
+  color: var(--color-muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.interpretation-comparison-arrow {
+  stroke: var(--color-accent-strong);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: interpretation-stage8-arrow-draw 320ms ease-out 80ms 1 forwards;
+}
+
+.interpretation-comparison-arrowhead {
+  fill: var(--color-accent-strong);
+  opacity: 0;
+  animation: interpretation-stage8-arrowhead 160ms ease-out 360ms 1 forwards;
+}
+
+.interpretation-comparison-same-position circle {
+  fill: none;
+  stroke: var(--color-accent-strong);
+  stroke-width: 2;
+}
+
+.interpretation-visual-card--regional .marker-current circle {
+  animation: interpretation-stage8-target 280ms ease-out 300ms 1 both;
+}
+
+@keyframes interpretation-stage8-focus {
+  0% {
+    opacity: .62;
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  55% {
+    opacity: 1;
+    filter: drop-shadow(0 0 7px color-mix(in srgb, var(--color-accent) 58%, transparent));
+  }
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 0 transparent);
+  }
+}
+
+@keyframes interpretation-stage8-arrow-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes interpretation-stage8-arrowhead {
+  to { opacity: 1; }
+}
+
+@keyframes interpretation-stage8-target {
+  0%, 100% {
+    stroke-width: 4;
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  58% {
+    stroke-width: 6;
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-accent) 52%, transparent));
+  }
+}
+
+html.ui-motion-reduced .interpretation-body-region.is-focus,
+html.ui-motion-reduced .interpretation-comparison-arrow,
+html.ui-motion-reduced .interpretation-comparison-arrowhead,
+html.ui-motion-reduced .interpretation-visual-card--regional .marker-current circle {
+  animation: none;
+}
+
+html.ui-motion-reduced .interpretation-comparison-arrow {
+  stroke-dashoffset: 0;
+}
+
+html.ui-motion-reduced .interpretation-comparison-arrowhead {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interpretation-body-region.is-focus,
+  .interpretation-comparison-arrow,
+  .interpretation-comparison-arrowhead,
+  .interpretation-visual-card--regional .marker-current circle {
+    animation: none;
+  }
+
+  .interpretation-comparison-arrow {
+    stroke-dashoffset: 0;
+  }
+
+  .interpretation-comparison-arrowhead {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .interpretation-regional-visual {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .interpretation-body-locator-svg {
+    width: 132px;
+  }
+}
