@@ -1,5 +1,5 @@
-// Runtime revision: desktop-record-step1-20260921-11
-const CACHE_NAME = "runload-app-current-20260921-11";
+// Runtime revision: pwa-delivery-refresh-20260921-12
+const CACHE_NAME = "runload-app-current-20260921-12";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -38,6 +38,7 @@ const PRECACHE_URLS = [
   "./styles/desktop-shell-v4.css",
   "./styles/desktop-record-refine.css",
   "./styles/tokens.css",
+  "./ui/pwaUpdateBootstrapV1.js",
   "./ui/appRouter.js",
   "./ui/appSettings.js",
   "./ui/appShell.js",
@@ -110,14 +111,14 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
-    event.respondWith(fetch(request).catch(() => caches.match("./index.html")));
+    event.respondWith(fetch(request, { cache: "no-store" }).catch(() => caches.match("./index.html")));
     return;
   }
 
   if (!PRECACHE_PATHS.has(url.pathname)) return;
   event.respondWith(
     caches.open(CACHE_NAME).then((cache) => (
-      fetch(request)
+      fetch(new Request(request, { cache: "no-store" }))
         .then((response) => {
           if (response.ok && response.type === "basic") {
             const copy = response.clone();
