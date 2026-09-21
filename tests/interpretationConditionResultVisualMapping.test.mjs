@@ -34,7 +34,7 @@ function output(){
   };
 }
 
-await test('STAGE8B-CONDITION-RESULT-USES-SEPARATED-PATTERN',()=>{
+await test('VISUAL-MAPPING-CONDITION-RESULT-USES-SEPARATED-PATTERN',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/data-visual-pattern="condition-result-separated"/);
   assert.match(html,/人体図で股関節部を強調/);
@@ -42,7 +42,7 @@ await test('STAGE8B-CONDITION-RESULT-USES-SEPARATED-PATTERN',()=>{
   assert.match(html,/data-condition-context="separate"/);
 });
 
-await test('STAGE8B-CONDITION-CARD-IS-FACTUAL-AND-COMPACT',()=>{
+await test('VISUAL-MAPPING-CONDITION-CARD-IS-FACTUAL-AND-COMPACT',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/前回と異なる走行条件/);
   assert.match(html,/ペース、坂の条件、ほか1件/);
@@ -50,7 +50,7 @@ await test('STAGE8B-CONDITION-CARD-IS-FACTUAL-AND-COMPACT',()=>{
   assert.doesNotMatch(html,/路面条件/);
 });
 
-await test('STAGE8B-CONDITION-RESULT-HAS-NO-CAUSAL-CONNECTOR',()=>{
+await test('VISUAL-MAPPING-CONDITION-RESULT-HAS-NO-CAUSAL-CONNECTOR',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/この比較だけで走行条件を部位別結果の原因とは判断できません/);
   const card=html.match(/<aside class="interpretation-condition-context"[^>]*>[\s\S]*?<\/aside>/)?.[0] || '';
@@ -59,18 +59,18 @@ await test('STAGE8B-CONDITION-RESULT-HAS-NO-CAUSAL-CONNECTOR',()=>{
   assert.doesNotMatch(html,/原因です|影響しました|ためです/);
 });
 
-await test('STAGE8B-CONDITION-RESULT-DOES-NOT-MIX-ROF-LANE',()=>{
+await test('VISUAL-MAPPING-CONDITION-RESULT-DOES-NOT-MIX-ROF-LANE',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.doesNotMatch(html,/主観的な疲労感 0–10/);
   assert.doesNotMatch(html,/走行前後の疲労感/);
 });
 
-await test('STAGE8B-CONDITION-RESULT-KEEPS-ONE-REGIONAL-FOCUS',()=>{
+await test('VISUAL-MAPPING-CONDITION-RESULT-KEEPS-ONE-REGIONAL-FOCUS',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.equal((html.match(/interpretation-body-region is-focus/g)||[]).length,1);
   assert.match(html,/別の部位との大小比較にも使いません/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Stage 8B Condition Result Mapping',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Condition Result Visual Mapping',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;

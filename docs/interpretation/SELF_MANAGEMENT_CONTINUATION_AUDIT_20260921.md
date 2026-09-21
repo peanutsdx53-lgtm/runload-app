@@ -1,11 +1,11 @@
-# Stage 8D — Self-Management Continuation Completion Audit
+# Self-Management Continuation Completion Audit
 
 Date: 2026-09-21
 Status: COMPLETE — PASS
 
 ## Scope
 
-Stage 8D completes the bridge from understanding to the next self-observation or existing RunLoad function for the five Stage 8B primary Meaning Core patterns:
+self-management continuation completes the bridge from understanding to the next self-observation or existing RunLoad function for the five meaning-driven visual mapping primary Meaning Core patterns:
 
 - `CURRENT_SHIFT_WITH_HISTORY`
 - `CONDITION_AND_RESULT_CHANGED`
@@ -83,7 +83,7 @@ It does not expose all downstream functions at once.
 
 ## Motion / Reduced Motion
 
-The continuation uses the existing short Stage 8C reveal sequence.
+The continuation uses the existing short guided visual integration reveal sequence.
 
 - continuation reveal: one-shot 160 ms;
 - downstream choices follow afterward;
@@ -117,16 +117,16 @@ Verified:
 
 Dedicated tests:
 
-- existing: `tests/interpretationStage8DCurrentShiftContinuation.test.mjs`
-- completion: `tests/interpretationStage8DSelfManagementContinuation.test.mjs`
+- existing: `tests/interpretationCurrentShiftContinuation.test.mjs`
+- completion: `tests/interpretationSelfManagementContinuation.test.mjs`
 
 ## Runtime integrity correction
 
-At Stage 8D completion, the runtime manifest was found to still contain the prior Stage 8C hashes for the presentation/CSS even though the partial Stage 8D files had already changed.
+At self-management continuation completion, the runtime manifest was found to still contain the prior guided visual integration hashes for the presentation/CSS even though the partial self-management continuation files had already changed.
 
 This was a ledger/PWA-test alignment issue, not a scientific-core issue.
 
-Current runtime hashes after Stage 8D completion:
+Current runtime hashes after self-management continuation completion:
 
 - `ui/interpretationRoomPresentation.js`: `03c7d977eff1ebf68e144c6c2dda14c38f65a992b97bd9e7c1c4bf7ea687ae16`
 - `styles/interpretation-room.css`: `5a6358fb9b1556c8e5787f6755ac27a1be231a8082243394017bf0c58b67b5f7`
@@ -136,7 +136,7 @@ Current runtime hashes after Stage 8D completion:
 
 ## Scientific boundary
 
-Stage 8D does not add:
+self-management continuation does not add:
 
 - diagnosis;
 - injury probability or risk;
@@ -156,4 +156,4 @@ Stage 8D does not add:
 
 ## Next gate
 
-Stage 8E final visual/motion/runtime/scientific regression audit.
+final closure audit final visual/motion/runtime/scientific regression audit.

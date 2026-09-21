@@ -97,7 +97,7 @@ It must preserve:
 - `RUNTIME_SHA256SUMS.txt`
 - `tests/interpretationRoomPwaIntegrationV1.test.mjs`
 
-A temporary Stage 8E GitHub Actions workflow was tested as an audit mechanism, did not produce workflow runs in this environment, and was removed from the final branch tree.
+A temporary final-audit GitHub Actions workflow was tested as an audit mechanism, did not produce workflow runs in this environment, and was removed from the final branch tree.
 
 ## Verification
 
@@ -197,4 +197,4 @@ No calculation logic, ROF-J semantics, causal inference, diagnosis, safety judgm
 
 The **entry-gate design and implementation are complete**.
 
-The remaining Interpretation-engine closure item is the final Stage 8E whole-feature regression/audit boundary. Entry-gate completion does not by itself authorize merge or formal Current promotion.
+The remaining Interpretation-engine closure item is the final whole-feature regression/audit boundary. Entry-gate completion does not by itself authorize merge or formal Current promotion.

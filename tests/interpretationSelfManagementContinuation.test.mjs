@@ -39,7 +39,7 @@ const cases=[
 ];
 
 for(const [code,key] of cases){
-  await test(`STAGE8D-CONTINUATION-${code}`,()=>{
+  await test(`SELF-MANAGEMENT-CONTINUATION-${code}`,()=>{
     const html=renderInterpretationRoom({output:output(code),view:'explain',mode:'visual',origin:'result'});
     assert.match(html,new RegExp(`data-continuation="${key}"`));
     assert.match(html,/今回理解したこと/);
@@ -49,42 +49,42 @@ for(const [code,key] of cases){
   });
 }
 
-await test('STAGE8D-CURRENT-SHIFT-USES-HISTORY-WHEN-AVAILABLE',()=>{
+await test('SELF-MANAGEMENT-CURRENT-SHIFT-USES-HISTORY-WHEN-AVAILABLE',()=>{
   const html=renderInterpretationRoom({output:output('CURRENT_SHIFT_WITH_HISTORY'),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/過去の比較可能な記録を確認/);
   assert.match(html,/#\/history/);
 });
 
-await test('STAGE8D-CONDITION-RESULT-USES-SIMULATION-WHEN-AVAILABLE',()=>{
+await test('SELF-MANAGEMENT-CONDITION-RESULT-USES-SIMULATION-WHEN-AVAILABLE',()=>{
   const html=renderInterpretationRoom({output:output('CONDITION_AND_RESULT_CHANGED'),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/条件を分けて確認/);
   assert.match(html,/#\/simulation/);
 });
 
-await test('STAGE8D-DIRECT-ACTION-UNAVAILABLE-FALLS-BACK-TO-MANAGEMENT',()=>{
+await test('SELF-MANAGEMENT-DIRECT-ACTION-UNAVAILABLE-FALLS-BACK-TO-MANAGEMENT',()=>{
   const html=renderInterpretationRoom({output:output('CURRENT_REFERENCE_PATTERN',{history:false}),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/次にどう活かすか考える/);
   assert.match(html,/topic=manage/);
 });
 
-await test('STAGE8D-MULTI-LAYER-NEXT-OBSERVATION-KEEPS-SCALES-SEPARATE',()=>{
+await test('SELF-MANAGEMENT-MULTI-LAYER-NEXT-OBSERVATION-KEEPS-SCALES-SEPARATE',()=>{
   const html=renderInterpretationRoom({output:output('MULTI_LAYER_CHANGE'),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/別々の尺度としてもう一度確認できます/);
 });
 
-await test('STAGE8D-REPEATED-OBSERVATION-NEXT-CHECK-USES-COUNTS',()=>{
+await test('SELF-MANAGEMENT-REPEATED-OBSERVATION-NEXT-CHECK-USES-COUNTS',()=>{
   const html=renderInterpretationRoom({output:output('REPEATED_OBSERVATION'),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/件数として更新できます/);
 });
 
-await test('STAGE8D-CURRENT-REFERENCE-NEXT-CHECK-WAITS-FOR-COMPARABLE-RECORD',()=>{
+await test('SELF-MANAGEMENT-CURRENT-REFERENCE-NEXT-CHECK-WAITS-FOR-COMPARABLE-RECORD',()=>{
   const html=renderInterpretationRoom({output:output('CURRENT_REFERENCE_PATTERN',{history:false}),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/今回の基準100との位置からどう変わったか/);
 });
 
-await test('STAGE8D-REVEAL-AND-REDUCED-MOTION-REMAIN-STATIC-EQUIVALENT',async()=>{
+await test('SELF-MANAGEMENT-REVEAL-AND-REDUCED-MOTION-REMAIN-STATIC-EQUIVALENT',async()=>{
   const css=await source('styles/interpretation-room.css');
-  const block=css.slice(css.indexOf('/* Stage 8D:'));
+  const block=css.slice(css.indexOf('/* Current-shift self-management continuation. */'));
   assert.match(block,/160ms ease-out 540ms 1 both/);
   assert.match(block,/animation-delay: 660ms/);
   assert.match(block,/html\.ui-motion-reduced[\s\S]*animation: none[\s\S]*opacity: 1[\s\S]*transform: none/);
@@ -92,5 +92,5 @@ await test('STAGE8D-REVEAL-AND-REDUCED-MOTION-REMAIN-STATIC-EQUIVALENT',async()=
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Stage 8D Self Management Continuation',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Self Management Continuation',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;

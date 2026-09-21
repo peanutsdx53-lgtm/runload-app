@@ -32,39 +32,39 @@ function output(){
   };
 }
 
-await test('STAGE8B-REPEATED-USES-COUNT-PATTERN',()=>{
+await test('VISUAL-MAPPING-REPEATED-USES-COUNT-PATTERN',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/data-visual-pattern="repeated-count"/);
   assert.match(html,/比較可能な過去4件/);
   assert.match(html,/過去4件のうち3件でも/);
 });
 
-await test('STAGE8B-REPEATED-USES-EQUAL-SIZE-RECORD-DOTS',()=>{
+await test('VISUAL-MAPPING-REPEATED-USES-EQUAL-SIZE-RECORD-DOTS',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.equal((html.match(/interpretation-repeat-dot is-match/g)||[]).length,3);
   assert.equal((html.match(/interpretation-repeat-dot is-other/g)||[]).length,1);
   assert.equal((html.match(/interpretation-repeat-dot is-current/g)||[]).length,1);
 });
 
-await test('STAGE8B-REPEATED-LOCATES-ONE-REGION-WITHOUT-REGIONAL-ARROW',()=>{
+await test('VISUAL-MAPPING-REPEATED-LOCATES-ONE-REGION-WITHOUT-REGIONAL-ARROW',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.equal((html.match(/interpretation-body-region is-focus/g)||[]).length,1);
   assert.doesNotMatch(html,/interpretation-comparison-arrow/);
 });
 
-await test('STAGE8B-REPEATED-DOES-NOT-TURN-COUNT-INTO-TRAIT',()=>{
+await test('VISUAL-MAPPING-REPEATED-DOES-NOT-TURN-COUNT-INTO-TRAIT',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/体質、傾向、けがの起こりやすさを示しません/);
   assert.match(html,/ここから体質や将来の結果までは判断しません/);
   assert.doesNotMatch(html,/傾向があります|体質です|なりやすい|起こりやすいです/);
 });
 
-await test('STAGE8B-REPEATED-DOES-NOT-MIX-OTHER-LAYERS',()=>{
+await test('VISUAL-MAPPING-REPEATED-DOES-NOT-MIX-OTHER-LAYERS',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.doesNotMatch(html,/主観的な疲労感 0–10/);
   assert.doesNotMatch(html,/前回と異なる走行条件/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Stage 8B Repeated Observation Mapping',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Repeated Observation Visual Mapping',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;

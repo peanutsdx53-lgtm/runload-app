@@ -33,7 +33,7 @@ function output(){
   };
 }
 
-await test('STAGE8A-LOCATES-ONE-FOCUS-REGION',()=>{
+await test('VISUAL-FOUNDATION-LOCATES-ONE-FOCUS-REGION',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual'});
   assert.match(html,/interpretation-body-locator/);
   assert.match(html,/data-focus-region="BA-DISP-014"/);
@@ -41,7 +41,7 @@ await test('STAGE8A-LOCATES-ONE-FOCUS-REGION',()=>{
   assert.match(html,/人体図で股関節部を強調/);
 });
 
-await test('STAGE8A-DRAWS-PREVIOUS-TO-CURRENT-DIRECTION',()=>{
+await test('VISUAL-FOUNDATION-DRAWS-PREVIOUS-TO-CURRENT-DIRECTION',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual'});
   assert.match(html,/比較方向/);
   assert.match(html,/前回 → 今回/);
@@ -51,7 +51,7 @@ await test('STAGE8A-DRAWS-PREVIOUS-TO-CURRENT-DIRECTION',()=>{
   assert.match(html,/>100</);
 });
 
-await test('STAGE8A-FALLS-BACK-TO-REFERENCE-WHEN-NO-COMPATIBLE-PREVIOUS',()=>{
+await test('VISUAL-FOUNDATION-FALLS-BACK-TO-REFERENCE-WHEN-NO-COMPATIBLE-PREVIOUS',()=>{
   const out=output();
   out.comparison.regionalById['BA-DISP-014']={comparablePreviousRecordId:null,previousValue:null,delta:null};
   const html=renderInterpretationRoom({output:out,view:'explain',mode:'visual'});
@@ -60,16 +60,16 @@ await test('STAGE8A-FALLS-BACK-TO-REFERENCE-WHEN-NO-COMPATIBLE-PREVIOUS',()=>{
   assert.doesNotMatch(html,/>前回</);
 });
 
-await test('STAGE8A-EXPLAINS-NON-RISK-SEMANTICS',()=>{
+await test('VISUAL-FOUNDATION-EXPLAINS-NON-RISK-SEMANTICS',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual'});
   assert.match(html,/矢印は比較の向きだけを示します/);
   assert.match(html,/危険・安全・改善・悪化を判断しません/);
   assert.match(html,/別の部位との大小比較にも使いません/);
 });
 
-await test('STAGE8A-MOTION-IS-ONE-SHOT-AND-REDUCED-MOTION-IS-STATIC',async()=>{
+await test('VISUAL-FOUNDATION-MOTION-IS-ONE-SHOT-AND-REDUCED-MOTION-IS-STATIC',async()=>{
   const css=await source('styles/interpretation-room.css');
-  const stage=css.slice(css.indexOf('/* Stage 8A:'));
+  const stage=css.slice(css.indexOf('/* Understanding-focused regional visual foundation. */'));
   assert.match(stage,/320ms ease-out 80ms 1 forwards/);
   assert.match(stage,/280ms ease-out 1 both/);
   assert.doesNotMatch(stage,/infinite/);
@@ -78,11 +78,11 @@ await test('STAGE8A-MOTION-IS-ONE-SHOT-AND-REDUCED-MOTION-IS-STATIC',async()=>{
   assert.doesNotMatch(stage,/var\(--color-danger|var\(--color-success/);
 });
 
-await test('STAGE8A-PWA-PRECACHES-REUSED-BODY-VISUAL-MODULE',async()=>{
+await test('VISUAL-FOUNDATION-PWA-PRECACHES-REUSED-BODY-VISUAL-MODULE',async()=>{
   const sw=await source('service-worker.js');
   assert.match(sw,/"\.\/ui\/prototypeBodyRegionVisuals\.js"/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Stage 8A Visual Foundation',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Visual Foundation',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;

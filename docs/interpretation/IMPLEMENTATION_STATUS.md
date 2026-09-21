@@ -8,9 +8,9 @@ Main merge commit: `3b096f51b219ff7b69299d3f03eeb7b7ec26d6a6`
 
 ## Resume protocol
 
-This file is the durable restart point for implementation. If work resumes in another ChatGPT conversation, read this file first, then inspect `main`, PR #51, and the latest Current package before making any edits.
+This file is the durable restart point for implementation. If work resumes in another work session, read this file first, then inspect `main`, PR #51, and the latest Current package before making any edits.
 
-Do not rely on prior chat history. Use the branch state and this ledger as the implementation truth.
+Do not rely on undocumented prior context. Use the branch state and this ledger as the implementation truth.
 
 ## Authority and protected baselines
 
@@ -57,21 +57,21 @@ Key frozen decisions:
 6. Existing Safety/support decision outranks ordinary interpretation/navigation.
 7. Do not infer diagnosis, injury risk, causality, safety, or run/no-run decisions.
 8. Evidence display may cite saved calculation basis and relevant research background, but must not claim a complete list of every source used by the calculation unless such provenance is explicitly persisted.
-9. V1 has no generative-AI free text and no Notebook revival.
+9. V1 uses only predefined deterministic outputs and has no Notebook revival.
 10. Existing `nextCheckPoint` may be read/reused; do not create a new notebook-like datastore.
 11. Old `#/activation` remains compatible through alias/redirect behavior.
 12. Public wording is formal, concise, non-colloquial, and non-abstract.
 
 ## Stage ledger
 
-### Stage 0 — Durable restart mechanism
+### Durable restart mechanism
 Status: COMPLETE
 - [x] Dedicated implementation branch created from audited main baseline.
 - [x] Durable status ledger added to the branch.
 - [x] Draft PR #49 opened as an additional durable anchor.
 - Branch bootstrap commit: `397e0e78854116e28b97fa6ca813ce622697e458`
 
-### Stage 1 — Interpretation Core domain implementation
+### Interpretation Core domain implementation
 Status: COMPLETE
 Implemented:
 - [x] `core/interpretationCore.js`
@@ -105,7 +105,7 @@ Local verification against audited App Source:
 - protected Primary core SHA unchanged
 - protected ROF-J core SHA unchanged
 
-### Stage 2 — Independent Room route and presentation
+### Independent Room route and presentation
 Status: COMPLETE
 Implemented:
 - [x] canonical `interpretation-room` route
@@ -122,7 +122,7 @@ Implemented:
 - [x] immersive shell with ordinary bottom navigation and feature menu omitted
 - [x] dedicated integration suite `tests/interpretationRoomIntegrationV1.test.mjs`
 
-Stage 2 commits:
+Implementation commits:
 - Presentation: `a93992d422e6dafc681c6416e3abb46a395ec947`
 - Screen: `835464623dd901a4694a77070f78d8842d14402d`
 - Styles: `baf3f455da1a02c41cba30d4c286d3786ea475c8`
@@ -139,10 +139,10 @@ Verification against audited App Source:
 - JS/MJS syntax scan: **80 files / 0 failures**
 - protected Primary core SHA unchanged
 - protected ROF-J core SHA unchanged
-- Stage 2 integration test SHA-256: `49bf0addf2e6f77db9061764a9df81a25ffa43352fa13b916083b023761b48d2`
+- Independent-room integration test SHA-256: `49bf0addf2e6f77db9061764a9df81a25ffa43352fa13b916083b023761b48d2`
 - branch compare to audited base contains no changes to protected calculation cores
 
-### Stage 3 — Existing-screen launch points and legacy activation compatibility
+### Existing-screen launch points and legacy activation compatibility
 Status: COMPLETE
 Implemented:
 - [x] Result compact launch point reuses the existing result-use slot and opens RunLoad Interpretation
@@ -155,7 +155,7 @@ Implemented:
 - [x] duplicate public Activation renderer/menu/workspace entry retired
 - [x] dedicated launch integration suite `tests/interpretationRoomLaunchIntegrationV1.test.mjs`
 
-Stage 3 commits:
+Launch-integration commits:
 - Result launch: `288bc2c773b99acb5263caff9458d8db5a7cfa91`
 - Home launch: `4c38ce85a431732ceeb5f88ec9a2ccd360fb91e0`
 - Body-region launch: `c7d81cc86170eb3420cbfc701760fe264b3b6402`
@@ -174,9 +174,9 @@ Verification against audited App Source:
 - JS/MJS syntax scan: **81 files / 0 failures**
 - protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
 - protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
-- Stage 3 launch integration test SHA-256: `5dea4ad98ae1c7e0d91b1e31cb289d99932db046db328b3cae249b9718acaf90`
+- Launch integration test SHA-256: `5dea4ad98ae1c7e0d91b1e31cb289d99932db046db328b3cae249b9718acaf90`
 
-### Stage 4 — PWA/runtime integration
+### PWA/runtime integration
 Status: COMPLETE
 Implemented:
 - [x] Interpretation Core added to Service Worker precache
@@ -190,7 +190,7 @@ Implemented:
 - [x] existing CSP supports the new same-origin external JS/CSS; no CSP relaxation or inline script was added
 - [x] dedicated PWA/runtime suite `tests/interpretationRoomPwaIntegrationV1.test.mjs`
 
-Stage 4 commits:
+PWA/runtime commits:
 - PWA cache integration: `6f909cbcdac867a67e8399fa629ff21c8f754206`
 - Runtime SHA-256 manifest: `0a6a411b539d2ce3dc9c6b7f3ff14004a7b3dcbd`
 - PWA integration tests: `4b8aa58b2411c5c10ae3492ba5e76ebc473e40bd`
@@ -201,16 +201,16 @@ Verification:
 - Service Worker SHA-256: `604a1e3f9e03d0fc1566f51bd3457d67bd8a106e1978855356dd5ee000c44771`
 - runtime manifest contains current Interpretation Core SHA-256 `e04eb0f1e8e0655c4cc0fb08a264d59aa393655a850cf8ce8458bfbba31d64f8`
 - branch compare against audited base shows **no changes** to protected Primary or ROF-J core files
-- Stage 3 full baseline regression remains **273/273 PASS**; final combined regression is reserved for Stage 5
+- Previous full baseline regression remains **273/273 PASS**; final combined regression is reserved for the full-regression audit
 
-### Stage 5 — Full regression and scientific-boundary audit
+### Full regression and scientific-boundary audit
 Status: **COMPLETE — PASS**
 
 Durable audit record:
-- `docs/interpretation/STAGE5_FINAL_AUDIT_20260921.md`
+- `docs/interpretation/FULL_REGRESSION_SCIENTIFIC_BOUNDARY_AUDIT_20260921.md`
 - audited implementation head before audit-document-only commits: `4b0230dda4c57f2d7c22244c1c6a1e3b89869935`
 
-Corrections made during Stage 5:
+Corrections made during full regression:
 - Home runtime-manifest mismatch corrected: `3551bb7d56381fd7616653fdfd97e60b562d7b6e`
 - Presentation literal-`\\n` syntax defect corrected: `4490622cab7fbf1be5a806b6a6893dd6346c9ce1`
 - repaired Presentation runtime SHA recorded: `30269ea4bf142ec53a04cd13adcda2ba2f70d447`
@@ -232,7 +232,7 @@ Final verification:
 - scientific boundaries: PASS
 - public wording boundary: PASS
 - no new persistent Interpretation datastore
-- no generative-AI/free-text implementation
+- no unconstrained free-text generation
 - no new Interpretation network/API dependency
 - PWA/CSP/static-resource audit: PASS
 
@@ -246,28 +246,28 @@ Visual acceptance:
 - user-visible acceptance remains the final pre-merge/pre-Current gate.
 
 App Source packaging note:
-- when formal App Source/Current is regenerated, update the two App-Source-only legacy test contracts (Stage4 Result-use and Stage6 route alias), include all four new Interpretation suites, regenerate verification metadata, and re-run packaged-copy verification.
-## Resolved Stage 5 safe-stop findings
+- when formal App Source/Current is regenerated, update the two App-Source-only legacy test contracts (Result-use and route-alias coverage), include all four new Interpretation suites, regenerate verification metadata, and re-run packaged-copy verification.
+## Resolved full-regression safe-stop findings
 
-The earlier Stage 5 safe stops were resolved under explicit user authorization:
+The earlier full-regression safe stops were resolved under explicit user authorization:
 - runtime Home hash mismatch: corrected and reverified;
 - Presentation literal-`\\n` syntax defect: corrected and reverified;
 - dedicated test expectations affected by those corrections: aligned and re-run.
 
-See `docs/interpretation/STAGE5_FINAL_AUDIT_20260921.md` for the final audit trail.
+See `docs/interpretation/FULL_REGRESSION_SCIENTIFIC_BOUNDARY_AUDIT_20260921.md` for the final audit trail.
 
-## Stage 6 — Interpretation Experience Upgrade
+## Interpretation Experience Upgrade
 Status: **BASELINE COMPLETE — PASS**
 
 Controlling delta:
-- `docs/interpretation/STAGE6_INTERPRETATION_EXPERIENCE_DESIGN_20260921.md`
+- `docs/interpretation/INTERPRETATION_EXPERIENCE_DESIGN_20260921.md`
 
 Durable audit:
-- `docs/interpretation/STAGE6_BASELINE_AUDIT_20260921.md`
+- `docs/interpretation/INTERPRETATION_EXPERIENCE_BASELINE_AUDIT_20260921.md`
 
 User-approved direction:
 - Interpretation must answer what the user should understand from the record, not merely reorganize Result-screen values.
-- The current Stage 6 implementation is accepted as the development baseline.
+- The current interpretation-experience implementation is accepted as the development baseline.
 - Exact interpretation content, presentation method, and the route/sequence used to reach explanations remain intentional future refinement areas.
 
 Implemented:
@@ -281,7 +281,7 @@ Implemented:
 - [x] condition/result non-causal boundary
 - [x] repeated-observation explicit-count wording
 - [x] nearby visual-label staggering at mobile width
-- [x] no new persistence, external API, or generative AI
+- [x] no new persistence, external API, or unconstrained text generation
 - [x] protected Primary and ROF-J cores unchanged
 
 Final verification:
@@ -298,7 +298,7 @@ Final verification:
 - protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
 - protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
 - GitHub compare contains no protected-core changes
-- principal Stage 6 GitHub files were byte-verified against the validated local audit copy
+- principal interpretation-experience GitHub files were byte-verified against the validated local audit copy
 
 Meaning V2 SHA clarification:
 - previous apparent mismatch was not a file mismatch;
@@ -311,14 +311,14 @@ Release state:
 - formal Current remains untouched
 - no merge or Current promotion has been performed
 
-## Stage 7 — Guided Interpretation Dialogue
+## Guided Interpretation Dialogue
 Status: **BASELINE COMPLETE — PASS**
 
 Controlling design:
-- `docs/interpretation/STAGE7_GUIDED_DIALOGUE_DESIGN_20260921.md`
+- `docs/interpretation/GUIDED_INTERPRETATION_DIALOGUE_DESIGN_20260921.md`
 
 Durable audit:
-- `docs/interpretation/STAGE7_GUIDED_DIALOGUE_AUDIT_20260921.md`
+- `docs/interpretation/GUIDED_INTERPRETATION_DIALOGUE_AUDIT_20260921.md`
 
 User-approved direction:
 - do not expose many interpretation items at once;
@@ -334,7 +334,7 @@ Implemented:
 - [x] existing `nextCheckPoint` deferred until the next-use context
 - [x] Evidence moved downstream from explanation rather than competing at entry
 - [x] legacy `view=next` compatibility resolves to narrow management dialogue
-- [x] no free-text chat, AI avatar, typing simulation, persistent conversation history, or external API
+- [x] no unrestricted free-text conversation, simulated agent avatar, typing simulation, persistent conversation history, or external API
 - [x] downstream functions are linked, not duplicated
 - [x] Support precedence retained
 - [x] scientific boundaries unchanged
@@ -354,7 +354,7 @@ Final verification:
 - protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
 - protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
 - GitHub compare contains no protected-core changes
-- principal Stage 7 GitHub files byte-match the validated local audit copy
+- principal guided-dialogue GitHub files byte-match the validated local audit copy
 
 Visual audit:
 - 390 px and 1280 px;
@@ -369,11 +369,11 @@ Release state:
 - formal Current remains untouched
 - no merge or Current promotion has been performed
 
-## Stage 8 — Understanding-Focused Visual Interpretation
-Status: **STAGE 8D COMPLETE — ENTRY GATES COMPLETE; STAGE 8E FINAL AUDIT NEXT**
+## understanding-focused visual interpretation — Understanding-Focused Visual Interpretation
+Status: **SELF-MANAGEMENT CONTINUATION COMPLETE — ENTRY GATES COMPLETE; FINAL CLOSURE AUDIT NEXT**
 
 Controlling work plan:
-- `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
+- `docs/interpretation/UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
 
 Mandatory distinction:
 - Result screen = display recorded/result information.
@@ -403,13 +403,13 @@ Implementation principles:
 - downstream History / Simulation / Plan / Consultation / Reading functions remain separate and are only bridged to.
 
 Planned sequence:
-- Stage 8A: first reusable visual batch — **implemented**: one body-region focus, local previous/Reference-100/current direction, one-time accent emphasis, reduced-motion static equivalent. ROF-J remains separate and unchanged in this batch;
-- Stage 8B: map Meaning Core codes to visual explanation patterns;
-- Stage 8C: integrate visuals into the Stage 7 guided dialogue;
-- Stage 8D: strengthen explanation → next self-management observation/function bridge;
-- Stage 8E: mobile/desktop/theme/dark/reduced-motion visual audit + full regression.
+- visual foundation: first reusable visual batch — **implemented**: one body-region focus, local previous/Reference-100/current direction, one-time accent emphasis, reduced-motion static equivalent. ROF-J remains separate and unchanged in this batch;
+- meaning-driven visual mapping: map Meaning Core codes to visual explanation patterns;
+- guided visual integration: integrate visuals into the guided dialogue;
+- self-management continuation: strengthen explanation → next self-management observation/function bridge;
+- final closure audit: mobile/desktop/theme/dark/reduced-motion visual audit + full regression.
 
-Stage 8 work-order rule:
+understanding-focused visual interpretation work-order rule:
 1. identify the exact comprehension problem;
 2. select one Meaning Core context;
 3. select one visual transformation;
@@ -419,17 +419,17 @@ Stage 8 work-order rule:
 7. run regression and visual review;
 8. record findings before the next batch.
 
-Baseline before Stage 8:
-- Stage 7 guided dialogue: **371/371 PASS**
+Baseline before understanding-focused visual interpretation:
+- Guided-dialogue baseline: **371/371 PASS**
 - runtime manifest: **79/79 PASS**
 - protected Primary and ROF-J cores unchanged
 - PR #49 remains Draft
 - main and formal Current remain untouched
 
-## Stage 8A first-batch checkpoint — 2026-09-21
+## visual foundation first-batch checkpoint — 2026-09-21
 
 Durable audit:
-- `docs/interpretation/STAGE8A_VISUAL_FOUNDATION_AUDIT_20260921.md`
+- `docs/interpretation/VISUAL_FOUNDATION_AUDIT_20260921.md`
 
 Implemented:
 - one selected body region is located using the existing prototype body-region visual definitions;
@@ -445,8 +445,8 @@ Implemented:
 Verification at this checkpoint:
 - pre-Stage-8 durable branch baseline: 371/371 PASS;
 - audited Current/local baseline verification: 273/273 PASS, 17 suites, 77 syntax files, 0 syntax failures;
-- current Stage 8A production-source focused checks: 8/8 PASS;
-- current Stage 7/Stage 6/Stage 8A/PWA cross-surface checks: 15/15 PASS;
+- current visual foundation production-source focused checks: 8/8 PASS;
+- current guided-dialogue / interpretation-experience / visual foundation / PWA cross-surface checks: 15/15 PASS;
 - 390 px render: viewport 390 px / scroll width 390 px, no horizontal overflow;
 - comparison label overlap count: 0;
 - exactly one body region focused;
@@ -456,21 +456,21 @@ Verification at this checkpoint:
 
 Important verification boundary:
 - the 273/273 result is the independently verified audited Current/main baseline, not a claim that the full feature branch was rerun locally;
-- the full Stage 8E regression remains a later mandatory gate.
+- the full final closure audit regression remains a later mandatory gate.
 
 Release state:
 - PR #49 remains intended to stay Draft;
 - no merge to main has been performed;
 - formal Current remains untouched;
-- Stage 8B has not started.
+- meaning-driven visual mapping has not started.
 
-## Stage 8B mapping checkpoint — CURRENT_SHIFT_WITH_HISTORY
+## meaning-driven visual mapping mapping checkpoint — CURRENT_SHIFT_WITH_HISTORY
 
 User acceptance:
-- Stage 8A static visual was accepted as a compromise-line baseline and Stage 8B was authorized to proceed.
+- visual foundation static visual was accepted as a compromise-line baseline and meaning-driven visual mapping was authorized to proceed.
 
 Durable audit:
-- `docs/interpretation/STAGE8B_CURRENT_SHIFT_AUDIT_20260921.md`
+- `docs/interpretation/CURRENT_SHIFT_VISUAL_MAPPING_AUDIT_20260921.md`
 
 Mapped:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
@@ -484,16 +484,16 @@ Verification:
 - focused production-source checks: **11/11 PASS**;
 - target code uses `data-visual-pattern="locate-compare"`;
 - unmapped Meaning Core codes remain on general visual behavior;
-- Stage 7 two-choice entry remains unchanged;
+- Guided-dialogue two-choice entry remains unchanged;
 - no new route or downstream-function duplication;
 - runtime hash manifest and PWA hash contract updated for the changed presentation/CSS;
 - targeted 390 px layout review found no new horizontal-layout issue;
-- fresh production-browser visual audit remains reserved for Stage 8E.
+- fresh production-browser visual audit remains reserved for final closure audit.
 
-## Stage 8B mapping checkpoint — CONDITION_AND_RESULT_CHANGED
+## meaning-driven visual mapping mapping checkpoint — CONDITION_AND_RESULT_CHANGED
 
 Durable audit:
-- `docs/interpretation/STAGE8B_CONDITION_RESULT_AUDIT_20260921.md`
+- `docs/interpretation/CONDITION_RESULT_VISUAL_MAPPING_AUDIT_20260921.md`
 
 Mapped so far:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
@@ -513,10 +513,10 @@ Verification:
 - `MULTI_LAYER_CHANGE` remains unmapped/general at this checkpoint;
 - runtime/PWA hash contracts updated.
 
-## Stage 8B mapping checkpoint — MULTI_LAYER_CHANGE
+## meaning-driven visual mapping mapping checkpoint — MULTI_LAYER_CHANGE
 
 Durable audit:
-- `docs/interpretation/STAGE8B_MULTI_LAYER_AUDIT_20260921.md`
+- `docs/interpretation/MULTI_LAYER_VISUAL_MAPPING_AUDIT_20260921.md`
 
 Mapped so far:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
@@ -532,14 +532,14 @@ Multi-layer rules:
 
 Verification:
 - multi-layer focused checks: **10/10 PASS**;
-- prior Stage 8B mappings remained intact;
+- prior meaning-driven visual mapping mappings remained intact;
 - targeted 390 px layout review found both lanes inside the canvas;
 - runtime/PWA hash contracts updated.
 
-## Stage 8B mapping checkpoint — REPEATED_OBSERVATION
+## meaning-driven visual mapping mapping checkpoint — REPEATED_OBSERVATION
 
 Durable audit:
-- `docs/interpretation/STAGE8B_REPEATED_OBSERVATION_AUDIT_20260921.md`
+- `docs/interpretation/REPEATED_OBSERVATION_VISUAL_MAPPING_AUDIT_20260921.md`
 
 Mapped so far:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
@@ -556,14 +556,14 @@ Repeated-observation rules:
 
 Verification:
 - repeated-observation focused checks: **10/10 PASS**;
-- prior Stage 8B mappings remained intact;
+- prior meaning-driven visual mapping mappings remained intact;
 - targeted 390 px layout review showed the fixed-size count visual inside the canvas;
 - runtime/PWA hash contracts updated.
 
-## Stage 8B completion checkpoint
+## meaning-driven visual mapping completion checkpoint
 
 Durable completion audit:
-- `docs/interpretation/STAGE8B_MEANING_VISUAL_MAPPING_AUDIT_20260921.md`
+- `docs/interpretation/MEANING_VISUAL_MAPPING_COMPLETION_AUDIT_20260921.md`
 
 Completed mappings:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + compatible previous → current;
@@ -572,10 +572,10 @@ Completed mappings:
 - `REPEATED_OBSERVATION` → Locate + explicit compatible-record counts;
 - `CURRENT_REFERENCE_PATTERN` → Locate + Reference-100 → current.
 
-Combined Stage 8B integrity checkpoint:
+Combined meaning-driven visual mapping integrity checkpoint:
 - **21/21 PASS**;
-- Stage 7 entry remains exactly two ordinary choices;
-- Stage 7 understand step remains at most three choices;
+- Guided-dialogue entry remains exactly two ordinary choices;
+- Guided-dialogue understand step remains at most three choices;
 - runtime/PWA visual-file contracts aligned;
 - protected Primary and ROF-J core hashes unchanged;
 - PR #49 remains Draft and unmerged;
@@ -583,17 +583,17 @@ Combined Stage 8B integrity checkpoint:
 
 Visual-audit boundary:
 - targeted 390 px static-layout review completed for all five patterns;
-- full production-browser mobile/desktop/theme/dark/reduced-motion audit remains Stage 8E.
+- full production-browser mobile/desktop/theme/dark/reduced-motion audit remains final closure audit.
 
-## Stage 8C completion checkpoint
+## guided visual integration completion checkpoint
 
 Durable audit:
-- `docs/interpretation/STAGE8C_GUIDED_VISUAL_INTEGRATION_AUDIT_20260921.md`
+- `docs/interpretation/GUIDED_VISUAL_INTEGRATION_AUDIT_20260921.md`
 
 Completed:
 - Entry remains one interpretation + exactly two intent choices;
-- Understand step offers up to three representation choices and does not render Stage 8 visuals yet;
-- Stage 8 main visual appears only in the selected Visual explanation step;
+- Understand step offers up to three representation choices and does not render understanding-focused visual interpretation visuals yet;
+- understanding-focused visual interpretation main visual appears only in the selected Visual explanation step;
 - one main visual stack per Visual explanation;
 - understanding note follows the visual;
 - follow-up remains exactly two downstream choices: Evidence / management narrowing;
@@ -601,20 +601,20 @@ Completed:
 - Reduced Motion shows the complete static state immediately.
 
 Verification:
-- Stage 8C focused checks: **9/9 PASS**;
+- guided visual integration focused checks: **9/9 PASS**;
 - no route redesign;
 - no downstream-function duplication;
 - runtime/PWA hash contracts updated;
-- Stage 8B 390 px layouts remain the geometry baseline;
-- full production-browser animation/theme audit remains Stage 8E.
+- meaning-driven visual mapping 390 px layouts remain the geometry baseline;
+- full production-browser animation/theme audit remains final closure audit.
 
-## Stage 8D completion checkpoint
+## self-management continuation completion checkpoint
 
 Durable audit:
-- `docs/interpretation/STAGE8D_SELF_MANAGEMENT_CONTINUATION_AUDIT_20260921.md`
+- `docs/interpretation/SELF_MANAGEMENT_CONTINUATION_AUDIT_20260921.md`
 
 Completed:
-- all five Stage 8B primary Meaning Core patterns now carry the three-part self-management continuation:
+- all five meaning-driven visual mapping primary Meaning Core patterns now carry the three-part self-management continuation:
   - 今回理解したこと
   - まだ分からないこと
   - 次に確認すること
@@ -626,8 +626,8 @@ Completed:
 - no prescription, run/rest decision, causal inference, or new persistence was introduced.
 
 Verification:
-- Stage 8D completion focused checks: **13/13 PASS**;
-- runtime manifest/PWA hash expectations were corrected to the actual Stage 8D presentation/CSS files.
+- self-management continuation completion focused checks: **13/13 PASS**;
+- runtime manifest/PWA hash expectations were corrected to the actual self-management continuation presentation/CSS files.
 
 ## Entry gate completion checkpoint — 2026-09-21
 
@@ -655,14 +655,14 @@ Verification:
 - protected ROF-J core SHA unchanged.
 
 Audit tooling note:
-- a temporary GitHub Actions workflow was attempted for final Stage 8E execution;
+- a temporary GitHub Actions workflow was attempted for final final closure audit execution;
 - no workflow run was generated in this environment;
 - the temporary workflow was removed and is not part of the final branch tree.
 
-## Stage 8E final closure checkpoint
+## final closure audit final closure checkpoint
 
 Durable audit:
-- `docs/interpretation/STAGE8E_FINAL_CLOSURE_AUDIT_20260921.md`
+- `docs/interpretation/FINAL_CLOSURE_AUDIT_20260921.md`
 
 Status: **COMPLETE WITH EXECUTION-ENVIRONMENT LIMITATION**.
 
@@ -701,7 +701,7 @@ Mandatory completion checks:
 - PWA/runtime integrity;
 - protected scientific-core integrity.
 
-Do not merge PR #49 or promote formal Current as part of Stage 8E.
+Do not merge PR #49 or promote formal Current as part of final closure audit.
 
 
 ## Post-merge hotfix — stale hidden safety state
@@ -752,7 +752,7 @@ Verification:
 
 Current update requirement:
 - do not reuse the 2026-09-20 verification report unchanged;
-- the next Current App Source must include the updated Stage 4 / Stage 6 regression tests, the 19 result-understanding suites, required ROF-J provenance, and the integrated verifier;
+- the next Current App Source must include the updated result-use and route-alias regression tests, the 19 result-understanding suites, required ROF-J provenance, and the integrated verifier;
 - Current documentation must explicitly state why the feature is necessary, what it does, and what it does not do.
 
 Next application phase after merge/Current promotion:

@@ -1,4 +1,4 @@
-# RunLoad Interpretation — Stage 8E Final Closure Audit
+# RunLoad Interpretation — Final Closure Audit
 
 Date: 2026-09-21
 Status: COMPLETE WITH EXECUTION-ENVIRONMENT LIMITATION
@@ -39,14 +39,14 @@ Verified:
 
 ### Current feature-branch source cross-check
 
-Stage 7 + Stage 8 + runtime + scientific-boundary source checks:
+guided-dialogue baseline + understanding-focused visual interpretation + runtime + scientific-boundary source checks:
 - **57/57 PASS**.
 
 Verified:
-- Stage 7 entry remains two choices;
+- guided-dialogue baseline entry remains two choices;
 - Understand step remains at most three choices;
 - Simple / Difference keep management-narrowing behavior;
-- Stage 8D direct History / Simulation bridge is limited to the Visual explanation context;
+- self-management continuation direct History / Simulation bridge is limited to the Visual explanation context;
 - all five primary Meaning patterns render their dedicated visual and continuation;
 - regional and ROF-J scales remain separate;
 - repeated-observation pattern has no comparison arrow;
@@ -106,7 +106,7 @@ The temporary workflow was removed from the final branch tree.
 
 Therefore this audit does **not** claim a fresh single-command full-branch test run that did not occur.
 
-The release decision is based on the verified browser audit, current-source contract checks, prior audited baseline regression, dedicated Stage 8/entry checks, runtime/PWA integrity, and protected-core verification above.
+The release decision is based on the verified browser audit, current-source contract checks, prior audited baseline regression, dedicated understanding-focused visual interpretation/entry checks, runtime/PWA integrity, and protected-core verification above.
 
 ## Scientific boundary
 
@@ -119,7 +119,7 @@ PASS:
 - no unsupported causal inference;
 - no cross-region physical ranking;
 - no new persistent interpretation datastore;
-- no external/generative-AI dependency.
+- no external service or unconstrained text-generation dependency.
 
 ## Release decision
 

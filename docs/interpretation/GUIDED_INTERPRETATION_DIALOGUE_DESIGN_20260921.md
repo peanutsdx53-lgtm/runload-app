@@ -1,8 +1,8 @@
-# RunLoad Guided Interpretation Dialogue — Stage 7 Design Authority
+# RunLoad Guided Interpretation Dialogue — Design Authority
 
 Date: 2026-09-21
-Status: IMPLEMENTATION AUTHORITY FOR STAGE 7
-Parent baseline: Stage 6 Interpretation Experience
+Status: IMPLEMENTATION AUTHORITY FOR GUIDED DIALOGUE
+Parent baseline: Interpretation Experience
 
 ## 1. Purpose
 
@@ -167,7 +167,7 @@ Existing explanation routes remain compatible:
 - `view=explain&mode=simple|visual|difference`
 - `view=evidence`
 - `view=detail`
-- `view=next` retained for backward compatibility during Stage 7.
+- `view=next` retained for backward compatibility for this guided-dialogue update.
 
 No new persistence.
 
@@ -201,21 +201,21 @@ Unchanged:
 
 ## 12. Implementation sequence
 
-### Stage 7A
+### Dialogue routing and intent narrowing
 - add deterministic dialogue view/topic routing;
 - replace entry four-mode menu with two-way intent narrowing.
 
-### Stage 7B
+### Interpretation-support dialogue
 - interpretation-support dialogue;
 - evidence as downstream explanation;
 - keep Detail secondary.
 
-### Stage 7C
+### Self-management bridge dialogue
 - self-management bridge dialogue;
 - History / Simulation / next-use separation;
 - next-use → Plan / Consultation / Reading.
 
-### Stage 7D
+### Regression and boundary audit
 - regression;
 - information-load contract tests;
 - 390 px / desktop visual audit;
@@ -223,6 +223,6 @@ Unchanged:
 
 ## 13. Release rule
 
-Stage 7 does not authorize merge or Current promotion.
+This guided-dialogue update does not authorize merge or Current promotion.
 
 PR #49 remains Draft until explicit later acceptance.

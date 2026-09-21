@@ -188,7 +188,7 @@
   min-width: 0;
 }
 
-/* Stage 6: meaning-first explanation surfaces. */
+/* Meaning-first explanation surfaces. */
 .interpretation-primary--meaning h1 {
   margin-top: 8px;
   max-width: 34em;
@@ -406,7 +406,7 @@
   }
 }
 
-/* Stage 7: deterministic guided dialogue. */
+/* Deterministic guided dialogue. */
 .interpretation-dialogue-thread {
   display: grid;
   gap: 14px;
@@ -548,7 +548,7 @@
 }
 
 
-/* Stage 8A: understanding-focused regional visual foundation. */
+/* Understanding-focused regional visual foundation. */
 .interpretation-regional-visual {
   display: grid;
   grid-template-columns: minmax(126px, .42fr) minmax(0, 1fr);
@@ -595,7 +595,7 @@
   stroke: var(--color-accent-strong);
   stroke-width: 3;
   opacity: 1;
-  animation: interpretation-stage8-focus 280ms ease-out 1 both;
+  animation: interpretation-focus-region 280ms ease-out 1 both;
 }
 
 .interpretation-body-locator figcaption {
@@ -652,13 +652,13 @@
   stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: interpretation-stage8-arrow-draw 320ms ease-out 80ms 1 forwards;
+  animation: interpretation-comparison-arrow-draw 320ms ease-out 80ms 1 forwards;
 }
 
 .interpretation-comparison-arrowhead {
   fill: var(--color-accent-strong);
   opacity: 0;
-  animation: interpretation-stage8-arrowhead 160ms ease-out 360ms 1 forwards;
+  animation: interpretation-comparison-arrowhead 160ms ease-out 360ms 1 forwards;
 }
 
 .interpretation-comparison-same-position circle {
@@ -668,10 +668,10 @@
 }
 
 .interpretation-visual-card--regional .marker-current circle {
-  animation: interpretation-stage8-target 280ms ease-out 300ms 1 both;
+  animation: interpretation-current-target 280ms ease-out 300ms 1 both;
 }
 
-@keyframes interpretation-stage8-focus {
+@keyframes interpretation-focus-region {
   0% {
     opacity: .62;
     filter: drop-shadow(0 0 0 transparent);
@@ -686,15 +686,15 @@
   }
 }
 
-@keyframes interpretation-stage8-arrow-draw {
+@keyframes interpretation-comparison-arrow-draw {
   to { stroke-dashoffset: 0; }
 }
 
-@keyframes interpretation-stage8-arrowhead {
+@keyframes interpretation-comparison-arrowhead {
   to { opacity: 1; }
 }
 
-@keyframes interpretation-stage8-target {
+@keyframes interpretation-current-target {
   0%, 100% {
     stroke-width: 4;
     filter: drop-shadow(0 0 0 transparent);
@@ -749,7 +749,7 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
 }
 
 
-/* Stage 8B: CURRENT_SHIFT_WITH_HISTORY understanding note. */
+/* CURRENT_SHIFT_WITH_HISTORY understanding note. */
 .interpretation-visual-insight {
   padding: 14px 16px;
   border-left: 3px solid var(--color-accent-strong);
@@ -772,7 +772,7 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
 }
 
 
-/* Stage 8B: separated condition context. */
+/* Separated condition context. */
 .interpretation-condition-context {
   padding: 14px 16px;
   border: 1px solid var(--color-line);
@@ -804,7 +804,7 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
 }
 
 
-/* Stage 8B: separate regional and ROF-J layers. */
+/* Separate regional and ROF-J layers. */
 .interpretation-layer-pair {
   display: grid;
   gap: 10px;
@@ -839,7 +839,7 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
 }
 
 
-/* Stage 8B: repeated-observation count visual. */
+/* Repeated-observation count visual. */
 .interpretation-repeated-layout {
   display: grid;
   grid-template-columns: minmax(126px, .42fr) minmax(0, 1fr);
@@ -918,8 +918,8 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
 }
 
 
-/* Stage 8C: short guided reveal sequence. */
-@keyframes interpretation-stage8-guided-reveal {
+/* Short guided reveal sequence. */
+@keyframes interpretation-guided-reveal {
   from {
     opacity: 0;
     transform: translateY(4px);
@@ -931,11 +931,11 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
 }
 
 .interpretation-room-view--visual [data-reveal-step="explanation"] {
-  animation: interpretation-stage8-guided-reveal 160ms ease-out 420ms 1 both;
+  animation: interpretation-guided-reveal 160ms ease-out 420ms 1 both;
 }
 
 .interpretation-room-view--visual [data-reveal-step="choices"] {
-  animation: interpretation-stage8-guided-reveal 160ms ease-out 540ms 1 both;
+  animation: interpretation-guided-reveal 160ms ease-out 540ms 1 both;
 }
 
 html.ui-motion-reduced .interpretation-room-view--visual [data-reveal-step="explanation"],
@@ -955,7 +955,7 @@ html.ui-motion-reduced .interpretation-room-view--visual [data-reveal-step="choi
 }
 
 
-/* Stage 8D: current-shift self-management continuation. */
+/* Current-shift self-management continuation. */
 .interpretation-continuation {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -991,7 +991,7 @@ html.ui-motion-reduced .interpretation-room-view--visual [data-reveal-step="choi
 }
 
 .interpretation-room-view--visual [data-reveal-step="continuation"] {
-  animation: interpretation-stage8-guided-reveal 160ms ease-out 540ms 1 both;
+  animation: interpretation-guided-reveal 160ms ease-out 540ms 1 both;
 }
 
 .interpretation-room-view--visual [data-reveal-step="choices"] {

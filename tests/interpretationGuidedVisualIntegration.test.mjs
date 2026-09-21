@@ -34,14 +34,14 @@ function output(){
 
 function choiceCount(html){return (html.match(/class="interpretation-dialogue-choice"/g)||[]).length;}
 
-await test('STAGE8C-ENTRY-HAS-NO-VISUAL-BEFORE-INTENT-NARROWING',()=>{
+await test('GUIDED-VISUAL-ENTRY-HAS-NO-VISUAL-BEFORE-INTENT-NARROWING',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
   assert.equal(choiceCount(html),2);
   assert.doesNotMatch(html,/data-guided-stage="understand-visual"/);
   assert.doesNotMatch(html,/interpretation-body-locator/);
 });
 
-await test('STAGE8C-UNDERSTAND-STEP-OFFERS-VISUAL-WITHOUT-RENDERING-IT',()=>{
+await test('GUIDED-VISUAL-UNDERSTAND-STEP-OFFERS-VISUAL-WITHOUT-RENDERING-IT',()=>{
   const html=renderInterpretationRoom({output:output(),view:'dialogue',topic:'understand',origin:'result'});
   assert.ok(choiceCount(html)<=3);
   assert.match(html,/図で確認/);
@@ -50,7 +50,7 @@ await test('STAGE8C-UNDERSTAND-STEP-OFFERS-VISUAL-WITHOUT-RENDERING-IT',()=>{
   assert.doesNotMatch(html,/interpretation-body-locator/);
 });
 
-await test('STAGE8C-VISUAL-APPEARS-AFTER-REPRESENTATION-SELECTION',()=>{
+await test('GUIDED-VISUAL-VISUAL-APPEARS-AFTER-REPRESENTATION-SELECTION',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/data-guided-stage="understand-visual"/);
   assert.match(html,/data-reveal-step="visual"/);
@@ -59,7 +59,7 @@ await test('STAGE8C-VISUAL-APPEARS-AFTER-REPRESENTATION-SELECTION',()=>{
   assert.equal((html.match(/class="interpretation-visual-stack"/g)||[]).length,1);
 });
 
-await test('STAGE8C-FOLLOWUP-STAYS-TWO-CHOICES-AND-DOWNSTREAM',()=>{
+await test('GUIDED-VISUAL-FOLLOWUP-STAYS-TWO-CHOICES-AND-DOWNSTREAM',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   const follow=html.match(/<section class="interpretation-dialogue-followup"[^>]*>[\s\S]*?<\/section>/)?.[0] || '';
   assert.ok(follow);
@@ -69,21 +69,21 @@ await test('STAGE8C-FOLLOWUP-STAYS-TWO-CHOICES-AND-DOWNSTREAM',()=>{
   assert.doesNotMatch(follow,/#\/history|#\/simulation|#\/plan|#\/consultation|#\/reading/);
 });
 
-await test('STAGE8C-REVEAL-IS-SHORT-ONE-SHOT',async()=>{
+await test('GUIDED-VISUAL-REVEAL-IS-SHORT-ONE-SHOT',async()=>{
   const css=await source('styles/interpretation-room.css');
-  const block=css.slice(css.indexOf('/* Stage 8C: short guided reveal sequence. */'));
+  const block=css.slice(css.indexOf('/* Short guided reveal sequence. */'));
   assert.match(block,/160ms ease-out 420ms 1 both/);
   assert.match(block,/160ms ease-out 540ms 1 both/);
   assert.doesNotMatch(block,/infinite/);
 });
 
-await test('STAGE8C-REDUCED-MOTION-SHOWS-COMPLETE-STATIC-STATE',async()=>{
+await test('GUIDED-VISUAL-REDUCED-MOTION-SHOWS-COMPLETE-STATIC-STATE',async()=>{
   const css=await source('styles/interpretation-room.css');
-  const block=css.slice(css.indexOf('/* Stage 8C: short guided reveal sequence. */'));
+  const block=css.slice(css.indexOf('/* Short guided reveal sequence. */'));
   assert.match(block,/html\.ui-motion-reduced[\s\S]*animation: none[\s\S]*opacity: 1[\s\S]*transform: none/);
   assert.match(block,/@media \(prefers-reduced-motion: reduce\)[\s\S]*animation: none[\s\S]*opacity: 1[\s\S]*transform: none/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Stage 8C Guided Visual Integration',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Guided Visual Integration',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;

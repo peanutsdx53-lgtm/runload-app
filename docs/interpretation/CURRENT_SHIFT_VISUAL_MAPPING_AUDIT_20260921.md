@@ -1,7 +1,7 @@
-# Stage 8B — CURRENT_SHIFT_WITH_HISTORY Visual Mapping Audit
+# CURRENT_SHIFT_WITH_HISTORY Visual Mapping Audit
 
 Date: 2026-09-21
-Status: COMPLETE — FIRST STAGE 8B MAPPING
+Status: COMPLETE — FIRST MEANING-DRIVEN VISUAL MAPPING MAPPING
 
 ## Scope
 
@@ -42,11 +42,11 @@ For `CURRENT_SHIFT_WITH_HISTORY`:
 - downstream Evidence / self-management choices remain separate;
 - no route or downstream function is duplicated.
 
-Other Meaning Core codes remain on the existing general visual behavior until they are mapped in later Stage 8B batches.
+Other Meaning Core codes remain on the existing general visual behavior until they are mapped in later meaning-driven visual mapping batches.
 
 ## Motion semantics
 
-Unchanged from Stage 8A:
+Unchanged from visual foundation:
 
 - body accent = where to look;
 - arrow growth = comparison direction from previous to current;
@@ -72,14 +72,14 @@ Verified items include:
 - ROF-J lane absent from the target step;
 - scientific/non-risk boundary retained;
 - an unmapped code remains on `data-visual-pattern="general"`;
-- Stage 7 entry still has two intent choices;
+- guided-dialogue baseline entry still has two intent choices;
 - no new route;
 - no danger/success semantic color added;
 - reused body visual remains in PWA precache.
 
 Dedicated regression file:
 
-- `tests/interpretationStage8BCurrentShift.test.mjs`
+- `tests/interpretationCurrentShiftVisualMapping.test.mjs`
 
 Runtime hashes after this batch:
 
@@ -92,7 +92,7 @@ The runtime manifest and PWA hash expectations were aligned to the changed prese
 
 ## 390 px targeted visual review
 
-A 390 px static layout fixture using the current Stage 8A/8B visual structure was reviewed.
+A 390 px static layout fixture using the current visual foundation/8B visual structure was reviewed.
 
 Findings:
 
@@ -102,7 +102,7 @@ Findings:
 - the new note does not create horizontal overflow or a second competing visual;
 - the note visually reads after the main comparison.
 
-The available sandbox did not have a Playwright Chromium executable for a fresh browser screenshot in this batch, so this checkpoint does not replace the later Stage 8E production-browser visual audit.
+The available sandbox did not have a Playwright Chromium executable for a fresh browser screenshot in this batch, so this checkpoint does not replace the later final closure audit production-browser visual audit.
 
 ## Scientific boundary
 
@@ -118,7 +118,7 @@ This batch does not infer:
 - causality;
 - cross-region ranking.
 
-## Next Stage 8B batch
+## Next meaning-driven visual mapping batch
 
 Proceed one code at a time.
 

@@ -1,8 +1,8 @@
-# RunLoad Understanding-Focused Visual Interpretation — Stage 8 Work Plan
+# RunLoad Understanding-Focused Visual Interpretation — Work Plan
 
 Date: 2026-09-21
 Status: APPROVED FUTURE WORK DIRECTION
-Parent baseline: Stage 7 Guided Interpretation Dialogue
+Parent baseline: guided-dialogue baseline Guided Interpretation Dialogue
 Branch: `feature/runload-interpretation-room-v1`
 
 ## 1. Purpose
@@ -48,7 +48,7 @@ The Interpretation engine answers:
 
 This distinction is mandatory for future implementation.
 
-A Stage 8 change must be rejected if it mainly:
+A understanding-focused visual interpretation change must be rejected if it mainly:
 - repeats the same numerical cards;
 - repeats the same tables;
 - restates the Result screen with longer prose;
@@ -92,7 +92,7 @@ The user may stop at any step.
 
 ## 4. Information-load rule
 
-Stage 7 progressive-disclosure rules remain active.
+guided-dialogue baseline progressive-disclosure rules remain active.
 
 At one ordinary step:
 - one main interpretation;
@@ -114,7 +114,7 @@ on the same primary interpretation step.
 
 ## 5. Visual grammar
 
-Stage 8 introduces a small, consistent visual grammar.
+understanding-focused visual interpretation introduces a small, consistent visual grammar.
 
 ### 5.1 Focus highlight
 
@@ -213,7 +213,7 @@ If both change:
 
 ## 7. Result-to-Interpretation transformation patterns
 
-Stage 8 should implement reusable transformation patterns instead of screen-specific ad-hoc graphics.
+understanding-focused visual interpretation should implement reusable transformation patterns instead of screen-specific ad-hoc graphics.
 
 ### Pattern 1 — Locate
 Result:
@@ -292,7 +292,7 @@ Existing `ui/uiMotion.js` already contains:
 - `prefers-reduced-motion: reduce` handling;
 - reduced-motion class synchronization.
 
-Stage 8 must reuse this behavior.
+understanding-focused visual interpretation must reuse this behavior.
 
 When reduced motion is requested:
 - render the final state immediately;
@@ -350,7 +350,7 @@ The visual explanation ends where the downstream function begins.
 
 ## 13. Proposed implementation stages
 
-### Stage 8A — Visual semantics foundation
+### Visual semantics foundation
 Implement reusable, deterministic visual primitives:
 - focus region locator;
 - local comparison arrow;
@@ -360,7 +360,7 @@ Implement reusable, deterministic visual primitives:
 
 No major route redesign in 8A.
 
-### Stage 8B — Meaning-driven reveal sequence
+### Meaning-driven reveal sequence
 Connect Meaning Core primary codes to one visual pattern.
 
 Examples:
@@ -370,8 +370,8 @@ Examples:
 - `REPEATED_OBSERVATION` → Locate + repeated-observation count visual;
 - `CURRENT_REFERENCE_PATTERN` → Locate + Reference-100/current line.
 
-### Stage 8C — Guided-dialogue integration
-Integrate visuals into the Stage 7 dialogue.
+### Guided-dialogue integration
+Integrate visuals into the guided-dialogue baseline dialogue.
 
 Rules:
 - no more than one main visual per step;
@@ -379,7 +379,7 @@ Rules:
 - explanation follow-up remains limited to two or three choices;
 - evidence/detail remain downstream.
 
-### Stage 8D — Self-management continuation
+### Self-management continuation
 Upgrade the final explanation-to-function bridge.
 
 Show:
@@ -390,7 +390,7 @@ Show:
 
 Do not prescribe training changes.
 
-### Stage 8E — Visual/motion audit
+### Visual/motion audit
 Audit:
 - 390 px mobile;
 - desktop;
@@ -406,7 +406,7 @@ Then run full regression and runtime-integrity checks.
 
 ## 14. Implementation acceptance criteria
 
-Stage 8 is acceptable only if:
+understanding-focused visual interpretation is acceptable only if:
 
 1. a user can identify the main point without reading the Result table again;
 2. the Interpretation view is visually and functionally distinguishable from Result;
@@ -417,13 +417,13 @@ Stage 8 is acceptable only if:
 7. Reference-100 and ROF-J remain separate scales;
 8. no cross-region physical ranking is introduced;
 9. no downstream feature is duplicated;
-10. ordinary choice count stays within Stage 7 limits;
+10. ordinary choice count stays within guided-dialogue baseline limits;
 11. protected scientific cores remain byte-identical;
 12. full regression, PWA/runtime, scientific-boundary, and visual audits pass.
 
 ## 15. Work-order rule
 
-Before implementing a Stage 8 batch:
+Before implementing a understanding-focused visual interpretation batch:
 1. identify the Meaning Core code/context being improved;
 2. state what the user currently fails to understand;
 3. choose one visual transformation pattern;
@@ -443,4 +443,4 @@ This work plan does not authorize:
 - main modification;
 - formal Current promotion.
 
-Stage 8 should be developed on the existing feature branch and reviewed incrementally.
+understanding-focused visual interpretation should be developed on the existing feature branch and reviewed incrementally.

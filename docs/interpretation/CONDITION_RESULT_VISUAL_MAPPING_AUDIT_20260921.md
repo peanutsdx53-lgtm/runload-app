@@ -1,7 +1,7 @@
-# Stage 8B — CONDITION_AND_RESULT_CHANGED Visual Mapping Audit
+# CONDITION_AND_RESULT_CHANGED Visual Mapping Audit
 
 Date: 2026-09-21
-Status: COMPLETE — SECOND STAGE 8B MAPPING
+Status: COMPLETE — SECOND MEANING-DRIVEN VISUAL MAPPING MAPPING
 
 ## Scope
 
@@ -10,7 +10,7 @@ This batch maps only:
 - `CONDITION_AND_RESULT_CHANGED`
 
 Previously mapped `CURRENT_SHIFT_WITH_HISTORY` remains unchanged.
-Other Stage 8B codes remain unmapped.
+Other meaning-driven visual mapping codes remain unmapped.
 
 ## Comprehension problem
 
@@ -35,7 +35,7 @@ Condition detail is intentionally compact:
 
 ## Motion semantics
 
-Only the regional Stage 8A motion remains active:
+Only the regional visual foundation motion remains active:
 
 - body focus = where to look;
 - arrow = compatible previous → current comparison direction.
@@ -69,7 +69,7 @@ Verified:
 
 Dedicated regression file:
 
-- `tests/interpretationStage8BConditionResult.test.mjs`
+- `tests/interpretationConditionResultVisualMapping.test.mjs`
 
 Runtime hashes:
 
@@ -91,7 +91,7 @@ Observed order:
 
 The new cards remain within the 390 px canvas and do not create a competing horizontal visual.
 
-A fresh production-browser screenshot remains part of Stage 8E because the current sandbox lacks a Playwright Chromium executable.
+A fresh production-browser screenshot remains part of final closure audit because the current sandbox lacks a Playwright Chromium executable.
 
 ## Scientific boundary
 
@@ -99,7 +99,7 @@ No calculation, Meaning Core classification, compatible-history rule, ROF-J sema
 
 No causal claim is introduced.
 
-## Next Stage 8B batch
+## Next meaning-driven visual mapping batch
 
 Next:
 

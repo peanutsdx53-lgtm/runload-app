@@ -1,4 +1,4 @@
-# RunLoad Guided Interpretation Dialogue — Stage 7 Audit
+# RunLoad Guided Interpretation Dialogue — Audit
 
 Date: 2026-09-21
 
@@ -94,7 +94,7 @@ The interaction is chat-like in sequence but remains deterministic.
 
 Not introduced:
 - free-text chat input;
-- generative AI;
+- unconstrained text generation;
 - AI avatar;
 - typing indicator;
 - persistent dialogue history;
@@ -207,7 +207,7 @@ Validated local files and GitHub branch are byte-identical for:
 
 ## Next refinement
 
-Stage 7 is a baseline, not a final UX freeze.
+This guided-dialogue implementation is a baseline, not a final UX freeze.
 
 Future refinement may adjust:
 - exact interpretation wording;

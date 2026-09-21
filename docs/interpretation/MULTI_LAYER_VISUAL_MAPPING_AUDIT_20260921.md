@@ -1,7 +1,7 @@
-# Stage 8B — MULTI_LAYER_CHANGE Visual Mapping Audit
+# MULTI_LAYER_CHANGE Visual Mapping Audit
 
 Date: 2026-09-21
-Status: COMPLETE — THIRD STAGE 8B MAPPING
+Status: COMPLETE — THIRD MEANING-DRIVEN VISUAL MAPPING MAPPING
 
 ## Scope
 
@@ -61,7 +61,7 @@ Verified:
 
 Dedicated regression file:
 
-- `tests/interpretationStage8BMultiLayer.test.mjs`
+- `tests/interpretationMultiLayerVisualMapping.test.mjs`
 
 Runtime hashes:
 
@@ -84,13 +84,13 @@ Observed sequence:
 
 Both lanes remain within the 390 px canvas and read as vertically separated information layers.
 
-A fresh production-browser visual audit remains reserved for Stage 8E.
+A fresh production-browser visual audit remains reserved for final closure audit.
 
 ## Scientific boundary
 
 No scale unification, causal inference, risk inference, calculation change, ROF-J semantic change, Safety change, persistence change, or downstream-function duplication was introduced.
 
-## Next Stage 8B batch
+## Next meaning-driven visual mapping batch
 
 Next:
 

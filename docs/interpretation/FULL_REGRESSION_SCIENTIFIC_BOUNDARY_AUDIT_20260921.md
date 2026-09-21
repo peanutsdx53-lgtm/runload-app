@@ -1,4 +1,4 @@
-# RunLoad Interpretation Room — Stage 5 Final Audit
+# RunLoad Interpretation Room — Full Regression and Scientific-Boundary Audit
 
 Date: 2026-09-21
 
@@ -14,7 +14,7 @@ Audited base:
 
 Main remained at the audited base during this audit. PR #49 remained draft. Formal Current was not modified.
 
-## Findings corrected during Stage 5
+## Findings corrected during full-regression checkpoint
 
 ### 1. Runtime manifest Home mismatch
 
@@ -47,7 +47,7 @@ Corrections:
 - Home launch wording contract aligned with current public copy: commit `61a5b17e93401be1d80a4885abc88b3388167894`
 - PWA test Presentation SHA aligned with repaired runtime: commit `4b0230dda4c57f2d7c22244c1c6a1e3b89869935`
 
-No protected calculation logic was changed by any Stage 5 correction.
+No protected calculation logic was changed by any full-regression checkpoint correction.
 
 ## Final regression result
 
@@ -106,7 +106,7 @@ Confirmed:
 - existing support/safety decision has precedence over normal Simulation/Plan routing
 - high regional values alone do not escalate Safety
 - evidence display uses persisted provenance and explicitly avoids a complete-bibliography claim
-- no generative-AI/free-text interpretation was introduced
+- no unconstrained free-text interpretation was introduced
 - no new Interpretation Room storage namespace or persistent datastore was introduced
 - no new network/API call was introduced by Interpretation Core/Room
 
@@ -150,8 +150,8 @@ Confirmed:
 
 The public GitHub runtime does not contain the pre-existing 273-test App Source suite. When a new formal App Source / Current package is produced, the following must be carried forward:
 
-1. update `tests/uiIntegrationStage4ResultHistory.test.mjs` so the result-use contract expects `#/interpretation-room?...&origin=result` instead of the old Activation screen;
-2. update `tests/uiIntegrationStage6ReleaseAudit.test.mjs` so Activation is validated as a compatibility alias and `renderActivationScreen` is absent;
+1. update the result/history integration test so the result-use contract expects `#/interpretation-room?...&origin=result` instead of the old Activation screen;
+2. update the release-audit integration test so Activation is validated as a compatibility alias and `renderActivationScreen` is absent;
 3. include the four new Interpretation test suites;
 4. regenerate the App Source verification result and runtime SHA manifest;
 5. re-run the full packaged-copy verification before Current promotion.
@@ -198,12 +198,12 @@ Automated visual/mobile layout audit is therefore **PASS**. User-visible accepta
 
 ## Final state
 
-- Stage 0: COMPLETE
-- Stage 1: COMPLETE
-- Stage 2: COMPLETE
-- Stage 3: COMPLETE
-- Stage 4: COMPLETE
-- Stage 5: **COMPLETE — PASS**
+- Durable restart mechanism: COMPLETE
+- Interpretation Core implementation: COMPLETE
+- Independent room route/presentation: COMPLETE
+- Existing-screen launch compatibility: COMPLETE
+- PWA/runtime integration: COMPLETE
+- full-regression checkpoint: **COMPLETE — PASS**
 - PR #49: keep **Draft** until user visual/functional acceptance
 - main: unchanged
 - formal Current: unchanged

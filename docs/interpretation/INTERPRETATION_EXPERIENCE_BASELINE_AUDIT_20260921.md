@@ -1,10 +1,10 @@
-# RunLoad Interpretation Experience — Stage 6 Baseline Audit
+# RunLoad Interpretation Experience — Baseline Audit
 
 Date: 2026-09-21
 
 ## Decision
 
-**PASS — Stage 6 meaning-first interpretation baseline is established and reproducible.**
+**PASS — the meaning-first interpretation baseline is established and reproducible.**
 
 This is not a final UX/content freeze.
 
@@ -21,12 +21,12 @@ Audited base / current main:
 
 PR #49 remains Draft. Formal Current remains untouched.
 
-## Stage 6 role change
+## Interpretation-experience role change
 
-Stage 5:
+Previous verified baseline:
 - result reorganization and connected Interpretation Room.
 
-Stage 6 baseline:
+Interpretation-experience baseline:
 - stored result;
 - deterministic RunLoad meaning;
 - concise supporting observations;
@@ -102,11 +102,11 @@ Existing persisted-evidence route retained.
 ## Visual findings and corrections
 
 ### Mobile Detail overflow
-Carried forward from Stage 5:
+Carried forward from the previous verified baseline:
 - wide table is contained by its own horizontal-scroll wrapper;
 - page-level overflow remains resolved.
 
-### Stage 6 Visual near-label overlap
+### Visual near-label overlap
 Detected:
 - compatible previous value 101 and Reference-100 produced overlapping labels at 390 px.
 
@@ -152,7 +152,7 @@ GitHub compare against the audited base contains no changes to either protected 
 
 ## GitHub / local identity
 
-The following Stage 6 files were confirmed byte-identical between the validated local audit copy and the feature branch by Git blob SHA:
+The following interpretation-experience files were confirmed byte-identical between the validated local audit copy and the feature branch by Git blob SHA:
 
 - `core/interpretationCore.js`: `1484cb8e7e2829b8bff0ff0b322a2513ab155701`
 - `ui/interpretationRoomPresentation.js`: `39a385710b3021ef37eae99263a3c222093066e3`
@@ -172,7 +172,7 @@ The earlier apparent Meaning V2 mismatch was resolved:
 
 PASS.
 
-Stage 6 does not:
+This baseline does not:
 - modify Primary calculation coefficients or scientific geometry;
 - modify ROF-J semantics;
 - introduce a new safety/risk algorithm;
@@ -180,11 +180,11 @@ Stage 6 does not:
 - infer causation from condition/result co-change;
 - rank different body regions by physical magnitude;
 - create a new interpretation datastore;
-- add generative AI or external API dependency.
+- add unconstrained text generation or external API dependency.
 
 ## Status after this audit
 
-The Stage 6 implementation is now the **approved development baseline** for continued interpretation UX refinement.
+The interpretation-experience implementation is now the **approved development baseline** for continued interpretation UX refinement.
 
 Not frozen:
 - exact wording;
@@ -210,4 +210,4 @@ Frozen unless separately authorized:
 - merge: not performed
 - Current promotion: not performed
 
-Next work should iterate on interpretation quality and navigation/presentation using this Stage 6 baseline, then repeat regression and visual audit before any merge or Current promotion.
+Next work should iterate on interpretation quality and navigation/presentation using this interpretation-experience baseline, then repeat regression and visual audit before any merge or Current promotion.

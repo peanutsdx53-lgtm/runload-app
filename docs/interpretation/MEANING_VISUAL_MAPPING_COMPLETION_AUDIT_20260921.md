@@ -1,11 +1,11 @@
-# Stage 8B — Meaning-Driven Visual Mapping Completion Audit
+# Meaning-Driven Visual Mapping Completion Audit
 
 Date: 2026-09-21
 Status: COMPLETE — PASS
 
 ## Scope
 
-Stage 8B connects the approved primary Meaning Core codes to one deterministic understanding-oriented visual pattern at a time.
+meaning-driven visual mapping connects the approved primary Meaning Core codes to one deterministic understanding-oriented visual pattern at a time.
 
 Completed mappings:
 
@@ -57,13 +57,13 @@ No bulk physical ranking, causal model, risk model, new Safety logic, new persis
 - current position explained as a future same-region comparison point;
 - no good/bad evaluation.
 
-## Dedicated Stage 8B regression files
+## Dedicated meaning-driven visual mapping regression files
 
-- `tests/interpretationStage8BCurrentShift.test.mjs`
-- `tests/interpretationStage8BConditionResult.test.mjs`
-- `tests/interpretationStage8BMultiLayer.test.mjs`
-- `tests/interpretationStage8BRepeatedObservation.test.mjs`
-- `tests/interpretationStage8BCurrentReference.test.mjs`
+- `tests/interpretationCurrentShiftVisualMapping.test.mjs`
+- `tests/interpretationConditionResultVisualMapping.test.mjs`
+- `tests/interpretationMultiLayerVisualMapping.test.mjs`
+- `tests/interpretationRepeatedObservationVisualMapping.test.mjs`
+- `tests/interpretationCurrentReferenceVisualMapping.test.mjs`
 
 Per-batch focused verification:
 
@@ -73,7 +73,7 @@ Per-batch focused verification:
 - repeated observation: 10/10 PASS;
 - current reference: 8/8 PASS.
 
-## Combined Stage 8B integrity checkpoint
+## Combined meaning-driven visual mapping integrity checkpoint
 
 Combined production-source checks: **21/21 PASS**
 
@@ -84,8 +84,8 @@ Verified:
 - information-layer suppression/separation rules;
 - no previous marker for current-reference pattern;
 - no comparison arrow for repeated-count pattern;
-- Stage 7 entry remains two choices;
-- Stage 7 understand step remains at most three choices;
+- guided-dialogue baseline entry remains two choices;
+- guided-dialogue baseline understand step remains at most three choices;
 - runtime manifest tracks current visual runtime files;
 - reused body-region visual remains in PWA precache;
 - protected Primary calculation core hash is unchanged;
@@ -113,11 +113,11 @@ Targeted 390 px static-layout reviews were performed for all five visual pattern
 
 They confirmed the intended mobile stacking/order and no obvious horizontal-layout issue in the changed surfaces.
 
-The current sandbox does not contain a Playwright Chromium executable, so the full production-browser mobile/desktop/theme/dark/reduced-motion visual audit remains reserved for Stage 8E.
+The current sandbox does not contain a Playwright Chromium executable, so the full production-browser mobile/desktop/theme/dark/reduced-motion visual audit remains reserved for final closure audit.
 
 ## Unmapped/general states
 
-No ad-hoc Stage 8B mapping was introduced for:
+No ad-hoc meaning-driven visual mapping mapping was introduced for:
 
 - `COMPARISON_BASELINE`;
 - support-priority states;
@@ -135,7 +135,7 @@ They retain existing behavior and scientific boundaries.
 
 ## Next stage
 
-Stage 8C — Guided-dialogue integration.
+guided visual integration — Guided-dialogue integration.
 
 Primary acceptance target:
 
