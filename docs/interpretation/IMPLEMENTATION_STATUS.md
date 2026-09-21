@@ -366,7 +366,7 @@ Release state:
 - no merge or Current promotion has been performed
 
 ## Stage 8 — Understanding-Focused Visual Interpretation
-Status: **STAGE 8B IN PROGRESS — CURRENT_SHIFT_WITH_HISTORY / CONDITION_AND_RESULT_CHANGED / MULTI_LAYER_CHANGE MAPPED AND VERIFIED**
+Status: **STAGE 8B IN PROGRESS — FOUR PRIMARY MEANING PATTERNS MAPPED AND VERIFIED**
 
 Controlling work plan:
 - `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
@@ -532,16 +532,38 @@ Verification:
 - targeted 390 px layout review found both lanes inside the canvas;
 - runtime/PWA hash contracts updated.
 
+## Stage 8B mapping checkpoint — REPEATED_OBSERVATION
+
+Durable audit:
+- `docs/interpretation/STAGE8B_REPEATED_OBSERVATION_AUDIT_20260921.md`
+
+Mapped so far:
+- `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
+- `CONDITION_AND_RESULT_CHANGED` → Locate + Compare + separated condition card;
+- `MULTI_LAYER_CHANGE` → separate regional / ROF-J lanes;
+- `REPEATED_OBSERVATION` → Locate + explicit compatible-record count visual.
+
+Repeated-observation rules:
+- fixed-size record points;
+- explicit `過去N件のうちM件`;
+- no comparison arrow;
+- no motion intensity based on count;
+- explicit no-trait/no-future-inference boundary.
+
+Verification:
+- repeated-observation focused checks: **10/10 PASS**;
+- prior Stage 8B mappings remained intact;
+- targeted 390 px layout review showed the fixed-size count visual inside the canvas;
+- runtime/PWA hash contracts updated.
+
 ## Current next action
 
 Continue Stage 8B with **one Meaning Core code only**:
 
-- `REPEATED_OBSERVATION`;
-- one body-region focus;
-- compact explicit record-count visualization;
-- no `傾向`, `体質`, `なりやすい` or similar trait/proneness interpretation;
-- no animation intensity based on repeated count;
-- do not map `CURRENT_REFERENCE_PATTERN` in the same implementation batch.
+- `CURRENT_REFERENCE_PATTERN`;
+- Locate + Reference-100 → current;
+- no previous marker when compatible previous is unavailable;
+- explain current position as a future comparison point, not a good/bad evaluation.
 
 ## Stop conditions
 
