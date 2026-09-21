@@ -30,38 +30,38 @@ function output(){
   };
 }
 
-await test('STAGE8B-CURRENT-REFERENCE-USES-REFERENCE-CURRENT-PATTERN',()=>{
+await test('VISUAL-MAPPING-CURRENT-REFERENCE-USES-REFERENCE-CURRENT-PATTERN',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/data-visual-pattern="reference-current"/);
   assert.match(html,/基準100 → 今回/);
   assert.match(html,/data-arrow-origin="reference"/);
 });
 
-await test('STAGE8B-CURRENT-REFERENCE-HIDES-PREVIOUS-EVEN-IF-COMPARISON-OBJECT-HAS-ONE',()=>{
+await test('VISUAL-MAPPING-CURRENT-REFERENCE-HIDES-PREVIOUS-EVEN-IF-COMPARISON-OBJECT-HAS-ONE',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.doesNotMatch(html,/>前回</);
   assert.doesNotMatch(html,/data-arrow-origin="previous"/);
 });
 
-await test('STAGE8B-CURRENT-REFERENCE-EXPLAINS-FUTURE-COMPARISON-POINT',()=>{
+await test('VISUAL-MAPPING-CURRENT-REFERENCE-EXPLAINS-FUTURE-COMPARISON-POINT',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/股関節部は今回104で、基準100より上に表示されています/);
   assert.match(html,/次回以降に同じ部位を比べるための比較点として使えます/);
 });
 
-await test('STAGE8B-CURRENT-REFERENCE-DOES-NOT-MIX-OTHER-LAYERS',()=>{
+await test('VISUAL-MAPPING-CURRENT-REFERENCE-DOES-NOT-MIX-OTHER-LAYERS',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.doesNotMatch(html,/主観的な疲労感 0–10/);
   assert.doesNotMatch(html,/前回と異なる走行条件/);
   assert.doesNotMatch(html,/interpretation-repeat-dots/);
 });
 
-await test('STAGE8B-CURRENT-REFERENCE-KEEPS-NON-EVALUATIVE-BOUNDARY',()=>{
+await test('VISUAL-MAPPING-CURRENT-REFERENCE-KEEPS-NON-EVALUATIVE-BOUNDARY',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/危険・安全・改善・悪化を判断しません/);
   assert.doesNotMatch(html,/良い結果です|悪い結果です|危険です|安全です|改善しました|悪化しました|危険度が(?:高い|低い)/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Stage 8B Current Reference Mapping',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Current Reference Visual Mapping',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
