@@ -83,7 +83,7 @@ Under `prefers-reduced-motion: reduce` or the existing `html.ui-motion-reduced` 
 - `styles/interpretation-room.css`
 - `service-worker.js`
 - `RUNTIME_SHA256SUMS.txt`
-- `tests/interpretationStage8AVisualFoundation.test.mjs`
+- `tests/interpretationVisualFoundation.test.mjs`
 - `tests/interpretationRoomPwaIntegrationV1.test.mjs`
 - this audit document
 - `docs/interpretation/IMPLEMENTATION_STATUS.md` is updated separately as the durable project ledger.

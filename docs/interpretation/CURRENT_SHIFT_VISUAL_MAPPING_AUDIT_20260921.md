@@ -79,7 +79,7 @@ Verified items include:
 
 Dedicated regression file:
 
-- `tests/interpretationStage8BCurrentShift.test.mjs`
+- `tests/interpretationCurrentShiftVisualMapping.test.mjs`
 
 Runtime hashes after this batch:
 

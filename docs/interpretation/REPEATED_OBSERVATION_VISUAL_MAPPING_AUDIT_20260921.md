@@ -62,7 +62,7 @@ Verified:
 
 Dedicated regression file:
 
-- `tests/interpretationStage8BRepeatedObservation.test.mjs`
+- `tests/interpretationRepeatedObservationVisualMapping.test.mjs`
 
 Runtime hashes:
 

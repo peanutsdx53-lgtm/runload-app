@@ -55,7 +55,7 @@ Verified:
 
 Dedicated regression file:
 
-- `tests/interpretationStage8BCurrentReference.test.mjs`
+- `tests/interpretationCurrentReferenceVisualMapping.test.mjs`
 
 Runtime hashes:
 

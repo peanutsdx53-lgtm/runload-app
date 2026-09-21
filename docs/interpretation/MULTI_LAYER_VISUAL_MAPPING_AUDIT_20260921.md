@@ -61,7 +61,7 @@ Verified:
 
 Dedicated regression file:
 
-- `tests/interpretationStage8BMultiLayer.test.mjs`
+- `tests/interpretationMultiLayerVisualMapping.test.mjs`
 
 Runtime hashes:
 

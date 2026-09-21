@@ -59,11 +59,11 @@ No bulk physical ranking, causal model, risk model, new Safety logic, new persis
 
 ## Dedicated meaning-driven visual mapping regression files
 
-- `tests/interpretationStage8BCurrentShift.test.mjs`
-- `tests/interpretationStage8BConditionResult.test.mjs`
-- `tests/interpretationStage8BMultiLayer.test.mjs`
-- `tests/interpretationStage8BRepeatedObservation.test.mjs`
-- `tests/interpretationStage8BCurrentReference.test.mjs`
+- `tests/interpretationCurrentShiftVisualMapping.test.mjs`
+- `tests/interpretationConditionResultVisualMapping.test.mjs`
+- `tests/interpretationMultiLayerVisualMapping.test.mjs`
+- `tests/interpretationRepeatedObservationVisualMapping.test.mjs`
+- `tests/interpretationCurrentReferenceVisualMapping.test.mjs`
 
 Per-batch focused verification:
 

@@ -117,8 +117,8 @@ Verified:
 
 Dedicated tests:
 
-- existing: `tests/interpretationStage8DCurrentShiftContinuation.test.mjs`
-- completion: `tests/interpretationStage8DSelfManagementContinuation.test.mjs`
+- existing: `tests/interpretationCurrentShiftContinuation.test.mjs`
+- completion: `tests/interpretationSelfManagementContinuation.test.mjs`
 
 ## Runtime integrity correction
 

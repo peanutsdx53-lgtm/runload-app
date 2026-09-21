@@ -69,7 +69,7 @@ Verified:
 
 Dedicated regression file:
 
-- `tests/interpretationStage8BConditionResult.test.mjs`
+- `tests/interpretationConditionResultVisualMapping.test.mjs`
 
 Runtime hashes:
 

@@ -77,7 +77,7 @@ Verified:
 
 Dedicated regression file:
 
-- `tests/interpretationStage8CGuidedVisualIntegration.test.mjs`
+- `tests/interpretationGuidedVisualIntegration.test.mjs`
 
 ## Runtime hashes
 
