@@ -1,5 +1,5 @@
-// Runtime revision: desktop-workspace-refresh-20260921-05
-const CACHE_NAME = "runload-app-current-20260921-05";
+// Runtime revision: desktop-workspace-refresh-20260921-06
+const CACHE_NAME = "runload-app-current-20260921-06";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
