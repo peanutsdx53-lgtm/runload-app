@@ -1702,3 +1702,72 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: secondary empty-state completion ===== */
+@media (min-width: 80rem) {
+  .screen--history.prototype-parity--history .empty-records--filtered {
+    min-height: 9rem;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.3rem;
+    text-align: center;
+  }
+
+  .screen--history.prototype-parity--history .empty-records--filtered strong {
+    color: var(--ink);
+    font-size: 1rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--history.prototype-parity--history .empty-records--filtered p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.82rem !important;
+    line-height: 1.5;
+  }
+
+  .screen--plan.prototype-parity--plan .saved-card--empty {
+    min-height: 7.5rem;
+    padding: 1rem 1.1rem !important;
+    display: grid;
+    align-content: center;
+    gap: 0.25rem;
+    text-align: center;
+  }
+
+  .screen--plan.prototype-parity--plan .saved-card--empty strong {
+    font-size: 0.94rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--plan.prototype-parity--plan .saved-card--empty span {
+    color: var(--muted);
+    font-size: 0.8rem !important;
+    line-height: 1.5;
+  }
+
+  .screen--settings.prototype-parity--settings .settings-empty-state {
+    min-height: 6rem;
+    padding: 0.9rem 1rem;
+    display: grid;
+    align-content: center;
+    gap: 0.25rem;
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: var(--surface);
+  }
+
+  .screen--settings.prototype-parity--settings .settings-empty-state strong {
+    color: var(--ink);
+    font-size: 0.9rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--settings.prototype-parity--settings .settings-empty-state span {
+    color: var(--muted);
+    font-size: 0.78rem !important;
+    line-height: 1.5;
+  }
+}
