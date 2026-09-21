@@ -8,9 +8,9 @@ Main merge commit: `3b096f51b219ff7b69299d3f03eeb7b7ec26d6a6`
 
 ## Resume protocol
 
-This file is the durable restart point for implementation. If work resumes in another ChatGPT conversation, read this file first, then inspect `main`, PR #51, and the latest Current package before making any edits.
+This file is the durable restart point for implementation. If work resumes in another work session, read this file first, then inspect `main`, PR #51, and the latest Current package before making any edits.
 
-Do not rely on prior chat history. Use the branch state and this ledger as the implementation truth.
+Do not rely on undocumented prior context. Use the branch state and this ledger as the implementation truth.
 
 ## Authority and protected baselines
 
@@ -57,7 +57,7 @@ Key frozen decisions:
 6. Existing Safety/support decision outranks ordinary interpretation/navigation.
 7. Do not infer diagnosis, injury risk, causality, safety, or run/no-run decisions.
 8. Evidence display may cite saved calculation basis and relevant research background, but must not claim a complete list of every source used by the calculation unless such provenance is explicitly persisted.
-9. V1 has no generative-AI free text and no Notebook revival.
+9. V1 uses only predefined deterministic outputs and has no Notebook revival.
 10. Existing `nextCheckPoint` may be read/reused; do not create a new notebook-like datastore.
 11. Old `#/activation` remains compatible through alias/redirect behavior.
 12. Public wording is formal, concise, non-colloquial, and non-abstract.
@@ -232,7 +232,7 @@ Final verification:
 - scientific boundaries: PASS
 - public wording boundary: PASS
 - no new persistent Interpretation datastore
-- no generative-AI/free-text implementation
+- no unconstrained free-text generation
 - no new Interpretation network/API dependency
 - PWA/CSP/static-resource audit: PASS
 
@@ -281,7 +281,7 @@ Implemented:
 - [x] condition/result non-causal boundary
 - [x] repeated-observation explicit-count wording
 - [x] nearby visual-label staggering at mobile width
-- [x] no new persistence, external API, or generative AI
+- [x] no new persistence, external API, or unconstrained text generation
 - [x] protected Primary and ROF-J cores unchanged
 
 Final verification:
@@ -334,7 +334,7 @@ Implemented:
 - [x] existing `nextCheckPoint` deferred until the next-use context
 - [x] Evidence moved downstream from explanation rather than competing at entry
 - [x] legacy `view=next` compatibility resolves to narrow management dialogue
-- [x] no free-text chat, AI avatar, typing simulation, persistent conversation history, or external API
+- [x] no unrestricted free-text conversation, simulated agent avatar, typing simulation, persistent conversation history, or external API
 - [x] downstream functions are linked, not duplicated
 - [x] Support precedence retained
 - [x] scientific boundaries unchanged
