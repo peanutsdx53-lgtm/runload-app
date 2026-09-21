@@ -747,3 +747,26 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
     width: 132px;
   }
 }
+
+
+/* Stage 8B: CURRENT_SHIFT_WITH_HISTORY understanding note. */
+.interpretation-visual-insight {
+  padding: 14px 16px;
+  border-left: 3px solid var(--color-accent-strong);
+  border-radius: 0 12px 12px 0;
+  background: var(--color-accent-soft);
+}
+
+.interpretation-visual-insight small {
+  color: var(--color-accent-strong);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .06em;
+}
+
+.interpretation-visual-insight p {
+  margin: 5px 0 0;
+  color: var(--color-ink);
+  font-size: 13px;
+  line-height: 1.65;
+}
