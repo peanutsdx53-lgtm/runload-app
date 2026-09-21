@@ -123,6 +123,9 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   }
 
   if (screen === "consultation") {
+    if (recordId) {
+      return { title: "共有用にまとめる", backHref: screenHref("result", { recordId }), backLabel: "結果" };
+    }
     return { title: "共有用にまとめる", backHref: "#/more", backLabel: "その他" };
   }
 
@@ -138,6 +141,15 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   }
 
   if (screen === "reading") {
+    const origin = parameter("origin");
+    const regionId = parameter("regionId");
+    if (origin === "result-condition" && recordId && regionId) {
+      return {
+        title: parameter("articleId") ? "記事" : "読みもの",
+        backHref: screenHref("body-part-detail", { recordId, regionId }),
+        backLabel: "部位結果",
+      };
+    }
     if (parameter("articleId")) return { title: "記事", backHref: "#/reading", backLabel: "読みもの" };
     return { title: "読みもの", backHref: "#/more", backLabel: "その他" };
   }
