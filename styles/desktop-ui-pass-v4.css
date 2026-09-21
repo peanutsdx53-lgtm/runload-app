@@ -1,0 +1,15 @@
+/*
+ * Desktop UI refinement pass v4.
+ * Keep equal-type card groups visually balanced at narrower desktop widths.
+ */
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--settings.prototype-parity--settings .display-setting-list,
+  .screen--reading.prototype-parity--reading .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.prototype-parity--settings .display-setting:nth-child(3) {
+    grid-column: auto !important;
+  }
+}
