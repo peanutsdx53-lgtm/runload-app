@@ -43,7 +43,7 @@ It does not:
 - infer causality;
 - rank different body regions physically;
 - create a new notebook-like persistent datastore;
-- use generative-AI free text.
+- generate unconstrained free-text responses.
 
 ## Final code cleanup
 
