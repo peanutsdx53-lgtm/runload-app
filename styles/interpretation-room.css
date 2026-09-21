@@ -802,3 +802,38 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
   font-size: 11px;
   line-height: 1.5;
 }
+
+
+/* Stage 8B: separate regional and ROF-J layers. */
+.interpretation-layer-pair {
+  display: grid;
+  gap: 10px;
+}
+
+.interpretation-layer-lane {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.interpretation-layer-lane > small {
+  color: var(--color-muted);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .06em;
+}
+
+.interpretation-layer-separator {
+  justify-self: center;
+  padding: 4px 10px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  color: var(--color-muted);
+  background: var(--color-paper);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.interpretation-layer-pair .interpretation-visual-card {
+  width: 100%;
+}
