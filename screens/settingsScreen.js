@@ -48,7 +48,8 @@ export function renderSettingsScreen({ services, context }) {
   const saved = context?.parameters?.get("status") === "saved";
   const goalValues = new Set(Array.isArray(profile.runningGoalTags) ? profile.runningGoalTags : []);
   const goals = ["健康づくり", "習慣化", "距離を伸ばす", "大会参加", "気分転換", "その他"];
-  return `<div class="screen screen--settings prototype-parity prototype-parity--settings">
+  return `<div class="screen screen--settings prototype-parity prototype-parity--settings secondary-derived-screen">
+    <a class="secondary-derived-back" href="#/more">← その他へ戻る</a>
     <section class="head"><p class="eyebrow">SETTINGS</p><h1>設定</h1><p>表示、使い回す情報、端末内データをまとめます。</p></section>
     ${saved ? '<p class="parity-save-message" role="status">設定を保存しました。</p>' : ""}
     <form id="journal-settings-form" novalidate>
