@@ -1,7 +1,7 @@
 # RunLoad Interpretation Room — Implementation Status
 
 Date: 2026-09-21
-Status: STAGE 6 BASELINE COMPLETE — ITERATIVE UX REFINEMENT NEXT
+Status: STAGE 7 GUIDED DIALOGUE BASELINE COMPLETE — ITERATIVE REFINEMENT NEXT
 Branch: `feature/runload-interpretation-room-v1`
 Draft PR: #49
 Base commit: `8d2937c7bbfe3a7094601628a109d31309edd775`
@@ -307,15 +307,78 @@ Release state:
 - formal Current remains untouched
 - no merge or Current promotion has been performed
 
+## Stage 7 — Guided Interpretation Dialogue
+Status: **BASELINE COMPLETE — PASS**
+
+Controlling design:
+- `docs/interpretation/STAGE7_GUIDED_DIALOGUE_DESIGN_20260921.md`
+
+Durable audit:
+- `docs/interpretation/STAGE7_GUIDED_DIALOGUE_AUDIT_20260921.md`
+
+User-approved direction:
+- do not expose many interpretation items at once;
+- narrow what the user wants to know through a chat-like deterministic sequence;
+- keep interpretation support and downstream-function bridging clearly separated;
+- use existing History / Simulation / Plan / Consultation / Reading / Support instead of recreating them inside Interpretation Room.
+
+Implemented:
+- [x] ordinary entry reduced to one primary interpretation + exactly two intent choices
+- [x] `この結果を理解したい` → at most three representation choices
+- [x] `次にどう活かすか考えたい` → History / Simulation / next-use bridge step
+- [x] next-use → Plan / Consultation / Reading only
+- [x] existing `nextCheckPoint` deferred until the next-use context
+- [x] Evidence moved downstream from explanation rather than competing at entry
+- [x] legacy `view=next` compatibility resolves to narrow management dialogue
+- [x] no free-text chat, AI avatar, typing simulation, persistent conversation history, or external API
+- [x] downstream functions are linked, not duplicated
+- [x] Support precedence retained
+- [x] scientific boundaries unchanged
+
+Final verification:
+- existing App Source verifier: **273/273 PASS**
+- Interpretation Core: **24/24 PASS**
+- Meaning V2: **13/13 PASS**
+- Room Integration: **18/18 PASS**
+- Launch Integration: **11/11 PASS**
+- PWA Integration: **7/7 PASS**
+- Experience V2: **11/11 PASS**
+- Guided Dialogue V1: **14/14 PASS**
+- combined: **371/371 PASS**
+- reconstructed runtime manifest: **79/79 PASS**
+- local reconstructed App Source syntax including local visual fixtures: **89/89 PASS**
+- protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
+- protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
+- GitHub compare contains no protected-core changes
+- principal Stage 7 GitHub files byte-match the validated local audit copy
+
+Visual audit:
+- 390 px and 1280 px;
+- entry / understand / manage / next-use / simple / visual / difference;
+- page-level horizontal overflow: **0** for every audited view;
+- ordinary choice counts: 2 / 3 / 3 / 3 / 2 / 2 / 2 respectively;
+- unrelated scientific-boundary repetition was removed from manage/next-use steps after visual review.
+
+Release state:
+- PR #49 remains Draft
+- main remains at audited base
+- formal Current remains untouched
+- no merge or Current promotion has been performed
+
 ## Current next action
 
-Use Stage 6 as the new development baseline and continue iterative refinement of:
-1. interpretation content quality;
-2. amount/timing of information shown;
-3. visual hierarchy, diagrams, and color use;
-4. entry and transition routes between existing screens and Interpretation Room.
+Use Stage 7 as the new development baseline.
 
-Do not merge PR #49 and do not promote formal Current merely because Stage 6 baseline passed. Re-run regression and visual audit after each substantive refinement batch.
+Future refinement should focus on:
+1. the quality and brevity of each RunLoad interpretation;
+2. context-sensitive ordering of the two/three offered questions;
+3. visual hierarchy, wording, diagrams, and color use;
+4. transitions into and back from History / Simulation / Plan / Consultation / Reading;
+5. whether additional deterministic dialogue paths materially improve self-management without increasing confusion.
+
+Keep the progressive-disclosure rule: one question at a time, normally two choices and never more than three ordinary choices per step.
+
+Do not merge PR #49 and do not promote formal Current solely because Stage 7 baseline passed. Re-run regression and visual audit after substantive refinement batches.
 
 ## Stop conditions
 
