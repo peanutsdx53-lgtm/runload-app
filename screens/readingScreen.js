@@ -314,12 +314,14 @@ function renderPrototypeReading({ services, context }) {
   const detailArticles = new Map(items.map((item) => [item.article.id, item.article]));
   if (featured) detailArticles.set(featured.id, featured);
   return `<div class="screen screen--reading prototype-parity prototype-parity--reading secondary-derived-screen" data-prototype-reading${initialArticleId ? ` data-reading-initial-article="${escapeHtml(initialArticleId)}"` : ""}>
-    <a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a>
+    <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>読みもの</strong><span aria-hidden="true"></span></header>
+    <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">READING</p><h1>読みもの</h1><p>結果の意味や、走った日の背景を確認するための一般情報です。</p></section>
     ${featured ? `<section class="recommend"><small>今回の結果から</small><strong>${escapeHtml(featured.title)}</strong><p>${escapeHtml(recommendation.reason || featured.lead || "")}</p><button type="button" data-reading-open="${escapeHtml(featured.id)}">この記事を読む</button></section>` : ""}
     <div class="filter-strip"><div class="filter-strip-head"><span>分類</span><small>横にスライド <b aria-hidden="true">→</b></small></div><div class="filters" role="group" aria-label="読みものの分類。横方向にスクロールできます"><button class="active" type="button" data-reading-filter="all">すべて</button><button type="button" data-reading-filter="result">結果</button><button type="button" data-reading-filter="record">記録・履歴</button><button type="button" data-reading-filter="running">走りとのつき合い方</button><button type="button" data-reading-filter="after">走った後</button><button type="button" data-reading-filter="before">走る前</button><button type="button" data-reading-filter="share">相談・共有</button></div></div>
     <div class="grid">${items.map((item) => renderPrototypeReadingArticle(item.article, item.filter)).join("")}</div>
     <div class="drawer" data-reading-drawer hidden><section class="sheet" role="dialog" aria-modal="true" aria-label="読みもの本文">${[...detailArticles.values()].map(renderPrototypeReadingDetail).join("")}</section></div>
+    </div>
   </div>`;
 }
 
