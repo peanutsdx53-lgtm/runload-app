@@ -1,5 +1,5 @@
-// Runtime revision: derived-record-surfaces-20260921-15
-const CACHE_NAME = "runload-app-current-20260921-15";
+// Runtime revision: course-derived-v2-20260921-16
+const CACHE_NAME = "runload-app-current-20260921-16";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -39,6 +39,7 @@ const PRECACHE_URLS = [
   "./styles/desktop-record-refine.css",
   "./styles/desktop-record-polish-v2.css",
   "./styles/desktop-record-derived-v1.css",
+  "./styles/desktop-course-derived-v2.css",
   "./styles/tokens.css",
   "./ui/pwaUpdateBootstrapV1.js",
   "./ui/appRouter.js",
