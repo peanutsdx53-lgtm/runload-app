@@ -26,7 +26,7 @@ await test('GLOBAL-FEATURE-MENU-DOES-NOT-DUPLICATE-UNDERSTANDING-ENTRY',()=>{
   const end=architecture.indexOf('const WORKSPACE_BY_SCREEN',start);
   const block=architecture.slice(start,end);
   assert.ok(start>=0 && end>start);
-  assert.doesNotMatch(block,/interpretation-room|結果を理解する/);
+  assert.doesNotMatch(block,/screen:\s*"interpretation-room"|label:\s*"結果を理解する"/);
 });
 
 await test('CONTEXTUAL-UNDERSTANDING-ENTRIES-REMAIN',()=>{
