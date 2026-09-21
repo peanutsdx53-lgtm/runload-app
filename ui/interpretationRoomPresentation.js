@@ -543,6 +543,36 @@ function renderCurrentShiftUnderstanding(output) {
   return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`${region.label}は、比較可能な前回${number(comparison.previousValue)}から今回${number(region.value)}へ、同じ部位内で表示位置が変わっています。`)}</p></div>`;
 }
 
+function renderRepeatedObservationVisual(output) {
+  const region = focusRegion(output);
+  const repeated = meaningFact(output, "REGION_REPEATED_DIRECTION");
+  if (!region || !repeated) return renderRegionalVisual(output);
+  const comparableCount = Math.max(0, Number(repeated.pastComparableCount) || 0);
+  const matchingCount = Math.max(0, Math.min(comparableCount, Number(repeated.pastMatchingCount) || 0));
+  const dots = Array.from({ length: comparableCount }, (_, index) => (
+    `<span class="interpretation-repeat-dot ${index < matchingCount ? "is-match" : "is-other"}" aria-hidden="true"></span>`
+  )).join("");
+  return `<article class="interpretation-visual-card interpretation-visual-card--repeated">
+    <div class="interpretation-visual-card__head"><small>同じ部位の比較可能な記録だけを確認</small><h2>${escapeHtml(region.label)}</h2></div>
+    <div class="interpretation-repeated-layout">
+      ${renderBodyRegionLocator(output, region)}
+      <div class="interpretation-repeated-count" aria-label="${escapeHtml(`比較可能な過去${comparableCount}件のうち${matchingCount}件でも今回と同じ方向`)}">
+        <div class="interpretation-repeat-current"><span class="interpretation-repeat-dot is-current" aria-hidden="true"></span><span><small>今回</small><strong>${escapeHtml(directionText(repeated.currentDirection))}</strong></span></div>
+        <div class="interpretation-repeat-history"><small>比較可能な過去${comparableCount}件</small><div class="interpretation-repeat-dots">${dots}</div></div>
+        <p>過去${escapeHtml(String(comparableCount))}件のうち${escapeHtml(String(matchingCount))}件でも、今回と同じ方向に表示されています。</p>
+      </div>
+    </div>
+    <p class="source-boundary">記録点は確認された回数を表すだけです。体質、傾向、けがの起こりやすさを示しません。</p>
+  </article>`;
+}
+
+function renderRepeatedObservationUnderstanding(output) {
+  if (meaning(output).primaryCode !== "REPEATED_OBSERVATION") return "";
+  const repeated = meaningFact(output, "REGION_REPEATED_DIRECTION");
+  if (!repeated) return "";
+  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`今回は、比較可能な過去${repeated.pastComparableCount}件のうち${repeated.pastMatchingCount}件でも同じ方向が確認されています。ここから体質や将来の結果までは判断しません。`)}</p></div>`;
+}
+
 function renderMultiLayerVisual(output) {
   const regional = renderRegionalVisual(output);
   const rof = renderRofVisual(output);
@@ -588,27 +618,34 @@ function renderVisualExplanation(output, origin) {
   const currentShiftPattern = code === "CURRENT_SHIFT_WITH_HISTORY";
   const conditionResultPattern = code === "CONDITION_AND_RESULT_CHANGED";
   const multiLayerPattern = code === "MULTI_LAYER_CHANGE";
+  const repeatedPattern = code === "REPEATED_OBSERVATION";
   const lead = currentShiftPattern && region
     ? `まず${region.label}の位置を確認し、比較可能な前回から今回への違いだけを見ます。`
     : conditionResultPattern && region
       ? `まず${region.label}の前回との差を確認し、走行条件の違いは別枠で確認します。`
       : multiLayerPattern && region
         ? `${region.label}の部位別表示と主観的な疲労感を、別の尺度として順に確認します。`
-        : "同じ解釈を、数値の位置関係に変えて確認します。";
+        : repeatedPattern && region
+          ? `${region.label}について、比較可能な過去記録で今回と同じ方向が何件あったかを確認します。`
+          : "同じ解釈を、数値の位置関係に変えて確認します。";
   const visualPattern = currentShiftPattern
     ? "locate-compare"
     : conditionResultPattern
       ? "condition-result-separated"
       : multiLayerPattern
         ? "separate-layers"
-        : "general";
+        : repeatedPattern
+          ? "repeated-count"
+          : "general";
   const visualBody = currentShiftPattern
     ? `${renderRegionalVisual(output)}${renderCurrentShiftUnderstanding(output)}`
     : conditionResultPattern
       ? `${renderRegionalVisual(output)}${renderConditionContext(output)}${renderConditionResultUnderstanding(output)}`
       : multiLayerPattern
         ? `${renderMultiLayerVisual(output)}${renderMultiLayerUnderstanding(output)}`
-        : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
+        : repeatedPattern
+          ? `${renderRepeatedObservationVisual(output)}${renderRepeatedObservationUnderstanding(output)}`
+          : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
   return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual" data-visual-pattern="${visualPattern}">
     <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>${escapeHtml(lead)}</p></header>
     <section class="interpretation-visual-stack">${visualBody}</section>
