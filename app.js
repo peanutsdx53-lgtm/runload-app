@@ -185,7 +185,7 @@ function renderScreen(location) {
 }
 
 const RESUME_SCROLL_SURFACE_SELECTOR = [
-  ".prototype-parity--course .editor",
+  ".course-derived-screen .course-derived-body",
   ".prototype-parity--record .subscreen",
   ".prototype-parity--record .sheet",
   ".prototype-parity--result .detail-screen",
