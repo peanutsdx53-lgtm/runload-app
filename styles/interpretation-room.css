@@ -916,3 +916,40 @@ html.ui-motion-reduced .interpretation-comparison-arrowhead {
     gap: 10px;
   }
 }
+
+
+/* Stage 8C: short guided reveal sequence. */
+@keyframes interpretation-stage8-guided-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.interpretation-room-view--visual [data-reveal-step="explanation"] {
+  animation: interpretation-stage8-guided-reveal 160ms ease-out 420ms 1 both;
+}
+
+.interpretation-room-view--visual [data-reveal-step="choices"] {
+  animation: interpretation-stage8-guided-reveal 160ms ease-out 540ms 1 both;
+}
+
+html.ui-motion-reduced .interpretation-room-view--visual [data-reveal-step="explanation"],
+html.ui-motion-reduced .interpretation-room-view--visual [data-reveal-step="choices"] {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interpretation-room-view--visual [data-reveal-step="explanation"],
+  .interpretation-room-view--visual [data-reveal-step="choices"] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
