@@ -15,12 +15,16 @@ Do not rely on prior chat history. Use the branch state and this ledger as the i
 ## Authority and protected baselines
 
 Top-level Current authority:
-- `RunLoad_CURRENT_COMPLETE_20260920.zip`
-- SHA-256: `74524651f6b7561ba6165b77b492c327223ba371d1363f6f1335ce4799480fc8`
+- `RunLoad_CURRENT_COMPLETE_20260921.zip`
+- SHA-256: `83118aa846c706da13250cff42b30ac64ea909a0b67423cef68b858e83ad083d`
 
 Operational App Source:
-- `RunLoad_Current_App_Source_20260920.zip`
-- SHA-256: `05f42f59bffb657cb0df8f9b2f86768959e149ae48af54369fa900711a7c03b9`
+- `RunLoad_Current_App_Source_20260921.zip`
+- SHA-256: `2053df07c93ca1d73ae861ec3ee4fadc427f77e27780841a6dc8c37f77fc01ab`
+
+Public App:
+- `RunLoad_Public_App_20260921.zip`
+- SHA-256: `65d099a18bed0e73a17b107c993eccf0150b217babfb7d98b867b384d445795b`
 
 Protected calculation core:
 - SHA-256: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
@@ -28,7 +32,7 @@ Protected calculation core:
 Protected ROF-J core:
 - SHA-256: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
 
-These protected cores must remain byte-identical throughout this feature branch.
+These protected cores remain the protected Current baseline and must stay byte-identical unless an explicitly authorized scientific revision is performed.
 
 ## Controlling pre-code design
 
