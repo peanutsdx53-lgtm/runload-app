@@ -1,5 +1,5 @@
-// Runtime revision: desktop-ui-pass-v3-20260921-20
-const CACHE_NAME = "runload-app-current-20260921-20";
+// Runtime revision: desktop-ui-pass-v4-20260921-21
+const CACHE_NAME = "runload-app-current-20260921-21";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -44,6 +44,7 @@ const PRECACHE_URLS = [
   "./styles/desktop-ui-pass-v1.css",
   "./styles/desktop-ui-pass-v2.css",
   "./styles/desktop-ui-pass-v3.css",
+  "./styles/desktop-ui-pass-v4.css",
   "./styles/tokens.css",
   "./ui/pwaUpdateBootstrapV1.js",
   "./ui/appRouter.js",
