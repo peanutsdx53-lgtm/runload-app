@@ -1,5 +1,5 @@
-// Runtime revision: pc-uiux-refresh-20260921-02
-const CACHE_NAME = "runload-app-current-20260921-02";
+// Runtime revision: pc-record-uiux-refresh-20260921-03
+const CACHE_NAME = "runload-app-current-20260921-03";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
