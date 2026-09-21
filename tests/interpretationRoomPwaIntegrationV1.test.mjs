@@ -50,9 +50,9 @@ await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
   for(const line of expected) assert.ok(manifest.includes(line),line);
 });
 
-await test('RUNTIME-HASH-MANIFEST-TRACKS-STAGE4-SERVICE-WORKER',async()=>{
+await test('RUNTIME-HASH-MANIFEST-TRACKS-CURRENT-SERVICE-WORKER',async()=>{
   const manifest=await source('RUNTIME_SHA256SUMS.txt');
-  assert.match(manifest,/0463e3b47218ac675e345d5241c4d382f7c862c5f7ccc0732d25d6dd0540e052  service-worker\\.js/);
+  assert.match(manifest,/0463e3b47218ac675e345d5241c4d382f7c862c5f7ccc0732d25d6dd0540e052  service-worker\.js/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
