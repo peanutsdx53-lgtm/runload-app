@@ -53,7 +53,7 @@ await test('STAGE8B-CONDITION-CARD-IS-FACTUAL-AND-COMPACT',()=>{
 await test('STAGE8B-CONDITION-RESULT-HAS-NO-CAUSAL-CONNECTOR',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/この比較だけで走行条件を部位別結果の原因とは判断できません/);
-  const card=html.match(/<aside class="interpretation-condition-context"[^>]*>[\\s\\S]*?<\/aside>/)?.[0] || '';
+  const card=html.match(/<aside class="interpretation-condition-context"[^>]*>[\s\S]*?<\/aside>/)?.[0] || '';
   assert.ok(card);
   assert.doesNotMatch(card,/arrow|svg|line|path/i);
   assert.doesNotMatch(html,/原因です|影響しました|ためです/);
