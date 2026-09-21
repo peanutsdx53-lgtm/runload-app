@@ -1,5 +1,5 @@
-// Runtime revision: desktop-ui-state-theme-audit-20260922-24
-const CACHE_NAME = "runload-app-current-20260922-24";
+// Runtime revision: desktop-ui-state-theme-audit-20260922-25
+const CACHE_NAME = "runload-app-current-20260922-25";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
