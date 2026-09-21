@@ -729,7 +729,7 @@ function renderVisualExplanation(output, origin) {
     <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>${escapeHtml(lead)}</p></header>
     <section class="interpretation-visual-stack" data-reveal-step="visual">${visualBody}</section>
     ${renderSelfManagementContinuation(output)}
-    ${renderExplanationFollowup(output, origin)}
+    ${renderExplanationFollowup(output, origin, true)}
     <div class="interpretation-inline-actions"><a class="button button--text" href="${escapeHtml(route(recordId, origin, { view: "summary", regionId }))}">最初の確認へ戻る</a></div>
   </div>`;
 }
@@ -761,10 +761,10 @@ function renderDifferenceExplanation(output, origin) {
   </div>`;
 }
 
-function renderExplanationFollowup(output, origin) {
+function renderExplanationFollowup(output, origin, preferContinuation = false) {
   const recordId = output?.targetRecordId || "";
   const regionId = output?.context?.selectedRegionId || meaning(output).focusRegionIds?.[0] || "";
-  const bridge = continuationAction(output);
+  const bridge = preferContinuation ? continuationAction(output) : null;
   const continuationChoice = bridge
     ? renderDialogueChoice(actionHref(bridge.action, output?.context?.origin || origin), bridge.title, bridge.description)
     : renderDialogueChoice(route(recordId, origin, { view: "dialogue", topic: "manage", regionId }), "次にどう活かすか考える", "自己管理に使う機能を絞る");
