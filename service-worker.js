@@ -1,4 +1,4 @@
-// Runtime revision: interpretation-safety-hotfix-v1
+// Runtime revision: interpretation-final-cleanup-v1
 const CACHE_NAME = "runload-app-current";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
