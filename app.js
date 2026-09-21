@@ -2,7 +2,7 @@ import { registerPwaServiceWorker } from "./core/runloadCore.js";
 import { createApplicationServices, createHistoryWorkflow } from "./core/runloadCore.js";
 import { createSecondPillarRofJServices } from "./core/secondPillarRofJ.js";
 import { createAppRouter } from "./ui/appRouter.js";
-import { focusScreenHeading, renderAppShell } from "./ui/appShell.js";
+import { focusScreenHeading, renderAppShell, renderDesktopHeader } from "./ui/appShell.js";
 import { applyJournalSettings } from "./ui/appSettings.js";
 import { APP_GUIDE_VERSION, DEFAULT_GUIDE_SECTION, normalizeGuideSection, shouldOpenGuide, withGuideVersionSeen } from "./ui/guideContent.js";
 import { bindAppShellInteractions } from "./ui/shellInteractions.js";
@@ -57,6 +57,7 @@ const routeAliases = Object.freeze({
 });
 
 const appRoot = document.getElementById("app");
+const desktopHeaderRoot = document.getElementById("desktop-header-root");
 const baseApplicationServices = createApplicationServices();
 const secondPillar = createSecondPillarRofJServices({
   gateway: baseApplicationServices.storage.gateway,
@@ -85,34 +86,12 @@ let guideSection = DEFAULT_GUIDE_SECTION;
 let guideFirstVisit = guideOpen;
 let router;
 
-const GLOBAL_DESKTOP_HEADER_SELECTOR = '[data-global-desktop-header="true"]';
-
-function removeMountedDesktopHeader() {
-  document.querySelectorAll(GLOBAL_DESKTOP_HEADER_SELECTOR).forEach((header) => header.remove());
-}
-
-function mountDesktopHeaderToViewport() {
-  const header = appRoot.querySelector(".app-header--desktop.app-header--viewport-fixed");
-  if (!header) return;
-  header.dataset.globalDesktopHeader = "true";
-  header.style.position = "fixed";
-  header.style.top = "0";
-  header.style.right = "0";
-  header.style.bottom = "auto";
-  header.style.left = "0";
-  header.style.width = "100%";
-  header.style.zIndex = "200";
-  header.style.transform = "none";
-  document.body.insertBefore(header, appRoot);
-}
-
 function saveGuideVersionSeen() {
   const currentSettings = applicationServices.storage.settings.load();
   applicationServices.storage.settings.save(withGuideVersionSeen(currentSettings));
 }
 
 function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {}) {
-  removeMountedDesktopHeader();
   applyJournalSettings(applicationServices.storage.settings.load());
   const screenName = currentLocation.screen;
   const recordInputReturnState = screenName === "record-input"
@@ -120,6 +99,16 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
     : null;
   const renderSelectedScreen = screenRenderers[screenName] ?? screenRenderers.home;
   const latestExperience = applicationServices.workflows.records.loadLatestExperience();
+  if (desktopHeaderRoot) {
+    desktopHeaderRoot.innerHTML = screenName === "interpretation-room"
+      ? ""
+      : renderDesktopHeader({
+          currentScreen: screenName,
+          currentLocation,
+          hasResult: Boolean(latestExperience),
+        });
+  }
+
   appRoot.innerHTML = renderAppShell({
     currentScreen: screenName,
     currentLocation,
@@ -139,8 +128,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
   document.title = `${document.querySelector("#main-content h1")?.textContent ?? "RunLoad Journal"} — RunLoad Journal`;
   prepareUiMotion(appRoot, { screenName });
 
-  bindAppShellInteractions({
-    root: appRoot,
+  const shellInteractionCallbacks = {
     onOpenGuide: (section) => {
       guideOpen = true;
       guideFirstVisit = false;
@@ -151,14 +139,17 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       saveGuideVersionSeen();
       guideOpen = false;
       guideFirstVisit = false;
-      renderCurrentLocation({ focusHeading: false, focusSelector: "#feature-menu-button" });
+      renderCurrentLocation({ focusHeading: false, focusSelector: "#feature-menu-button-desktop" });
     },
     onSelectGuideSection: (section) => {
       guideSection = normalizeGuideSection(section);
       renderCurrentLocation({ focusHeading: false, focusSelector: `#guide-tab-${guideSection}` });
     },
-  });
-  mountDesktopHeaderToViewport();
+  };
+  bindAppShellInteractions({ root: appRoot, ...shellInteractionCallbacks });
+  if (desktopHeaderRoot?.firstElementChild) {
+    bindAppShellInteractions({ root: desktopHeaderRoot, ...shellInteractionCallbacks });
+  }
   bindScreenInteractions({
     screenName,
     services: applicationServices,
