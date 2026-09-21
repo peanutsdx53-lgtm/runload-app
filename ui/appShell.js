@@ -24,8 +24,12 @@ const TOPBAR_CONTEXT_LABELS = Object.freeze({
   more: "MORE",
 });
 
-function topbarContextLabel(screen = "") {
-  return TOPBAR_CONTEXT_LABELS[screen] || "RUNLOAD";
+function topbarContextLabel(screen = "", currentLocation = null) {
+  const contextDerivedScreens = new Set(["plan", "consultation", "support-guidance", "reading", "privacy", "settings"]);
+  const resolvedScreen = contextDerivedScreens.has(screen)
+    ? resolveCurrentPrimaryScreen(screen, currentLocation)
+    : screen;
+  return TOPBAR_CONTEXT_LABELS[resolvedScreen] || "RUNLOAD";
 }
 
 export const PRIMARY_NAVIGATION = PRIMARY_DESTINATIONS;
@@ -70,6 +74,13 @@ export function resolveCurrentPrimaryScreen(currentScreen, currentLocation = nul
     if (from === "history") return "history";
     if (from === "plan") return "home";
     return "result";
+  }
+  if (currentScreen === "consultation" && parameter("recordId")) return "result";
+  if (currentScreen === "reading" && parameter("origin") === "result-condition") return "result";
+  if (currentScreen === "support-guidance") {
+    const returnTo = parameter("returnTo");
+    if (returnTo.startsWith("#/record-input")) return "record-input";
+    if (returnTo.startsWith("#/consultation") && returnTo.includes("recordId=")) return "result";
   }
   return PRIMARY_SECTION_BY_SCREEN[currentScreen] || currentScreen;
 }
@@ -150,7 +161,7 @@ export function renderDesktopHeader({ currentScreen, currentLocation, hasResult 
   return `<header class="app-header app-header--desktop app-header--viewport-fixed">
     <div class="app-screen-context" aria-label="現在の画面">
       <small>SCREEN</small>
-      <strong>${escapeHtml(topbarContextLabel(currentScreen))}</strong>
+      <strong>${escapeHtml(topbarContextLabel(currentScreen, currentLocation))}</strong>
     </div>
     <div class="app-header__actions">
       ${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}
@@ -164,7 +175,7 @@ function renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult) 
   if (context) {
     return `<header class="prototype-mobile-topbar prototype-mobile-topbar--context"><a class="prototype-mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong>${escapeHtml(context.title)}</strong><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
   }
-  return `<header class="prototype-mobile-topbar"><a class="prototype-mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></a><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
+  return `<header class="prototype-mobile-topbar"><a class="prototype-mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen, currentLocation))}</small></a><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
 }
 
 function renderImmersiveHeader(currentScreen, currentLocation) {
