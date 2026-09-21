@@ -509,6 +509,32 @@ function renderRegionalVisual(output) {
     </div>
     <p class="source-boundary">人体図の強調は注目する位置を示します。比較図は${escapeHtml(region.label)}の中だけで読み、色や矢印から危険・安全・改善・悪化を判断しません。別の部位との大小比較にも使いません。</p></article>`;
 }
+function compactConditionText(output) {
+  const labels = conditionLabels(output);
+  if (!labels.length) return "";
+  const visible = labels.slice(0, 2);
+  const remainder = labels.length - visible.length;
+  return `${visible.join("、")}${remainder > 0 ? `、ほか${remainder}件` : ""}`;
+}
+
+function renderConditionContext(output) {
+  const text = compactConditionText(output);
+  if (!text) return "";
+  return `<aside class="interpretation-condition-context" data-condition-context="separate">
+    <small>前回と異なる走行条件</small>
+    <p>${escapeHtml(text)}</p>
+    <span>部位別結果とは別の情報として確認します。</span>
+  </aside>`;
+}
+
+function renderConditionResultUnderstanding(output) {
+  if (meaning(output).primaryCode !== "CONDITION_AND_RESULT_CHANGED") return "";
+  const region = focusRegion(output);
+  const text = compactConditionText(output);
+  if (!region || !text) return "";
+  return `<div class="interpretation-visual-insight"><small>この図で分かること</small><p>${escapeHtml(`今回は、${region.label}の表示と${text}の両方が前回と異なります。ただし、この比較だけで走行条件を部位別結果の原因とは判断できません。`)}</p></div>`;
+}
+
 function renderCurrentShiftUnderstanding(output) {
   if (meaning(output).primaryCode !== "CURRENT_SHIFT_WITH_HISTORY") return "";
   const region = focusRegion(output);
@@ -536,13 +562,23 @@ function renderVisualExplanation(output, origin) {
   const code = meaning(output).primaryCode || "";
   const region = focusRegion(output);
   const currentShiftPattern = code === "CURRENT_SHIFT_WITH_HISTORY";
+  const conditionResultPattern = code === "CONDITION_AND_RESULT_CHANGED";
   const lead = currentShiftPattern && region
     ? `まず${region.label}の位置を確認し、比較可能な前回から今回への違いだけを見ます。`
-    : "同じ解釈を、数値の位置関係に変えて確認します。";
+    : conditionResultPattern && region
+      ? `まず${region.label}の前回との差を確認し、走行条件の違いは別枠で確認します。`
+      : "同じ解釈を、数値の位置関係に変えて確認します。";
+  const visualPattern = currentShiftPattern
+    ? "locate-compare"
+    : conditionResultPattern
+      ? "condition-result-separated"
+      : "general";
   const visualBody = currentShiftPattern
     ? `${renderRegionalVisual(output)}${renderCurrentShiftUnderstanding(output)}`
-    : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
-  return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual" data-visual-pattern="${currentShiftPattern ? "locate-compare" : "general"}">
+    : conditionResultPattern
+      ? `${renderRegionalVisual(output)}${renderConditionContext(output)}${renderConditionResultUnderstanding(output)}`
+      : `${renderRegionalVisual(output)}${renderRofVisual(output)}`;
+  return `<div class="interpretation-room-view interpretation-room-view--explain interpretation-room-view--visual" data-visual-pattern="${visualPattern}">
     <header class="interpretation-view-head"><p>RunLoad解釈</p><h1>図で見る</h1><p>${escapeHtml(lead)}</p></header>
     <section class="interpretation-visual-stack">${visualBody}</section>
     ${renderExplanationFollowup(output, origin)}
