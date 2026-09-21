@@ -175,10 +175,10 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
     <div class="app-shell">
       ${renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult)}
       <header class="app-header app-header--desktop">
-        <a class="app-brand" href="#/home" aria-label="RunLoad ホーム">
-          <span class="app-brand__mark" aria-hidden="true"><svg viewBox="0 0 32 32" focusable="false"><rect x="5" y="6" width="22" height="20" rx="7"></rect><path d="M10 21V11h5.2c3.1 0 4.8 1.5 4.8 4 0 2.6-1.7 4.1-4.8 4.1H10"></path><path d="M16.2 17.3h5.3"></path></svg></span>
-          <span><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></span>
-        </a>
+        <div class="app-screen-context" aria-label="現在の画面">
+          <small>SCREEN</small>
+          <strong>${escapeHtml(topbarContextLabel(currentScreen))}</strong>
+        </div>
         <div class="app-header__actions">
           ${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}
         </div>
