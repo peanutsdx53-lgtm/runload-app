@@ -41,7 +41,7 @@ await test('PWA-INTERPRETATION-STYLESHEET-IS-SAME-ORIGIN-EXTERNAL',async()=>{
 await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
   const manifest=await source('RUNTIME_SHA256SUMS.txt');
   const expected=[
-    'e04eb0f1e8e0655c4cc0fb08a264d59aa393655a850cf8ce8458bfbba31d64f8  core/interpretationCore.js',
+    '20fc3b838f4251d08c765c46fa07d29b905e38e2b38474cea85bcf0dd77845a8  core/interpretationCore.js',
     '2cf8624fb993ef7913635180030131ab030652aefc4330da1508b1de6eb97d15  screens/interpretationRoomScreen.js',
     '89a45320c3a8a1f580627c37549d62c15d5c68ee9cdfcbc912bc5c6d719c7033  styles/interpretation-room.css',
     '956d92781c64d0898a014a9bf57f568367dd228206e01698dcc81de891fdf49f  ui/interpretationRoomPresentation.js',
