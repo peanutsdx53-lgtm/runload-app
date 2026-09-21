@@ -146,6 +146,18 @@ function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix
   return `<div class="feature-menu" data-feature-menu><button type="button" id="${escapeHtml(buttonId)}" class="app-menu-button" aria-label="画面メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="${escapeHtml(panelId)}"><span class="app-menu-button__label">メニュー</span></button><div id="${escapeHtml(panelId)}" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="${escapeHtml(titleId)}" hidden><header class="feature-menu__header"><p>画面メニュー</p><strong id="${escapeHtml(titleId)}">補助画面を開く</strong></header><nav class="feature-menu__nav" aria-label="補助画面">${groupedDestinations}</nav></div></div>`;
 }
 
+export function renderDesktopHeader({ currentScreen, currentLocation, hasResult = false }) {
+  return `<header class="app-header app-header--desktop app-header--viewport-fixed">
+    <div class="app-screen-context" aria-label="現在の画面">
+      <small>SCREEN</small>
+      <strong>${escapeHtml(topbarContextLabel(currentScreen))}</strong>
+    </div>
+    <div class="app-header__actions">
+      ${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}
+    </div>
+  </header>`;
+}
+
 function renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult) {
   const menu = renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "mobile" });
   const context = resolveScreenContextNavigation(currentScreen, currentLocation);
@@ -172,16 +184,6 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
       </div>`;
   }
   return `
-    <header class="app-header app-header--desktop app-header--viewport-fixed">
-      <div class="app-screen-context" aria-label="現在の画面">
-        <small>SCREEN</small>
-        <strong>${escapeHtml(topbarContextLabel(currentScreen))}</strong>
-      </div>
-      <div class="app-header__actions">
-        ${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}
-      </div>
-    </header>
-
     <div class="app-shell">
       ${renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult)}
 
