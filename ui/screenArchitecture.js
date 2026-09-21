@@ -161,7 +161,6 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
   Object.freeze({
     label: "結果を使う",
     items: Object.freeze([
-      Object.freeze({ screen: "interpretation-room", label: "結果を理解する", description: "最新の結果を整理して確認", requiresRecord: true }),
       Object.freeze({ screen: "simulation", label: "条件を比べる", description: "条件を変えて同じ計算モデルで確認" }),
       Object.freeze({ screen: "plan", label: "予定", description: "次の走行・休養予定を作る" }),
     ]),
