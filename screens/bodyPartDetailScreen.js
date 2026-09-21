@@ -47,7 +47,7 @@ function trendSvg(rows) {
   if (!rows.length) return '<text x="160" y="72" text-anchor="middle">比較できる保存記録はありません</text>';
   const values = rows.map((item) => Number(item.row.value));
   const min = Math.min(94, ...values) - 1; const max = Math.max(106, ...values) + 1;
-  const xs = rows.length === 1 ? [160] : rows.map((_, i) => 28 + i * (264 / (rows.length - 1)));
+  const xs = rows.length === 1 ? [168] : rows.map((_, i) => 44 + i * (244 / (rows.length - 1)));
   const y = (v) => 120 - (Number(v) - min) / Math.max(1, max - min) * 92;
   const points = rows.map((item, i) => `${xs[i]},${y(item.row.value)}`).join(" ");
   const baseline = y(100);
