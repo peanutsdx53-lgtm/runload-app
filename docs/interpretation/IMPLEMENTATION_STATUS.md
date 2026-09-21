@@ -369,11 +369,11 @@ Release state:
 - formal Current remains untouched
 - no merge or Current promotion has been performed
 
-## Stage 8 — Understanding-Focused Visual Interpretation
+## understanding-focused visual interpretation — Understanding-Focused Visual Interpretation
 Status: **STAGE 8D COMPLETE — ENTRY GATES COMPLETE; STAGE 8E FINAL AUDIT NEXT**
 
 Controlling work plan:
-- `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
+- `docs/interpretation/UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
 
 Mandatory distinction:
 - Result screen = display recorded/result information.
@@ -403,13 +403,13 @@ Implementation principles:
 - downstream History / Simulation / Plan / Consultation / Reading functions remain separate and are only bridged to.
 
 Planned sequence:
-- Stage 8A: first reusable visual batch — **implemented**: one body-region focus, local previous/Reference-100/current direction, one-time accent emphasis, reduced-motion static equivalent. ROF-J remains separate and unchanged in this batch;
-- Stage 8B: map Meaning Core codes to visual explanation patterns;
-- Stage 8C: integrate visuals into the guided dialogue;
-- Stage 8D: strengthen explanation → next self-management observation/function bridge;
-- Stage 8E: mobile/desktop/theme/dark/reduced-motion visual audit + full regression.
+- visual foundation: first reusable visual batch — **implemented**: one body-region focus, local previous/Reference-100/current direction, one-time accent emphasis, reduced-motion static equivalent. ROF-J remains separate and unchanged in this batch;
+- meaning-driven visual mapping: map Meaning Core codes to visual explanation patterns;
+- guided visual integration: integrate visuals into the guided dialogue;
+- self-management continuation: strengthen explanation → next self-management observation/function bridge;
+- final closure audit: mobile/desktop/theme/dark/reduced-motion visual audit + full regression.
 
-Stage 8 work-order rule:
+understanding-focused visual interpretation work-order rule:
 1. identify the exact comprehension problem;
 2. select one Meaning Core context;
 3. select one visual transformation;
@@ -419,17 +419,17 @@ Stage 8 work-order rule:
 7. run regression and visual review;
 8. record findings before the next batch.
 
-Baseline before Stage 8:
+Baseline before understanding-focused visual interpretation:
 - Guided-dialogue baseline: **371/371 PASS**
 - runtime manifest: **79/79 PASS**
 - protected Primary and ROF-J cores unchanged
 - PR #49 remains Draft
 - main and formal Current remain untouched
 
-## Stage 8A first-batch checkpoint — 2026-09-21
+## visual foundation first-batch checkpoint — 2026-09-21
 
 Durable audit:
-- `docs/interpretation/STAGE8A_VISUAL_FOUNDATION_AUDIT_20260921.md`
+- `docs/interpretation/VISUAL_FOUNDATION_AUDIT_20260921.md`
 
 Implemented:
 - one selected body region is located using the existing prototype body-region visual definitions;
@@ -445,8 +445,8 @@ Implemented:
 Verification at this checkpoint:
 - pre-Stage-8 durable branch baseline: 371/371 PASS;
 - audited Current/local baseline verification: 273/273 PASS, 17 suites, 77 syntax files, 0 syntax failures;
-- current Stage 8A production-source focused checks: 8/8 PASS;
-- current guided-dialogue / interpretation-experience / Stage 8A / PWA cross-surface checks: 15/15 PASS;
+- current visual foundation production-source focused checks: 8/8 PASS;
+- current guided-dialogue / interpretation-experience / visual foundation / PWA cross-surface checks: 15/15 PASS;
 - 390 px render: viewport 390 px / scroll width 390 px, no horizontal overflow;
 - comparison label overlap count: 0;
 - exactly one body region focused;
@@ -456,21 +456,21 @@ Verification at this checkpoint:
 
 Important verification boundary:
 - the 273/273 result is the independently verified audited Current/main baseline, not a claim that the full feature branch was rerun locally;
-- the full Stage 8E regression remains a later mandatory gate.
+- the full final closure audit regression remains a later mandatory gate.
 
 Release state:
 - PR #49 remains intended to stay Draft;
 - no merge to main has been performed;
 - formal Current remains untouched;
-- Stage 8B has not started.
+- meaning-driven visual mapping has not started.
 
-## Stage 8B mapping checkpoint — CURRENT_SHIFT_WITH_HISTORY
+## meaning-driven visual mapping mapping checkpoint — CURRENT_SHIFT_WITH_HISTORY
 
 User acceptance:
-- Stage 8A static visual was accepted as a compromise-line baseline and Stage 8B was authorized to proceed.
+- visual foundation static visual was accepted as a compromise-line baseline and meaning-driven visual mapping was authorized to proceed.
 
 Durable audit:
-- `docs/interpretation/STAGE8B_CURRENT_SHIFT_AUDIT_20260921.md`
+- `docs/interpretation/CURRENT_SHIFT_VISUAL_MAPPING_AUDIT_20260921.md`
 
 Mapped:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
@@ -488,12 +488,12 @@ Verification:
 - no new route or downstream-function duplication;
 - runtime hash manifest and PWA hash contract updated for the changed presentation/CSS;
 - targeted 390 px layout review found no new horizontal-layout issue;
-- fresh production-browser visual audit remains reserved for Stage 8E.
+- fresh production-browser visual audit remains reserved for final closure audit.
 
-## Stage 8B mapping checkpoint — CONDITION_AND_RESULT_CHANGED
+## meaning-driven visual mapping mapping checkpoint — CONDITION_AND_RESULT_CHANGED
 
 Durable audit:
-- `docs/interpretation/STAGE8B_CONDITION_RESULT_AUDIT_20260921.md`
+- `docs/interpretation/CONDITION_RESULT_VISUAL_MAPPING_AUDIT_20260921.md`
 
 Mapped so far:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
@@ -513,10 +513,10 @@ Verification:
 - `MULTI_LAYER_CHANGE` remains unmapped/general at this checkpoint;
 - runtime/PWA hash contracts updated.
 
-## Stage 8B mapping checkpoint — MULTI_LAYER_CHANGE
+## meaning-driven visual mapping mapping checkpoint — MULTI_LAYER_CHANGE
 
 Durable audit:
-- `docs/interpretation/STAGE8B_MULTI_LAYER_AUDIT_20260921.md`
+- `docs/interpretation/MULTI_LAYER_VISUAL_MAPPING_AUDIT_20260921.md`
 
 Mapped so far:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
@@ -532,14 +532,14 @@ Multi-layer rules:
 
 Verification:
 - multi-layer focused checks: **10/10 PASS**;
-- prior Stage 8B mappings remained intact;
+- prior meaning-driven visual mapping mappings remained intact;
 - targeted 390 px layout review found both lanes inside the canvas;
 - runtime/PWA hash contracts updated.
 
-## Stage 8B mapping checkpoint — REPEATED_OBSERVATION
+## meaning-driven visual mapping mapping checkpoint — REPEATED_OBSERVATION
 
 Durable audit:
-- `docs/interpretation/STAGE8B_REPEATED_OBSERVATION_AUDIT_20260921.md`
+- `docs/interpretation/REPEATED_OBSERVATION_VISUAL_MAPPING_AUDIT_20260921.md`
 
 Mapped so far:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
@@ -556,14 +556,14 @@ Repeated-observation rules:
 
 Verification:
 - repeated-observation focused checks: **10/10 PASS**;
-- prior Stage 8B mappings remained intact;
+- prior meaning-driven visual mapping mappings remained intact;
 - targeted 390 px layout review showed the fixed-size count visual inside the canvas;
 - runtime/PWA hash contracts updated.
 
-## Stage 8B completion checkpoint
+## meaning-driven visual mapping completion checkpoint
 
 Durable completion audit:
-- `docs/interpretation/STAGE8B_MEANING_VISUAL_MAPPING_AUDIT_20260921.md`
+- `docs/interpretation/MEANING_VISUAL_MAPPING_COMPLETION_AUDIT_20260921.md`
 
 Completed mappings:
 - `CURRENT_SHIFT_WITH_HISTORY` → Locate + compatible previous → current;
@@ -572,7 +572,7 @@ Completed mappings:
 - `REPEATED_OBSERVATION` → Locate + explicit compatible-record counts;
 - `CURRENT_REFERENCE_PATTERN` → Locate + Reference-100 → current.
 
-Combined Stage 8B integrity checkpoint:
+Combined meaning-driven visual mapping integrity checkpoint:
 - **21/21 PASS**;
 - Guided-dialogue entry remains exactly two ordinary choices;
 - Guided-dialogue understand step remains at most three choices;
@@ -583,17 +583,17 @@ Combined Stage 8B integrity checkpoint:
 
 Visual-audit boundary:
 - targeted 390 px static-layout review completed for all five patterns;
-- full production-browser mobile/desktop/theme/dark/reduced-motion audit remains Stage 8E.
+- full production-browser mobile/desktop/theme/dark/reduced-motion audit remains final closure audit.
 
-## Stage 8C completion checkpoint
+## guided visual integration completion checkpoint
 
 Durable audit:
-- `docs/interpretation/STAGE8C_GUIDED_VISUAL_INTEGRATION_AUDIT_20260921.md`
+- `docs/interpretation/GUIDED_VISUAL_INTEGRATION_AUDIT_20260921.md`
 
 Completed:
 - Entry remains one interpretation + exactly two intent choices;
-- Understand step offers up to three representation choices and does not render Stage 8 visuals yet;
-- Stage 8 main visual appears only in the selected Visual explanation step;
+- Understand step offers up to three representation choices and does not render understanding-focused visual interpretation visuals yet;
+- understanding-focused visual interpretation main visual appears only in the selected Visual explanation step;
 - one main visual stack per Visual explanation;
 - understanding note follows the visual;
 - follow-up remains exactly two downstream choices: Evidence / management narrowing;
@@ -601,20 +601,20 @@ Completed:
 - Reduced Motion shows the complete static state immediately.
 
 Verification:
-- Stage 8C focused checks: **9/9 PASS**;
+- guided visual integration focused checks: **9/9 PASS**;
 - no route redesign;
 - no downstream-function duplication;
 - runtime/PWA hash contracts updated;
-- Stage 8B 390 px layouts remain the geometry baseline;
-- full production-browser animation/theme audit remains Stage 8E.
+- meaning-driven visual mapping 390 px layouts remain the geometry baseline;
+- full production-browser animation/theme audit remains final closure audit.
 
-## Stage 8D completion checkpoint
+## self-management continuation completion checkpoint
 
 Durable audit:
-- `docs/interpretation/STAGE8D_SELF_MANAGEMENT_CONTINUATION_AUDIT_20260921.md`
+- `docs/interpretation/SELF_MANAGEMENT_CONTINUATION_AUDIT_20260921.md`
 
 Completed:
-- all five Stage 8B primary Meaning Core patterns now carry the three-part self-management continuation:
+- all five meaning-driven visual mapping primary Meaning Core patterns now carry the three-part self-management continuation:
   - 今回理解したこと
   - まだ分からないこと
   - 次に確認すること
@@ -626,8 +626,8 @@ Completed:
 - no prescription, run/rest decision, causal inference, or new persistence was introduced.
 
 Verification:
-- Stage 8D completion focused checks: **13/13 PASS**;
-- runtime manifest/PWA hash expectations were corrected to the actual Stage 8D presentation/CSS files.
+- self-management continuation completion focused checks: **13/13 PASS**;
+- runtime manifest/PWA hash expectations were corrected to the actual self-management continuation presentation/CSS files.
 
 ## Entry gate completion checkpoint — 2026-09-21
 
@@ -655,14 +655,14 @@ Verification:
 - protected ROF-J core SHA unchanged.
 
 Audit tooling note:
-- a temporary GitHub Actions workflow was attempted for final Stage 8E execution;
+- a temporary GitHub Actions workflow was attempted for final final closure audit execution;
 - no workflow run was generated in this environment;
 - the temporary workflow was removed and is not part of the final branch tree.
 
-## Stage 8E final closure checkpoint
+## final closure audit final closure checkpoint
 
 Durable audit:
-- `docs/interpretation/STAGE8E_FINAL_CLOSURE_AUDIT_20260921.md`
+- `docs/interpretation/FINAL_CLOSURE_AUDIT_20260921.md`
 
 Status: **COMPLETE WITH EXECUTION-ENVIRONMENT LIMITATION**.
 
@@ -701,7 +701,7 @@ Mandatory completion checks:
 - PWA/runtime integrity;
 - protected scientific-core integrity.
 
-Do not merge PR #49 or promote formal Current as part of Stage 8E.
+Do not merge PR #49 or promote formal Current as part of final closure audit.
 
 
 ## Post-merge hotfix — stale hidden safety state
