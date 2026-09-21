@@ -366,7 +366,7 @@ Release state:
 - no merge or Current promotion has been performed
 
 ## Stage 8 — Understanding-Focused Visual Interpretation
-Status: **STAGE 8B IN PROGRESS — CURRENT_SHIFT_WITH_HISTORY MAPPED AND VERIFIED**
+Status: **STAGE 8B IN PROGRESS — CURRENT_SHIFT_WITH_HISTORY AND CONDITION_AND_RESULT_CHANGED MAPPED AND VERIFIED**
 
 Controlling work plan:
 - `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
@@ -486,15 +486,38 @@ Verification:
 - targeted 390 px layout review found no new horizontal-layout issue;
 - fresh production-browser visual audit remains reserved for Stage 8E.
 
+## Stage 8B mapping checkpoint — CONDITION_AND_RESULT_CHANGED
+
+Durable audit:
+- `docs/interpretation/STAGE8B_CONDITION_RESULT_AUDIT_20260921.md`
+
+Mapped so far:
+- `CURRENT_SHIFT_WITH_HISTORY` → Locate + Compare;
+- `CONDITION_AND_RESULT_CHANGED` → Locate + Compare + separated factual condition card.
+
+Condition/result mapping rules:
+- condition card is visually separate;
+- at most two condition labels are shown, with `ほかN件` summary when needed;
+- no line, arrow, or motion connects condition and regional result;
+- one explicit sentence states that co-change does not establish cause;
+- ROF-J is not mixed into this primary step.
+
+Verification:
+- condition/result focused checks after correcting one false-positive test expression: **9/9 PASS**;
+- targeted 390 px layout review: no new horizontal-layout issue;
+- `CURRENT_SHIFT_WITH_HISTORY` regression remained intact;
+- `MULTI_LAYER_CHANGE` remains unmapped/general at this checkpoint;
+- runtime/PWA hash contracts updated.
+
 ## Current next action
 
 Continue Stage 8B with **one Meaning Core code only**:
 
-- `CONDITION_AND_RESULT_CHANGED`;
-- Locate + Compare + separated factual condition card;
-- no connecting causal arrow;
-- explicit non-causal boundary;
-- do not change `MULTI_LAYER_CHANGE`, `REPEATED_OBSERVATION`, or `CURRENT_REFERENCE_PATTERN` in the same implementation batch.
+- `MULTI_LAYER_CHANGE`;
+- regional lane + separate ROF-J 0–10 lane;
+- no causal arrow between the two information layers;
+- one sentence stating that both contain a difference while remaining separate;
+- do not map `REPEATED_OBSERVATION` or `CURRENT_REFERENCE_PATTERN` in the same implementation batch.
 
 ## Stop conditions
 
