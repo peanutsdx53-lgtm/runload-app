@@ -1,14 +1,14 @@
 # RunLoad Interpretation Room — Implementation Status
 
 Date: 2026-09-21
-Status: INTERPRETATION IMPLEMENTATION CLOSED — STAGE 8E COMPLETE WITH EXECUTION-ENVIRONMENT LIMITATION
-Branch: `feature/runload-interpretation-room-v1`
-Draft PR: #49
-Base commit: `8d2937c7bbfe3a7094601628a109d31309edd775`
+Status: RESULT-UNDERSTANDING FEATURE FINALIZED — FULL VERIFICATION PASS; PR #51 PENDING MERGE
+Branch: `cleanup/interpretation-finalize-20260921`
+Draft PR: #51
+Cleanup base commit: `26a8fb3fd4759f064e21212bfce841ad8f89c766`
 
 ## Resume protocol
 
-This file is the durable restart point for implementation. If work resumes in another ChatGPT conversation, read this file first, then inspect PR #49, the branch head, and changed files before making any edits.
+This file is the durable restart point for implementation. If work resumes in another ChatGPT conversation, read this file first, then inspect PR #51, the branch head, and changed files before making any edits.
 
 Do not rely on prior chat history. Use the branch state and this ledger as the implementation truth.
 
@@ -717,6 +717,44 @@ Verification:
 - exact current save-reader behavior: **4/4 PASS**;
 - hotfix source/runtime checks: **23/23 PASS**;
 - protected calculation and ROF-J cores unchanged.
+
+## Final feature cleanup and verification checkpoint — 2026-09-21
+
+Status: **COMPLETE — FULL PASS BEFORE MERGE**
+
+Durable audit:
+- `docs/interpretation/FINAL_FEATURE_CLEANUP_AUDIT_20260921.md`
+
+Purpose:
+- the Result screen generates/displays the two result layers;
+- this feature organizes already-saved results so a beginner can identify what to look at, what can be understood, what remains unknown, and what to check next;
+- it does not change the underlying calculated result.
+
+Final cleanup:
+- retired `activationScreen.js` removed;
+- retired activation CSS removed;
+- duplicate global understanding entry removed;
+- unused screen-architecture exports removed;
+- temporary validation overlays removed;
+- only the minimum legacy activation URL/return compatibility remains.
+
+Verification:
+- result-understanding suites: **19/19 PASS; 175/175 assertions PASS**;
+- previous Current regression suites: **17/17 PASS; 273/273 assertions PASS**;
+- integrated Current verifier: **36/36 PASS; 448/448 assertions PASS**;
+- JS/MJS syntax in integrated Current source: **98/98 PASS**;
+- runtime SHA-256: **78/78 PASS**;
+- protected Primary and ROF-J cores: **unchanged / PASS**.
+
+Current update requirement:
+- do not reuse the 2026-09-20 verification report unchanged;
+- the next Current App Source must include the updated Stage 4 / Stage 6 regression tests, the 19 result-understanding suites, required ROF-J provenance, and the integrated verifier;
+- Current documentation must explicitly state why the feature is necessary, what it does, and what it does not do.
+
+Next application phase after merge/Current promotion:
+- PC/mobile layout correction;
+- small application defects;
+- final UI refinement.
 
 ## Stop conditions
 
