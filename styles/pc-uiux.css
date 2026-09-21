@@ -948,3 +948,171 @@
     overflow-x: auto;
   }
 }
+
+
+/* Plan and Course: readable form widths and content-sized controls. */
+@media (min-width: 80rem) {
+  .screen--plan.prototype-parity--plan {
+    width: min(100%, 66rem);
+    margin-inline: auto;
+  }
+
+  .screen--plan.prototype-parity--plan .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 19rem;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .screen--plan.prototype-parity--plan .confirm-panel {
+    position: sticky;
+    top: 6rem;
+  }
+
+  .screen--plan.prototype-parity--plan .plan-date-control {
+    width: 12rem;
+    max-width: 100%;
+  }
+
+  .screen--plan.prototype-parity--plan .two {
+    grid-template-columns: 10.5rem 13.5rem;
+    gap: 1rem;
+    justify-content: start;
+  }
+
+  .screen--plan.prototype-parity--plan .metric-field > div {
+    width: 100%;
+  }
+
+  .screen--plan.prototype-parity--plan .metric-field input {
+    text-align: center;
+  }
+
+  .screen--plan.prototype-parity--plan .field textarea[name="memo"] {
+    width: min(100%, 36rem);
+  }
+
+  .screen--plan.prototype-parity--plan .saved {
+    width: min(100%, 66rem);
+  }
+
+  .screen--course-library.prototype-parity--course {
+    width: min(100%, 66rem);
+    margin-inline: auto;
+  }
+
+  .screen--course-library.prototype-parity--course .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .screen--course-library.prototype-parity--course .card {
+    min-width: 0;
+  }
+
+  .screen--course-editor.prototype-parity--course .editor-main {
+    width: min(100%, 56rem);
+    margin-inline: auto;
+  }
+
+  .screen--course-editor.prototype-parity--course .e-card,
+  .screen--course-editor.prototype-parity--course .preview,
+  .screen--course-editor.prototype-parity--course .editor-actions {
+    width: 100%;
+  }
+
+  .screen--course-editor.prototype-parity--course input[name="courseName"] {
+    width: min(100%, 28rem);
+  }
+
+  .screen--course-editor.prototype-parity--course .mode {
+    width: 100%;
+    display: grid;
+    gap: 0.45rem;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  .screen--course-editor.prototype-parity--course .grade-mode {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .screen--course-editor.prototype-parity--course .mode.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .screen--course-editor.prototype-parity--course .mode button {
+    width: 100%;
+    min-width: 0;
+    min-height: 3.1rem;
+    padding: 0.55rem 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .screen--course-editor.prototype-parity--course .inputs {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 0.9rem 1.2rem;
+    justify-content: start;
+    align-items: end;
+  }
+
+  .screen--course-editor.prototype-parity--course .mfield {
+    width: max-content;
+    max-width: 100%;
+  }
+
+  .screen--course-editor.prototype-parity--course .mfield > div,
+  .screen--course-editor.prototype-parity--course .percent-control {
+    width: 8rem;
+    max-width: 100%;
+  }
+
+  .screen--course-editor.prototype-parity--course .mfield input,
+  .screen--course-editor.prototype-parity--course .percent-control input {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .screen--course-editor.prototype-parity--course .section-row {
+    grid-template-columns: 6.5rem 9rem 8rem;
+    gap: 0.8rem;
+    justify-content: start;
+    align-items: end;
+  }
+
+  .screen--course-editor.prototype-parity--course .section-row-head {
+    grid-column: 1 / -1;
+  }
+
+  .screen--course-editor.prototype-parity--course .section-field,
+  .screen--course-editor.prototype-parity--course .section-grade {
+    min-width: 0;
+  }
+
+  .screen--course-editor.prototype-parity--course .section-field select,
+  .screen--course-editor.prototype-parity--course .section-field .percent-control {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .screen--course-editor.prototype-parity--course .mix-row {
+    grid-template-columns: minmax(9rem, max-content) 7rem;
+    justify-content: start;
+  }
+
+  .screen--course-editor.prototype-parity--course .mix-row .percent-control {
+    width: 7rem;
+  }
+
+  .screen--course-editor.prototype-parity--course .field select[name="primarySurfaceKey"] {
+    width: 18rem;
+    max-width: 100%;
+  }
+}
