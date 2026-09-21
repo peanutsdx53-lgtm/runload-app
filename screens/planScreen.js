@@ -24,7 +24,8 @@ export function renderPlanScreen({ services, context }) {
   const nextCheck=recent?.reflectionContext?.nextCheckPoint || recent?.reflectionContext?.nextCheck || "";
   const distance=session.distanceKm ?? ""; const duration=session.durationMinutes ?? "";
   return `<div class="screen screen--plan prototype-parity prototype-parity--plan secondary-derived-screen">
-    <a class="secondary-derived-back" href="#/home">← Homeへ戻る</a>
+    <header class="secondary-derived-head"><a class="secondary-derived-back" href="#/home">← Homeへ戻る</a><strong>次の予定</strong><span aria-hidden="true"></span></header>
+    <div class="secondary-derived-body">
     <section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">${escapeHtml(formatLocalDate(scheduledDate))}</span></section><p class="visually-hidden">予定条件は利用者が入力した事実であり、数値スコアではなく入力した予定事実として扱います。おすすめ・安全判断・自動処方ではありません。</p>
     ${nextCheck?`<section class="carry"><i></i><div><small>前回から引き継いだ内容</small><strong>次のランで確認したいこと</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
     <form id="plan-form" class="layout" novalidate>
@@ -46,5 +47,6 @@ export function renderPlanScreen({ services, context }) {
       <aside class="panel confirm-panel"><div class="panel-head"><small>CHECK</small><h2>保存前の確認</h2><p>入力した予定だけを確認します。</p></div><div class="confirm"><div class="summary-card"><small data-plan-summary-kind>${planType==="rest"?"休養予定":"走行予定"}</small><strong data-plan-summary-date>${escapeHtml(formatLocalDate(scheduledDate))}</strong><span data-plan-summary-line>${planType==="rest"?"走行条件なし":`${distance||"—"} km・${duration||"—"}分・${course.name||"コース未選択"}`}</span></div><div class="summary-row" data-plan-summary-metrics${planType==="rest"?" hidden":""}><div><small>距離</small><strong data-plan-summary-distance>${escapeHtml(distance||"—")} km</strong></div><div><small>時間</small><strong data-plan-summary-duration>${escapeHtml(duration||"—")}分</strong></div><div><small>コース</small><strong data-plan-summary-course>${escapeHtml(course.name||"未選択")}</strong></div></div><div class="form-messages" data-form-messages tabindex="-1" hidden></div><button class="save" type="submit">${editing?"変更を保存する":"予定を保存する"}</button></div></aside>
     </form>
     <details class="saved"><summary><div><strong>保存した予定</strong><span>予定内容と実施状況を見る</span></div><span>${plans.length}件</span></summary><div class="saved-list">${plans.length?plans.map(savedPlanCard).join(""):'<div class="saved-card"><strong>保存した予定はありません。</strong></div>'}</div></details>
+    </div>
   </div>`;
 }
