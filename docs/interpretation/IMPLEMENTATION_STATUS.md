@@ -366,7 +366,7 @@ Release state:
 - no merge or Current promotion has been performed
 
 ## Stage 8 — Understanding-Focused Visual Interpretation
-Status: **STAGE 8B IN PROGRESS — FOUR PRIMARY MEANING PATTERNS MAPPED AND VERIFIED**
+Status: **STAGE 8B COMPLETE — FIVE PRIMARY VISUAL MAPPINGS VERIFIED; STAGE 8C NEXT**
 
 Controlling work plan:
 - `docs/interpretation/STAGE8_UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
@@ -556,14 +556,42 @@ Verification:
 - targeted 390 px layout review showed the fixed-size count visual inside the canvas;
 - runtime/PWA hash contracts updated.
 
+## Stage 8B completion checkpoint
+
+Durable completion audit:
+- `docs/interpretation/STAGE8B_MEANING_VISUAL_MAPPING_AUDIT_20260921.md`
+
+Completed mappings:
+- `CURRENT_SHIFT_WITH_HISTORY` → Locate + compatible previous → current;
+- `CONDITION_AND_RESULT_CHANGED` → Locate + Compare + separate condition facts;
+- `MULTI_LAYER_CHANGE` → separate regional / ROF-J lanes;
+- `REPEATED_OBSERVATION` → Locate + explicit compatible-record counts;
+- `CURRENT_REFERENCE_PATTERN` → Locate + Reference-100 → current.
+
+Combined Stage 8B integrity checkpoint:
+- **21/21 PASS**;
+- Stage 7 entry remains exactly two ordinary choices;
+- Stage 7 understand step remains at most three choices;
+- runtime/PWA visual-file contracts aligned;
+- protected Primary and ROF-J core hashes unchanged;
+- PR #49 remains Draft and unmerged;
+- main and formal Current remain untouched.
+
+Visual-audit boundary:
+- targeted 390 px static-layout review completed for all five patterns;
+- full production-browser mobile/desktop/theme/dark/reduced-motion audit remains Stage 8E.
+
 ## Current next action
 
-Continue Stage 8B with **one Meaning Core code only**:
+Begin **Stage 8C — Guided-dialogue integration** with one limited batch.
 
-- `CURRENT_REFERENCE_PATTERN`;
-- Locate + Reference-100 → current;
-- no previous marker when compatible previous is unavailable;
-- explain current position as a future comparison point, not a good/bad evaluation.
+First Stage 8C target:
+- verify that visual explanation appears only after the user chooses the understanding branch and then `図で確認`;
+- keep one main visual per step;
+- keep Evidence and self-management bridges downstream;
+- add only short sequential reveal if it improves reading order;
+- Reduced Motion must show the complete state immediately;
+- do not redesign routes or downstream functions.
 
 ## Stop conditions
 
