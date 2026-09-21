@@ -1,7 +1,7 @@
 # RunLoad Interpretation Room — Implementation Status
 
 Date: 2026-09-21
-Status: RESULT-UNDERSTANDING FEATURE COMPLETE — MERGED TO MAIN; CURRENT PROMOTION IN PROGRESS
+Status: RESULT-UNDERSTANDING FEATURE COMPLETE — MERGED TO MAIN; CURRENT 2026-09-21 PROMOTED AND VERIFIED
 Branch: `main`
 Merged PR: #51
 Main merge commit: `3b096f51b219ff7b69299d3f03eeb7b7ec26d6a6`
@@ -755,6 +755,35 @@ Next application phase after merge/Current promotion:
 - PC/mobile layout correction;
 - small application defects;
 - final UI refinement.
+
+## Current 2026-09-21 promotion completion
+
+Status: **COMPLETE**
+
+Durable record:
+- `docs/interpretation/CURRENT_PROMOTION_20260921.md`
+
+Artifacts:
+- App Source SHA-256: `2053df07c93ca1d73ae861ec3ee4fadc427f77e27780841a6dc8c37f77fc01ab`
+- Public App SHA-256: `65d099a18bed0e73a17b107c993eccf0150b217babfb7d98b867b384d445795b`
+- CURRENT COMPLETE SHA-256: `83118aa846c706da13250cff42b30ac64ea909a0b67423cef68b858e83ad083d`
+
+Final verification:
+- integrated App Source: **36/36 suites; 448/448 assertions PASS**;
+- syntax: **98/98 PASS**;
+- runtime SHA: **78/78 PASS**;
+- App Source/Public App runtime parity: **78/78 PASS**;
+- Current root self-verifier before packaging: **14/14 PASS**;
+- Current root self-verifier after fresh extraction: **14/14 PASS**;
+- protected Primary and ROF-J cores unchanged.
+
+Library:
+- `/RunLoad_Current_20260921` contains App Source, Public App, CURRENT COMPLETE, and Final Audit.
+
+Publication constraint:
+- no fresh GitHub Pages run/artifact was observed, so no new Pages artifact parity claim is made.
+
+The result-understanding feature is closed. The next phase is PC/mobile layout correction and small application defect repair.
 
 ## Stop conditions
 
