@@ -18,7 +18,8 @@ export function renderSupportGuidanceScreen({ context } = {}) {
       ? "共有用の整理へ戻る"
       : "その他へ戻る";
   return `<div class="screen screen--support-guidance prototype-parity prototype-parity--support secondary-derived-screen">
-    <a class="secondary-derived-back" href="${backHref}">← ${backLabel}</a>
+    <header class="secondary-derived-head"><a class="secondary-derived-back" href="${backHref}">← ${backLabel}</a><strong>公的サポート</strong><span aria-hidden="true"></span></header>
+    <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">PUBLIC SUPPORT</p><h1>公的サポート</h1><p>症状や体調について、RunLoadとは別の公的な窓口を確認します。</p></section>
     <p class="notice">この画面はRunLoadの部位ごとの目安や疲労感の値から緊急性を判定するものではありません。</p><p class="visually-hidden">RunLoadの数値表示ではなく、本人の症状や体調をもとに公的窓口を選びます。RunLoadは緊急性、診断、受診要否を判定しません。</p>
     <div class="cards">
@@ -27,5 +28,6 @@ export function renderSupportGuidanceScreen({ context } = {}) {
       <article class="card"><small>医療機関を探す</small><strong>医療情報ネット（ナビイ）</strong><p>厚生労働省の全国医療機関検索です。診療科目、場所、受付日時などから検索できます。</p><a href="https://www.iryou.teikyouseido.mhlw.go.jp/znk-web/juminkanja/S2300/initialize" target="_blank" rel="noreferrer"><span>医療機関を探す</span><span>›</span></a></article>
     </div>
     <a class="back" data-context-back-duplicate href="${backHref}">‹ ${backLabel}</a>
+    </div>
   </div>`;
 }
