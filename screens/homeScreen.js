@@ -50,7 +50,7 @@ function renderLatestRecord(experience) {
   if (record.activityType === "rest") {
     return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">REST</span></div><div class="plan"><small>保存した内容</small><strong>休養</strong><span>走行による12部位結果は作成しません</span></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>記録を開く</span><span>›</span></a></article>`;
   }
-  return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実際に走った時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を開く</span><span>›</span></a></article>`;
+  return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実際に走った時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><div class="card-actions"><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を見る</span><span>›</span></a><a class="card-link card-link--understanding" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=home"><span>結果を理解する</span><span>›</span></a></div></article>`;
 }
 
 function nextPlan(services) {
@@ -78,6 +78,5 @@ export function renderHomeScreen({ services }) {
     <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div><span class="date-badge">${escapeHtml(today)}</span></section>
     ${renderFocus(latestExperience, draft)}
     <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div><a href="#/history">履歴を見る</a></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
-    ${latestExperience ? `<section class="section"><div class="section-head"><div><small>WHEN NEEDED</small><h2>必要なときに開く</h2></div></div><div class="support support--single"><a href="#/activation?recordId=${encodeURIComponent(latestExperience.record.id)}"><span aria-hidden="true">◇</span><div><strong>結果の活用</strong><small>振り返る・共有する・次を考える</small></div></a></div></section>` : ""}
   </div>`;
 }

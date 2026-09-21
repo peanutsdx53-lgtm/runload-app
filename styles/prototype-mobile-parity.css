@@ -123,6 +123,9 @@
 .prototype-parity--home .metrics strong{font-size:13px}
 .prototype-parity--home .metrics small{margin-top:3px;font-size:7px;color:var(--muted)}
 .prototype-parity--home .card-link{width:100%;min-height:42px;margin-top:11px;border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--accent2);display:flex;align-items:center;justify-content:space-between;padding:8px 10px;font-size:9px;font-weight:850}
+.prototype-parity--home .card-actions{display:grid;gap:6px;margin-top:11px}
+.prototype-parity--home .card-actions .card-link{margin-top:0}
+.prototype-parity--home .card-link--understanding{border-color:transparent;background:transparent;color:var(--accent2);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent)}
 .prototype-parity--home .plan{margin-top:12px;padding:11px;border-radius:13px;background:var(--soft)}
 .prototype-parity--home .plan small,.prototype-parity--home .plan strong,.prototype-parity--home .plan span{display:block}
 .prototype-parity--home .plan small{font-size:7px;color:var(--muted);font-weight:850}
@@ -956,6 +959,13 @@
 .prototype-parity--result .activation-link small{font-size:7px;color:var(--muted);font-weight:850}
 .prototype-parity--result .activation-link strong{margin-top:3px;font-size:11px}
 .prototype-parity--result .activation-link i{font-style:normal;color:var(--accent-strong);font-size:20px}
+.prototype-parity--result .understanding-link-wrap{max-width:840px;margin:18px auto 0}
+.prototype-parity--result .understanding-link{width:100%;min-height:64px;padding:12px 14px;border:1px solid var(--line);border-radius:17px;background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:space-between;text-align:left;text-decoration:none;box-shadow:var(--shadow-soft)}
+.prototype-parity--result .understanding-link small,.prototype-parity--result .understanding-link strong,.prototype-parity--result .understanding-link em{display:block}
+.prototype-parity--result .understanding-link small{font-size:7px;color:var(--muted);font-weight:850}
+.prototype-parity--result .understanding-link strong{margin-top:3px;font-size:11px}
+.prototype-parity--result .understanding-link em{margin-top:4px;color:var(--muted);font-size:8px;font-style:normal;line-height:1.45}
+.prototype-parity--result .understanding-link i{font-style:normal;color:var(--accent-strong);font-size:20px}
 
 
 /* ===== Frozen prototype: history ===== */

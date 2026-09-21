@@ -13,7 +13,7 @@ const TOPBAR_CONTEXT_LABELS = Object.freeze({
   result: "RESULT",
   "body-part-detail": "RESULT / REGION",
   history: "HISTORY",
-  activation: "RESULT USE",
+  "interpretation-room": "INTERPRETATION",
   simulation: "SIMULATION",
   plan: "PLAN",
   consultation: "SHARE PREP",
@@ -43,7 +43,7 @@ const PRIMARY_SECTION_BY_SCREEN = Object.freeze({
   "course-editor": "record-input",
   "gpx-analysis": "record-input",
   "body-part-detail": "result",
-  activation: "result",
+  "interpretation-room": "result",
   simulation: "result",
   plan: "home",
   reading: "more",
@@ -155,7 +155,22 @@ function renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult) 
   return `<header class="prototype-mobile-topbar"><a class="prototype-mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen))}</small></a><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
 }
 
+function renderImmersiveHeader(currentScreen, currentLocation) {
+  const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { title: "RunLoad解釈", backHref: "#/home", backLabel: "Home" };
+  return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(context.title)}</strong><span class="interpretation-room-header__spacer" aria-hidden="true"></span></header>`;
+}
+
 export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {} }) {
+  const immersive = currentScreen === "interpretation-room";
+  if (immersive) {
+    return `
+      <div class="app-shell app-shell--immersive">
+        ${renderImmersiveHeader(currentScreen, currentLocation)}
+        <main id="main-content" class="app-main" tabindex="-1">
+          ${screenContent}
+        </main>
+      </div>`;
+  }
   return `
     <div class="app-shell">
       ${renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult)}

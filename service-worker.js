@@ -1,18 +1,20 @@
+// Runtime revision: interpretation-entry-gates-v1
 const CACHE_NAME = "runload-app-current";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
+  "./core/interpretationCore.js",
   "./core/runloadCore.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./index.html",
   "./manifest.webmanifest",
-  "./screens/activationScreen.js",
   "./screens/bodyPartDetailScreen.js",
   "./screens/consultationScreen.js",
   "./screens/courseEditorScreen.js",
   "./screens/courseLibraryScreen.js",
   "./screens/historyScreen.js",
+  "./screens/interpretationRoomScreen.js",
   "./screens/homeScreen.js",
   "./screens/gpxAnalysisScreen.js",
   "./screens/moreScreen.js",
@@ -30,6 +32,7 @@ const PRECACHE_URLS = [
   "./styles/screens.css",
   "./styles/prototype-fidelity-v2.css",
   "./styles/prototype-mobile-parity.css",
+  "./styles/interpretation-room.css",
   "./styles/product-quality.css",
   "./styles/tokens.css",
   "./ui/appRouter.js",
@@ -41,6 +44,8 @@ const PRECACHE_URLS = [
   "./ui/guideContent.js",
   "./ui/hierarchicalExplanation.js",
   "./ui/historyPresentation.js",
+  "./ui/interpretationRoomPresentation.js",
+  "./ui/prototypeBodyRegionVisuals.js",
   "./ui/interactions/browserUtilities.js",
   "./ui/interactions/consultationInteractions.js",
   "./ui/interactions/readingInteractions.js",
@@ -75,17 +80,21 @@ self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)));
 });
 
+const PRECACHE_PATHS = new Set(PRECACHE_URLS.map((path) => new URL(path, self.location).pathname));
+
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(keys
         .filter((key) => key.startsWith(RUNLOAD_CACHE_PREFIX) && key !== CACHE_NAME)
         .map((key) => caches.delete(key))))
+      .then(() => caches.open(CACHE_NAME))
+      .then((cache) => cache.keys().then((requests) => Promise.all(requests
+        .filter((request) => !PRECACHE_PATHS.has(new URL(request.url).pathname))
+        .map((request) => cache.delete(request)))))
       .then(() => self.clients.claim())
   );
 });
-
-const PRECACHE_PATHS = new Set(PRECACHE_URLS.map((path) => new URL(path, self.location).pathname));
 
 self.addEventListener("fetch", (event) => {
   const request = event.request;
