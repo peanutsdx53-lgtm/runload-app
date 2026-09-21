@@ -41,6 +41,13 @@ await test('PWA-AND-RUNTIME-DROP-RETIRED-SCREEN',()=>{
   assert.doesNotMatch(read('RUNTIME_SHA256SUMS.txt'),/screens\/activationScreen\.js/);
 });
 
+await test('RETIRED-ACTIVATION-STYLES-REMOVED',()=>{
+  const screens=read('styles/screens.css');
+  const mobile=read('styles/prototype-mobile-parity.css');
+  assert.doesNotMatch(screens,/\.activation-(?:intro|grid|source|card)|\.result-activation-hub/);
+  assert.doesNotMatch(mobile,/prototype-parity--activation|\.activation-link(?:-wrap)?/);
+});
+
 await test('FINAL-CLEANUP-PWA-REVISION-IS-PRESENT',()=>{
   assert.match(read('service-worker.js'),/interpretation-final-cleanup-v1/);
 });
