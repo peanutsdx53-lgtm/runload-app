@@ -1,5 +1,5 @@
-// Runtime revision: pc-header-pin-record-revert-20260921-04
-const CACHE_NAME = "runload-app-current-20260921-04";
+// Runtime revision: desktop-workspace-refresh-20260921-05
+const CACHE_NAME = "runload-app-current-20260921-05";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -34,7 +34,7 @@ const PRECACHE_URLS = [
   "./styles/prototype-mobile-parity.css",
   "./styles/interpretation-room.css",
   "./styles/product-quality.css",
-  "./styles/pc-uiux.css",
+  "./styles/desktop-workspace.css",
   "./styles/tokens.css",
   "./ui/appRouter.js",
   "./ui/appSettings.js",
