@@ -43,8 +43,8 @@ await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
   const expected=[
     '20fc3b838f4251d08c765c46fa07d29b905e38e2b38474cea85bcf0dd77845a8  core/interpretationCore.js',
     '56eb4ff3d5e4c826d45bd283f6b7378ba2e50632e380b9d37bc238ddcc73cd34  screens/interpretationRoomScreen.js',
-    'bb327c93303a835a43b41f41f8235d27e4b695bcaf6a58f754b6d2e90dedea39  styles/interpretation-room.css',
-    '6f9cf5af4302fe242aeed3cd5ddbd35aaa9586d0990d6250e090946b51923e90  ui/interpretationRoomPresentation.js',
+    '9ab2b8ea7c77779f8b9e3a0817fa704450139e8213627e675a444b99c85cca1c  styles/interpretation-room.css',
+    'f1175e6f36d1043ae47136854812f5f443784affa4f93806a43a84bc001bc05b  ui/interpretationRoomPresentation.js',
     '044d9a07dfda7cf01c6b98088892d2ef2f8a057595bf43fc3a9d68d637c039d4  ui/prototypeBodyRegionVisuals.js',
   ];
   for(const line of expected) assert.ok(manifest.includes(line),line);
