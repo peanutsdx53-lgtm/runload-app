@@ -61,7 +61,7 @@ function baseOutput(primaryCode='CONDITION_AND_RESULT_CHANGED'){
 
 await test('SUMMARY-ANSWERS-WHAT-TO-UNDERSTAND-FIRST',()=>{
   const html=renderInterpretationRoom({output:baseOutput(),view:'summary',origin:'result'});
-  assert.match(html,/今回のRunLoad解釈/);
+  assert.match(html,/今回の確認/);
   assert.match(html,/股関節部の表示と坂の条件の両方が変わっています/);
   assert.match(html,/原因として結び付けません/);
   assert.match(html,/今、確認したいことはどちらですか/);
