@@ -1371,3 +1371,27 @@
     margin-inline: auto;
   }
 }
+
+/* Auxiliary screens: keep support and privacy guidance at readable desktop widths. */
+@media (min-width: 80rem) {
+  .screen--support-guidance.prototype-parity--support {
+    width: min(100%, 50rem);
+    margin-inline: auto;
+  }
+
+  .screen--support-guidance.prototype-parity--support .card a {
+    width: max-content;
+    max-width: 100%;
+    min-width: 12rem;
+    gap: 1.5rem;
+  }
+
+  .screen--privacy.prototype-parity--privacy {
+    width: min(100%, 54rem);
+    margin-inline: auto;
+  }
+
+  .screen--privacy.prototype-parity--privacy .actions {
+    width: min(100%, 28rem);
+  }
+}
