@@ -823,3 +823,128 @@
     transform: translate(-50%, -50%) rotate(45deg);
   }
 }
+
+
+/* Body-region detail and History: wide charts, readable non-chart content. */
+@media (min-width: 80rem) {
+  .screen--body-part-detail.prototype-parity--result .detail-main {
+    width: min(100%, 76rem);
+    margin-inline: auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .screen--body-part-detail.prototype-parity--result :is(
+    .detail-title,
+    .detail-hero,
+    .compact-boundary,
+    .screen-actions
+  ) {
+    width: min(100%, 58rem);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .screen--body-part-detail.prototype-parity--result .trend-card {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1.25rem 1.4rem;
+  }
+
+  .screen--body-part-detail.prototype-parity--result .trend-svg {
+    width: 100%;
+    max-height: none;
+  }
+
+  .screen--history.prototype-parity--history {
+    width: min(100%, 80rem);
+    margin-inline: auto;
+  }
+
+  .screen--history.prototype-parity--history .history-mode {
+    width: min(100%, 42rem);
+  }
+
+  .screen--history.prototype-parity--history .history-view--records {
+    width: min(100%, 68rem);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .screen--history.prototype-parity--history .history-view--records .record-filters {
+    grid-template-columns: minmax(22rem, 1fr) auto;
+    gap: 1rem;
+  }
+
+  .screen--history.prototype-parity--history .history-view--records .record-filters label {
+    min-width: 0;
+  }
+
+  .screen--history.prototype-parity--history .history-view--records .record-filters input[type="search"] {
+    width: min(100%, 34rem);
+  }
+
+  .screen--history.prototype-parity--history .history-view--records .type-toggle {
+    width: max-content;
+    max-width: 100%;
+  }
+
+  .screen--history.prototype-parity--history .history-view--records .record-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .screen--history.prototype-parity--history .history-view--records .record-item {
+    min-width: 0;
+  }
+
+  .screen--history.prototype-parity--history .history-view--compare {
+    width: 100%;
+  }
+
+  .screen--history.prototype-parity--history .history-view--compare .comparison-layout {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .screen--history.prototype-parity--history .history-view--compare .chart-card {
+    grid-column: 1;
+    min-width: 0;
+    padding: 1.15rem 1.25rem;
+  }
+
+  .screen--history.prototype-parity--history .history-view--compare .chart-wrap {
+    width: 100%;
+    margin-top: 0.8rem;
+    overflow: visible;
+  }
+
+  .screen--history.prototype-parity--history .history-view--compare .chart-wrap svg {
+    width: 100%;
+    min-height: 23rem;
+  }
+
+  .screen--history.prototype-parity--history .history-view--compare .selected-card {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 6rem;
+  }
+
+  .screen--history.prototype-parity--history .history-view--compare .records-disclosure,
+  .screen--history.prototype-parity--history .history-view--compare .comparison-side,
+  .screen--history.prototype-parity--history .history-view--compare .screen-footnote {
+    grid-column: 1 / -1;
+  }
+
+  .screen--history.prototype-parity--history .history-view--compare .records-disclosure {
+    width: 100%;
+  }
+
+  .screen--history.prototype-parity--history .history-view--compare .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
