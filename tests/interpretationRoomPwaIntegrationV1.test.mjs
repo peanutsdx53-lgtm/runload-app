@@ -9,7 +9,7 @@ function precache(sw){const block=sw.slice(sw.indexOf('const PRECACHE_URLS = [')
 await test('PWA-PRECACHE-INCLUDES-INTERPRETATION-RUNTIME',async()=>{
   const sw=await source('service-worker.js');
   const paths=precache(sw);
-  for(const rel of ['./core/interpretationCore.js','./screens/interpretationRoomScreen.js','./styles/interpretation-room.css','./ui/interpretationRoomPresentation.js']) assert.ok(paths.includes(rel),rel);
+  for(const rel of ['./core/interpretationCore.js','./screens/interpretationRoomScreen.js','./styles/interpretation-room.css','./ui/interpretationRoomPresentation.js','./ui/prototypeBodyRegionVisuals.js']) assert.ok(paths.includes(rel),rel);
 });
 
 await test('PWA-PRECACHE-EXCLUDES-RETIRED-ACTIVATION-SCREEN',async()=>{
@@ -43,15 +43,16 @@ await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
   const expected=[
     '20fc3b838f4251d08c765c46fa07d29b905e38e2b38474cea85bcf0dd77845a8  core/interpretationCore.js',
     '56eb4ff3d5e4c826d45bd283f6b7378ba2e50632e380b9d37bc238ddcc73cd34  screens/interpretationRoomScreen.js',
-    '0df4867683c7eba0ba940e0d3d769602eaf2c4292615e4f7d5863f2ae9dc0462  styles/interpretation-room.css',
-    '3bd387fdbe4f70c23e4c4e7fc70b1fdddd536e1a53cf61161473a3c7e3e93730  ui/interpretationRoomPresentation.js',
+    '307170d3fba2825f491c803ec321c7f2300e1d8dd2a68363797f87225a27284d  styles/interpretation-room.css',
+    '1950c7c3ba0fd916002351f3c91b989ec0d8e2fe0fb40e9a51f84d35cedf9748  ui/interpretationRoomPresentation.js',
+    '044d9a07dfda7cf01c6b98088892d2ef2f8a057595bf43fc3a9d68d637c039d4  ui/prototypeBodyRegionVisuals.js',
   ];
   for(const line of expected) assert.ok(manifest.includes(line),line);
 });
 
 await test('RUNTIME-HASH-MANIFEST-TRACKS-STAGE4-SERVICE-WORKER',async()=>{
   const manifest=await source('RUNTIME_SHA256SUMS.txt');
-  assert.match(manifest,/604a1e3f9e03d0fc1566f51bd3457d67bd8a106e1978855356dd5ee000c44771  service-worker\.js/);
+  assert.match(manifest,/0463e3b47218ac675e345d5241c4d382f7c862c5f7ccc0732d25d6dd0540e052  service-worker\\.js/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
