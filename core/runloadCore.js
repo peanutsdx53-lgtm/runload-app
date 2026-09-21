@@ -77,7 +77,7 @@ function registerPwaServiceWorker() {
 
   window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register("./service-worker.js");
+      const registration = await navigator.serviceWorker.register("./service-worker.js", { updateViaCache: "none" });
       await registration.update();
       if (registration.waiting && navigator.serviceWorker.controller) {
         showUpdateNotice(registration);
