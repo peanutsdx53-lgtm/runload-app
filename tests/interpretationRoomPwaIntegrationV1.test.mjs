@@ -52,7 +52,7 @@ await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
 
 await test('RUNTIME-HASH-MANIFEST-TRACKS-CURRENT-SERVICE-WORKER',async()=>{
   const manifest=await source('RUNTIME_SHA256SUMS.txt');
-  assert.match(manifest,/0463e3b47218ac675e345d5241c4d382f7c862c5f7ccc0732d25d6dd0540e052  service-worker\.js/);
+  assert.match(manifest,/f8e32ba17d22f66677ce257699261a66d4f389928007c0692bc6ba6685c1669c  service-worker\\.js/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
