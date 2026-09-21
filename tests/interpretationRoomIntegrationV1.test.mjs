@@ -40,6 +40,19 @@ function output(overrides={}){
       ],
       selectedRegionIds:['BA-DISP-014'],
       limitationCodes:['NO_DIAGNOSIS','NO_CAUSAL_INFERENCE','NO_COMPLETE_BIBLIOGRAPHY_CLAIM'],
+      meaning:{
+        primaryCode:'CONDITION_AND_RESULT_CHANGED',
+        secondaryCodes:['MULTI_LAYER_CHANGE','CURRENT_SHIFT_WITH_HISTORY','ROF_PRE_POST_CHANGE','CONDITION_DIFFERENCES_PRESENT'],
+        focusRegionIds:['BA-DISP-014'],
+        availableModes:['simple','visual','difference','evidence'],
+        factsUsed:[
+          {type:'REGION_CURRENT_REFERENCE',regionId:'BA-DISP-014',label:'股関節部',value:104,referenceDirection:'ABOVE_REFERENCE'},
+          {type:'REGION_PREVIOUS_DIFFERENCE',regionId:'BA-DISP-014',label:'股関節部',currentValue:104,previousValue:101,delta:3,direction:'UP',previousRecordId:'p1',previousDate:'2026-09-19'},
+          {type:'ROF_PRE_POST',pre:4,post:6,delta:2,direction:'UP'},
+          {type:'CONDITION_DIFFERENCES',count:1,labels:['GRADE'],previousRecordId:'p1',previousDate:'2026-09-19'},
+        ],
+        boundaryCodes:['NO_DIAGNOSIS','NO_INJURY_RISK','NO_SAFETY_OR_RUN_PERMISSION','NO_CROSS_REGION_RANKING','NO_CAUSAL_INFERENCE','ROF_SEPARATE_SUBJECTIVE_LAYER'],
+      },
     },
     evidence:{
       completeness:{completePerContributionTrace:false,wordingCode:'DO_NOT_CLAIM_FULL_BIBLIOGRAPHY'},
@@ -62,26 +75,29 @@ function output(overrides={}){
 
 await test('SUMMARY-IS-INTERPRETATION-FIRST',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  assert.match(html,/RunLoad解釈/);
-  assert.match(html,/今回の12部位では/);
-  assert.ok(html.indexOf('今回の12部位では')<html.indexOf('確認する内容を選択してください。'));
+  assert.match(html,/今回の読み方/);
+  assert.match(html,/股関節部の表示と坂の条件の両方が変わっています/);
+  assert.match(html,/そう読める理由/);
+  assert.ok(html.indexOf('今回の読み方')<html.indexOf('別の見方で確認'));
+  assert.doesNotMatch(html,/今回の12部位では/);
 });
 
-await test('SUMMARY-HAS-AT-MOST-FOUR-FIRST-LEVEL-CHOICES',()=>{
+await test('SUMMARY-HAS-AT-MOST-FOUR-ALTERNATIVE-VIEWS',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  const count=(html.match(/class="interpretation-choice"/g)||[]).length;
+  const count=(html.match(/class="interpretation-view-choice"/g)||[]).length;
   assert.equal(count,4);
 });
 
-await test('SUMMARY-USES-FORMAL-CHOICE-COPY',()=>{
+await test('SUMMARY-CHANGES-REPRESENTATION-INSTEAD-OF-REPEATING-FEATURE-MENU',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  for(const text of ['今回の結果を詳しく確認','過去記録との違いを確認','条件を変えた場合を確認','相談・読みものへ進む']) assert.match(html,new RegExp(text));
+  for(const text of ['簡単に見る','図で見る','違いだけ見る','根拠を見る']) assert.match(html,new RegExp(text));
+  assert.doesNotMatch(html,/今回の結果を詳しく確認|過去記録との違いを確認|相談・読みものへ進む/);
   assert.doesNotMatch(html,/どうしますか|気になりますね|おすすめです/);
 });
 
 await test('SUMMARY-KEEPS-NONCAUSAL-BOUNDARY',()=>{
   const html=renderInterpretationRoom({output:output(),view:'summary',origin:'result'});
-  assert.match(html,/因果関係はこの結果から判断しません/);
+  assert.match(html,/どの条件が結果の違いに関係したかは分けられません/);
 });
 
 await test('DETAIL-SEPARATES-REGIONAL-AND-ROF',()=>{
