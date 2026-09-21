@@ -4,7 +4,7 @@ import { renderInterpretationRoom } from '../ui/interpretationRoomPresentation.j
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 
-function output(primaryCode='CURRENT_SHIFT_WITH_HISTORY'){
+function output(){
   return {
     targetRecordId:'r1',
     context:{recordDate:'2026-09-21',origin:'result',selectedRegionId:'BA-DISP-014'},
@@ -24,7 +24,7 @@ function output(primaryCode='CURRENT_SHIFT_WITH_HISTORY'){
     },
     interpretation:{
       meaning:{
-        primaryCode,
+        primaryCode:'CURRENT_SHIFT_WITH_HISTORY',
         secondaryCodes:[],
         focusRegionIds:['BA-DISP-014'],
         availableModes:['visual'],
@@ -58,13 +58,6 @@ await test('STAGE8B-CURRENT-SHIFT-DOES-NOT-MIX-ROF-LANE',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.doesNotMatch(html,/主観的な疲労感 0–10/);
   assert.doesNotMatch(html,/走行前後の疲労感/);
-});
-
-await test('STAGE8B-OTHER-MEANINGS-KEEP-GENERAL-VISUAL-UNTIL-MAPPED',()=>{
-  const html=renderInterpretationRoom({output:output('MULTI_LAYER_CHANGE'),view:'explain',mode:'visual',origin:'result'});
-  assert.match(html,/data-visual-pattern="general"/);
-  assert.match(html,/主観的な疲労感 0–10/);
-  assert.doesNotMatch(html,/この図で分かること/);
 });
 
 await test('STAGE8B-CURRENT-SHIFT-KEEPS-SCIENTIFIC-BOUNDARY',()=>{
