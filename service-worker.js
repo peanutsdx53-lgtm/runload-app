@@ -1,5 +1,5 @@
-// Runtime revision: pc-record-uiux-refresh-20260921-03
-const CACHE_NAME = "runload-app-current-20260921-03";
+// Runtime revision: pc-header-pin-record-revert-20260921-04
+const CACHE_NAME = "runload-app-current-20260921-04";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
