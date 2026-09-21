@@ -64,14 +64,14 @@ Key frozen decisions:
 
 ## Stage ledger
 
-### Stage 0 — Durable restart mechanism
+### Durable restart mechanism
 Status: COMPLETE
 - [x] Dedicated implementation branch created from audited main baseline.
 - [x] Durable status ledger added to the branch.
 - [x] Draft PR #49 opened as an additional durable anchor.
 - Branch bootstrap commit: `397e0e78854116e28b97fa6ca813ce622697e458`
 
-### Stage 1 — Interpretation Core domain implementation
+### Interpretation Core domain implementation
 Status: COMPLETE
 Implemented:
 - [x] `core/interpretationCore.js`
@@ -105,7 +105,7 @@ Local verification against audited App Source:
 - protected Primary core SHA unchanged
 - protected ROF-J core SHA unchanged
 
-### Stage 2 — Independent Room route and presentation
+### Independent Room route and presentation
 Status: COMPLETE
 Implemented:
 - [x] canonical `interpretation-room` route
@@ -122,7 +122,7 @@ Implemented:
 - [x] immersive shell with ordinary bottom navigation and feature menu omitted
 - [x] dedicated integration suite `tests/interpretationRoomIntegrationV1.test.mjs`
 
-Stage 2 commits:
+Implementation commits:
 - Presentation: `a93992d422e6dafc681c6416e3abb46a395ec947`
 - Screen: `835464623dd901a4694a77070f78d8842d14402d`
 - Styles: `baf3f455da1a02c41cba30d4c286d3786ea475c8`
@@ -139,10 +139,10 @@ Verification against audited App Source:
 - JS/MJS syntax scan: **80 files / 0 failures**
 - protected Primary core SHA unchanged
 - protected ROF-J core SHA unchanged
-- Stage 2 integration test SHA-256: `49bf0addf2e6f77db9061764a9df81a25ffa43352fa13b916083b023761b48d2`
+- Independent-room integration test SHA-256: `49bf0addf2e6f77db9061764a9df81a25ffa43352fa13b916083b023761b48d2`
 - branch compare to audited base contains no changes to protected calculation cores
 
-### Stage 3 — Existing-screen launch points and legacy activation compatibility
+### Existing-screen launch points and legacy activation compatibility
 Status: COMPLETE
 Implemented:
 - [x] Result compact launch point reuses the existing result-use slot and opens RunLoad Interpretation
@@ -155,7 +155,7 @@ Implemented:
 - [x] duplicate public Activation renderer/menu/workspace entry retired
 - [x] dedicated launch integration suite `tests/interpretationRoomLaunchIntegrationV1.test.mjs`
 
-Stage 3 commits:
+Launch-integration commits:
 - Result launch: `288bc2c773b99acb5263caff9458d8db5a7cfa91`
 - Home launch: `4c38ce85a431732ceeb5f88ec9a2ccd360fb91e0`
 - Body-region launch: `c7d81cc86170eb3420cbfc701760fe264b3b6402`
@@ -174,9 +174,9 @@ Verification against audited App Source:
 - JS/MJS syntax scan: **81 files / 0 failures**
 - protected Primary core SHA unchanged: `b47d1afdbb714c39c32868ed3aaf950f1aa2b71db0f98d3bca0112babc98adc8`
 - protected ROF-J core SHA unchanged: `7ea31dbbbd03d5e74960ff0c7de53bc431536d743be6bc46fbf5ac8906063908`
-- Stage 3 launch integration test SHA-256: `5dea4ad98ae1c7e0d91b1e31cb289d99932db046db328b3cae249b9718acaf90`
+- Launch integration test SHA-256: `5dea4ad98ae1c7e0d91b1e31cb289d99932db046db328b3cae249b9718acaf90`
 
-### Stage 4 — PWA/runtime integration
+### PWA/runtime integration
 Status: COMPLETE
 Implemented:
 - [x] Interpretation Core added to Service Worker precache
@@ -190,7 +190,7 @@ Implemented:
 - [x] existing CSP supports the new same-origin external JS/CSS; no CSP relaxation or inline script was added
 - [x] dedicated PWA/runtime suite `tests/interpretationRoomPwaIntegrationV1.test.mjs`
 
-Stage 4 commits:
+PWA/runtime commits:
 - PWA cache integration: `6f909cbcdac867a67e8399fa629ff21c8f754206`
 - Runtime SHA-256 manifest: `0a6a411b539d2ce3dc9c6b7f3ff14004a7b3dcbd`
 - PWA integration tests: `4b8aa58b2411c5c10ae3492ba5e76ebc473e40bd`
@@ -370,7 +370,7 @@ Release state:
 - no merge or Current promotion has been performed
 
 ## understanding-focused visual interpretation — Understanding-Focused Visual Interpretation
-Status: **STAGE 8D COMPLETE — ENTRY GATES COMPLETE; STAGE 8E FINAL AUDIT NEXT**
+Status: **SELF-MANAGEMENT CONTINUATION COMPLETE — ENTRY GATES COMPLETE; FINAL CLOSURE AUDIT NEXT**
 
 Controlling work plan:
 - `docs/interpretation/UNDERSTANDING_VISUAL_WORKPLAN_20260921.md`
