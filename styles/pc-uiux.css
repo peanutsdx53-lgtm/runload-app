@@ -989,6 +989,16 @@
     max-width: 100%;
   }
 
+  .screen--plan.prototype-parity--plan .seg {
+    width: 20rem;
+    max-width: 100%;
+  }
+
+  .screen--plan.prototype-parity--plan select[name="runningFormat"] {
+    width: 19rem;
+    max-width: 100%;
+  }
+
   .screen--plan.prototype-parity--plan .two {
     grid-template-columns: 10.5rem 13.5rem;
     gap: 1rem;
