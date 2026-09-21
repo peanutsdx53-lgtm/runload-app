@@ -280,7 +280,7 @@
 
 
 /* Record: PC-only workspace. Existing record/save logic is unchanged. */
-@media (min-width: 64rem) {
+@media (min-width: 55rem) {
   .screen--record-input.prototype-parity--record {
     width: min(100%, 82rem);
     margin-inline: auto;
@@ -785,6 +785,53 @@
   .screen--record-input.prototype-parity--record .primary-sheet-action,
   .screen--record-input.prototype-parity--record .text-action {
     font-size: 0.86rem;
+  }
+}
+
+@media (min-width: 55rem) and (max-width: 63.99rem) {
+  .screen--record-input.prototype-parity--record .record-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .screen--record-input.prototype-parity--record .record-form > .core-card,
+  .screen--record-input.prototype-parity--record .record-form > .optional-stack,
+  .screen--record-input.prototype-parity--record .desktop-save-area {
+    grid-column: 1;
+  }
+
+  .screen--record-input.prototype-parity--record .record-form > .core-card {
+    grid-template-columns: minmax(11rem, 1fr) minmax(12rem, 1fr);
+  }
+
+  .screen--record-input.prototype-parity--record .core-heading {
+    grid-column: 1 / -1;
+  }
+
+  .screen--record-input.prototype-parity--record .activity-toggle {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .screen--record-input.prototype-parity--record .date-field {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .screen--record-input.prototype-parity--record .core-card > [data-run-fields],
+  .screen--record-input.prototype-parity--record .core-card > [data-rest-fields] {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  .screen--record-input.prototype-parity--record .fatigue-inline {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    grid-template-columns: minmax(0, 1fr) 9rem;
+  }
+
+  .screen--record-input.prototype-parity--record .desktop-save-area {
+    grid-row: auto;
+    position: static;
   }
 }
 
