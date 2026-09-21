@@ -1,7 +1,7 @@
-# Stage 8B — CURRENT_REFERENCE_PATTERN Visual Mapping Audit
+# CURRENT_REFERENCE_PATTERN Visual Mapping Audit
 
 Date: 2026-09-21
-Status: COMPLETE — FIFTH STAGE 8B MAPPING
+Status: COMPLETE — FIFTH MEANING-DRIVEN VISUAL MAPPING MAPPING
 
 ## Scope
 
@@ -9,7 +9,7 @@ This batch maps only:
 
 - `CURRENT_REFERENCE_PATTERN`
 
-This completes the five primary Stage 8B mapping examples defined in the approved Stage 8 work plan.
+This completes the five primary meaning-driven visual mapping mapping examples defined in the approved understanding-focused visual interpretation work plan.
 
 ## Comprehension problem
 
@@ -73,13 +73,13 @@ The visual contains only Reference-100 and current markers with the reference-or
 
 No previous marker appears and the layout remains within the mobile canvas.
 
-Fresh production-browser visual audit remains reserved for Stage 8E.
+Fresh production-browser visual audit remains reserved for final closure audit.
 
 ## Scientific boundary
 
 No good/bad interpretation, risk inference, diagnosis, run/rest recommendation, causality, cross-region ranking, scientific calculation change, Safety change, or persistent-data change was introduced.
 
-## Stage 8B state
+## meaning-driven visual mapping state
 
 Mapped:
 
@@ -89,9 +89,9 @@ Mapped:
 - `REPEATED_OBSERVATION`;
 - `CURRENT_REFERENCE_PATTERN`.
 
-Unmapped/non-ordinary codes such as support/limited states retain their existing behavior. `COMPARISON_BASELINE` also remains on the existing general representation rather than receiving an ad-hoc Stage 8B mapping.
+Unmapped/non-ordinary codes such as support/limited states retain their existing behavior. `COMPARISON_BASELINE` also remains on the existing general representation rather than receiving an ad-hoc meaning-driven visual mapping mapping.
 
 Next gate:
 
-- combined Stage 8B regression/integrity checkpoint;
-- then Stage 8C guided-dialogue integration may begin.
+- combined meaning-driven visual mapping regression/integrity checkpoint;
+- then guided visual integration guided-dialogue integration may begin.

@@ -1,11 +1,11 @@
-# Stage 8C — Guided Visual Integration Audit
+# Guided Visual Integration Audit
 
 Date: 2026-09-21
 Status: COMPLETE — PASS
 
 ## Purpose
 
-Stage 8C integrates the Stage 8 visual patterns into the Stage 7 deterministic dialogue without turning the Interpretation Room into a dashboard.
+guided visual integration integrates the understanding-focused visual interpretation visual patterns into the guided-dialogue baseline deterministic dialogue without turning the Interpretation Room into a dashboard.
 
 ## Dialogue order
 
@@ -20,7 +20,7 @@ The ordinary sequence remains:
    - Evidence;
    - self-management narrowing.
 
-The Entry and Understand steps do not render the body visual or Stage 8 visual patterns.
+The Entry and Understand steps do not render the body visual or understanding-focused visual interpretation visual patterns.
 
 ## Implementation
 
@@ -35,7 +35,7 @@ No route was redesigned.
 
 ## Sequential reveal
 
-The main visual retains the existing Stage 8A focus/arrow motion.
+The main visual retains the existing visual foundation focus/arrow motion.
 
 Additional reveal order:
 
@@ -58,7 +58,7 @@ Under the existing reduced-motion class or `prefers-reduced-motion: reduce`:
 
 ## Verification
 
-Focused Stage 8C checks:
+Focused guided visual integration checks:
 
 - **9/9 PASS**
 
@@ -89,15 +89,15 @@ Runtime manifest and PWA hash expectations were aligned.
 
 ## Visual review boundary
 
-Stage 8C changes timing/order, not the 390 px geometry of the Stage 8B cards.
+guided visual integration changes timing/order, not the 390 px geometry of the meaning-driven visual mapping cards.
 
-The five 390 px targeted Stage 8B layouts therefore remain the geometry baseline.
+The five 390 px targeted meaning-driven visual mapping layouts therefore remain the geometry baseline.
 
-A production-browser animation/timing audit across mobile, desktop, themes, dark mode and Reduced Motion remains mandatory in Stage 8E.
+A production-browser animation/timing audit across mobile, desktop, themes, dark mode and Reduced Motion remains mandatory in final closure audit.
 
 ## Responsibility/scientific boundary
 
-Stage 8C does not add:
+guided visual integration does not add:
 
 - free text;
 - AI chat;
@@ -119,7 +119,7 @@ Stage 8C does not add:
 
 ## Next stage
 
-Stage 8D — strengthen understanding → self-management continuation.
+self-management continuation — strengthen understanding → self-management continuation.
 
 The next batch must remain descriptive:
 

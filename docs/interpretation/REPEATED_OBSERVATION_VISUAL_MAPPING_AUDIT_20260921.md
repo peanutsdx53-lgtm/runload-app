@@ -1,7 +1,7 @@
-# Stage 8B — REPEATED_OBSERVATION Visual Mapping Audit
+# REPEATED_OBSERVATION Visual Mapping Audit
 
 Date: 2026-09-21
-Status: COMPLETE — FOURTH STAGE 8B MAPPING
+Status: COMPLETE — FOURTH MEANING-DRIVEN VISUAL MAPPING MAPPING
 
 ## Scope
 
@@ -9,7 +9,7 @@ This batch maps only:
 
 - `REPEATED_OBSERVATION`
 
-Previously mapped Stage 8B codes remain unchanged.
+Previously mapped meaning-driven visual mapping codes remain unchanged.
 
 ## Comprehension problem
 
@@ -80,7 +80,7 @@ The body locator, current direction, four past record points, explicit 4-of-3 co
 
 The count visualization uses equal-size points and does not visually escalate with count.
 
-Fresh production-browser visual audit remains reserved for Stage 8E.
+Fresh production-browser visual audit remains reserved for final closure audit.
 
 ## Scientific boundary
 
@@ -97,7 +97,7 @@ The display does not infer:
 
 No scientific calculation or Meaning Core classification rule was modified.
 
-## Next Stage 8B batch
+## Next meaning-driven visual mapping batch
 
 Next:
 

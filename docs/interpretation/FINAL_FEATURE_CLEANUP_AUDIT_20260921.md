@@ -43,7 +43,7 @@ It does not:
 - infer causality;
 - rank different body regions physically;
 - create a new notebook-like persistent datastore;
-- use generative-AI free text.
+- generate unconstrained free-text responses.
 
 ## Final code cleanup
 
@@ -107,11 +107,11 @@ Current result-understanding test set:
 
 The 2026-09-20 Current regression set was updated only where it explicitly depended on the retired activation screen/route assumptions.
 
-Updated Stage 4:
+Updated result-use regression contract:
 - Result uses `interpretation-room` contextual understanding entry;
 - activation is an alias, not a public screen.
 
-Updated Stage 6:
+Updated release-boundary regression contract:
 - legacy user routes are limited to the activation compatibility alias;
 - public-boundary audit includes the current Interpretation screen/presentation instead of the retired activation screen.
 
@@ -141,7 +141,7 @@ Full execution exposed stale or incorrect test assumptions that prior source-lev
 - condition-card regex over-escaped `[\s\S]`;
 - evaluative-boundary tests treated the word `危険度` inside explicit non-judgment disclaimers as a prohibited conclusion;
 - an obsolete pre-mapping Multi Layer test still expected the old generic visual;
-- old Current Stage 4 and Stage 6 tests still depended on the retired activation screen.
+- old Current result-use and release-boundary tests still depended on the retired activation screen.
 
 These were corrected without changing the protected calculation or ROF-J cores.
 

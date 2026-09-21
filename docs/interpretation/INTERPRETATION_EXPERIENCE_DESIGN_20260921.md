@@ -1,20 +1,20 @@
-# RunLoad Interpretation Experience Upgrade — Stage 6 Design Delta
+# RunLoad Interpretation Experience Upgrade — Design Delta
 
 Date: 2026-09-21
-Status: IMPLEMENTATION AUTHORITY FOR STAGE 6
+Status: IMPLEMENTATION AUTHORITY FOR INTERPRETATION EXPERIENCE
 Parent design: RunLoad Interpretation Room Design Authority V1.1 Candidate
 Branch: `feature/runload-interpretation-room-v1`
 
 ## 1. Reason for this delta
 
-The Stage 5 implementation successfully connects RunLoad results, history, ROF-J, evidence, and existing feature routes in an independent Interpretation Room.
+The previous verified implementation successfully connects RunLoad results, history, ROF-J, evidence, and existing feature routes in an independent Interpretation Room.
 
 However, the first-pass presentation is still too close to result reorganization:
 - it repeats regional counts and values;
 - it describes what is already visible on the Result screen;
 - it does not sufficiently answer the user's implicit question: **"What should I understand from this record?"**
 
-Stage 6 changes the Interpretation Room from a result-summary surface into a deterministic explanation surface.
+This design delta changes the Interpretation Room from a result-summary surface into a deterministic explanation surface.
 
 ## 2. Updated product role
 
@@ -228,23 +228,23 @@ No user model or generated chat history is persisted.
 
 ## 11. Implementation sequence
 
-### Stage 6A — Meaning Core
+### Meaning Core
 - add structured meaning frame;
 - deterministic rule priority;
 - unit tests.
 
-### Stage 6B — Explanation modes
+### Explanation modes
 - Simple;
 - Visual;
 - Difference;
 - Evidence route reuse.
 
-### Stage 6C — Summary redesign
+### Summary redesign
 - replace result-count-first copy with meaning-first copy;
 - reduce opening information;
 - add alternative-view choices.
 
-### Stage 6D — visual/mobile regression
+### Visual/mobile regression
 - 390 px and desktop render;
 - no page overflow;
 - visual labels remain legible;
@@ -252,7 +252,7 @@ No user model or generated chat history is persisted.
 
 ## 12. Protected boundaries
 
-Stage 6 must not modify:
+This design delta must not modify:
 - protected Primary calculation core;
 - protected ROF-J calculation core;
 - Reference-100 scientific semantics;
@@ -262,7 +262,7 @@ Stage 6 must not modify:
 
 ## 13. Acceptance criteria
 
-Stage 6 is acceptable only if:
+This design delta is acceptable only if:
 
 1. opening Summary answers a meaning question rather than restating the Result screen;
 2. the primary interpretation is understandable without opening the 12-row detail table;
