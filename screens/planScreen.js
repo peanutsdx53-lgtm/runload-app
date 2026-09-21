@@ -23,7 +23,8 @@ export function renderPlanScreen({ services, context }) {
   const scheduledDate=editing?.scheduledDate||localTodayIso();
   const nextCheck=recent?.reflectionContext?.nextCheckPoint || recent?.reflectionContext?.nextCheck || "";
   const distance=session.distanceKm ?? ""; const duration=session.durationMinutes ?? "";
-  return `<div class="screen screen--plan prototype-parity prototype-parity--plan">
+  return `<div class="screen screen--plan prototype-parity prototype-parity--plan secondary-derived-screen">
+    <a class="secondary-derived-back" href="#/home">← Homeへ戻る</a>
     <section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">${escapeHtml(formatLocalDate(scheduledDate))}</span></section><p class="visually-hidden">予定条件は利用者が入力した事実であり、数値スコアではなく入力した予定事実として扱います。おすすめ・安全判断・自動処方ではありません。</p>
     ${nextCheck?`<section class="carry"><i></i><div><small>前回から引き継いだ内容</small><strong>次のランで確認したいこと</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
     <form id="plan-form" class="layout" novalidate>
