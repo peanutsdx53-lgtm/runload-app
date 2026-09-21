@@ -1,5 +1,5 @@
-// Runtime revision: current-resource-refresh-20260921
-const CACHE_NAME = "runload-app-current";
+// Runtime revision: pc-uiux-refresh-20260921-02
+const CACHE_NAME = "runload-app-current-20260921-02";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -78,7 +78,11 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)));
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then(() => self.skipWaiting())
+  );
 });
 
 const PRECACHE_PATHS = new Set(PRECACHE_URLS.map((path) => new URL(path, self.location).pathname));
@@ -111,16 +115,15 @@ self.addEventListener("fetch", (event) => {
   if (!PRECACHE_PATHS.has(url.pathname)) return;
   event.respondWith(
     caches.open(CACHE_NAME).then((cache) => (
-      cache.match(request, { ignoreSearch: true }).then((cached) => {
-        if (cached) return cached;
-        return fetch(request).then((response) => {
+      fetch(request)
+        .then((response) => {
           if (response.ok && response.type === "basic") {
             const copy = response.clone();
             event.waitUntil(cache.put(request, copy));
           }
           return response;
-        });
-      })
+        })
+        .catch(() => cache.match(request, { ignoreSearch: true }))
     ))
   );
 });
