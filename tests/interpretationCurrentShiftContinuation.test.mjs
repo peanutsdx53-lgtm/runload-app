@@ -34,7 +34,7 @@ function output(withHistory=true, primaryCode='CURRENT_SHIFT_WITH_HISTORY'){
 
 function choiceCount(html){return (html.match(/class="interpretation-dialogue-choice"/g)||[]).length;}
 
-await test('STAGE8D-CURRENT-SHIFT-SHOWS-THREE-PART-CONTINUATION',()=>{
+await test('SELF-MANAGEMENT-CURRENT-SHIFT-SHOWS-THREE-PART-CONTINUATION',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.match(html,/data-continuation="current-shift"/);
   assert.match(html,/今回理解したこと/);
@@ -43,7 +43,7 @@ await test('STAGE8D-CURRENT-SHIFT-SHOWS-THREE-PART-CONTINUATION',()=>{
   assert.match(html,/次の比較可能な記録で、股関節部の今回との差と基準100との位置をもう一度確認できます/);
 });
 
-await test('STAGE8D-CURRENT-SHIFT-BRIDGES-DIRECTLY-TO-EXISTING-HISTORY',()=>{
+await test('SELF-MANAGEMENT-CURRENT-SHIFT-BRIDGES-DIRECTLY-TO-EXISTING-HISTORY',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   const follow=html.match(/<section class="interpretation-dialogue-followup"[^>]*>[\s\S]*?<\/section>/)?.[0] || '';
   assert.ok(follow);
@@ -54,7 +54,7 @@ await test('STAGE8D-CURRENT-SHIFT-BRIDGES-DIRECTLY-TO-EXISTING-HISTORY',()=>{
   assert.doesNotMatch(follow,/topic=manage/);
 });
 
-await test('STAGE8D-HISTORY-UNAVAILABLE-FALLS-BACK-TO-MANAGEMENT-NARROWING',()=>{
+await test('SELF-MANAGEMENT-HISTORY-UNAVAILABLE-FALLS-BACK-TO-MANAGEMENT-NARROWING',()=>{
   const html=renderInterpretationRoom({output:output(false),view:'explain',mode:'visual',origin:'result'});
   const follow=html.match(/<section class="interpretation-dialogue-followup"[^>]*>[\s\S]*?<\/section>/)?.[0] || '';
   assert.equal(choiceCount(follow),2);
@@ -62,21 +62,21 @@ await test('STAGE8D-HISTORY-UNAVAILABLE-FALLS-BACK-TO-MANAGEMENT-NARROWING',()=>
   assert.doesNotMatch(follow,/#\/history/);
 });
 
-await test('STAGE8D-FIRST-BATCH-DOES-NOT-APPLY-CONTINUATION-TO-OTHER-MEANINGS',()=>{
+await test('SELF-MANAGEMENT-FIRST-BATCH-DOES-NOT-APPLY-CONTINUATION-TO-OTHER-MEANINGS',()=>{
   const out=output(true,'CURRENT_REFERENCE_PATTERN');
   out.comparison.regionalById['BA-DISP-014']={comparablePreviousRecordId:null,previousValue:null,delta:null};
   const html=renderInterpretationRoom({output:out,view:'explain',mode:'visual',origin:'result'});
   assert.doesNotMatch(html,/data-continuation="current-shift"/);
 });
 
-await test('STAGE8D-CONTINUATION-IS-OBSERVATIONAL-NOT-PRESCRIPTIVE',()=>{
+await test('SELF-MANAGEMENT-CONTINUATION-IS-OBSERVATIONAL-NOT-PRESCRIPTIVE',()=>{
   const html=renderInterpretationRoom({output:output(),view:'explain',mode:'visual',origin:'result'});
   assert.doesNotMatch(html,/走るべき|休むべき|距離を減らす|距離を増やす|安全です|危険です/);
 });
 
-await test('STAGE8D-REVEAL-ORDER-AND-REDUCED-MOTION',async()=>{
+await test('SELF-MANAGEMENT-REVEAL-ORDER-AND-REDUCED-MOTION',async()=>{
   const css=await source('styles/interpretation-room.css');
-  const block=css.slice(css.indexOf('/* Stage 8D: current-shift self-management continuation. */'));
+  const block=css.slice(css.indexOf('/* Current-shift self-management continuation. */'));
   assert.match(block,/160ms ease-out 540ms 1 both/);
   assert.match(block,/animation-delay: 660ms/);
   assert.match(block,/html\.ui-motion-reduced[\s\S]*animation: none[\s\S]*opacity: 1[\s\S]*transform: none/);
@@ -84,5 +84,5 @@ await test('STAGE8D-REVEAL-ORDER-AND-REDUCED-MOTION',async()=>{
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Stage 8D Current Shift Continuation',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Current Shift Continuation',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
