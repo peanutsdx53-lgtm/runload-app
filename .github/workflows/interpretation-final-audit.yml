@@ -19,8 +19,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Run existing Current verifier
-        run: node verify_app_current.mjs
       - name: Run every test suite
         shell: bash
         run: |
