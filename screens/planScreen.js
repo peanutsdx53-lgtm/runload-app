@@ -11,6 +11,31 @@ function planTitle(plan={}) { const session=plan.plannedSession||{}; if(plan.pla
 function savedPlanCard(plan={}) { const rest=plan.planType==="rest"||plan.plannedSession?.activityType==="rest"; return `<article class="saved-card" data-plan-id="${escapeHtml(plan.id||"")}"><small>${escapeHtml(formatLocalDate(plan.scheduledDate||""))}・${rest?"休養予定":"走行予定"}</small><strong>${escapeHtml(planTitle(plan))}</strong><span>保存済み</span><div class="saved-actions">${rest?"":`<a href="#/record-input?planId=${encodeURIComponent(plan.id||"")}">この予定で記録</a>`}<a href="#/plan?planId=${encodeURIComponent(plan.id||"")}">編集</a><button type="button" data-action="delete-plan" data-plan-id="${escapeHtml(plan.id||"")}">削除</button></div></article>`; }
 function dateDisplay(iso="") { return String(iso||"").replaceAll("-","/") || "未設定"; }
 
+function planContextHref(context, planId="") {
+  const query=new URLSearchParams();
+  if(planId)query.set("planId",planId);
+  ["sourceRecordId","recordId","regionId","from","roomOrigin","roomExperience"].forEach((key)=>{
+    const value=String(context?.parameters?.get(key)||"");
+    if(value)query.set(key,value);
+  });
+  return `#/plan${query.size?`?${query.toString()}`:""}`;
+}
+
+function planBackContext(context) {
+  const from=String(context?.parameters?.get("from")||"");
+  if(from!=="interpretation-room")return { href:"#/home", label:"Homeへ戻る" };
+  const recordId=String(context?.parameters?.get("recordId")||context?.parameters?.get("sourceRecordId")||"");
+  const regionId=String(context?.parameters?.get("regionId")||"");
+  const roomOrigin=String(context?.parameters?.get("roomOrigin")||"result");
+  const roomExperience=String(context?.parameters?.get("roomExperience")||"");
+  const query=new URLSearchParams();
+  if(recordId)query.set("recordId",recordId);
+  query.set("origin",roomOrigin);
+  if(roomExperience==="v3")query.set("experience","v3");
+  if(regionId)query.set("regionId",regionId);
+  return { href:`#/interpretation-room?${query.toString()}`, label:"結果の整理へ戻る" };
+}
+
 export function renderPlanScreen({ services, context }) {
   const planId=String(context?.parameters?.get("planId")||"");
   const editing=planId?services.storage.plans.findById(planId):null;
@@ -18,7 +43,11 @@ export function renderPlanScreen({ services, context }) {
   const course=selected?.course || courseFromPlan(editing);
   const session=editing?.plannedSession||{};
   const planType=editing?.planType||"run";
-  const recent=latestRunRecord(services);
+  const sourceRecordId=String(context?.parameters?.get("sourceRecordId")||context?.parameters?.get("recordId")||"");
+  const requestedSource=sourceRecordId?services.storage.records.findById?.(sourceRecordId):null;
+  const recent=requestedSource?.activityType==="run"?requestedSource:latestRunRecord(services);
+  const backContext=planBackContext(context);
+  const selfHref=planContextHref(context, planId);
   const plans=services.storage.plans.loadAll().sort((a,b)=>String(a.scheduledDate||"").localeCompare(String(b.scheduledDate||"")));
   const scheduledDate=editing?.scheduledDate||localTodayIso();
   const nextCheck=recent?.reflectionContext?.nextCheckPoint || recent?.reflectionContext?.nextCheck || "";
