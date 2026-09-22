@@ -1,4 +1,4 @@
-/* RunLoad mobile screen layouts and responsive refinements. */
+/* RunLoad mobile screen layouts and responsive rules. */
 /*
  * RunLoad mobile screen layout layer.
  * Maintains the approved mobile UI geometry.
@@ -2548,7 +2548,7 @@
 }
 
 
-/* ===== smartphone alignment refinements ===== */
+/* ===== Smartphone alignment ===== */
 /* Course detail inputs: one visual grammar for percentage, type, and grade. */
 .screen-layout--course .section-row{
   grid-template-columns:repeat(3,minmax(0,1fr));
