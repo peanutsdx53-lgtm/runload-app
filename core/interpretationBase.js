@@ -1,4 +1,4 @@
-// RunLoad Interpretation Base V1
+// RunLoad Interpretation Base
 // Deterministic, read-only interpretation of persisted RunLoad outputs.
 // This module does not calculate or modify Primary Regional Reference-100 or ROF-J values.
 
