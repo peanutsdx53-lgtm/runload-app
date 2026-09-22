@@ -126,7 +126,7 @@
 .interpretation-v3-body-view figcaption {
   margin-bottom: 0.25rem;
   color: var(--color-muted);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
@@ -213,8 +213,47 @@
   font-size: 0.82rem;
 }
 
-.interpretation-v3-overview-groups span {
+.interpretation-v3-overview-groups > div > strong {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.interpretation-v3-overview-groups > div > strong::before {
+  content: "";
+  width: 0.65rem;
+  height: 0.65rem;
+  flex: 0 0 auto;
+  border: 1px solid var(--color-map-line);
+  border-radius: 50%;
+}
+
+.interpretation-v3-overview-groups > div[data-kind="above"] > strong::before {
+  background: var(--color-map-high);
+}
+
+.interpretation-v3-overview-groups > div[data-kind="near"] > strong::before {
+  background: var(--color-map-middle);
+}
+
+.interpretation-v3-overview-groups > div[data-kind="below"] > strong::before {
+  background: var(--color-map-low);
+}
+
+html.rl-appearance-dark .interpretation-v3-overview-groups > div[data-kind="below"] > strong::before {
+  background: color-mix(in srgb, var(--color-map-low) 55%, var(--color-muted));
+}
+
+.interpretation-v3-overview-group-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.18rem 0.55rem;
   color: var(--color-muted);
+}
+
+.interpretation-v3-overview-group-name {
+  white-space: nowrap;
+  overflow-wrap: normal;
   font-size: 0.82rem;
   line-height: 1.6;
 }
