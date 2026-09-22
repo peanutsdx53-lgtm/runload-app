@@ -14,7 +14,7 @@ function dateDisplay(iso="") { return String(iso||"").replaceAll("-","/") || "�
 function planContextHref(context, planId="") {
   const query=new URLSearchParams();
   if(planId)query.set("planId",planId);
-  ["sourceRecordId","recordId","regionId","from","roomOrigin","roomExperience"].forEach((key)=>{
+  ["sourceRecordId","recordId","regionId","from","roomOrigin"].forEach((key)=>{
     const value=String(context?.parameters?.get(key)||"");
     if(value)query.set(key,value);
   });
@@ -27,11 +27,9 @@ function planBackContext(context) {
   const recordId=String(context?.parameters?.get("recordId")||context?.parameters?.get("sourceRecordId")||"");
   const regionId=String(context?.parameters?.get("regionId")||"");
   const roomOrigin=String(context?.parameters?.get("roomOrigin")||"result");
-  const roomExperience=String(context?.parameters?.get("roomExperience")||"");
   const query=new URLSearchParams();
   if(recordId)query.set("recordId",recordId);
   query.set("origin",roomOrigin);
-  if(roomExperience==="v3")query.set("experience","v3");
   if(regionId)query.set("regionId",regionId);
   return { href:`#/interpretation-room?${query.toString()}`, label:"結果の整理へ戻る" };
 }
@@ -59,7 +57,7 @@ export function renderPlanScreen({ services, context }) {
   const scheduledDate=editing?.scheduledDate||localTodayIso();
   const nextCheck=recent?.reflectionContext?.nextCheckPoint || recent?.reflectionContext?.nextCheck || "";
   const distance=session.distanceKm ?? ""; const duration=session.durationMinutes ?? "";
-  return `<div class="screen screen--plan prototype-parity prototype-parity--plan secondary-derived-screen">
+  return `<div class="screen screen--plan screen-layout screen-layout--plan secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backContext.href)}">← ${escapeHtml(backContext.label)}</a><strong>次の予定</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">${escapeHtml(formatLocalDate(scheduledDate))}</span></section><p class="visually-hidden">予定条件は利用者が入力した事実であり、数値スコアではなく入力した予定事実として扱います。おすすめ・安全判断・自動処方ではありません。</p>

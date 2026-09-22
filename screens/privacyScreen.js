@@ -16,7 +16,7 @@ function item({ type, eyebrow, title, description, body, open = false }) {
 
 export function renderPrivacyScreen({ context } = {}) {
   const fromSettings = String(context?.parameters?.get?.("returnTo") || "").startsWith("#/settings");
-  return `<div class="screen screen--privacy prototype-parity prototype-parity--privacy secondary-derived-screen">
+  return `<div class="screen screen--privacy screen-layout screen-layout--privacy secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${fromSettings ? "#/settings?section=data" : "#/more"}">← ${fromSettings ? "設定へ戻る" : "その他へ戻る"}</a><strong>データの扱い</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">PRIVACY</p><h1>データの扱い</h1><p>何を端末に保存し、いつ外部機能を開くかを確認します。</p></section><p class="visually-hidden">旧版の端末内データは自動移行・自動削除せず、このアプリからは読み込みません。バックアップファイルは、RunLoadによるパスワード保護や暗号化を行いません。</p>

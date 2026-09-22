@@ -276,7 +276,7 @@ function renderArticleDetail(article, related, services, origin = "", recordId =
 }
 
 
-const PROTOTYPE_READING_ITEMS = Object.freeze([
+const READING_ITEMS = Object.freeze([
   Object.freeze({ id: "regional-three-views", filter: "result" }),
   Object.freeze({ id: "history-compatible", filter: "record" }),
   Object.freeze({ id: "plan-facts-current", filter: "record" }),
@@ -288,17 +288,17 @@ const PROTOTYPE_READING_ITEMS = Object.freeze([
   Object.freeze({ id: "consultation-prep-v27", filter: "share" }),
 ]);
 
-function renderPrototypeReadingArticle(article, filter) {
+function renderReadingArticle(article, filter) {
   return `<article class="article-card" data-reading-card data-cat="${escapeHtml(filter)}"><small>${escapeHtml(article.category || "一般情報")}</small><strong>${escapeHtml(article.title || "読みもの")}</strong><p>${escapeHtml(article.lead || article.summary || "")}</p><button type="button" data-reading-open="${escapeHtml(article.id)}">読む</button></article>`;
 }
 
-function renderPrototypeReadingDetail(article) {
+function renderReadingDetail(article) {
   return `<article data-reading-detail="${escapeHtml(article.id)}" hidden><div class="sheet-head"><div><small>${escapeHtml(article.category || "一般情報")}</small><strong id="articleTitle-${escapeHtml(article.id)}">${escapeHtml(article.title || "読みもの")}</strong></div><button class="close" type="button" data-reading-close aria-label="閉じる">×</button></div><p class="lead">${escapeHtml(article.lead || article.summary || "")}</p><div class="body-copy">${(article.body || []).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>${(article.practicePoints || []).length ? `<div class="points"><strong>見返すポイント</strong><ul>${article.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></div>` : ""}<p class="caution">${escapeHtml(article.caution || "一般情報であり、個別の診断・処方・走行可否判断には使用しません。")}</p><p class="source-note">Current Appで管理している公開資料・研究文献を背景にした一般情報です。個別の診断・処方ではありません。</p></article>`;
 }
 
-function renderPrototypeReading({ services, context }) {
+function renderReadingContent({ services, context }) {
   const available = new Map(visibleArticles(services.column.list()).map((article) => [article.id, article]));
-  const items = PROTOTYPE_READING_ITEMS.map((item) => ({ ...item, article: available.get(item.id) })).filter((item) => item.article);
+  const items = READING_ITEMS.map((item) => ({ ...item, article: available.get(item.id) })).filter((item) => item.article);
   const allExperiences = services.workflows.records.loadAllExperiences();
   const target = resolveColumnTargetExperience(services, context);
   const recommendation = buildColumnRecommendation(services, target.experience, allExperiences, context);
@@ -309,7 +309,6 @@ function renderPrototypeReading({ services, context }) {
   const regionId = context.parameters.get("regionId") || "";
   const from = context.parameters.get("from") || "";
   const roomOrigin = context.parameters.get("roomOrigin") || "result";
-  const roomExperience = context.parameters.get("roomExperience") || "";
   let backHref = origin === "result-condition" && recordId && regionId
     ? `#/body-part-detail?recordId=${encodeURIComponent(recordId)}&regionId=${encodeURIComponent(regionId)}`
     : "#/more";
@@ -318,25 +317,24 @@ function renderPrototypeReading({ services, context }) {
     const roomQuery = new URLSearchParams();
     if (recordId) roomQuery.set("recordId", recordId);
     roomQuery.set("origin", roomOrigin);
-    if (roomExperience === "v3") roomQuery.set("experience", "v3");
     if (regionId) roomQuery.set("regionId", regionId);
     backHref = `#/interpretation-room?${roomQuery.toString()}`;
     backLabel = "結果の整理へ戻る";
   }
   const detailArticles = new Map(items.map((item) => [item.article.id, item.article]));
   if (featured) detailArticles.set(featured.id, featured);
-  return `<div class="screen screen--reading prototype-parity prototype-parity--reading secondary-derived-screen" data-prototype-reading${initialArticleId ? ` data-reading-initial-article="${escapeHtml(initialArticleId)}"` : ""}>
+  return `<div class="screen screen--reading screen-layout screen-layout--reading secondary-derived-screen" data-reading-screen${initialArticleId ? ` data-reading-initial-article="${escapeHtml(initialArticleId)}"` : ""}>
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>読みもの</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">READING</p><h1>読みもの</h1><p>結果の意味や、走った日の背景を確認するための一般情報です。</p></section>
     ${featured ? `<section class="recommend"><small>今回の結果から</small><strong>${escapeHtml(featured.title)}</strong><p>${escapeHtml(recommendation.reason || featured.lead || "")}</p><button type="button" data-reading-open="${escapeHtml(featured.id)}">この記事を読む</button></section>` : ""}
     <div class="filter-strip"><div class="filter-strip-head"><span>分類</span><small>横にスライド <b aria-hidden="true">→</b></small></div><div class="filters" role="group" aria-label="読みものの分類。横方向にスクロールできます"><button class="active" type="button" data-reading-filter="all">すべて</button><button type="button" data-reading-filter="result">結果</button><button type="button" data-reading-filter="record">記録・履歴</button><button type="button" data-reading-filter="running">走りとのつき合い方</button><button type="button" data-reading-filter="after">走った後</button><button type="button" data-reading-filter="before">走る前</button><button type="button" data-reading-filter="share">相談・共有</button></div></div>
-    <div class="grid">${items.map((item) => renderPrototypeReadingArticle(item.article, item.filter)).join("")}</div>
-    <div class="drawer" data-reading-drawer hidden><section class="sheet" role="dialog" aria-modal="true" aria-label="読みもの本文">${[...detailArticles.values()].map(renderPrototypeReadingDetail).join("")}</section></div>
+    <div class="grid">${items.map((item) => renderReadingArticle(item.article, item.filter)).join("")}</div>
+    <div class="drawer" data-reading-drawer hidden><section class="sheet" role="dialog" aria-modal="true" aria-label="読みもの本文">${[...detailArticles.values()].map(renderReadingDetail).join("")}</section></div>
     </div>
   </div>`;
 }
 
 export function renderReadingScreen({ services, context }) {
-  return renderPrototypeReading({ services, context });
+  return renderReadingContent({ services, context });
 }

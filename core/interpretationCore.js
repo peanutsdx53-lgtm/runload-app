@@ -1,757 +1,441 @@
-// RunLoad Interpretation Core V1
-// Deterministic, read-only interpretation of persisted RunLoad outputs.
-// This module does not calculate or modify Primary Regional Reference-100 or ROF-J values.
+// RunLoad Interpretation Core.
+// Deterministic, read-only projection for beginner-facing result understanding.
+// This module consumes persisted results and never recalculates Primary Reference-100 or ROF-J values.
 
-export const INTERPRETATION_CORE_VERSION = "runload-interpretation-core-v1.1";
-export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V2";
-export const INTERPRETATION_EVIDENCE_CONTRACT = "PERSISTED_RESULT_PROVENANCE_V1";
+import {
+  buildBaseInterpretation,
+  previousDeltaDirection,
+  referenceDirection,
+} from "./interpretationBase.js";
+import { officialRofJDescriptor } from "./secondPillarRofJ.js";
 
-const NORMAL_PLAN_BLOCK = "normal_plan_suggestions";
-const VALID_SUPPORT_ROUTES = new Set(["normal", "review", "consult", "urgent"]);
-const REGION_ORDER = Object.freeze([
-  "BA-DISP-014", "BA-DISP-015", "BA-DISP-016", "BA-DISP-018",
-  "BA-DISP-019", "BA-DISP-021", "BA-DISP-023", "BA-DISP-024",
-  "BA-DISP-025", "BA-DISP-027", "BA-DISP-028", "BA-DISP-029",
-]);
-const REGION_ORDER_INDEX = new Map(REGION_ORDER.map((id, index) => [id, index]));
+export const INTERPRETATION_CORE_VERSION = "runload-interpretation-core-v3.0";
+export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V3";
+export const INTERPRETATION_ROUTE_RESOLVER_VERSION = "primary-reference100-v3-explanation-route-v1";
 
-function clone(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
+const CURRENT_PRIMARY_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
+const SPEED_ONLY_PRIMARY_REGIONS = new Set(["R01", "R02", "R03", "R04", "R07", "R08", "R11", "R12"]);
+const CONDITIONAL_PRIMARY_REGIONS = new Set(["R05", "R06", "R09", "R10"]);
+const CADENCE_CAPABLE_PRIMARY_REGIONS = new Set(["R05", "R09"]);
+const GRADE_CAPABLE_PRIMARY_REGIONS = new Set(["R05", "R06", "R09", "R10"]);
+const ROF_ANCHORS = Object.freeze([2, 4, 6, 8, 10]);
 
 function finite(value) {
   return value !== null && value !== "" && Number.isFinite(Number(value));
 }
 
-function uniqueStrings(values = []) {
-  return Object.freeze([...new Set(values.filter(Boolean).map((value) => String(value)))]);
+function frozenArray(items = []) {
+  return Object.freeze(items.map((item) => Object.freeze(item)));
 }
 
-export function stableRecordKey(record = {}) {
-  return `${String(record.date || "")}|${String(record.createdAt || "")}|${String(record.id || "")}`;
+function regionRow(resultRecord = {}, regionId = "") {
+  return (Array.isArray(resultRecord?.result?.regions) ? resultRecord.result.regions : [])
+    .find((row) => String(row?.regionId || "") === String(regionId || "")) || null;
 }
 
-export function referenceDirection(value) {
-  if (!finite(value)) return "UNAVAILABLE";
-  const n = Number(value);
-  if (n >= 101) return "ABOVE_REFERENCE";
-  if (n <= 99) return "BELOW_REFERENCE";
-  return "REFERENCE_VICINITY";
-}
-
-export function previousDeltaDirection(delta) {
-  if (!finite(delta)) return "NONE";
-  const n = Number(delta);
-  if (n >= 1) return "UP";
-  if (n <= -1) return "DOWN";
-  return "LESS_THAN_ONE_POINT";
-}
-
-function signatureFor(resultRecord = {}, regionId = "") {
-  return resultRecord?.comparison_signatures?.[regionId] || null;
-}
-
-export function signaturesComparable(left, right) {
-  return Boolean(
-    left
-    && right
-    && left.regionId === right.regionId
-    && left.modelVersion === right.modelVersion
-    && left.outputSemanticVersion === right.outputSemanticVersion
-    && left.constructId === right.constructId
-    && left.referenceId === right.referenceId,
-  );
-}
-
-function regionOrder(regionId = "") {
-  return REGION_ORDER_INDEX.has(regionId) ? REGION_ORDER_INDEX.get(regionId) : 999;
-}
-
-function sortRegionalRows(rows = []) {
-  return [...rows].sort((a, b) => regionOrder(a.regionId) - regionOrder(b.regionId) || String(a.regionId).localeCompare(String(b.regionId)));
-}
-
-function regionRows(experience = null) {
-  const rows = experience?.regionalV2ResultRecord?.result?.regions;
-  return Array.isArray(rows) ? sortRegionalRows(rows) : [];
-}
-
-function paceSecondsPerKm(record = {}) {
-  const distanceKm = Number(record.distanceKm);
-  const durationMinutes = Number(record.durationMinutes);
-  return distanceKm > 0 && durationMinutes > 0 ? Math.round(durationMinutes * 60 / distanceKm) : null;
-}
-
-function gradeSummary(record = {}) {
-  const course = record.course && typeof record.course === "object" ? record.course : {};
-  const knowledge = String(course.gradeKnowledge || record.gradeKnowledge || "UNKNOWN");
-  const uphillSharePercent = finite(course.uphillSharePercent ?? record.uphillSharePercent)
-    ? Number(course.uphillSharePercent ?? record.uphillSharePercent)
-    : null;
-  const downhillSharePercent = finite(course.downhillSharePercent ?? record.downhillSharePercent)
-    ? Number(course.downhillSharePercent ?? record.downhillSharePercent)
-    : null;
-  const uphillGradePercent = finite(course.uphillGradePercent ?? record.uphillGradePercent)
-    ? Number(course.uphillGradePercent ?? record.uphillGradePercent)
-    : null;
-  const downhillGradePercent = finite(course.downhillGradePercent ?? record.downhillGradePercent)
-    ? Number(course.downhillGradePercent ?? record.downhillGradePercent)
-    : null;
-  return Object.freeze({ knowledge, uphillSharePercent, downhillSharePercent, uphillGradePercent, downhillGradePercent });
-}
-
-function surfaceSummary(record = {}) {
-  const course = record.course && typeof record.course === "object" ? record.course : {};
-  const raw = Array.isArray(course.surfaceComponents)
-    ? course.surfaceComponents
-    : Array.isArray(record.surfaceComponents)
-      ? record.surfaceComponents
-      : [];
-  return Object.freeze(raw.map((item) => Object.freeze({
-    category: String(item?.category || item?.userCategory || item?.label || ""),
-    sharePercent: finite(item?.sharePercent ?? item?.share_percent) ? Number(item.sharePercent ?? item.share_percent) : null,
-  })));
-}
-
-function currentFacts(record = {}) {
+function referenceComparison(value) {
+  if (!finite(value)) {
+    return Object.freeze({ available: false, reference: 100, value: null, difference: null, direction: "UNAVAILABLE" });
+  }
+  const numeric = Number(value);
   return Object.freeze({
-    distanceKm: finite(record.distanceKm) ? Number(record.distanceKm) : null,
-    durationMinutes: finite(record.durationMinutes) ? Number(record.durationMinutes) : null,
-    paceSecondsPerKm: paceSecondsPerKm(record),
-    runningFormat: String(record.runningFormat || ""),
-    courseName: String(record.course?.name || record.courseName || ""),
-    gradeSummary: gradeSummary(record),
-    surfaceSummary: surfaceSummary(record),
-    averageCadenceSpm: finite(record.averageCadenceSpm) ? Number(record.averageCadenceSpm) : null,
-    nextCheckPoint: String(record.reflectionContext?.nextCheckPoint || ""),
+    available: true,
+    reference: 100,
+    value: numeric,
+    difference: numeric - 100,
+    direction: referenceDirection(numeric),
   });
 }
 
-function compactAxisEstimate(item = {}) {
-  return Object.freeze({
-    axis: String(item.axis || ""),
-    value: finite(item.value) ? Number(item.value) : null,
-    valueEnvelope: Array.isArray(item.valueEnvelope) ? Object.freeze([...item.valueEnvelope]) : null,
-    state: String(item.state || ""),
-    evidenceState: String(item.evidenceState || ""),
-    unsupportedDistanceKm: finite(item.unsupportedDistanceKm) ? Number(item.unsupportedDistanceKm) : 0,
-  });
-}
-
-function projectCurrentRegions(experience = null) {
-  return Object.freeze(regionRows(experience).map((row) => Object.freeze({
-    regionId: String(row.regionId || ""),
-    primaryRegionId: String(row.primaryRegionId || ""),
-    label: String(row.regionName || row.regionId || ""),
-    formalOrder: regionOrder(row.regionId),
-    value: finite(row.value) ? Number(row.value) : null,
-    referenceDirection: referenceDirection(row.value),
-    calculationState: String(row.calculationState || ""),
-    evidenceState: String(row.evidenceState || row.provenance || ""),
-    evidenceStates: uniqueStrings(row.evidenceStates || []),
-    construct: String(row.construct || ""),
-    constructId: String(row.constructId || ""),
-    referenceId: String(row.referenceId || ""),
-    sourceIds: uniqueStrings(row.sourceIds || []),
-    coverageProportion: finite(row.coverageProportion) ? Number(row.coverageProportion) : null,
-    unsupportedDistanceKm: finite(row.unsupportedDistanceKm) ? Number(row.unsupportedDistanceKm) : 0,
-    projectCompositeFlag: Boolean(row.projectCompositeFlag),
-    axisEstimates: Object.freeze((Array.isArray(row.axisEstimates) ? row.axisEstimates : []).map(compactAxisEstimate)),
-  })));
-}
-
-function eligiblePastExperiences(targetExperience, allExperiences = []) {
-  const targetKey = stableRecordKey(targetExperience?.record || {});
-  return (Array.isArray(allExperiences) ? allExperiences : [])
-    .filter((experience) => experience?.record?.id && experience.record.id !== targetExperience?.record?.id)
-    .filter((experience) => stableRecordKey(experience.record) < targetKey)
-    .sort((a, b) => stableRecordKey(a.record).localeCompare(stableRecordKey(b.record)));
-}
-
-function comparableRegionalHistory(targetExperience, allExperiences, regionId) {
-  const targetResult = targetExperience?.regionalV2ResultRecord || null;
-  const targetSignature = signatureFor(targetResult, regionId);
-  if (!targetSignature) return [];
-  return eligiblePastExperiences(targetExperience, allExperiences)
-    .map((experience) => ({
-      experience,
-      row: regionRows(experience).find((candidate) => candidate.regionId === regionId) || null,
-      signature: signatureFor(experience?.regionalV2ResultRecord, regionId),
-    }))
-    .filter((item) => item.row && finite(item.row.value) && signaturesComparable(targetSignature, item.signature));
-}
-
-function historyDirectionCounts(items = []) {
-  const counts = { above: 0, near: 0, below: 0, unavailable: 0 };
-  items.forEach((item) => {
-    const direction = referenceDirection(item.row?.value);
-    if (direction === "ABOVE_REFERENCE") counts.above += 1;
-    else if (direction === "REFERENCE_VICINITY") counts.near += 1;
-    else if (direction === "BELOW_REFERENCE") counts.below += 1;
-    else counts.unavailable += 1;
-  });
-  return Object.freeze(counts);
-}
-
-function buildRegionalComparisons(targetExperience, allExperiences, currentRegions) {
-  const regionalById = {};
-  currentRegions.forEach((region) => {
-    const history = comparableRegionalHistory(targetExperience, allExperiences, region.regionId);
-    const previous = history.length ? history.at(-1) : null;
-    const delta = previous && finite(region.value) ? Number(region.value) - Number(previous.row.value) : null;
-    const recent = history.slice(-5);
-    regionalById[region.regionId] = Object.freeze({
-      comparablePreviousRecordId: previous?.experience?.record?.id || "",
-      comparablePreviousDate: previous?.experience?.record?.date || "",
-      previousValue: previous && finite(previous.row?.value) ? Number(previous.row.value) : null,
-      delta: finite(delta) ? Number(delta) : null,
-      previousDirection: previousDeltaDirection(delta),
-      historyComparableCount: history.length,
-      historyLastFive: Object.freeze(recent.map((item) => Object.freeze({
-        recordId: String(item.experience.record.id || ""),
-        date: String(item.experience.record.date || ""),
-        createdAt: String(item.experience.record.createdAt || ""),
-        value: Number(item.row.value),
-        referenceDirection: referenceDirection(item.row.value),
-      }))),
-      historyReferenceDirectionCounts: historyDirectionCounts(history),
+function previousComparison(comparison = {}) {
+  const available = Boolean(comparison?.comparablePreviousRecordId) && finite(comparison?.previousValue);
+  if (!available) {
+    return Object.freeze({
+      available: false,
+      recordId: "",
+      date: "",
+      previousValue: null,
+      currentValue: null,
+      difference: null,
+      direction: "NONE",
     });
-  });
-  return Object.freeze(regionalById);
-}
-
-function immediatelyPreviousRun(targetExperience, allExperiences = []) {
-  const past = eligiblePastExperiences(targetExperience, allExperiences)
-    .filter((experience) => String(experience?.record?.activityType || "").toLowerCase() === "run");
-  return past.length ? past.at(-1) : null;
-}
-
-function sameJson(left, right) {
-  return JSON.stringify(left) === JSON.stringify(right);
-}
-
-function numericDifference(id, labelToken, current, previous, tolerance = 1e-9) {
-  if (!finite(current) || !finite(previous)) return null;
-  const a = Number(current); const b = Number(previous);
-  if (Math.abs(a - b) <= tolerance) return null;
-  return Object.freeze({ id, labelToken, current: a, previous: b, delta: a - b });
-}
-
-export function buildConditionDifferenceSummary(targetExperience, allExperiences = []) {
-  const previousExperience = immediatelyPreviousRun(targetExperience, allExperiences);
-  if (!previousExperience) return Object.freeze({ previousRecordId: "", previousDate: "", differences: Object.freeze([]) });
-  const current = currentFacts(targetExperience.record || {});
-  const previous = currentFacts(previousExperience.record || {});
-  const differences = [];
-  const maybePush = (value) => { if (value) differences.push(value); };
-  maybePush(numericDifference("distance", "DISTANCE", current.distanceKm, previous.distanceKm));
-  maybePush(numericDifference("duration", "DURATION", current.durationMinutes, previous.durationMinutes));
-  maybePush(numericDifference("pace", "PACE", current.paceSecondsPerKm, previous.paceSecondsPerKm, 0));
-  if (current.runningFormat && previous.runningFormat && current.runningFormat !== previous.runningFormat) {
-    differences.push(Object.freeze({ id: "running-format", labelToken: "RUNNING_FORMAT", current: current.runningFormat, previous: previous.runningFormat }));
   }
-  if ((current.courseName || previous.courseName) && current.courseName !== previous.courseName) {
-    differences.push(Object.freeze({ id: "course", labelToken: "COURSE", current: current.courseName, previous: previous.courseName }));
-  }
-  if (!sameJson(current.gradeSummary, previous.gradeSummary)) {
-    differences.push(Object.freeze({ id: "grade", labelToken: "GRADE", current: current.gradeSummary, previous: previous.gradeSummary }));
-  }
-  if (!sameJson(current.surfaceSummary, previous.surfaceSummary)) {
-    differences.push(Object.freeze({ id: "surface", labelToken: "SURFACE", current: current.surfaceSummary, previous: previous.surfaceSummary }));
-  }
-  maybePush(numericDifference("cadence", "CADENCE", current.averageCadenceSpm, previous.averageCadenceSpm));
+  const delta = finite(comparison?.delta) ? Number(comparison.delta) : null;
   return Object.freeze({
-    previousRecordId: String(previousExperience.record.id || ""),
-    previousDate: String(previousExperience.record.date || ""),
-    differences: Object.freeze(differences),
+    available: true,
+    recordId: String(comparison.comparablePreviousRecordId || ""),
+    date: String(comparison.comparablePreviousDate || ""),
+    previousValue: Number(comparison.previousValue),
+    currentValue: finite(comparison?.currentValue) ? Number(comparison.currentValue) : null,
+    difference: delta,
+    direction: previousDeltaDirection(delta),
   });
 }
 
-export function buildRofJInterpretation(rofSummary = null, rofRecentReferences = {}) {
-  const summary = rofSummary && typeof rofSummary === "object" ? rofSummary : {};
-  const validPair = finite(summary.pre) && finite(summary.post) && finite(summary.delta);
+function historyProjection(comparison = {}) {
   return Object.freeze({
-    available: Boolean(summary.available),
-    pre: finite(summary.pre) ? Number(summary.pre) : null,
-    post: finite(summary.post) ? Number(summary.post) : null,
-    delta: validPair ? Number(summary.delta) : null,
-    direction: validPair ? String(summary.direction || "") : "",
-    directionLabel: validPair ? String(summary.directionLabel || "") : "",
-    preEligibility: clone(summary.preEligibility || null),
-    postEligibility: clone(summary.postEligibility || null),
+    comparableCount: Number(comparison?.historyComparableCount || 0),
+    lastFive: frozenArray((comparison?.historyLastFive || []).map((item) => ({
+      recordId: String(item.recordId || ""),
+      date: String(item.date || ""),
+      value: finite(item.value) ? Number(item.value) : null,
+      referenceDirection: String(item.referenceDirection || "UNAVAILABLE"),
+    }))),
+    referenceDirectionCounts: Object.freeze({
+      above: Number(comparison?.historyReferenceDirectionCounts?.above || 0),
+      near: Number(comparison?.historyReferenceDirectionCounts?.near || 0),
+      below: Number(comparison?.historyReferenceDirectionCounts?.below || 0),
+      unavailable: Number(comparison?.historyReferenceDirectionCounts?.unavailable || 0),
+    }),
+  });
+}
+
+export function buildRofValueMeaning(value) {
+  if (!finite(value)) {
+    return Object.freeze({ available: false, value: null, descriptorType: "NONE", descriptor: "", lowerAnchor: null, upperAnchor: null });
+  }
+  const numeric = Number(value);
+  const exact = officialRofJDescriptor(numeric);
+  if (exact) {
+    return Object.freeze({
+      available: true,
+      value: numeric,
+      descriptorType: "EXACT",
+      descriptor: exact,
+      lowerAnchor: null,
+      upperAnchor: null,
+    });
+  }
+  const lower = [...ROF_ANCHORS].reverse().find((anchor) => anchor < numeric);
+  const upper = ROF_ANCHORS.find((anchor) => anchor > numeric);
+  const anchor = (anchorValue) => anchorValue == null ? null : Object.freeze({ value: anchorValue, descriptor: officialRofJDescriptor(anchorValue) || "" });
+  return Object.freeze({
+    available: true,
+    value: numeric,
+    descriptorType: lower != null && upper != null ? "BETWEEN_ANCHORS" : "POSITION_ONLY",
+    descriptor: "",
+    lowerAnchor: anchor(lower),
+    upperAnchor: anchor(upper),
+  });
+}
+
+function subjectiveState(rof = {}) {
+  const pre = finite(rof?.pre);
+  const post = finite(rof?.post);
+  if (pre && post) return "PAIR";
+  if (pre) return "PRE_ONLY";
+  if (post) return "POST_ONLY";
+  return rof?.available ? "RECORDED_NOT_ELIGIBLE" : "NONE";
+}
+
+function buildSubjectiveContext(rof = {}) {
+  const pair = finite(rof?.pre) && finite(rof?.post) && finite(rof?.delta);
+  return Object.freeze({
+    state: subjectiveState(rof),
+    pre: buildRofValueMeaning(rof?.pre),
+    post: buildRofValueMeaning(rof?.post),
+    difference: Object.freeze({
+      eligible: pair,
+      value: pair ? Number(rof.delta) : null,
+      direction: pair ? String(rof.direction || "") : "",
+    }),
     recentReferences: Object.freeze({
-      pre: clone(rofRecentReferences?.pre || null),
-      post: clone(rofRecentReferences?.post || null),
-      delta: clone(rofRecentReferences?.delta || null),
+      pre: rof?.recentReferences?.pre || null,
+      post: rof?.recentReferences?.post || null,
+      delta: rof?.recentReferences?.delta || null,
     }),
+    boundaryTokens: Object.freeze(["ROF_IS_SUBJECTIVE", "ROF_SEPARATE_FROM_REFERENCE100", "NO_RECOVERY_SAFETY_INJURY_INFERENCE"]),
   });
 }
 
-export function buildEvidenceInterpretation(targetExperience = null, currentRegions = []) {
+function surfaceRecorded(engineInput = {}) {
+  return Array.isArray(engineInput?.surfaceComponents)
+    && engineInput.surfaceComponents.some((item) => Number(item?.sharePercent ?? item?.share_percent ?? 0) > 0);
+}
+
+function gradeRecorded(engineInput = {}) {
+  if (Array.isArray(engineInput?.segments) && engineInput.segments.length) {
+    return engineInput.segments.some((segment) => finite(segment?.gradePercent) && Math.abs(Number(segment.gradePercent)) > 1e-12);
+  }
+  return Number(engineInput?.uphillSharePercent || 0) > 0 || Number(engineInput?.downhillSharePercent || 0) > 0;
+}
+
+function exposureFacts(resultRecord = {}) {
+  const engineInput = resultRecord?.engine_input_snapshot || {};
+  const exposure = resultRecord?.result?.exposure || {};
+  const runWalk = String(engineInput.runningFormat || "").toUpperCase() === "RUN_WALK";
+  const segmented = Array.isArray(engineInput.segments) && engineInput.segments.length > 0;
+  if (segmented) {
+    return Object.freeze({
+      type: "SEGMENTED",
+      distanceKm: finite(exposure.distanceKm) ? Number(exposure.distanceKm) : null,
+      durationMinutes: finite(exposure.durationMinutes) ? Number(exposure.durationMinutes) : null,
+      speedMps: finite(exposure.speedMps) ? Number(exposure.speedMps) : null,
+      segmentCount: engineInput.segments.length,
+    });
+  }
+  return Object.freeze({
+    type: runWalk ? "RUNNING_PHASE" : "WHOLE_RUN",
+    distanceKm: finite(runWalk ? engineInput.runningDistanceKm : engineInput.distanceKm)
+      ? Number(runWalk ? engineInput.runningDistanceKm : engineInput.distanceKm)
+      : null,
+    durationMinutes: finite(runWalk ? engineInput.runningDurationMinutes : engineInput.durationMinutes)
+      ? Number(runWalk ? engineInput.runningDurationMinutes : engineInput.durationMinutes)
+      : null,
+    speedMps: finite(exposure.speedMps) ? Number(exposure.speedMps) : null,
+    segmentCount: 0,
+  });
+}
+
+function inputItem(id, value, role, source = "engine_input_snapshot") {
+  return Object.freeze({ id, value, role, source });
+}
+
+export function resolveCalculationPath(targetExperience = null, region = null) {
   const resultRecord = targetExperience?.regionalV2ResultRecord || {};
-  const registry = resultRecord.source_registry && typeof resultRecord.source_registry === "object" ? resultRecord.source_registry : {};
-  const regions = {};
-  currentRegions.forEach((region) => {
-    regions[region.regionId] = Object.freeze({
-      sourceIds: region.sourceIds,
-      sources: Object.freeze(region.sourceIds.map((sourceId) => Object.freeze({
-        sourceId,
-        label: String(registry[sourceId]?.label || sourceId),
-        role: String(registry[sourceId]?.role || ""),
-      }))),
-      evidenceState: region.evidenceState,
-      evidenceStates: region.evidenceStates,
-      construct: region.construct,
-      constructId: region.constructId,
-      referenceId: region.referenceId,
-      axisEstimates: region.axisEstimates,
-      projectCompositeFlag: region.projectCompositeFlag,
-    });
+  const row = region ? regionRow(resultRecord, region.regionId) : null;
+  const engineInput = resultRecord?.engine_input_snapshot || null;
+  const modelVersion = String(resultRecord?.model_version || "");
+  const primaryRegionId = String(region?.primaryRegionId || row?.primaryRegionId || "");
+  const exposure = exposureFacts(resultRecord);
+
+  const unavailable = (reasonToken) => Object.freeze({
+    resolutionStatus: "UNAVAILABLE",
+    resolutionBasis: "NONE",
+    resolverVersion: INTERPRETATION_ROUTE_RESOLVER_VERSION,
+    activeRoute: "UNKNOWN",
+    exposure,
+    activeInputs: Object.freeze([]),
+    conditionalInputs: Object.freeze([]),
+    contextOnlyInputs: Object.freeze([]),
+    explanationTokens: Object.freeze([reasonToken]),
   });
-  return Object.freeze({
-    contract: INTERPRETATION_EVIDENCE_CONTRACT,
-    regions: Object.freeze(regions),
-    completeness: Object.freeze({
-      completePerContributionTrace: false,
-      wordingCode: "DO_NOT_CLAIM_FULL_BIBLIOGRAPHY",
-    }),
-  });
-}
 
-export function resolveInterpretationSafetyMode(supportDecision = {}) {
-  const route = VALID_SUPPORT_ROUTES.has(String(supportDecision?.route || "")) ? String(supportDecision.route) : "normal";
-  return Object.freeze({
-    route,
-    reasons: uniqueStrings(supportDecision?.reasons || []),
-    blocks: uniqueStrings(supportDecision?.blocks || []),
-    nextActions: uniqueStrings(supportDecision?.nextActions || []),
-  });
-}
+  if (!region || !row || modelVersion !== CURRENT_PRIMARY_MODEL_VERSION) return unavailable("CURRENT_MODEL_RESULT_REQUIRED");
+  if (String(targetExperience?.regionalSemanticState || "").startsWith("LEGACY")) return unavailable("LEGACY_RESULT_NOT_REINTERPRETED");
+  if (String(row.calculationState || "") !== "CALCULATED" || !finite(row.value)) return unavailable("CALCULATED_REGION_REQUIRED");
+  if (!engineInput) return unavailable("ENGINE_INPUT_SNAPSHOT_REQUIRED");
 
-function action(actionId, labelToken, destination, parameters = {}, enabled = true, blockedReason = "") {
-  return Object.freeze({ actionId, labelToken, destination, parameters: Object.freeze({ ...parameters }), enabled, blockedReason });
-}
-
-export function resolveInterpretationActions({ targetExperience = null, availability = {}, safety = {}, origin = "", selectedRegionId = "" } = {}) {
-  const recordId = String(targetExperience?.record?.id || "");
-  const common = { recordId, origin: "interpretation-room" };
-  const normalPlanBlocked = safety.blocks.includes(NORMAL_PLAN_BLOCK);
-  const actions = [];
-  if (safety.route === "urgent") {
-    actions.push(action("official-help", "OFFICIAL_HELP", "support-guidance", { returnTo: `#/interpretation-room?recordId=${encodeURIComponent(recordId)}&origin=${encodeURIComponent(origin || "result")}` }));
-    actions.push(action("share", "CONSULTATION", "consultation", common));
-    actions.push(action("review-input", "REVIEW_INPUT", "record-input", { recordId, returnTo: `#/interpretation-room?recordId=${encodeURIComponent(recordId)}` }));
-  } else if (safety.route === "consult") {
-    actions.push(action("share", "CONSULTATION", "consultation", common));
-    actions.push(action("review-input", "REVIEW_INPUT", "record-input", { recordId, returnTo: `#/interpretation-room?recordId=${encodeURIComponent(recordId)}` }));
-  } else if (safety.route === "review") {
-    actions.push(action("review-input", "REVIEW_INPUT", "record-input", { recordId, returnTo: `#/interpretation-room?recordId=${encodeURIComponent(recordId)}` }));
+  const activeInputs = [];
+  if (exposure.type === "RUNNING_PHASE") {
+    activeInputs.push(inputItem("RUNNING_DISTANCE", exposure.distanceKm, "DERIVE_SPEED"));
+    activeInputs.push(inputItem("RUNNING_DURATION", exposure.durationMinutes, "DERIVE_SPEED"));
+  } else if (exposure.type === "WHOLE_RUN") {
+    activeInputs.push(inputItem("DISTANCE", exposure.distanceKm, "DERIVE_SPEED"));
+    activeInputs.push(inputItem("DURATION", exposure.durationMinutes, "DERIVE_SPEED"));
   }
-  if (availability.regionalHistory) actions.push(action("history", "HISTORY", "history", { recordId, regionId: selectedRegionId || "", view: "trends", metric: "region" }));
-  if (targetExperience?.record?.activityType === "run") {
-    actions.push(action("simulation", "SIMULATION", "simulation", common, !normalPlanBlocked, normalPlanBlocked ? "EXISTING_SUPPORT_BLOCK" : ""));
-    actions.push(action("plan", "PLAN", "plan", { sourceRecordId: recordId, from: "interpretation-room" }, !normalPlanBlocked, normalPlanBlocked ? "EXISTING_SUPPORT_BLOCK" : ""));
-  }
-  actions.push(action("reading", "READING", "reading", { recordId, origin: "interpretation-room", regionId: selectedRegionId || "" }));
-  actions.push(action("share", "CONSULTATION", "consultation", common));
-  const deduped = [];
-  const seen = new Set();
-  actions.forEach((item) => { if (!seen.has(item.actionId)) { seen.add(item.actionId); deduped.push(item); } });
-  return Object.freeze(deduped);
-}
+  if (finite(exposure.speedMps)) activeInputs.push(inputItem("SPEED", exposure.speedMps, "PRIMARY_NUMERIC_ROUTE", "persisted_result.exposure"));
 
-function regionalAvailability(currentRegions, regionalById) {
-  const numeric = currentRegions.filter((region) => finite(region.value));
-  return Object.freeze({
-    regional: numeric.length > 0,
-    previousRegional: Object.values(regionalById).some((item) => Boolean(item.comparablePreviousRecordId)),
-    regionalHistory: Object.values(regionalById).some((item) => item.historyComparableCount > 0),
-  });
-}
+  const conditionalInputs = [];
+  const contextOnlyInputs = [];
+  const hasCadence = finite(engineInput.averageCadenceSpm);
+  const hasGrade = gradeRecorded(engineInput);
+  const hasSurface = surfaceRecorded(engineInput);
+  const hasFootStrike = Boolean(engineInput.footStrikeObservation);
 
-function selectCompactRegions(currentRegions, regionalById, selectedRegionId = "") {
-  if (selectedRegionId && currentRegions.some((region) => region.regionId === selectedRegionId && finite(region.value))) {
-    return Object.freeze([selectedRegionId]);
-  }
-  const selected = currentRegions
-    .filter((region) => region.referenceDirection === "ABOVE_REFERENCE")
-    .filter((region) => regionalById[region.regionId]?.previousDirection === "UP")
-    .sort((a, b) => a.formalOrder - b.formalOrder)
-    .slice(0, 2)
-    .map((region) => region.regionId);
-  return Object.freeze(selected);
-}
+  if (hasSurface) contextOnlyInputs.push(inputItem("SURFACE", engineInput.surfaceComponents, "CONTEXT_ONLY"));
+  if (hasFootStrike) contextOnlyInputs.push(inputItem("FOOT_STRIKE", engineInput.footStrikeObservation, "CONTEXT_ONLY"));
 
-function buildSummaryCodes({ targetExperience, availability, currentRegions, regionalById, rof, conditionSummary, safety }) {
-  const codes = [];
-  const activityType = String(targetExperience?.record?.activityType || "").toLowerCase();
-  if (!targetExperience?.record) return Object.freeze(["NO_TARGET_RECORD"]);
-  if (activityType === "rest") codes.push("REST_RECORD");
-  if (availability.regional) codes.push("REGIONAL_AVAILABLE");
-  else codes.push("REGIONAL_UNAVAILABLE");
-  const availableCount = currentRegions.filter((region) => finite(region.value)).length;
-  if (availableCount && availableCount < currentRegions.length) codes.push("REGIONAL_PARTIAL_AVAILABILITY");
-  if (availability.previousRegional) codes.push("PREVIOUS_REGIONAL_AVAILABLE");
-  if (availability.regionalHistory) codes.push("REGIONAL_HISTORY_AVAILABLE");
-  if (rof.pre !== null && rof.post !== null && rof.delta !== null) codes.push("ROF_PAIR_AVAILABLE");
-  if (rof.recentReferences.pre || rof.recentReferences.post || rof.recentReferences.delta) codes.push("ROF_RECENT_REFERENCE_AVAILABLE");
-  if (conditionSummary.differences.length) codes.push("CONDITION_DIFFERENCES_AVAILABLE");
-  const regionalDifferenceExists = Object.values(regionalById).some((item) => finite(item.delta) && Math.abs(item.delta) >= 1);
-  if (regionalDifferenceExists && conditionSummary.differences.length) codes.push("NON_CAUSAL_BOUNDARY_REQUIRED");
-  if (targetExperience?.regionalV2Recovery?.status === "RECOVERED") codes.push("REGIONAL_TRANSIENT_RECOVERY");
-  if (String(targetExperience?.regionalSemanticState || "").startsWith("LEGACY")) codes.push("LEGACY_REGIONAL_BOUNDARY");
-  if (safety.route !== "normal") codes.push(`SUPPORT_${safety.route.toUpperCase()}`);
-  return Object.freeze(codes);
-}
-
-function buildSummaryTokens(currentRegions, regionalById, conditionSummary, rof) {
-  const numeric = currentRegions.filter((region) => finite(region.value));
-  const counts = numeric.reduce((out, region) => {
-    if (region.referenceDirection === "ABOVE_REFERENCE") out.above += 1;
-    else if (region.referenceDirection === "REFERENCE_VICINITY") out.near += 1;
-    else if (region.referenceDirection === "BELOW_REFERENCE") out.below += 1;
-    return out;
-  }, { above: 0, near: 0, below: 0 });
-  const previousDifferenceCount = Object.values(regionalById).filter((item) => ["UP", "DOWN"].includes(item.previousDirection)).length;
-  return Object.freeze([
-    Object.freeze({ token: "REGIONAL_COUNTS", values: Object.freeze({ available: numeric.length, unavailable: currentRegions.length - numeric.length, ...counts }) }),
-    Object.freeze({ token: "PREVIOUS_REGIONAL_DIFFERENCE_COUNT", values: Object.freeze({ count: previousDifferenceCount }) }),
-    Object.freeze({ token: "CONDITION_DIFFERENCE_COUNT", values: Object.freeze({ count: conditionSummary.differences.length }) }),
-    Object.freeze({ token: "ROF_PAIR", values: Object.freeze({ pre: rof.pre, post: rof.post, delta: rof.delta, direction: rof.direction }) }),
-  ]);
-}
-
-
-function meaningDirectionKey(direction = "") {
-  if (direction === "ABOVE_REFERENCE") return "above";
-  if (direction === "REFERENCE_VICINITY") return "near";
-  if (direction === "BELOW_REFERENCE") return "below";
-  return "";
-}
-
-function orderedRegionCandidates(currentRegions = [], predicate = () => true) {
-  return currentRegions
-    .filter((region) => finite(region.value))
-    .filter(predicate)
-    .sort((a, b) => a.formalOrder - b.formalOrder || String(a.regionId).localeCompare(String(b.regionId)));
-}
-
-function firstRegionId(currentRegions = [], predicate = () => true) {
-  return orderedRegionCandidates(currentRegions, predicate)[0]?.regionId || "";
-}
-
-function regionalDifferenceIds(currentRegions = [], regionalById = {}) {
-  return Object.freeze(orderedRegionCandidates(
-    currentRegions,
-    (region) => ["UP", "DOWN"].includes(regionalById[region.regionId]?.previousDirection),
-  ).map((region) => region.regionId));
-}
-
-function repeatedObservationCandidate(currentRegions = [], regionalById = {}) {
-  for (const region of orderedRegionCandidates(
-    currentRegions,
-    (candidate) => ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(candidate.referenceDirection),
-  )) {
-    const comparison = regionalById[region.regionId];
-    const key = meaningDirectionKey(region.referenceDirection);
-    const pastMatchingCount = Number(comparison?.historyReferenceDirectionCounts?.[key] || 0);
-    if (comparison?.historyComparableCount >= 2 && pastMatchingCount >= 2) {
-      return Object.freeze({
-        regionId: region.regionId,
-        currentDirection: region.referenceDirection,
-        pastMatchingCount,
-        pastComparableCount: Number(comparison.historyComparableCount || 0),
-      });
-    }
-  }
-  return null;
-}
-
-function focusRegionIdForMeaning(currentRegions = [], regionalById = {}, selectedRegionId = "") {
-  if (selectedRegionId && currentRegions.some((region) => region.regionId === selectedRegionId && finite(region.value))) {
-    return selectedRegionId;
-  }
-  const repeated = repeatedObservationCandidate(currentRegions, regionalById);
-  if (repeated?.regionId) return repeated.regionId;
-  const changed = firstRegionId(currentRegions, (region) => ["UP", "DOWN"].includes(regionalById[region.regionId]?.previousDirection));
-  if (changed) return changed;
-  const referenceDifference = firstRegionId(currentRegions, (region) => ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(region.referenceDirection));
-  if (referenceDifference) return referenceDifference;
-  return firstRegionId(currentRegions);
-}
-
-function buildMeaningFacts({ currentRegions, regionalById, conditionSummary, rof, focusRegionId, repeated }) {
-  const facts = [];
-  const region = currentRegions.find((item) => item.regionId === focusRegionId) || null;
-  const comparison = focusRegionId ? regionalById[focusRegionId] : null;
-
-  if (region) {
-    facts.push(Object.freeze({
-      type: "REGION_CURRENT_REFERENCE",
-      regionId: region.regionId,
-      label: region.label,
-      value: region.value,
-      referenceDirection: region.referenceDirection,
-    }));
-  }
-
-  if (region && comparison?.comparablePreviousRecordId && finite(comparison.delta)) {
-    facts.push(Object.freeze({
-      type: "REGION_PREVIOUS_DIFFERENCE",
-      regionId: region.regionId,
-      label: region.label,
-      currentValue: region.value,
-      previousValue: comparison.previousValue,
-      delta: comparison.delta,
-      direction: comparison.previousDirection,
-      previousRecordId: comparison.comparablePreviousRecordId,
-      previousDate: comparison.comparablePreviousDate,
-    }));
-  }
-
-  if (repeated && repeated.regionId === focusRegionId) {
-    facts.push(Object.freeze({
-      type: "REGION_REPEATED_DIRECTION",
-      regionId: repeated.regionId,
-      currentDirection: repeated.currentDirection,
-      pastMatchingCount: repeated.pastMatchingCount,
-      pastComparableCount: repeated.pastComparableCount,
-    }));
-  }
-
-  if (finite(rof?.pre) && finite(rof?.post) && finite(rof?.delta)) {
-    facts.push(Object.freeze({
-      type: "ROF_PRE_POST",
-      pre: Number(rof.pre),
-      post: Number(rof.post),
-      delta: Number(rof.delta),
-      direction: String(rof.direction || ""),
-    }));
-  }
-
-  if (conditionSummary?.differences?.length) {
-    facts.push(Object.freeze({
-      type: "CONDITION_DIFFERENCES",
-      count: conditionSummary.differences.length,
-      labels: Object.freeze(conditionSummary.differences.map((item) => String(item.labelToken || item.id || "")).filter(Boolean)),
-      previousRecordId: String(conditionSummary.previousRecordId || ""),
-      previousDate: String(conditionSummary.previousDate || ""),
-    }));
-  }
-
-  return Object.freeze(facts.slice(0, 5));
-}
-
-function meaningBoundaryCodes(primaryCode, rof, conditionSummary) {
-  const codes = ["NO_DIAGNOSIS", "NO_INJURY_RISK", "NO_SAFETY_OR_RUN_PERMISSION", "NO_CROSS_REGION_RANKING"];
-  const regionalAndCondition = primaryCode === "CONDITION_AND_RESULT_CHANGED" || Boolean(conditionSummary?.differences?.length);
-  if (regionalAndCondition) codes.push("NO_CAUSAL_INFERENCE");
-  if (finite(rof?.pre) && finite(rof?.post)) codes.push("ROF_SEPARATE_SUBJECTIVE_LAYER");
-  return Object.freeze(codes);
-}
-
-export function buildMeaningFrame({ targetExperience = null, currentRegions = [], regionalById = {}, conditionSummary = null, rof = null, safety = null, availability = null, selectedRegionId = "" } = {}) {
-  if (!targetExperience?.record) {
+  if (exposure.type === "SEGMENTED") {
+    if (hasCadence) conditionalInputs.push(inputItem("CADENCE", Number(engineInput.averageCadenceSpm), "CONDITIONAL_NUMERIC_ROUTE"));
+    if (hasGrade) conditionalInputs.push(inputItem("GRADE", "SEGMENT_GRADES", "CONDITIONAL_NUMERIC_ROUTE"));
     return Object.freeze({
-      primaryCode: "NO_TARGET_RECORD",
-      secondaryCodes: Object.freeze([]),
-      focusRegionIds: Object.freeze([]),
-      availableModes: Object.freeze([]),
-      factsUsed: Object.freeze([]),
-      boundaryCodes: Object.freeze([]),
+      resolutionStatus: "PARTIAL",
+      resolutionBasis: "PERSISTED_INPUTS_WITHOUT_SEGMENT_ROUTE_TRACE",
+      resolverVersion: INTERPRETATION_ROUTE_RESOLVER_VERSION,
+      activeRoute: "SECTION_COMPOSED",
+      exposure,
+      activeInputs: frozenArray(activeInputs),
+      conditionalInputs: frozenArray(conditionalInputs),
+      contextOnlyInputs: frozenArray(contextOnlyInputs),
+      explanationTokens: Object.freeze(["SEGMENTED_CALCULATION", "DISTANCE_WEIGHTED_REGION_SUMMARY", "DO_NOT_CLAIM_EXACT_PER_SEGMENT_ROUTE"]),
     });
   }
 
-  const resolvedSafety = safety || { route: "normal" };
-  const resolvedAvailability = availability || {};
-  const semanticState = String(targetExperience?.regionalSemanticState || "");
-  const differenceIds = regionalDifferenceIds(currentRegions, regionalById);
-  const hasRegionalDifference = differenceIds.length > 0;
-  const hasRofDifference = finite(rof?.delta) && Math.abs(Number(rof.delta)) >= 1;
-  const hasConditionDifference = Boolean(conditionSummary?.differences?.length);
-  const repeated = repeatedObservationCandidate(currentRegions, regionalById);
-  const focusRegionId = focusRegionIdForMeaning(currentRegions, regionalById, selectedRegionId);
-
-  let primaryCode = "COMPARISON_BASELINE";
-  if (resolvedSafety.route && resolvedSafety.route !== "normal") {
-    primaryCode = "SUPPORT_PRIORITY";
-  } else if (!resolvedAvailability.regional || semanticState.startsWith("LEGACY")) {
-    primaryCode = "LIMITED_RESULT";
-  } else if (repeated) {
-    primaryCode = "REPEATED_OBSERVATION";
-  } else if (hasRegionalDifference && hasConditionDifference) {
-    primaryCode = "CONDITION_AND_RESULT_CHANGED";
-  } else if (hasRegionalDifference && hasRofDifference) {
-    primaryCode = "MULTI_LAYER_CHANGE";
-  } else if (hasRegionalDifference) {
-    primaryCode = "CURRENT_SHIFT_WITH_HISTORY";
-  } else if (currentRegions.some((region) => ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(region.referenceDirection))) {
-    primaryCode = "CURRENT_REFERENCE_PATTERN";
+  if (SPEED_ONLY_PRIMARY_REGIONS.has(primaryRegionId)) {
+    if (hasCadence) contextOnlyInputs.push(inputItem("CADENCE", Number(engineInput.averageCadenceSpm), "NOT_ACTIVE_FOR_THIS_REGION"));
+    if (hasGrade) contextOnlyInputs.push(inputItem("GRADE", "RECORDED", "NOT_ACTIVE_FOR_THIS_REGION"));
+    return Object.freeze({
+      resolutionStatus: "EXACT",
+      resolutionBasis: "VERSION_LOCKED_REGION_ROUTE",
+      resolverVersion: INTERPRETATION_ROUTE_RESOLVER_VERSION,
+      activeRoute: "SPEED",
+      exposure,
+      activeInputs: frozenArray(activeInputs),
+      conditionalInputs: Object.freeze([]),
+      contextOnlyInputs: frozenArray(contextOnlyInputs),
+      explanationTokens: Object.freeze([exposure.type === "RUNNING_PHASE" ? "RUNNING_PHASE_DERIVES_SPEED" : "DISTANCE_DURATION_DERIVE_SPEED", "SPEED_USED_FOR_REGION"]),
+    });
   }
 
-  const secondaryCodes = [];
-  if (primaryCode !== "REPEATED_OBSERVATION" && repeated) secondaryCodes.push("REPEATED_OBSERVATION");
-  if (primaryCode !== "CONDITION_AND_RESULT_CHANGED" && hasRegionalDifference && hasConditionDifference) secondaryCodes.push("CONDITION_AND_RESULT_CHANGED");
-  if (primaryCode !== "MULTI_LAYER_CHANGE" && hasRegionalDifference && hasRofDifference) secondaryCodes.push("MULTI_LAYER_CHANGE");
-  if (primaryCode !== "CURRENT_SHIFT_WITH_HISTORY" && hasRegionalDifference) secondaryCodes.push("CURRENT_SHIFT_WITH_HISTORY");
-  if (hasRofDifference) secondaryCodes.push("ROF_PRE_POST_CHANGE");
-  if (hasConditionDifference) secondaryCodes.push("CONDITION_DIFFERENCES_PRESENT");
+  if (!CONDITIONAL_PRIMARY_REGIONS.has(primaryRegionId)) return unavailable("UNKNOWN_REGION_ROUTE");
 
-  const availableModes = ["simple"];
-  if (focusRegionId) availableModes.push("visual");
-  if (hasRegionalDifference || hasRofDifference || hasConditionDifference) availableModes.push("difference");
-  if (resolvedAvailability.persistedEvidence) availableModes.push("evidence");
+  if (CADENCE_CAPABLE_PRIMARY_REGIONS.has(primaryRegionId) && hasCadence) {
+    conditionalInputs.push(inputItem("CADENCE", Number(engineInput.averageCadenceSpm), "CONDITIONAL_NUMERIC_ROUTE"));
+  } else if (hasCadence) {
+    contextOnlyInputs.push(inputItem("CADENCE", Number(engineInput.averageCadenceSpm), "NOT_ACTIVE_FOR_THIS_REGION"));
+  }
+  if (GRADE_CAPABLE_PRIMARY_REGIONS.has(primaryRegionId) && hasGrade) {
+    conditionalInputs.push(inputItem("GRADE", "RECORDED", "CONDITIONAL_NUMERIC_ROUTE"));
+  } else if (hasGrade) {
+    contextOnlyInputs.push(inputItem("GRADE", "RECORDED", "NOT_ACTIVE_FOR_THIS_REGION"));
+  }
+
+  if (conditionalInputs.length) {
+    return Object.freeze({
+      resolutionStatus: "PARTIAL",
+      resolutionBasis: "PERSISTED_RESULT_DOES_NOT_RETAIN_FINAL_CONDITIONAL_ROUTE_TRACE",
+      resolverVersion: INTERPRETATION_ROUTE_RESOLVER_VERSION,
+      activeRoute: "SPEED_WITH_CONDITIONAL_INPUTS",
+      exposure,
+      activeInputs: frozenArray(activeInputs),
+      conditionalInputs: frozenArray(conditionalInputs),
+      contextOnlyInputs: frozenArray(contextOnlyInputs),
+      explanationTokens: Object.freeze(["SPEED_IS_BASE_ROUTE", "CONDITIONAL_INPUT_RECORDED", "DO_NOT_CLAIM_CONDITIONAL_INPUT_WAS_APPLIED"]),
+    });
+  }
 
   return Object.freeze({
-    primaryCode,
-    secondaryCodes: uniqueStrings(secondaryCodes),
-    focusRegionIds: Object.freeze(focusRegionId ? [focusRegionId] : []),
-    availableModes: uniqueStrings(availableModes),
-    factsUsed: buildMeaningFacts({
-      currentRegions,
-      regionalById,
-      conditionSummary,
-      rof,
-      focusRegionId,
-      repeated,
-    }),
-    boundaryCodes: meaningBoundaryCodes(primaryCode, rof, conditionSummary),
+    resolutionStatus: "EXACT",
+    resolutionBasis: "VERSION_LOCKED_BASE_ROUTE_NO_CONDITIONAL_INPUT",
+    resolverVersion: INTERPRETATION_ROUTE_RESOLVER_VERSION,
+    activeRoute: "SPEED",
+    exposure,
+    activeInputs: frozenArray(activeInputs),
+    conditionalInputs: Object.freeze([]),
+    contextOnlyInputs: frozenArray(contextOnlyInputs),
+    explanationTokens: Object.freeze([exposure.type === "RUNNING_PHASE" ? "RUNNING_PHASE_DERIVES_SPEED" : "DISTANCE_DURATION_DERIVE_SPEED", "SPEED_USED_FOR_REGION"]),
   });
 }
 
-function limitationCodes(targetExperience, evidence) {
-  const codes = [
-    "NO_DIAGNOSIS",
-    "NO_INJURY_RISK",
-    "NO_SAFETY_OR_RUN_PERMISSION",
-    "NO_CROSS_REGION_RANKING",
-    "NO_CAUSAL_INFERENCE",
-    "ROF_SEPARATE_SUBJECTIVE_LAYER",
-  ];
-  if (!evidence.completeness.completePerContributionTrace) codes.push("NO_COMPLETE_BIBLIOGRAPHY_CLAIM");
-  if (String(targetExperience?.regionalSemanticState || "").startsWith("LEGACY")) codes.push("LEGACY_NOT_REINTERPRETED_AS_CURRENT");
-  return Object.freeze(codes);
+function overviewRegion(region, comparison = {}) {
+  const reference = referenceComparison(region?.value);
+  const previous = previousComparison({ ...comparison, currentValue: region?.value });
+  return Object.freeze({
+    regionId: String(region?.regionId || ""),
+    primaryRegionId: String(region?.primaryRegionId || ""),
+    label: String(region?.label || ""),
+    value: finite(region?.value) ? Number(region.value) : null,
+    availability: finite(region?.value) ? "AVAILABLE" : String(region?.calculationState || "UNAVAILABLE"),
+    reference,
+    previous,
+  });
 }
 
-export function buildInterpretationContext({ targetExperience = null, allExperiences = [], rofSummary = null, rofRecentReferences = {}, origin = "", selectedRegionId = "", supportDecision = null } = {}) {
-  const currentRegions = projectCurrentRegions(targetExperience);
-  const regionalById = buildRegionalComparisons(targetExperience, allExperiences, currentRegions);
-  const conditionSummary = buildConditionDifferenceSummary(targetExperience, allExperiences);
-  const rof = buildRofJInterpretation(rofSummary, rofRecentReferences);
-  const safety = resolveInterpretationSafetyMode(supportDecision || targetExperience?.supportDecision || {});
-  const regionalFlags = regionalAvailability(currentRegions, regionalById);
-  const availability = Object.freeze({
-    ...regionalFlags,
-    rofPair: rof.pre !== null && rof.post !== null && rof.delta !== null,
-    rofRecentPre: Boolean(rof.recentReferences.pre),
-    rofRecentPost: Boolean(rof.recentReferences.post),
-    rofRecentDelta: Boolean(rof.recentReferences.delta),
-    conditionComparison: conditionSummary.differences.length > 0,
-    persistedEvidence: currentRegions.some((region) => region.sourceIds.length > 0 || region.construct || region.evidenceState),
+function regionalState(base = {}) {
+  if (String(base?.context?.activityType || "").toLowerCase() === "rest") return "REST";
+  if (String(base?.context?.regionalSemanticState || "").startsWith("LEGACY")) return "LEGACY";
+  const regions = base?.current?.regions || [];
+  const available = regions.filter((region) => finite(region.value)).length;
+  if (!available) return "UNAVAILABLE";
+  if (available < regions.length) return "PARTIAL";
+  return "AVAILABLE";
+}
+
+function selectRegion(base = {}, selectedRegionId = "") {
+  if (!selectedRegionId) return null;
+  const region = (base?.current?.regions || []).find((item) => item.regionId === selectedRegionId) || null;
+  if (!region) return null;
+  const comparison = base?.comparison?.regionalById?.[selectedRegionId] || {};
+  return { region, comparison };
+}
+
+function nextProjection(base = {}, selectedRegionId = "") {
+  const actions = Array.isArray(base?.actions) ? base.actions : [];
+  const enabled = actions.filter((action) => action?.enabled !== false);
+  if (base?.safety?.route && base.safety.route !== "normal") {
+    const action = enabled[0] || null;
+    return Object.freeze({ selectionRequired: false, primaryAction: action, otherActions: frozenArray(enabled.slice(1)) });
+  }
+  if (!selectedRegionId) {
+    return Object.freeze({ selectionRequired: true, primaryAction: null, otherActions: Object.freeze([]) });
+  }
+  const comparison = base?.comparison?.regionalById?.[selectedRegionId] || {};
+  const hasConditionDifference = Array.isArray(base?.comparison?.conditionDifferences) && base.comparison.conditionDifferences.length > 0;
+  const preferredId = hasConditionDifference ? "simulation" : comparison.historyComparableCount > 0 ? "history" : "plan";
+  const primary = enabled.find((action) => action.actionId === preferredId) || enabled[0] || null;
+  return Object.freeze({
+    selectionRequired: false,
+    primaryAction: primary,
+    otherActions: frozenArray(enabled.filter((action) => action !== primary)),
   });
-  const selectedRegionIds = selectCompactRegions(currentRegions, regionalById, selectedRegionId);
-  const evidence = buildEvidenceInterpretation(targetExperience, currentRegions);
-  const meaning = buildMeaningFrame({
+}
+
+export function buildRunLoadInterpretation({
+  targetExperience = null,
+  allExperiences = [],
+  rofSummary = null,
+  rofRecentReferences = {},
+  origin = "",
+  selectedRegionId = "",
+  supportDecision = null,
+} = {}) {
+  const base = buildBaseInterpretation({
     targetExperience,
-    currentRegions,
-    regionalById,
-    conditionSummary,
-    rof,
-    safety,
-    availability,
+    allExperiences,
+    rofSummary,
+    rofRecentReferences,
+    origin,
     selectedRegionId,
+    supportDecision,
   });
-  const actions = resolveInterpretationActions({ targetExperience, availability, safety, origin, selectedRegionId });
-  return Object.freeze({ currentRegions, regionalById, conditionSummary, rof, safety, availability, selectedRegionIds, evidence, meaning, actions });
-}
 
-export function buildCurrentRunInterpretation(context = {}) {
-  const currentRegions = context.currentRegions || [];
-  return Object.freeze({
-    regions: currentRegions,
-    selectedRegionIds: context.selectedRegionIds || Object.freeze([]),
-  });
-}
+  const selected = selectRegion(base, selectedRegionId);
+  const selectedRegion = selected ? Object.freeze({
+    regionId: selected.region.regionId,
+    primaryRegionId: selected.region.primaryRegionId,
+    label: selected.region.label,
+    value: selected.region.value,
+    referenceComparison: referenceComparison(selected.region.value),
+    previousComparison: previousComparison({ ...selected.comparison, currentValue: selected.region.value }),
+    personalHistory: historyProjection(selected.comparison),
+    calculationPath: resolveCalculationPath(targetExperience, selected.region),
+  }) : null;
 
-export function buildRegionalHistoryInterpretation(context = {}) {
-  return Object.freeze({ regionalById: context.regionalById || Object.freeze({}) });
-}
-
-export function buildRunLoadInterpretation({ targetExperience = null, allExperiences = [], rofSummary = null, rofRecentReferences = {}, origin = "", selectedRegionId = "", supportDecision = null } = {}) {
-  if (!targetExperience?.record) {
-    const safety = resolveInterpretationSafetyMode(supportDecision || {});
-    return Object.freeze({
-      schemaVersion: INTERPRETATION_OUTPUT_SCHEMA_VERSION,
-      coreVersion: INTERPRETATION_CORE_VERSION,
-      targetRecordId: "",
-      generatedFrom: Object.freeze({ resultRecordId: "", modelVersion: "", outputSemanticVersion: "", engineBuildVersion: "", authorityVersion: "" }),
-      context: Object.freeze({ origin: String(origin || ""), recordDate: "", createdAt: "", activityType: "", selectedRegionId: String(selectedRegionId || ""), regionalSemanticState: "NONE", regionalRecoveryStatus: "" }),
-      availability: Object.freeze({ regional: false, previousRegional: false, regionalHistory: false, rofPair: false, rofRecentPre: false, rofRecentPost: false, rofRecentDelta: false, conditionComparison: false, persistedEvidence: false }),
-      current: Object.freeze({ facts: Object.freeze({}), regions: Object.freeze([]), rof: buildRofJInterpretation(null, {}) }),
-      comparison: Object.freeze({ stableTargetKey: "", regionalById: Object.freeze({}), conditionDifferences: Object.freeze([]), conditionPreviousRecordId: "", conditionPreviousDate: "", rofRecentReferences: Object.freeze({ pre: null, post: null, delta: null }) }),
-      interpretation: Object.freeze({ summaryCodes: Object.freeze(["NO_TARGET_RECORD"]), summaryTokens: Object.freeze([]), selectedRegionIds: Object.freeze([]), limitationCodes: Object.freeze([]), meaning: buildMeaningFrame() }),
-      evidence: Object.freeze({ contract: INTERPRETATION_EVIDENCE_CONTRACT, regions: Object.freeze({}), completeness: Object.freeze({ completePerContributionTrace: false, wordingCode: "DO_NOT_CLAIM_FULL_BIBLIOGRAPHY" }) }),
-      safety,
-      actions: Object.freeze([action("record", "RECORD", "record-input")]),
-    });
-  }
-
-  const ctx = buildInterpretationContext({ targetExperience, allExperiences, rofSummary, rofRecentReferences, origin, selectedRegionId, supportDecision });
-  const resultRecord = targetExperience.regionalV2ResultRecord || {};
-  const summaryCodes = buildSummaryCodes({
-    targetExperience,
-    availability: ctx.availability,
-    currentRegions: ctx.currentRegions,
-    regionalById: ctx.regionalById,
-    rof: ctx.rof,
-    conditionSummary: ctx.conditionSummary,
-    safety: ctx.safety,
-  });
-  const summaryTokens = buildSummaryTokens(ctx.currentRegions, ctx.regionalById, ctx.conditionSummary, ctx.rof);
+  const regions = (base?.current?.regions || []).map((region) => overviewRegion(region, base?.comparison?.regionalById?.[region.regionId] || {}));
+  const subjectiveContext = buildSubjectiveContext(base?.current?.rof || {});
 
   return Object.freeze({
     schemaVersion: INTERPRETATION_OUTPUT_SCHEMA_VERSION,
     coreVersion: INTERPRETATION_CORE_VERSION,
-    targetRecordId: String(targetExperience.record.id || ""),
-    generatedFrom: Object.freeze({
-      resultRecordId: String(resultRecord.id || ""),
-      modelVersion: String(resultRecord.model_version || ""),
-      outputSemanticVersion: String(resultRecord.output_semantic_version || resultRecord.result?.outputSemanticVersion || ""),
-      engineBuildVersion: String(resultRecord.engine_build_version || ""),
-      authorityVersion: String(resultRecord.authority_version || ""),
-    }),
-    context: Object.freeze({
+    target: Object.freeze({
+      recordId: String(base?.targetRecordId || ""),
+      resultRecordId: String(base?.generatedFrom?.resultRecordId || ""),
+      date: String(base?.context?.recordDate || ""),
+      activityType: String(base?.context?.activityType || ""),
       origin: String(origin || ""),
-      recordDate: String(targetExperience.record.date || ""),
-      createdAt: String(targetExperience.record.createdAt || ""),
-      activityType: String(targetExperience.record.activityType || ""),
       selectedRegionId: String(selectedRegionId || ""),
-      regionalSemanticState: String(targetExperience.regionalSemanticState || "NONE"),
-      regionalRecoveryStatus: String(targetExperience.regionalV2Recovery?.status || ""),
     }),
-    availability: ctx.availability,
-    current: Object.freeze({
-      facts: currentFacts(targetExperience.record),
-      regions: ctx.currentRegions,
-      rof: ctx.rof,
+    state: Object.freeze({
+      targetAvailable: Boolean(base?.targetRecordId),
+      regional: regionalState(base),
+      history: base?.availability?.regionalHistory ? "AVAILABLE" : "NONE",
+      subjective: subjectiveContext.state,
+      support: String(base?.safety?.route || "normal").toUpperCase(),
+      legacy: String(base?.context?.regionalSemanticState || "").startsWith("LEGACY"),
     }),
-    comparison: Object.freeze({
-      stableTargetKey: stableRecordKey(targetExperience.record),
-      regionalById: ctx.regionalById,
-      conditionDifferences: ctx.conditionSummary.differences,
-      conditionPreviousRecordId: ctx.conditionSummary.previousRecordId,
-      conditionPreviousDate: ctx.conditionSummary.previousDate,
-      rofRecentReferences: ctx.rof.recentReferences,
+    overview: Object.freeze({
+      regions: frozenArray(regions),
+      selectionMode: selectedRegionId ? "EXPLICIT" : "USER_SELECT",
+      guidanceTokens: Object.freeze(["REGIONS_USE_OWN_REFERENCE", "NO_CROSS_REGION_RANKING", "NUMBERS_REQUIRE_CONTEXT"]),
     }),
-    interpretation: Object.freeze({
-      summaryCodes,
-      summaryTokens,
-      selectedRegionIds: ctx.selectedRegionIds,
-      limitationCodes: limitationCodes(targetExperience, ctx.evidence),
-      meaning: ctx.meaning,
+    selectedRegion,
+    subjectiveContext,
+    understanding: Object.freeze({
+      facts: base?.interpretation?.meaning?.factsUsed || Object.freeze([]),
+      boundaryCodes: base?.interpretation?.limitationCodes || Object.freeze([]),
     }),
-    evidence: ctx.evidence,
-    safety: ctx.safety,
-    actions: ctx.actions,
+    next: nextProjection(base, selectedRegionId),
+    advanced: Object.freeze({ evidence: base?.evidence || null }),
+    safety: base?.safety || Object.freeze({ route: "normal", reasons: Object.freeze([]), blocks: Object.freeze([]), nextActions: Object.freeze([]) }),
+    provenance: Object.freeze({
+      sourceSchemaVersion: base?.schemaVersion || "",
+      sourceCoreVersion: base?.coreVersion || "",
+      modelVersion: base?.generatedFrom?.modelVersion || "",
+      outputSemanticVersion: base?.generatedFrom?.outputSemanticVersion || "",
+      readOnly: true,
+      primaryRecalculated: false,
+      rofRecalculated: false,
+    }),
   });
 }

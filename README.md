@@ -1,24 +1,35 @@
 # RunLoad
 
-RunLoad is a pre-release regular web application for beginner runners to review their own running records, body-region Reference-100 values, subjective fatigue (ROF-J), history, plans, courses and local GPX information.
+RunLoad is a browser-based application that helps beginner runners review their own running records, body-region Reference-100 values, subjective fatigue (ROF-J), history, plans, courses, and local GPX information.
 
-## Status
-- Development-stage pre-release app for smartphone verification and iterative polish.
-- This repository root is the deployable app, not the former UI/UX prototype.
-- The frozen prototype is preserved in Git history and branch `archive/prototype-freeze-20260918`.
+## Current application structure
 
-## Fixed interpretation boundaries
-- Reference-100 is for within-region self-understanding; it is not a cross-region ranking.
+The repository root is the deployable application.
+
+- `core/`: deterministic domain logic and interpretation logic
+- `screens/`: screen-level rendering and screen-specific composition
+- `ui/`: shared presentation, navigation, interactions, and browser UI services
+- `styles/`: theme tokens, shared layout/components, screen styles, responsive/mobile/desktop layers
+- `tests/`: executable regression, boundary, navigation, presentation, and integration tests
+- `RUNTIME_SHA256SUMS.txt`: integrity manifest for deployable runtime files
+
+See `docs/CODEBASE_ARCHITECTURE.md` for ownership and maintenance rules.
+
+## Scientific and interpretation boundaries
+
+- Reference-100 supports within-region self-understanding; it is not a cross-region ranking.
 - Distance is a separate running fact, not an automatic multiplier of the regional display.
-- Missing or unsupported data is not converted to zero or fabricated q=1.
-- ROF-J records subjective fatigue at the time of answering; it is not a readiness, recovery, safety or injury-risk score.
+- Missing or unsupported data is not converted to zero or fabricated as q=1.
+- ROF-J records subjective fatigue at the time of answering; it is separate from Reference-100.
+- ROF-J is not a readiness, recovery, safety, injury-risk, or run/no-run score.
 - session-RPE is not implemented.
-- The app does not diagnose, prescribe, score injury risk/readiness/safety, or make automatic run/no-run decisions.
-- Notebook is not part of this version.
-- This version does not migrate or reinterpret old-app records.
+- The app does not diagnose, prescribe training, estimate injury risk, or make automatic safety decisions.
+- Legacy records are not silently reinterpreted as current Reference-100 values.
 
-## Data
-App records are stored locally in the browser. GPX analysis is local-only in this version.
+## Data and deployment
 
-## Verification baseline
-Latest Share Readability refinement: dedicated V1.32 audit 22/22 PASS and modified JavaScript syntax 2/2 PASS. The Share Preparation output no longer asks for a recipient, and the selected body-region indicator is presented as one meaning-first block with its comparable prior change. The Result screen's existing baseline-direction rule is reused. Protected calculation cores, storage implementation, and scientific source/model files are unchanged.
+Application data is stored locally in the browser. GPX analysis is local-only. The repository root is the PWA/web deployment payload.
+
+## Verification
+
+Changes should keep all JavaScript/MJS syntax checks, runtime reachability checks, PWA precache checks, and all test suites passing. Runtime changes must be followed by regeneration of `RUNTIME_SHA256SUMS.txt`.

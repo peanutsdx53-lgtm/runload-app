@@ -1,5 +1,5 @@
 export function bindReading({ router }) {
-  const root = document.querySelector("[data-prototype-reading]");
+  const root = document.querySelector("[data-reading-screen]");
   if (root) {
     const drawer = root.querySelector("[data-reading-drawer]");
     const details = [...root.querySelectorAll("[data-reading-detail]")];

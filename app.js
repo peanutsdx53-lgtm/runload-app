@@ -48,14 +48,6 @@ const screenRenderers = {
   settings: renderSettingsScreen,
 };
 
-const routeAliases = Object.freeze({
-  activation: (parameters) => {
-    const nextParameters = new URLSearchParams(parameters);
-    if (!nextParameters.has("origin")) nextParameters.set("origin", "result");
-    return Object.freeze({ screen: "interpretation-room", parameters: nextParameters });
-  },
-});
-
 const appRoot = document.getElementById("app");
 const desktopHeaderRoot = document.getElementById("desktop-header-root");
 const baseApplicationServices = createApplicationServices();
@@ -187,12 +179,12 @@ function renderScreen(location) {
 
 const RESUME_SCROLL_SURFACE_SELECTOR = [
   ".course-derived-screen .course-derived-body",
-  ".prototype-parity--record .subscreen",
-  ".prototype-parity--record .sheet",
-  ".prototype-parity--result .detail-screen",
-  ".prototype-parity--result .region-sheet",
-  ".prototype-parity--history .region-sheet",
-  ".prototype-parity--reading .sheet",
+  ".screen-layout--record .subscreen",
+  ".screen-layout--record .sheet",
+  ".screen-layout--result .detail-screen",
+  ".screen-layout--result .region-sheet",
+  ".screen-layout--history .region-sheet",
+  ".screen-layout--reading .sheet",
   ".feature-menu__panel",
   ".guide-dialog__body",
   ".screen-tutorial__panel",
@@ -268,7 +260,6 @@ document.addEventListener("visibilitychange", () => {
 
 router = createAppRouter({
   availableScreens: Object.keys(screenRenderers),
-  routeAliases,
   onScreenChange: renderScreen,
 });
 

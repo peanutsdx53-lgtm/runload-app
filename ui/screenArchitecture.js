@@ -40,14 +40,12 @@ function workflowReturnLabel(href = "") {
 function interpretationReturnContext(parameter, recordId = "") {
   if (parameter("from") !== "interpretation-room") return null;
   const roomOrigin = parameter("roomOrigin") || "result";
-  const roomExperience = parameter("roomExperience");
   const regionId = parameter("regionId");
   return {
     title: "結果の整理",
     backHref: screenHref("interpretation-room", {
       recordId,
       origin: roomOrigin,
-      ...(roomExperience === "v3" ? { experience: "v3" } : {}),
       regionId,
     }),
     backLabel: "結果の整理",
@@ -94,8 +92,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "interpretation-room") {
     const origin = parameter("origin");
     const regionId = parameter("regionId");
-    const experience = parameter("experience");
-    const interpretationTitle = experience === "v3" ? "結果を整理する" : "結果を理解する";
+    const interpretationTitle = "結果を整理する";
     if (origin === "history") {
       return { title: interpretationTitle, backHref: screenHref("history", { recordId }), backLabel: "履歴" };
     }
@@ -117,20 +114,10 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     if (from === "history") return { title: "条件比較", backHref: "#/history", backLabel: "履歴" };
     if (from === "interpretation-room") {
       const roomOrigin = parameter("roomOrigin");
-      const roomExperience = parameter("roomExperience");
       return {
         title: "条件比較",
-        backHref: screenHref("interpretation-room", roomExperience === "v3"
-          ? { recordId, origin: roomOrigin || "result", experience: "v3" }
-          : { recordId, origin: roomOrigin || "result", view: "next", intent: "condition" }),
-        backLabel: roomExperience === "v3" ? "結果の整理" : "結果の理解",
-      };
-    }
-    if (from === "activation") {
-      return {
-        title: "条件比較",
-        backHref: screenHref("interpretation-room", { recordId, origin: "result", view: "next", intent: "condition" }),
-        backLabel: "結果の理解",
+        backHref: screenHref("interpretation-room", { recordId, origin: roomOrigin || "result" }),
+        backLabel: "結果の整理",
       };
     }
     return {

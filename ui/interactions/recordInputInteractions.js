@@ -40,14 +40,14 @@ function updateRecordSubmitAvailability(form) {
   const ready = Boolean(date) && (activityType === "rest" || (distanceReady && durationReady));
   document.querySelectorAll('#record-input-form [type="submit"], [form="record-input-form"][type="submit"]').forEach((button) => { button.disabled = !ready; });
 
-  const progress = form.querySelector("[data-prototype-required-progress]");
+  const progress = form.querySelector("[data-record-required-progress]");
   if (progress) {
     progress.textContent = activityType === "rest"
       ? "休養として保存"
       : `距離・時間 ${requiredCount} / 2`;
   }
 
-  const hint = form.querySelector("[data-prototype-save-hint]");
+  const hint = form.querySelector("[data-record-save-hint]");
   if (hint) {
     hint.textContent = activityType === "rest"
       ? "休養日として保存できます。"
@@ -56,7 +56,7 @@ function updateRecordSubmitAvailability(form) {
         : "距離と実際に走った時間を入力してください。";
   }
 
-  const dateDisplay = form.querySelector("[data-prototype-date-display]");
+  const dateDisplay = form.querySelector("[data-record-date-display]");
   const readableDate = date ? date.replaceAll("-", "/") : "—";
   if (dateDisplay) dateDisplay.textContent = readableDate;
 
@@ -217,13 +217,13 @@ function updateCourseSummary(form) {
     if (paragraphs[1]) paragraphs[1].innerHTML = `<strong>坂道：</strong>${slopeSummary(course)}`;
     if (paragraphs[2]) paragraphs[2].innerHTML = `<strong>入力方法：</strong>${course.surfaceInputMode === "MIXED" ? "複数路面の割合" : course.surfaceInputMode === "SINGLE" ? "主な路面1種類" : "路面は未入力"}`;
   }
-  const prototypeSelected = form.querySelector("[data-prototype-selected-course]");
-  const prototypeName = form.querySelector("[data-prototype-course-name]");
-  const prototypeMeta = form.querySelector("[data-prototype-course-meta]");
+  const selectedCourseNode = form.querySelector("[data-record-selected-course]");
+  const courseNameNode = form.querySelector("[data-record-course-name]");
+  const courseMetaNode = form.querySelector("[data-record-course-meta]");
   const hasCourse = Boolean(course.name) || String(course.gradeKnowledge || "UNKNOWN") !== "UNKNOWN" || String(course.modelSurfaceClass || "UNKNOWN") !== "UNKNOWN";
-  if (prototypeSelected) prototypeSelected.hidden = !hasCourse;
-  if (prototypeName) prototypeName.textContent = course.name || "名称なし";
-  if (prototypeMeta) prototypeMeta.textContent = [primarySurfaceSummary(course), slopeSummary(course)].filter(Boolean).join("・") || "条件を保存";
+  if (selectedCourseNode) selectedCourseNode.hidden = !hasCourse;
+  if (courseNameNode) courseNameNode.textContent = course.name || "名称なし";
+  if (courseMetaNode) courseMetaNode.textContent = [primarySurfaceSummary(course), slopeSummary(course)].filter(Boolean).join("・") || "条件を保存";
 }
 
 function fieldsFromForm(form) {
