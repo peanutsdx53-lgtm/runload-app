@@ -2,8 +2,8 @@ const CACHE_NAME = "runload-app-runtime-v1";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
+  "./core/interpretationBase.js",
   "./core/interpretationCore.js",
-  "./core/interpretationCoreV3.js",
   "./core/runloadCore.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
