@@ -1,0 +1,65 @@
+name: Interpretation V3 Visual Audit
+
+on:
+  push:
+    branches:
+      - interpretation-v3-redesign-20260922
+    paths:
+      - "core/interpretationCoreV3.js"
+      - "ui/interpretationRoomPresentationV3.js"
+      - "styles/interpretation-room-v3.css"
+      - "tests/visual/interpretationV3VisualHarness.mjs"
+      - ".github/workflows/interpretation-v3-visual-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate static V3 audit pages
+        run: node tests/visual/interpretationV3VisualHarness.mjs
+      - name: Start local server
+        run: |
+          python3 -m http.server 8000 > /tmp/runload-http.log 2>&1 &
+          echo $! > /tmp/runload-http.pid
+          sleep 2
+      - name: Resolve Chrome
+        id: chrome
+        shell: bash
+        run: |
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "bin=$(command -v google-chrome)" >> "$GITHUB_OUTPUT"
+          elif command -v google-chrome-stable >/dev/null 2>&1; then
+            echo "bin=$(command -v google-chrome-stable)" >> "$GITHUB_OUTPUT"
+          elif command -v chromium >/dev/null 2>&1; then
+            echo "bin=$(command -v chromium)" >> "$GITHUB_OUTPUT"
+          else
+            echo "No Chrome/Chromium found" >&2
+            exit 1
+          fi
+      - name: Capture screenshots
+        shell: bash
+        run: |
+          mkdir -p visual-artifacts
+          CHROME="${{ steps.chrome.outputs.bin }}"
+          common=(--headless=new --disable-gpu --no-sandbox --hide-scrollbars --virtual-time-budget=1000)
+          "$CHROME" "${common[@]}" --window-size=390,1200 --screenshot=visual-artifacts/overview-mobile-light.png http://127.0.0.1:8000/.visual-preview/overview-light.html
+          "$CHROME" "${common[@]}" --window-size=390,1200 --screenshot=visual-artifacts/overview-mobile-dark.png http://127.0.0.1:8000/.visual-preview/overview-dark.html
+          "$CHROME" "${common[@]}" --window-size=390,2200 --screenshot=visual-artifacts/selected-mobile-light.png http://127.0.0.1:8000/.visual-preview/selected-light.html
+          "$CHROME" "${common[@]}" --window-size=390,2200 --screenshot=visual-artifacts/selected-mobile-dark.png http://127.0.0.1:8000/.visual-preview/selected-dark.html
+          "$CHROME" "${common[@]}" --window-size=1440,1200 --screenshot=visual-artifacts/overview-desktop-light.png http://127.0.0.1:8000/.visual-preview/overview-light.html
+          "$CHROME" "${common[@]}" --window-size=1440,1200 --screenshot=visual-artifacts/overview-desktop-dark.png http://127.0.0.1:8000/.visual-preview/overview-dark.html
+          "$CHROME" "${common[@]}" --window-size=1440,2200 --screenshot=visual-artifacts/selected-desktop-light.png http://127.0.0.1:8000/.visual-preview/selected-light.html
+          "$CHROME" "${common[@]}" --window-size=1440,2200 --screenshot=visual-artifacts/selected-desktop-dark.png http://127.0.0.1:8000/.visual-preview/selected-dark.html
+          ls -lh visual-artifacts
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: interpretation-v3-visual-audit
+          path: visual-artifacts/
+          if-no-files-found: error
+          retention-days: 7
