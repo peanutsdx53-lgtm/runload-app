@@ -2103,3 +2103,18 @@
     grid-template-columns: 10rem 10rem 14rem 14rem !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: modal background scroll isolation ===== */
+@media (min-width: 80rem) {
+  body:has(.screen--history.prototype-parity--history .sheet-overlay:not([hidden])) {
+    overflow: hidden !important;
+  }
+
+  body:has(.screen--reading.prototype-parity--reading .drawer:not([hidden]))
+    .screen--reading.prototype-parity--reading .secondary-derived-body,
+  html:has(.screen--consultation.prototype-parity--consultation .share-viewer:not([hidden]))
+    .screen--consultation.prototype-parity--consultation .secondary-derived-body {
+    overflow: hidden !important;
+  }
+}
