@@ -98,9 +98,12 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     if (from === "history") return { title: "条件比較", backHref: "#/history", backLabel: "履歴" };
     if (from === "interpretation-room") {
       const roomOrigin = parameter("roomOrigin");
+      const roomExperience = parameter("roomExperience");
       return {
         title: "条件比較",
-        backHref: screenHref("interpretation-room", { recordId, origin: roomOrigin || "result", view: "next", intent: "condition" }),
+        backHref: screenHref("interpretation-room", roomExperience === "v3"
+          ? { recordId, origin: roomOrigin || "result", experience: "v3" }
+          : { recordId, origin: roomOrigin || "result", view: "next", intent: "condition" }),
         backLabel: "結果の理解",
       };
     }
