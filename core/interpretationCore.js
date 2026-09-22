@@ -408,7 +408,7 @@ export function buildRunLoadInterpretation({
     }),
     state: Object.freeze({
       targetAvailable: Boolean(base?.targetRecordId),
-      regional: regionalState(v2),
+      regional: regionalState(base),
       history: base?.availability?.regionalHistory ? "AVAILABLE" : "NONE",
       subjective: subjectiveContext.state,
       support: String(base?.safety?.route || "normal").toUpperCase(),
