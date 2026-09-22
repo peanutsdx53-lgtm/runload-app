@@ -1,5 +1,5 @@
 import { buildRunLoadInterpretationV3 } from "../core/interpretationCoreV3.js";
-import { renderInterpretationRoomV3 } from "../ui/interpretationRoomPresentationV3.js";
+import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
 
 const ALLOWED_ORIGINS = new Set(["result", "history", "body-part-detail", "simulation", "home"]);
 
@@ -44,5 +44,5 @@ export function renderInterpretationRoomScreen({ services, context }) {
     supportDecision: targetExperience?.supportDecision || null,
   });
 
-  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoomV3({ output })}</section>`;
+  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output })}</section>`;
 }
