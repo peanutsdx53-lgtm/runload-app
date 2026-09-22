@@ -34,8 +34,8 @@ await test('PWA-ACTIVATE-PRUNES-STALE-SAME-CACHE-RESOURCES',async()=>{
 
 await test('PWA-INTERPRETATION-STYLESHEET-IS-SAME-ORIGIN-EXTERNAL',async()=>{
   const html=await source('index.html');
-  assert.doesNotMatch(html,/interpretation-room\.css/);
-  assert.match(html,/<link rel="stylesheet" href="\.\/styles\/interpretation-room-v3\.css">/);
+  assert.match(html,/<link rel="stylesheet" href="\.\/styles\/interpretation-room\.css">/);
+  assert.doesNotMatch(html,/interpretation-room-v3\.css/);
   assert.doesNotMatch(html,/<script(?![^>]*\bsrc=)[^>]*>\s*[^<]/i);
   assert.match(html,/script-src 'self'/);
   assert.match(html,/style-src 'self'/);
