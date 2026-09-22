@@ -1,5 +1,5 @@
-import { registerPwaServiceWorker } from "./core/runloadCore.js";
-import { createApplicationServices, createHistoryWorkflow } from "./core/runloadCore.js";
+import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkflow } from "./core/runloadCore.js";
+
 import { createSecondPillarRofJServices } from "./core/secondPillarRofJ.js";
 import { createAppRouter } from "./ui/appRouter.js";
 import { focusScreenHeading, renderAppShell, renderDesktopHeader } from "./ui/appShell.js";
