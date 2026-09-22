@@ -1,20 +1,9 @@
-import { PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/runloadCore.js";
-import { createPlanFactPreview } from "../core/runloadCore.js";
+import { PRIMARY_REGIONAL_V2_REGION_DEFS, createPlanFactPreview, bodyRegionFormalName } from "../core/runloadCore.js";
+
 import { escapeHtml, renderStatusLabel } from "./commonComponents.js";
-import {
-  buildPlanConditionSnapshot,
-  normalizePlanSession,
-} from "./planPresentation.js";
-import {
-  bodyRegionFormalName,
-  bodyRegionPlainMeaning,
-} from "../core/runloadCore.js";
-import {
-  SAFETY_FLAG_LABELS,
-  SUBJECTIVE_STATUS_LABELS,
-  formatLocalDate,
-  formatNumber,
-} from "./recordPresentation.js";
+import { buildPlanConditionSnapshot, normalizePlanSession } from "./planPresentation.js";
+
+import { SAFETY_FLAG_LABELS, SUBJECTIVE_STATUS_LABELS, formatLocalDate, formatNumber } from "./recordPresentation.js";
 
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
@@ -23,10 +12,6 @@ const DEFAULT_REGION_ID = "BA-DISP-019";
 
 function hasFiniteValue(value) {
   return value !== null && value !== "" && Number.isFinite(Number(value));
-}
-
-function percentage(value) {
-  return hasFiniteValue(value) ? `${Math.round(Number(value) * 100)}%` : "—";
 }
 
 function normalizeRegionId(value = "") {
