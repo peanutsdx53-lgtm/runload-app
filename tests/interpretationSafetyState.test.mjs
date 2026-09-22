@@ -76,5 +76,5 @@ await testCase('PUBLIC-UNDERSTANDING-UI-OMITS-INTERNAL-NAME',()=>{
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Safety Stale State Hotfix',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Safety State',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
