@@ -14,8 +14,9 @@ await test('INTERPRETATION-SCREEN-USES-ONE-CANONICAL-PRESENTATION',()=>{
   const s=read('screens/interpretationRoomScreen.js');
   assert.match(s,/buildRunLoadInterpretationV3/);
   assert.match(s,/renderInterpretationRoom/);
-  assert.doesNotMatch(s,/ALLOWED_EXPERIENCES|data-experience|renderInterpretationRoom\b|buildRunLoadInterpretation\(buildArgs\)/);
-  assert.equal(exists('ui/interpretationRoomPresentation.js'),false);
+  assert.doesNotMatch(s,/ALLOWED_EXPERIENCES|data-experience|buildRunLoadInterpretation\(buildArgs\)/);
+  assert.equal(exists('ui/interpretationRoomPresentation.js'),true);
+  assert.equal(exists('ui/interpretationRoomPresentationV3.js'),false);
 });
 
 await test('REGION-SELECTION-DOES-NOT-CARRY-VERSION-QUERY',()=>{
@@ -46,9 +47,10 @@ await test('SCREEN-ARCHITECTURE-HAS-NO-VERSION-BRANCH',()=>{
 
 await test('CANONICAL-CSS-REPLACES-LEGACY-INTERPRETATION-CSS',()=>{
   const html=read('index.html');
-  assert.match(html,/<link rel="stylesheet" href="\.\/styles\/interpretation-room-v3\.css">/);
-  assert.doesNotMatch(html,/styles\/interpretation-room\.css/);
-  assert.equal(exists('styles/interpretation-room.css'),false);
+  assert.match(html,/<link rel="stylesheet" href="\.\/styles\/interpretation-room\.css">/);
+  assert.doesNotMatch(html,/styles\/interpretation-room-v3\.css/);
+  assert.equal(exists('styles/interpretation-room.css'),true);
+  assert.equal(exists('styles/interpretation-room-v3.css'),false);
   const css=read('styles/interpretation-room.css');
   assert.match(css,/\.app-shell--immersive/);
   assert.match(css,/\.interpretation-room-header/);
@@ -57,10 +59,10 @@ await test('CANONICAL-CSS-REPLACES-LEGACY-INTERPRETATION-CSS',()=>{
 
 await test('PWA-PRECACHES-ONLY-CANONICAL-INTERPRETATION-PRESENTATION',()=>{
   const sw=read('service-worker.js');
-  assert.match(sw,/\.\/ui\/interpretationRoomPresentationV3\.js/);
-  assert.match(sw,/\.\/styles\/interpretation-room-v3\.css/);
-  assert.doesNotMatch(sw,/interpretationRoomPresentation\.js/);
-  assert.doesNotMatch(sw,/styles\/interpretation-room\.css/);
+  assert.match(sw,/\.\/ui\/interpretationRoomPresentation\.js/);
+  assert.match(sw,/\.\/styles\/interpretation-room\.css/);
+  assert.doesNotMatch(sw,/interpretationRoomPresentationV3\.js/);
+  assert.doesNotMatch(sw,/styles\/interpretation-room-v3\.css/);
 });
 
 await test('PRIMARY-NAVIGATION-REMAINS-UNCHANGED',()=>{
