@@ -43,9 +43,9 @@ await test('PWA-AND-RUNTIME-DROP-RETIRED-SCREEN',()=>{
 
 await test('RETIRED-ACTIVATION-STYLES-REMOVED',()=>{
   const screens=read('styles/screens.css');
-  const mobile=read('styles/prototype-mobile-parity.css');
+  const mobile=read('styles/mobile.css');
   assert.doesNotMatch(screens,/\.activation-(?:intro|grid|source|card)|\.result-activation-hub/);
-  assert.doesNotMatch(mobile,/prototype-parity--activation|\.activation-link(?:-wrap)?/);
+  assert.doesNotMatch(mobile,/screen-layout--activation|\.activation-link(?:-wrap)?/);
 });
 
 await test('UNUSED-SCREEN-ARCHITECTURE-EXPORTS-REMOVED',()=>{
