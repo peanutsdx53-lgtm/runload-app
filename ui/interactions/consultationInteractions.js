@@ -6,7 +6,7 @@ function reportText() {
 }
 
 export function bindConsultation() {
-  const root = document.querySelector("[data-prototype-share-prep]");
+  const root = document.querySelector("[data-share-prep]");
   if (!root) return;
 
   const sourceInputs = [...root.querySelectorAll("[data-consult-source]")];
