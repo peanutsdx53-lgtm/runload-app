@@ -1026,11 +1026,11 @@
     padding: 0.1rem 0.3rem 0.1rem 0.1rem;
   }
 
-  .screen--result.screen-layout--result .desktop-region-panel > .region-list[data-prototype-region-list="focus"] {
+  .screen--result.screen-layout--result .desktop-region-panel > .region-list[data-result-region-list="focus"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .screen--result.screen-layout--result .desktop-region-panel > .region-list[data-prototype-region-list="all"] {
+  .screen--result.screen-layout--result .desktop-region-panel > .region-list[data-result-region-list="all"] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
