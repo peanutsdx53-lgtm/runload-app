@@ -2118,3 +2118,20 @@
     overflow: hidden !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: normalized semantic spacing hooks ===== */
+@media (min-width: 80rem) {
+  .screen--plan.prototype-parity--plan .plan-rest-summary,
+  .screen--plan.prototype-parity--plan .plan-memo-field {
+    margin-top: 0.8rem !important;
+  }
+
+  .screen--settings.prototype-parity--settings .profile-goal-head {
+    margin-top: 0.75rem !important;
+  }
+
+  .screen--settings.prototype-parity--settings .action-chevron {
+    margin-left: 0.5rem;
+  }
+}
