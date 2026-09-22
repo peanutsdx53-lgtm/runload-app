@@ -49,6 +49,7 @@ export function renderPlanScreen({ services, context }) {
   const backContext=planBackContext(context);
   const selfHref=planContextHref(context, planId);
   const sourceLabel=sourceRecordId?"今回の記録":"前回の記録";
+  const carryLabel=sourceRecordId?"今回の記録から引き継いだ内容":"前回から引き継いだ内容";
   const simulationQuery=new URLSearchParams();
   simulationQuery.set("from","plan");
   simulationQuery.set("returnTo",selfHref);
@@ -62,7 +63,7 @@ export function renderPlanScreen({ services, context }) {
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backContext.href)}">← ${escapeHtml(backContext.label)}</a><strong>次の予定</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">${escapeHtml(formatLocalDate(scheduledDate))}</span></section><p class="visually-hidden">予定条件は利用者が入力した事実であり、数値スコアではなく入力した予定事実として扱います。おすすめ・安全判断・自動処方ではありません。</p>
-    ${nextCheck?`<section class="carry"><i></i><div><small>前回から引き継いだ内容</small><strong>次のランで確認したいこと</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
+    ${nextCheck?`<section class="carry"><i></i><div><small>${escapeHtml(carryLabel)}</small><strong>次のランで確認したいこと</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
     <form id="plan-form" class="layout" novalidate>
       <input type="hidden" name="planId" value="${escapeHtml(editing?.id||"")}"><input type="hidden" name="courseJson" value="${escapeHtml(JSON.stringify(course))}"><input type="hidden" name="routePattern" value="${escapeHtml(course.routePattern||"UNKNOWN")}">
       <input class="visually-hidden" type="radio" name="planType" value="run"${planType==="run"?" checked":""}><input class="visually-hidden" type="radio" name="planType" value="rest"${planType==="rest"?" checked":""}>
