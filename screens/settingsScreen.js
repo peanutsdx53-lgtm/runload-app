@@ -70,7 +70,7 @@ export function renderSettingsScreen({ services, context }) {
             <label class="field"><span>ランニング開始時期・任意</span><input name="runningStartDateOrBand" maxlength="80" value="${escapeHtml(profile.runningStartDateOrBand || "")}" placeholder="例：2026年春、3か月前"><small>振り返り・相談時の文脈として保存</small></label>
             <label class="field"><span>走ることへの慣れ・任意</span><select name="experienceSelfAssessment"><option value=""${!profile.experienceSelfAssessment ? " selected" : ""}>未設定</option>${["始めたばかり","まだ慣れていない","少し慣れてきた","自分なりに継続している"].map((x) => `<option value="${escapeHtml(x)}"${profile.experienceSelfAssessment === x ? " selected" : ""}>${escapeHtml(x)}</option>`).join("")}</select><small>数値の補正には使いません</small></label>
           </div>
-          <div class="sub-section-head" style="margin-top:12px"><small>GOAL</small><strong>記録を続ける主な目的・任意</strong></div>
+          <div class="sub-section-head profile-goal-head"><small>GOAL</small><strong>記録を続ける主な目的・任意</strong></div>
           <div class="goal-grid">${goals.map((goal) => `<label><input type="checkbox" name="runningGoalTags" value="${escapeHtml(goal)}"${goalValues.has(goal) ? " checked" : ""}><span>${escapeHtml(goal)}</span></label>`).join("")}</div>
           <details class="subdetails"><summary><span><strong>身体に関する任意情報</strong><small>必要な場合だけ入力</small></span><span>⌄</span></summary><div class="subdetails-body"><div class="fields two-fields">
             <label class="field"><span>身長（cm）</span><input name="profileHeightCm" type="number" inputmode="decimal" min="100" max="230" step="0.1" value="${escapeHtml(profile.heightCm ?? "")}"></label>
@@ -96,7 +96,7 @@ export function renderSettingsScreen({ services, context }) {
         <div class="restore-preview" data-restore-preview-host aria-live="polite"><p class="muted-text">ファイルを選ぶと、内容を確認してから復元できます。</p></div>
         <div class="danger-box"><strong>この端末内のRunLoadデータを削除</strong><p>記録、結果、予定、保存コース、プロフィール、設定、保存シューズ、下書きなどを削除します。端末へ書き出したバックアップファイルは削除しません。</p><label class="field"><span>確認のため「削除」と入力</span><input id="clear-data-confirmation" autocomplete="off"></label><div class="action-row"><button type="button" class="danger" data-action="clear-all-user-data">すべて削除</button></div></div>
         <div class="form-messages" data-data-management-messages role="status" aria-live="polite" tabindex="-1" hidden></div>
-        <div class="action-row"><a href="#/privacy?returnTo=%23%2Fsettings">データの扱いを確認 <span style="margin-left:8px">›</span></a></div>
+        <div class="action-row"><a href="#/privacy?returnTo=%23%2Fsettings">データの扱いを確認 <span class="action-chevron">›</span></a></div>
       </div></details>
     </section>
 
