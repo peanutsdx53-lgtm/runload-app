@@ -97,7 +97,7 @@ await test('INTERPRETATION-SIMULATION-LINK-CARRIES-ROOM-ORIGIN-WITHOUT-CORE-MUTA
 await test('SIMULATION-SCREEN-ARCHITECTURE-RETURNS-TO-ROOM',()=>{
   const s=read('ui/screenArchitecture.js');
   assert.match(s,/from === "interpretation-room"/);
-  assert.match(s,/backLabel: "結果の理解"/);
+  assert.match(s,/roomExperience === "v3" \? "結果の整理" : "結果の理解"/);
   assert.match(s,/view: "next", intent: "condition"/);
 });
 
