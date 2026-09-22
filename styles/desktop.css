@@ -2,7 +2,7 @@
 
 /* ===== Desktop shell ===== */
 /*
- * Desktop frame v4.
+ * Desktop frame .
  * Natural document scrolling is restored. The only desktop header that may
  * render is the dedicated body-level header host.
  */
@@ -50,7 +50,7 @@
   }
 
   /* Hide any legacy/cached desktop header that is still rendered inside #app.
-     Only the dedicated body-level host is allowed on desktop. */
+ Only the dedicated body-level host is allowed on desktop. */
   #app .app-header--desktop,
   #app .mobile-topbar {
     display: none !important;
@@ -95,14 +95,14 @@
 }
 
 /*
- * Desktop shell v4.
+ * Desktop shell .
  * This file intentionally owns only the fixed desktop header host
  * and the PC record workspace. It is loaded last so legacy UI
  * geometry cannot override these desktop decisions.
  */
 
 /* The desktop header lives in its own body-level host.
-   The host itself is fixed; the header is not part of the app scroll tree. */
+ The host itself is fixed; the header is not part of the app scroll tree. */
 #desktop-header-root {
   display: none;
 }
@@ -1257,7 +1257,7 @@
 
 /* ===== Record visual polish ===== */
 /*
- * Desktop record polish v2.
+ * Desktop record polish .
  * Final-pass geometry for Step 1, Step 3, and embedded record subflows.
  * Loaded after desktop-record-refine.css.
  */
@@ -2013,7 +2013,7 @@
 
 /* ===== Course desktop layout ===== */
 /*
- * Desktop course-derived screens v2.
+ * Desktop course-derived screens .
  * Course Library, Course Editor and GPX are treated as secondary RECORD screens.
  * The document itself is locked; only the derived panel body scrolls.
  */
@@ -2650,7 +2650,7 @@
 
 /* ===== Course desktop refinements ===== */
 /*
- * Desktop course-derived screens v3.
+ * Desktop course-derived screens .
  * Final unification with the BODY RECORD / SHOES derived-panel pattern.
  * The course editor frame is never a scroll surface; only .course-derived-body scrolls.
  */
@@ -2726,7 +2726,7 @@
   }
 
   /* Critical fix: eliminate the legacy .editor scroll container.
-     The header is a non-scrolling grid row and only editor-main scrolls. */
+ The header is a non-scrolling grid row and only editor-main scrolls. */
   .screen--course-editor.screen-layout--course .editor.course-derived-frame {
     position: relative !important;
     inset: auto !important;
@@ -3875,7 +3875,7 @@
 /* ===== Desktop UI refinement section 2 ===== */
 /*
  * Desktop UI refinement section 2.
- * Typography/detail audit after v1. Loaded last.
+ * Typography/detail audit after . Loaded last.
  * Record and Result families remain outside this pass.
  */
 
@@ -4158,7 +4158,7 @@
 /* ===== Desktop UI refinement section 3 ===== */
 /*
  * Desktop UI refinement section 3.
- * Final explicit typography selectors found by the post-v2 audit.
+ * Final explicit typography selectors found by the post- audit.
  */
 
 @media (min-width: 80rem) {
@@ -4369,10 +4369,10 @@
   }
 
   /*
-   * The previous derived-screen overlay used --color-ink as a shadow source.
-   * In dark mode that becomes a light halo. Use the theme's dedicated dialog
-   * shadow/overlay tokens instead.
-   */
+ * The previous derived-screen overlay used --color-ink as a shadow source.
+ * In dark mode that becomes a light halo. Use the theme's dedicated dialog
+ * shadow/overlay tokens instead.
+ */
   .secondary-derived-screen {
     box-shadow:
       var(--shadow-dialog),
@@ -4404,8 +4404,8 @@
   }
 
   /* ===== Reading states =====
-   * Two equal columns avoid the visually awkward 3 + 1 desktop pattern.
-   */
+ * Two equal columns avoid the visually awkward 3 + 1 desktop pattern.
+ */
   .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
@@ -4471,7 +4471,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: state completeness and odd-card balance ===== */
+/* ===== state completeness and odd-card balance ===== */
 @media (min-width: 80rem) {
   /* History: make the first-use state actionable rather than a large blank card. */
   .screen--history.screen-layout--history .empty-records--initial {
@@ -4638,7 +4638,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: secondary empty-state completion ===== */
+/* ===== secondary empty-state completion ===== */
 @media (min-width: 80rem) {
   .screen--history.screen-layout--history .empty-records--filtered {
     min-height: 9rem;
@@ -4707,7 +4707,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: cross-screen visual hierarchy and theme safety ===== */
+/* ===== cross-screen visual hierarchy and theme safety ===== */
 @media (min-width: 80rem) {
   /* History: desktop typography inherited from the mobile layout. */
   .screen--history.screen-layout--history .section-index,
@@ -4888,7 +4888,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: zero-comparable History state ===== */
+/* ===== zero-comparable History state ===== */
 @media (min-width: 80rem) {
   .screen--history.screen-layout--history .history-comparison-empty {
     width: min(100%, 54rem);
@@ -4954,7 +4954,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: variable-count Settings collections ===== */
+/* ===== variable-count Settings collections ===== */
 @media (min-width: 80rem) {
   .screen--settings.screen-layout--settings .shoes {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -4989,7 +4989,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: export font consistency ===== */
+/* ===== export font consistency ===== */
 @media print {
   .screen-layout--consultation .share-print-document {
     font-family: var(--font-sans) !important;
@@ -4997,7 +4997,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: Settings field sizing by content ===== */
+/* ===== Settings field sizing by content ===== */
 @media (min-width: 80rem) {
   /* Long text/select fields stay moderate instead of stretching across the panel. */
   .screen--settings.screen-layout--settings .disclosure-body > .fields.two-fields {
@@ -5039,7 +5039,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: modal background scroll isolation ===== */
+/* ===== modal background scroll isolation ===== */
 @media (min-width: 80rem) {
   body:has(.screen--history.screen-layout--history .sheet-overlay:not([hidden])) {
     overflow: hidden !important;
@@ -5054,7 +5054,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: normalized semantic spacing hooks ===== */
+/* ===== normalized semantic spacing hooks ===== */
 @media (min-width: 80rem) {
   .screen--plan.screen-layout--plan .plan-rest-summary,
   .screen--plan.screen-layout--plan .plan-memo-field {
@@ -5071,7 +5071,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: dark-mode chart emphasis ===== */
+/* ===== dark-mode chart emphasis ===== */
 @media (min-width: 80rem) {
   .screen--history.screen-layout--history .chart-point.selected {
     filter: none !important;
@@ -5079,7 +5079,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: unavailable-state readability ===== */
+/* ===== unavailable-state readability ===== */
 @media (min-width: 80rem) {
   .screen--consultation.screen-layout--consultation .share-source.is-unavailable {
     opacity: 1 !important;
@@ -5094,7 +5094,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: History undo state ===== */
+/* ===== History undo state ===== */
 @media (min-width: 80rem) {
   .screen--history.screen-layout--history .history-undo {
     position: fixed;
@@ -5134,7 +5134,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: Settings saved-status state ===== */
+/* ===== Settings saved-status state ===== */
 @media (min-width: 80rem) {
   .screen--settings.screen-layout--settings .parity-save-message {
     width: min(100%, 32rem);
@@ -5151,7 +5151,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: derived-screen width alignment ===== */
+/* ===== derived-screen width alignment ===== */
 @media (min-width: 80rem) {
   .secondary-derived-screen {
     width: min(74rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 2rem)) !important;
@@ -5160,13 +5160,13 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: variable Reading filter counts ===== */
+/* ===== variable Reading filter counts ===== */
 @media (min-width: 80rem) {
   /*
-   * The unfiltered view contains nine cards, but filters can leave one or two.
-   * auto-fit keeps 3 columns when space/data allow and expands smaller result
-   * sets instead of leaving two empty desktop columns.
-   */
+ * The unfiltered view contains nine cards, but filters can leave one or two.
+ * auto-fit keeps 3 columns when space/data allow and expands smaller result
+ * sets instead of leaving two empty desktop columns.
+ */
   .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)) !important;
   }
@@ -5179,7 +5179,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: HOME typography without changing the approved layout ===== */
+/* ===== HOME typography without changing the approved layout ===== */
 @media (min-width: 80rem) {
   .screen--home.screen-layout--home {
     font-family: inherit !important;
@@ -5220,7 +5220,7 @@
 }
 
 
-/* ===== Re-audit 2026-09-22: minimum desktop micro-label scale ===== */
+/* ===== minimum desktop micro-label scale ===== */
 @media (min-width: 80rem) {
   #desktop-header-root .app-screen-context small,
   .app-shell:not(.app-shell--immersive) .primary-navigation__link {
@@ -5295,7 +5295,7 @@
 }
 
 
-/* ===== Final desktop visual audit: 2026-09-22 ===== */
+/* ===== Desktop visual integrity ===== */
 @media (min-width: 80rem) {
   /* HISTORY: status chips are semantic labels, not microcopy. */
   .screen--history.screen-layout--history .record-kind {
