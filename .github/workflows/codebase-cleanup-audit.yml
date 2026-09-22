@@ -51,7 +51,7 @@ jobs:
             }
             graph.set(rel(file),deps);
           }
-          const entries=['app.js','ui/pwaUpdateBootstrapV1.js'];
+          const entries=['app.js','ui/pwaUpdateBootstrap.js'];
           const reachable=new Set();
           const stack=[...entries];
           while(stack.length){
