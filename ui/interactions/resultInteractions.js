@@ -96,10 +96,10 @@ function bindRegionalV2ViewToggle(services) {
 }
 
 
-function bindPrototypeResultParity() {
-  const root = document.querySelector(".prototype-parity--result");
+function bindResultRegionControls() {
+  const root = document.querySelector(".screen-layout--result");
   if (!root) return;
-  const sheet = root.querySelector("[data-prototype-region-sheet]");
+  const sheet = root.querySelector("[data-result-region-sheet]");
   const setView = (view, mobile = false) => {
     const buttonAttr = mobile ? "data-result-mobile-view" : "data-result-view";
     const listAttr = mobile ? "data-result-region-mobile-list" : "data-result-region-list";
@@ -139,5 +139,5 @@ export function bindResult({ services, context }) {
   bindResultSectionJumps();
   bindRegionalViewTabs(services);
   bindRegionalV2ViewToggle(services);
-  bindPrototypeResultParity();
+  bindResultRegionControls();
 }
