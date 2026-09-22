@@ -1,8 +1,5 @@
-import {
-  BODY_AREA_TAXONOMY,
-  normalizeBodyAreaObservations,
-} from "../core/runloadCore.js";
-import { SAFETY_FLAG_KEYS } from "../core/runloadCore.js";
+import { BODY_AREA_TAXONOMY, normalizeBodyAreaObservations, SAFETY_FLAG_KEYS } from "../core/runloadCore.js";
+
 import { SUBJECTIVE_STATUS_LABELS } from "./recordPresentation.js";
 
 export const DETAILED_SUBJECTIVE_STATUSES = Object.freeze([
@@ -12,10 +9,6 @@ export const DETAILED_SUBJECTIVE_STATUSES = Object.freeze([
 
 function stringValue(value, fallback = "") {
   return value === undefined || value === null ? String(fallback) : String(value);
-}
-
-function checkedValue(value) {
-  return value === true || value === "1" || value === "on" || value === "true";
 }
 
 export function subjectiveFieldsFromFeedback(feedback = {}) {
