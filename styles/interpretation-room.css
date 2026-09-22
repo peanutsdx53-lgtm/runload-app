@@ -49,10 +49,10 @@
 
 /* Canonical Interpretation room styles. */
 .interpretation-room {
-  --v3-reading-width: 46rem;
+  --interpretation-reading-width: 46rem;
   display: grid;
   gap: clamp(1.5rem, 5vw, 3rem);
-  width: min(100%, var(--v3-reading-width));
+  width: min(100%, var(--interpretation-reading-width));
   margin-inline: auto;
   padding: clamp(0.25rem, 2vw, 1rem) 0 clamp(2rem, 7vw, 4rem);
   min-width: 0;
@@ -608,7 +608,7 @@ html.rl-appearance-dark .interpretation-room-region-shape[data-reference-directi
 .interpretation-room-boundary p { margin: 0; color: var(--color-muted); line-height: 1.7; }
 
 @media (min-width: 760px) {
-  .interpretation-room { --v3-reading-width: 54rem; }
+  .interpretation-room { --interpretation-reading-width: 54rem; }
   .interpretation-room-map { padding: 1.5rem 2rem; }
   .interpretation-room-body-view svg { max-height: 22rem; }
   .interpretation-room-region-picker > div { grid-template-columns: repeat(3, minmax(0, 1fr)); }
