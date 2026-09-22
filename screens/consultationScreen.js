@@ -179,7 +179,7 @@ function prototypeDocumentBlocks(items) {
   }).join("");
 }
 
-function renderPrototypeConsultation({ services, experience, plan, regionId = "", backHref = "#/more", backLabel = "その他へ戻る" }) {
+function renderPrototypeConsultation({ services, experience, plan, regionId = "", backHref = "#/more", backLabel = "その他へ戻る", selfHref = "#/consultation" }) {
   if (!experience?.record) {
     return `<div class="screen screen--consultation prototype-parity prototype-parity--consultation secondary-derived-screen"><header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>共有用にまとめる</strong><span aria-hidden="true"></span></header><div class="secondary-derived-body"><section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel consultation-empty-state"><div class="consultation-empty-state__copy"><small>RECORD</small><strong>共有できる記録はまだありません</strong><p>走行または休養を保存すると、共有する内容をここで整理できます。</p></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div></div>`;
   }
@@ -259,7 +259,7 @@ function renderPrototypeConsultation({ services, experience, plan, regionId = ""
     </article>
 
     <p class="boundary">共有する内容は本人が選びます。個人的なメモなどは、必要な場合だけ含めてください。</p>
-    <a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}&returnTo=${encodeURIComponent(`#/consultation?recordId=${record.id}`)}"><span><small>症状や体調について公的な案内を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
+    <a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}&returnTo=${encodeURIComponent(selfHref)}"><span><small>症状や体調について公的な案内を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
     </div>
   </div>`;
 }
@@ -272,7 +272,26 @@ export function renderConsultationScreen({ services, context }) {
   const plans = services.storage.plans.loadAll();
   const plan = latestPlan(plans);
   const regionId = context.parameters.get("regionId") || "";
-  const backHref = requestedRecordId ? `#/result?recordId=${encodeURIComponent(requestedRecordId)}` : "#/more";
-  const backLabel = requestedRecordId ? "結果へ戻る" : "その他へ戻る";
-  return renderPrototypeConsultation({ services, experience, plan, regionId, backHref, backLabel });
+  const from = context.parameters.get("from") || "";
+  const roomOrigin = context.parameters.get("roomOrigin") || "result";
+  const roomExperience = context.parameters.get("roomExperience") || "";
+  const selfQuery = new URLSearchParams();
+  if (requestedRecordId) selfQuery.set("recordId", requestedRecordId);
+  if (regionId) selfQuery.set("regionId", regionId);
+  if (from) selfQuery.set("from", from);
+  if (roomOrigin) selfQuery.set("roomOrigin", roomOrigin);
+  if (roomExperience) selfQuery.set("roomExperience", roomExperience);
+  const selfHref = `#/consultation${selfQuery.size ? `?${selfQuery.toString()}` : ""}`;
+  let backHref = requestedRecordId ? `#/result?recordId=${encodeURIComponent(requestedRecordId)}` : "#/more";
+  let backLabel = requestedRecordId ? "結果へ戻る" : "その他へ戻る";
+  if (from === "interpretation-room") {
+    const roomQuery = new URLSearchParams();
+    if (requestedRecordId) roomQuery.set("recordId", requestedRecordId);
+    roomQuery.set("origin", roomOrigin);
+    if (roomExperience === "v3") roomQuery.set("experience", "v3");
+    if (regionId) roomQuery.set("regionId", regionId);
+    backHref = `#/interpretation-room?${roomQuery.toString()}`;
+    backLabel = "結果の整理へ戻る";
+  }
+  return renderPrototypeConsultation({ services, experience, plan, regionId, backHref, backLabel, selfHref });
 }
