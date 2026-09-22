@@ -20,6 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install Japanese font for visual audit
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y fonts-noto-cjk
+          fc-cache -f
+
       - name: Generate static V3 audit pages
         run: node tests/visual/interpretationV3VisualHarness.mjs
       - name: Start local server
