@@ -32,7 +32,6 @@ const PRECACHE_URLS = [
   "./styles/screens.css",
   "./styles/mobile.css",
   "./styles/interpretation-room.css",
-  "./styles/product-quality.css",
   "./styles/desktop-workspace.css",
   "./styles/desktop.css",
   "./styles/tokens.css",
