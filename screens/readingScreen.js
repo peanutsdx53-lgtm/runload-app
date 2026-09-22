@@ -307,10 +307,22 @@ function renderPrototypeReading({ services, context }) {
   const origin = context.parameters.get("origin") || "";
   const recordId = context.parameters.get("recordId") || "";
   const regionId = context.parameters.get("regionId") || "";
-  const backHref = origin === "result-condition" && recordId && regionId
+  const from = context.parameters.get("from") || "";
+  const roomOrigin = context.parameters.get("roomOrigin") || "result";
+  const roomExperience = context.parameters.get("roomExperience") || "";
+  let backHref = origin === "result-condition" && recordId && regionId
     ? `#/body-part-detail?recordId=${encodeURIComponent(recordId)}&regionId=${encodeURIComponent(regionId)}`
     : "#/more";
-  const backLabel = origin === "result-condition" && recordId && regionId ? "部位結果へ戻る" : "その他へ戻る";
+  let backLabel = origin === "result-condition" && recordId && regionId ? "部位結果へ戻る" : "その他へ戻る";
+  if (from === "interpretation-room") {
+    const roomQuery = new URLSearchParams();
+    if (recordId) roomQuery.set("recordId", recordId);
+    roomQuery.set("origin", roomOrigin);
+    if (roomExperience === "v3") roomQuery.set("experience", "v3");
+    if (regionId) roomQuery.set("regionId", regionId);
+    backHref = `#/interpretation-room?${roomQuery.toString()}`;
+    backLabel = "結果の整理へ戻る";
+  }
   const detailArticles = new Map(items.map((item) => [item.article.id, item.article]));
   if (featured) detailArticles.set(featured.id, featured);
   return `<div class="screen screen--reading prototype-parity prototype-parity--reading secondary-derived-screen" data-prototype-reading${initialArticleId ? ` data-reading-initial-article="${escapeHtml(initialArticleId)}"` : ""}>
