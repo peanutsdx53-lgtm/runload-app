@@ -11,7 +11,7 @@ function precache(sw){const block=sw.slice(sw.indexOf('const PRECACHE_URLS = [')
 await test('PWA-PRECACHE-INCLUDES-INTERPRETATION-RUNTIME',async()=>{
   const sw=await source('service-worker.js');
   const paths=precache(sw);
-  for(const rel of ['./core/interpretationCore.js','./core/interpretationCoreV3.js','./screens/interpretationRoomScreen.js','./styles/interpretation-room.css','./ui/interpretationRoomPresentation.js','./ui/bodyRegionVisuals.js']) assert.ok(paths.includes(rel),rel);
+  for(const rel of ['./core/interpretationCore.js','./screens/interpretationRoomScreen.js','./styles/interpretation-room.css','./ui/interpretationRoomPresentation.js','./ui/bodyRegionVisuals.js']) assert.ok(paths.includes(rel),rel);
 });
 
 await test('PWA-PRECACHE-EXCLUDES-RETIRED-ACTIVATION-SCREEN',async()=>{
@@ -45,7 +45,6 @@ await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
   const manifest=await source('RUNTIME_SHA256SUMS.txt');
   const paths=[
     'core/interpretationCore.js',
-    'core/interpretationCoreV3.js',
     'screens/interpretationRoomScreen.js',
     'styles/interpretation-room.css',
     'ui/interpretationRoomPresentation.js',
