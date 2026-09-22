@@ -117,6 +117,8 @@ await test('OVERVIEW-EXPLAINS-NO-CROSS-REGION-RANKING',()=>{
 await test('OVERVIEW-ADDS-NONCOLOR-DIRECTION-GROUPING',()=>{
   const html=renderInterpretationRoomV3({output:baseOutput({selected:false})});
   assert.match(html,/今回の分かれ方/);
+  assert.doesNotMatch(html,/class="interpretation-v3-legend"/);
+  assert.match(html,/interpretation-v3-overview-group-name/);
   assert.match(html,/基準より上側/);
   assert.match(html,/基準付近/);
   assert.match(html,/基準より下側/);
