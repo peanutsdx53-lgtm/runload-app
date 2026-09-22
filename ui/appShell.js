@@ -75,6 +75,7 @@ export function resolveCurrentPrimaryScreen(currentScreen, currentLocation = nul
     if (from === "plan") return "home";
     return "result";
   }
+  if (["plan", "consultation", "reading"].includes(currentScreen) && parameter("from") === "interpretation-room") return "result";
   if (currentScreen === "consultation" && parameter("recordId")) return "result";
   if (currentScreen === "reading" && parameter("origin") === "result-condition") return "result";
   if (currentScreen === "support-guidance") {
