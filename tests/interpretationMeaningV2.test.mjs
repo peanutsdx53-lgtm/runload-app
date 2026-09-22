@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { buildMeaningFrame } from '../core/interpretationCore.js';
+import { buildMeaningFrame } from '../core/interpretationBase.js';
 
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
@@ -142,5 +142,5 @@ await test('MEANING-FACTS-ARE-STRUCTURED-NOT-PROSE-CONCLUSIONS',()=>{
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Meaning V2',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Meaning',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
