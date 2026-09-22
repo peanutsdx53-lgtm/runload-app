@@ -12,11 +12,12 @@ async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catc
 
 await test('INTERPRETATION-SCREEN-USES-ONE-CANONICAL-PRESENTATION',()=>{
   const s=read('screens/interpretationRoomScreen.js');
-  assert.match(s,/buildRunLoadInterpretationV3/);
+  assert.match(s,/buildRunLoadInterpretation/);
   assert.match(s,/renderInterpretationRoom/);
   assert.doesNotMatch(s,/ALLOWED_EXPERIENCES|data-experience|buildRunLoadInterpretation\(buildArgs\)/);
   assert.equal(exists('ui/interpretationRoomPresentation.js'),true);
   assert.equal(exists('ui/interpretationRoomPresentationV3.js'),false);
+  assert.equal(exists('core/interpretationCoreV3.js'),false);
 });
 
 await test('REGION-SELECTION-DOES-NOT-CARRY-VERSION-QUERY',()=>{
