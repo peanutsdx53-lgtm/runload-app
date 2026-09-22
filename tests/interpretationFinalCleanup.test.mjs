@@ -54,8 +54,9 @@ await test('UNUSED-SCREEN-ARCHITECTURE-EXPORTS-REMOVED',()=>{
   assert.match(architecture,/renderRecordsWorkspaceNavigation/);
 });
 
-await test('PWA-RUNTIME-REVISION-IS-PRESENT',()=>{
-  assert.match(read('service-worker.js'),/^\/\/ Runtime revision: [a-z0-9][a-z0-9._-]+$/m);
+await test('PWA-CACHE-NAME-IS-STABLE',()=>{
+  assert.match(read('service-worker.js'),/const CACHE_NAME = "runload-app-runtime-v1";/);
+  assert.doesNotMatch(read('service-worker.js'),/desktop-final-visual-audit|20260922-37/);
 });
 
 await test('PUBLIC-UI-OMITS-INTERNAL-INTERPRETATION-NAME',()=>{
