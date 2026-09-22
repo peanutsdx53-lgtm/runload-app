@@ -1,0 +1,48 @@
+name: Interpretation V3 Full Audit
+
+on:
+  push:
+    branches:
+      - interpretation-v3-redesign-20260922
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: JavaScript and MJS syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+            count=$((count+1))
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0)
+          echo "SYNTAX_FILES=$count"
+      - name: Run all test suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          failed=0
+          for file in tests/*.test.mjs; do
+            echo "::group::$file"
+            if node "$file"; then
+              count=$((count+1))
+            else
+              failed=$((failed+1))
+            fi
+            echo "::endgroup::"
+          done
+          echo "TEST_SUITES_PASSED=$count"
+          echo "TEST_SUITES_FAILED=$failed"
+          test "$failed" -eq 0
