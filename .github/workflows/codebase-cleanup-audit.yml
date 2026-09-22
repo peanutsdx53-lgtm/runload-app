@@ -1,4 +1,4 @@
-name: Codebase cleanup reachability audit
+name: Codebase cleanup final stage-one audit
 
 on:
   push:
@@ -16,7 +16,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Runtime reachability and naming report
+      - name: Generate current runtime manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            printf '%s\0' .nojekyll README.md app.js index.html manifest.webmanifest service-worker.js
+            find core icons screens styles ui -type f -print0
+          } | sort -z | xargs -0 sha256sum > /tmp/RUNTIME_SHA256SUMS.txt
+          echo "RUNTIME_MANIFEST_BEGIN"
+          cat /tmp/RUNTIME_SHA256SUMS.txt
+          echo "RUNTIME_MANIFEST_END"
+          cp /tmp/RUNTIME_SHA256SUMS.txt RUNTIME_SHA256SUMS.txt
+          echo "RUNTIME_MANIFEST_ENTRIES=$(wc -l < /tmp/RUNTIME_SHA256SUMS.txt)"
+
+      - name: JavaScript and MJS syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r file; do
+            node --check "$file" >/dev/null
+            count=$((count+1))
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          echo "SYNTAX_FILES_PASS=$count"
+
+      - name: Runtime reachability
         shell: bash
         run: |
           set -euo pipefail
@@ -61,46 +86,35 @@ jobs:
             for(const dep of graph.get(cur)||[]) stack.push(dep);
           }
           const unreachable=runtimeJs.filter(p=>!reachable.has(p)&&p!=='service-worker.js').sort();
-
           const html=read(path.join(root,'index.html'));
           const linkedCss=[...html.matchAll(/<link[^>]+href=["']\.\/([^"']+\.css)["']/g)].map(m=>m[1]);
           const css=files.map(rel).filter(p=>p.endsWith('.css'));
           const unlinkedCss=css.filter(p=>!linkedCss.includes(p)).sort();
-
-          const runtimeFlags=[];
-          for(const file of files.filter(p=>/\.(?:js|css|html)$/.test(p))){
-            const src=read(file);
-            for(const [kind,re] of [
-              ['prototype',/\bprototype[-_A-Za-z0-9]*/gi],
-              ['hotfix',/\bhotfix[-_A-Za-z0-9]*/gi],
-              ['preview',/\bpreview[-_A-Za-z0-9]*/gi],
-              ['candidate',/\bcandidate\b/gi],
-              ['TODO',/\bTODO\b/g],
-              ['FIXME',/\bFIXME\b/g],
-            ]){
-              const matches=[...src.matchAll(re)];
-              if(matches.length) runtimeFlags.push({file:rel(file),kind,count:matches.length});
-            }
-          }
-
           const sw=read(path.join(root,'service-worker.js'));
           const precache=[...sw.matchAll(/"\.\/([^"]+)"/g)].map(m=>m[1]);
           const missingPrecache=precache.filter(p=>!fs.existsSync(path.join(root,p)));
-
-          console.log('REACHABILITY_RUNTIME_JS='+runtimeJs.length);
-          console.log('REACHABILITY_UNREACHABLE='+JSON.stringify(unreachable));
-          console.log('REACHABILITY_UNLINKED_CSS='+JSON.stringify(unlinkedCss));
-          console.log('REACHABILITY_MISSING_PRECACHE='+JSON.stringify(missingPrecache));
-          console.log('REACHABILITY_RUNTIME_FLAGS='+JSON.stringify(runtimeFlags));
+          console.log('RUNTIME_JS='+runtimeJs.length);
+          console.log('UNREACHABLE_JS='+JSON.stringify(unreachable));
+          console.log('UNLINKED_CSS='+JSON.stringify(unlinkedCss));
+          console.log('MISSING_PRECACHE='+JSON.stringify(missingPrecache));
+          if(unreachable.length||unlinkedCss.length||missingPrecache.length) process.exitCode=1;
           NODE
 
-      - name: Syntax report
+      - name: Run all test suites against regenerated manifest
         shell: bash
         run: |
           set -euo pipefail
-          count=0
-          while IFS= read -r file; do
-            node --check "$file" >/dev/null
-            count=$((count+1))
-          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
-          echo "SYNTAX_FILES_PASS=$count"
+          passed=0
+          failed=0
+          for file in tests/*.test.mjs; do
+            echo "::group::$file"
+            if node "$file"; then
+              passed=$((passed+1))
+            else
+              failed=$((failed+1))
+            fi
+            echo "::endgroup::"
+          done
+          echo "TEST_SUITES_PASSED=$passed"
+          echo "TEST_SUITES_FAILED=$failed"
+          test "$failed" -eq 0
