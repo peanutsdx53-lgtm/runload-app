@@ -14,7 +14,7 @@ function dateDisplay(iso="") { return String(iso||"").replaceAll("-","/") || "�
 function planContextHref(context, planId="") {
   const query=new URLSearchParams();
   if(planId)query.set("planId",planId);
-  ["sourceRecordId","recordId","regionId","from","roomOrigin","roomExperience"].forEach((key)=>{
+  ["sourceRecordId","recordId","regionId","from","roomOrigin"].forEach((key)=>{
     const value=String(context?.parameters?.get(key)||"");
     if(value)query.set(key,value);
   });
@@ -27,11 +27,9 @@ function planBackContext(context) {
   const recordId=String(context?.parameters?.get("recordId")||context?.parameters?.get("sourceRecordId")||"");
   const regionId=String(context?.parameters?.get("regionId")||"");
   const roomOrigin=String(context?.parameters?.get("roomOrigin")||"result");
-  const roomExperience=String(context?.parameters?.get("roomExperience")||"");
   const query=new URLSearchParams();
   if(recordId)query.set("recordId",recordId);
   query.set("origin",roomOrigin);
-  if(roomExperience==="v3")query.set("experience","v3");
   if(regionId)query.set("regionId",regionId);
   return { href:`#/interpretation-room?${query.toString()}`, label:"結果の整理へ戻る" };
 }
