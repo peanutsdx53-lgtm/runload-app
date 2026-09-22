@@ -274,14 +274,12 @@ export function renderConsultationScreen({ services, context }) {
   const regionId = context.parameters.get("regionId") || "";
   const from = context.parameters.get("from") || "";
   const roomOrigin = context.parameters.get("roomOrigin") || "result";
-  const roomExperience = context.parameters.get("roomExperience") || "";
   const selfQuery = new URLSearchParams();
   if (requestedRecordId) selfQuery.set("recordId", requestedRecordId);
   if (regionId) selfQuery.set("regionId", regionId);
   if (from) selfQuery.set("from", from);
   if (from === "interpretation-room") {
     selfQuery.set("roomOrigin", roomOrigin);
-    if (roomExperience) selfQuery.set("roomExperience", roomExperience);
   }
   const selfHref = `#/consultation${selfQuery.size ? `?${selfQuery.toString()}` : ""}`;
   let backHref = requestedRecordId ? `#/result?recordId=${encodeURIComponent(requestedRecordId)}` : "#/more";
@@ -290,7 +288,6 @@ export function renderConsultationScreen({ services, context }) {
     const roomQuery = new URLSearchParams();
     if (requestedRecordId) roomQuery.set("recordId", requestedRecordId);
     roomQuery.set("origin", roomOrigin);
-    if (roomExperience === "v3") roomQuery.set("experience", "v3");
     if (regionId) roomQuery.set("regionId", regionId);
     backHref = `#/interpretation-room?${roomQuery.toString()}`;
     backLabel = "結果の整理へ戻る";
