@@ -10,7 +10,7 @@ const read=(rel)=>fs.readFileSync(path.join(root,rel),'utf8');
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 
-const derivedParams='recordId=r1&sourceRecordId=r1&regionId=BA-DISP-014&from=interpretation-room&roomOrigin=history&roomExperience=v3';
+const derivedParams='recordId=r1&sourceRecordId=r1&regionId=BA-DISP-014&from=interpretation-room&roomOrigin=history';
 const location=(query)=>({parameters:new URLSearchParams(query)});
 
 await test('PLAN-DERIVED-BACK-RETURNS-TO-SAME-V3-REGION',()=>{
@@ -53,7 +53,7 @@ await test('DIRECT-ENTRY-BACK-BEHAVIOR-IS-PRESERVED',()=>{
 });
 
 await test('SIMULATION-FROM-DERIVED-PLAN-USES-PRESERVED-PLAN-RETURN',()=>{
-  const returnTo='#/plan?sourceRecordId=r1&recordId=r1&regionId=BA-DISP-014&from=interpretation-room&roomOrigin=history&roomExperience=v3';
+  const returnTo='#/plan?sourceRecordId=r1&recordId=r1&regionId=BA-DISP-014&from=interpretation-room&roomOrigin=history';
   const nav=resolveScreenContextNavigation('simulation',location(`from=plan&recordId=r1&returnTo=${encodeURIComponent(returnTo)}`));
   assert.equal(nav.title,'条件比較');
   assert.equal(nav.backLabel,'予定');
@@ -82,7 +82,7 @@ await test('CONSULTATION-SUPPORT-ROUNDTRIP-PRESERVES-DERIVED-CONTEXT',()=>{
 await test('READING-DERIVED-INTERNAL-BACK-PRESERVES-V3-CONTEXT',()=>{
   const s=read('screens/readingScreen.js');
   assert.match(s,/from === "interpretation-room"/);
-  assert.match(s,/roomExperience === "v3"/);
+  assert.doesNotMatch(s,/roomExperience|experience=v3/);
   assert.match(s,/backLabel = "結果の整理へ戻る"/);
   assert.match(s,/regionId/);
 });
