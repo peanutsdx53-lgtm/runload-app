@@ -1,23 +1,13 @@
-import { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents } from "../../core/runloadCore.js";
-import { BODY_AREA_LATERALITY, BODY_AREA_LATERALITY_LABELS, BODY_AREA_TAXONOMY } from "../../core/runloadCore.js";
-import { SAFETY_FLAG_KEYS } from "../../core/runloadCore.js";
+import { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents, BODY_AREA_LATERALITY, BODY_AREA_LATERALITY_LABELS, BODY_AREA_TAXONOMY, SAFETY_FLAG_KEYS } from "../../core/runloadCore.js";
+
 import { ROF_J_DESCRIPTOR_MAP } from "../../core/secondPillarRofJ.js";
-import {
-  booleanValue,
-  numberValue,
-  optionalNumberValue,
-  setHidden,
-  showFormMessages,
-} from "./formUtilities.js";
+import { booleanValue, numberValue, optionalNumberValue, setHidden, showFormMessages } from "./formUtilities.js";
 import { primarySurfaceSummary, slopeSummary } from "../coursePresentation.js";
 import { beginRecordInputJourney, clearRecordInputWorkspace, refreshActiveRecordInputWorkspace, restoreRecordInputWorkspace, saveRecordInputWorkspace } from "../recordInputWorkspace.js";
 import { subjectiveSummaryFromFields } from "../subjectivePresentation.js";
 import { RECORD_REGIONAL_SUBJECTIVE_AREAS } from "../recordEmbeddedSubflows.js";
 import { PERSONAL_CONTEXT_FIELD_NAMES, personalContextFromFields, personalSummaryFromFields } from "../personalContextPresentation.js";
 import { confirmGradeDomain } from "./gradeDomainConfirmation.js";
-
-
-
 
 function updateInputFormVisibility(form) {
   const activityType = form.querySelector('[name="activityType"]:checked')?.value || "run";
@@ -403,8 +393,6 @@ function bindSecondPillarLifecycle(form, { services, router, context }) {
   });
 }
 
-
-
 function recordBodyStatus(form) {
   return form.querySelector('[name="subjectiveStatus"]:checked')?.value || "deferred";
 }
@@ -647,7 +635,6 @@ export function readSubjectiveFeedback(formData) {
     },
   };
 }
-
 
 const RUN_WALK_SURFACE_COMPONENTS = Object.freeze({
   PAVED: "paved", TRACK: "track", TREADMILL: "treadmill", SOIL: "soil", TRAIL: "trail",
