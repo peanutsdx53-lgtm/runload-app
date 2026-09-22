@@ -10,7 +10,7 @@
 
 .support--single { grid-template-columns: minmax(0, 1fr); }
 .course-library .quick.is-empty,
-.prototype-parity--course .quick.is-empty {
+.screen-layout--course .quick.is-empty {
   cursor: default;
   opacity: .82;
 }
