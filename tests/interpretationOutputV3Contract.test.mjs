@@ -261,5 +261,5 @@ await test('V3-BUILD-DOES-NOT-MUTATE-INPUT',()=>{
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Output V3 Contract Candidate',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Output V3 Contract',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
