@@ -6,7 +6,7 @@
 
 @media (min-width: 80rem) {
   /* ===== Step 1: one visual grammar for select/date/number inputs ===== */
-  .screen--record-input.prototype-parity--record .activity-field {
+  .screen--record-input.screen-layout--record .activity-field {
     grid-column: 1 !important;
     grid-row: 2 !important;
     width: 20rem;
@@ -17,7 +17,7 @@
     align-self: start;
   }
 
-  .screen--record-input.prototype-parity--record .activity-field__label {
+  .screen--record-input.screen-layout--record .activity-field__label {
     display: block;
     color: var(--color-muted);
     font-size: 0.82rem;
@@ -25,7 +25,7 @@
     font-weight: 850;
   }
 
-  .screen--record-input.prototype-parity--record .activity-toggle {
+  .screen--record-input.screen-layout--record .activity-toggle {
     width: 20rem !important;
     max-width: 20rem !important;
     min-width: 0;
@@ -40,7 +40,7 @@
     overflow: hidden !important;
   }
 
-  .screen--record-input.prototype-parity--record .activity-toggle legend {
+  .screen--record-input.screen-layout--record .activity-toggle legend {
     position: absolute !important;
     width: 1px !important;
     height: 1px !important;
@@ -53,13 +53,13 @@
     transform: none !important;
   }
 
-  .screen--record-input.prototype-parity--record .activity-toggle label,
-  .screen--record-input.prototype-parity--record .activity-toggle label + label {
+  .screen--record-input.screen-layout--record .activity-toggle label,
+  .screen--record-input.screen-layout--record .activity-toggle label + label {
     min-width: 0;
     border: 0 !important;
   }
 
-  .screen--record-input.prototype-parity--record .activity-toggle span {
+  .screen--record-input.screen-layout--record .activity-toggle span {
     min-height: 2.55rem !important;
     border: 1px solid transparent !important;
     border-radius: 0.55rem !important;
@@ -68,20 +68,20 @@
     font-size: 0.94rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .activity-toggle input:checked + span {
+  .screen--record-input.screen-layout--record .activity-toggle input:checked + span {
     border-color: var(--color-selection-border) !important;
     background: var(--color-selection-surface) !important;
     color: var(--color-accent-strong) !important;
     box-shadow: inset 0 0 0 1px var(--color-selection-border) !important;
   }
 
-  .screen--record-input.prototype-parity--record .date-field {
+  .screen--record-input.screen-layout--record .date-field {
     width: 20rem !important;
     max-width: 20rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .date-control,
-  .screen--record-input.prototype-parity--record .measure-field > div {
+  .screen--record-input.screen-layout--record .date-control,
+  .screen--record-input.screen-layout--record .measure-field > div {
     min-height: 3.05rem !important;
     height: 3.05rem !important;
     border: 1px solid var(--color-line) !important;
@@ -90,7 +90,7 @@
   }
 
   /* ===== Step 3: short values stay short and align on one row ===== */
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) {
     display: grid !important;
     grid-template-columns: 11rem 17rem 20rem !important;
     gap: 0.85rem 1rem !important;
@@ -98,41 +98,41 @@
     align-items: end;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) > .two-fields {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) > .two-fields {
     display: contents !important;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) .field {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .field {
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) input[name="steps"] {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) input[name="steps"] {
     width: 11rem !important;
     max-width: 11rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) select[name="stepsProvenance"] {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) select[name="stepsProvenance"] {
     width: 17rem !important;
     max-width: 17rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) .field--running-format,
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) select[name="runningFormat"] {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .field--running-format,
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) select[name="runningFormat"] {
     width: 20rem !important;
     max-width: 20rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) .nested-panel,
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) .inner-details {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .nested-panel,
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .inner-details {
     grid-column: 1 / -1 !important;
     width: min(100%, 50rem) !important;
     max-width: 50rem !important;
   }
 
   /* ===== Embedded body/shoe screens: clearly framed as a layer over Record ===== */
-  .screen--record-input.prototype-parity--record .subscreen {
+  .screen--record-input.screen-layout--record .subscreen {
     position: fixed !important;
     top: 4.75rem !important;
     right: 0 !important;
@@ -149,19 +149,19 @@
     -webkit-backdrop-filter: blur(5px);
   }
 
-  .screen--record-input.prototype-parity--record .subscreen[hidden] {
+  .screen--record-input.screen-layout--record .subscreen[hidden] {
     display: none !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > header,
-  .screen--record-input.prototype-parity--record .subscreen > main {
+  .screen--record-input.screen-layout--record .subscreen > header,
+  .screen--record-input.screen-layout--record .subscreen > main {
     width: min(72rem, calc(100vw - 10rem)) !important;
     max-width: none !important;
     margin-inline: auto !important;
     background: var(--color-surface) !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > header {
+  .screen--record-input.screen-layout--record .subscreen > header {
     position: static !important;
     top: auto !important;
     height: 3.7rem !important;
@@ -177,7 +177,7 @@
     -webkit-backdrop-filter: none !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > header button {
+  .screen--record-input.screen-layout--record .subscreen > header button {
     min-height: 2.4rem;
     padding: 0 0.65rem;
     border: 1px solid var(--color-line) !important;
@@ -188,15 +188,15 @@
     font-weight: 850 !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > header span {
+  .screen--record-input.screen-layout--record .subscreen > header span {
     font-size: 0.82rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > header strong {
+  .screen--record-input.screen-layout--record .subscreen > header strong {
     font-size: 0.98rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > main {
+  .screen--record-input.screen-layout--record .subscreen > main {
     max-height: calc(100dvh - 4.75rem - 3.7rem - 3.35rem) !important;
     padding: 1.35rem 1.5rem 1.6rem !important;
     overflow-x: hidden !important;
@@ -207,40 +207,40 @@
     box-shadow: 0 1.35rem 3.5rem color-mix(in srgb, var(--color-ink) 18%, transparent);
   }
 
-  .screen--record-input.prototype-parity--record .sub-flow {
+  .screen--record-input.screen-layout--record .sub-flow {
     gap: 1rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-flow-head {
+  .screen--record-input.screen-layout--record .sub-flow-head {
     padding: 0 0.15rem 0.25rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-flow-head .eyebrow {
+  .screen--record-input.screen-layout--record .sub-flow-head .eyebrow {
     font-size: 0.72rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-flow-head h2 {
+  .screen--record-input.screen-layout--record .sub-flow-head h2 {
     margin-top: 0.25rem !important;
     font-size: 1.8rem !important;
     line-height: 1.1;
   }
 
-  .screen--record-input.prototype-parity--record .sub-flow-head > p:last-child {
+  .screen--record-input.screen-layout--record .sub-flow-head > p:last-child {
     margin-top: 0.45rem !important;
     font-size: 0.86rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid {
+  .screen--record-input.screen-layout--record .sub-choice-grid {
     gap: 0.65rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid legend {
+  .screen--record-input.screen-layout--record .sub-choice-grid legend {
     margin-bottom: 0.2rem !important;
     font-size: 0.78rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid label {
+  .screen--record-input.screen-layout--record .sub-choice-grid label {
     min-height: 4.2rem !important;
     padding: 0.75rem 0.9rem !important;
     grid-template-columns: 1.5rem minmax(0, 1fr) !important;
@@ -248,133 +248,133 @@
     border-radius: 0.85rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid input {
+  .screen--record-input.screen-layout--record .sub-choice-grid input {
     width: 1.2rem !important;
     height: 1.2rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid strong {
+  .screen--record-input.screen-layout--record .sub-choice-grid strong {
     font-size: 0.96rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid small {
+  .screen--record-input.screen-layout--record .sub-choice-grid small {
     margin-top: 0.2rem !important;
     font-size: 0.78rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .body-area-entry,
-  .screen--record-input.prototype-parity--record .sub-card,
-  .screen--record-input.prototype-parity--record .sub-extra {
+  .screen--record-input.screen-layout--record .body-area-entry,
+  .screen--record-input.screen-layout--record .sub-card,
+  .screen--record-input.screen-layout--record .sub-extra {
     border-radius: 1rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .body-area-entry,
-  .screen--record-input.prototype-parity--record .sub-card {
+  .screen--record-input.screen-layout--record .body-area-entry,
+  .screen--record-input.screen-layout--record .sub-card {
     padding: 1rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-section-head small {
+  .screen--record-input.screen-layout--record .sub-section-head small {
     font-size: 0.7rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-section-head strong {
+  .screen--record-input.screen-layout--record .sub-section-head strong {
     margin-top: 0.18rem !important;
     font-size: 1.08rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-section-head span {
+  .screen--record-input.screen-layout--record .sub-section-head span {
     margin-top: 0.22rem !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subjective-body-map {
+  .screen--record-input.screen-layout--record .subjective-body-map {
     gap: 0.7rem !important;
     margin-top: 0.8rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subjective-body-map figure {
+  .screen--record-input.screen-layout--record .subjective-body-map figure {
     padding: 0.6rem !important;
     border-radius: 0.85rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subjective-body-map figcaption {
+  .screen--record-input.screen-layout--record .subjective-body-map figcaption {
     font-size: 0.76rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subjective-body-map svg {
+  .screen--record-input.screen-layout--record .subjective-body-map svg {
     height: 15rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .selected-body-summary {
+  .screen--record-input.screen-layout--record .selected-body-summary {
     margin-top: 0.75rem !important;
     padding: 0.65rem 0.75rem !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .selected-body-row strong {
+  .screen--record-input.screen-layout--record .selected-body-row strong {
     font-size: 0.84rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .selected-body-row select {
+  .screen--record-input.screen-layout--record .selected-body-row select {
     height: 2.45rem !important;
     font-size: 0.82rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-two-fields {
+  .screen--record-input.screen-layout--record .sub-two-fields {
     gap: 0.8rem !important;
     margin-top: 0.9rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen .field {
+  .screen--record-input.screen-layout--record .subscreen .field {
     gap: 0.4rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen .field > span {
+  .screen--record-input.screen-layout--record .subscreen .field > span {
     font-size: 0.82rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen .field input,
-  .screen--record-input.prototype-parity--record .subscreen .field select,
-  .screen--record-input.prototype-parity--record .subscreen .field textarea {
+  .screen--record-input.screen-layout--record .subscreen .field input,
+  .screen--record-input.screen-layout--record .subscreen .field select,
+  .screen--record-input.screen-layout--record .subscreen .field textarea {
     min-height: 3rem !important;
     padding: 0.7rem 0.8rem !important;
     font-size: 0.96rem !important;
     border-radius: 0.75rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-extra summary strong {
+  .screen--record-input.screen-layout--record .sub-extra summary strong {
     font-size: 0.94rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-extra summary small,
-  .screen--record-input.prototype-parity--record .sub-extra-body > p {
+  .screen--record-input.screen-layout--record .sub-extra summary small,
+  .screen--record-input.screen-layout--record .sub-extra-body > p {
     font-size: 0.78rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .safety-check-grid label,
-  .screen--record-input.prototype-parity--record .focus-tag-grid label {
+  .screen--record-input.screen-layout--record .safety-check-grid label,
+  .screen--record-input.screen-layout--record .focus-tag-grid label {
     min-height: 2.9rem;
     padding: 0.65rem 0.75rem !important;
     align-items: center !important;
     font-size: 0.84rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-check {
+  .screen--record-input.screen-layout--record .sub-check {
     padding: 0.7rem 0.8rem !important;
     grid-template-columns: 1.4rem minmax(0, 1fr) !important;
     gap: 0.65rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-check strong {
+  .screen--record-input.screen-layout--record .sub-check strong {
     font-size: 0.86rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-check small,
-  .screen--record-input.prototype-parity--record .sub-note {
+  .screen--record-input.screen-layout--record .sub-check small,
+  .screen--record-input.screen-layout--record .sub-note {
     font-size: 0.76rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-flow-save {
+  .screen--record-input.screen-layout--record .sub-flow-save {
     min-height: 3.2rem !important;
     border-radius: 0.8rem !important;
     font-size: 0.92rem !important;
@@ -382,28 +382,28 @@
 }
 
 @media (min-width: 80rem) and (max-width: 92rem) {
-  .screen--record-input.prototype-parity--record .activity-field,
-  .screen--record-input.prototype-parity--record .activity-toggle {
+  .screen--record-input.screen-layout--record .activity-field,
+  .screen--record-input.screen-layout--record .activity-toggle {
     width: 18rem !important;
     max-width: 18rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) {
     grid-template-columns: 10rem 15rem 18rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) input[name="steps"] {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) input[name="steps"] {
     width: 10rem !important;
     max-width: 10rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) select[name="stepsProvenance"] {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) select[name="stepsProvenance"] {
     width: 15rem !important;
     max-width: 15rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) .field--running-format,
-  .screen--record-input.prototype-parity--record .stage-body:has(input[name="steps"]) select[name="runningFormat"] {
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .field--running-format,
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) select[name="runningFormat"] {
     width: 18rem !important;
     max-width: 18rem !important;
   }
