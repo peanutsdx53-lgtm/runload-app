@@ -2359,3 +2359,53 @@
     line-height: 1.35 !important;
   }
 }
+
+
+/* ===== Final desktop visual audit: 2026-09-22 ===== */
+@media (min-width: 80rem) {
+  /* HISTORY: status chips are semantic labels, not microcopy. */
+  .screen--history.prototype-parity--history .record-kind {
+    font-size: 0.75rem !important;
+    line-height: 1.25 !important;
+  }
+
+  /* PLAN: keep short units intact and give numeric controls enough room. */
+  .screen--plan.prototype-parity--plan .two {
+    grid-template-columns: 13.5rem 15rem !important;
+  }
+
+  .screen--plan.prototype-parity--plan .metric-field > div {
+    min-width: 0;
+  }
+
+  .screen--plan.prototype-parity--plan .metric-field em {
+    flex: 0 0 auto;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+  }
+
+  /* SETTINGS: the three equal display controls should use the available row width. */
+  .screen--settings.prototype-parity--settings .display-setting-list {
+    width: min(100%, 54rem) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.prototype-parity--settings .display-setting__title small {
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+  }
+
+  /* READING: the mobile horizontal-scroll fade is not meaningful on wrapped desktop filters. */
+  .screen--reading.prototype-parity--reading .filter-strip::after {
+    display: none !important;
+  }
+
+  .screen--reading.prototype-parity--reading .filter-strip .filters {
+    padding-right: 0 !important;
+  }
+
+  /* CONSULTATION: higher desktop specificity must never override the hidden state. */
+  .screen--consultation.prototype-parity--consultation .share-viewer[hidden] {
+    display: none !important;
+  }
+}
