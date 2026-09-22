@@ -155,18 +155,28 @@ function renderOverviewMap(output) {
   const choices = regions.map((region) => `<a href="${escapeHtml(regionHref(output, region.regionId))}" class="interpretation-v3-region-choice">
     <strong>${escapeHtml(region.label)}</strong><span>${escapeHtml(referenceText(region.reference?.direction || ""))}</span>
   </a>`).join("");
+  const groupedDirections = [
+    ["ABOVE_REFERENCE", "基準より上側"],
+    ["REFERENCE_VICINITY", "基準付近"],
+    ["BELOW_REFERENCE", "基準より下側"],
+  ].map(([direction, label]) => ({
+    label,
+    names: regions.filter((region) => region.reference?.direction === direction).map((region) => region.label),
+  })).filter((group) => group.names.length);
+  const groupedDirectionsHtml = groupedDirections.map((group) => `<div><strong>${escapeHtml(group.label)}</strong><span>${escapeHtml(group.names.join("・"))}</span></div>`).join("");
 
   return `<section class="interpretation-v3-overview" aria-labelledby="interpretation-v3-overview-title">
     <div class="interpretation-v3-section-head"><span>1</span><div><small>身体全体を見る</small><h2 id="interpretation-v3-overview-title">部位ごとの位置を確認</h2></div></div>
     <p class="interpretation-v3-lead">同じ走りでも、各部位がそれぞれの基準100に対して同じ位置になるとは限りません。まず1部位を選びます。</p>
     <div class="interpretation-v3-map" aria-label="12部位の基準100との位置">${views}</div>
     <div class="interpretation-v3-legend" aria-label="図の見方"><span data-kind="above">基準より上側</span><span data-kind="near">基準付近</span><span data-kind="below">基準より下側</span><span data-kind="unavailable">表示なし</span></div>
+    <div class="interpretation-v3-overview-groups" aria-label="今回の部位ごとの分かれ方"><small>今回の分かれ方</small>${groupedDirectionsHtml}</div>
     <details class="interpretation-v3-region-picker"><summary>部位名から選ぶ</summary><div>${choices}</div></details>
     <p class="interpretation-v3-boundary-line">部位どうしの数値を順位付けする図ではありません。</p>
   </section>`;
 }
 
-function renderReferenceComparison(region) {
+function renderReferenceComparison(region, step = 1) {
   const reference = region?.referenceComparison || {};
   const previous = region?.previousComparison || {};
   const current = finite(region?.value) ? number(region.value) : "—";
@@ -182,7 +192,7 @@ function renderReferenceComparison(region) {
   }
 
   return `<section class="interpretation-v3-selected" aria-labelledby="interpretation-v3-selected-title">
-    <div class="interpretation-v3-section-head"><span>2</span><div><small>選んだ部位を見る</small><h2 id="interpretation-v3-selected-title">${escapeHtml(region.label)}</h2></div></div>
+    <div class="interpretation-v3-section-head"><span>${escapeHtml(String(step))}</span><div><small>選んだ部位を見る</small><h2 id="interpretation-v3-selected-title">${escapeHtml(region.label)}</h2></div></div>
     <div class="interpretation-v3-current-result"><span>${escapeHtml(referenceText(reference.direction || ""))}</span><strong>${escapeHtml(current)}</strong><small>基準100との差 ${escapeHtml(referenceDifference)}</small></div>
     <div class="interpretation-v3-comparisons">${referenceLine}${previousLine}</div>
   </section>`;
@@ -215,11 +225,11 @@ function inputValue(item = {}, exposure = {}) {
   return finite(item.value) ? number(item.value) : "記録あり";
 }
 
-function renderCalculationPath(region) {
+function renderCalculationPath(region, step = 2) {
   const path = region?.calculationPath || {};
   if (path.resolutionStatus === "UNAVAILABLE") {
     return `<section class="interpretation-v3-calculation" aria-labelledby="interpretation-v3-calculation-title">
-      <div class="interpretation-v3-section-head"><span>3</span><div><small>表示の作られ方</small><h2 id="interpretation-v3-calculation-title">今回確認できる計算情報</h2></div></div>
+      <div class="interpretation-v3-section-head"><span>${escapeHtml(String(step))}</span><div><small>表示の作られ方</small><h2 id="interpretation-v3-calculation-title">今回確認できる計算情報</h2></div></div>
       <p class="interpretation-v3-lead">この保存記録からは、現在の計算経路を正確に説明できません。推測で補いません。</p>
     </section>`;
   }
@@ -250,7 +260,7 @@ function renderCalculationPath(region) {
     : "";
 
   return `<section class="interpretation-v3-calculation" aria-labelledby="interpretation-v3-calculation-title">
-    <div class="interpretation-v3-section-head"><span>3</span><div><small>表示の作られ方</small><h2 id="interpretation-v3-calculation-title">この数値に使われた情報</h2></div></div>
+    <div class="interpretation-v3-section-head"><span>${escapeHtml(String(step))}</span><div><small>表示の作られ方</small><h2 id="interpretation-v3-calculation-title">この数値に使われた情報</h2></div></div>
     ${flow}${conditionalHtml}${contextHtml}
     <p class="interpretation-v3-boundary-line">ここで示すのはRunLoad内部の計算経路です。身体で実際に起きた原因を示すものではありません。</p>
   </section>`;
@@ -277,7 +287,7 @@ function rofPoint(label, item) {
   return `<div class="interpretation-v3-rof-reading"><small>${escapeHtml(label)}</small><strong>${escapeHtml(number(value, 0))}<em>/10</em></strong><span>${escapeHtml(rofMeaningText(item))}</span></div>`;
 }
 
-function renderSubjective(output) {
+function renderSubjective(output, step = 3) {
   const context = output?.subjectiveContext || {};
   if (context.state === "NONE") return "";
   const pre = context.pre || {};
@@ -289,7 +299,7 @@ function renderSubjective(output) {
     : '<p class="interpretation-v3-rof-difference">前後がそろっていないため、前後差は表示しません。</p>';
 
   return `<section class="interpretation-v3-subjective" aria-labelledby="interpretation-v3-subjective-title">
-    <div class="interpretation-v3-section-head"><span>4</span><div><small>自分の感じ方</small><h2 id="interpretation-v3-subjective-title">走る前後の疲れ</h2></div></div>
+    <div class="interpretation-v3-section-head"><span>${escapeHtml(String(step))}</span><div><small>自分の感じ方</small><h2 id="interpretation-v3-subjective-title">走る前後の疲れ</h2></div></div>
     <div class="interpretation-v3-rof-readings">${rofPoint("走る前", pre)}${rofPoint("走った後", post)}</div>
     <div class="interpretation-v3-rof-scale" aria-label="疲れの0から10までの尺度"><span>0</span><div>${marker(pre, "is-pre")}${marker(post, "is-post")}</div><span>10</span></div>
     ${comparison}
@@ -297,7 +307,7 @@ function renderSubjective(output) {
   </section>`;
 }
 
-function renderUnderstanding(output, region) {
+function renderUnderstanding(output, region, step = 4) {
   const reference = region?.referenceComparison || {};
   const previous = region?.previousComparison || {};
   const path = region?.calculationPath || {};
@@ -319,18 +329,18 @@ function renderUnderstanding(output, region) {
   }
 
   return `<section class="interpretation-v3-understanding" aria-labelledby="interpretation-v3-understanding-title">
-    <div class="interpretation-v3-section-head"><span>5</span><div><small>ここまでを整理</small><h2 id="interpretation-v3-understanding-title">分かることと、まだ分からないこと</h2></div></div>
+    <div class="interpretation-v3-section-head"><span>${escapeHtml(String(step))}</span><div><small>ここまでを整理</small><h2 id="interpretation-v3-understanding-title">分かることと、まだ分からないこと</h2></div></div>
     <div class="interpretation-v3-understanding-grid"><article><strong>今回確認できること</strong><ul>${known.slice(0, 3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></article><article><strong>ここからは決められないこと</strong><ul>${unknown.slice(0, 3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></article></div>
   </section>`;
 }
 
-function renderNext(output) {
+function renderNext(output, step = 5) {
   const next = output?.next || {};
   const primary = next.primaryAction || null;
   if (!primary) return "";
   const others = next.otherActions || [];
   return `<section class="interpretation-v3-next" aria-labelledby="interpretation-v3-next-title">
-    <div class="interpretation-v3-section-head"><span>6</span><div><small>次に確認するなら</small><h2 id="interpretation-v3-next-title">今回の内容を次へつなぐ</h2></div></div>
+    <div class="interpretation-v3-section-head"><span>${escapeHtml(String(step))}</span><div><small>次に確認するなら</small><h2 id="interpretation-v3-next-title">今回の内容を次へつなぐ</h2></div></div>
     ${renderAction(primary, output, { primary: true })}
     ${others.length ? `<details class="interpretation-v3-other-actions"><summary>ほかにできること</summary><div class="interpretation-v3-secondary-actions">${others.map((action) => renderAction(action, output)).join("")}</div></details>` : ""}
   </section>`;
@@ -351,7 +361,7 @@ function renderAdvanced(output, region) {
 function renderSelectedFlow(output) {
   const region = output?.selectedRegion;
   if (!region) return "";
-  return `${renderReferenceComparison(region)}${renderCalculationPath(region)}${renderSubjective(output)}${renderUnderstanding(output, region)}${renderNext(output)}${renderAdvanced(output, region)}`;
+  return `${renderReferenceComparison(region, 1)}${renderCalculationPath(region, 2)}${renderSubjective(output, 3)}${renderUnderstanding(output, region, 4)}${renderNext(output, 5)}${renderAdvanced(output, region)}`;
 }
 
 export function renderInterpretationRoomV3({ output } = {}) {
@@ -367,11 +377,11 @@ export function renderInterpretationRoomV3({ output } = {}) {
   return `<div class="interpretation-v3${selected ? " interpretation-v3--selected" : " interpretation-v3--overview"}" data-interpretation-v3-state="${selected ? "selected" : "overview"}">
     <header class="interpretation-v3-hero">
       <p>${escapeHtml(date)}</p>
-      <h1>${selected ? "今回の結果を順番に整理" : "今回の身体を部位ごとに見る"}</h1>
+      <h1>${selected ? `${output?.selectedRegion?.label || "選んだ部位"}の結果を整理` : "今回の身体を部位ごとに見る"}</h1>
       <p>${selected ? "数値を基準・過去・計算に使われた情報と一緒に確認します。" : "12部位を一つの順位にせず、それぞれの基準100との位置から見ます。"}</p>
     </header>
-    ${selected ? `<a class="interpretation-v3-back-to-overview" href="${escapeHtml(regionHref(output, ""))}">← 身体全体へ戻る</a>` : ""}
-    ${renderOverviewMap(output)}
+    ${selected ? `<a class="interpretation-v3-back-to-overview" href="${escapeHtml(regionHref(output, ""))}">← 身体全体から選び直す</a>` : ""}
+    ${selected ? "" : renderOverviewMap(output)}
     ${renderSelectedFlow(output)}
   </div>`;
 }
