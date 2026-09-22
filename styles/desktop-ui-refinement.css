@@ -2018,3 +2018,38 @@
     margin: 0.8rem auto 0;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: variable-count Settings collections ===== */
+@media (min-width: 80rem) {
+  .screen--settings.prototype-parity--settings .shoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--settings.prototype-parity--settings .shoe {
+    min-width: 0;
+    min-height: 4.2rem;
+    padding: 0.8rem 0.9rem !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .screen--settings.prototype-parity--settings .shoe > span {
+    min-width: 0;
+  }
+
+  .screen--settings.prototype-parity--settings .shoe strong,
+  .screen--settings.prototype-parity--settings .shoe small {
+    overflow-wrap: anywhere;
+  }
+
+  .screen--settings.prototype-parity--settings .shoe button {
+    min-height: 2.5rem !important;
+    padding-inline: 0.75rem !important;
+    white-space: nowrap;
+  }
+
+  .screen--settings.prototype-parity--settings .shoes > .shoe:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
