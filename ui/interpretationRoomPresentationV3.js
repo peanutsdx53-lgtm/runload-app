@@ -43,7 +43,6 @@ function regionHref(output, regionId) {
   const query = new URLSearchParams();
   if (output?.target?.recordId) query.set("recordId", output.target.recordId);
   if (output?.target?.origin) query.set("origin", output.target.origin);
-  query.set("experience", "v3");
   if (regionId) query.set("regionId", regionId);
   return `#/interpretation-room?${query.toString()}`;
 }
@@ -61,7 +60,6 @@ function actionHref(action, output) {
   if (["simulation", "plan", "consultation", "reading"].includes(action.destination)) {
     query.set("from", "interpretation-room");
     query.set("roomOrigin", output?.target?.origin || "result");
-    query.set("roomExperience", "v3");
   }
   return `#/${encodeURIComponent(action.destination)}${query.size ? `?${query.toString()}` : ""}`;
 }
