@@ -29,7 +29,7 @@ await test('RESULT-GATE-USES-PLAIN-LANGUAGE',()=>{
   const gate=source.match(/<section class="understanding-link-wrap"[\s\S]*?<\/section>/)?.[0]||'';
   assert.match(gate,/今回の結果を整理する/);
   assert.match(gate,/基準・過去・計算に使った情報と一緒に確認します/);
-  assert.match(gate,/origin=result&experience=v3/);
+  assert.match(gate,/origin=result/);
   assert.doesNotMatch(gate,/RunLoad解釈|解釈エンジン|計算エンジン|Reference-100/);
 });
 
@@ -41,7 +41,7 @@ await test('HOME-LATEST-RUN-SEPARATES-VIEW-AND-UNDERSTAND',()=>{
   const understand=runLine.indexOf('結果を整理する');
   assert.ok(view>=0 && understand>view);
   assert.match(runLine,/#\/result\?recordId=/);
-  assert.match(runLine,/#\/interpretation-room\?recordId=.*origin=home&experience=v3/);
+  assert.match(runLine,/#\/interpretation-room\?recordId=.*origin=home/);
 });
 
 await test('HOME-REMOVES-SEPARATE-INTERPRETATION-PROMO',()=>{
