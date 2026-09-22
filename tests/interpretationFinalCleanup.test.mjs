@@ -61,7 +61,7 @@ await test('PWA-CACHE-NAME-IS-STABLE',()=>{
 
 await test('PUBLIC-UI-OMITS-INTERNAL-INTERPRETATION-NAME',()=>{
   const files=[
-    'ui/interpretationRoomPresentationV3.js',
+    'ui/interpretationRoomPresentation.js',
     'ui/screenArchitecture.js',
     'ui/appShell.js',
     'screens/homeScreen.js',
