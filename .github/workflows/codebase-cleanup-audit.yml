@@ -1,4 +1,4 @@
-# rerun-after-test-alignment
+# final-cleanup-audit
 name: Codebase cleanup final stage-one audit
 
 on:
