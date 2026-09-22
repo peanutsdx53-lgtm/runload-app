@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import {
-  INTERPRETATION_V3_CORE_VERSION,
-  INTERPRETATION_V3_OUTPUT_SCHEMA_VERSION,
+  INTERPRETATION_CORE_VERSION,
+  INTERPRETATION_OUTPUT_SCHEMA_VERSION,
   buildRofValueMeaning,
-  buildRunLoadInterpretationV3,
-} from '../core/interpretationCoreV3.js';
+  buildRunLoadInterpretation,
+} from '../core/interpretationCore.js';
 
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
@@ -68,13 +68,13 @@ function fakeExperience({
 function build(opts={}){
   const target=opts.target||fakeExperience(opts);
   const all=opts.all||[target];
-  return buildRunLoadInterpretationV3({targetExperience:target,allExperiences:all,selectedRegionId:opts.selectedRegionId||'',origin:opts.origin||'result',rofSummary:opts.rofSummary||null,rofRecentReferences:opts.rofRecentReferences||{},supportDecision:opts.supportDecision||target.supportDecision});
+  return buildRunLoadInterpretation({targetExperience:target,allExperiences:all,selectedRegionId:opts.selectedRegionId||'',origin:opts.origin||'result',rofSummary:opts.rofSummary||null,rofRecentReferences:opts.rofRecentReferences||{},supportDecision:opts.supportDecision||target.supportDecision});
 }
 
 await test('V3-SCHEMA-AND-READONLY-PROVENANCE',()=>{
-  const out=buildRunLoadInterpretationV3();
-  assert.equal(INTERPRETATION_V3_CORE_VERSION,'runload-interpretation-core-v3.0');
-  assert.equal(out.schemaVersion,INTERPRETATION_V3_OUTPUT_SCHEMA_VERSION);
+  const out=buildRunLoadInterpretation();
+  assert.equal(INTERPRETATION_CORE_VERSION,'runload-interpretation-core-v3.0');
+  assert.equal(out.schemaVersion,INTERPRETATION_OUTPUT_SCHEMA_VERSION);
   assert.equal(out.state.targetAvailable,false);
   assert.equal(out.provenance.primaryRecalculated,false);
   assert.equal(out.provenance.rofRecalculated,false);
