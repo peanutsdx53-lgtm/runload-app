@@ -179,12 +179,12 @@ function renderScreen(location) {
 
 const RESUME_SCROLL_SURFACE_SELECTOR = [
   ".course-derived-screen .course-derived-body",
-  ".prototype-parity--record .subscreen",
-  ".prototype-parity--record .sheet",
-  ".prototype-parity--result .detail-screen",
-  ".prototype-parity--result .region-sheet",
-  ".prototype-parity--history .region-sheet",
-  ".prototype-parity--reading .sheet",
+  ".screen-layout--record .subscreen",
+  ".screen-layout--record .sheet",
+  ".screen-layout--result .detail-screen",
+  ".screen-layout--result .region-sheet",
+  ".screen-layout--history .region-sheet",
+  ".screen-layout--reading .sheet",
   ".feature-menu__panel",
   ".guide-dialog__body",
   ".screen-tutorial__panel",
