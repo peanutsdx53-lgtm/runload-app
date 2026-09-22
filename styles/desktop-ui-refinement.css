@@ -1771,3 +1771,184 @@
     line-height: 1.5;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: cross-screen visual hierarchy and theme safety ===== */
+@media (min-width: 80rem) {
+  /* History: desktop typography left behind by the mobile prototype. */
+  .screen--history.prototype-parity--history .section-index,
+  .screen--history.prototype-parity--history .chart-axis-label,
+  .screen--history.prototype-parity--history .chart-date {
+    font-size: 0.75rem !important;
+  }
+
+  .screen--history.prototype-parity--history .chart-value,
+  .screen--history.prototype-parity--history .chart-region-heading h2,
+  .screen--history.prototype-parity--history .region-option-copy strong {
+    font-size: 0.86rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--history.prototype-parity--history .region-option-copy small {
+    font-size: 0.74rem !important;
+    line-height: 1.35 !important;
+  }
+
+  /* History region selection is a desktop dialog, not a mobile bottom sheet. */
+  .screen--history.prototype-parity--history .sheet-overlay {
+    align-items: center !important;
+    padding: 5.75rem 1.5rem 1.5rem !important;
+    background: var(--overlay-dialog) !important;
+  }
+
+  .screen--history.prototype-parity--history .region-sheet {
+    width: min(48rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
+    max-height: min(78dvh, 46rem) !important;
+    padding: 1rem 1.1rem 1.2rem !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 1.25rem !important;
+    background: var(--surface) !important;
+    box-shadow: var(--shadow-dialog) !important;
+  }
+
+  .screen--history.prototype-parity--history .region-sheet .grip {
+    display: none !important;
+  }
+
+  .screen--history.prototype-parity--history .region-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.65rem !important;
+  }
+
+  .screen--history.prototype-parity--history .region-option {
+    min-height: 4.4rem !important;
+    padding: 0.65rem 0.7rem !important;
+  }
+
+  /* Selected segmented controls should not turn into light halos in dark mode. */
+  .screen--history.prototype-parity--history .history-mode button.active,
+  .screen--history.prototype-parity--history .display-toggle button.active,
+  .screen--plan.prototype-parity--plan .seg button.active {
+    box-shadow: none !important;
+  }
+
+  /* Plan: number/text controls use the same desktop input grammar. */
+  .screen--plan.prototype-parity--plan .field input,
+  .screen--plan.prototype-parity--plan .field select,
+  .screen--plan.prototype-parity--plan .field textarea {
+    min-height: 3rem !important;
+    padding: 0.7rem 0.8rem !important;
+    border-radius: 0.72rem !important;
+    font-size: 0.94rem !important;
+    font-family: inherit !important;
+  }
+
+  .screen--plan.prototype-parity--plan .saved-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--plan.prototype-parity--plan .saved-list > .saved-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  /* Settings: six goal choices are a balanced 3 x 2 desktop group. */
+  .screen--settings.prototype-parity--settings .row strong {
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--settings.prototype-parity--settings .goal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  /* Reading: nine visible articles form a 3 x 3 grid on desktop. */
+  .screen--reading.prototype-parity--reading .filter-strip-head b {
+    font-size: 0.88rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--reading.prototype-parity--reading .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+    width: auto !important;
+    grid-column: auto !important;
+    display: block !important;
+  }
+
+  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) > :not(.text-link),
+  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) .text-link {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  /* Article detail is a bounded desktop dialog rather than a bottom sheet. */
+  .screen--reading.prototype-parity--reading .drawer {
+    align-items: center !important;
+    justify-items: center !important;
+    padding: 5.75rem 1.5rem 1.5rem !important;
+    background: var(--overlay-dialog) !important;
+  }
+
+  .screen--reading.prototype-parity--reading .drawer .sheet {
+    width: min(54rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
+    max-height: min(80dvh, 50rem) !important;
+    margin: 0 !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 1.25rem !important;
+    box-shadow: var(--shadow-dialog) !important;
+  }
+
+  /* Consultation/share preview: finish the desktop type scale and theme-safe overlay. */
+  .screen--consultation.prototype-parity--consultation .report section strong,
+  .screen--consultation.prototype-parity--consultation .share-card--regional .share-region-detail b {
+    font-size: 0.88rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--consultation.prototype-parity--consultation .share-viewer-purpose p {
+    font-size: 0.82rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .screen--consultation.prototype-parity--consultation .share-viewer {
+    display: grid !important;
+    place-items: center !important;
+    padding: 5.75rem 1.5rem 1.5rem !important;
+    background: var(--overlay-dialog) !important;
+    overflow: hidden !important;
+  }
+
+  .screen--consultation.prototype-parity--consultation .share-viewer-shell {
+    width: min(60rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 7.25rem) !important;
+    overflow-y: auto !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 1.25rem !important;
+    box-shadow: var(--shadow-dialog) !important;
+  }
+
+  .screen--history.prototype-parity--history .history-mode button,
+  .screen--history.prototype-parity--history .display-toggle button,
+  .screen--plan.prototype-parity--plan .seg button,
+  .screen--reading.prototype-parity--reading .filters button {
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--history.prototype-parity--history .region-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.prototype-parity--settings .goal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--reading.prototype-parity--reading .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
