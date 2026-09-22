@@ -58,7 +58,7 @@ function actionHref(action, output) {
     query.set("recordId", output.target.recordId);
   }
   if (output?.target?.selectedRegionId && !query.has("regionId")) query.set("regionId", output.target.selectedRegionId);
-  if (action.destination === "simulation") {
+  if (["simulation", "plan", "consultation", "reading"].includes(action.destination)) {
     query.set("from", "interpretation-room");
     query.set("roomOrigin", output?.target?.origin || "result");
     query.set("roomExperience", "v3");
@@ -69,7 +69,7 @@ function actionHref(action, output) {
 const ACTION_COPY = Object.freeze({
   simulation: Object.freeze({ title: "条件を変えた表示を確かめる", note: "今回の記録を基準に、条件を変えた場合の12部位表示を確認します。" }),
   history: Object.freeze({ title: "この部位のこれまでを見る", note: "同じ方法で比べられる過去記録を確認します。" }),
-  plan: Object.freeze({ title: "次回確認したいことを残す", note: "今回の確認内容を、次の記録につなげます。" }),
+  plan: Object.freeze({ title: "次の走りや休養を準備する", note: "今回の記録を見ながら、次の予定を作ります。" }),
   share: Object.freeze({ title: "人に見せる形に整理する", note: "今回の記録を共有しやすい形にまとめます。" }),
   reading: Object.freeze({ title: "背景をもう少し詳しく読む", note: "結果の読み方や関連する一般情報を確認します。" }),
   "official-help": Object.freeze({ title: "公的サポートを確認する", note: "入力内容に応じた相談先や案内を確認します。" }),
