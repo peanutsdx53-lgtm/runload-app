@@ -2135,3 +2135,11 @@
     margin-left: 0.5rem;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: dark-mode chart emphasis ===== */
+@media (min-width: 80rem) {
+  .screen--history.prototype-parity--history .chart-point.selected {
+    filter: none !important;
+  }
+}
