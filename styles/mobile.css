@@ -1,20 +1,20 @@
 /* RunLoad mobile and responsive screen styles. */
 
-/* ===== prototype-fidelity-v2.css ===== */
+/* ===== Responsive foundation ===== */
 /*
  * RunLoad UI/UX finish pass 1
- * UI-fidelity layer: presentation only.
+ * Responsive presentation layer.
  * Keeps production workflows, storage and calculation authority unchanged.
  */
 
 :root {
-  --UI-frame-width: 1180px;
-  --UI-content-width: 1080px;
-  --UI-form-width: 900px;
-  --UI-topbar-height: 60px;
-  --UI-bottom-nav-height: 76px;
-  --UI-card-radius: 18px;
-  --UI-card-shadow: 0 7px 20px color-mix(in srgb, var(--color-ink) 6%, transparent);
+  --app-frame-width: 1180px;
+  --app-content-width: 1080px;
+  --app-form-width: 900px;
+  --app-topbar-height: 60px;
+  --app-bottom-nav-height: 76px;
+  --app-card-radius: 18px;
+  --app-card-shadow: 0 7px 20px color-mix(in srgb, var(--color-ink) 6%, transparent);
 }
 
 /* --- Global frame / top bar / bottom navigation --- */
@@ -26,10 +26,10 @@ body {
 }
 
 .app-shell {
-  width: min(100%, var(--UI-frame-width));
+  width: min(100%, var(--app-frame-width));
   min-height: 100dvh;
   margin: 0 auto;
-  padding-bottom: calc(var(--UI-bottom-nav-height) + env(safe-area-inset-bottom));
+  padding-bottom: calc(var(--app-bottom-nav-height) + env(safe-area-inset-bottom));
   background: var(--color-paper);
 }
 
@@ -38,7 +38,7 @@ body {
   top: 0;
   z-index: 40;
   width: 100%;
-  min-height: var(--UI-topbar-height);
+  min-height: var(--app-topbar-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -90,10 +90,10 @@ body {
 }
 
 .app-main {
-  width: min(100%, var(--UI-content-width));
+  width: min(100%, var(--app-content-width));
   margin: 0 auto;
   padding: 23px clamp(14px, 3vw, 28px) 42px;
-  scroll-margin-top: calc(var(--UI-topbar-height) + 8px);
+  scroll-margin-top: calc(var(--app-topbar-height) + 8px);
 }
 .screen { gap: 28px; }
 
@@ -102,8 +102,8 @@ body {
   left: 50%;
   bottom: 0;
   z-index: 50;
-  width: min(100%, var(--UI-frame-width));
-  height: calc(var(--UI-bottom-nav-height) + env(safe-area-inset-bottom));
+  width: min(100%, var(--app-frame-width));
+  height: calc(var(--app-bottom-nav-height) + env(safe-area-inset-bottom));
   transform: translateX(-50%);
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -142,7 +142,7 @@ body {
 .primary-navigation__link.is-current::after { display: none; }
 .primary-navigation__link.is-disabled { opacity: .52; }
 
-/* --- UI-type page hierarchy --- */
+/* --- Screen page hierarchy --- */
 .page-heading {
   max-width: 680px;
   padding: 0;
@@ -230,9 +230,9 @@ body {
 .settings-privacy-entry, .settings-secondary-area, .public-help-boundary,
 .public-help-priority, .public-help-selected, .quick-share-card) {
   border: 1px solid var(--color-line);
-  border-radius: var(--UI-card-radius);
+  border-radius: var(--app-card-radius);
   background: var(--color-surface);
-  box-shadow: var(--UI-card-shadow);
+  box-shadow: var(--app-card-shadow);
 }
 
 .form-section,
@@ -326,7 +326,7 @@ input, select, textarea {
 .screen--home .home-start-steps { border: 0; box-shadow: none; background: transparent; }
 
 /* --- Record V0.16 fidelity --- */
-.screen--record-input { max-width: var(--UI-form-width); margin-inline: auto; gap: 12px; }
+.screen--record-input { max-width: var(--app-form-width); margin-inline: auto; gap: 12px; }
 .screen--record-input .page-heading { margin-bottom: 2px; }
 .screen--record-input .record-fatigue-inline {
   min-height: 62px;
@@ -355,7 +355,7 @@ input, select, textarea {
   border: 1px solid var(--color-line);
   border-radius: 18px;
   background: var(--color-surface);
-  box-shadow: var(--UI-card-shadow);
+  box-shadow: var(--app-card-shadow);
 }
 .screen--result .result-card { gap: 13px; padding: 14px; border-radius: 20px; }
 .screen--result .result-card__heading h2 { font-size: 19px; }
@@ -369,7 +369,7 @@ input, select, textarea {
 .screen--body-part-detail { gap: 18px; }
 .screen--body-part-detail :is(.body-part-detail-card, .body-part-analysis-action, .body-part-relationship, .body-part-context-grid) {
   border-radius: 18px;
-  box-shadow: var(--UI-card-shadow);
+  box-shadow: var(--app-card-shadow);
 }
 
 /* --- History V0.14 fidelity --- */
@@ -391,12 +391,12 @@ input, select, textarea {
 .screen--history-unified .history-record-table-disclosure,
 .screen--history-unified .filter-panel {
   border-radius: 19px;
-  box-shadow: var(--UI-card-shadow);
+  box-shadow: var(--app-card-shadow);
 }
 .screen--history-unified .history-chart-display-toggle,
 .screen--history-unified .period-tabs { border-radius: 11px; }
 .screen--history-unified .history-list { gap: 8px; }
-.screen--history-unified .history-item { padding: 12px; border-radius: 16px; box-shadow: var(--UI-card-shadow); }
+.screen--history-unified .history-item { padding: 12px; border-radius: 16px; box-shadow: var(--app-card-shadow); }
 
 /* --- Plan V0.9 --- */
 .screen--plan { max-width: 980px; margin-inline: auto; gap: 16px; }
@@ -405,7 +405,7 @@ input, select, textarea {
 .screen--plan .frozen-plan-course,
 .screen--plan .frozen-plan-card {
   border-radius: 16px;
-  box-shadow: var(--UI-card-shadow);
+  box-shadow: var(--app-card-shadow);
 }
 .screen--plan .frozen-plan-form { padding: 15px; border: 1px solid var(--color-line); background: var(--color-surface); }
 .screen--plan .frozen-plan-toolbar { margin: 0; }
@@ -455,7 +455,7 @@ input, select, textarea {
   border: 1px solid var(--color-line);
   border-top-width: 1px;
   border-radius: 17px;
-  box-shadow: var(--UI-card-shadow);
+  box-shadow: var(--app-card-shadow);
 }
 .screen--column .column-article { max-width: 760px; }
 
@@ -478,7 +478,7 @@ input, select, textarea {
   border: 1px solid var(--color-line);
   border-radius: 15px;
   background: var(--color-surface);
-  box-shadow: var(--UI-card-shadow);
+  box-shadow: var(--app-card-shadow);
 }
 .screen--more .feature-link-card__number {
   width: 32px;
@@ -513,8 +513,8 @@ input, select, textarea {
   .pwa-update-notice {
     left: max(12px, env(safe-area-inset-left));
     right: max(12px, env(safe-area-inset-right));
-    bottom: calc(var(--UI-bottom-nav-height) + env(safe-area-inset-bottom) + 10px);
-    max-height: calc(100dvh - var(--UI-topbar-height) - var(--UI-bottom-nav-height) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px);
+    bottom: calc(var(--app-bottom-nav-height) + env(safe-area-inset-bottom) + 10px);
+    max-height: calc(100dvh - var(--app-topbar-height) - var(--app-bottom-nav-height) - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px);
     overflow: auto;
     overscroll-behavior: contain;
   }
@@ -577,7 +577,7 @@ input, select, textarea {
   .primary-navigation__link { font-size: 10px; }
 }
 
-/* --- Desktop UI frame --- */
+/* --- Desktop frame --- */
 @media (min-width: 880px) {
   body {
     background: linear-gradient(90deg,
@@ -587,7 +587,7 @@ input, select, textarea {
       color-mix(in srgb, var(--color-paper) 78%, var(--color-surface)));
   }
   .app-shell {
-    width: min(calc(100% - 32px), var(--UI-frame-width));
+    width: min(calc(100% - 32px), var(--app-frame-width));
     min-height: calc(100dvh - 32px);
     margin: 16px auto;
     padding-bottom: 0;
@@ -619,12 +619,12 @@ input, select, textarea {
   .app-main { padding: 0; }
 }
 
-/* ===== prototype-mobile-parity.css ===== */
+/* ===== Screen-specific mobile layouts ===== */
 /*
  * RunLoad mobile screen layout layer.
- * Generated from the frozen UI authority sources.
- * Screen DOM is progressively migrated to the UI hierarchy.
- * Color aliases remain theme-driven; geometry follows the frozen UI.
+ * Maintains the approved mobile UI geometry.
+ * Screen DOM follows the current screen hierarchy.
+ * Color aliases remain theme-driven; geometry follows the approved layout.
  */
 
 .screen-layout {
@@ -701,7 +701,7 @@ input, select, textarea {
 
 
 
-/* ===== Screen section: home ===== */
+/* ===== Screen: home ===== */
 .screen-layout--home a,.screen-layout--home button{font:inherit;-webkit-tap-highlight-color:transparent}
 .screen-layout--home a{text-decoration:none;color:inherit}
 .screen-layout--home button{touch-action:manipulation}
@@ -778,7 +778,7 @@ input, select, textarea {
 @media (prefers-reduced-motion:reduce){.screen-layout--home *:before,.screen-layout--home *:after{transition-duration:.001ms!important;animation-duration:.001ms!important}}
 
 
-/* ===== Screen section: record ===== */
+/* ===== Screen: record ===== */
 .screen-layout--record button,.screen-layout--record input,.screen-layout--record select,.screen-layout--record textarea{font:inherit}
 .screen-layout--record button,.screen-layout--record a,.screen-layout--record summary,.screen-layout--record input,.screen-layout--record select,.screen-layout--record textarea{touch-action:manipulation}
 .screen-layout--record button,.screen-layout--record summary,.screen-layout--record .course-chip,.screen-layout--record .linked-card{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
@@ -1244,7 +1244,7 @@ input, select, textarea {
 .screen-layout--record .selected-body-row button{grid-column:2/3;grid-row:2/3}}
 
 
-/* ===== Screen section: result ===== */
+/* ===== Screen: result ===== */
 .screen-layout--result button{font:inherit;-webkit-tap-highlight-color:transparent}
 .screen-layout--result .eyebrow{margin:0;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.16em}
 .screen-layout--result .intro-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
@@ -1583,7 +1583,7 @@ input, select, textarea {
 .screen-layout--result .understanding-link i{font-style:normal;color:var(--accent-strong);font-size:20px}
 
 
-/* ===== Screen section: history ===== */
+/* ===== Screen: history ===== */
 .screen-layout--history button,.screen-layout--history input{font:inherit}
 .screen-layout--history button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 .screen-layout--history .sample-badge{font-size:8px;font-weight:900;letter-spacing:.11em;color:var(--accent-strong);padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
@@ -1957,7 +1957,7 @@ input, select, textarea {
 @media (max-width:360px){.screen-layout--history .selected-facts-compact dd{font-size:9px}}
 
 
-/* ===== Screen section: plan ===== */
+/* ===== Screen: plan ===== */
 .screen-layout--plan a,.screen-layout--plan button,.screen-layout--plan input,.screen-layout--plan select{font:inherit;-webkit-tap-highlight-color:transparent}
 .screen-layout--plan a{text-decoration:none;color:inherit}
 .screen-layout--plan button{touch-action:manipulation}
@@ -2088,7 +2088,7 @@ input, select, textarea {
 .screen-layout--plan .details summary i{margin-top:2px}}
 
 
-/* ===== Screen section: simulation ===== */
+/* ===== Screen: simulation ===== */
 .screen-layout--simulation button,.screen-layout--simulation input,.screen-layout--simulation select,.screen-layout--simulation a{font:inherit;-webkit-tap-highlight-color:transparent}
 .screen-layout--simulation button{touch-action:manipulation}
 .screen-layout--simulation a{text-decoration:none;color:inherit}
@@ -2266,7 +2266,7 @@ input, select, textarea {
 .screen-layout--simulation .course-link b{flex:0 0 auto;font-size:8px;color:var(--accent-strong);font-weight:900}
 
 
-/* ===== Screen section: course ===== */
+/* ===== Screen: course ===== */
 .screen-layout--course button,.screen-layout--course input,.screen-layout--course select,.screen-layout--course a{font:inherit}
 .screen-layout--course button{touch-action:manipulation}
 .screen-layout--course a{text-decoration:none;color:inherit}
@@ -2479,7 +2479,7 @@ input, select, textarea {
 @media (prefers-reduced-motion:reduce){.screen-layout--course *:before,.screen-layout--course *:after{transition-duration:.001ms!important}}
 
 
-/* ===== Screen section: gpx ===== */
+/* ===== Screen: gpx ===== */
 .screen-layout--gpx button,.screen-layout--gpx input,.screen-layout--gpx select,.screen-layout--gpx a{font:inherit;-webkit-tap-highlight-color:transparent}
 .screen-layout--gpx button{touch-action:manipulation}
 .screen-layout--gpx a{text-decoration:none;color:inherit}
@@ -2672,7 +2672,7 @@ input, select, textarea {
 .screen-layout--gpx .file-note{margin-top:6px}}
 
 
-/* ===== Screen section: consultation ===== */
+/* ===== Screen: consultation ===== */
 .screen-layout--consultation a,.screen-layout--consultation button,.screen-layout--consultation input,.screen-layout--consultation textarea{font:inherit;-webkit-tap-highlight-color:transparent}
 .screen-layout--consultation a{text-decoration:none;color:inherit}
 .screen-layout--consultation .eyebrow{margin:0;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.16em}
@@ -2746,7 +2746,7 @@ input, select, textarea {
 .screen-layout--consultation .report section,.screen-layout--consultation .report header{break-inside:avoid}}
 
 
-/* ===== Screen section: support ===== */
+/* ===== Screen: support ===== */
 .screen-layout--support a{color:inherit;text-decoration:none}
 .screen-layout--support .eyebrow{margin:0;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.16em}
 .screen-layout--support .head h1{margin:4px 0 0;font-size:30px;letter-spacing:-.04em}
@@ -2766,7 +2766,7 @@ input, select, textarea {
 .screen-layout--support .back{margin-top:14px;display:inline-flex;align-items:center;gap:5px;color:var(--accent2);font-size:9px;font-weight:850}
 
 
-/* ===== Screen section: reading ===== */
+/* ===== Screen: reading ===== */
 .screen-layout--reading a,.screen-layout--reading button{font:inherit;-webkit-tap-highlight-color:transparent}
 .screen-layout--reading a{text-decoration:none;color:inherit}
 .screen-layout--reading .eyebrow{margin:0;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.16em}
@@ -2811,7 +2811,7 @@ input, select, textarea {
 .screen-layout--reading .sheet{border-radius:24px;max-height:82vh}}
 
 
-/* ===== Screen section: privacy ===== */
+/* ===== Screen: privacy ===== */
 .screen-layout--privacy a{color:inherit;text-decoration:none}
 .screen-layout--privacy .eyebrow{margin:0;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.16em}
 .screen-layout--privacy .head h1{margin:4px 0 0;font-size:30px;letter-spacing:-.04em}
@@ -2838,7 +2838,7 @@ input, select, textarea {
 .screen-layout--privacy .actions a{min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;font-size:9px;font-weight:850;color:var(--accent2)}
 
 
-/* ===== Screen section: more ===== */
+/* ===== Screen: more ===== */
 .screen-layout--more a,.screen-layout--more button{font:inherit;-webkit-tap-highlight-color:transparent}
 .screen-layout--more a{text-decoration:none;color:inherit}
 .screen-layout--more .eyebrow{margin:0;color:var(--accent);font-size:9px;font-weight:900;letter-spacing:.16em}
@@ -2860,7 +2860,7 @@ input, select, textarea {
 @media (prefers-reduced-motion:reduce){.screen-layout--more *:before,.screen-layout--more *:after{transition-duration:.001ms!important;animation-duration:.001ms!important}}
 
 
-/* ===== Screen section: settings ===== */
+/* ===== Screen: settings ===== */
 .screen-layout--settings a,.screen-layout--settings button,.screen-layout--settings input,.screen-layout--settings select{font:inherit;-webkit-tap-highlight-color:transparent}
 .screen-layout--settings a{text-decoration:none;color:inherit}
 .screen-layout--settings button{touch-action:manipulation}
@@ -3122,7 +3122,7 @@ input, select, textarea {
   .primary-navigation__link.is-disabled small { font-size: 6px; }
   .primary-navigation__link.is-disabled .primary-navigation__label { opacity: .75; }
 
-  /* Keep transient application controls above the UI navigation. */
+  /* Keep transient application controls above the mobile navigation. */
   .pwa-update-notice,
   [data-pwa-update-notice] {
     bottom: calc(86px + env(safe-area-inset-bottom)) !important;
