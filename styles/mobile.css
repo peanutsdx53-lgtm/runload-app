@@ -2548,7 +2548,7 @@
 }
 
 
-/* ===== V1.28 smartphone alignment refinements ===== */
+/* ===== smartphone alignment refinements ===== */
 /* Course detail inputs: one visual grammar for percentage, type, and grade. */
 .screen-layout--course .section-row{
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -2806,7 +2806,7 @@
 }
 
 
-/* ===== V1.30 share preparation redesign ===== */
+/* ===== share preparation redesign ===== */
 .screen-layout--consultation .share-step{margin-top:24px}
 .screen-layout--consultation .share-purpose-step .section-head h2{font-size:15px}
 .screen-layout--consultation .share-purpose-step .field{margin-top:12px}
