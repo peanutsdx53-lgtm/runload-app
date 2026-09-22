@@ -1,0 +1,132 @@
+name: Codebase cleanup audit
+
+on:
+  push:
+    branches:
+      - codebase-cleanup-20260922
+    paths:
+      - ".github/workflows/codebase-cleanup-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r file; do
+            node --check "$file" >/dev/null
+            count=$((count+1))
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          echo "SYNTAX_FILES_PASS=$count"
+
+      - name: Static dependency and naming audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('fs');
+          const path=require('path');
+          const root=process.cwd();
+          const walk=(dir)=>{
+            const out=[];
+            for(const ent of fs.readdirSync(dir,{withFileTypes:true})){
+              if(ent.name==='.git') continue;
+              const p=path.join(dir,ent.name);
+              if(ent.isDirectory()) out.push(...walk(p)); else out.push(p);
+            }
+            return out;
+          };
+          const rel=p=>path.relative(root,p).replaceAll(path.sep,'/');
+          const files=walk(root);
+          const js=files.filter(p=>/\.(?:js|mjs)$/.test(p));
+          const css=files.filter(p=>p.endsWith('.css'));
+          const md=files.filter(p=>p.endsWith('.md'));
+          const read=p=>fs.readFileSync(p,'utf8');
+          const importRe=/\bimport\s+(?:[^'"]*?\s+from\s+)?["']([^"']+)["']/g;
+          const graph=new Map();
+          for(const file of js){
+            const deps=[];
+            const src=read(file);
+            for(const m of src.matchAll(importRe)){
+              if(!m[1].startsWith('.')) continue;
+              let target=path.resolve(path.dirname(file),m[1]);
+              if(!path.extname(target)) target+='.js';
+              deps.push(rel(target));
+            }
+            graph.set(rel(file),deps);
+          }
+          const entries=['app.js','ui/pwaUpdateBootstrapV1.js'];
+          const reachable=new Set();
+          const stack=[...entries];
+          while(stack.length){
+            const cur=stack.pop();
+            if(reachable.has(cur)) continue;
+            reachable.add(cur);
+            for(const dep of graph.get(cur)||[]) stack.push(dep);
+          }
+          const runtimeJs=js.map(rel).filter(p=>p.endsWith('.js')&&!p.startsWith('tests/'));
+          const unreachable=runtimeJs.filter(p=>!reachable.has(p)&&p!=='service-worker.js').sort();
+
+          const html=read(path.join(root,'index.html'));
+          const linkedCss=[...html.matchAll(/<link[^>]+href=["']\.\/([^"']+\.css)["']/g)].map(m=>m[1]);
+          const unlinkedCss=css.map(rel).filter(p=>!linkedCss.includes(p)).sort();
+
+          const sw=read(path.join(root,'service-worker.js'));
+          const precache=[...sw.matchAll(/"\.\/([^"]+)"/g)].map(m=>m[1]);
+          const missingPrecache=precache.filter(p=>!fs.existsSync(path.join(root,p)));
+
+          const flagRe=/(prototype|preview|hotfix|candidate|(?:^|[-_.])v\d+(?:[-_.]|$)|2026\d{4}|status|workplan|baseline)/i;
+          const flaggedNames=files.map(rel).filter(p=>flagRe.test(p)).sort();
+
+          const sourceFlags=[];
+          for(const file of files.filter(p=>/\.(?:js|mjs|css|html)$/.test(p))){
+            const src=read(file);
+            const patterns=[
+              ['TODO',/\bTODO\b/g],['FIXME',/\bFIXME\b/g],['prototype',/\bprototype[-_A-Za-z0-9]*/gi],
+              ['preview',/\bpreview[-_A-Za-z0-9]*/gi],['hotfix',/\bhotfix[-_A-Za-z0-9]*/gi],
+              ['candidate',/\bcandidate\b/gi],['literal-backslash-n',/\\n/g]
+            ];
+            for(const [kind,re] of patterns){
+              const count=[...src.matchAll(re)].length;
+              if(count) sourceFlags.push({file:rel(file),kind,count});
+            }
+          }
+
+          console.log('AUDIT_RUNTIME_JS='+runtimeJs.length);
+          console.log('AUDIT_REACHABLE_JS='+[...reachable].filter(p=>runtimeJs.includes(p)).length);
+          console.log('AUDIT_UNREACHABLE_JS='+JSON.stringify(unreachable));
+          console.log('AUDIT_LINKED_CSS='+JSON.stringify(linkedCss));
+          console.log('AUDIT_UNLINKED_CSS='+JSON.stringify(unlinkedCss));
+          console.log('AUDIT_MISSING_PRECACHE='+JSON.stringify(missingPrecache));
+          console.log('AUDIT_FLAGGED_FILENAMES='+JSON.stringify(flaggedNames));
+          console.log('AUDIT_SOURCE_FLAGS='+JSON.stringify(sourceFlags));
+          console.log('AUDIT_MARKDOWN_COUNT='+md.length);
+          if(missingPrecache.length) process.exitCode=1;
+          NODE
+
+      - name: Run test suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          passed=0
+          failed=0
+          for file in tests/*.test.mjs; do
+            echo "::group::$file"
+            if node "$file"; then
+              passed=$((passed+1))
+            else
+              failed=$((failed+1))
+            fi
+            echo "::endgroup::"
+          done
+          echo "TEST_SUITES_PASSED=$passed"
+          echo "TEST_SUITES_FAILED=$failed"
+          test "$failed" -eq 0
