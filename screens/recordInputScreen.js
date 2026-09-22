@@ -77,7 +77,7 @@ function localToday() {
   return `${year}-${month}-${day}`;
 }
 
-function prototypeDateLabel(value = "") {
+function recordDateLabel(value = "") {
   const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
   return match ? `${match[1]}/${match[2]}/${match[3]}` : String(value || "—");
 }
@@ -107,7 +107,7 @@ function renderPlanCourseLibrarySaveOption(course = {}, { fromPlan = false, isRe
 function renderCourseEntry(course = {}, isRest = false, { fromPlan = false } = {}) {
   const selectedCourse = hasDetailedCourse(course);
   return `<div class="record-course-entry" data-run-fields${isRest ? " hidden" : ""}>
-    <div class="selected-course"${selectedCourse ? "" : " hidden"} data-prototype-selected-course><div><small>今回のコース</small><strong data-prototype-course-name>${escapeHtml(course.name || "名称なし")}</strong><span data-prototype-course-meta>${escapeHtml(course.modelSurfaceClass && course.modelSurfaceClass !== "UNKNOWN" ? course.modelSurfaceClass : "条件を保存")}</span></div><button type="button" data-action="clear-record-course">解除</button></div>
+    <div class="selected-course"${selectedCourse ? "" : " hidden"} data-record-selected-course><div><small>今回のコース</small><strong data-record-course-name>${escapeHtml(course.name || "名称なし")}</strong><span data-record-course-meta>${escapeHtml(course.modelSurfaceClass && course.modelSurfaceClass !== "UNKNOWN" ? course.modelSurfaceClass : "条件を保存")}</span></div><button type="button" data-action="clear-record-course">解除</button></div>
     <button class="route-button" type="button" data-action="open-course-library"><span><small>保存コース</small><strong>コースを選ぶ・作る</strong></span><i>›</i></button>
     ${renderPlanCourseLibrarySaveOption(course, { fromPlan, isRest })}
   </div>`;
@@ -258,12 +258,12 @@ export function renderRecordInputScreen({ services, context }) {
   return `<div class="screen screen--record-input screen-layout screen-layout--record">
     <section class="page-head"><div><p class="eyebrow">RECORD</p><h1>${editing ? "保存した記録を確認・更新" : "今日の記録"}</h1></div></section>
     ${editing ? `<p class="parity-record-banner">保存済みの${escapeHtml(formatLocalDate(record.date))}の記録を更新します。</p>` : selectedPlan ? `<p class="parity-record-banner">保存した予定から今回の記録へ転記しています。</p>` : savedDraft ? `<p class="parity-record-banner">入力途中の下書きから再開しています。</p>` : ""}
-    <form id="record-input-form" class="record-form prototype-record-form" data-editing="${editing ? "true" : "false"}" novalidate>
+    <form id="record-input-form" class="record-form" data-editing="${editing ? "true" : "false"}" novalidate>
       <input type="hidden" name="recordId" value="${escapeHtml(effectiveRecordId)}"><input type="hidden" name="planId" value="${escapeHtml(selectedPlan?.id || "")}"><div class="form-messages" data-form-messages tabindex="-1" hidden></div>
-      <section class="core-card" data-information-role="fact"><div class="core-heading"><span class="core-stage-icon">1</span><div class="core-title-copy"><p class="stage-label">必須</p><h2>今日の走行</h2></div><span data-prototype-required-progress>距離・時間</span></div>
+      <section class="core-card" data-information-role="fact"><div class="core-heading"><span class="core-stage-icon">1</span><div class="core-title-copy"><p class="stage-label">必須</p><h2>今日の走行</h2></div><span data-record-required-progress>距離・時間</span></div>
         ${renderRofJInlineAndOverlay({ services, linkedRunId, editing })}
         <div class="activity-field"><span class="activity-field__label" id="record-activity-label">記録の種類</span><fieldset class="activity-toggle" aria-labelledby="record-activity-label"><label><input type="radio" name="activityType" value="run"${checked(!isRest)}><span>走行</span></label><label><input type="radio" name="activityType" value="rest"${checked(isRest)}><span>休養</span></label></fieldset></div>
-        <div class="date-field"><span class="date-label">日付</span><label class="date-control"><span data-prototype-date-display>${escapeHtml(prototypeDateLabel(record.date))}</span><input name="date" type="date" value="${escapeHtml(record.date)}" required></label></div>
+        <div class="date-field"><span class="date-label">日付</span><label class="date-control"><span data-record-date-display>${escapeHtml(recordDateLabel(record.date))}</span><input name="date" type="date" value="${escapeHtml(record.date)}" required></label></div>
         <div data-run-fields${isRest ? " hidden" : ""}><div class="measure-grid"><label class="measure-field"><span>距離</span><div><input name="distanceKm" type="number" inputmode="decimal" min="0.01" max="10000" step="0.01" value="${escapeHtml(record.distanceKm || "")}" placeholder="5.0" required><b>km</b></div></label><label class="measure-field"><span>実際に走った時間</span><div><input name="durationMinutes" type="number" inputmode="decimal" min="0.01" max="100000" step="0.1" value="${escapeHtml(record.durationMinutes || "")}" placeholder="35"><b>分</b></div></label></div></div>
         <div class="rest-note" data-rest-fields${isRest ? "" : " hidden"}><strong>休養日として保存</strong><span>走行による数値結果は表示しません。身体記録やメモは必要な場合だけ追加できます。</span></div>
       </section>
@@ -281,7 +281,7 @@ export function renderRecordInputScreen({ services, context }) {
       <aside class="desktop-save-area" aria-label="保存状況">
         <div class="desktop-save-area__intro">
           <strong>${editing ? "入力内容を確認して更新" : "必須項目を確認して保存"}</strong>
-          <span data-prototype-save-hint>${isRest ? "休養日として保存できます。" : "距離と実際に走った時間を入力してください。"}</span>
+          <span data-record-save-hint>${isRest ? "休養日として保存できます。" : "距離と実際に走った時間を入力してください。"}</span>
         </div>
         <div class="save-readiness" data-save-readiness>
           <div class="save-readiness__summary">
@@ -291,7 +291,7 @@ export function renderRecordInputScreen({ services, context }) {
           <div class="save-readiness__bar" aria-hidden="true"><i data-save-readiness-bar style="width:${isRest ? "100" : "0"}%"></i></div>
           <dl class="save-context">
             <div><dt>記録</dt><dd data-save-context-activity>${isRest ? "休養" : "走行"}</dd></div>
-            <div><dt>日付</dt><dd data-save-context-date>${escapeHtml(prototypeDateLabel(record.date))}</dd></div>
+            <div><dt>日付</dt><dd data-save-context-date>${escapeHtml(recordDateLabel(record.date))}</dd></div>
           </dl>
           <div class="save-checklist" data-save-run-checklist${isRest ? " hidden" : ""}>
             <div data-save-check="distance"><span>距離</span><b data-save-check-state="distance">未入力</b></div>
