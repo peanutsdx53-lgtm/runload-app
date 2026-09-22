@@ -17,7 +17,7 @@ import {
 import { bodyAreaLateralityLabel } from "../core/runloadCore.js";
 import { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } from "../core/runloadCore.js";
 
-import { PROTOTYPE_BODY_VIEWS } from "../ui/prototypeBodyRegionVisuals.js";
+import { BODY_REGION_VIEWS } from "../ui/bodyRegionVisuals.js";
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
 const REGION_BY_ID = new Map(REGIONS.map((region) => [region.id, region]));
@@ -733,7 +733,7 @@ function renderTrendView(workspace) {
 
 
 function prototypeLocatorSvg(regionId) {
-  for (const view of PROTOTYPE_BODY_VIEWS) {
+  for (const view of BODY_REGION_VIEWS) {
     const match=view.paths.find(([id])=>id===regionId);
     if (!match) continue;
     return `<svg viewBox="70 10 160 430" aria-hidden="true"><g class="mini-silhouette">${view.silhouette}</g><path class="mini-region" d="${match[1]}"></path></svg>`;
@@ -741,7 +741,7 @@ function prototypeLocatorSvg(regionId) {
   return "";
 }
 function prototypeRegionViewLabel(regionId) {
-  return PROTOTYPE_BODY_VIEWS.find((view)=>view.paths.some(([id])=>id===regionId))?.title || "部位";
+  return BODY_REGION_VIEWS.find((view)=>view.paths.some(([id])=>id===regionId))?.title || "部位";
 }
 function prototypeNavButton(label, small, href, active=false) {
   return `<button type="button" class="${active?"active":""}" data-history-href="${escapeHtml(href)}" aria-pressed="${active}"><span>${escapeHtml(label)}</span><small>${escapeHtml(small)}</small></button>`;
