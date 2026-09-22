@@ -1,13 +1,12 @@
 import { SURFACE_FIELDS } from "../core/runloadCore.js";
-import { escapeHtml, renderPageHeading, renderScreenGuide, renderStatusLabel } from "../ui/commonComponents.js";
+import { escapeHtml, renderScreenGuide } from "../ui/commonComponents.js";
 import { subjectiveFieldsFromFeedback, subjectiveSummaryFromFields } from "../ui/subjectivePresentation.js";
 import { personalContextSummary } from "../ui/personalContextPresentation.js";
-import { renderCourseSummary } from "../ui/coursePresentation.js";
+
 import { formatLocalDate } from "../ui/recordPresentation.js";
 import { INPUT_PURPOSE_GUIDANCE } from "../ui/hierarchicalExplanation.js";
 import { ROF_J_DESCRIPTOR_MAP } from "../core/secondPillarRofJ.js";
 import { renderEmbeddedPersonalSubflow, renderEmbeddedSubjectiveSubflow } from "../ui/recordEmbeddedSubflows.js";
-
 
 function renderRofJInlineAndOverlay({ services, linkedRunId = "", editing = false }) {
   if (!services?.secondPillar) return "";
@@ -98,7 +97,6 @@ function hasDetailedCourse(course = {}) {
   return SURFACE_FIELDS.some(({ recordKey }) => Number(course[recordKey] || 0) > 0);
 }
 
-
 function renderPlanCourseLibrarySaveOption(course = {}, { fromPlan = false, isRest = false } = {}) {
   if (!fromPlan || isRest || !String(course.name || "").trim()) return "";
   return `<div class="record-course-library-save" data-plan-course-library-save><label class="choice-card record-course-library-save__choice"><input type="checkbox" name="savePlanCourseToLibrary" value="1"><span><strong>このコースを保存したコースにも残す</strong><small>記録を保存すると、次回から入力画面で選べます。同じ名前がある場合は確認します。</small></span></label></div>`;
@@ -149,8 +147,7 @@ function renderCourseHiddenFields(course = {}) {
   return `<div class="course-hidden-fields" hidden aria-hidden="true">${baseFields}${sectionFields}${surfaceFields}</div>`;
 }
 
-
-function renderRecordInputGuide({ selectedPlan = null, editing = false } = {}) {
+ = {}) {
   const saveText = editing
     ? "同じ記録を更新し、結果画面を開きます。"
     : selectedPlan
@@ -175,7 +172,7 @@ function renderEnvironmentContext(record = {}) {
   return `<details class="inner-details"><summary><span>環境を残す</span><i>⌄</i></summary><div class="inner-body environment-fields"><input type="hidden" name="weather" value="${escapeHtml(context.weather || "")}"><input type="hidden" name="windSummary" value="${escapeHtml(context.windSummary || "")}"><label class="field"><span>気温（℃）</span><input name="temperatureC" type="number" inputmode="decimal" min="-50" max="60" step="0.1" value="${escapeHtml(context.temperatureC ?? "")}" placeholder="例：24"></label><label class="field"><span>環境メモ</span><textarea name="environmentNote" maxlength="500" rows="1" placeholder="例：暑い、向かい風、湿度が高い">${escapeHtml(context.environmentNote || "")}</textarea></label></div></details>`;
 }
 
-function renderRecoveryAndReflection(record = {}) {
+) {
   const recovery = record.recoveryContext || {};
   const reflection = record.reflectionContext || {};
   const consultation = record.consultationContext || {};
