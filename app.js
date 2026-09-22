@@ -48,14 +48,6 @@ const screenRenderers = {
   settings: renderSettingsScreen,
 };
 
-const routeAliases = Object.freeze({
-  activation: (parameters) => {
-    const nextParameters = new URLSearchParams(parameters);
-    if (!nextParameters.has("origin")) nextParameters.set("origin", "result");
-    return Object.freeze({ screen: "interpretation-room", parameters: nextParameters });
-  },
-});
-
 const appRoot = document.getElementById("app");
 const desktopHeaderRoot = document.getElementById("desktop-header-root");
 const baseApplicationServices = createApplicationServices();
@@ -268,7 +260,6 @@ document.addEventListener("visibilitychange", () => {
 
 router = createAppRouter({
   availableScreens: Object.keys(screenRenderers),
-  routeAliases,
   onScreenChange: renderScreen,
 });
 
