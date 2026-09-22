@@ -11,12 +11,12 @@ export async function copyText(text) {
     await navigator.clipboard.writeText(text);
     return;
   }
-  const temporary = document.createElement("textarea");
-  temporary.value = text;
-  document.body.appendChild(temporary);
-  temporary.select();
+  const fallbackTextarea = document.createElement("textarea");
+  fallbackTextarea.value = text;
+  document.body.appendChild(fallbackTextarea);
+  fallbackTextarea.select();
   document.execCommand("copy");
-  temporary.remove();
+  fallbackTextarea.remove();
 }
 
 export function downloadText(filename, text, mimeType = "text/plain;charset=utf-8") {
