@@ -279,14 +279,16 @@ await test('ADVANCED-EVIDENCE-IS-COLLAPSED-BEHIND-PLAIN-LANGUAGE',()=>{
   assert.match(html,/<details class="interpretation-v3-advanced">/);
   assert.match(html,/計算方法と研究上の背景を詳しく見る/);
   assert.match(html,/全文献の完全な一覧ではありません/);
+  assert.match(html,/Reference-100/);
 });
 
-await test('PUBLIC-V3-UI-OMITS-INTERNAL-JARGON',()=>{
+await test('BEGINNER-V3-FLOW-OMITS-INTERNAL-JARGON',()=>{
   const html=renderInterpretationRoomV3({output:baseOutput()});
-  assert.doesNotMatch(html,/ROF-J/);
-  assert.doesNotMatch(html,/Reference-100/);
-  assert.doesNotMatch(html,/primaryCode/);
-  assert.doesNotMatch(html,/P1_SOURCE|P2_CROSS/);
+  const beginnerHtml=html.replace(/<details class="interpretation-v3-advanced">[\s\S]*?<\/details>/,'');
+  assert.doesNotMatch(beginnerHtml,/ROF-J/);
+  assert.doesNotMatch(beginnerHtml,/Reference-100/);
+  assert.doesNotMatch(beginnerHtml,/primaryCode/);
+  assert.doesNotMatch(beginnerHtml,/P1_SOURCE|P2_CROSS/);
 });
 
 await test('REST-STATE-DOES-NOT-FABRICATE-REGIONAL-RESULTS',()=>{
