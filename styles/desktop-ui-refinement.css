@@ -2224,3 +2224,22 @@
     max-width: 74rem !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: variable Reading filter counts ===== */
+@media (min-width: 80rem) {
+  /*
+   * The unfiltered view contains nine cards, but filters can leave one or two.
+   * auto-fit keeps 3 columns when space/data allow and expands smaller result
+   * sets instead of leaving two empty desktop columns.
+   */
+  .screen--reading.prototype-parity--reading .grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)) !important;
+  }
+
+  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+    width: auto !important;
+    grid-column: auto !important;
+    display: block !important;
+  }
+}
