@@ -17,7 +17,7 @@ export function renderSupportGuidanceScreen({ context } = {}) {
     : backHref.startsWith("#/consultation")
       ? "共有用の整理へ戻る"
       : "その他へ戻る";
-  return `<div class="screen screen--support-guidance prototype-parity prototype-parity--support secondary-derived-screen">
+  return `<div class="screen screen--support-guidance screen-layout screen-layout--support secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${backHref}">← ${backLabel}</a><strong>公的サポート</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">PUBLIC SUPPORT</p><h1>公的サポート</h1><p>症状や体調について、RunLoadとは別の公的な窓口を確認します。</p></section>
