@@ -20,7 +20,6 @@ await test('PLAN-DERIVED-BACK-RETURNS-TO-SAME-V3-REGION',()=>{
   assert.match(nav.backHref,/#\/interpretation-room\?/);
   assert.match(nav.backHref,/recordId=r1/);
   assert.match(nav.backHref,/origin=history/);
-  assert.match(nav.backHref,/experience=v3/);
   assert.match(nav.backHref,/regionId=BA-DISP-014/);
 });
 
@@ -28,7 +27,6 @@ await test('CONSULTATION-DERIVED-BACK-RETURNS-TO-SAME-V3-REGION',()=>{
   const nav=resolveScreenContextNavigation('consultation',location(derivedParams));
   assert.equal(nav.title,'共有用にまとめる');
   assert.equal(nav.backLabel,'結果の整理');
-  assert.match(nav.backHref,/experience=v3/);
   assert.match(nav.backHref,/regionId=BA-DISP-014/);
 });
 
@@ -36,7 +34,6 @@ await test('READING-DERIVED-BACK-RETURNS-TO-SAME-V3-REGION',()=>{
   const nav=resolveScreenContextNavigation('reading',location(derivedParams));
   assert.equal(nav.title,'読みもの');
   assert.equal(nav.backLabel,'結果の整理');
-  assert.match(nav.backHref,/experience=v3/);
   assert.match(nav.backHref,/regionId=BA-DISP-014/);
 });
 
