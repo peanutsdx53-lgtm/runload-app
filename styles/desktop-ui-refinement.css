@@ -2249,6 +2249,7 @@
 @media (min-width: 80rem) {
   .screen--home.prototype-parity--home {
     font-family: inherit !important;
+    --muted: color-mix(in srgb, var(--color-muted) 88%, var(--color-ink));
   }
 
   .screen--home.prototype-parity--home > .page-head .eyebrow,
