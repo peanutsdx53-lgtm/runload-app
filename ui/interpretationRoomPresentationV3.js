@@ -156,20 +156,20 @@ function renderOverviewMap(output) {
     <strong>${escapeHtml(region.label)}</strong><span>${escapeHtml(referenceText(region.reference?.direction || ""))}</span>
   </a>`).join("");
   const groupedDirections = [
-    ["ABOVE_REFERENCE", "基準より上側"],
-    ["REFERENCE_VICINITY", "基準付近"],
-    ["BELOW_REFERENCE", "基準より下側"],
-  ].map(([direction, label]) => ({
+    ["ABOVE_REFERENCE", "above", "基準より上側"],
+    ["REFERENCE_VICINITY", "near", "基準付近"],
+    ["BELOW_REFERENCE", "below", "基準より下側"],
+  ].map(([direction, kind, label]) => ({
+    kind,
     label,
     names: regions.filter((region) => region.reference?.direction === direction).map((region) => region.label),
   })).filter((group) => group.names.length);
-  const groupedDirectionsHtml = groupedDirections.map((group) => `<div><strong>${escapeHtml(group.label)}</strong><span>${escapeHtml(group.names.join("・"))}</span></div>`).join("");
+  const groupedDirectionsHtml = groupedDirections.map((group) => `<div data-kind="${escapeHtml(group.kind)}"><strong>${escapeHtml(group.label)}</strong><span class="interpretation-v3-overview-group-names">${group.names.map((name) => `<span class="interpretation-v3-overview-group-name">${escapeHtml(name)}</span>`).join("")}</span></div>`).join("");
 
   return `<section class="interpretation-v3-overview" aria-labelledby="interpretation-v3-overview-title">
     <div class="interpretation-v3-section-head"><span>1</span><div><small>身体全体を見る</small><h2 id="interpretation-v3-overview-title">部位ごとの位置を確認</h2></div></div>
     <p class="interpretation-v3-lead">同じ走りでも、各部位がそれぞれの基準100に対して同じ位置になるとは限りません。まず1部位を選びます。</p>
     <div class="interpretation-v3-map" aria-label="12部位の基準100との位置">${views}</div>
-    <div class="interpretation-v3-legend" aria-label="図の見方"><span data-kind="above">基準より上側</span><span data-kind="near">基準付近</span><span data-kind="below">基準より下側</span><span data-kind="unavailable">表示なし</span></div>
     <div class="interpretation-v3-overview-groups" aria-label="今回の部位ごとの分かれ方"><small>今回の分かれ方</small>${groupedDirectionsHtml}</div>
     <details class="interpretation-v3-region-picker"><summary>部位名から選ぶ</summary><div>${choices}</div></details>
     <p class="interpretation-v3-boundary-line">部位どうしの数値を順位付けする図ではありません。</p>
