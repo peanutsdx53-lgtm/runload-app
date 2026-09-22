@@ -43,7 +43,7 @@ const PRECACHE_URLS = [
   "./styles/desktop-course-derived-v3.css",
   "./styles/desktop-ui-refinement.css",
   "./styles/tokens.css",
-  "./ui/pwaUpdateBootstrapV1.js",
+  "./ui/pwaUpdateBootstrap.js",
   "./ui/appRouter.js",
   "./ui/appSettings.js",
   "./ui/appShell.js",
