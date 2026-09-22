@@ -58,7 +58,7 @@ await test('REST-RECORD-DOES-NOT-OFFER-UNDERSTANDING-ENTRY',()=>{
 });
 
 await test('ENTRY-STYLING-IS-SECONDARY-NOT-WARNING',()=>{
-  const css=read('styles/prototype-mobile-parity.css');
+  const css=read('styles/mobile.css');
   const start=css.indexOf('.screen-layout--result .understanding-link-wrap');
   const end=css.indexOf('.screen-layout--history',start);
   const block=css.slice(start,end);
