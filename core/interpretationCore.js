@@ -322,7 +322,7 @@ function overviewRegion(region, comparison = {}) {
   });
 }
 
-function regionalState(v2 = {}) {
+function regionalState(base = {}) {
   if (String(base?.context?.activityType || "").toLowerCase() === "rest") return "REST";
   if (String(base?.context?.regionalSemanticState || "").startsWith("LEGACY")) return "LEGACY";
   const regions = base?.current?.regions || [];
@@ -332,7 +332,7 @@ function regionalState(v2 = {}) {
   return "AVAILABLE";
 }
 
-function selectRegion(v2 = {}, selectedRegionId = "") {
+function selectRegion(base = {}, selectedRegionId = "") {
   if (!selectedRegionId) return null;
   const region = (base?.current?.regions || []).find((item) => item.regionId === selectedRegionId) || null;
   if (!region) return null;
@@ -340,7 +340,7 @@ function selectRegion(v2 = {}, selectedRegionId = "") {
   return { region, comparison };
 }
 
-function nextProjection(v2 = {}, selectedRegionId = "") {
+function nextProjection(base = {}, selectedRegionId = "") {
   const actions = Array.isArray(base?.actions) ? base.actions : [];
   const enabled = actions.filter((action) => action?.enabled !== false);
   if (base?.safety?.route && base.safety.route !== "normal") {
