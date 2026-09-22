@@ -113,7 +113,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
 
   if (screen === "simulation") {
     const from = parameter("from");
-    if (from === "plan") return { title: "条件比較", backHref: "#/plan", backLabel: "予定" };
+    if (from === "plan") return { title: "条件比較", backHref: safeWorkflowReturn(parameter("returnTo") || "#/plan"), backLabel: "予定" };
     if (from === "history") return { title: "条件比較", backHref: "#/history", backLabel: "履歴" };
     if (from === "interpretation-room") {
       const roomOrigin = parameter("roomOrigin");
