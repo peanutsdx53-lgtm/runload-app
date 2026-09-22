@@ -2143,3 +2143,18 @@
     filter: none !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: unavailable-state readability ===== */
+@media (min-width: 80rem) {
+  .screen--consultation.prototype-parity--consultation .share-source.is-unavailable {
+    opacity: 1 !important;
+    background: var(--surface2) !important;
+    color: var(--muted) !important;
+  }
+
+  .screen--consultation.prototype-parity--consultation .share-source.is-unavailable strong,
+  .screen--consultation.prototype-parity--consultation .share-source.is-unavailable em {
+    color: var(--muted) !important;
+  }
+}
