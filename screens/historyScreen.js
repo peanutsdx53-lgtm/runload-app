@@ -1,31 +1,15 @@
-import { renderRecordsWorkspaceNavigation } from "../ui/screenArchitecture.js";
-import { PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/runloadCore.js";
-import { bodyRegionFormalName, bodyRegionPlainMeaning } from "../core/runloadCore.js";
-import {
-  escapeHtml,
-  renderEmptyState,
-  renderPageHeading,
-  renderScreenGuide,
-  renderStatusLabel,
-} from "../ui/commonComponents.js";
+
+import { PRIMARY_REGIONAL_V2_REGION_DEFS, bodyRegionFormalName, bodyAreaLateralityLabel, PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } from "../core/runloadCore.js";
+
+import { escapeHtml, renderEmptyState, renderScreenGuide, renderStatusLabel } from "../ui/commonComponents.js";
 import { addDaysIso, localTodayIso, parseIsoDate } from "../ui/historyPresentation.js";
-import {
-  formatActivitySummary,
-  formatLocalDate,
-  formatNumber,
-} from "../ui/recordPresentation.js";
-import { bodyAreaLateralityLabel } from "../core/runloadCore.js";
-import { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } from "../core/runloadCore.js";
+import { formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
 
 import { BODY_REGION_VIEWS } from "../ui/bodyRegionVisuals.js";
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
 const REGION_BY_ID = new Map(REGIONS.map((region) => [region.id, region]));
 const DEFAULT_REGION_ID = "BA-DISP-019";
-
-function isReference100ModelVersion(value = "") {
-  return String(value || "") === PRIMARY_REGIONAL_V2_MODEL_VERSION;
-}
 
 function reference100DistanceKm(resultRecord = {}, experience = null) {
   if (resultRecord?.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION) return null;
@@ -222,31 +206,6 @@ function sharedParameters(workspace) {
   };
 }
 
-function renderTabs(workspace) {
-  const shared = sharedParameters(workspace);
-  return `<nav class="view-tabs history-unified-tabs" aria-label="履歴の表示">
-    <a class="view-tab${workspace.view === "records" ? " is-current" : ""}" href="${escapeHtml(buildHref({ ...shared, view: "records" }))}"${workspace.view === "records" ? ' aria-current="page"' : ""}>記録一覧</a>
-    <a class="view-tab${workspace.view === "trends" ? " is-current" : ""}" href="${escapeHtml(buildHref({ ...shared, view: "trends" }))}"${workspace.view === "trends" ? ' aria-current="page"' : ""}>推移を見る</a>
-  </nav>`;
-}
-
-function renderPeriodTabs(workspace) {
-  const shared = sharedParameters(workspace);
-  return `<nav class="period-tabs" aria-label="表示期間">${[7, 28, 90, 180].map((period) => `<a class="period-tab${workspace.period === period ? " is-current" : ""}" href="${escapeHtml(buildHref({ ...shared, view: workspace.view, period }))}"${workspace.period === period ? ' aria-current="page"' : ""}>${period}日</a>`).join("")}</nav>`;
-}
-
-function renderGuide() {
-  return renderScreenGuide({
-    id: "history-unified-guide",
-    summary: "保存記録、部位の目安の推移、身体の記録を役割ごとに分けて見返します。",
-    sections: [
-      { title: "記録一覧", body: "日付、走行・休養、距離、時間、コースから保存記録を探します。記録の良し悪しを判定する画面ではありません。" },
-      { title: "数値の推移", body: "部位の目安は、同じ部位・同じ計算方法・同じ保存時の仕組みで比べられる記録だけを線で結びます。" },
-      { title: "身体の記録", body: "自分で入力した値を日付順に並べます。改善・悪化や危険度は判定しません。" },
-    ],
-  });
-}
-
 function renderCounts(workspace) {
   return `<dl class="history-count-grid"><div><dt>走行</dt><dd>${workspace.counts.run}件</dd></div><div><dt>休養</dt><dd>${workspace.counts.rest}件</dd></div><div><dt>部位結果</dt><dd>${workspace.counts.regional}件</dd></div></dl>`;
 }
@@ -291,10 +250,6 @@ function renderRecordList(workspace, context) {
     const hasRegional = Boolean(item.resultRecord);
     return `<article class="history-item history-fact-item"><div class="history-item__date"><time class="history-date${weekendClass(record.date)}" datetime="${escapeHtml(record.date)}">${escapeHtml(formatLocalDate(record.date))}</time>${renderStatusLabel(record.activityType === "rest" ? "休養" : "走行", record.activityType === "rest" ? "neutral" : "info")}</div><div class="history-item__body"><h2>${escapeHtml(formatActivitySummary(record))}</h2><p>${escapeHtml(record.course?.name || "コース名なし")}</p>${record.memo ? `<p class="history-item__memo">${escapeHtml(record.memo)}</p>` : ""}<div class="history-fact-item__labels">${hasRegional ? renderStatusLabel("部位結果あり", "model") : renderStatusLabel("部位結果なし", "neutral")}</div></div><div class="history-item__actions"><a class="button button--secondary" href="#/result?recordId=${encodeURIComponent(record.id)}">結果を見る</a><a class="button button--text" href="#/record-input?recordId=${encodeURIComponent(record.id)}">編集</a><button class="button button--text" type="button" data-action="delete-history-record" data-record-id="${escapeHtml(record.id)}" data-record-label="${escapeHtml(`${formatLocalDate(record.date)}の記録`)}">削除</button></div></article>`;
   }).join("")}</div>`;
-}
-
-function renderRecordView(workspace, context) {
-  return `<section class="history-records-view"><section class="history-role-boundary" data-information-role="fact" aria-labelledby="history-role-title"><p>保存した記録</p><h2 id="history-role-title">走行記録と結果を探す</h2><p>ここには保存した記録と結果が並びます。保存した事実と比較できる推移を確認します。</p></section>${renderCounts(workspace)}${renderRecordFilters(workspace, context)}${renderRecordList(workspace, context)}</section>`;
 }
 
 function chartGeometry(items) {
@@ -474,33 +429,6 @@ function renderRegionalDisplayToggle(workspace) {
   return `<nav class="history-chart-display-toggle" aria-label="グラフの表示"><span>グラフ表示</span><div>${option("ratio", "比率")}${option("difference", "差分")}</div></nav>`;
 }
 
-function renderReferenceValueTrendChart(items, regionName, workspace) {
-  if (!items.length) return '<p class="muted-text">比較できる記録が不足しています。</p>';
-  const geometry = referenceValueGeometry(items);
-  if (!geometry) return '<p class="muted-text">目安を表示できません。</p>';
-  const selectedId = workspace.anchor?.experience?.record?.id || items.at(-1)?.experience?.record?.id || "";
-  const labelIndices = chartLabelIndices(geometry.points.length);
-  const polyline = geometry.points.map((point) => `${point.x},${point.y}`).join(" ");
-  const gridLines = geometry.ticks.map((tick) => `<line x1="7" y1="${tick.y}" x2="97" y2="${tick.y}" class="regional-history-chart__grid"></line><text x="5.6" y="${tick.y + .75}" text-anchor="end" class="regional-history-chart__tick-label">${escapeHtml(formatNumber(tick.value, Math.abs(tick.value) < 10 ? 1 : 0))}</text>`).join("");
-  const valueLabels = geometry.points.map((point, index) => labelIndices.has(index)
-    ? `<text x="${point.x}" y="${Math.max(6.4, point.y - 2.6)}" text-anchor="middle" class="regional-history-chart__value-label">${escapeHtml(formatNumber(point.conditionIndexExact, 1))}</text>`
-    : "").join("");
-  const dateLabels = geometry.points.map((point, index) => {
-    if (!labelIndices.has(index)) return "";
-    const current = point.experience.record.id === selectedId;
-    const weekday = weekdayLabel(point.experience.record.date);
-    return `<text x="${point.x}" y="48.7" text-anchor="middle" class="regional-history-chart__date-label${weekendClass(point.experience.record.date)}${current ? " is-current" : ""}"><tspan x="${point.x}" dy="0">${escapeHtml(shortDateLabel(point.experience.record.date))}</tspan><tspan x="${point.x}" dy="2.7">(${escapeHtml(weekday)})</tspan></text>`;
-  }).join("");
-  const referenceMarks = geometry.points.map((point) => point.referenceY == null ? "" : `<line x1="${Math.max(7.5, point.x - 1.35)}" y1="${point.referenceY}" x2="${Math.min(97, point.x + 1.35)}" y2="${point.referenceY}" class="regional-history-chart__reference-mark"><title>${escapeHtml(`基準 ${formatNumber(point.referenceValue, 1)}`)}</title></line>`).join("");
-  const pointLinks = geometry.points.map((point) => {
-    const selected = point.experience.record.id === selectedId;
-    const delta = Number(point.conditionIndexExact) - Number(point.referenceValue);
-    const halo = selected ? `<circle cx="${point.x}" cy="${point.y}" r="1.9" class="regional-history-chart__point-halo"></circle>` : "";
-    return `<a href="${escapeHtml(trendSelectionHref(workspace, point))}" aria-label="${escapeHtml(`${formatLocalDate(point.experience.record.date)}、目安${formatNumber(point.conditionIndexExact, 1)}、基準からの差${delta >= 0 ? "+" : ""}${formatNumber(delta, 1)}`)}">${halo}<circle cx="${point.x}" cy="${point.y}" r="${selected ? 1.2 : .82}" class="regional-history-chart__point${selected ? " is-current" : ""}"><title>${escapeHtml(`${formatLocalDate(point.experience.record.date)} 目安${formatNumber(point.conditionIndexExact, 1)}`)}</title></circle></a>`;
-  }).join("");
-  return `<figure class="regional-history-chart regional-history-chart--ratio regional-history-chart--value" data-regional-history="true"><div class="regional-history-chart__meaning"><strong>${escapeHtml(regionName)}の目安の推移</strong><span>基準線：その部位の基準（100）</span></div><svg viewBox="0 0 100 56" role="img" aria-label="${escapeHtml(regionName)}の目安の推移">${gridLines}${referenceMarks}${geometry.points.length > 1 ? `<polyline points="${polyline}" class="regional-history-chart__line"></polyline>` : ""}${valueLabels}${pointLinks}${dateLabels}</svg><figcaption class="regional-history-chart__axis regional-history-chart__axis--ratio"><span>古い記録</span><strong>横軸：記録日　／　縦軸：${escapeHtml(regionName)}の目安</strong><span>新しい記録</span></figcaption></figure>`;
-}
-
 function renderReferenceDifferenceTrendChart(items, regionName, workspace) {
   if (!items.length) return '<p class="muted-text">比較できる記録が不足しています。</p>';
   const rows = items.map((item) => ({ ...item, difference: referenceRatioPercent(item) - 100 }));
@@ -665,16 +593,6 @@ function renderTrendTable(items, selectedId = "", workspace = null) {
   return `<div class="regional-trend-table regional-trend-table--reference"><table><thead><tr><th scope="col" aria-label="番号"></th><th scope="col">記録日</th><th scope="col">距離</th><th scope="col">時間</th><th scope="col">平均ペース</th><th scope="col">平均の坂の傾き</th><th scope="col">路面</th><th scope="col">目安</th><th scope="col">基準との比率</th><th scope="col">基準からの差</th></tr></thead><tbody>${items.map((item, index) => { const ratio = referenceRatioPercent(item); const delta = Number(ratio) - 100; const record = item.experience.record; const selected = record.id === selectedId; const direction = trendDirectionLabel(delta); return `<tr${selected ? ' class="is-selected"' : ""}><td class="history-table-index"><span>${index + 1}</span></td><th scope="row"><a class="history-table-date${weekendClass(record.date)}" href="${escapeHtml(trendSelectionHref(workspace, item))}">${escapeHtml(shortDateLabel(record.date))} (${escapeHtml(weekdayLabel(record.date))})</a></th><td>${escapeHtml(formatNumber(item.referenceDistanceKm, 2))} km</td><td>${escapeHtml(formatDuration(record))}</td><td>${escapeHtml(formatPacePerKm(record))}</td><td>${escapeHtml(formatAverageGrade(record))}</td><td>${escapeHtml(primarySurfaceLabel(record))}</td><td>${escapeHtml(formatNumber(item.conditionIndexExact, 1))}</td><td><strong>${escapeHtml(formatNumber(ratio, 0))}%</strong></td><td class="history-table-delta ${escapeHtml(direction.className)}">${delta >= 0 ? "+" : ""}${escapeHtml(formatNumber(delta, 0))}% ${escapeHtml(direction.arrow)}</td></tr>`; }).join("")}</tbody></table></div>`;
 }
 
-function renderRegionSelector(workspace) {
-  return `<form id="regional-history-form" class="history-body-part-selector"><input type="hidden" name="view" value="trends"><input type="hidden" name="metric" value="region"><input type="hidden" name="period" value="${workspace.period}"><input type="hidden" name="anchorDate" value="${escapeHtml(workspace.endDate)}"><input type="hidden" name="display" value="${escapeHtml(workspace.regionalDisplay)}"><label class="field"><span>推移を見る部位</span><select name="regionId">${REGIONS.map((region) => `<option value="${escapeHtml(region.id)}"${workspace.regionId === region.id ? " selected" : ""}>${escapeHtml(bodyRegionFormalName(region.id, region.name))}</option>`).join("")}</select></label><button class="button button--secondary" type="submit">部位を変更</button></form>`;
-}
-
-function renderPlanSummary(workspace) {
-  if (workspace.period !== 7) return "";
-  if (!workspace.plans.length) return '<section class="result-card"><div class="result-card__heading"><div><p>7日間の予定</p><h2>予定と実績</h2></div></div><p>この7日間に保存された予定はありません。</p></section>';
-  return `<section class="result-card"><div class="result-card__heading"><div><p>7日間の予定</p><h2>予定と実績</h2></div>${renderStatusLabel(`${workspace.plans.length}件`, "neutral")}</div><ul class="compact-link-list">${workspace.plans.map((plan) => `<li><a href="#/plan?planId=${encodeURIComponent(plan.id)}">${escapeHtml(formatLocalDate(plan.scheduledDate))}・${escapeHtml(plan.title || (plan.planType === "rest" ? "休養予定" : "走行予定"))}</a></li>`).join("")}</ul><p class="source-boundary">予定どおりかを採点せず、保存した予定と実績への入口だけを表示します。</p></section>`;
-}
-
 function renderMetricTabs(workspace) {
   const common = {
     view: "trends",
@@ -723,14 +641,6 @@ function renderRegionTrendView(workspace) {
   const previous = previousComparableItem(directItems, selected);
   return `<section class="history-trends-view history-trends-view--regional history-focused-analysis">${renderFocusedHistoryHeader(workspace, regionName, directItems.length)}${!anchorConditionAvailable&&workspace.requestedRecordId?'<section class="result-card"><h2>この記録では数値推移を作りません</h2><p>同じ意味で比べられる部位の目安がありません。</p></section>':""}<div class="history-focused-grid"><section class="history-focused-chart-card" aria-labelledby="history-ratio-title"><h2 id="history-ratio-title" class="visually-hidden">${escapeHtml(regionName)}の推移グラフ</h2>${renderRegionalDisplayToggle(workspace)}${renderTrendChart(directItems, regionName, workspace)}</section>${renderSelectedTrendRecord(selected, previous, regionName)}${directItems.length ? `<details class="history-record-table-disclosure" open><summary>記録一覧（${directItems.length}件）</summary>${renderTrendTable(directItems, selected?.experience?.record?.id || "", workspace)}<a class="history-record-table-disclosure__all" href="${escapeHtml(buildHref({ view: "records", period: workspace.period, anchorDate: workspace.endDate, regionId: workspace.regionId }))}">すべての記録を確認する</a></details>` : ""}<aside class="history-focused-side-lower">${renderComparisonConditions()}${renderReflectionActions(selected)}</aside></div><p class="history-focused-footnote">※ 比率は、その部位自身の基準を100としたときの値です。走行距離は別の記録事実として表示します。上がる・下がるが良い・悪いを示すものではありません。</p>${otherItems.length?`<details class="history-detail-disclosure"><summary>比較対象から外れた記録 ${otherItems.length}件</summary><p>記録は残したまま、同じ意味では比較できない記録をグラフから分けています。</p></details>`:""}</section>`;
 }
-
-function renderTrendView(workspace) {
-  const content = workspace.metric === "subjective"
-    ? renderSubjectiveTrendView(workspace)
-    : renderRegionTrendView(workspace);
-  return `${renderMetricTabs(workspace)}${content}`;
-}
-
 
 function regionLocatorSvg(regionId) {
   for (const view of BODY_REGION_VIEWS) {
