@@ -270,8 +270,8 @@ await test('DERIVED-ACTIONS-PRESERVE-INTERPRETATION-CONTEXT',()=>{
     assert.match(html,new RegExp(`#\\/${destination}\\?`));
   }
   assert.ok((html.match(/from=interpretation-room/g)||[]).length>=4);
-  assert.ok((html.match(/roomExperience=v3/g)||[]).length>=4);
   assert.ok((html.match(/roomOrigin=result/g)||[]).length>=4);
+  assert.doesNotMatch(html,/roomExperience|experience=v3/);
 });
 
 await test('ADVANCED-EVIDENCE-IS-COLLAPSED-BEHIND-PLAIN-LANGUAGE',()=>{
