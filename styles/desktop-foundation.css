@@ -529,7 +529,7 @@
   }
 
   /* Steps 2–4 are deliberately one vertical sequence.
-     Opening one step never pushes another step into a side column. */
+ Opening one step never pushes another step into a side column. */
   .screen--record-input.screen-layout--record .optional-stack {
     width: 100%;
     display: grid !important;
