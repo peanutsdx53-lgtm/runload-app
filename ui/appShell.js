@@ -2,8 +2,6 @@ import { escapeHtml } from "./commonComponents.js";
 import { renderGuideDialog } from "./guideContent.js";
 import { FEATURE_DESTINATION_GROUPS, PRIMARY_DESTINATIONS, resolveScreenContextNavigation } from "./screenArchitecture.js";
 
-const CORE_NAVIGATION = PRIMARY_DESTINATIONS;
-
 const TOPBAR_CONTEXT_LABELS = Object.freeze({
   home: "HOME",
   "record-input": "RECORD",
@@ -144,10 +142,6 @@ function renderFeatureMenuGroup(label, items, currentScreen, currentLocation, ha
 function renderGuideMenuLink(item, index) {
   const idAttribute = index === 0 ? ' id="app-guide-button"' : "";
   return `<button type="button"${idAttribute} class="feature-menu__link feature-menu__link--button" data-open-guide="${escapeHtml(item.section)}" aria-label="${escapeHtml(`${item.label}: ${item.description}`)}"><span class="feature-menu__item-title">${escapeHtml(item.label)}</span><span class="feature-menu__item-description">${escapeHtml(item.description)}</span></button>`;
-}
-
-function renderFeatureGuideGroup() {
-  return `<section class="feature-menu__group feature-menu__group--guide" aria-label="アプリ説明"><p class="feature-menu__group-label">アプリ説明</p><div class="feature-menu__links feature-menu__links--guide">${APP_EXPLANATION_NAVIGATION.map((item, index) => renderGuideMenuLink(item, index)).join("")}</div></section>`;
 }
 
 function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix = "global" }) {
