@@ -13,19 +13,19 @@ async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catc
 await test('INTERPRETATION-SCREEN-USES-ONE-CANONICAL-PRESENTATION',()=>{
   const s=read('screens/interpretationRoomScreen.js');
   assert.match(s,/buildRunLoadInterpretationV3/);
-  assert.match(s,/renderInterpretationRoomV3/);
+  assert.match(s,/renderInterpretationRoom/);
   assert.doesNotMatch(s,/ALLOWED_EXPERIENCES|data-experience|renderInterpretationRoom\b|buildRunLoadInterpretation\(buildArgs\)/);
   assert.equal(exists('ui/interpretationRoomPresentation.js'),false);
 });
 
 await test('REGION-SELECTION-DOES-NOT-CARRY-VERSION-QUERY',()=>{
-  const s=read('ui/interpretationRoomPresentationV3.js');
+  const s=read('ui/interpretationRoomPresentation.js');
   assert.match(s,/regionHref\(output, region\.regionId\)/);
   assert.doesNotMatch(s,/query\.set\("experience"/);
 });
 
 await test('DERIVED-ACTIONS-CARRY-ROOM-CONTEXT-WITHOUT-VERSION-STATE',()=>{
-  const s=read('ui/interpretationRoomPresentationV3.js');
+  const s=read('ui/interpretationRoomPresentation.js');
   assert.match(s,/query\.set\("from", "interpretation-room"\)/);
   assert.match(s,/query\.set\("roomOrigin"/);
   assert.doesNotMatch(s,/roomExperience|experience=v3/);
@@ -49,10 +49,10 @@ await test('CANONICAL-CSS-REPLACES-LEGACY-INTERPRETATION-CSS',()=>{
   assert.match(html,/<link rel="stylesheet" href="\.\/styles\/interpretation-room-v3\.css">/);
   assert.doesNotMatch(html,/styles\/interpretation-room\.css/);
   assert.equal(exists('styles/interpretation-room.css'),false);
-  const css=read('styles/interpretation-room-v3.css');
+  const css=read('styles/interpretation-room.css');
   assert.match(css,/\.app-shell--immersive/);
   assert.match(css,/\.interpretation-room-header/);
-  assert.match(css,/\.interpretation-v3\b/);
+  assert.match(css,/\.interpretation-room\b/);
 });
 
 await test('PWA-PRECACHES-ONLY-CANONICAL-INTERPRETATION-PRESENTATION',()=>{
