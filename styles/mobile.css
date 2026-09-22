@@ -3691,3 +3691,98 @@ html.consult-viewer-open{overflow:hidden}
   .screen-layout--consultation .share-print-document>footer strong{display:block;font-size:8pt}
   .screen-layout--consultation .share-print-document>footer p{margin:1.5mm 0 0;font-size:7.5pt;line-height:1.45;color:#66747e}
 }
+
+/* Cross-screen mobile resilience and navigation rules. */
+
+.feature-menu__link--current,
+.primary-navigation__link[aria-current="page"] {
+  cursor: default;
+  pointer-events: none;
+}
+
+.support--single { grid-template-columns: minmax(0, 1fr); }
+.course-library .quick.is-empty,
+.screen-layout--course .quick.is-empty {
+  cursor: default;
+  opacity: .82;
+}
+
+@media (max-width: 54.99rem) {
+  .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    min-height: calc(62px + env(safe-area-inset-top));
+    height: auto;
+    padding-top: max(9px, env(safe-area-inset-top));
+    padding-bottom: 9px;
+  }
+
+  .mobile-topbar__brand {
+    flex: 1 1 auto;
+    max-width: calc(100% - 6.5rem);
+  }
+
+  .mobile-topbar__actions {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+
+  .mobile-topbar .feature-menu { position: relative !important; }
+  .mobile-topbar .app-menu-button {
+    min-width: 4.9rem;
+    min-height: 44px;
+    padding: 0 .9rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-accent-strong);
+    box-shadow: none;
+    font-size: .78rem;
+    font-weight: 900;
+  }
+
+  .mobile-topbar .feature-menu.is-open .app-menu-button,
+  .mobile-topbar .app-menu-button:focus-visible {
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+  }
+
+  .mobile-topbar .feature-menu__panel:not([hidden]) {
+    top: calc(100% + .55rem);
+    right: 0;
+    width: min(22rem, calc(100vw - 1rem));
+    max-height: min(70dvh, calc(100dvh - 9rem - env(safe-area-inset-bottom)));
+    border-radius: 18px;
+  }
+
+  .mobile-topbar--context > strong {
+    max-width: calc(100% - 12.5rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobile-topbar--context > a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .primary-navigation__link[aria-current="page"] {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
+@media (max-width: 22rem) {
+  .mobile-topbar .app-menu-button {
+    min-width: 4.35rem;
+    padding-inline: .65rem;
+    font-size: .72rem;
+  }
+  .mobile-topbar--context > strong { max-width: calc(100% - 11.4rem); }
+}
