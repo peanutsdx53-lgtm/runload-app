@@ -1,3 +1,52 @@
+/* Interpretation immersive shell */
+.app-shell--immersive {
+  padding-bottom: 0;
+}
+
+.app-shell--immersive .app-main {
+  width: min(100%, 860px);
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+}
+
+.interpretation-room-header {
+  position: sticky;
+  top: 0;
+  z-index: 45;
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) auto minmax(90px, 1fr);
+  align-items: center;
+  min-height: 56px;
+  padding: max(8px, env(safe-area-inset-top)) clamp(14px, 3vw, 24px) 8px;
+  border-bottom: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-surface) 96%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.interpretation-room-header__back {
+  justify-self: start;
+  color: var(--color-accent-strong);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.interpretation-room-header__title {
+  justify-self: center;
+  font-size: 15px;
+  font-weight: 850;
+}
+
+.interpretation-room-header__spacer {
+  min-width: 1px;
+}
+
+.screen--interpretation-room {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
 /* Opt-in Interpretation V3 preview. Default Interpretation remains V2 until approval. */
 .interpretation-v3 {
   --v3-reading-width: 46rem;
