@@ -8,48 +8,48 @@
 
 @media (min-width: 80rem) {
   /* ===== Shared typography hierarchy ===== */
-  .screen--history.prototype-parity--history,
-  .screen--more.prototype-parity--more,
+  .screen--history.screen-layout--history,
+  .screen--more.screen-layout--more,
   .secondary-derived-screen {
     font-family: inherit !important;
   }
 
-  .screen--history.prototype-parity--history .eyebrow,
-  .screen--more.prototype-parity--more .eyebrow,
+  .screen--history.screen-layout--history .eyebrow,
+  .screen--more.screen-layout--more .eyebrow,
   .secondary-derived-screen .eyebrow {
     font-size: 0.76rem !important;
     line-height: 1.2 !important;
     letter-spacing: 0.14em !important;
   }
 
-  .screen--history.prototype-parity--history :is(.page-head h1),
-  .screen--more.prototype-parity--more :is(.head h1),
+  .screen--history.screen-layout--history :is(.page-head h1),
+  .screen--more.screen-layout--more :is(.head h1),
   .secondary-derived-screen :is(.page-head h1, .head h1) {
     font-size: clamp(2.15rem, 2.45vw, 2.75rem) !important;
     line-height: 1.08 !important;
     letter-spacing: -0.035em !important;
   }
 
-  .screen--history.prototype-parity--history .page-head > div > p:last-child,
-  .screen--more.prototype-parity--more .head > p:last-child,
+  .screen--history.screen-layout--history .page-head > div > p:last-child,
+  .screen--more.screen-layout--more .head > p:last-child,
   .secondary-derived-screen :is(.page-head p:last-child, .head p:last-child) {
     font-size: 0.9rem !important;
     line-height: 1.55 !important;
   }
 
   /* ===== Primary screen: History ===== */
-  .screen--history.prototype-parity--history {
+  .screen--history.screen-layout--history {
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  .screen--history.prototype-parity--history .page-head {
+  .screen--history.screen-layout--history .page-head {
     width: 100%;
   }
 
-  .screen--history.prototype-parity--history .history-mode {
+  .screen--history.screen-layout--history .history-mode {
     width: min(100%, 38rem) !important;
     margin-top: 1.25rem !important;
     padding: 0.3rem !important;
@@ -57,52 +57,52 @@
     border-radius: 0.9rem !important;
   }
 
-  .screen--history.prototype-parity--history .history-mode button {
+  .screen--history.screen-layout--history .history-mode button {
     min-height: 3.5rem !important;
     padding: 0.65rem 0.85rem !important;
     border-radius: 0.7rem !important;
   }
 
-  .screen--history.prototype-parity--history .history-mode button span {
+  .screen--history.screen-layout--history .history-mode button span {
     font-size: 0.95rem !important;
   }
 
-  .screen--history.prototype-parity--history .history-mode button small {
+  .screen--history.screen-layout--history .history-mode button small {
     margin-top: 0.18rem !important;
     font-size: 0.76rem !important;
   }
 
-  .screen--history.prototype-parity--history .history-view {
+  .screen--history.screen-layout--history .history-view {
     width: 100% !important;
     max-width: none !important;
     margin-top: 1.5rem !important;
   }
 
-  .screen--history.prototype-parity--history .records-head,
-  .screen--history.prototype-parity--history .comparison-head {
+  .screen--history.screen-layout--history .records-head,
+  .screen--history.screen-layout--history .comparison-head {
     min-height: 3.25rem;
   }
 
-  .screen--history.prototype-parity--history .comparison-title small {
+  .screen--history.screen-layout--history .comparison-title small {
     font-size: 0.76rem !important;
   }
 
-  .screen--history.prototype-parity--history .comparison-title h2 {
+  .screen--history.screen-layout--history .comparison-title h2 {
     font-size: 1.45rem !important;
   }
 
-  .screen--history.prototype-parity--history .record-total {
+  .screen--history.screen-layout--history .record-total {
     padding: 0.45rem 0.7rem !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--history.prototype-parity--history .history-view--records {
+  .screen--history.screen-layout--history .history-view--records {
     width: 100% !important;
     max-width: none !important;
     margin-inline: 0 !important;
   }
 
-  .screen--history.prototype-parity--history .record-filters {
+  .screen--history.screen-layout--history .record-filters {
     width: 100% !important;
     margin-top: 0.85rem !important;
     padding: 0.9rem !important;
@@ -113,11 +113,11 @@
     border-radius: 1rem !important;
   }
 
-  .screen--history.prototype-parity--history .record-filters label > span {
+  .screen--history.screen-layout--history .record-filters label > span {
     font-size: 0.82rem !important;
   }
 
-  .screen--history.prototype-parity--history .record-filters input {
+  .screen--history.screen-layout--history .record-filters input {
     height: 3rem !important;
     margin-top: 0.35rem !important;
     padding-inline: 0.85rem !important;
@@ -125,7 +125,7 @@
     font-size: 0.94rem !important;
   }
 
-  .screen--history.prototype-parity--history .type-toggle {
+  .screen--history.screen-layout--history .type-toggle {
     width: 18rem !important;
     max-width: 18rem !important;
     margin: 0 !important;
@@ -134,98 +134,98 @@
     border-radius: 0.75rem !important;
   }
 
-  .screen--history.prototype-parity--history .type-toggle button {
+  .screen--history.screen-layout--history .type-toggle button {
     min-height: 2.55rem !important;
     font-size: 0.84rem !important;
     border-radius: 0.55rem !important;
   }
 
-  .screen--history.prototype-parity--history .record-list {
+  .screen--history.screen-layout--history .record-list {
     margin-top: 0.9rem !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.9rem !important;
   }
 
-  .screen--history.prototype-parity--history .record-item {
+  .screen--history.screen-layout--history .record-item {
     min-width: 0;
     padding: 1rem !important;
     border-radius: 1rem !important;
   }
 
-  .screen--history.prototype-parity--history .record-item time {
+  .screen--history.screen-layout--history .record-item time {
     font-size: 0.9rem !important;
   }
 
-  .screen--history.prototype-parity--history .record-kind {
+  .screen--history.screen-layout--history .record-kind {
     font-size: 0.74rem !important;
   }
 
-  .screen--history.prototype-parity--history .record-item h3 {
+  .screen--history.screen-layout--history .record-item h3 {
     margin-top: 0.65rem !important;
     font-size: 1.05rem !important;
     line-height: 1.35 !important;
   }
 
-  .screen--history.prototype-parity--history .record-item p {
+  .screen--history.screen-layout--history .record-item p {
     margin-top: 0.3rem !important;
     font-size: 0.82rem !important;
     line-height: 1.45 !important;
     overflow-wrap: anywhere;
   }
 
-  .screen--history.prototype-parity--history .record-actions {
+  .screen--history.screen-layout--history .record-actions {
     margin-top: 0.75rem !important;
     gap: 0.45rem !important;
   }
 
-  .screen--history.prototype-parity--history .record-actions :is(button, a) {
+  .screen--history.screen-layout--history .record-actions :is(button, a) {
     min-height: 2.55rem !important;
     padding: 0 0.8rem !important;
     font-size: 0.8rem !important;
     border-radius: 0.65rem !important;
   }
 
-  .screen--history.prototype-parity--history .history-view--compare {
+  .screen--history.screen-layout--history .history-view--compare {
     width: 100% !important;
   }
 
-  .screen--history.prototype-parity--history .region-picker-trigger {
+  .screen--history.screen-layout--history .region-picker-trigger {
     min-width: 18rem !important;
     min-height: 4rem !important;
     padding: 0.7rem 0.8rem !important;
     border-radius: 0.9rem !important;
   }
 
-  .screen--history.prototype-parity--history .region-picker-trigger small {
+  .screen--history.screen-layout--history .region-picker-trigger small {
     font-size: 0.72rem !important;
   }
 
-  .screen--history.prototype-parity--history .region-picker-trigger strong {
+  .screen--history.screen-layout--history .region-picker-trigger strong {
     font-size: 0.95rem !important;
   }
 
-  .screen--history.prototype-parity--history .history-toolbar {
+  .screen--history.screen-layout--history .history-toolbar {
     margin-top: 0.9rem !important;
     padding: 0.7rem 0.2rem !important;
   }
 
-  .screen--history.prototype-parity--history .period-control > span,
-  .screen--history.prototype-parity--history .compare-count small {
+  .screen--history.screen-layout--history .period-control > span,
+  .screen--history.screen-layout--history .compare-count small {
     font-size: 0.78rem !important;
   }
 
-  .screen--history.prototype-parity--history .period-control button {
+  .screen--history.screen-layout--history .period-control button {
     min-width: 3.4rem !important;
     min-height: 2.5rem !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--history.prototype-parity--history .compare-count strong {
+  .screen--history.screen-layout--history .compare-count strong {
     font-size: 0.98rem !important;
   }
 
-  .screen--history.prototype-parity--history .comparison-layout {
+  .screen--history.screen-layout--history .comparison-layout {
     margin-top: 1rem !important;
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) 21rem !important;
@@ -233,33 +233,33 @@
     align-items: start !important;
   }
 
-  .screen--history.prototype-parity--history .chart-card {
+  .screen--history.screen-layout--history .chart-card {
     grid-column: 1 !important;
     min-width: 0;
     padding: 1rem 1.1rem !important;
     border-radius: 1.15rem !important;
   }
 
-  .screen--history.prototype-parity--history .chart-card-head h2 {
+  .screen--history.screen-layout--history .chart-card-head h2 {
     font-size: 1.15rem !important;
   }
 
-  .screen--history.prototype-parity--history .display-toggle button {
+  .screen--history.screen-layout--history .display-toggle button {
     min-height: 2.45rem !important;
     padding-inline: 0.7rem !important;
     font-size: 0.78rem !important;
   }
 
-  .screen--history.prototype-parity--history .chart-wrap svg {
+  .screen--history.screen-layout--history .chart-wrap svg {
     width: 100% !important;
     min-height: 22rem !important;
   }
 
-  .screen--history.prototype-parity--history .chart-legend {
+  .screen--history.screen-layout--history .chart-legend {
     font-size: 0.76rem !important;
   }
 
-  .screen--history.prototype-parity--history .selected-card {
+  .screen--history.screen-layout--history .selected-card {
     grid-column: 2 !important;
     grid-row: 1 !important;
     position: sticky !important;
@@ -268,58 +268,58 @@
     border-radius: 1rem !important;
   }
 
-  .screen--history.prototype-parity--history .selected-card-head small,
-  .screen--history.prototype-parity--history .selected-main-value small,
-  .screen--history.prototype-parity--history .selected-main-value span,
-  .screen--history.prototype-parity--history .selected-facts dt,
-  .screen--history.prototype-parity--history .result-link small {
+  .screen--history.screen-layout--history .selected-card-head small,
+  .screen--history.screen-layout--history .selected-main-value small,
+  .screen--history.screen-layout--history .selected-main-value span,
+  .screen--history.screen-layout--history .selected-facts dt,
+  .screen--history.screen-layout--history .result-link small {
     font-size: 0.74rem !important;
   }
 
-  .screen--history.prototype-parity--history .selected-card-head h2 {
+  .screen--history.screen-layout--history .selected-card-head h2 {
     font-size: 1.2rem !important;
   }
 
-  .screen--history.prototype-parity--history .selected-facts dd,
-  .screen--history.prototype-parity--history .result-link strong {
+  .screen--history.screen-layout--history .selected-facts dd,
+  .screen--history.screen-layout--history .result-link strong {
     font-size: 0.88rem !important;
   }
 
-  .screen--history.prototype-parity--history .records-disclosure,
-  .screen--history.prototype-parity--history .comparison-side,
-  .screen--history.prototype-parity--history .screen-footnote {
+  .screen--history.screen-layout--history .records-disclosure,
+  .screen--history.screen-layout--history .comparison-side,
+  .screen--history.screen-layout--history .screen-footnote {
     grid-column: 1 / -1 !important;
   }
 
-  .screen--history.prototype-parity--history .records-disclosure > summary strong,
-  .screen--history.prototype-parity--history .condition-details summary,
-  .screen--history.prototype-parity--history .excluded-details summary {
+  .screen--history.screen-layout--history .records-disclosure > summary strong,
+  .screen--history.screen-layout--history .condition-details summary,
+  .screen--history.screen-layout--history .excluded-details summary {
     font-size: 0.86rem !important;
   }
 
-  .screen--history.prototype-parity--history .records-disclosure > summary small,
-  .screen--history.prototype-parity--history .condition-details > div,
-  .screen--history.prototype-parity--history .excluded-details > p,
-  .screen--history.prototype-parity--history .screen-footnote {
+  .screen--history.screen-layout--history .records-disclosure > summary small,
+  .screen--history.screen-layout--history .condition-details > div,
+  .screen--history.screen-layout--history .excluded-details > p,
+  .screen--history.screen-layout--history .screen-footnote {
     font-size: 0.78rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--history.prototype-parity--history .table-scroll table {
+  .screen--history.screen-layout--history .table-scroll table {
     min-width: 0 !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--history.prototype-parity--history .table-scroll th {
+  .screen--history.screen-layout--history .table-scroll th {
     font-size: 0.75rem !important;
   }
 
-  .screen--history.prototype-parity--history .table-scroll :is(th, td) {
+  .screen--history.screen-layout--history .table-scroll :is(th, td) {
     padding: 0.72rem 0.75rem !important;
   }
 
   /* ===== Primary screen: More ===== */
-  .screen--more.prototype-parity--more {
+  .screen--more.screen-layout--more {
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
@@ -330,48 +330,48 @@
     align-content: start;
   }
 
-  .screen--more.prototype-parity--more .head {
+  .screen--more.screen-layout--more .head {
     grid-column: 1 / -1;
   }
 
-  .screen--more.prototype-parity--more .group {
+  .screen--more.screen-layout--more .group {
     min-width: 0;
     margin-top: 0.5rem !important;
   }
 
-  .screen--more.prototype-parity--more .group-title {
+  .screen--more.screen-layout--more .group-title {
     margin: 0 0.2rem 0.55rem !important;
     font-size: 0.76rem !important;
   }
 
-  .screen--more.prototype-parity--more .list {
+  .screen--more.screen-layout--more .list {
     border-radius: 1.1rem !important;
   }
 
-  .screen--more.prototype-parity--more .row {
+  .screen--more.screen-layout--more .row {
     min-height: 5.4rem !important;
     padding: 0.9rem 1rem !important;
     grid-template-columns: 3rem minmax(0, 1fr) auto !important;
     gap: 0.8rem !important;
   }
 
-  .screen--more.prototype-parity--more .icon {
+  .screen--more.screen-layout--more .icon {
     width: 3rem !important;
     height: 3rem !important;
     border-radius: 0.85rem !important;
     font-size: 1.05rem;
   }
 
-  .screen--more.prototype-parity--more .copy small {
+  .screen--more.screen-layout--more .copy small {
     font-size: 0.72rem !important;
   }
 
-  .screen--more.prototype-parity--more .copy strong {
+  .screen--more.screen-layout--more .copy strong {
     margin-top: 0.15rem !important;
     font-size: 1rem !important;
   }
 
-  .screen--more.prototype-parity--more .copy span {
+  .screen--more.screen-layout--more .copy span {
     margin-top: 0.2rem !important;
     font-size: 0.8rem !important;
     line-height: 1.4 !important;
@@ -435,39 +435,39 @@
   }
 
   /* Plan is Home-derived but uses the widest form composition. */
-  .screen--plan.prototype-parity--plan {
+  .screen--plan.screen-layout--plan {
     width: min(74rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 2rem)) !important;
     max-width: 74rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .page-head h1 {
+  .screen--plan.screen-layout--plan .page-head h1 {
     font-size: 2.35rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .date-pill {
+  .screen--plan.screen-layout--plan .date-pill {
     padding: 0.5rem 0.75rem !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .carry {
+  .screen--plan.screen-layout--plan .carry {
     margin-top: 1rem !important;
     padding: 0.85rem 0.95rem !important;
     border-radius: 0.9rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .carry small {
+  .screen--plan.screen-layout--plan .carry small {
     font-size: 0.74rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .carry strong {
+  .screen--plan.screen-layout--plan .carry strong {
     font-size: 0.94rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .carry span {
+  .screen--plan.screen-layout--plan .carry span {
     font-size: 0.8rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .layout {
+  .screen--plan.screen-layout--plan .layout {
     margin-top: 1rem !important;
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) 20rem !important;
@@ -475,218 +475,218 @@
     align-items: start !important;
   }
 
-  .screen--plan.prototype-parity--plan .panel {
+  .screen--plan.screen-layout--plan .panel {
     min-width: 0;
     border-radius: 1rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .panel-head {
+  .screen--plan.screen-layout--plan .panel-head {
     padding: 0.9rem 1rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .panel-head small {
+  .screen--plan.screen-layout--plan .panel-head small {
     font-size: 0.72rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .panel-head h2 {
+  .screen--plan.screen-layout--plan .panel-head h2 {
     font-size: 1.15rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .panel-head p {
+  .screen--plan.screen-layout--plan .panel-head p {
     font-size: 0.78rem !important;
     line-height: 1.45 !important;
   }
 
-  .screen--plan.prototype-parity--plan .panel-body {
+  .screen--plan.screen-layout--plan .panel-body {
     padding: 1rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .seg {
+  .screen--plan.screen-layout--plan .seg {
     width: 18rem !important;
     max-width: 18rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .seg button {
+  .screen--plan.screen-layout--plan .seg button {
     min-height: 2.8rem !important;
     font-size: 0.88rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .plan-date-field {
+  .screen--plan.screen-layout--plan .plan-date-field {
     width: 20rem !important;
     max-width: 20rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .plan-date-label span,
-  .screen--plan.prototype-parity--plan .metric-field > span,
-  .screen--plan.prototype-parity--plan .field > span {
+  .screen--plan.screen-layout--plan .plan-date-label span,
+  .screen--plan.screen-layout--plan .metric-field > span,
+  .screen--plan.screen-layout--plan .field > span {
     font-size: 0.82rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .plan-date-control,
-  .screen--plan.prototype-parity--plan .metric-field > div,
-  .screen--plan.prototype-parity--plan .field :is(select, textarea) {
+  .screen--plan.screen-layout--plan .plan-date-control,
+  .screen--plan.screen-layout--plan .metric-field > div,
+  .screen--plan.screen-layout--plan .field :is(select, textarea) {
     min-height: 3rem !important;
     border-radius: 0.75rem !important;
     font-size: 0.96rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .two {
+  .screen--plan.screen-layout--plan .two {
     width: max-content !important;
     grid-template-columns: 12rem 14rem !important;
     gap: 0.8rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .course-choice,
-  .screen--plan.prototype-parity--plan .details,
-  .screen--plan.prototype-parity--plan .assist-link {
+  .screen--plan.screen-layout--plan .course-choice,
+  .screen--plan.screen-layout--plan .details,
+  .screen--plan.screen-layout--plan .assist-link {
     width: min(100%, 44rem) !important;
   }
 
-  .screen--plan.prototype-parity--plan .course-choice small,
-  .screen--plan.prototype-parity--plan .details small,
-  .screen--plan.prototype-parity--plan .assist-link small,
-  .screen--plan.prototype-parity--plan .summary-card small {
+  .screen--plan.screen-layout--plan .course-choice small,
+  .screen--plan.screen-layout--plan .details small,
+  .screen--plan.screen-layout--plan .assist-link small,
+  .screen--plan.screen-layout--plan .summary-card small {
     font-size: 0.74rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .course-choice strong,
-  .screen--plan.prototype-parity--plan .details strong,
-  .screen--plan.prototype-parity--plan .assist-link strong,
-  .screen--plan.prototype-parity--plan .summary-card strong {
+  .screen--plan.screen-layout--plan .course-choice strong,
+  .screen--plan.screen-layout--plan .details strong,
+  .screen--plan.screen-layout--plan .assist-link strong,
+  .screen--plan.screen-layout--plan .summary-card strong {
     font-size: 0.92rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .course-choice span,
-  .screen--plan.prototype-parity--plan .details span,
-  .screen--plan.prototype-parity--plan .assist-link span,
-  .screen--plan.prototype-parity--plan .summary-card span,
-  .screen--plan.prototype-parity--plan .note {
+  .screen--plan.screen-layout--plan .course-choice span,
+  .screen--plan.screen-layout--plan .details span,
+  .screen--plan.screen-layout--plan .assist-link span,
+  .screen--plan.screen-layout--plan .summary-card span,
+  .screen--plan.screen-layout--plan .note {
     font-size: 0.78rem !important;
     line-height: 1.45 !important;
   }
 
-  .screen--plan.prototype-parity--plan .confirm-panel {
+  .screen--plan.screen-layout--plan .confirm-panel {
     position: sticky !important;
     top: 0 !important;
   }
 
-  .screen--plan.prototype-parity--plan .summary-row {
+  .screen--plan.screen-layout--plan .summary-row {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
-  .screen--plan.prototype-parity--plan .summary-row > div:last-child {
+  .screen--plan.screen-layout--plan .summary-row > div:last-child {
     grid-column: 1 / -1;
   }
 
-  .screen--plan.prototype-parity--plan .save {
+  .screen--plan.screen-layout--plan .save {
     min-height: 3rem !important;
     font-size: 0.9rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .saved {
+  .screen--plan.screen-layout--plan .saved {
     margin-top: 1rem !important;
     border-radius: 1rem !important;
   }
 
   /* Settings derived from More. */
-  .screen--settings.prototype-parity--settings .display-setting-list {
+  .screen--settings.screen-layout--settings .display-setting-list {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.8rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting:nth-child(3) {
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
     grid-column: 1 / -1;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting,
-  .screen--settings.prototype-parity--settings .disclosure {
+  .screen--settings.screen-layout--settings .display-setting,
+  .screen--settings.screen-layout--settings .disclosure {
     border-radius: 1rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting summary,
-  .screen--settings.prototype-parity--settings .disclosure summary {
+  .screen--settings.screen-layout--settings .display-setting summary,
+  .screen--settings.screen-layout--settings .disclosure summary {
     min-height: 4.2rem !important;
     padding: 0.8rem 0.9rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting__title small,
-  .screen--settings.prototype-parity--settings .disclosure summary small,
-  .screen--settings.prototype-parity--settings .sub-section-head small,
-  .screen--settings.prototype-parity--settings .subdetails summary small,
-  .screen--settings.prototype-parity--settings .shoe small,
-  .screen--settings.prototype-parity--settings .data-overview small,
-  .screen--settings.prototype-parity--settings .about-grid small {
+  .screen--settings.screen-layout--settings .display-setting__title small,
+  .screen--settings.screen-layout--settings .disclosure summary small,
+  .screen--settings.screen-layout--settings .sub-section-head small,
+  .screen--settings.screen-layout--settings .subdetails summary small,
+  .screen--settings.screen-layout--settings .shoe small,
+  .screen--settings.screen-layout--settings .data-overview small,
+  .screen--settings.screen-layout--settings .about-grid small {
     font-size: 0.74rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting__title strong,
-  .screen--settings.prototype-parity--settings .disclosure summary strong {
+  .screen--settings.screen-layout--settings .display-setting__title strong,
+  .screen--settings.screen-layout--settings .disclosure summary strong {
     font-size: 0.96rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting__current {
+  .screen--settings.screen-layout--settings .display-setting__current {
     font-size: 0.76rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-choice strong {
+  .screen--settings.screen-layout--settings .display-choice strong {
     font-size: 0.86rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .disclosure summary span,
-  .screen--settings.prototype-parity--settings .boundary,
-  .screen--settings.prototype-parity--settings .field small,
-  .screen--settings.prototype-parity--settings .note,
-  .screen--settings.prototype-parity--settings .restore-preview,
-  .screen--settings.prototype-parity--settings .danger-box p {
+  .screen--settings.screen-layout--settings .disclosure summary span,
+  .screen--settings.screen-layout--settings .boundary,
+  .screen--settings.screen-layout--settings .field small,
+  .screen--settings.screen-layout--settings .note,
+  .screen--settings.screen-layout--settings .restore-preview,
+  .screen--settings.screen-layout--settings .danger-box p {
     font-size: 0.78rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--settings.prototype-parity--settings .field > span {
+  .screen--settings.screen-layout--settings .field > span {
     font-size: 0.82rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .field :is(input, select) {
+  .screen--settings.screen-layout--settings .field :is(input, select) {
     min-height: 3rem !important;
     font-size: 0.94rem !important;
     border-radius: 0.72rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .goal-grid {
+  .screen--settings.screen-layout--settings .goal-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .goal-grid label {
+  .screen--settings.screen-layout--settings .goal-grid label {
     min-height: 3rem !important;
     font-size: 0.82rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .data-overview,
-  .screen--settings.prototype-parity--settings .about-grid {
+  .screen--settings.screen-layout--settings .data-overview,
+  .screen--settings.screen-layout--settings .about-grid {
     width: 100% !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
-  .screen--settings.prototype-parity--settings .data-overview strong {
+  .screen--settings.screen-layout--settings .data-overview strong {
     font-size: 0.98rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .about-grid strong,
-  .screen--settings.prototype-parity--settings .shoe strong,
-  .screen--settings.prototype-parity--settings .subdetails summary strong,
-  .screen--settings.prototype-parity--settings .danger-box strong {
+  .screen--settings.screen-layout--settings .about-grid strong,
+  .screen--settings.screen-layout--settings .shoe strong,
+  .screen--settings.screen-layout--settings .subdetails summary strong,
+  .screen--settings.screen-layout--settings .danger-box strong {
     font-size: 0.88rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .action-row :is(button, label, a) {
+  .screen--settings.screen-layout--settings .action-row :is(button, label, a) {
     min-height: 2.75rem !important;
     font-size: 0.8rem !important;
   }
 
   /* Privacy derived from More. */
-  .screen--privacy.prototype-parity--privacy .lead {
+  .screen--privacy.screen-layout--privacy .lead {
     margin-top: 1rem !important;
     padding: 1rem !important;
     font-size: 0.86rem !important;
@@ -694,51 +694,51 @@
     border-radius: 1rem !important;
   }
 
-  .screen--privacy.prototype-parity--privacy .list {
+  .screen--privacy.screen-layout--privacy .list {
     margin-top: 0.9rem !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.8rem !important;
   }
 
-  .screen--privacy.prototype-parity--privacy .item {
+  .screen--privacy.screen-layout--privacy .item {
     min-width: 0;
     margin: 0 !important;
     border-radius: 1rem !important;
   }
 
-  .screen--privacy.prototype-parity--privacy .item summary {
+  .screen--privacy.screen-layout--privacy .item summary {
     min-height: 5rem !important;
     padding: 0.85rem 0.95rem !important;
   }
 
-  .screen--privacy.prototype-parity--privacy .icon {
+  .screen--privacy.screen-layout--privacy .icon {
     width: 2.8rem !important;
     height: 2.8rem !important;
   }
 
-  .screen--privacy.prototype-parity--privacy .copy small {
+  .screen--privacy.screen-layout--privacy .copy small {
     font-size: 0.72rem !important;
   }
 
-  .screen--privacy.prototype-parity--privacy .copy strong {
+  .screen--privacy.screen-layout--privacy .copy strong {
     font-size: 0.96rem !important;
   }
 
-  .screen--privacy.prototype-parity--privacy .copy span,
-  .screen--privacy.prototype-parity--privacy .body,
-  .screen--privacy.prototype-parity--privacy .warning {
+  .screen--privacy.screen-layout--privacy .copy span,
+  .screen--privacy.screen-layout--privacy .body,
+  .screen--privacy.screen-layout--privacy .warning {
     font-size: 0.8rem !important;
     line-height: 1.55 !important;
   }
 
-  .screen--privacy.prototype-parity--privacy .warning,
-  .screen--privacy.prototype-parity--privacy .actions {
+  .screen--privacy.screen-layout--privacy .warning,
+  .screen--privacy.screen-layout--privacy .actions {
     grid-column: 1 / -1;
   }
 
   /* Support derived from More / body record. 3 cards become 1 + 2. */
-  .screen--support-guidance.prototype-parity--support .notice {
+  .screen--support-guidance.screen-layout--support .notice {
     margin-top: 1rem !important;
     padding: 0.9rem 1rem !important;
     font-size: 0.82rem !important;
@@ -746,174 +746,174 @@
     border-radius: 0.9rem !important;
   }
 
-  .screen--support-guidance.prototype-parity--support .cards {
+  .screen--support-guidance.screen-layout--support .cards {
     margin-top: 0.9rem !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.8rem !important;
   }
 
-  .screen--support-guidance.prototype-parity--support .card {
+  .screen--support-guidance.screen-layout--support .card {
     min-width: 0;
     padding: 1rem !important;
     border-radius: 1rem !important;
   }
 
-  .screen--support-guidance.prototype-parity--support .card:first-child {
+  .screen--support-guidance.screen-layout--support .card:first-child {
     grid-column: 1 / -1;
   }
 
-  .screen--support-guidance.prototype-parity--support .card small {
+  .screen--support-guidance.screen-layout--support .card small {
     font-size: 0.74rem !important;
   }
 
-  .screen--support-guidance.prototype-parity--support .card strong {
+  .screen--support-guidance.screen-layout--support .card strong {
     margin-top: 0.2rem !important;
     font-size: 1rem !important;
   }
 
-  .screen--support-guidance.prototype-parity--support .card p {
+  .screen--support-guidance.screen-layout--support .card p {
     margin-top: 0.4rem !important;
     font-size: 0.82rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--support-guidance.prototype-parity--support .card a {
+  .screen--support-guidance.screen-layout--support .card a {
     min-height: 2.8rem !important;
     margin-top: 0.7rem !important;
     font-size: 0.82rem !important;
   }
 
-  .screen--support-guidance.prototype-parity--support > .back {
+  .screen--support-guidance.screen-layout--support > .back {
     display: none !important;
   }
 
   /* Reading derived from More. No horizontal-only filter on desktop. */
-  .screen--reading.prototype-parity--reading .recommend {
+  .screen--reading.screen-layout--reading .recommend {
     margin-top: 1rem !important;
     padding: 1rem 1.1rem !important;
     border-radius: 1rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .recommend small,
-  .screen--reading.prototype-parity--reading .article-card small {
+  .screen--reading.screen-layout--reading .recommend small,
+  .screen--reading.screen-layout--reading .article-card small {
     font-size: 0.74rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .recommend strong,
-  .screen--reading.prototype-parity--reading .article-card strong {
+  .screen--reading.screen-layout--reading .recommend strong,
+  .screen--reading.screen-layout--reading .article-card strong {
     font-size: 1rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .recommend p,
-  .screen--reading.prototype-parity--reading .article-card p {
+  .screen--reading.screen-layout--reading .recommend p,
+  .screen--reading.screen-layout--reading .article-card p {
     font-size: 0.82rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--reading.prototype-parity--reading .recommend button,
-  .screen--reading.prototype-parity--reading .article-card button {
+  .screen--reading.screen-layout--reading .recommend button,
+  .screen--reading.screen-layout--reading .article-card button {
     min-height: 2.7rem !important;
     font-size: 0.82rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .filter-strip {
+  .screen--reading.screen-layout--reading .filter-strip {
     margin-top: 1rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .filter-strip-head small {
+  .screen--reading.screen-layout--reading .filter-strip-head small {
     display: none !important;
   }
 
-  .screen--reading.prototype-parity--reading .filters {
+  .screen--reading.screen-layout--reading .filters {
     overflow: visible !important;
     flex-wrap: wrap !important;
     gap: 0.45rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .filters button {
+  .screen--reading.screen-layout--reading .filters button {
     min-height: 2.6rem !important;
     padding: 0 0.8rem !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .grid {
+  .screen--reading.screen-layout--reading .grid {
     margin-top: 0.9rem !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.8rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .article-card {
+  .screen--reading.screen-layout--reading .article-card {
     min-width: 0;
     padding: 1rem !important;
     border-radius: 1rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .drawer .sheet {
+  .screen--reading.screen-layout--reading .drawer .sheet {
     width: min(54rem, calc(100vw - 8rem)) !important;
     max-width: 54rem !important;
     padding: 1.2rem 1.3rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .sheet-head strong {
+  .screen--reading.screen-layout--reading .sheet-head strong {
     font-size: 1.15rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .sheet :is(.lead, .body-copy p, .points, .caution, .source-note) {
+  .screen--reading.screen-layout--reading .sheet :is(.lead, .body-copy p, .points, .caution, .source-note) {
     font-size: 0.84rem !important;
     line-height: 1.6 !important;
   }
 
   /* Consultation derived from More / Result. */
-  .screen--consultation.prototype-parity--consultation .source {
+  .screen--consultation.screen-layout--consultation .source {
     margin-top: 1rem !important;
     padding: 0.9rem 1rem !important;
     border-radius: 0.9rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .source small,
-  .screen--consultation.prototype-parity--consultation .section-head small,
-  .screen--consultation.prototype-parity--consultation .support-link small {
+  .screen--consultation.screen-layout--consultation .source small,
+  .screen--consultation.screen-layout--consultation .section-head small,
+  .screen--consultation.screen-layout--consultation .support-link small {
     font-size: 0.74rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .source strong,
-  .screen--consultation.prototype-parity--consultation .section-head h2,
-  .screen--consultation.prototype-parity--consultation .support-link strong {
+  .screen--consultation.screen-layout--consultation .source strong,
+  .screen--consultation.screen-layout--consultation .section-head h2,
+  .screen--consultation.screen-layout--consultation .support-link strong {
     font-size: 1rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .source span,
-  .screen--consultation.prototype-parity--consultation .section-head p,
-  .screen--consultation.prototype-parity--consultation .boundary {
+  .screen--consultation.screen-layout--consultation .source span,
+  .screen--consultation.screen-layout--consultation .section-head p,
+  .screen--consultation.screen-layout--consultation .boundary {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .section {
+  .screen--consultation.screen-layout--consultation .section {
     margin-top: 0.9rem !important;
     padding: 1rem !important;
     border-radius: 1rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .field > span {
+  .screen--consultation.screen-layout--consultation .field > span {
     font-size: 0.82rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .field :is(textarea, select, input) {
+  .screen--consultation.screen-layout--consultation .field :is(textarea, select, input) {
     min-height: 3rem !important;
     font-size: 0.94rem !important;
     border-radius: 0.72rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .share-source-list {
+  .screen--consultation.screen-layout--consultation .share-source-list {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .support-link {
+  .screen--consultation.screen-layout--consultation .support-link {
     margin-top: 0.9rem !important;
     min-height: 4rem !important;
     padding: 0.8rem 0.9rem !important;
@@ -929,11 +929,11 @@
     max-width: none !important;
   }
 
-  .screen--plan.prototype-parity--plan .layout {
+  .screen--plan.screen-layout--plan .layout {
     grid-template-columns: minmax(0, 1fr) 18rem !important;
   }
 
-  .screen--history.prototype-parity--history .comparison-layout {
+  .screen--history.screen-layout--history .comparison-layout {
     grid-template-columns: minmax(0, 1fr) 19rem !important;
   }
 }
@@ -947,276 +947,276 @@
 
 @media (min-width: 80rem) {
   /* Prevent accidental typography drift and awkward label wrapping. */
-  .screen--history.prototype-parity--history,
-  .screen--more.prototype-parity--more,
+  .screen--history.screen-layout--history,
+  .screen--more.screen-layout--more,
   .secondary-derived-screen {
     font-family: inherit !important;
     line-break: strict;
   }
 
-  .screen--history.prototype-parity--history :is(h1,h2,h3),
-  .screen--more.prototype-parity--more :is(h1,h2,h3),
+  .screen--history.screen-layout--history :is(h1,h2,h3),
+  .screen--more.screen-layout--more :is(h1,h2,h3),
   .secondary-derived-screen :is(h1,h2,h3) {
     text-wrap: balance;
     overflow-wrap: normal;
     word-break: normal;
   }
 
-  .screen--history.prototype-parity--history :is(button,a),
-  .screen--more.prototype-parity--more :is(button,a),
+  .screen--history.screen-layout--history :is(button,a),
+  .screen--more.screen-layout--more :is(button,a),
   .secondary-derived-screen :is(button,a) {
     font-family: inherit !important;
   }
 
   /* ===== History: explicit removal of remaining mobile-size labels ===== */
-  .screen--history.prototype-parity--history .sample-badge,
-  .screen--history.prototype-parity--history .region-picker-trigger i,
-  .screen--history.prototype-parity--history .chart-card-head small,
-  .screen--history.prototype-parity--history .records-disclosure > summary small,
-  .screen--history.prototype-parity--history .region-picker-trigger .region-picker-copy em,
-  .screen--history.prototype-parity--history .chart-region-heading small,
-  .screen--history.prototype-parity--history .chart-region-heading span,
-  .screen--history.prototype-parity--history .region-option-copy small,
-  .screen--history.prototype-parity--history .selected-focus-heading small,
-  .screen--history.prototype-parity--history .selected-focus-value span,
-  .screen--history.prototype-parity--history .selected-facts-compact dt {
+  .screen--history.screen-layout--history .sample-badge,
+  .screen--history.screen-layout--history .region-picker-trigger i,
+  .screen--history.screen-layout--history .chart-card-head small,
+  .screen--history.screen-layout--history .records-disclosure > summary small,
+  .screen--history.screen-layout--history .region-picker-trigger .region-picker-copy em,
+  .screen--history.screen-layout--history .chart-region-heading small,
+  .screen--history.screen-layout--history .chart-region-heading span,
+  .screen--history.screen-layout--history .region-option-copy small,
+  .screen--history.screen-layout--history .selected-focus-heading small,
+  .screen--history.screen-layout--history .selected-focus-value span,
+  .screen--history.screen-layout--history .selected-facts-compact dt {
     font-size: 0.76rem !important;
     line-height: 1.35 !important;
   }
 
-  .screen--history.prototype-parity--history .chart-meaning span,
-  .screen--history.prototype-parity--history .condition-details > div,
-  .screen--history.prototype-parity--history .excluded-details > p,
-  .screen--history.prototype-parity--history .empty-records {
+  .screen--history.screen-layout--history .chart-meaning span,
+  .screen--history.screen-layout--history .condition-details > div,
+  .screen--history.screen-layout--history .excluded-details > p,
+  .screen--history.screen-layout--history .empty-records {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--history.prototype-parity--history .chart-meaning strong,
-  .screen--history.prototype-parity--history .selected-weekday,
-  .screen--history.prototype-parity--history .selected-facts-compact dd {
+  .screen--history.screen-layout--history .chart-meaning strong,
+  .screen--history.screen-layout--history .selected-weekday,
+  .screen--history.screen-layout--history .selected-facts-compact dd {
     font-size: 0.86rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--history.prototype-parity--history .chart-meaning {
+  .screen--history.screen-layout--history .chart-meaning {
     padding: 0.75rem 0.85rem !important;
     border-radius: 0.75rem !important;
   }
 
-  .screen--history.prototype-parity--history .selected-card-head > span {
+  .screen--history.screen-layout--history .selected-card-head > span {
     min-width: 2rem !important;
     height: 2rem !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--history.prototype-parity--history .region-picker-copy {
+  .screen--history.screen-layout--history .region-picker-copy {
     min-width: 0;
   }
 
-  .screen--history.prototype-parity--history .region-picker-copy strong,
-  .screen--history.prototype-parity--history .region-picker-copy em {
+  .screen--history.screen-layout--history .region-picker-copy strong,
+  .screen--history.screen-layout--history .region-picker-copy em {
     white-space: normal !important;
   }
 
   /* ===== Plan: complete label/control hierarchy ===== */
-  .screen--plan.prototype-parity--plan .field > span b,
-  .screen--plan.prototype-parity--plan .plan-date-label b,
-  .screen--plan.prototype-parity--plan .quick small,
-  .screen--plan.prototype-parity--plan .summary-row small,
-  .screen--plan.prototype-parity--plan .saved-card small {
+  .screen--plan.screen-layout--plan .field > span b,
+  .screen--plan.screen-layout--plan .plan-date-label b,
+  .screen--plan.screen-layout--plan .quick small,
+  .screen--plan.screen-layout--plan .summary-row small,
+  .screen--plan.screen-layout--plan .saved-card small {
     font-size: 0.74rem !important;
     line-height: 1.35 !important;
   }
 
-  .screen--plan.prototype-parity--plan .metric-field em,
-  .screen--plan.prototype-parity--plan .details summary span,
-  .screen--plan.prototype-parity--plan .saved summary span,
-  .screen--plan.prototype-parity--plan .saved-card span,
-  .screen--plan.prototype-parity--plan .compare-row {
+  .screen--plan.screen-layout--plan .metric-field em,
+  .screen--plan.screen-layout--plan .details summary span,
+  .screen--plan.screen-layout--plan .saved summary span,
+  .screen--plan.screen-layout--plan .saved-card span,
+  .screen--plan.screen-layout--plan .compare-row {
     font-size: 0.8rem !important;
     line-height: 1.45 !important;
   }
 
-  .screen--plan.prototype-parity--plan .details summary strong,
-  .screen--plan.prototype-parity--plan .quick strong,
-  .screen--plan.prototype-parity--plan .summary-row strong,
-  .screen--plan.prototype-parity--plan .saved summary strong {
+  .screen--plan.screen-layout--plan .details summary strong,
+  .screen--plan.screen-layout--plan .quick strong,
+  .screen--plan.screen-layout--plan .summary-row strong,
+  .screen--plan.screen-layout--plan .saved summary strong {
     font-size: 0.92rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--plan.prototype-parity--plan .course-choice a,
-  .screen--plan.prototype-parity--plan .saved-actions :is(button,a) {
+  .screen--plan.screen-layout--plan .course-choice a,
+  .screen--plan.screen-layout--plan .saved-actions :is(button,a) {
     min-height: 2.55rem !important;
     padding-inline: 0.75rem !important;
     font-size: 0.8rem !important;
     white-space: nowrap;
   }
 
-  .screen--plan.prototype-parity--plan .summary-row {
+  .screen--plan.screen-layout--plan .summary-row {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
-  .screen--plan.prototype-parity--plan .summary-row > div:last-child {
+  .screen--plan.screen-layout--plan .summary-row > div:last-child {
     grid-column: auto !important;
   }
 
   /* ===== Settings: balance the three display controls and remaining microcopy ===== */
-  .screen--settings.prototype-parity--settings .display-setting-list {
+  .screen--settings.screen-layout--settings .display-setting-list {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting:nth-child(3) {
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
     grid-column: auto !important;
   }
 
-  .screen--settings.prototype-parity--settings .group-title,
-  .screen--settings.prototype-parity--settings .row small,
-  .screen--settings.prototype-parity--settings .theme-preview small,
-  .screen--settings.prototype-parity--settings .shoe button {
+  .screen--settings.screen-layout--settings .group-title,
+  .screen--settings.screen-layout--settings .row small,
+  .screen--settings.screen-layout--settings .theme-preview small,
+  .screen--settings.screen-layout--settings .shoe button {
     font-size: 0.76rem !important;
     line-height: 1.35 !important;
   }
 
-  .screen--settings.prototype-parity--settings .row span,
-  .screen--settings.prototype-parity--settings .theme-preview span,
-  .screen--settings.prototype-parity--settings .value {
+  .screen--settings.screen-layout--settings .row span,
+  .screen--settings.screen-layout--settings .theme-preview span,
+  .screen--settings.screen-layout--settings .value {
     font-size: 0.8rem !important;
     line-height: 1.45 !important;
   }
 
-  .screen--settings.prototype-parity--settings .segment button,
-  .screen--settings.prototype-parity--settings .theme-preview strong {
+  .screen--settings.screen-layout--settings .segment button,
+  .screen--settings.screen-layout--settings .theme-preview strong {
     font-size: 0.88rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .action-row :is(button,label,a) {
+  .screen--settings.screen-layout--settings .action-row :is(button,label,a) {
     font-size: 0.82rem !important;
     white-space: nowrap;
   }
 
   /* ===== Privacy: readable expanded content ===== */
-  .screen--privacy.prototype-parity--privacy .body p,
-  .screen--privacy.prototype-parity--privacy .body ul {
+  .screen--privacy.screen-layout--privacy .body p,
+  .screen--privacy.screen-layout--privacy .body ul {
     font-size: 0.82rem !important;
     line-height: 1.6 !important;
   }
 
-  .screen--privacy.prototype-parity--privacy .body li + li {
+  .screen--privacy.screen-layout--privacy .body li + li {
     margin-top: 0.35rem;
   }
 
-  .screen--privacy.prototype-parity--privacy .actions a {
+  .screen--privacy.screen-layout--privacy .actions a {
     min-height: 2.8rem !important;
     padding-inline: 0.9rem !important;
     font-size: 0.84rem !important;
   }
 
   /* ===== Reading: article-detail typography and a balanced 3xN grid ===== */
-  .screen--reading.prototype-parity--reading .filter-strip-head span,
-  .screen--reading.prototype-parity--reading .sheet-head small {
+  .screen--reading.screen-layout--reading .filter-strip-head span,
+  .screen--reading.screen-layout--reading .sheet-head small {
     font-size: 0.76rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .grid {
+  .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
-  .screen--reading.prototype-parity--reading .points strong {
+  .screen--reading.screen-layout--reading .points strong {
     font-size: 0.9rem !important;
   }
 
-  .screen--reading.prototype-parity--reading .points ul,
-  .screen--reading.prototype-parity--reading .lead,
-  .screen--reading.prototype-parity--reading .body-copy p,
-  .screen--reading.prototype-parity--reading .caution,
-  .screen--reading.prototype-parity--reading .source-note {
+  .screen--reading.screen-layout--reading .points ul,
+  .screen--reading.screen-layout--reading .lead,
+  .screen--reading.screen-layout--reading .body-copy p,
+  .screen--reading.screen-layout--reading .caution,
+  .screen--reading.screen-layout--reading .source-note {
     font-size: 0.84rem !important;
     line-height: 1.65 !important;
   }
 
-  .screen--reading.prototype-parity--reading .article-card strong,
-  .screen--reading.prototype-parity--reading .article-card p {
+  .screen--reading.screen-layout--reading .article-card strong,
+  .screen--reading.screen-layout--reading .article-card p {
     overflow-wrap: anywhere;
   }
 
   /* ===== Consultation: explicit microcopy and output typography ===== */
-  .screen--consultation.prototype-parity--consultation .source a,
-  .screen--consultation.prototype-parity--consultation .actions button,
-  .screen--consultation.prototype-parity--consultation .route span {
+  .screen--consultation.screen-layout--consultation .source a,
+  .screen--consultation.screen-layout--consultation .actions button,
+  .screen--consultation.screen-layout--consultation .route span {
     font-size: 0.82rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .field span,
-  .screen--consultation.prototype-parity--consultation .share-purpose-step .field span,
-  .screen--consultation.prototype-parity--consultation .share-region-detail span,
-  .screen--consultation.prototype-parity--consultation .share-preview > header span,
-  .screen--consultation.prototype-parity--consultation .share-viewer-purpose small,
-  .screen--consultation.prototype-parity--consultation .share-viewer-shell > footer {
+  .screen--consultation.screen-layout--consultation .field span,
+  .screen--consultation.screen-layout--consultation .share-purpose-step .field span,
+  .screen--consultation.screen-layout--consultation .share-region-detail span,
+  .screen--consultation.screen-layout--consultation .share-preview > header span,
+  .screen--consultation.screen-layout--consultation .share-viewer-purpose small,
+  .screen--consultation.screen-layout--consultation .share-viewer-shell > footer {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .route small,
-  .screen--consultation.prototype-parity--consultation .panel-head small,
-  .screen--consultation.prototype-parity--consultation .status,
-  .screen--consultation.prototype-parity--consultation .report header small,
-  .screen--consultation.prototype-parity--consultation .report section small,
-  .screen--consultation.prototype-parity--consultation .field small,
-  .screen--consultation.prototype-parity--consultation .share-source small,
-  .screen--consultation.prototype-parity--consultation .share-preview > header small,
-  .screen--consultation.prototype-parity--consultation .share-card small,
-  .screen--consultation.prototype-parity--consultation .share-output-actions .output small,
-  .screen--consultation.prototype-parity--consultation .share-viewer-head small,
-  .screen--consultation.prototype-parity--consultation .share-viewer-grid .share-card small {
+  .screen--consultation.screen-layout--consultation .route small,
+  .screen--consultation.screen-layout--consultation .panel-head small,
+  .screen--consultation.screen-layout--consultation .status,
+  .screen--consultation.screen-layout--consultation .report header small,
+  .screen--consultation.screen-layout--consultation .report section small,
+  .screen--consultation.screen-layout--consultation .field small,
+  .screen--consultation.screen-layout--consultation .share-source small,
+  .screen--consultation.screen-layout--consultation .share-preview > header small,
+  .screen--consultation.screen-layout--consultation .share-card small,
+  .screen--consultation.screen-layout--consultation .share-output-actions .output small,
+  .screen--consultation.screen-layout--consultation .share-viewer-head small,
+  .screen--consultation.screen-layout--consultation .share-viewer-grid .share-card small {
     font-size: 0.74rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .select-list strong,
-  .screen--consultation.prototype-parity--consultation .share-card strong,
-  .screen--consultation.prototype-parity--consultation .share-region-detail b {
+  .screen--consultation.screen-layout--consultation .select-list strong,
+  .screen--consultation.screen-layout--consultation .share-card strong,
+  .screen--consultation.screen-layout--consultation .share-region-detail b {
     font-size: 0.9rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .select-list span,
-  .screen--consultation.prototype-parity--consultation .share-source em,
-  .screen--consultation.prototype-parity--consultation .report header span,
-  .screen--consultation.prototype-parity--consultation .report section p,
-  .screen--consultation.prototype-parity--consultation .memo,
-  .screen--consultation.prototype-parity--consultation .share-card--regional .share-region-detail span {
+  .screen--consultation.screen-layout--consultation .select-list span,
+  .screen--consultation.screen-layout--consultation .share-source em,
+  .screen--consultation.screen-layout--consultation .report header span,
+  .screen--consultation.screen-layout--consultation .report section p,
+  .screen--consultation.screen-layout--consultation .memo,
+  .screen--consultation.screen-layout--consultation .share-card--regional .share-region-detail span {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .share-source-list > :last-child:nth-child(odd) {
+  .screen--consultation.screen-layout--consultation .share-source-list > :last-child:nth-child(odd) {
     grid-column: 1 / -1;
   }
 
   /* ===== Support: avoid long single-line button labels ===== */
-  .screen--support-guidance.prototype-parity--support .card a span:first-child {
+  .screen--support-guidance.screen-layout--support .card a span:first-child {
     overflow-wrap: anywhere;
   }
 
   .secondary-derived-back,
-  .screen--support-guidance.prototype-parity--support .card a,
-  .screen--plan.prototype-parity--plan .course-choice a {
+  .screen--support-guidance.screen-layout--support .card a,
+  .screen--plan.screen-layout--plan .course-choice a {
     text-wrap: nowrap;
   }
 }
 
 @media (min-width: 80rem) and (max-width: 92rem) {
-  .screen--reading.prototype-parity--reading .grid {
+  .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting-list {
+  .screen--settings.screen-layout--settings .display-setting-list {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting:nth-child(3) {
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
     grid-column: 1 / -1 !important;
   }
 }
@@ -1228,85 +1228,85 @@
  */
 
 @media (min-width: 80rem) {
-  .screen--history.prototype-parity--history .period-control > span,
-  .screen--history.prototype-parity--history .record-filters label > span,
-  .screen--history.prototype-parity--history .records-disclosure > summary small {
+  .screen--history.screen-layout--history .period-control > span,
+  .screen--history.screen-layout--history .record-filters label > span,
+  .screen--history.screen-layout--history .records-disclosure > summary small {
     font-size: 0.78rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--history.prototype-parity--history .selected-card-head > span {
+  .screen--history.screen-layout--history .selected-card-head > span {
     font-size: 0.8rem !important;
   }
 
-  .screen--history.prototype-parity--history .condition-details > div,
-  .screen--history.prototype-parity--history .excluded-details > p {
+  .screen--history.screen-layout--history .condition-details > div,
+  .screen--history.screen-layout--history .excluded-details > p {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--history.prototype-parity--history .record-actions button,
-  .screen--history.prototype-parity--history .record-actions a {
+  .screen--history.screen-layout--history .record-actions button,
+  .screen--history.screen-layout--history .record-actions a {
     font-size: 0.8rem !important;
   }
 
-  .screen--history.prototype-parity--history .page-head > div > p:last-child,
-  .screen--plan.prototype-parity--plan .page-head p:last-child,
-  .screen--consultation.prototype-parity--consultation .head p:last-child,
-  .screen--support-guidance.prototype-parity--support .head p:last-child,
-  .screen--reading.prototype-parity--reading .head p:last-child,
-  .screen--privacy.prototype-parity--privacy .head p:last-child,
-  .screen--more.prototype-parity--more .head p:last-child,
-  .screen--settings.prototype-parity--settings .head p:last-child {
+  .screen--history.screen-layout--history .page-head > div > p:last-child,
+  .screen--plan.screen-layout--plan .page-head p:last-child,
+  .screen--consultation.screen-layout--consultation .head p:last-child,
+  .screen--support-guidance.screen-layout--support .head p:last-child,
+  .screen--reading.screen-layout--reading .head p:last-child,
+  .screen--privacy.screen-layout--privacy .head p:last-child,
+  .screen--more.screen-layout--more .head p:last-child,
+  .screen--settings.screen-layout--settings .head p:last-child {
     font-size: 0.9rem !important;
     line-height: 1.55 !important;
   }
 
-  .screen--plan.prototype-parity--plan .eyebrow,
-  .screen--consultation.prototype-parity--consultation .eyebrow,
-  .screen--support-guidance.prototype-parity--support .eyebrow,
-  .screen--reading.prototype-parity--reading .eyebrow,
-  .screen--privacy.prototype-parity--privacy .eyebrow,
-  .screen--settings.prototype-parity--settings .eyebrow {
+  .screen--plan.screen-layout--plan .eyebrow,
+  .screen--consultation.screen-layout--consultation .eyebrow,
+  .screen--support-guidance.screen-layout--support .eyebrow,
+  .screen--reading.screen-layout--reading .eyebrow,
+  .screen--privacy.screen-layout--privacy .eyebrow,
+  .screen--settings.screen-layout--settings .eyebrow {
     font-size: 0.76rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .field > span,
-  .screen--plan.prototype-parity--plan .metric-field span,
-  .screen--settings.prototype-parity--settings .field > span {
+  .screen--plan.screen-layout--plan .field > span,
+  .screen--plan.screen-layout--plan .metric-field span,
+  .screen--settings.screen-layout--settings .field > span {
     font-size: 0.82rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .field > span b {
+  .screen--plan.screen-layout--plan .field > span b {
     font-size: 0.74rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .saved-actions button {
+  .screen--plan.screen-layout--plan .saved-actions button {
     font-size: 0.8rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .action-row button,
-  .screen--settings.prototype-parity--settings .action-row label,
-  .screen--settings.prototype-parity--settings .action-row a {
+  .screen--settings.screen-layout--settings .action-row button,
+  .screen--settings.screen-layout--settings .action-row label,
+  .screen--settings.screen-layout--settings .action-row a {
     font-size: 0.82rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .large-text .field > span {
+  .screen--settings.screen-layout--settings .large-text .field > span {
     font-size: 0.88rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .share-preview > header small {
+  .screen--consultation.screen-layout--consultation .share-preview > header small {
     font-size: 0.74rem !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .share-preview > header span,
-  .screen--consultation.prototype-parity--consultation .share-viewer-shell > footer {
+  .screen--consultation.screen-layout--consultation .share-preview > header span,
+  .screen--consultation.screen-layout--consultation .share-viewer-shell > footer {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
 
   /* Legacy bottom navigation belongs to mobile only. */
-  .screen--history.prototype-parity--history .bottom-nav {
+  .screen--history.screen-layout--history .bottom-nav {
     display: none !important;
   }
 }
@@ -1318,12 +1318,12 @@
  */
 
 @media (min-width: 80rem) and (max-width: 92rem) {
-  .screen--settings.prototype-parity--settings .display-setting-list,
-  .screen--reading.prototype-parity--reading .grid {
+  .screen--settings.screen-layout--settings .display-setting-list,
+  .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting:nth-child(3) {
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
     grid-column: auto !important;
   }
 }
@@ -1428,8 +1428,8 @@
 
 @media (min-width: 80rem) {
   /* Strengthen secondary text without hard-coding a light or dark color. */
-  .screen--history.prototype-parity--history,
-  .screen--more.prototype-parity--more,
+  .screen--history.screen-layout--history,
+  .screen--more.screen-layout--more,
   .secondary-derived-screen {
     --muted: color-mix(in srgb, var(--color-muted) 88%, var(--color-ink));
   }
@@ -1446,7 +1446,7 @@
   }
 
   /* ===== History states ===== */
-  .screen--history.prototype-parity--history .empty-records {
+  .screen--history.screen-layout--history .empty-records {
     width: 100%;
     min-height: 12rem;
     margin-top: 1rem;
@@ -1463,7 +1463,7 @@
     box-shadow: var(--shadow-card);
   }
 
-  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) {
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) {
     grid-column: 1 / -1;
     width: calc(50% - 0.45rem);
     justify-self: center;
@@ -1472,18 +1472,18 @@
   /* ===== Reading states =====
    * Two equal columns avoid the visually awkward 3 + 1 desktop pattern.
    */
-  .screen--reading.prototype-parity--reading .grid {
+  .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
-  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
     grid-column: 1 / -1;
     width: calc(50% - 0.4rem);
     justify-self: center;
   }
 
   /* ===== Consultation empty state ===== */
-  .screen--consultation.prototype-parity--consultation .secondary-derived-body > .panel {
+  .screen--consultation.screen-layout--consultation .secondary-derived-body > .panel {
     width: min(100%, 46rem);
     min-height: 11rem;
     margin: 1rem auto 0;
@@ -1491,47 +1491,47 @@
     border-radius: 1rem;
   }
 
-  .screen--consultation.prototype-parity--consultation .secondary-derived-body > .panel .actions {
+  .screen--consultation.screen-layout--consultation .secondary-derived-body > .panel .actions {
     margin-top: 0.9rem;
   }
 
   /* Remaining desktop microcopy found by Chromium visual-state audit. */
-  .screen--settings.prototype-parity--settings .sub-section-head strong,
-  .screen--consultation.prototype-parity--consultation .share-source strong,
-  .screen--consultation.prototype-parity--consultation .share-card strong,
-  .screen--consultation.prototype-parity--consultation .share-output-actions .output strong {
+  .screen--settings.screen-layout--settings .sub-section-head strong,
+  .screen--consultation.screen-layout--consultation .share-source strong,
+  .screen--consultation.screen-layout--consultation .share-card strong,
+  .screen--consultation.screen-layout--consultation .share-output-actions .output strong {
     font-size: 0.88rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--plan.prototype-parity--plan .saved-card strong,
-  .screen--privacy.prototype-parity--privacy .lead strong {
+  .screen--plan.screen-layout--plan .saved-card strong,
+  .screen--privacy.screen-layout--privacy .lead strong {
     font-size: 0.92rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--history.prototype-parity--history .chart-wrap svg text {
+  .screen--history.screen-layout--history .chart-wrap svg text {
     font-size: 0.75rem !important;
   }
 
-  .screen--support-guidance.prototype-parity--support .secondary-derived-body > .back[data-context-back-duplicate] {
+  .screen--support-guidance.screen-layout--support .secondary-derived-body > .back[data-context-back-duplicate] {
     display: none !important;
   }
 
   /* Empty/save-status copy must remain readable in both appearance modes. */
-  .screen--history.prototype-parity--history :is(.empty-records, .screen-footnote),
-  .screen--plan.prototype-parity--plan :is(.note, .saved-card span),
-  .screen--settings.prototype-parity--settings :is(.note, .muted-text),
-  .screen--privacy.prototype-parity--privacy :is(.body, .warning),
-  .screen--reading.prototype-parity--reading :is(.article-card p, .source-note),
-  .screen--consultation.prototype-parity--consultation :is(.boundary, .memo),
-  .screen--support-guidance.prototype-parity--support :is(.notice, .card p) {
+  .screen--history.screen-layout--history :is(.empty-records, .screen-footnote),
+  .screen--plan.screen-layout--plan :is(.note, .saved-card span),
+  .screen--settings.screen-layout--settings :is(.note, .muted-text),
+  .screen--privacy.screen-layout--privacy :is(.body, .warning),
+  .screen--reading.screen-layout--reading :is(.article-card p, .source-note),
+  .screen--consultation.screen-layout--consultation :is(.boundary, .memo),
+  .screen--support-guidance.screen-layout--support :is(.notice, .card p) {
     color: var(--muted) !important;
   }
 }
 
 @media (min-width: 80rem) and (max-width: 92rem) {
-  .screen--reading.prototype-parity--reading .grid {
+  .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
@@ -1540,7 +1540,7 @@
 /* ===== Re-audit 2026-09-22: state completeness and odd-card balance ===== */
 @media (min-width: 80rem) {
   /* History: make the first-use state actionable rather than a large blank card. */
-  .screen--history.prototype-parity--history .empty-records--initial {
+  .screen--history.screen-layout--history .empty-records--initial {
     min-height: 14rem;
     padding: 1.4rem;
     display: grid;
@@ -1551,28 +1551,28 @@
     text-align: center;
   }
 
-  .screen--history.prototype-parity--history .empty-records--initial small {
+  .screen--history.screen-layout--history .empty-records--initial small {
     color: var(--accent);
     font-size: 0.76rem !important;
     font-weight: 900;
     letter-spacing: 0.12em;
   }
 
-  .screen--history.prototype-parity--history .empty-records--initial strong {
+  .screen--history.screen-layout--history .empty-records--initial strong {
     margin-top: 0.15rem;
     color: var(--ink);
     font-size: 1.12rem !important;
     line-height: 1.35;
   }
 
-  .screen--history.prototype-parity--history .empty-records--initial p {
+  .screen--history.screen-layout--history .empty-records--initial p {
     margin: 0.15rem 0 0;
     color: var(--muted);
     font-size: 0.84rem !important;
     line-height: 1.55;
   }
 
-  .screen--history.prototype-parity--history .empty-records--initial a {
+  .screen--history.screen-layout--history .empty-records--initial a {
     width: max-content;
     min-height: 2.75rem;
     margin: 0.7rem auto 0;
@@ -1588,12 +1588,12 @@
     text-decoration: none;
   }
 
-  .screen--history.prototype-parity--history .empty-records:not(.empty-records--initial) {
+  .screen--history.screen-layout--history .empty-records:not(.empty-records--initial) {
     min-height: 8rem;
   }
 
   /* History: an odd final record becomes an intentional full-width row. */
-  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) {
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) {
     width: 100% !important;
     grid-column: 1 / -1 !important;
     display: grid;
@@ -1606,19 +1606,19 @@
     align-items: center;
   }
 
-  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) .record-item-head {
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) .record-item-head {
     grid-area: head;
   }
 
-  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) h3 {
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) h3 {
     grid-area: summary;
   }
 
-  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) > p {
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) > p {
     grid-area: memo;
   }
 
-  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd) .record-actions {
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) .record-actions {
     grid-area: actions;
     margin-top: 0 !important;
     justify-self: end;
@@ -1626,7 +1626,7 @@
   }
 
   /* Reading: avoid a centered half-width orphan when the article count is odd. */
-  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
     width: 100% !important;
     grid-column: 1 / -1 !important;
     display: grid;
@@ -1635,11 +1635,11 @@
     align-items: center;
   }
 
-  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) > :not(.text-link) {
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) > :not(.text-link) {
     grid-column: 1;
   }
 
-  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) .text-link {
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) .text-link {
     grid-column: 2;
     grid-row: 1 / span 4;
     align-self: center;
@@ -1647,7 +1647,7 @@
   }
 
   /* Consultation: the no-record state should read as a deliberate state, not a small leftover panel. */
-  .screen--consultation.prototype-parity--consultation .consultation-empty-state {
+  .screen--consultation.screen-layout--consultation .consultation-empty-state {
     width: min(100%, 52rem) !important;
     min-height: 13rem !important;
     margin: 1.25rem auto 0 !important;
@@ -1658,18 +1658,18 @@
     align-items: center;
   }
 
-  .screen--consultation.prototype-parity--consultation .consultation-empty-state__copy {
+  .screen--consultation.screen-layout--consultation .consultation-empty-state__copy {
     min-width: 0;
   }
 
-  .screen--consultation.prototype-parity--consultation .consultation-empty-state__copy small {
+  .screen--consultation.screen-layout--consultation .consultation-empty-state__copy small {
     color: var(--accent);
     font-size: 0.76rem !important;
     font-weight: 900;
     letter-spacing: 0.1em;
   }
 
-  .screen--consultation.prototype-parity--consultation .consultation-empty-state__copy strong {
+  .screen--consultation.screen-layout--consultation .consultation-empty-state__copy strong {
     display: block;
     margin-top: 0.25rem;
     color: var(--ink);
@@ -1677,19 +1677,19 @@
     line-height: 1.4;
   }
 
-  .screen--consultation.prototype-parity--consultation .consultation-empty-state__copy p {
+  .screen--consultation.screen-layout--consultation .consultation-empty-state__copy p {
     margin: 0.4rem 0 0;
     color: var(--muted);
     font-size: 0.82rem !important;
     line-height: 1.55;
   }
 
-  .screen--consultation.prototype-parity--consultation .consultation-empty-state .actions {
+  .screen--consultation.screen-layout--consultation .consultation-empty-state .actions {
     margin: 0 !important;
     align-self: center;
   }
 
-  .screen--consultation.prototype-parity--consultation .consultation-empty-state .actions a {
+  .screen--consultation.screen-layout--consultation .consultation-empty-state .actions a {
     min-height: 2.8rem;
     padding-inline: 1rem;
     white-space: nowrap;
@@ -1697,8 +1697,8 @@
 }
 
 @media (min-width: 80rem) and (max-width: 92rem) {
-  .screen--history.prototype-parity--history .record-list > .record-item:last-child:nth-child(odd),
-  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd),
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
     grid-template-columns: minmax(0, 1fr) auto;
   }
 }
@@ -1706,7 +1706,7 @@
 
 /* ===== Re-audit 2026-09-22: secondary empty-state completion ===== */
 @media (min-width: 80rem) {
-  .screen--history.prototype-parity--history .empty-records--filtered {
+  .screen--history.screen-layout--history .empty-records--filtered {
     min-height: 9rem;
     display: grid;
     place-content: center;
@@ -1715,20 +1715,20 @@
     text-align: center;
   }
 
-  .screen--history.prototype-parity--history .empty-records--filtered strong {
+  .screen--history.screen-layout--history .empty-records--filtered strong {
     color: var(--ink);
     font-size: 1rem !important;
     line-height: 1.4;
   }
 
-  .screen--history.prototype-parity--history .empty-records--filtered p {
+  .screen--history.screen-layout--history .empty-records--filtered p {
     margin: 0;
     color: var(--muted);
     font-size: 0.82rem !important;
     line-height: 1.5;
   }
 
-  .screen--plan.prototype-parity--plan .saved-card--empty {
+  .screen--plan.screen-layout--plan .saved-card--empty {
     min-height: 7.5rem;
     padding: 1rem 1.1rem !important;
     display: grid;
@@ -1737,18 +1737,18 @@
     text-align: center;
   }
 
-  .screen--plan.prototype-parity--plan .saved-card--empty strong {
+  .screen--plan.screen-layout--plan .saved-card--empty strong {
     font-size: 0.94rem !important;
     line-height: 1.4;
   }
 
-  .screen--plan.prototype-parity--plan .saved-card--empty span {
+  .screen--plan.screen-layout--plan .saved-card--empty span {
     color: var(--muted);
     font-size: 0.8rem !important;
     line-height: 1.5;
   }
 
-  .screen--settings.prototype-parity--settings .settings-empty-state {
+  .screen--settings.screen-layout--settings .settings-empty-state {
     min-height: 6rem;
     padding: 0.9rem 1rem;
     display: grid;
@@ -1759,13 +1759,13 @@
     background: var(--surface);
   }
 
-  .screen--settings.prototype-parity--settings .settings-empty-state strong {
+  .screen--settings.screen-layout--settings .settings-empty-state strong {
     color: var(--ink);
     font-size: 0.9rem !important;
     line-height: 1.4;
   }
 
-  .screen--settings.prototype-parity--settings .settings-empty-state span {
+  .screen--settings.screen-layout--settings .settings-empty-state span {
     color: var(--muted);
     font-size: 0.78rem !important;
     line-height: 1.5;
@@ -1776,32 +1776,32 @@
 /* ===== Re-audit 2026-09-22: cross-screen visual hierarchy and theme safety ===== */
 @media (min-width: 80rem) {
   /* History: desktop typography left behind by the mobile prototype. */
-  .screen--history.prototype-parity--history .section-index,
-  .screen--history.prototype-parity--history .chart-axis-label,
-  .screen--history.prototype-parity--history .chart-date {
+  .screen--history.screen-layout--history .section-index,
+  .screen--history.screen-layout--history .chart-axis-label,
+  .screen--history.screen-layout--history .chart-date {
     font-size: 0.75rem !important;
   }
 
-  .screen--history.prototype-parity--history .chart-value,
-  .screen--history.prototype-parity--history .chart-region-heading h2,
-  .screen--history.prototype-parity--history .region-option-copy strong {
+  .screen--history.screen-layout--history .chart-value,
+  .screen--history.screen-layout--history .chart-region-heading h2,
+  .screen--history.screen-layout--history .region-option-copy strong {
     font-size: 0.86rem !important;
     line-height: 1.35 !important;
   }
 
-  .screen--history.prototype-parity--history .region-option-copy small {
+  .screen--history.screen-layout--history .region-option-copy small {
     font-size: 0.74rem !important;
     line-height: 1.35 !important;
   }
 
   /* History region selection is a desktop dialog, not a mobile bottom sheet. */
-  .screen--history.prototype-parity--history .sheet-overlay {
+  .screen--history.screen-layout--history .sheet-overlay {
     align-items: center !important;
     padding: 5.75rem 1.5rem 1.5rem !important;
     background: var(--overlay-dialog) !important;
   }
 
-  .screen--history.prototype-parity--history .region-sheet {
+  .screen--history.screen-layout--history .region-sheet {
     width: min(48rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
     max-height: min(78dvh, 46rem) !important;
     padding: 1rem 1.1rem 1.2rem !important;
@@ -1811,31 +1811,31 @@
     box-shadow: var(--shadow-dialog) !important;
   }
 
-  .screen--history.prototype-parity--history .region-sheet .grip {
+  .screen--history.screen-layout--history .region-sheet .grip {
     display: none !important;
   }
 
-  .screen--history.prototype-parity--history .region-options {
+  .screen--history.screen-layout--history .region-options {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
   }
 
-  .screen--history.prototype-parity--history .region-option {
+  .screen--history.screen-layout--history .region-option {
     min-height: 4.4rem !important;
     padding: 0.65rem 0.7rem !important;
   }
 
   /* Selected segmented controls should not turn into light halos in dark mode. */
-  .screen--history.prototype-parity--history .history-mode button.active,
-  .screen--history.prototype-parity--history .display-toggle button.active,
-  .screen--plan.prototype-parity--plan .seg button.active {
+  .screen--history.screen-layout--history .history-mode button.active,
+  .screen--history.screen-layout--history .display-toggle button.active,
+  .screen--plan.screen-layout--plan .seg button.active {
     box-shadow: none !important;
   }
 
   /* Plan: number/text controls use the same desktop input grammar. */
-  .screen--plan.prototype-parity--plan .field input,
-  .screen--plan.prototype-parity--plan .field select,
-  .screen--plan.prototype-parity--plan .field textarea {
+  .screen--plan.screen-layout--plan .field input,
+  .screen--plan.screen-layout--plan .field select,
+  .screen--plan.screen-layout--plan .field textarea {
     min-height: 3rem !important;
     padding: 0.7rem 0.8rem !important;
     border-radius: 0.72rem !important;
@@ -1843,56 +1843,56 @@
     font-family: inherit !important;
   }
 
-  .screen--plan.prototype-parity--plan .saved-list {
+  .screen--plan.screen-layout--plan .saved-list {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.75rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .saved-list > .saved-card:last-child:nth-child(odd) {
+  .screen--plan.screen-layout--plan .saved-list > .saved-card:last-child:nth-child(odd) {
     grid-column: 1 / -1;
   }
 
   /* Settings: six goal choices are a balanced 3 x 2 desktop group. */
-  .screen--settings.prototype-parity--settings .row strong {
+  .screen--settings.screen-layout--settings .row strong {
     font-size: 0.9rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--settings.prototype-parity--settings .goal-grid {
+  .screen--settings.screen-layout--settings .goal-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
   /* Reading: nine visible articles form a 3 x 3 grid on desktop. */
-  .screen--reading.prototype-parity--reading .filter-strip-head b {
+  .screen--reading.screen-layout--reading .filter-strip-head b {
     font-size: 0.88rem !important;
     line-height: 1.35 !important;
   }
 
-  .screen--reading.prototype-parity--reading .grid {
+  .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
-  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
     width: auto !important;
     grid-column: auto !important;
     display: block !important;
   }
 
-  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) > :not(.text-link),
-  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) .text-link {
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) > :not(.text-link),
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) .text-link {
     grid-column: auto !important;
     grid-row: auto !important;
   }
 
   /* Article detail is a bounded desktop dialog rather than a bottom sheet. */
-  .screen--reading.prototype-parity--reading .drawer {
+  .screen--reading.screen-layout--reading .drawer {
     align-items: center !important;
     justify-items: center !important;
     padding: 5.75rem 1.5rem 1.5rem !important;
     background: var(--overlay-dialog) !important;
   }
 
-  .screen--reading.prototype-parity--reading .drawer .sheet {
+  .screen--reading.screen-layout--reading .drawer .sheet {
     width: min(54rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
     max-height: min(80dvh, 50rem) !important;
     margin: 0 !important;
@@ -1902,18 +1902,18 @@
   }
 
   /* Consultation/share preview: finish the desktop type scale and theme-safe overlay. */
-  .screen--consultation.prototype-parity--consultation .report section strong,
-  .screen--consultation.prototype-parity--consultation .share-card--regional .share-region-detail b {
+  .screen--consultation.screen-layout--consultation .report section strong,
+  .screen--consultation.screen-layout--consultation .share-card--regional .share-region-detail b {
     font-size: 0.88rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .share-viewer-purpose p {
+  .screen--consultation.screen-layout--consultation .share-viewer-purpose p {
     font-size: 0.82rem !important;
     line-height: 1.55 !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .share-viewer {
+  .screen--consultation.screen-layout--consultation .share-viewer {
     display: grid !important;
     place-items: center !important;
     padding: 5.75rem 1.5rem 1.5rem !important;
@@ -1921,7 +1921,7 @@
     overflow: hidden !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .share-viewer-shell {
+  .screen--consultation.screen-layout--consultation .share-viewer-shell {
     width: min(60rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
     min-height: 0 !important;
     max-height: calc(100dvh - 7.25rem) !important;
@@ -1931,24 +1931,24 @@
     box-shadow: var(--shadow-dialog) !important;
   }
 
-  .screen--history.prototype-parity--history .history-mode button,
-  .screen--history.prototype-parity--history .display-toggle button,
-  .screen--plan.prototype-parity--plan .seg button,
-  .screen--reading.prototype-parity--reading .filters button {
+  .screen--history.screen-layout--history .history-mode button,
+  .screen--history.screen-layout--history .display-toggle button,
+  .screen--plan.screen-layout--plan .seg button,
+  .screen--reading.screen-layout--reading .filters button {
     white-space: nowrap;
   }
 }
 
 @media (min-width: 80rem) and (max-width: 92rem) {
-  .screen--history.prototype-parity--history .region-options {
+  .screen--history.screen-layout--history .region-options {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
-  .screen--settings.prototype-parity--settings .goal-grid {
+  .screen--settings.screen-layout--settings .goal-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
-  .screen--reading.prototype-parity--reading .grid {
+  .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 }
@@ -1956,7 +1956,7 @@
 
 /* ===== Re-audit 2026-09-22: zero-comparable History state ===== */
 @media (min-width: 80rem) {
-  .screen--history.prototype-parity--history .history-comparison-empty {
+  .screen--history.screen-layout--history .history-comparison-empty {
     width: min(100%, 54rem);
     min-height: 14rem;
     margin: 1rem auto 0;
@@ -1973,7 +1973,7 @@
     box-shadow: var(--shadow-card);
   }
 
-  .screen--history.prototype-parity--history .history-comparison-empty small {
+  .screen--history.screen-layout--history .history-comparison-empty small {
     color: var(--accent);
     font-size: 0.76rem !important;
     line-height: 1.3;
@@ -1981,21 +1981,21 @@
     letter-spacing: 0.12em;
   }
 
-  .screen--history.prototype-parity--history .history-comparison-empty strong {
+  .screen--history.screen-layout--history .history-comparison-empty strong {
     margin-top: 0.1rem;
     color: var(--ink);
     font-size: 1.08rem !important;
     line-height: 1.4;
   }
 
-  .screen--history.prototype-parity--history .history-comparison-empty p {
+  .screen--history.screen-layout--history .history-comparison-empty p {
     margin: 0.15rem 0 0;
     color: var(--muted);
     font-size: 0.82rem !important;
     line-height: 1.55;
   }
 
-  .screen--history.prototype-parity--history .history-comparison-empty a {
+  .screen--history.screen-layout--history .history-comparison-empty a {
     width: max-content;
     min-height: 2.75rem;
     margin: 0.7rem auto 0;
@@ -2013,7 +2013,7 @@
     white-space: nowrap;
   }
 
-  .screen--history.prototype-parity--history .history-comparison-empty + .comparison-side {
+  .screen--history.screen-layout--history .history-comparison-empty + .comparison-side {
     width: min(100%, 54rem);
     margin: 0.8rem auto 0;
   }
@@ -2022,34 +2022,34 @@
 
 /* ===== Re-audit 2026-09-22: variable-count Settings collections ===== */
 @media (min-width: 80rem) {
-  .screen--settings.prototype-parity--settings .shoes {
+  .screen--settings.screen-layout--settings .shoes {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.75rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .shoe {
+  .screen--settings.screen-layout--settings .shoe {
     min-width: 0;
     min-height: 4.2rem;
     padding: 0.8rem 0.9rem !important;
     border-radius: 0.85rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .shoe > span {
+  .screen--settings.screen-layout--settings .shoe > span {
     min-width: 0;
   }
 
-  .screen--settings.prototype-parity--settings .shoe strong,
-  .screen--settings.prototype-parity--settings .shoe small {
+  .screen--settings.screen-layout--settings .shoe strong,
+  .screen--settings.screen-layout--settings .shoe small {
     overflow-wrap: anywhere;
   }
 
-  .screen--settings.prototype-parity--settings .shoe button {
+  .screen--settings.screen-layout--settings .shoe button {
     min-height: 2.5rem !important;
     padding-inline: 0.75rem !important;
     white-space: nowrap;
   }
 
-  .screen--settings.prototype-parity--settings .shoes > .shoe:last-child:nth-child(odd) {
+  .screen--settings.screen-layout--settings .shoes > .shoe:last-child:nth-child(odd) {
     grid-column: 1 / -1;
   }
 }
@@ -2057,7 +2057,7 @@
 
 /* ===== Re-audit 2026-09-22: export font consistency ===== */
 @media print {
-  .prototype-parity--consultation .share-print-document {
+  .screen-layout--consultation .share-print-document {
     font-family: var(--font-sans) !important;
   }
 }
@@ -2066,7 +2066,7 @@
 /* ===== Re-audit 2026-09-22: Settings field sizing by content ===== */
 @media (min-width: 80rem) {
   /* Long text/select fields stay moderate instead of stretching across the panel. */
-  .screen--settings.prototype-parity--settings .disclosure-body > .fields.two-fields {
+  .screen--settings.screen-layout--settings .disclosure-body > .fields.two-fields {
     width: auto !important;
     grid-template-columns: 22rem 20rem !important;
     gap: 0.85rem !important;
@@ -2074,7 +2074,7 @@
   }
 
   /* Height/weight are short numeric values; age/sex need slightly wider selects. */
-  .screen--settings.prototype-parity--settings .subdetails-body > .fields.two-fields {
+  .screen--settings.screen-layout--settings .subdetails-body > .fields.two-fields {
     width: auto !important;
     grid-template-columns: 11rem 11rem 16rem 16rem !important;
     gap: 0.8rem !important;
@@ -2082,24 +2082,24 @@
     align-items: end;
   }
 
-  .screen--settings.prototype-parity--settings .subdetails-body > .fields.two-fields .field {
+  .screen--settings.screen-layout--settings .subdetails-body > .fields.two-fields .field {
     min-width: 0;
   }
 
   /* Four compact counters belong on one desktop row; descriptive ABOUT cards remain 2 x 2. */
-  .screen--settings.prototype-parity--settings .data-overview {
+  .screen--settings.screen-layout--settings .data-overview {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     gap: 0.75rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .about-grid {
+  .screen--settings.screen-layout--settings .about-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.75rem !important;
   }
 }
 
 @media (min-width: 80rem) and (max-width: 86rem) {
-  .screen--settings.prototype-parity--settings .subdetails-body > .fields.two-fields {
+  .screen--settings.screen-layout--settings .subdetails-body > .fields.two-fields {
     grid-template-columns: 10rem 10rem 14rem 14rem !important;
   }
 }
@@ -2107,14 +2107,14 @@
 
 /* ===== Re-audit 2026-09-22: modal background scroll isolation ===== */
 @media (min-width: 80rem) {
-  body:has(.screen--history.prototype-parity--history .sheet-overlay:not([hidden])) {
+  body:has(.screen--history.screen-layout--history .sheet-overlay:not([hidden])) {
     overflow: hidden !important;
   }
 
-  body:has(.screen--reading.prototype-parity--reading .drawer:not([hidden]))
-    .screen--reading.prototype-parity--reading .secondary-derived-body,
-  html:has(.screen--consultation.prototype-parity--consultation .share-viewer:not([hidden]))
-    .screen--consultation.prototype-parity--consultation .secondary-derived-body {
+  body:has(.screen--reading.screen-layout--reading .drawer:not([hidden]))
+    .screen--reading.screen-layout--reading .secondary-derived-body,
+  html:has(.screen--consultation.screen-layout--consultation .share-viewer:not([hidden]))
+    .screen--consultation.screen-layout--consultation .secondary-derived-body {
     overflow: hidden !important;
   }
 }
@@ -2122,16 +2122,16 @@
 
 /* ===== Re-audit 2026-09-22: normalized semantic spacing hooks ===== */
 @media (min-width: 80rem) {
-  .screen--plan.prototype-parity--plan .plan-rest-summary,
-  .screen--plan.prototype-parity--plan .plan-memo-field {
+  .screen--plan.screen-layout--plan .plan-rest-summary,
+  .screen--plan.screen-layout--plan .plan-memo-field {
     margin-top: 0.8rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .profile-goal-head {
+  .screen--settings.screen-layout--settings .profile-goal-head {
     margin-top: 0.75rem !important;
   }
 
-  .screen--settings.prototype-parity--settings .action-chevron {
+  .screen--settings.screen-layout--settings .action-chevron {
     margin-left: 0.5rem;
   }
 }
@@ -2139,7 +2139,7 @@
 
 /* ===== Re-audit 2026-09-22: dark-mode chart emphasis ===== */
 @media (min-width: 80rem) {
-  .screen--history.prototype-parity--history .chart-point.selected {
+  .screen--history.screen-layout--history .chart-point.selected {
     filter: none !important;
   }
 }
@@ -2147,14 +2147,14 @@
 
 /* ===== Re-audit 2026-09-22: unavailable-state readability ===== */
 @media (min-width: 80rem) {
-  .screen--consultation.prototype-parity--consultation .share-source.is-unavailable {
+  .screen--consultation.screen-layout--consultation .share-source.is-unavailable {
     opacity: 1 !important;
     background: var(--surface2) !important;
     color: var(--muted) !important;
   }
 
-  .screen--consultation.prototype-parity--consultation .share-source.is-unavailable strong,
-  .screen--consultation.prototype-parity--consultation .share-source.is-unavailable em {
+  .screen--consultation.screen-layout--consultation .share-source.is-unavailable strong,
+  .screen--consultation.screen-layout--consultation .share-source.is-unavailable em {
     color: var(--muted) !important;
   }
 }
@@ -2162,7 +2162,7 @@
 
 /* ===== Re-audit 2026-09-22: History undo state ===== */
 @media (min-width: 80rem) {
-  .screen--history.prototype-parity--history .history-undo {
+  .screen--history.screen-layout--history .history-undo {
     position: fixed;
     right: max(var(--pc-content-right), env(safe-area-inset-right));
     bottom: max(1.5rem, env(safe-area-inset-bottom));
@@ -2179,14 +2179,14 @@
     box-shadow: var(--shadow-dialog);
   }
 
-  .screen--history.prototype-parity--history .history-undo p {
+  .screen--history.screen-layout--history .history-undo p {
     margin: 0;
     color: var(--ink);
     font-size: 0.82rem !important;
     line-height: 1.45;
   }
 
-  .screen--history.prototype-parity--history .history-undo button {
+  .screen--history.screen-layout--history .history-undo button {
     min-height: 2.55rem;
     padding: 0 0.8rem;
     border: 1px solid var(--accent);
@@ -2202,7 +2202,7 @@
 
 /* ===== Re-audit 2026-09-22: Settings saved-status state ===== */
 @media (min-width: 80rem) {
-  .screen--settings.prototype-parity--settings .parity-save-message {
+  .screen--settings.screen-layout--settings .parity-save-message {
     width: min(100%, 32rem);
     margin: 1rem 0 0;
     padding: 0.7rem 0.85rem;
@@ -2233,11 +2233,11 @@
    * auto-fit keeps 3 columns when space/data allow and expands smaller result
    * sets instead of leaving two empty desktop columns.
    */
-  .screen--reading.prototype-parity--reading .grid {
+  .screen--reading.screen-layout--reading .grid {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)) !important;
   }
 
-  .screen--reading.prototype-parity--reading .grid > .article-card:last-child:nth-child(odd) {
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
     width: auto !important;
     grid-column: auto !important;
     display: block !important;
@@ -2247,40 +2247,40 @@
 
 /* ===== Re-audit 2026-09-22: HOME typography without changing the approved layout ===== */
 @media (min-width: 80rem) {
-  .screen--home.prototype-parity--home {
+  .screen--home.screen-layout--home {
     font-family: inherit !important;
     --muted: color-mix(in srgb, var(--color-muted) 88%, var(--color-ink));
   }
 
-  .screen--home.prototype-parity--home > .page-head .eyebrow,
-  .screen--home.prototype-parity--home > .section .section-head small,
-  .screen--home.prototype-parity--home > .focus .focus-copy small,
-  .screen--home.prototype-parity--home > .focus .source b,
-  .screen--home.prototype-parity--home > .section .card-head small,
-  .screen--home.prototype-parity--home > .section .pill,
-  .screen--home.prototype-parity--home > .section .metrics small,
-  .screen--home.prototype-parity--home > .section .plan small {
+  .screen--home.screen-layout--home > .page-head .eyebrow,
+  .screen--home.screen-layout--home > .section .section-head small,
+  .screen--home.screen-layout--home > .focus .focus-copy small,
+  .screen--home.screen-layout--home > .focus .source b,
+  .screen--home.screen-layout--home > .section .card-head small,
+  .screen--home.screen-layout--home > .section .pill,
+  .screen--home.screen-layout--home > .section .metrics small,
+  .screen--home.screen-layout--home > .section .plan small {
     font-size: 0.76rem !important;
     line-height: 1.35 !important;
   }
 
-  .screen--home.prototype-parity--home > .focus .carry {
+  .screen--home.screen-layout--home > .focus .carry {
     font-size: 0.76rem !important;
   }
 
-  .screen--home.prototype-parity--home > .focus .source span,
-  .screen--home.prototype-parity--home > .section .plan span {
+  .screen--home.screen-layout--home > .focus .source span,
+  .screen--home.screen-layout--home > .section .plan span {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--home.prototype-parity--home > .section .card-head strong,
-  .screen--home.prototype-parity--home > .section .plan strong {
+  .screen--home.screen-layout--home > .section .card-head strong,
+  .screen--home.screen-layout--home > .section .plan strong {
     font-size: 0.96rem !important;
     line-height: 1.4 !important;
   }
 
-  .screen--home.prototype-parity--home > .section .card {
+  .screen--home.screen-layout--home > .section .card {
     box-shadow: var(--shadow-card) !important;
   }
 }
@@ -2293,7 +2293,7 @@
     font-size: 0.75rem !important;
   }
 
-  .screen--history.prototype-parity--history :is(
+  .screen--history.screen-layout--history :is(
     .sample-badge,
     .region-picker-trigger small,
     .chart-card-head small,
@@ -2305,8 +2305,8 @@
     .selected-facts dt,
     .result-link small
   ),
-  .screen--more.prototype-parity--more .copy small,
-  .screen--plan.prototype-parity--plan :is(
+  .screen--more.screen-layout--more .copy small,
+  .screen--plan.screen-layout--plan :is(
     .panel-head small,
     .course-choice small,
     .details small,
@@ -2318,7 +2318,7 @@
     .field > span b,
     .plan-date-label b
   ),
-  .screen--settings.prototype-parity--settings :is(
+  .screen--settings.screen-layout--settings :is(
     .display-setting__title small,
     .disclosure summary small,
     .sub-section-head small,
@@ -2330,14 +2330,14 @@
     .row small,
     .theme-preview small
   ),
-  .screen--privacy.prototype-parity--privacy .copy small,
-  .screen--reading.prototype-parity--reading :is(
+  .screen--privacy.screen-layout--privacy .copy small,
+  .screen--reading.screen-layout--reading :is(
     .recommend small,
     .article-card small,
     .filter-strip-head span,
     .sheet-head small
   ),
-  .screen--consultation.prototype-parity--consultation :is(
+  .screen--consultation.screen-layout--consultation :is(
     .source small,
     .section-head small,
     .support-link small,
@@ -2354,7 +2354,7 @@
     .share-viewer-head small,
     .share-viewer-grid .share-card small
   ),
-  .screen--support-guidance.prototype-parity--support .card small {
+  .screen--support-guidance.screen-layout--support .card small {
     font-size: 0.75rem !important;
     line-height: 1.35 !important;
   }
@@ -2364,48 +2364,48 @@
 /* ===== Final desktop visual audit: 2026-09-22 ===== */
 @media (min-width: 80rem) {
   /* HISTORY: status chips are semantic labels, not microcopy. */
-  .screen--history.prototype-parity--history .record-kind {
+  .screen--history.screen-layout--history .record-kind {
     font-size: 0.75rem !important;
     line-height: 1.25 !important;
   }
 
   /* PLAN: keep short units intact and give numeric controls enough room. */
-  .screen--plan.prototype-parity--plan .two {
+  .screen--plan.screen-layout--plan .two {
     grid-template-columns: 13.5rem 15rem !important;
   }
 
-  .screen--plan.prototype-parity--plan .metric-field > div {
+  .screen--plan.screen-layout--plan .metric-field > div {
     min-width: 0;
   }
 
-  .screen--plan.prototype-parity--plan .metric-field em {
+  .screen--plan.screen-layout--plan .metric-field em {
     flex: 0 0 auto;
     white-space: nowrap !important;
     word-break: keep-all !important;
   }
 
   /* SETTINGS: the three equal display controls should use the available row width. */
-  .screen--settings.prototype-parity--settings .display-setting-list {
+  .screen--settings.screen-layout--settings .display-setting-list {
     width: min(100%, 54rem) !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
-  .screen--settings.prototype-parity--settings .display-setting__title small {
+  .screen--settings.screen-layout--settings .display-setting__title small {
     white-space: nowrap !important;
     word-break: keep-all !important;
   }
 
   /* READING: the mobile horizontal-scroll fade is not meaningful on wrapped desktop filters. */
-  .screen--reading.prototype-parity--reading .filter-strip::after {
+  .screen--reading.screen-layout--reading .filter-strip::after {
     display: none !important;
   }
 
-  .screen--reading.prototype-parity--reading .filter-strip .filters {
+  .screen--reading.screen-layout--reading .filter-strip .filters {
     padding-right: 0 !important;
   }
 
   /* CONSULTATION: higher desktop specificity must never override the hidden state. */
-  .screen--consultation.prototype-parity--consultation .share-viewer[hidden] {
+  .screen--consultation.screen-layout--consultation .share-viewer[hidden] {
     display: none !important;
   }
 }
