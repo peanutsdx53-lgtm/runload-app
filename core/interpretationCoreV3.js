@@ -1,4 +1,4 @@
-// RunLoad Interpretation Core V3 candidate.
+// RunLoad Interpretation Core V3.
 // Deterministic, read-only projection for beginner-facing result understanding.
 // This module consumes persisted results and never recalculates Primary Reference-100 or ROF-J values.
 
@@ -9,8 +9,8 @@ import {
 } from "./interpretationCore.js";
 import { officialRofJDescriptor } from "./secondPillarRofJ.js";
 
-export const INTERPRETATION_V3_CORE_VERSION = "runload-interpretation-core-v2.0-candidate";
-export const INTERPRETATION_V3_OUTPUT_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V3_CANDIDATE";
+export const INTERPRETATION_V3_CORE_VERSION = "runload-interpretation-core-v3.0";
+export const INTERPRETATION_V3_OUTPUT_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V3";
 export const INTERPRETATION_V3_ROUTE_RESOLVER_VERSION = "primary-reference100-v3-explanation-route-v1";
 
 const CURRENT_PRIMARY_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
