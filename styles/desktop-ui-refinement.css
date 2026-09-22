@@ -1952,3 +1952,69 @@
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: zero-comparable History state ===== */
+@media (min-width: 80rem) {
+  .screen--history.prototype-parity--history .history-comparison-empty {
+    width: min(100%, 54rem);
+    min-height: 14rem;
+    margin: 1rem auto 0;
+    padding: 1.35rem 1.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 36rem);
+    place-content: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: var(--surface);
+    text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+
+  .screen--history.prototype-parity--history .history-comparison-empty small {
+    color: var(--accent);
+    font-size: 0.76rem !important;
+    line-height: 1.3;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+  }
+
+  .screen--history.prototype-parity--history .history-comparison-empty strong {
+    margin-top: 0.1rem;
+    color: var(--ink);
+    font-size: 1.08rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--history.prototype-parity--history .history-comparison-empty p {
+    margin: 0.15rem 0 0;
+    color: var(--muted);
+    font-size: 0.82rem !important;
+    line-height: 1.55;
+  }
+
+  .screen--history.prototype-parity--history .history-comparison-empty a {
+    width: max-content;
+    min-height: 2.75rem;
+    margin: 0.7rem auto 0;
+    padding: 0 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.72rem;
+    background: var(--accent);
+    color: var(--color-on-accent);
+    font-size: 0.84rem !important;
+    line-height: 1.2;
+    font-weight: 850;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .screen--history.prototype-parity--history .history-comparison-empty + .comparison-side {
+    width: min(100%, 54rem);
+    margin: 0.8rem auto 0;
+  }
+}
