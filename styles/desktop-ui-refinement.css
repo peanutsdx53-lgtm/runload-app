@@ -2243,3 +2243,43 @@
     display: block !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: HOME typography without changing the approved layout ===== */
+@media (min-width: 80rem) {
+  .screen--home.prototype-parity--home {
+    font-family: inherit !important;
+  }
+
+  .screen--home.prototype-parity--home > .page-head .eyebrow,
+  .screen--home.prototype-parity--home > .section .section-head small,
+  .screen--home.prototype-parity--home > .focus .focus-copy small,
+  .screen--home.prototype-parity--home > .focus .source b,
+  .screen--home.prototype-parity--home > .section .card-head small,
+  .screen--home.prototype-parity--home > .section .pill,
+  .screen--home.prototype-parity--home > .section .metrics small,
+  .screen--home.prototype-parity--home > .section .plan small {
+    font-size: 0.76rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--home.prototype-parity--home > .focus .carry {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--home.prototype-parity--home > .focus .source span,
+  .screen--home.prototype-parity--home > .section .plan span {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--home.prototype-parity--home > .section .card-head strong,
+  .screen--home.prototype-parity--home > .section .plan strong {
+    font-size: 0.96rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--home.prototype-parity--home > .section .card {
+    box-shadow: var(--shadow-card) !important;
+  }
+}
