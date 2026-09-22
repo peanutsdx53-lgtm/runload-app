@@ -124,7 +124,7 @@
   }
 
   /* Existing editor shell becomes the common fixed panel instead of its own viewport. */
-  .screen--course-editor.prototype-parity--course .editor.course-derived-frame {
+  .screen--course-editor.screen-layout--course .editor.course-derived-frame {
     position: relative !important;
     inset: auto !important;
     padding: 0 !important;
@@ -132,48 +132,48 @@
     background: var(--color-surface) !important;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-head.course-derived-head {
+  .screen--course-editor.screen-layout--course .editor-head.course-derived-head {
     position: relative !important;
     top: auto !important;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-main.course-derived-body {
+  .screen--course-editor.screen-layout--course .editor-main.course-derived-body {
     width: 100% !important;
     max-width: none !important;
     padding: 1.35rem 1.5rem 1.65rem !important;
   }
 
   /* ===== Course Library ===== */
-  .screen--course-library.prototype-parity--course .course-derived-body {
+  .screen--course-library.screen-layout--course .course-derived-body {
     display: grid !important;
     grid-template-columns: minmax(0, 1.5fr) minmax(20rem, 0.75fr) !important;
     gap: 1.05rem 1.25rem !important;
     align-content: start;
   }
 
-  .screen--course-library.prototype-parity--course .head {
+  .screen--course-library.screen-layout--course .head {
     grid-column: 1 / -1;
     margin: 0 !important;
   }
 
-  .screen--course-library.prototype-parity--course .head .eyebrow {
+  .screen--course-library.screen-layout--course .head .eyebrow {
     font-size: 0.72rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .head h1 {
+  .screen--course-library.screen-layout--course .head h1 {
     margin-top: 0.25rem !important;
     font-size: 2rem !important;
     line-height: 1.08;
   }
 
-  .screen--course-library.prototype-parity--course .head p:last-child {
+  .screen--course-library.screen-layout--course .head p:last-child {
     margin: 0.42rem 0 0 !important;
     color: var(--color-muted);
     font-size: 0.86rem !important;
     line-height: 1.45;
   }
 
-  .screen--course-library.prototype-parity--course .current {
+  .screen--course-library.screen-layout--course .current {
     grid-column: 1 / -1;
     width: 100% !important;
     margin: 0 !important;
@@ -182,51 +182,51 @@
     border-radius: 1rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .current small {
+  .screen--course-library.screen-layout--course .current small {
     font-size: 0.72rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .current strong {
+  .screen--course-library.screen-layout--course .current strong {
     margin-top: 0.18rem !important;
     font-size: 1.12rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .current span,
-  .screen--course-library.prototype-parity--course .current b {
+  .screen--course-library.screen-layout--course .current span,
+  .screen--course-library.screen-layout--course .current b {
     font-size: 0.78rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .saved-section,
-  .screen--course-library.prototype-parity--course .assist-section {
+  .screen--course-library.screen-layout--course .saved-section,
+  .screen--course-library.screen-layout--course .assist-section {
     width: 100% !important;
     min-width: 0;
     margin: 0 !important;
   }
 
-  .screen--course-library.prototype-parity--course .saved-section {
+  .screen--course-library.screen-layout--course .saved-section {
     grid-column: 1;
   }
 
-  .screen--course-library.prototype-parity--course .assist-section {
+  .screen--course-library.screen-layout--course .assist-section {
     grid-column: 2;
   }
 
-  .screen--course-library.prototype-parity--course .section-head {
+  .screen--course-library.screen-layout--course .section-head {
     min-height: 3.1rem;
     align-items: end !important;
     gap: 0.8rem;
   }
 
-  .screen--course-library.prototype-parity--course .section-head small {
+  .screen--course-library.screen-layout--course .section-head small {
     font-size: 0.7rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .section-head h2 {
+  .screen--course-library.screen-layout--course .section-head h2 {
     margin-top: 0.18rem !important;
     font-size: 1.16rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .new {
+  .screen--course-library.screen-layout--course .new {
     min-height: 2.65rem !important;
     padding: 0 0.85rem !important;
     display: inline-flex;
@@ -235,32 +235,32 @@
     font-size: 0.82rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .list {
+  .screen--course-library.screen-layout--course .list {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.75rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .card {
+  .screen--course-library.screen-layout--course .card {
     min-width: 0;
     padding: 0.9rem !important;
     border-radius: 0.9rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .card-head strong {
+  .screen--course-library.screen-layout--course .card-head strong {
     font-size: 0.94rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .card-head span,
-  .screen--course-library.prototype-parity--course .fact small,
-  .screen--course-library.prototype-parity--course .empty-course-card p {
+  .screen--course-library.screen-layout--course .card-head span,
+  .screen--course-library.screen-layout--course .fact small,
+  .screen--course-library.screen-layout--course .empty-course-card p {
     font-size: 0.72rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .fact strong {
+  .screen--course-library.screen-layout--course .fact strong {
     font-size: 0.82rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .import-helper {
+  .screen--course-library.screen-layout--course .import-helper {
     width: 100% !important;
     margin: 0.65rem 0 0 !important;
     padding: 0.9rem !important;
@@ -269,54 +269,54 @@
     border-radius: 0.9rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .import-helper small {
+  .screen--course-library.screen-layout--course .import-helper small {
     font-size: 0.7rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .import-helper strong {
+  .screen--course-library.screen-layout--course .import-helper strong {
     font-size: 0.92rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .import-helper span {
+  .screen--course-library.screen-layout--course .import-helper span {
     font-size: 0.74rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .import-helper a {
+  .screen--course-library.screen-layout--course .import-helper a {
     min-height: 2.65rem;
     justify-content: center;
     font-size: 0.8rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .boundary {
+  .screen--course-library.screen-layout--course .boundary {
     grid-column: 1 / -1;
     margin: 0 !important;
     font-size: 0.74rem !important;
   }
 
   /* ===== Course Editor ===== */
-  .screen--course-editor.prototype-parity--course .editor-main > .eyebrow {
+  .screen--course-editor.screen-layout--course .editor-main > .eyebrow {
     font-size: 0.72rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-main > h1 {
+  .screen--course-editor.screen-layout--course .editor-main > h1 {
     margin: 0.24rem 0 0 !important;
     font-size: 2rem !important;
     line-height: 1.08;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-main > p {
+  .screen--course-editor.screen-layout--course .editor-main > p {
     margin: 0.42rem 0 0 !important;
     font-size: 0.84rem !important;
     line-height: 1.45;
   }
 
-  .screen--course-editor.prototype-parity--course #course-editor-form {
+  .screen--course-editor.screen-layout--course #course-editor-form {
     display: grid;
     gap: 0.9rem;
     margin-top: 1rem;
   }
 
-  .screen--course-editor.prototype-parity--course .e-card {
+  .screen--course-editor.screen-layout--course .e-card {
     width: 100% !important;
     margin: 0 !important;
     padding: 1.05rem 1.15rem !important;
@@ -324,162 +324,162 @@
     box-shadow: none !important;
   }
 
-  .screen--course-editor.prototype-parity--course .e-title b {
+  .screen--course-editor.screen-layout--course .e-title b {
     width: 2.4rem !important;
     height: 2.4rem !important;
     font-size: 0.82rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .e-title small {
+  .screen--course-editor.screen-layout--course .e-title small {
     font-size: 0.72rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .e-title h2 {
+  .screen--course-editor.screen-layout--course .e-title h2 {
     margin-top: 0.1rem !important;
     font-size: 1.18rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .field {
+  .screen--course-editor.screen-layout--course .field {
     gap: 0.36rem !important;
     margin-top: 0.8rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .field > span,
-  .screen--course-editor.prototype-parity--course .mfield > span,
-  .screen--course-editor.prototype-parity--course .section-field > span {
+  .screen--course-editor.screen-layout--course .field > span,
+  .screen--course-editor.screen-layout--course .mfield > span,
+  .screen--course-editor.screen-layout--course .section-field > span {
     font-size: 0.8rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .field input,
-  .screen--course-editor.prototype-parity--course .field select,
-  .screen--course-editor.prototype-parity--course .section-field select,
-  .screen--course-editor.prototype-parity--course .percent-control {
+  .screen--course-editor.screen-layout--course .field input,
+  .screen--course-editor.screen-layout--course .field select,
+  .screen--course-editor.screen-layout--course .section-field select,
+  .screen--course-editor.screen-layout--course .percent-control {
     min-height: 3rem !important;
     font-size: 0.94rem !important;
     border-radius: 0.72rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course input[name="courseName"] {
+  .screen--course-editor.screen-layout--course input[name="courseName"] {
     width: min(100%, 36rem) !important;
   }
 
-  .screen--course-editor.prototype-parity--course .mode {
+  .screen--course-editor.screen-layout--course .mode {
     margin-top: 0.8rem !important;
     padding: 0.3rem !important;
     gap: 0.3rem !important;
     border-radius: 0.8rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .grade-mode {
+  .screen--course-editor.screen-layout--course .grade-mode {
     width: min(100%, 46rem) !important;
   }
 
-  .screen--course-editor.prototype-parity--course .mode.three {
+  .screen--course-editor.screen-layout--course .mode.three {
     width: min(100%, 34rem) !important;
   }
 
-  .screen--course-editor.prototype-parity--course .mode button {
+  .screen--course-editor.screen-layout--course .mode button {
     min-height: 3rem !important;
     padding-inline: 0.75rem !important;
     border-radius: 0.58rem !important;
     font-size: 0.84rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .note,
-  .screen--course-editor.prototype-parity--course .support-copy {
+  .screen--course-editor.screen-layout--course .note,
+  .screen--course-editor.screen-layout--course .support-copy {
     font-size: 0.76rem !important;
     line-height: 1.45;
   }
 
-  .screen--course-editor.prototype-parity--course .gpx-inline {
+  .screen--course-editor.screen-layout--course .gpx-inline {
     margin-top: 0.8rem !important;
     min-height: 3.7rem !important;
     padding: 0.7rem 0.85rem !important;
     border-radius: 0.78rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .gpx-inline small {
+  .screen--course-editor.screen-layout--course .gpx-inline small {
     font-size: 0.68rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .gpx-inline strong {
+  .screen--course-editor.screen-layout--course .gpx-inline strong {
     font-size: 0.86rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .preview {
+  .screen--course-editor.screen-layout--course .preview {
     width: 100% !important;
     margin: 0 !important;
     padding: 1rem 1.1rem !important;
     border-radius: 1rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .preview > h2 {
+  .screen--course-editor.screen-layout--course .preview > h2 {
     font-size: 1rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .preview > strong {
+  .screen--course-editor.screen-layout--course .preview > strong {
     font-size: 1.12rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .preview-grid small {
+  .screen--course-editor.screen-layout--course .preview-grid small {
     font-size: 0.7rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .preview-grid span {
+  .screen--course-editor.screen-layout--course .preview-grid span {
     font-size: 0.82rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-actions {
+  .screen--course-editor.screen-layout--course .editor-actions {
     width: 100% !important;
     margin: 0 !important;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-actions .primary {
+  .screen--course-editor.screen-layout--course .editor-actions .primary {
     min-height: 3.25rem !important;
     font-size: 0.92rem !important;
   }
 
   /* ===== GPX ===== */
-  .screen--gpx-analysis.prototype-parity--gpx .course-derived-body {
+  .screen--gpx-analysis.screen-layout--gpx .course-derived-body {
     display: grid !important;
     gap: 0.9rem !important;
     align-content: start;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .intro,
-  .screen--gpx-analysis.prototype-parity--gpx .import-card,
-  .screen--gpx-analysis.prototype-parity--gpx .status-card,
-  .screen--gpx-analysis.prototype-parity--gpx .candidate-card,
-  .screen--gpx-analysis.prototype-parity--gpx .compact-boundary,
-  .screen--gpx-analysis.prototype-parity--gpx .profile-card,
-  .screen--gpx-analysis.prototype-parity--gpx .summary-grid,
-  .screen--gpx-analysis.prototype-parity--gpx #gpx-result-area {
+  .screen--gpx-analysis.screen-layout--gpx .intro,
+  .screen--gpx-analysis.screen-layout--gpx .import-card,
+  .screen--gpx-analysis.screen-layout--gpx .status-card,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-card,
+  .screen--gpx-analysis.screen-layout--gpx .compact-boundary,
+  .screen--gpx-analysis.screen-layout--gpx .profile-card,
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid,
+  .screen--gpx-analysis.screen-layout--gpx #gpx-result-area {
     width: 100% !important;
     max-width: none !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .intro {
+  .screen--gpx-analysis.screen-layout--gpx .intro {
     margin: 0 !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .intro .eyebrow {
+  .screen--gpx-analysis.screen-layout--gpx .intro .eyebrow {
     font-size: 0.72rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .intro h1 {
+  .screen--gpx-analysis.screen-layout--gpx .intro h1 {
     margin-top: 0.25rem !important;
     font-size: 2rem !important;
     line-height: 1.08;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .intro p:last-child {
+  .screen--gpx-analysis.screen-layout--gpx .intro p:last-child {
     margin-top: 0.42rem !important;
     font-size: 0.84rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .import-card {
+  .screen--gpx-analysis.screen-layout--gpx .import-card {
     margin: 0 !important;
     padding: 1.1rem 1.2rem !important;
     display: grid !important;
@@ -490,22 +490,22 @@
     box-shadow: none !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .import-copy small {
+  .screen--gpx-analysis.screen-layout--gpx .import-copy small {
     font-size: 0.7rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .import-copy h2 {
+  .screen--gpx-analysis.screen-layout--gpx .import-copy h2 {
     margin-top: 0.2rem !important;
     font-size: 1.2rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .import-copy p {
+  .screen--gpx-analysis.screen-layout--gpx .import-copy p {
     margin-top: 0.35rem !important;
     font-size: 0.8rem !important;
     line-height: 1.45;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .file-button {
+  .screen--gpx-analysis.screen-layout--gpx .file-button {
     grid-column: 2;
     grid-row: 1;
     width: 16rem !important;
@@ -515,104 +515,104 @@
     font-size: 0.88rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .import-meta {
+  .screen--gpx-analysis.screen-layout--gpx .import-meta {
     grid-column: 1 / -1;
     margin: 0 !important;
     gap: 0.45rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .import-meta span {
+  .screen--gpx-analysis.screen-layout--gpx .import-meta span {
     font-size: 0.7rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .gpx-help,
-  .screen--gpx-analysis.prototype-parity--gpx .file-note {
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help,
+  .screen--gpx-analysis.screen-layout--gpx .file-note {
     grid-column: 1 / -1;
     margin: 0 !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .gpx-help summary {
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help summary {
     min-height: 3.3rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .gpx-help summary strong {
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help summary strong {
     font-size: 0.84rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .gpx-help summary small,
-  .screen--gpx-analysis.prototype-parity--gpx .file-note,
-  .screen--gpx-analysis.prototype-parity--gpx .gpx-help-body p {
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help summary small,
+  .screen--gpx-analysis.screen-layout--gpx .file-note,
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help-body p {
     font-size: 0.74rem !important;
     line-height: 1.45;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .status-card {
+  .screen--gpx-analysis.screen-layout--gpx .status-card {
     margin: 0 !important;
     padding: 0.75rem 0.85rem !important;
     border-radius: 0.78rem !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .result-head {
+  .screen--gpx-analysis.screen-layout--gpx .result-head {
     margin-top: 0.35rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .result-head h2 {
+  .screen--gpx-analysis.screen-layout--gpx .result-head h2 {
     font-size: 1.18rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .result-head small,
-  .screen--gpx-analysis.prototype-parity--gpx .profile-heading small,
-  .screen--gpx-analysis.prototype-parity--gpx .candidate-heading small {
+  .screen--gpx-analysis.screen-layout--gpx .result-head small,
+  .screen--gpx-analysis.screen-layout--gpx .profile-heading small,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-heading small {
     font-size: 0.7rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .profile-card,
-  .screen--gpx-analysis.prototype-parity--gpx .candidate-card {
+  .screen--gpx-analysis.screen-layout--gpx .profile-card,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-card {
     padding: 1rem !important;
     border-radius: 1rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .profile-heading strong,
-  .screen--gpx-analysis.prototype-parity--gpx .candidate-heading h2 {
+  .screen--gpx-analysis.screen-layout--gpx .profile-heading strong,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-heading h2 {
     font-size: 1rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .profile-frame #gpx-profile-svg {
+  .screen--gpx-analysis.screen-layout--gpx .profile-frame #gpx-profile-svg {
     width: 100% !important;
     min-height: 17rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .summary-grid {
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     gap: 0.7rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .summary-grid article {
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid article {
     min-width: 0;
     padding: 0.85rem !important;
     border-radius: 0.85rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .summary-grid small,
-  .screen--gpx-analysis.prototype-parity--gpx .summary-grid span,
-  .screen--gpx-analysis.prototype-parity--gpx .candidate-values small,
-  .screen--gpx-analysis.prototype-parity--gpx .candidate-values span,
-  .screen--gpx-analysis.prototype-parity--gpx .compact-boundary {
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid small,
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid span,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values small,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values span,
+  .screen--gpx-analysis.screen-layout--gpx .compact-boundary {
     font-size: 0.72rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .summary-grid strong,
-  .screen--gpx-analysis.prototype-parity--gpx .candidate-values strong {
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid strong,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values strong {
     font-size: 1rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .candidate-values {
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 0.7rem !important;
   }
 
-  .screen--gpx-analysis.prototype-parity--gpx .primary-action {
+  .screen--gpx-analysis.screen-layout--gpx .primary-action {
     min-height: 3.2rem !important;
     font-size: 0.9rem !important;
   }
@@ -629,7 +629,7 @@
     max-width: 68rem !important;
   }
 
-  .screen--course-library.prototype-parity--course .course-derived-body {
+  .screen--course-library.screen-layout--course .course-derived-body {
     grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.75fr) !important;
   }
 }
