@@ -28,6 +28,12 @@ jobs:
             count=$((count+1))
           done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0)
           echo "SYNTAX_FILES=$count"
+      - name: Verify runtime SHA manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c RUNTIME_SHA256SUMS.txt
+          echo "RUNTIME_SHA_ENTRIES=$(wc -l < RUNTIME_SHA256SUMS.txt)"
       - name: Run all test suites
         shell: bash
         run: |
