@@ -2061,3 +2061,45 @@
     font-family: var(--font-sans) !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: Settings field sizing by content ===== */
+@media (min-width: 80rem) {
+  /* Long text/select fields stay moderate instead of stretching across the panel. */
+  .screen--settings.prototype-parity--settings .disclosure-body > .fields.two-fields {
+    width: auto !important;
+    grid-template-columns: 22rem 20rem !important;
+    gap: 0.85rem !important;
+    justify-content: start;
+  }
+
+  /* Height/weight are short numeric values; age/sex need slightly wider selects. */
+  .screen--settings.prototype-parity--settings .subdetails-body > .fields.two-fields {
+    width: auto !important;
+    grid-template-columns: 11rem 11rem 16rem 16rem !important;
+    gap: 0.8rem !important;
+    justify-content: start;
+    align-items: end;
+  }
+
+  .screen--settings.prototype-parity--settings .subdetails-body > .fields.two-fields .field {
+    min-width: 0;
+  }
+
+  /* Four compact counters belong on one desktop row; descriptive ABOUT cards remain 2 x 2. */
+  .screen--settings.prototype-parity--settings .data-overview {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--settings.prototype-parity--settings .about-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 86rem) {
+  .screen--settings.prototype-parity--settings .subdetails-body > .fields.two-fields {
+    grid-template-columns: 10rem 10rem 14rem 14rem !important;
+  }
+}
