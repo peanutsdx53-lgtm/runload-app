@@ -1,4 +1,4 @@
-/* Candidate only. Not linked from index.html until V3 integration is approved. */
+/* Opt-in Interpretation V3 preview. Default Interpretation remains V2 until approval. */
 .interpretation-v3 {
   --v3-reading-width: 46rem;
   display: grid;
@@ -163,29 +163,6 @@
   opacity: 0.78;
   stroke-width: 2.6;
 }
-
-.interpretation-v3-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem 0.8rem;
-  margin-top: 0.75rem;
-  color: var(--color-muted);
-  font-size: 0.72rem;
-}
-.interpretation-v3-legend span::before {
-  content: "";
-  display: inline-block;
-  width: 0.65rem;
-  height: 0.65rem;
-  margin-right: 0.35rem;
-  border: 1px solid var(--color-map-line);
-  border-radius: 50%;
-  vertical-align: -0.05rem;
-}
-.interpretation-v3-legend span[data-kind="above"]::before { background: var(--color-map-high); }
-.interpretation-v3-legend span[data-kind="near"]::before { background: var(--color-map-middle); }
-.interpretation-v3-legend span[data-kind="below"]::before { background: var(--color-map-low); }
-.interpretation-v3-legend span[data-kind="unavailable"]::before { background: transparent; border-style: dashed; }
 
 .interpretation-v3-overview-groups {
   display: grid;
