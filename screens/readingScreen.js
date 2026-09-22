@@ -1,13 +1,7 @@
-import { escapeHtml, renderEmptyState, renderPageHeading, renderStatusLabel } from "../ui/commonComponents.js";
-import {
-  V27_EMPHASIS_REGION_IDS,
-  V27_REGIONS,
-} from "../core/runloadCore.js";
-import { BODY_AREA_BY_ID } from "../core/runloadCore.js";
-import {
-  formatActivitySummary,
-  formatLocalDate,
-} from "../ui/recordPresentation.js";
+import { escapeHtml, renderStatusLabel } from "../ui/commonComponents.js";
+import { V27_EMPHASIS_REGION_IDS, V27_REGIONS, BODY_AREA_BY_ID } from "../core/runloadCore.js";
+
+import { formatActivitySummary } from "../ui/recordPresentation.js";
 
 const REGION_BY_ID = new Map(V27_REGIONS.map((region) => [region.id, region]));
 const DEFERRED_READING_ARTICLE_IDS = new Set(["rpe-separated", "model-total-v27"]);
@@ -186,31 +180,6 @@ function resolveColumnTargetExperience(services, context) {
   return Object.freeze({ experience, allExperiences, targetKind });
 }
 
-function renderFeaturedArticle(recommendation, experience, targetKind = "latest") {
-  const article = recommendation?.article || null;
-  if (!article) return "";
-  const targetLabel = targetKind === "latest" ? "最新記録" : targetKind === "none" ? "基礎記事" : "対象記録";
-  return `<section class="column-front-page" aria-labelledby="column-feature-title"><div class="column-front-page__body"><div><p>おすすめの読みもの</p><h2 id="column-feature-title">${escapeHtml(article.title)}</h2><p>${escapeHtml(article.lead)}</p><a class="button button--primary" href="${escapeHtml(articleHref(article.id, "featured"))}">この記事を読む</a></div><details class="column-recommendation-reason"><summary>この内容を選んだ理由</summary><p>${escapeHtml(recommendation.reason || "記録と読みものの対応から選びました。")}</p>${experience ? `<p><strong>${escapeHtml(targetLabel)}：</strong>${escapeHtml(formatActivitySummary(experience.record))}</p>` : ""}<p>記事は記録を見返すための一般知識です。</p></details></div></section>`;
-}
-
-
-function renderArticleSections(articles, categories, featuredId) {
-  return categories.map((category) => {
-    const categoryArticles = articles.filter((article) => article.category === category && article.id !== featuredId);
-    if (!categoryArticles.length) return "";
-    const descriptions = {
-      "結果の読み方": "12部位の目安、身体の記録、疲労感の記録の違いを説明します。",
-      "入力と振り返り": "本人が記録した事実や自分で感じたこと、過去比較、予定を分けて見返します。",
-      "走りとのつき合い方": "練習量、目標、生活や環境の背景を、一つの正解や評価に変えずに考えます。",
-      "走る前・走っている間": "睡眠、暑さ、会話のしやすさを、一つの数値や基準だけで決めずに考えます。",
-      "走った後の整え方": "クールダウン、水分、食事を、一つの方法や量だけで決めずに考えます。",
-      "部位・コース": "坂・路面・値が表す内容と限界を確認します。",
-      "相談・共有": "身体の記録と数値表示を区別し、共有資料の範囲を整えます。",
-    };
-    return `<section class="column-section" aria-labelledby="column-${escapeHtml(category)}"><div class="section-heading"><p>カテゴリ</p><h2 id="column-${escapeHtml(category)}">${escapeHtml(category)}</h2><p>${escapeHtml(descriptions[category] || "関連する記事です。")}</p></div><div class="article-grid">${categoryArticles.map((article) => renderArticleCard(article)).join("")}</div></section>`;
-  }).join("");
-}
-
 function sourceKey(source = {}) {
   return source.sourceId || [source.organization || "", source.title || "", source.url || ""].join("|");
 }
@@ -237,44 +206,6 @@ function sourceBeginnerNote(source = {}) {
   if (["systematicReview", "scopingReview", "reviewPaper", "clinicalReview"].includes(type)) return "記事の背景を整理するために参照した資料です。個別の診断や効果判定には使いません。";
   return "記事を書くときに参考にした資料です。";
 }
-
-function renderSourceIndex(allArticles) {
-  const rows = new Map();
-  allArticles.forEach((article) => (article.sources || [])
-    .filter(isUserFacingSource)
-    .forEach((source) => {
-      const key = sourceKey(source);
-      const existing = rows.get(key) || { source, articleTitles: [] };
-      if (!existing.articleTitles.includes(article.title)) existing.articleTitles.push(article.title);
-      rows.set(key, existing);
-    }));
-  const groups = [...rows.values()].sort((left, right) => (
-    String(left.source.sourceTypeLabel || "").localeCompare(String(right.source.sourceTypeLabel || ""), "ja")
-    || String(left.source.organization || "").localeCompare(String(right.source.organization || ""), "ja")
-  ));
-  if (!groups.length) return "";
-  return `<details class="column-source-index"><summary><span><strong>記事の参考資料</strong><small>読みものの背景として参照した公開資料です。必要なときだけ確認できます。</small></span></summary><div class="column-source-index__body">${groups.map(({ source, articleTitles }) => `<article><div><p>${renderStatusLabel(sourceBeginnerLabel(source), "neutral")}</p><h3>${escapeHtml(source.organization || "参考資料")}</h3><p>${escapeHtml(source.title || "")}</p><small>関連する読みもの：${escapeHtml(articleTitles.slice(0, 4).join("／"))}${articleTitles.length > 4 ? " ほか" : ""}</small></div>${source.url ? `<a class="text-link" href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">資料ページを開く<span class="visually-hidden external-link-note">（新しいタブで開きます）</span></a>` : ""}</article>`).join("")}</div></details>`;
-}
-
-function renderArticleDetail(article, related, services, origin = "", recordId = "", regionId = "") {
-  const cautionLine = article.caution
-    ? `<p><strong>この読み物の補足：</strong>${escapeHtml(article.caution)}</p>`
-    : "";
-  const publicSources = (article.sources || []).filter(isUserFacingSource);
-  return `<article class="column-article">
-    <header class="column-article__header"><p>${escapeHtml(article.category)}</p><h1>${escapeHtml(article.title)}</h1><p>${escapeHtml(article.lead)}</p><div class="article-meta"><span>記事更新 ${escapeHtml(article.lastReviewed || "未記載")}</span><span>${(article.tags || []).map(escapeHtml).join("・")}</span></div></header>
-    ${origin === "featured" ? '<p class="column-article-origin">おすすめの読みものから開いた記事です。</p>' : ""}${origin === "goal" ? '<p class="column-article-origin">設定した記録目的の入口から開いた記事です。目的は数値や優先順位には使いません。</p>' : ""}
-    ${origin === "result-condition" ? `<aside class="column-article-origin column-article-origin--result"><p>この読みものは、選択した部位の「今回の記録を振り返るヒント」から開いています。</p>${recordId && regionId ? `<a class="text-link" href="#/body-part-detail?recordId=${encodeURIComponent(recordId)}&regionId=${encodeURIComponent(regionId)}">元の部位結果へ戻る</a>` : ""}</aside>` : ""}
-    <aside class="editorial-boundary"><p>${renderStatusLabel("一般知識", "neutral")}</p><p>この記事は、自分の記録を見返すための一般的な学習資料です。個別の診断・処方・運動可否判断には使用しません。</p>${cautionLine}</aside>
-    <section class="article-summary"><h2>この記事の要点</h2><p>${escapeHtml(article.summary)}</p></section>
-    <div class="article-body">${(article.body || []).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>
-    ${(article.practicePoints || []).length ? `<section><h2>記録へ生かすヒント</h2><ul>${article.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></section>` : ""}
-    ${publicSources.length ? `<section class="article-sources"><h2>参考資料</h2><p class="source-boundary">この記事の背景として参照した公開資料です。個別の身体状態を決めるものではありません。</p>${publicSources.map((source) => `<article><p>${renderStatusLabel(sourceBeginnerLabel(source), "neutral")}</p><h3>${escapeHtml(source.title)}</h3><p>${escapeHtml(source.organization)}・${escapeHtml(source.year)}</p><p>${escapeHtml(sourceBeginnerNote(source))}</p>${source.url ? `<a class="text-link" href="${escapeHtml(source.url)}" target="_blank" rel="noreferrer">資料ページを開く<span class="visually-hidden external-link-note">（新しいタブで開きます）</span></a>` : ""}</article>`).join("")}</section>` : ""}
-    ${related ? `<aside class="related-article"><p>関連する読みもの</p><h2>${escapeHtml(related.title)}</h2><p>${escapeHtml(related.lead)}</p><a class="button button--secondary" href="${escapeHtml(articleHref(related.id))}">関連記事を読む</a></aside>` : ""}
-    <a class="button button--text" data-context-back-duplicate href="#/reading">記事一覧へ戻る</a>
-  </article>`;
-}
-
 
 const READING_ITEMS = Object.freeze([
   Object.freeze({ id: "regional-three-views", filter: "result" }),
