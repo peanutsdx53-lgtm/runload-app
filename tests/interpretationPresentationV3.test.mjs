@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderInterpretationRoomV3 } from '../ui/interpretationRoomPresentationV3.js';
+import { renderInterpretationRoom } from '../ui/interpretationRoomPresentation.js';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(here,'..');
@@ -93,7 +93,7 @@ function baseOutput({selected=true}={}){
 }
 
 await test('OVERVIEW-STARTS-WITH-WHOLE-BODY-NOT-QUESTION-MENU',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput({selected:false})});
+  const html=renderInterpretationRoom({output:baseOutput({selected:false})});
   assert.match(html,/今回の身体を部位ごとに見る/);
   assert.match(html,/部位ごとの位置を確認/);
   assert.match(html,/まず1部位を選びます/);
@@ -102,7 +102,7 @@ await test('OVERVIEW-STARTS-WITH-WHOLE-BODY-NOT-QUESTION-MENU',()=>{
 });
 
 await test('OVERVIEW-DOES-NOT-DUMP-TWELVE-NUMERIC-VALUES',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput({selected:false})});
+  const html=renderInterpretationRoom({output:baseOutput({selected:false})});
   assert.match(html,/股関節部：基準100より上側/);
   assert.match(html,/殿部：基準100付近/);
   assert.doesNotMatch(html,/>112</);
@@ -110,15 +110,15 @@ await test('OVERVIEW-DOES-NOT-DUMP-TWELVE-NUMERIC-VALUES',()=>{
 });
 
 await test('OVERVIEW-EXPLAINS-NO-CROSS-REGION-RANKING',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput({selected:false})});
+  const html=renderInterpretationRoom({output:baseOutput({selected:false})});
   assert.match(html,/部位どうしの数値を順位付けする図ではありません/);
 });
 
 await test('OVERVIEW-ADDS-NONCOLOR-DIRECTION-GROUPING',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput({selected:false})});
+  const html=renderInterpretationRoom({output:baseOutput({selected:false})});
   assert.match(html,/今回の分かれ方/);
-  assert.doesNotMatch(html,/class="interpretation-v3-legend"/);
-  assert.match(html,/interpretation-v3-overview-group-name/);
+  assert.doesNotMatch(html,/class="interpretation-room-legend"/);
+  assert.match(html,/interpretation-room-overview-group-name/);
   assert.match(html,/基準より上側/);
   assert.match(html,/基準付近/);
   assert.match(html,/基準より下側/);
@@ -126,16 +126,16 @@ await test('OVERVIEW-ADDS-NONCOLOR-DIRECTION-GROUPING',()=>{
 });
 
 await test('SELECTED-VIEW-DOES-NOT-REPEAT-WHOLE-BODY-MAP',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput()});
+  const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/股関節部の結果を整理/);
   assert.match(html,/身体全体から選び直す/);
-  assert.doesNotMatch(html,/class="interpretation-v3-map"/);
+  assert.doesNotMatch(html,/class="interpretation-room-map"/);
   assert.doesNotMatch(html,/部位名から選ぶ/);
   assert.match(html,/<span>1<\/span><div><small>選んだ部位を見る<\/small>/);
 });
 
 await test('SELECTED-REGION-SHOWS-NUMBER-WITH-REFERENCE-AND-PREVIOUS',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput()});
+  const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/基準100より上側/);
   assert.match(html,/>112</);
   assert.match(html,/基準100との差 \+12/);
@@ -146,13 +146,13 @@ await test('SELECTED-REGION-SHOWS-NUMBER-WITH-REFERENCE-AND-PREVIOUS',()=>{
 await test('NO-HISTORY-EXPLAINS-WHAT-THE-CURRENT-VALUE-BECOMES',()=>{
   const out=baseOutput();
   out.selectedRegion.previousComparison={available:false,recordId:'',date:'',previousValue:null,currentValue:null,difference:null,direction:'NONE'};
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.match(html,/同じ方法で比べられる過去記録はまだありません/);
   assert.match(html,/今回の値を次回の比較点として使えます/);
 });
 
 await test('EXACT-CALCULATION-PATH-IS-SIMPLE-AND-NONCAUSAL',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput()});
+  const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/この数値に使われた情報/);
   assert.match(html,/距離/);
   assert.match(html,/5 km/);
@@ -173,7 +173,7 @@ await test('RUN-WALK-COPY-USES-RUNNING-PHASE-NOT-WHOLE-RUN',()=>{
       {id:'SPEED',value:2.6388889,role:'PRIMARY_NUMERIC_ROUTE'},
     ],
   });
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.match(html,/走った区間の距離/);
   assert.match(html,/走った区間の時間/);
   assert.match(html,/走った区間から計算/);
@@ -186,7 +186,7 @@ await test('SEGMENTED-PATH-DOES-NOT-PRETEND-EXACT-PER-SEGMENT-ROUTE',()=>{
     activeRoute:'SECTION_COMPOSED',
     exposure:{type:'SEGMENTED',distanceKm:5,durationMinutes:30,speedMps:2.8,segmentCount:3},
   });
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.match(html,/3区間/);
   assert.match(html,/区間ごとに計算/);
   assert.match(html,/距離に応じてまとめる/);
@@ -200,7 +200,7 @@ await test('CONDITIONAL-INPUT-IS-NOT-CALLED-APPLIED',()=>{
     activeRoute:'SPEED_WITH_CONDITIONAL_INPUTS',
     conditionalInputs:[{id:'CADENCE',value:172,role:'CONDITIONAL_NUMERIC_ROUTE'}],
   });
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.match(html,/関係する条件として記録されています/);
   assert.match(html,/ピッチ/);
   assert.match(html,/172 spm/);
@@ -216,14 +216,14 @@ await test('CONTEXT-ONLY-INPUTS-ARE-CLEARLY-SEPARATED',()=>{
       {id:'GRADE',value:'RECORDED',role:'NOT_ACTIVE_FOR_THIS_REGION'},
     ],
   });
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.match(html,/記録はあるが、この部位の現在の数値計算には使わない情報/);
   assert.match(html,/路面/);
   assert.match(html,/坂/);
 });
 
 await test('ROF-EXACT-DESCRIPTORS-ARE-SHOWN-WITH-NUMBERS',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput()});
+  const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/走る前/);
   assert.match(html,/4<em>\/10/);
   assert.match(html,/少し疲れている/);
@@ -235,7 +235,7 @@ await test('ROF-UNLABELED-VALUE-USES-OFFICIAL-ANCHORS',()=>{
   const out=baseOutput();
   out.subjectiveContext.post={available:true,value:3,descriptorType:'BETWEEN_ANCHORS',descriptor:'',lowerAnchor:{value:2,descriptor:'まったく疲れていない'},upperAnchor:{value:4,descriptor:'少し疲れている'}};
   out.subjectiveContext.difference={eligible:true,value:-1,direction:'DOWN'};
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.match(html,/2「まったく疲れていない」と4「少し疲れている」の間/);
   assert.doesNotMatch(html,/やや疲れている/);
 });
@@ -244,26 +244,26 @@ await test('NO-SUBJECTIVE-RECORD-OMITS-SUBJECTIVE-SECTION',()=>{
   const out=baseOutput();
   out.state.subjective='NONE';
   out.subjectiveContext={state:'NONE',pre:{available:false},post:{available:false},difference:{eligible:false},recentReferences:{},boundaryTokens:[]};
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.doesNotMatch(html,/走る前後の疲れ/);
 });
 
 await test('UNDERSTANDING-PAIRS-KNOWN-AND-UNKNOWN',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput()});
+  const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/今回確認できること/);
   assert.match(html,/ここからは決められないこと/);
   assert.match(html,/身体的な原因やけがの可能性は判断できません/);
 });
 
 await test('NEXT-ACTION-USES-USER-GOAL-NOT-FEATURE-NAME',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput()});
+  const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/条件を変えた表示を確かめる/);
   assert.doesNotMatch(html,/>Simulation</);
   assert.match(html,/from=interpretation-room/);
 });
 
 await test('DERIVED-ACTIONS-PRESERVE-INTERPRETATION-CONTEXT',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput()});
+  const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/次の走りや休養を準備する/);
   assert.doesNotMatch(html,/次回確認したいことを残す/);
   for(const destination of ['simulation','plan','consultation','reading']) {
@@ -275,16 +275,16 @@ await test('DERIVED-ACTIONS-PRESERVE-INTERPRETATION-CONTEXT',()=>{
 });
 
 await test('ADVANCED-EVIDENCE-IS-COLLAPSED-BEHIND-PLAIN-LANGUAGE',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput()});
-  assert.match(html,/<details class="interpretation-v3-advanced">/);
+  const html=renderInterpretationRoom({output:baseOutput()});
+  assert.match(html,/<details class="interpretation-room-advanced">/);
   assert.match(html,/計算方法と研究上の背景を詳しく見る/);
   assert.match(html,/全文献の完全な一覧ではありません/);
   assert.match(html,/Reference-100/);
 });
 
 await test('BEGINNER-V3-FLOW-OMITS-INTERNAL-JARGON',()=>{
-  const html=renderInterpretationRoomV3({output:baseOutput()});
-  const beginnerHtml=html.replace(/<details class="interpretation-v3-advanced">[\s\S]*?<\/details>/,'');
+  const html=renderInterpretationRoom({output:baseOutput()});
+  const beginnerHtml=html.replace(/<details class="interpretation-room-advanced">[\s\S]*?<\/details>/,'');
   assert.doesNotMatch(beginnerHtml,/ROF-J/);
   assert.doesNotMatch(beginnerHtml,/Reference-100/);
   assert.doesNotMatch(beginnerHtml,/primaryCode/);
@@ -296,7 +296,7 @@ await test('REST-STATE-DOES-NOT-FABRICATE-REGIONAL-RESULTS',()=>{
   out.target.activityType='rest';
   out.state.regional='REST';
   out.overview.regions=[];
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.match(html,/今回は休養の記録です/);
   assert.match(html,/12部位の数値を作りません/);
   assert.doesNotMatch(html,/部位ごとの位置を確認/);
@@ -306,7 +306,7 @@ await test('LEGACY-STATE-DOES-NOT-REINTERPRET-AS-CURRENT',()=>{
   const out=baseOutput({selected:false});
   out.state.legacy=true;
   out.state.regional='LEGACY';
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.match(html,/現在の計算方法とは分けて扱います/);
   assert.match(html,/現在の基準100の結果として読み替えません/);
   assert.doesNotMatch(html,/部位ごとの位置を確認/);
@@ -320,20 +320,20 @@ await test('SUPPORT-STATE-TAKES-PRECEDENCE-OVER-NORMAL-INTERPRETATION',()=>{
     primaryAction:{actionId:'official-help',destination:'support-guidance',parameters:{},enabled:true},
     otherActions:[{actionId:'share',destination:'consultation',parameters:{recordId:'r1'},enabled:true}],
   };
-  const html=renderInterpretationRoomV3({output:out});
+  const html=renderInterpretationRoom({output:out});
   assert.match(html,/先に確認することがあります/);
   assert.match(html,/公的サポートを確認する/);
   assert.doesNotMatch(html,/この数値に使われた情報/);
 });
 
 await test('EMPTY-STATE-HAS-DIRECT-RECORD-ACTION',()=>{
-  const html=renderInterpretationRoomV3({output:{state:{targetAvailable:false}}});
+  const html=renderInterpretationRoom({output:{state:{targetAvailable:false}}});
   assert.match(html,/対象の保存記録がありません/);
   assert.match(html,/#\/record-input/);
 });
 
 await test('V3-CSS-USES-THEME-TOKENS-AND-NO-HARDCODED-HEX-COLORS',()=>{
-  const css=fs.readFileSync(path.join(root,'styles/interpretation-room-v3.css'),'utf8');
+  const css=fs.readFileSync(path.join(root,'styles/interpretation-room.css'),'utf8');
   assert.match(css,/var\(--color-surface\)/);
   assert.match(css,/var\(--color-map-high\)/);
   assert.match(css,/@media \(max-width: 420px\)/);
@@ -341,9 +341,9 @@ await test('V3-CSS-USES-THEME-TOKENS-AND-NO-HARDCODED-HEX-COLORS',()=>{
 });
 
 await test('V3-CSS-DOES-NOT-USE-RED-GREEN-GOOD-BAD-SEMANTICS',()=>{
-  const css=fs.readFileSync(path.join(root,'styles/interpretation-room-v3.css'),'utf8');
+  const css=fs.readFileSync(path.join(root,'styles/interpretation-room.css'),'utf8');
   assert.doesNotMatch(css,/\bred\b|\bgreen\b/i);
-  const presentation=fs.readFileSync(path.join(root,'ui/interpretationRoomPresentationV3.js'),'utf8');
+  const presentation=fs.readFileSync(path.join(root,'ui/interpretationRoomPresentation.js'),'utf8');
   assert.doesNotMatch(presentation,/安全な部位|危険な部位|良い部位|悪い部位/);
 });
 
