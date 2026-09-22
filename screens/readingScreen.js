@@ -309,7 +309,6 @@ function renderPrototypeReading({ services, context }) {
   const regionId = context.parameters.get("regionId") || "";
   const from = context.parameters.get("from") || "";
   const roomOrigin = context.parameters.get("roomOrigin") || "result";
-  const roomExperience = context.parameters.get("roomExperience") || "";
   let backHref = origin === "result-condition" && recordId && regionId
     ? `#/body-part-detail?recordId=${encodeURIComponent(recordId)}&regionId=${encodeURIComponent(regionId)}`
     : "#/more";
@@ -318,7 +317,6 @@ function renderPrototypeReading({ services, context }) {
     const roomQuery = new URLSearchParams();
     if (recordId) roomQuery.set("recordId", recordId);
     roomQuery.set("origin", roomOrigin);
-    if (roomExperience === "v3") roomQuery.set("experience", "v3");
     if (regionId) roomQuery.set("regionId", regionId);
     backHref = `#/interpretation-room?${roomQuery.toString()}`;
     backLabel = "結果の整理へ戻る";
