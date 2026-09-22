@@ -1,4 +1,4 @@
-/* RunLoad desktop layout and screen refinements. */
+/* RunLoad desktop-specific layouts. */
 
 /* ===== Desktop shell ===== */
 /*
@@ -49,8 +49,8 @@
     overflow: visible !important;
   }
 
-  /* Hide any legacy/cached desktop header that is still rendered inside #app.
- Only the dedicated body-level host is allowed on desktop. */
+  /* Hide duplicate desktop headers rendered inside #app.
+ Only the dedicated body-level host is used on desktop. */
   #app .app-header--desktop,
   #app .mobile-topbar {
     display: none !important;
@@ -95,10 +95,9 @@
 }
 
 /*
- * Desktop shell .
- * This file intentionally owns only the fixed desktop header host
- * and the PC record workspace. It is loaded last so legacy UI
- * geometry cannot override these desktop decisions.
+ * Desktop shell.
+ * This file owns the fixed desktop header host and desktop workspace geometry.
+ * It is loaded after shared layouts so desktop-specific geometry takes precedence.
  */
 
 /* The desktop header lives in its own body-level host.
@@ -947,11 +946,9 @@
   }
 }
 
-/* ===== Record desktop refinements ===== */
+/* ===== Record input desktop layout ===== */
 /*
- * Desktop record refinement.
- * Loaded after the desktop shell so record-input geometry can be tuned
- * independently without changing the global shell/header behavior.
+ * Record-input geometry is defined independently from the global shell and header.
  */
 @media (min-width: 80rem) {
   /* Step 1: required items first, optional pre-run fatigue last. */
@@ -1255,11 +1252,9 @@
   }
 }
 
-/* ===== Record visual polish ===== */
+/* ===== Record input visual layout ===== */
 /*
- * Desktop record polish .
- * Final-pass geometry for Step 1, Step 3, and embedded record subflows.
- * Loaded after desktop-record-refine.css.
+ * Geometry for Step 1, Step 3, and embedded record subflows.
  */
 
 @media (min-width: 80rem) {
@@ -2648,11 +2643,10 @@
   }
 }
 
-/* ===== Course desktop refinements ===== */
+/* ===== Course desktop layout ===== */
 /*
- * Desktop course-derived screens .
- * Final unification with the BODY RECORD / SHOES derived-panel pattern.
- * The course editor frame is never a scroll surface; only .course-derived-body scrolls.
+ * Course-derived screens use the same derived-panel structure as other desktop workspaces.
+ * The course editor frame is not a scroll surface; only .course-derived-body scrolls.
  */
 
 @media (min-width: 80rem) {
@@ -2725,8 +2719,7 @@
     line-height: 1.2 !important;
   }
 
-  /* Critical fix: eliminate the legacy .editor scroll container.
- The header is a non-scrolling grid row and only editor-main scrolls. */
+  /* The editor frame does not scroll; the header stays fixed and only editor-main scrolls. */
   .screen--course-editor.screen-layout--course .editor.course-derived-frame {
     position: relative !important;
     inset: auto !important;
@@ -2931,13 +2924,11 @@
   }
 }
 
-/* ===== Desktop UI refinements ===== */
-/* ===== Desktop UI refinement section 1 ===== */
+/* ===== Desktop screen layouts ===== */
+/* ===== Primary and secondary screen layouts ===== */
 /*
- * Desktop UI refinement section 1.
- * Scope: untouched primary screens (History, More) and secondary screens
- * derived from Home / More. Record and Result families are intentionally
- * excluded because they are handled in dedicated passes.
+ * Desktop layout for History, More, and secondary screens derived from Home / More.
+ * Record and Result families are defined in their dedicated sections.
  */
 
 @media (min-width: 80rem) {
@@ -3872,11 +3863,9 @@
   }
 }
 
-/* ===== Desktop UI refinement section 2 ===== */
+/* ===== Desktop typography and detail ===== */
 /*
- * Desktop UI refinement section 2.
- * Typography/detail audit after . Loaded last.
- * Record and Result families remain outside this pass.
+ * Typography and detail rules for desktop screens outside the Record and Result families.
  */
 
 @media (min-width: 80rem) {
@@ -4155,10 +4144,9 @@
   }
 }
 
-/* ===== Desktop UI refinement section 3 ===== */
+/* ===== Compact desktop typography ===== */
 /*
- * Desktop UI refinement section 3.
- * Final explicit typography selectors found by the post- audit.
+ * Explicit typography rules for dense desktop controls and summaries.
  */
 
 @media (min-width: 80rem) {
@@ -4239,15 +4227,14 @@
     line-height: 1.5 !important;
   }
 
-  /* Legacy bottom navigation belongs to mobile only. */
+  /* Bottom navigation is mobile-only. */
   .screen--history.screen-layout--history .bottom-nav {
     display: none !important;
   }
 }
 
-/* ===== Desktop UI refinement section 4 ===== */
+/* ===== Narrow desktop card balance ===== */
 /*
- * Desktop UI refinement section 4.
  * Keep equal-type card groups visually balanced at narrower desktop widths.
  */
 
@@ -4262,11 +4249,9 @@
   }
 }
 
-/* ===== Desktop UI refinement section 5 ===== */
+/* ===== Secondary-screen scroll frames ===== */
 /*
- * Desktop UI refinement section 5.
- * Unified secondary-screen frame: fixed toolbar + independently scrolling body.
- * Matches the interaction pattern established for BODY RECORD / SHOES.
+ * Secondary-screen frame with a fixed toolbar and independently scrolling body.
  */
 
 @media (min-width: 80rem) {
@@ -4353,11 +4338,10 @@
   }
 }
 
-/* ===== Desktop UI refinement section 6 ===== */
+/* ===== State-aware desktop readability ===== */
 /*
- * Desktop UI refinement section 6.
- * State-aware layout and light/dark readability audit.
- * Record-input and Result families remain outside this pass.
+ * State-aware layout and light/dark readability rules.
+ * Record-input and Result families are defined in their dedicated sections.
  */
 
 @media (min-width: 80rem) {
@@ -4429,7 +4413,7 @@
     margin-top: 0.9rem;
   }
 
-  /* Remaining desktop microcopy found by Chromium visual-state audit. */
+  /* Compact text sizing for dense desktop controls and summaries. */
   .screen--settings.screen-layout--settings .sub-section-head strong,
   .screen--consultation.screen-layout--consultation .share-source strong,
   .screen--consultation.screen-layout--consultation .share-card strong,
