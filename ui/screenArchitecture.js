@@ -1,6 +1,6 @@
 import { escapeHtml } from "./commonComponents.js";
 
-export const SCREEN_ARCHITECTURE_VERSION = "runload-screen-architecture-current-v4";
+export const SCREEN_ARCHITECTURE_VERSION = "runload-screen-architecture-current-v5";
 
 export const PRIMARY_DESTINATIONS = Object.freeze([
   Object.freeze({ screen: "home", label: "Home", description: "今日の入口", icon: "home" }),
@@ -145,12 +145,11 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     const regionId = parameter("regionId");
     if (origin === "result-condition" && recordId && regionId) {
       return {
-        title: parameter("articleId") ? "記事" : "読みもの",
+        title: "読みもの",
         backHref: screenHref("body-part-detail", { recordId, regionId }),
         backLabel: "部位結果",
       };
     }
-    if (parameter("articleId")) return { title: "記事", backHref: "#/reading", backLabel: "読みもの" };
     return { title: "読みもの", backHref: "#/more", backLabel: "その他" };
   }
 
