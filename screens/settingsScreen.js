@@ -1,18 +1,9 @@
-import {
-  APPEARANCE_MODE_OPTIONS,
-  COLOR_THEME_OPTIONS,
-  TEXT_SIZE_OPTIONS,
-  normalizeJournalSettings,
-} from "../ui/appSettings.js";
+import { APPEARANCE_MODE_OPTIONS, COLOR_THEME_OPTIONS, TEXT_SIZE_OPTIONS, normalizeJournalSettings } from "../ui/appSettings.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { PROFILE_AGE_BAND_OPTIONS } from "../core/runloadCore.js";
 
 function checked(current, value) {
   return current === value ? " checked" : "";
-}
-
-function renderSegmentRadios(name, current, options) {
-  return `<div class="segment parity-segment" role="group">${options.map((option) => `<label><input type="radio" name="${escapeHtml(name)}" value="${escapeHtml(option.value)}"${checked(current, option.value)}><span>${escapeHtml(option.label)}</span></label>`).join("")}</div>`;
 }
 
 function displayOptionLabel(option) {
