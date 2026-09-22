@@ -72,7 +72,7 @@ function baseOutput({selected=true}={}){
   }:null;
   const allActions=actions();
   return {
-    schemaVersion:'RUNLOAD_INTERPRETATION_OUTPUT_V3_CANDIDATE',
+    schemaVersion:'RUNLOAD_INTERPRETATION_OUTPUT_V3',
     target:{recordId:'r1',resultRecordId:'res1',date:'2026-09-20',activityType:'run',origin:'result',selectedRegionId:selected?'BA-DISP-014':''},
     state:{targetAvailable:true,regional:'AVAILABLE',history:'AVAILABLE',subjective:'PAIR',support:'NORMAL',legacy:false},
     overview:{regions:overview,selectionMode:selected?'EXPLICIT':'USER_SELECT',guidanceTokens:['REGIONS_USE_OWN_REFERENCE','NO_CROSS_REGION_RANKING']},
