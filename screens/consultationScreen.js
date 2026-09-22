@@ -279,8 +279,10 @@ export function renderConsultationScreen({ services, context }) {
   if (requestedRecordId) selfQuery.set("recordId", requestedRecordId);
   if (regionId) selfQuery.set("regionId", regionId);
   if (from) selfQuery.set("from", from);
-  if (roomOrigin) selfQuery.set("roomOrigin", roomOrigin);
-  if (roomExperience) selfQuery.set("roomExperience", roomExperience);
+  if (from === "interpretation-room") {
+    selfQuery.set("roomOrigin", roomOrigin);
+    if (roomExperience) selfQuery.set("roomExperience", roomExperience);
+  }
   const selfHref = `#/consultation${selfQuery.size ? `?${selfQuery.toString()}` : ""}`;
   let backHref = requestedRecordId ? `#/result?recordId=${encodeURIComponent(requestedRecordId)}` : "#/more";
   let backLabel = requestedRecordId ? "結果へ戻る" : "その他へ戻る";
