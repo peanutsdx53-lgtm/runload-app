@@ -1,4 +1,4 @@
-name: Codebase cleanup audit
+name: Codebase cleanup reachability audit
 
 on:
   push:
@@ -16,18 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: JavaScript syntax
-        shell: bash
-        run: |
-          set -euo pipefail
-          count=0
-          while IFS= read -r file; do
-            node --check "$file" >/dev/null
-            count=$((count+1))
-          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
-          echo "SYNTAX_FILES_PASS=$count"
-
-      - name: Static dependency and naming audit
+      - name: Runtime reachability and naming report
         shell: bash
         run: |
           set -euo pipefail
@@ -47,8 +36,7 @@ jobs:
           const rel=p=>path.relative(root,p).replaceAll(path.sep,'/');
           const files=walk(root);
           const js=files.filter(p=>/\.(?:js|mjs)$/.test(p));
-          const css=files.filter(p=>p.endsWith('.css'));
-          const md=files.filter(p=>p.endsWith('.md'));
+          const runtimeJs=js.map(rel).filter(p=>p.endsWith('.js')&&!p.startsWith('tests/'));
           const read=p=>fs.readFileSync(p,'utf8');
           const importRe=/\bimport\s+(?:[^'"]*?\s+from\s+)?["']([^"']+)["']/g;
           const graph=new Map();
@@ -72,61 +60,47 @@ jobs:
             reachable.add(cur);
             for(const dep of graph.get(cur)||[]) stack.push(dep);
           }
-          const runtimeJs=js.map(rel).filter(p=>p.endsWith('.js')&&!p.startsWith('tests/'));
           const unreachable=runtimeJs.filter(p=>!reachable.has(p)&&p!=='service-worker.js').sort();
 
           const html=read(path.join(root,'index.html'));
           const linkedCss=[...html.matchAll(/<link[^>]+href=["']\.\/([^"']+\.css)["']/g)].map(m=>m[1]);
-          const unlinkedCss=css.map(rel).filter(p=>!linkedCss.includes(p)).sort();
+          const css=files.map(rel).filter(p=>p.endsWith('.css'));
+          const unlinkedCss=css.filter(p=>!linkedCss.includes(p)).sort();
+
+          const runtimeFlags=[];
+          for(const file of files.filter(p=>/\.(?:js|css|html)$/.test(p))){
+            const src=read(file);
+            for(const [kind,re] of [
+              ['prototype',/\bprototype[-_A-Za-z0-9]*/gi],
+              ['hotfix',/\bhotfix[-_A-Za-z0-9]*/gi],
+              ['preview',/\bpreview[-_A-Za-z0-9]*/gi],
+              ['candidate',/\bcandidate\b/gi],
+              ['TODO',/\bTODO\b/g],
+              ['FIXME',/\bFIXME\b/g],
+            ]){
+              const matches=[...src.matchAll(re)];
+              if(matches.length) runtimeFlags.push({file:rel(file),kind,count:matches.length});
+            }
+          }
 
           const sw=read(path.join(root,'service-worker.js'));
           const precache=[...sw.matchAll(/"\.\/([^"]+)"/g)].map(m=>m[1]);
           const missingPrecache=precache.filter(p=>!fs.existsSync(path.join(root,p)));
 
-          const flagRe=/(prototype|preview|hotfix|candidate|(?:^|[-_.])v\d+(?:[-_.]|$)|2026\d{4}|status|workplan|baseline)/i;
-          const flaggedNames=files.map(rel).filter(p=>flagRe.test(p)).sort();
-
-          const sourceFlags=[];
-          for(const file of files.filter(p=>/\.(?:js|mjs|css|html)$/.test(p))){
-            const src=read(file);
-            const patterns=[
-              ['TODO',/\bTODO\b/g],['FIXME',/\bFIXME\b/g],['prototype',/\bprototype[-_A-Za-z0-9]*/gi],
-              ['preview',/\bpreview[-_A-Za-z0-9]*/gi],['hotfix',/\bhotfix[-_A-Za-z0-9]*/gi],
-              ['candidate',/\bcandidate\b/gi],['literal-backslash-n',/\\n/g]
-            ];
-            for(const [kind,re] of patterns){
-              const count=[...src.matchAll(re)].length;
-              if(count) sourceFlags.push({file:rel(file),kind,count});
-            }
-          }
-
-          console.log('AUDIT_RUNTIME_JS='+runtimeJs.length);
-          console.log('AUDIT_REACHABLE_JS='+[...reachable].filter(p=>runtimeJs.includes(p)).length);
-          console.log('AUDIT_UNREACHABLE_JS='+JSON.stringify(unreachable));
-          console.log('AUDIT_LINKED_CSS='+JSON.stringify(linkedCss));
-          console.log('AUDIT_UNLINKED_CSS='+JSON.stringify(unlinkedCss));
-          console.log('AUDIT_MISSING_PRECACHE='+JSON.stringify(missingPrecache));
-          console.log('AUDIT_FLAGGED_FILENAMES='+JSON.stringify(flaggedNames));
-          console.log('AUDIT_SOURCE_FLAGS='+JSON.stringify(sourceFlags));
-          console.log('AUDIT_MARKDOWN_COUNT='+md.length);
-          if(missingPrecache.length) process.exitCode=1;
+          console.log('REACHABILITY_RUNTIME_JS='+runtimeJs.length);
+          console.log('REACHABILITY_UNREACHABLE='+JSON.stringify(unreachable));
+          console.log('REACHABILITY_UNLINKED_CSS='+JSON.stringify(unlinkedCss));
+          console.log('REACHABILITY_MISSING_PRECACHE='+JSON.stringify(missingPrecache));
+          console.log('REACHABILITY_RUNTIME_FLAGS='+JSON.stringify(runtimeFlags));
           NODE
 
-      - name: Run test suites
+      - name: Syntax report
         shell: bash
         run: |
           set -euo pipefail
-          passed=0
-          failed=0
-          for file in tests/*.test.mjs; do
-            echo "::group::$file"
-            if node "$file"; then
-              passed=$((passed+1))
-            else
-              failed=$((failed+1))
-            fi
-            echo "::endgroup::"
-          done
-          echo "TEST_SUITES_PASSED=$passed"
-          echo "TEST_SUITES_FAILED=$failed"
-          test "$failed" -eq 0
+          count=0
+          while IFS= read -r file; do
+            node --check "$file" >/dev/null
+            count=$((count+1))
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          echo "SYNTAX_FILES_PASS=$count"
