@@ -1,5 +1,5 @@
-import { normalizeBodyProfile } from "../../core/runloadCore.js";
-import { STORAGE_KEYS } from "../../core/runloadCore.js";
+import { normalizeBodyProfile, STORAGE_KEYS } from "../../core/runloadCore.js";
+
 import { DEFAULT_JOURNAL_SETTINGS, applyJournalSettings, mergeJournalSettings } from "../appSettings.js";
 import { downloadJsonText } from "./browserUtilities.js";
 import { showDataMessage, showFormMessages } from "./formUtilities.js";
