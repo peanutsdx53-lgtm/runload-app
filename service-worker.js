@@ -69,7 +69,6 @@ const PRECACHE_URLS = [
   "./ui/gpxLocalAnalysis.js",
   "./ui/recordPresentation.js",
   "./ui/restorePreviewPresentation.js",
-  "./ui/runResultPresentation.js",
   "./ui/screenArchitecture.js",
   "./ui/screenInteractions.js",
   "./ui/screenTutorial.js",
