@@ -11,7 +11,7 @@ function precache(sw){const block=sw.slice(sw.indexOf('const PRECACHE_URLS = [')
 await test('PWA-PRECACHE-INCLUDES-INTERPRETATION-RUNTIME',async()=>{
   const sw=await source('service-worker.js');
   const paths=precache(sw);
-  for(const rel of ['./core/interpretationCore.js','./screens/interpretationRoomScreen.js','./styles/interpretation-room.css','./ui/interpretationRoomPresentation.js','./ui/prototypeBodyRegionVisuals.js']) assert.ok(paths.includes(rel),rel);
+  for(const rel of ['./core/interpretationCore.js','./core/interpretationCoreV3.js','./screens/interpretationRoomScreen.js','./styles/interpretation-room.css','./styles/interpretation-room-v3.css','./ui/interpretationRoomPresentation.js','./ui/interpretationRoomPresentationV3.js','./ui/prototypeBodyRegionVisuals.js']) assert.ok(paths.includes(rel),rel);
 });
 
 await test('PWA-PRECACHE-EXCLUDES-RETIRED-ACTIVATION-SCREEN',async()=>{
@@ -21,7 +21,7 @@ await test('PWA-PRECACHE-EXCLUDES-RETIRED-ACTIVATION-SCREEN',async()=>{
 
 await test('PWA-STABLE-CACHE-NAME-RETAINED',async()=>{
   const sw=await source('service-worker.js');
-  assert.match(sw,/const CACHE_NAME = "runload-app-current"/);
+  assert.match(sw,/const CACHE_NAME = "runload-app-current(?:-[^"]+)?";/);
 });
 
 await test('PWA-ACTIVATE-PRUNES-STALE-SAME-CACHE-RESOURCES',async()=>{
@@ -35,6 +35,7 @@ await test('PWA-ACTIVATE-PRUNES-STALE-SAME-CACHE-RESOURCES',async()=>{
 await test('PWA-INTERPRETATION-STYLESHEET-IS-SAME-ORIGIN-EXTERNAL',async()=>{
   const html=await source('index.html');
   assert.match(html,/<link rel="stylesheet" href="\.\/styles\/interpretation-room\.css">/);
+  assert.match(html,/<link rel="stylesheet" href="\.\/styles\/interpretation-room-v3\.css">/);
   assert.doesNotMatch(html,/<script(?![^>]*\bsrc=)[^>]*>\s*[^<]/i);
   assert.match(html,/script-src 'self'/);
   assert.match(html,/style-src 'self'/);
@@ -44,9 +45,12 @@ await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
   const manifest=await source('RUNTIME_SHA256SUMS.txt');
   const paths=[
     'core/interpretationCore.js',
+    'core/interpretationCoreV3.js',
     'screens/interpretationRoomScreen.js',
     'styles/interpretation-room.css',
+    'styles/interpretation-room-v3.css',
     'ui/interpretationRoomPresentation.js',
+    'ui/interpretationRoomPresentationV3.js',
     'ui/prototypeBodyRegionVisuals.js',
   ];
   for(const path of paths){

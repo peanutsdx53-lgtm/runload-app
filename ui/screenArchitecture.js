@@ -37,6 +37,23 @@ function workflowReturnLabel(href = "") {
   return "記録";
 }
 
+function interpretationReturnContext(parameter, recordId = "") {
+  if (parameter("from") !== "interpretation-room") return null;
+  const roomOrigin = parameter("roomOrigin") || "result";
+  const roomExperience = parameter("roomExperience");
+  const regionId = parameter("regionId");
+  return {
+    title: "結果の整理",
+    backHref: screenHref("interpretation-room", {
+      recordId,
+      origin: roomOrigin,
+      ...(roomExperience === "v3" ? { experience: "v3" } : {}),
+      regionId,
+    }),
+    backLabel: "結果の整理",
+  };
+}
+
 export function resolveScreenContextNavigation(screen = "", currentLocation = null) {
   if (PRIMARY_SCREEN_IDS.has(screen)) return null;
 
@@ -77,31 +94,36 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "interpretation-room") {
     const origin = parameter("origin");
     const regionId = parameter("regionId");
+    const experience = parameter("experience");
+    const interpretationTitle = experience === "v3" ? "結果を整理する" : "結果を理解する";
     if (origin === "history") {
-      return { title: "結果を理解する", backHref: screenHref("history", { recordId }), backLabel: "履歴" };
+      return { title: interpretationTitle, backHref: screenHref("history", { recordId }), backLabel: "履歴" };
     }
     if (origin === "body-part-detail" && regionId) {
-      return { title: "結果を理解する", backHref: screenHref("body-part-detail", { recordId, regionId }), backLabel: "部位詳細" };
+      return { title: interpretationTitle, backHref: screenHref("body-part-detail", { recordId, regionId }), backLabel: "部位詳細" };
     }
     if (origin === "simulation") {
-      return { title: "結果を理解する", backHref: screenHref("simulation", { recordId, from: "interpretation-room" }), backLabel: "条件比較" };
+      return { title: interpretationTitle, backHref: screenHref("simulation", { recordId, from: "interpretation-room" }), backLabel: "条件比較" };
     }
     if (origin === "home") {
-      return { title: "結果を理解する", backHref: "#/home", backLabel: "Home" };
+      return { title: interpretationTitle, backHref: "#/home", backLabel: "Home" };
     }
-    return { title: "結果を理解する", backHref: screenHref("result", { recordId }), backLabel: "結果" };
+    return { title: interpretationTitle, backHref: screenHref("result", { recordId }), backLabel: "結果" };
   }
 
   if (screen === "simulation") {
     const from = parameter("from");
-    if (from === "plan") return { title: "条件比較", backHref: "#/plan", backLabel: "予定" };
+    if (from === "plan") return { title: "条件比較", backHref: safeWorkflowReturn(parameter("returnTo") || "#/plan"), backLabel: "予定" };
     if (from === "history") return { title: "条件比較", backHref: "#/history", backLabel: "履歴" };
     if (from === "interpretation-room") {
       const roomOrigin = parameter("roomOrigin");
+      const roomExperience = parameter("roomExperience");
       return {
         title: "条件比較",
-        backHref: screenHref("interpretation-room", { recordId, origin: roomOrigin || "result", view: "next", intent: "condition" }),
-        backLabel: "結果の理解",
+        backHref: screenHref("interpretation-room", roomExperience === "v3"
+          ? { recordId, origin: roomOrigin || "result", experience: "v3" }
+          : { recordId, origin: roomOrigin || "result", view: "next", intent: "condition" }),
+        backLabel: roomExperience === "v3" ? "結果の整理" : "結果の理解",
       };
     }
     if (from === "activation") {
@@ -119,10 +141,14 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   }
 
   if (screen === "plan") {
+    const interpretationReturn = interpretationReturnContext(parameter, recordId || parameter("sourceRecordId"));
+    if (interpretationReturn) return { ...interpretationReturn, title: "次の予定" };
     return { title: "次の予定", backHref: "#/home", backLabel: "Home" };
   }
 
   if (screen === "consultation") {
+    const interpretationReturn = interpretationReturnContext(parameter, recordId);
+    if (interpretationReturn) return { ...interpretationReturn, title: "共有用にまとめる" };
     if (recordId) {
       return { title: "共有用にまとめる", backHref: screenHref("result", { recordId }), backLabel: "結果" };
     }
@@ -143,6 +169,8 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "reading") {
     const origin = parameter("origin");
     const regionId = parameter("regionId");
+    const interpretationReturn = interpretationReturnContext(parameter, recordId);
+    if (interpretationReturn) return { ...interpretationReturn, title: "読みもの" };
     if (origin === "result-condition" && recordId && regionId) {
       return {
         title: "読みもの",

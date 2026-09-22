@@ -72,7 +72,7 @@ await testCase('PUBLIC-UNDERSTANDING-UI-OMITS-INTERNAL-NAME',()=>{
   ];
   const combined=files.map(read).join('\n');
   assert.doesNotMatch(combined,/RunLoad解釈|RUNLOAD INTERPRETATION/);
-  assert.match(combined,/結果を理解する/);
+  assert.match(combined,/結果を整理する/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');

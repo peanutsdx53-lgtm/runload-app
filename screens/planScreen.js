@@ -11,6 +11,31 @@ function planTitle(plan={}) { const session=plan.plannedSession||{}; if(plan.pla
 function savedPlanCard(plan={}) { const rest=plan.planType==="rest"||plan.plannedSession?.activityType==="rest"; return `<article class="saved-card" data-plan-id="${escapeHtml(plan.id||"")}"><small>${escapeHtml(formatLocalDate(plan.scheduledDate||""))}・${rest?"休養予定":"走行予定"}</small><strong>${escapeHtml(planTitle(plan))}</strong><span>保存済み</span><div class="saved-actions">${rest?"":`<a href="#/record-input?planId=${encodeURIComponent(plan.id||"")}">この予定で記録</a>`}<a href="#/plan?planId=${encodeURIComponent(plan.id||"")}">編集</a><button type="button" data-action="delete-plan" data-plan-id="${escapeHtml(plan.id||"")}">削除</button></div></article>`; }
 function dateDisplay(iso="") { return String(iso||"").replaceAll("-","/") || "未設定"; }
 
+function planContextHref(context, planId="") {
+  const query=new URLSearchParams();
+  if(planId)query.set("planId",planId);
+  ["sourceRecordId","recordId","regionId","from","roomOrigin","roomExperience"].forEach((key)=>{
+    const value=String(context?.parameters?.get(key)||"");
+    if(value)query.set(key,value);
+  });
+  return `#/plan${query.size?`?${query.toString()}`:""}`;
+}
+
+function planBackContext(context) {
+  const from=String(context?.parameters?.get("from")||"");
+  if(from!=="interpretation-room")return { href:"#/home", label:"Homeへ戻る" };
+  const recordId=String(context?.parameters?.get("recordId")||context?.parameters?.get("sourceRecordId")||"");
+  const regionId=String(context?.parameters?.get("regionId")||"");
+  const roomOrigin=String(context?.parameters?.get("roomOrigin")||"result");
+  const roomExperience=String(context?.parameters?.get("roomExperience")||"");
+  const query=new URLSearchParams();
+  if(recordId)query.set("recordId",recordId);
+  query.set("origin",roomOrigin);
+  if(roomExperience==="v3")query.set("experience","v3");
+  if(regionId)query.set("regionId",regionId);
+  return { href:`#/interpretation-room?${query.toString()}`, label:"結果の整理へ戻る" };
+}
+
 export function renderPlanScreen({ services, context }) {
   const planId=String(context?.parameters?.get("planId")||"");
   const editing=planId?services.storage.plans.findById(planId):null;
@@ -18,16 +43,27 @@ export function renderPlanScreen({ services, context }) {
   const course=selected?.course || courseFromPlan(editing);
   const session=editing?.plannedSession||{};
   const planType=editing?.planType||"run";
-  const recent=latestRunRecord(services);
+  const sourceRecordId=String(context?.parameters?.get("sourceRecordId")||context?.parameters?.get("recordId")||"");
+  const requestedSource=sourceRecordId?services.storage.records.findById?.(sourceRecordId):null;
+  const recent=requestedSource?.activityType==="run"?requestedSource:latestRunRecord(services);
+  const backContext=planBackContext(context);
+  const selfHref=planContextHref(context, planId);
+  const sourceLabel=sourceRecordId?"今回の記録":"前回の記録";
+  const carryLabel=sourceRecordId?"今回の記録から引き継いだ内容":"前回から引き継いだ内容";
+  const simulationQuery=new URLSearchParams();
+  simulationQuery.set("from","plan");
+  simulationQuery.set("returnTo",selfHref);
+  if(sourceRecordId)simulationQuery.set("recordId",sourceRecordId);
+  const simulationHref=`#/simulation?${simulationQuery.toString()}`;
   const plans=services.storage.plans.loadAll().sort((a,b)=>String(a.scheduledDate||"").localeCompare(String(b.scheduledDate||"")));
   const scheduledDate=editing?.scheduledDate||localTodayIso();
   const nextCheck=recent?.reflectionContext?.nextCheckPoint || recent?.reflectionContext?.nextCheck || "";
   const distance=session.distanceKm ?? ""; const duration=session.durationMinutes ?? "";
   return `<div class="screen screen--plan prototype-parity prototype-parity--plan secondary-derived-screen">
-    <header class="secondary-derived-head"><a class="secondary-derived-back" href="#/home">← Homeへ戻る</a><strong>次の予定</strong><span aria-hidden="true"></span></header>
+    <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backContext.href)}">← ${escapeHtml(backContext.label)}</a><strong>次の予定</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">${escapeHtml(formatLocalDate(scheduledDate))}</span></section><p class="visually-hidden">予定条件は利用者が入力した事実であり、数値スコアではなく入力した予定事実として扱います。おすすめ・安全判断・自動処方ではありません。</p>
-    ${nextCheck?`<section class="carry"><i></i><div><small>前回から引き継いだ内容</small><strong>次のランで確認したいこと</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
+    ${nextCheck?`<section class="carry"><i></i><div><small>${escapeHtml(carryLabel)}</small><strong>次のランで確認したいこと</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
     <form id="plan-form" class="layout" novalidate>
       <input type="hidden" name="planId" value="${escapeHtml(editing?.id||"")}"><input type="hidden" name="courseJson" value="${escapeHtml(JSON.stringify(course))}"><input type="hidden" name="routePattern" value="${escapeHtml(course.routePattern||"UNKNOWN")}">
       <input class="visually-hidden" type="radio" name="planType" value="run"${planType==="run"?" checked":""}><input class="visually-hidden" type="radio" name="planType" value="rest"${planType==="rest"?" checked":""}>
@@ -36,10 +72,10 @@ export function renderPlanScreen({ services, context }) {
         <div class="plan-date-field"><div class="plan-date-label"><span>予定日</span><b>必須</b></div><label class="plan-date-control"><span data-plan-date-display aria-hidden="true">${escapeHtml(dateDisplay(scheduledDate))}</span><input name="scheduledDate" type="date" required value="${escapeHtml(scheduledDate)}" aria-label="予定日"></label></div>
         <div data-plan-run-fields${planType==="rest"?" hidden":""}>
           <div class="two"><label class="metric-field"><span>距離</span><div><input name="distanceKm" type="number" min="0.01" step="0.1" value="${escapeHtml(distance)}"><em>km</em></div></label><label class="metric-field"><span>実走予定時間</span><div><input name="durationMinutes" type="number" min="0.1" step="1" value="${escapeHtml(duration)}"><em>分</em></div></label></div>
-          <div class="course-choice"><div><small>コース・任意</small><strong data-plan-course-name>${escapeHtml(course.name||"未選択")}</strong><span>${escapeHtml(courseSummary(course))}</span></div><a href="#/course-library?returnTo=${encodeURIComponent(`#/plan${planId?`?planId=${encodeURIComponent(planId)}`:""}`)}">選ぶ・作る</a></div>
-          ${recent?`<details class="details"><summary><div><strong>前回の距離・時間を使う</strong><span>${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分を入力</span></div><i>⌄</i></summary><div class="details-body"><div class="quick quick--single"><button type="button" data-action="use-previous-facts" data-distance="${escapeHtml(recent.distanceKm||"")}" data-duration="${escapeHtml(recent.durationMinutes||"")}"><small>前回の記録</small><strong>${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分を入力</strong></button></div><p class="note">入力後に変更できます。自動提案ではありません。</p></div></details>`:""}
+          <div class="course-choice"><div><small>コース・任意</small><strong data-plan-course-name>${escapeHtml(course.name||"未選択")}</strong><span>${escapeHtml(courseSummary(course))}</span></div><a href="#/course-library?returnTo=${encodeURIComponent(selfHref)}">選ぶ・作る</a></div>
+          ${recent?`<details class="details"><summary><div><strong>${escapeHtml(sourceLabel)}の距離・時間を使う</strong><span>${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分を入力</span></div><i>⌄</i></summary><div class="details-body"><div class="quick quick--single"><button type="button" data-action="use-previous-facts" data-distance="${escapeHtml(recent.distanceKm||"")}" data-duration="${escapeHtml(recent.durationMinutes||"")}"><small>${escapeHtml(sourceLabel)}</small><strong>${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分を入力</strong></button></div><p class="note">入力後に変更できます。自動提案ではありません。</p></div></details>`:""}
           <details class="details"><summary><div><strong>走る／歩くの予定</strong><span>途中で歩く場合だけ選択</span></div><i>⌄</i></summary><div class="details-body"><label class="field"><span>予定の走り方 <b>任意</b></span><select name="runningFormat"><option value="UNKNOWN"${!session.runningFormat||session.runningFormat==="UNKNOWN"?" selected":""}>未設定</option><option value="CONTINUOUS_RUN"${session.runningFormat==="CONTINUOUS_RUN"?" selected":""}>途中で歩かず走る予定</option><option value="RUN_WALK"${session.runningFormat==="RUN_WALK"?" selected":""}>走りと歩きを混ぜる予定</option></select></label></div></details>
-          <a class="assist-link" href="#/simulation?from=plan"><div><small>任意</small><strong>前回と条件を比べる</strong><span>条件を変えたときの12部位表示を確認</span></div><i>›</i></a>
+          <a class="assist-link" href="${escapeHtml(simulationHref)}"><div><small>任意</small><strong>${escapeHtml(sourceRecordId?"この記録を基準に条件を比べる":"前回と条件を比べる")}</strong><span>条件を変えたときの12部位表示を確認</span></div><i>›</i></a>
         </div>
         <div data-plan-rest-fields${planType==="rest"?"":" hidden"}><div class="summary-card plan-rest-summary"><small>休養予定</small><strong>走行条件は入力しません</strong><span>予定日だけを確認して保存します。</span></div></div>
         <label class="field plan-memo-field"><span>メモ <b>任意</b></span><textarea name="memo" rows="3" maxlength="500">${escapeHtml(editing?.memo||"")}</textarea></label>

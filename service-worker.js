@@ -4,6 +4,7 @@ const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
   "./core/interpretationCore.js",
+  "./core/interpretationCoreV3.js",
   "./core/runloadCore.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -33,6 +34,7 @@ const PRECACHE_URLS = [
   "./styles/prototype-fidelity-v2.css",
   "./styles/prototype-mobile-parity.css",
   "./styles/interpretation-room.css",
+  "./styles/interpretation-room-v3.css",
   "./styles/product-quality.css",
   "./styles/desktop-workspace.css",
   "./styles/desktop-shell-v4.css",
@@ -54,6 +56,7 @@ const PRECACHE_URLS = [
   "./ui/hierarchicalExplanation.js",
   "./ui/historyPresentation.js",
   "./ui/interpretationRoomPresentation.js",
+  "./ui/interpretationRoomPresentationV3.js",
   "./ui/prototypeBodyRegionVisuals.js",
   "./ui/interactions/browserUtilities.js",
   "./ui/interactions/consultationInteractions.js",
