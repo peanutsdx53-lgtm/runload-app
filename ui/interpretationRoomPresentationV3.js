@@ -1,6 +1,6 @@
 import { escapeHtml } from "./commonComponents.js";
 import { formatLocalDate } from "./recordPresentation.js";
-import { PROTOTYPE_BODY_VIEWS } from "./prototypeBodyRegionVisuals.js";
+import { BODY_REGION_VIEWS } from "./bodyRegionVisuals.js";
 
 function finite(value) {
   return value !== null && value !== "" && Number.isFinite(Number(value));
@@ -137,7 +137,7 @@ function renderLegacy(output) {
 function renderOverviewMap(output) {
   const regions = output?.overview?.regions || [];
   const byId = new Map(regions.map((region) => [region.regionId, region]));
-  const views = PROTOTYPE_BODY_VIEWS.map((view) => {
+  const views = BODY_REGION_VIEWS.map((view) => {
     const paths = view.paths.map(([id, d]) => {
       const region = byId.get(id);
       const relation = referenceText(region?.reference?.direction || "");
