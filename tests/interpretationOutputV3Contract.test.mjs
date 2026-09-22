@@ -73,7 +73,7 @@ function build(opts={}){
 
 await test('V3-SCHEMA-AND-READONLY-PROVENANCE',()=>{
   const out=buildRunLoadInterpretationV3();
-  assert.equal(INTERPRETATION_V3_CORE_VERSION,'runload-interpretation-core-v2.0-candidate');
+  assert.equal(INTERPRETATION_V3_CORE_VERSION,'runload-interpretation-core-v3.0');
   assert.equal(out.schemaVersion,INTERPRETATION_V3_OUTPUT_SCHEMA_VERSION);
   assert.equal(out.state.targetAvailable,false);
   assert.equal(out.provenance.primaryRecalculated,false);
