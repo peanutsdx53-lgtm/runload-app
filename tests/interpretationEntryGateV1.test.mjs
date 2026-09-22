@@ -27,8 +27,9 @@ await test('RESULT-GATE-COMES-AFTER-TWO-RESULT-BLOCKS',()=>{
 await test('RESULT-GATE-USES-PLAIN-LANGUAGE',()=>{
   const source=read('screens/resultScreen.js');
   const gate=source.match(/<section class="understanding-link-wrap"[\s\S]*?<\/section>/)?.[0]||'';
-  assert.match(gate,/今回の結果を理解する/);
-  assert.match(gate,/表示された内容を順番に整理して確認します/);
+  assert.match(gate,/今回の結果を整理する/);
+  assert.match(gate,/基準・過去・計算に使った情報と一緒に確認します/);
+  assert.match(gate,/origin=result&experience=v3/);
   assert.doesNotMatch(gate,/RunLoad解釈|解釈エンジン|計算エンジン|Reference-100/);
 });
 
@@ -37,10 +38,10 @@ await test('HOME-LATEST-RUN-SEPARATES-VIEW-AND-UNDERSTAND',()=>{
   const runLine=source.split('\n').find((row)=>row.includes('card-actions')&&row.includes('結果を見る'))||'';
   assert.ok(runLine);
   const view=runLine.indexOf('結果を見る');
-  const understand=runLine.indexOf('結果を理解する');
+  const understand=runLine.indexOf('結果を整理する');
   assert.ok(view>=0 && understand>view);
   assert.match(runLine,/#\/result\?recordId=/);
-  assert.match(runLine,/#\/interpretation-room\?recordId=.*origin=home/);
+  assert.match(runLine,/#\/interpretation-room\?recordId=.*origin=home&experience=v3/);
 });
 
 await test('HOME-REMOVES-SEPARATE-INTERPRETATION-PROMO',()=>{
@@ -53,7 +54,7 @@ await test('REST-RECORD-DOES-NOT-OFFER-UNDERSTANDING-ENTRY',()=>{
   const source=read('screens/homeScreen.js');
   const restLine=source.split('\n').find((row)=>row.includes('REST')&&row.includes('記録を開く'))||'';
   assert.ok(restLine);
-  assert.doesNotMatch(restLine,/interpretation-room|結果を理解する/);
+  assert.doesNotMatch(restLine,/interpretation-room|結果を整理する|結果を理解する/);
 });
 
 await test('ENTRY-STYLING-IS-SECONDARY-NOT-WARNING',()=>{
