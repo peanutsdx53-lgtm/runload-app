@@ -6,72 +6,64 @@ import { fileURLToPath } from 'node:url';
 const here=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(here,'..');
 const read=(rel)=>fs.readFileSync(path.join(root,rel),'utf8');
+const exists=(rel)=>fs.existsSync(path.join(root,rel));
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 
-await test('V3-PREVIEW-IS-EXPLICIT-AND-V2-REMAINS-DEFAULT',()=>{
-  const s=read('screens/interpretationRoomScreen.js');
-  assert.match(s,/const ALLOWED_EXPERIENCES = new Set\(\["v2", "v3"\]\)/);
-  assert.match(s,/safeParameter\(parameters, "experience", ALLOWED_EXPERIENCES, "v2"\)/);
-  assert.match(s,/if \(experience === "v3"\)/);
-  assert.match(s,/data-experience="v3"/);
-  assert.match(s,/data-experience="v2"/);
-});
-
-await test('V3-SCREEN-USES-SEPARATE-CORE-AND-PRESENTATION',()=>{
+await test('INTERPRETATION-SCREEN-USES-ONE-CANONICAL-PRESENTATION',()=>{
   const s=read('screens/interpretationRoomScreen.js');
   assert.match(s,/buildRunLoadInterpretationV3/);
   assert.match(s,/renderInterpretationRoomV3/);
-  assert.match(s,/buildRunLoadInterpretation\(buildArgs\)/);
-  assert.match(s,/renderInterpretationRoom\(\{ output, view, mode, topic, intent, origin \}\)/);
+  assert.doesNotMatch(s,/ALLOWED_EXPERIENCES|data-experience|renderInterpretationRoom\b|buildRunLoadInterpretation\(buildArgs\)/);
+  assert.equal(exists('ui/interpretationRoomPresentation.js'),false);
 });
 
-await test('V3-REGION-SELECTION-PRESERVES-EXPERIENCE',()=>{
+await test('REGION-SELECTION-DOES-NOT-CARRY-VERSION-QUERY',()=>{
   const s=read('ui/interpretationRoomPresentationV3.js');
-  assert.match(s,/query\.set\("experience", "v3"\)/);
   assert.match(s,/regionHref\(output, region\.regionId\)/);
+  assert.doesNotMatch(s,/query\.set\("experience"/);
 });
 
-await test('V3-SIMULATION-LINK-CARRIES-RETURN-EXPERIENCE',()=>{
+await test('DERIVED-ACTIONS-CARRY-ROOM-CONTEXT-WITHOUT-VERSION-STATE',()=>{
   const s=read('ui/interpretationRoomPresentationV3.js');
-  assert.match(s,/query\.set\("roomExperience", "v3"\)/);
   assert.match(s,/query\.set\("from", "interpretation-room"\)/);
+  assert.match(s,/query\.set\("roomOrigin"/);
+  assert.doesNotMatch(s,/roomExperience|experience=v3/);
 });
 
-await test('SIMULATION-PRESERVES-V3-RETURN-CONTEXT',()=>{
+await test('SIMULATION-USES-CANONICAL-ROOM-RETURN',()=>{
   const s=read('screens/simulationScreen.js');
-  assert.match(s,/roomExperience/);
-  assert.match(s,/safeRoomExperience=roomExperience==="v3"\?"v3":""/);
-  assert.match(s,/experience=v3/);
-  assert.match(s,/selfQuery\.set\("roomExperience",safeRoomExperience\)/);
+  assert.match(s,/roomOrigin/);
+  assert.match(s,/結果の整理へ戻る/);
+  assert.doesNotMatch(s,/roomExperience|safeRoomExperience|view=next|intent=condition|from==="activation"/);
 });
 
-await test('SCREEN-ARCHITECTURE-PRESERVES-V3-RETURN-CONTEXT',()=>{
+await test('SCREEN-ARCHITECTURE-HAS-NO-VERSION-BRANCH',()=>{
   const s=read('ui/screenArchitecture.js');
-  assert.match(s,/const roomExperience = parameter\("roomExperience"\)/);
-  assert.match(s,/roomExperience === "v3"/);
-  assert.match(s,/experience: "v3"/);
+  assert.match(s,/const interpretationTitle = "結果を整理する"/);
+  assert.doesNotMatch(s,/roomExperience|experience === "v3"|view: "next"|intent: "condition"|from === "activation"/);
 });
 
-await test('V3-CSS-IS-SEPARATE-FROM-V2-CSS',()=>{
+await test('CANONICAL-CSS-REPLACES-LEGACY-INTERPRETATION-CSS',()=>{
   const html=read('index.html');
-  assert.match(html,/<link rel="stylesheet" href="\.\/styles\/interpretation-room\.css">/);
   assert.match(html,/<link rel="stylesheet" href="\.\/styles\/interpretation-room-v3\.css">/);
+  assert.doesNotMatch(html,/styles\/interpretation-room\.css/);
+  assert.equal(exists('styles/interpretation-room.css'),false);
   const css=read('styles/interpretation-room-v3.css');
+  assert.match(css,/\.app-shell--immersive/);
+  assert.match(css,/\.interpretation-room-header/);
   assert.match(css,/\.interpretation-v3\b/);
-  assert.doesNotMatch(css,/\.interpretation-primary\s*\{/);
 });
 
-await test('PWA-PRECACHES-V3-PREVIEW-RUNTIME',()=>{
+await test('PWA-PRECACHES-ONLY-CANONICAL-INTERPRETATION-PRESENTATION',()=>{
   const sw=read('service-worker.js');
-  for(const asset of [
-    './core/interpretationCoreV3.js',
-    './ui/interpretationRoomPresentationV3.js',
-    './styles/interpretation-room-v3.css',
-  ]) assert.ok(sw.includes(`"${asset}"`),asset);
+  assert.match(sw,/\.\/ui\/interpretationRoomPresentationV3\.js/);
+  assert.match(sw,/\.\/styles\/interpretation-room-v3\.css/);
+  assert.doesNotMatch(sw,/interpretationRoomPresentation\.js/);
+  assert.doesNotMatch(sw,/styles\/interpretation-room\.css/);
 });
 
-await test('V3-PREVIEW-DOES-NOT-ALTER-PRIMARY-NAVIGATION',()=>{
+await test('PRIMARY-NAVIGATION-REMAINS-UNCHANGED',()=>{
   const s=read('ui/screenArchitecture.js');
   for(const screen of ['home','record-input','result','history','more']) {
     assert.match(s,new RegExp(`screen: "${screen}"`));
@@ -80,5 +72,5 @@ await test('V3-PREVIEW-DOES-NOT-ALTER-PRIMARY-NAVIGATION',()=>{
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation V3 Preview Integration',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Canonical Integration',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
