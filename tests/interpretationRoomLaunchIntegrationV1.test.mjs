@@ -73,7 +73,7 @@ await test('SIMULATION-COURSE-ROUNDTRIP-PRESERVES-SOURCE-RECORD',()=>{
 });
 
 await test('INTERPRETATION-ACTIONS-CARRY-ROOM-ORIGIN-WITHOUT-VERSION-STATE',()=>{
-  const s=read('ui/interpretationRoomPresentationV3.js');
+  const s=read('ui/interpretationRoomPresentation.js');
   assert.match(s,/query\.set\("from", "interpretation-room"\)/);
   assert.match(s,/query\.set\("roomOrigin", output\?\.target\?\.origin \|\| "result"\)/);
   assert.doesNotMatch(s,/roomExperience|experience=v3/);
