@@ -8,7 +8,8 @@ function finite(value) {
 
 function number(value, digits = 1) {
   if (!finite(value)) return "—";
-  return Number(value).toFixed(digits).replace(/\.0$/, "");
+  const fixed = Number(value).toFixed(digits);
+  return fixed.includes(".") ? fixed.replace(/0+$/, "").replace(/\.$/, "") : fixed;
 }
 
 function signed(value, digits = 1) {
