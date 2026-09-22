@@ -1,5 +1,5 @@
-import { SURFACE_FIELDS } from "../../core/runloadCore.js";
-import { validateCoursePresetInput } from "../../core/runloadCore.js";
+import { SURFACE_FIELDS, validateCoursePresetInput } from "../../core/runloadCore.js";
+
 import { courseFormValues } from "./recordInputInteractions.js";
 import { setHidden, showFormMessages } from "./formUtilities.js";
 import { confirmGradeDomain } from "./gradeDomainConfirmation.js";
