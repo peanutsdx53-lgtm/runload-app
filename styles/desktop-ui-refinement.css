@@ -2284,3 +2284,78 @@
     box-shadow: var(--shadow-card) !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: minimum desktop micro-label scale ===== */
+@media (min-width: 80rem) {
+  #desktop-header-root .app-screen-context small,
+  .app-shell:not(.app-shell--immersive) .primary-navigation__link {
+    font-size: 0.75rem !important;
+  }
+
+  .screen--history.prototype-parity--history :is(
+    .sample-badge,
+    .region-picker-trigger small,
+    .chart-card-head small,
+    .records-disclosure > summary small,
+    .chart-region-heading small,
+    .region-option-copy small,
+    .selected-focus-heading small,
+    .selected-main-value small,
+    .selected-facts dt,
+    .result-link small
+  ),
+  .screen--more.prototype-parity--more .copy small,
+  .screen--plan.prototype-parity--plan :is(
+    .panel-head small,
+    .course-choice small,
+    .details small,
+    .assist-link small,
+    .summary-card small,
+    .quick small,
+    .summary-row small,
+    .saved-card small,
+    .field > span b,
+    .plan-date-label b
+  ),
+  .screen--settings.prototype-parity--settings :is(
+    .display-setting__title small,
+    .disclosure summary small,
+    .sub-section-head small,
+    .subdetails summary small,
+    .shoe small,
+    .data-overview small,
+    .about-grid small,
+    .group-title,
+    .row small,
+    .theme-preview small
+  ),
+  .screen--privacy.prototype-parity--privacy .copy small,
+  .screen--reading.prototype-parity--reading :is(
+    .recommend small,
+    .article-card small,
+    .filter-strip-head span,
+    .sheet-head small
+  ),
+  .screen--consultation.prototype-parity--consultation :is(
+    .source small,
+    .section-head small,
+    .support-link small,
+    .route small,
+    .panel-head small,
+    .status,
+    .report header small,
+    .report section small,
+    .field small,
+    .share-source small,
+    .share-preview > header small,
+    .share-card small,
+    .share-output-actions .output small,
+    .share-viewer-head small,
+    .share-viewer-grid .share-card small
+  ),
+  .screen--support-guidance.prototype-parity--support .card small {
+    font-size: 0.75rem !important;
+    line-height: 1.35 !important;
+  }
+}
