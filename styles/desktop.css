@@ -1,0 +1,5345 @@
+/* RunLoad desktop layout and screen refinements. */
+
+/* ===== desktop-shell-v4.css ===== */
+/*
+ * Desktop frame v4.
+ * Natural document scrolling is restored. The only desktop header that may
+ * render is the dedicated body-level header host.
+ */
+@media (min-width: 55rem) {
+  html,
+  body {
+    width: 100%;
+    height: auto !important;
+    min-height: 100%;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
+    contain: none !important;
+  }
+
+  #app {
+    width: 100%;
+    height: auto !important;
+    min-height: 100dvh;
+    overflow: visible !important;
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
+    contain: none !important;
+  }
+
+  #app > .app-shell:not(.app-shell--immersive) {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
+    contain: none !important;
+  }
+
+  #app > .app-shell:not(.app-shell--immersive) > .app-main {
+    height: auto !important;
+    min-height: calc(100dvh - 4.75rem) !important;
+    overflow: visible !important;
+  }
+
+  /* Hide any legacy/cached desktop header that is still rendered inside #app.
+     Only the dedicated body-level host is allowed on desktop. */
+  #app .app-header--desktop,
+  #app .UI-mobile-topbar {
+    display: none !important;
+  }
+
+  body > #desktop-header-root:not(:empty) {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    z-index: 2147483000 !important;
+    display: block !important;
+    width: 100vw !important;
+    height: 4.75rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
+    contain: none !important;
+    isolation: isolate;
+    pointer-events: none;
+  }
+
+  body > #desktop-header-root > .app-header--desktop {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    z-index: 2147483001 !important;
+    width: 100vw !important;
+    height: 4.75rem !important;
+    min-height: 4.75rem !important;
+    max-height: 4.75rem !important;
+    margin: 0 !important;
+    transform: none !important;
+    pointer-events: auto;
+  }
+}
+
+/*
+ * Desktop shell v4.
+ * This file intentionally owns only the fixed desktop header host
+ * and the PC record workspace. It is loaded last so legacy UI
+ * geometry cannot override these desktop decisions.
+ */
+
+/* The desktop header lives in its own body-level host.
+   The host itself is fixed; the header is not part of the app scroll tree. */
+#desktop-header-root {
+  display: none;
+}
+
+@media (min-width: 55rem) {
+  #desktop-header-root:not(:empty) {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    z-index: 1000 !important;
+    display: block;
+    height: 4.75rem;
+    pointer-events: none;
+  }
+
+  #desktop-header-root > .app-header--desktop {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    min-height: 4.75rem;
+    margin: 0 !important;
+    transform: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: auto;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-line) 72%, transparent);
+    background: color-mix(in srgb, var(--color-paper) 97%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  #desktop-header-root .app-screen-context {
+    min-width: 0;
+    display: grid;
+    gap: 0.1rem;
+    align-content: center;
+  }
+
+  #desktop-header-root .app-screen-context small {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.66rem;
+    line-height: 1.1;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+  }
+
+  #desktop-header-root .app-screen-context strong {
+    color: var(--color-ink);
+    font-size: 1.35rem;
+    line-height: 1.05;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+  }
+}
+
+@media (min-width: 80rem) {
+  #desktop-header-root > .app-header--desktop {
+    padding:
+      max(var(--space-3), env(safe-area-inset-top))
+      max(var(--pc-content-right), env(safe-area-inset-right))
+      var(--space-3)
+      max(var(--pc-content-left), env(safe-area-inset-left));
+  }
+}
+
+@media (min-width: 55rem) and (max-width: 79.99rem) {
+  #desktop-header-root > .app-header--desktop {
+    padding:
+      max(var(--space-3), env(safe-area-inset-top))
+      max(var(--space-5), env(safe-area-inset-right))
+      var(--space-3)
+      max(var(--space-5), env(safe-area-inset-left));
+  }
+
+  .app-shell:not(.app-shell--immersive) .app-main {
+    padding-top: calc(4.75rem + var(--space-5));
+  }
+}
+
+/* Record workspace: use the available PC canvas instead of a narrow UI column. */
+@media (min-width: 55rem) {
+  .app-shell:not(.app-shell--immersive) .screen--record-input.screen-layout--record {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0.9rem;
+  }
+
+  .screen--record-input.screen-layout--record > .page-head,
+  .screen--record-input.screen-layout--record > .parity-record-banner,
+  .screen--record-input.screen-layout--record .record-form {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+  }
+
+  .screen--record-input.screen-layout--record > .page-head {
+    min-height: 3.25rem;
+    padding: 0;
+    align-items: end;
+  }
+
+  .screen--record-input.screen-layout--record > .page-head .eyebrow {
+    font-size: 0.76rem;
+    line-height: 1.15;
+  }
+
+  .screen--record-input.screen-layout--record > .page-head h1 {
+    margin-top: 0.2rem;
+    font-size: clamp(2.15rem, 2.6vw, 2.8rem);
+    line-height: 1.05;
+  }
+
+  .screen--record-input.screen-layout--record > .parity-record-banner {
+    margin-top: -0.25rem;
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  .screen--record-input.screen-layout--record .record-form {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 21rem) !important;
+    gap: 0.9rem 1.2rem !important;
+    align-items: start;
+  }
+
+  .screen--record-input.screen-layout--record .record-form > .core-card,
+  .screen--record-input.screen-layout--record .record-form > .optional-stack {
+    grid-column: 1 !important;
+    min-width: 0;
+  }
+
+  .screen--record-input.screen-layout--record .record-form > .core-card {
+    margin: 0 !important;
+    padding: 1.1rem 1.2rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 0.8rem 1rem !important;
+    border-radius: 1.2rem;
+    overflow: hidden;
+  }
+
+  .screen--record-input.screen-layout--record .core-heading {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+    display: grid !important;
+    grid-template-columns: 2.45rem minmax(0, 1fr) auto !important;
+    gap: 0.78rem !important;
+    align-items: center;
+  }
+
+  .screen--record-input.screen-layout--record .core-stage-icon {
+    width: 2.35rem !important;
+    height: 2.35rem !important;
+    display: grid !important;
+    place-items: center;
+    text-align: center;
+    font-size: 0.82rem;
+  }
+
+  .screen--record-input.screen-layout--record .stage-label {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .core-heading h2 {
+    margin-top: 0.1rem;
+    font-size: 1.28rem !important;
+    line-height: 1.2;
+  }
+
+  .screen--record-input.screen-layout--record .core-heading > span:last-child {
+    font-size: 0.76rem !important;
+    padding: 0.38rem 0.56rem;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0.32rem !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
+    overflow: hidden;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle label {
+    min-width: 0;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle span {
+    width: 100%;
+    min-width: 0;
+    min-height: 3rem;
+    padding-inline: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    font-size: 0.94rem !important;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .screen--record-input.screen-layout--record .date-field {
+    grid-column: 2 !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: 3.4rem minmax(0, 1fr) !important;
+    gap: 0.6rem !important;
+    align-items: center;
+    overflow: visible !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-label,
+  .screen--record-input.screen-layout--record .date-field > span {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-control,
+  .screen--record-input.screen-layout--record .date-field input[type="date"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-control {
+    height: 3rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-control > span {
+    font-size: 1rem !important;
+    line-height: 3rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .core-card > [data-run-fields] {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    min-width: 0;
+  }
+
+  .screen--record-input.screen-layout--record .core-card > [data-rest-fields] {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+  }
+
+  .screen--record-input.screen-layout--record .measure-grid {
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 0 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .measure-field {
+    min-width: 0;
+    gap: 0.35rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .measure-field > span {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .measure-field > div {
+    width: 100% !important;
+    height: 3.1rem !important;
+    padding-inline: 0.75rem;
+  }
+
+  .screen--record-input.screen-layout--record .measure-field input {
+    min-width: 0;
+    font-size: 1.3rem !important;
+    text-align: left;
+  }
+
+  .screen--record-input.screen-layout--record .measure-field b {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .micro-note {
+    margin-top: 0.45rem !important;
+    font-size: 0.79rem !important;
+    line-height: 1.45;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline {
+    grid-column: 2 !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0.8rem 0.9rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 9rem !important;
+    gap: 0.75rem !important;
+    align-items: center;
+    align-self: stretch;
+    overflow: hidden;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline strong {
+    margin-top: 0.15rem;
+    font-size: 0.98rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline span {
+    margin-top: 0.2rem;
+    font-size: 0.78rem !important;
+    line-height: 1.35;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline button {
+    width: 9rem !important;
+    min-width: 0 !important;
+    min-height: 2.8rem !important;
+    padding-inline: 0.65rem !important;
+    font-size: 0.86rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .optional-stack {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.65rem !important;
+    margin: 0 !important;
+  }
+
+  .screen--record-input.screen-layout--record .optional-stack > .stage-card {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    grid-column: 1 / -1 !important;
+    justify-self: stretch !important;
+    margin: 0 !important;
+    border-radius: 1rem;
+  }
+
+  .screen--record-input.screen-layout--record .stage-card > summary {
+    width: 100%;
+    min-height: 4.15rem !important;
+    padding: 0.65rem 0.9rem !important;
+    display: grid !important;
+    grid-template-columns: 2.3rem minmax(0, 1fr) auto !important;
+    gap: 0.75rem !important;
+    align-items: center;
+  }
+
+  .screen--record-input.screen-layout--record .stage-icon {
+    width: 2.15rem !important;
+    height: 2.15rem !important;
+    display: grid !important;
+    place-items: center;
+    font-size: 0.78rem !important;
+    text-align: center;
+  }
+
+  .screen--record-input.screen-layout--record .summary-copy {
+    min-width: 0;
+  }
+
+  .screen--record-input.screen-layout--record .summary-copy small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .summary-copy strong {
+    margin-top: 0.12rem;
+    font-size: 1rem !important;
+    line-height: 1.25;
+  }
+
+  .screen--record-input.screen-layout--record .summary-copy em {
+    margin-top: 0.15rem;
+    font-size: 0.78rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body {
+    width: 100%;
+    padding: 1rem 1.05rem 1.05rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-intro,
+  .screen--record-input.screen-layout--record .snapshot-note,
+  .screen--record-input.screen-layout--record .record-return-status {
+    font-size: 0.82rem !important;
+    line-height: 1.5;
+  }
+
+  .screen--record-input.screen-layout--record .field {
+    min-width: 0;
+    gap: 0.4rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .field > span {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .field input,
+  .screen--record-input.screen-layout--record .field select,
+  .screen--record-input.screen-layout--record .field textarea {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 3rem !important;
+    padding: 0.7rem 0.82rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 1rem !important;
+    line-height: 1.35;
+  }
+
+  .screen--record-input.screen-layout--record .two-fields {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.85rem !important;
+    align-items: end;
+  }
+
+  .screen--record-input.screen-layout--record input[name="steps"],
+  .screen--record-input.screen-layout--record select[name="stepsProvenance"],
+  .screen--record-input.screen-layout--record select[name="runningFormat"],
+  .screen--record-input.screen-layout--record input[name="temperatureC"] {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .field:has(select[name="runningFormat"]) {
+    width: 100% !important;
+    margin-top: 0.8rem;
+  }
+
+  .screen--record-input.screen-layout--record .environment-fields {
+    width: 100% !important;
+    grid-template-columns: minmax(9rem, 0.35fr) minmax(0, 1fr) !important;
+    gap: 0.85rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .environment-fields .field input,
+  .screen--record-input.screen-layout--record .environment-fields .field textarea {
+    width: 100% !important;
+    height: 3rem !important;
+    min-height: 3rem !important;
+    font-size: 1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .linked-records {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.8rem !important;
+    margin-top: 0 !important;
+  }
+
+  .screen--record-input.screen-layout--record .route-button,
+  .screen--record-input.screen-layout--record .linked-card {
+    width: 100%;
+    min-height: 4rem !important;
+    padding: 0.72rem 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .route-button small,
+  .screen--record-input.screen-layout--record .linked-card small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .route-button strong,
+  .screen--record-input.screen-layout--record .linked-card strong {
+    font-size: 0.98rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .linked-card em {
+    font-size: 0.78rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .reflection-fields {
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.8rem !important;
+    margin-top: 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .reflection-fields .field:first-child {
+    grid-column: auto !important;
+  }
+
+  .screen--record-input.screen-layout--record .reflection-fields textarea,
+  .screen--record-input.screen-layout--record .reflection-fields .field:first-child textarea {
+    width: 100% !important;
+    min-height: 6.5rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area {
+    grid-column: 2 !important;
+    grid-row: 1 / span 2 !important;
+    position: sticky !important;
+    top: 5.75rem !important;
+    width: 100% !important;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 1.05rem !important;
+    display: grid !important;
+    gap: 0.85rem !important;
+    align-items: start;
+    border-radius: 1.1rem;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area strong {
+    font-size: 1.02rem !important;
+    line-height: 1.35;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area span {
+    margin-top: 0.35rem !important;
+    font-size: 0.84rem !important;
+    line-height: 1.5;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area .primary-save {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 3.1rem !important;
+    padding-inline: 0.8rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .record-form > .subscreen {
+    grid-column: 1 / -1 !important;
+  }
+
+  .screen--record-input.screen-layout--record .mobile-save-bar {
+    display: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .overlay {
+    align-items: center !important;
+    padding: 1.25rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .rof-sheet {
+    width: min(43rem, calc(100vw - 2.5rem)) !important;
+    max-height: min(47rem, calc(100dvh - 2.5rem)) !important;
+    padding: 1.05rem 1.25rem 1.2rem !important;
+    border-radius: 1.4rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .rof-sheet .sheet-head h2 {
+    font-size: 1.7rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .rof-question {
+    font-size: 1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .rof-current > span,
+  .screen--record-input.screen-layout--record .rof-about summary,
+  .screen--record-input.screen-layout--record .rof-about p,
+  .screen--record-input.screen-layout--record .rof-about small {
+    font-size: 0.78rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .rof-current > em,
+  .screen--record-input.screen-layout--record .rof-anchor-guide div {
+    font-size: 0.92rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .rof-ticks,
+  .screen--record-input.screen-layout--record .rof-anchor-guide small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .primary-sheet-action,
+  .screen--record-input.screen-layout--record .text-action {
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (min-width: 55rem) and (max-width: 68rem) {
+  .screen--record-input.screen-layout--record .record-form {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .screen--record-input.screen-layout--record .record-form > .core-card,
+  .screen--record-input.screen-layout--record .record-form > .optional-stack,
+  .screen--record-input.screen-layout--record .desktop-save-area {
+    grid-column: 1 !important;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area {
+    grid-row: auto !important;
+    position: static !important;
+  }
+}
+
+@media (min-width: 55rem) and (max-width: 60rem) {
+  .screen--record-input.screen-layout--record .record-form > .core-card {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .screen--record-input.screen-layout--record .core-heading,
+  .screen--record-input.screen-layout--record .activity-toggle,
+  .screen--record-input.screen-layout--record .date-field,
+  .screen--record-input.screen-layout--record .core-card > [data-run-fields],
+  .screen--record-input.screen-layout--record .core-card > [data-rest-fields],
+  .screen--record-input.screen-layout--record .fatigue-inline {
+    grid-column: 1 !important;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline {
+    grid-template-columns: minmax(0, 1fr) 9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .reflection-fields {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+
+/* Desktop save rail: readiness, context and auto-save feedback. */
+@media (min-width: 69rem) {
+  .screen--record-input.screen-layout--record .desktop-save-area {
+    top: 1.1rem !important;
+    gap: 0.9rem !important;
+    padding: 1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area__intro {
+    display: grid;
+    gap: 0.28rem;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area__intro > strong {
+    font-size: 1.06rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area__intro > span {
+    margin: 0 !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness {
+    display: grid;
+    gap: 0.7rem;
+    padding: 0.8rem;
+    border: 1px solid var(--color-line);
+    border-radius: 0.9rem;
+    background: color-mix(in srgb, var(--color-accent-soft) 35%, var(--color-surface));
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__summary > span {
+    margin: 0 !important;
+    color: var(--color-muted);
+    font-size: 0.75rem !important;
+    font-weight: 850;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__summary > strong {
+    font-size: 0.98rem !important;
+    color: var(--color-accent-strong);
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__bar {
+    height: 0.42rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-line) 78%, var(--color-surface));
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__bar > i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-accent);
+    transition: width 180ms ease;
+  }
+
+  .screen--record-input.screen-layout--record .save-context {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border: 1px solid color-mix(in srgb, var(--color-line) 84%, transparent);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .screen--record-input.screen-layout--record .save-context > div {
+    min-width: 0;
+    padding: 0.58rem 0.65rem;
+  }
+
+  .screen--record-input.screen-layout--record .save-context > div + div {
+    border-left: 1px solid color-mix(in srgb, var(--color-line) 84%, transparent);
+  }
+
+  .screen--record-input.screen-layout--record .save-context dt,
+  .screen--record-input.screen-layout--record .save-context dd {
+    margin: 0;
+  }
+
+  .screen--record-input.screen-layout--record .save-context dt {
+    color: var(--color-muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+  }
+
+  .screen--record-input.screen-layout--record .save-context dd {
+    margin-top: 0.12rem;
+    color: var(--color-ink);
+    font-size: 0.82rem;
+    font-weight: 850;
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist > div {
+    min-height: 2.2rem;
+    padding: 0.48rem 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--color-line) 84%, transparent);
+    border-radius: 0.65rem;
+    background: var(--color-surface);
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist > div > span {
+    margin: 0 !important;
+    color: var(--color-ink);
+    font-size: 0.78rem !important;
+    font-weight: 800;
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist > div > b {
+    color: var(--color-muted);
+    font-size: 0.72rem;
+    font-weight: 850;
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist > div.is-complete > b {
+    color: var(--color-accent-strong);
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__note,
+  .screen--record-input.screen-layout--record .save-readiness__draft {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.72rem;
+    line-height: 1.45;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__draft {
+    padding-top: 0.55rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-line) 80%, transparent);
+  }
+
+  .screen--record-input.screen-layout--record .draft-status:empty {
+    display: none;
+  }
+
+  .screen--record-input.screen-layout--record .draft-status:not(:empty) {
+    display: block;
+    margin: 0;
+    padding: 0.55rem 0.65rem;
+    border-radius: 0.65rem;
+    background: var(--color-surface-muted);
+    color: var(--color-muted);
+    font-size: 0.74rem;
+    line-height: 1.4;
+  }
+}
+
+
+/* Step 1: keep pre-run fatigue inside the reading flow rather than as a detached right block. */
+@media (min-width: 55rem) {
+  .screen--record-input.screen-layout--record .record-form > .core-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .screen--record-input.screen-layout--record .core-heading {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-field {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline {
+    grid-column: 1 / -1 !important;
+    grid-row: 3 !important;
+    min-height: 4.25rem !important;
+    padding: 0.78rem 0.9rem !important;
+    grid-template-columns: minmax(0, 1fr) minmax(9rem, 12rem) !important;
+    gap: 1rem !important;
+    align-items: center !important;
+    background: color-mix(in srgb, var(--color-accent-soft) 30%, var(--color-surface)) !important;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline button {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .core-card > [data-run-fields] {
+    grid-column: 1 / -1 !important;
+    grid-row: 4 !important;
+  }
+
+  .screen--record-input.screen-layout--record .core-card > [data-rest-fields] {
+    grid-column: 1 / -1 !important;
+    grid-row: 4 !important;
+  }
+
+  .screen--record-input.screen-layout--record .measure-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ===== desktop-record-refine.css ===== */
+/*
+ * Desktop record refinement.
+ * Loaded after the desktop shell so record-input geometry can be tuned
+ * independently without changing the global shell/header behavior.
+ */
+@media (min-width: 80rem) {
+  /* Step 1: required items first, optional pre-run fatigue last. */
+  .screen--record-input.screen-layout--record .record-form > .core-card {
+    grid-template-columns: 20rem 25rem minmax(0, 1fr) !important;
+    column-gap: 1rem !important;
+    row-gap: 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .core-heading {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    width: 20rem !important;
+    max-width: 20rem !important;
+    justify-self: start;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.8rem !important;
+    background: var(--color-surface) !important;
+    overflow: visible !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle legend {
+    position: absolute !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    clip: auto !important;
+    transform: translateY(-1.55rem);
+    color: var(--color-muted) !important;
+    font-size: 0.82rem !important;
+    line-height: 1.2;
+    font-weight: 850 !important;
+    white-space: nowrap;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle label + label {
+    border-left: 1px solid var(--color-line);
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle span {
+    min-height: 3.05rem !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    font-size: 0.94rem !important;
+    box-shadow: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle label:first-of-type span {
+    border-radius: 0.72rem 0 0 0.72rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle label:last-of-type span {
+    border-radius: 0 0.72rem 0.72rem 0 !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle input:checked + span {
+    background: var(--color-selection-surface) !important;
+    color: var(--color-accent-strong) !important;
+    box-shadow: inset 0 0 0 2px var(--color-selection-border) !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-field {
+    grid-column: 2 / -1 !important;
+    grid-row: 2 !important;
+    width: 20rem !important;
+    max-width: 20rem !important;
+    justify-self: start;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.38rem !important;
+    align-items: start !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-label {
+    display: block !important;
+    color: var(--color-muted) !important;
+    font-size: 0.82rem !important;
+    line-height: 1.2;
+    font-weight: 850 !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-control {
+    width: 100% !important;
+    height: 3.05rem !important;
+    min-height: 3.05rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.8rem !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-control > span {
+    line-height: 3.05rem !important;
+    padding-inline: 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .core-card > [data-run-fields] {
+    grid-column: 1 / -1 !important;
+    grid-row: 3 !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .measure-grid {
+    width: auto !important;
+    max-width: none !important;
+    grid-template-columns: 12rem 14rem !important;
+    gap: 0.8rem !important;
+    justify-content: start;
+  }
+
+  .screen--record-input.screen-layout--record .measure-field {
+    gap: 0.38rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .measure-field > span {
+    color: var(--color-muted) !important;
+    font-size: 0.82rem !important;
+    line-height: 1.2;
+    font-weight: 850 !important;
+  }
+
+  .screen--record-input.screen-layout--record .measure-field > div {
+    width: 100% !important;
+    height: 3.05rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.8rem !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline {
+    grid-column: 1 / -1 !important;
+    grid-row: 4 !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 3.8rem !important;
+    margin-top: 0.1rem !important;
+    padding: 0.7rem 0.8rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(14rem, 1fr) minmax(10rem, 0.85fr) 8.5rem !important;
+    gap: 1rem !important;
+    align-items: center !important;
+    border-top: 1px solid color-mix(in srgb, var(--color-line) 82%, transparent) !important;
+    border-right: 0 !important;
+    border-bottom: 0 !important;
+    border-left: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline__label,
+  .screen--record-input.screen-layout--record .fatigue-inline__status {
+    min-width: 0;
+    display: grid;
+    gap: 0.16rem;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline__label small,
+  .screen--record-input.screen-layout--record .fatigue-inline__status small {
+    margin: 0 !important;
+    color: var(--color-muted) !important;
+    font-size: 0.72rem !important;
+    line-height: 1.2;
+    font-weight: 850 !important;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline__label strong {
+    margin: 0 !important;
+    color: var(--color-ink);
+    font-size: 0.98rem !important;
+    line-height: 1.3;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline__status span {
+    margin: 0 !important;
+    color: var(--color-ink);
+    font-size: 0.86rem !important;
+    line-height: 1.3;
+    font-weight: 800;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline button {
+    width: 8.5rem !important;
+    min-height: 2.75rem !important;
+    justify-self: end;
+  }
+
+  .screen--record-input.screen-layout--record .fatigue-inline .form-messages {
+    grid-column: 1 / -1 !important;
+  }
+
+  .screen--record-input.screen-layout--record .core-card > [data-rest-fields] {
+    grid-column: 1 / -1 !important;
+    grid-row: 3 / 5 !important;
+  }
+
+  /* Step 2: the stage card is already the container. Remove the redundant inner frame. */
+  .screen--record-input.screen-layout--record .record-course-entry {
+    width: 100% !important;
+    display: grid !important;
+    gap: 0.7rem !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .record-course-entry .route-button,
+  .screen--record-input.screen-layout--record .record-course-entry .selected-course {
+    width: min(100%, 34rem) !important;
+    max-width: 34rem !important;
+    margin-top: 0 !important;
+  }
+
+  .screen--record-input.screen-layout--record .record-course-library-save {
+    width: min(100%, 34rem);
+    margin-block: 0.55rem 0;
+  }
+
+  /* Step 3: short values use short controls; free text gets the wider field. */
+  .screen--record-input.screen-layout--record .two-fields {
+    width: auto !important;
+    grid-template-columns: 12rem 18rem !important;
+    gap: 0.8rem !important;
+    justify-content: start;
+  }
+
+  .screen--record-input.screen-layout--record input[name="steps"] {
+    width: 12rem !important;
+    max-width: 12rem !important;
+  }
+
+  .screen--record-input.screen-layout--record select[name="stepsProvenance"] {
+    width: 18rem !important;
+    max-width: 18rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .field:has(select[name="runningFormat"]) {
+    width: 21rem !important;
+    max-width: 21rem !important;
+    margin-top: 0.8rem !important;
+  }
+
+  .screen--record-input.screen-layout--record select[name="runningFormat"] {
+    width: 21rem !important;
+    max-width: 21rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .inner-details {
+    width: min(100%, 48rem);
+  }
+
+  .screen--record-input.screen-layout--record .environment-fields {
+    width: auto !important;
+    grid-template-columns: 10rem minmax(22rem, 34rem) !important;
+    gap: 0.85rem !important;
+    justify-content: start;
+  }
+
+  .screen--record-input.screen-layout--record input[name="temperatureC"] {
+    width: 10rem !important;
+    max-width: 10rem !important;
+  }
+
+  .screen--record-input.screen-layout--record textarea[name="environmentNote"] {
+    width: 100% !important;
+    max-width: 34rem !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--record-input.screen-layout--record .record-form > .core-card {
+    grid-template-columns: 18rem 22rem minmax(0, 1fr) !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle {
+    width: 18rem !important;
+    max-width: 18rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-field {
+    width: 18rem !important;
+    max-width: 18rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .measure-grid {
+    grid-template-columns: 11rem 13rem !important;
+  }
+}
+
+/* ===== desktop-record-polish-v2.css ===== */
+/*
+ * Desktop record polish v2.
+ * Final-pass geometry for Step 1, Step 3, and embedded record subflows.
+ * Loaded after desktop-record-refine.css.
+ */
+
+@media (min-width: 80rem) {
+  /* ===== Step 1: one visual grammar for select/date/number inputs ===== */
+  .screen--record-input.screen-layout--record .activity-field {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    width: 20rem;
+    max-width: 20rem;
+    min-width: 0;
+    display: grid;
+    gap: 0.38rem;
+    align-self: start;
+  }
+
+  .screen--record-input.screen-layout--record .activity-field__label {
+    display: block;
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    line-height: 1.2;
+    font-weight: 850;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle {
+    width: 20rem !important;
+    max-width: 20rem !important;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0.25rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.25rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.8rem !important;
+    background: var(--color-surface-muted) !important;
+    overflow: hidden !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle legend {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    transform: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle label,
+  .screen--record-input.screen-layout--record .activity-toggle label + label {
+    min-width: 0;
+    border: 0 !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle span {
+    min-height: 2.55rem !important;
+    border: 1px solid transparent !important;
+    border-radius: 0.55rem !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: 0.94rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle input:checked + span {
+    border-color: var(--color-selection-border) !important;
+    background: var(--color-selection-surface) !important;
+    color: var(--color-accent-strong) !important;
+    box-shadow: inset 0 0 0 1px var(--color-selection-border) !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-field {
+    width: 20rem !important;
+    max-width: 20rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .date-control,
+  .screen--record-input.screen-layout--record .measure-field > div {
+    min-height: 3.05rem !important;
+    height: 3.05rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.8rem !important;
+    background: var(--color-surface) !important;
+  }
+
+  /* ===== Step 3: short values stay short and align on one row ===== */
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) {
+    display: grid !important;
+    grid-template-columns: 11rem 17rem 20rem !important;
+    gap: 0.85rem 1rem !important;
+    justify-content: start;
+    align-items: end;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) > .two-fields {
+    display: contents !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .field {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) input[name="steps"] {
+    width: 11rem !important;
+    max-width: 11rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) select[name="stepsProvenance"] {
+    width: 17rem !important;
+    max-width: 17rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .field--running-format,
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) select[name="runningFormat"] {
+    width: 20rem !important;
+    max-width: 20rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .nested-panel,
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .inner-details {
+    grid-column: 1 / -1 !important;
+    width: min(100%, 50rem) !important;
+    max-width: 50rem !important;
+  }
+
+  /* ===== Embedded body/shoe screens: clearly framed as a layer over Record ===== */
+  .screen--record-input.screen-layout--record .subscreen {
+    position: fixed !important;
+    top: 4.75rem !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 100000 !important;
+    padding: 1.35rem 2rem 2rem !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr);
+    align-content: center;
+    overflow: hidden !important;
+    background: color-mix(in srgb, var(--color-paper) 64%, transparent) !important;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+
+  .screen--record-input.screen-layout--record .subscreen[hidden] {
+    display: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > header,
+  .screen--record-input.screen-layout--record .subscreen > main {
+    width: min(72rem, calc(100vw - 10rem)) !important;
+    max-width: none !important;
+    margin-inline: auto !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > header {
+    position: static !important;
+    top: auto !important;
+    height: 3.7rem !important;
+    min-height: 3.7rem !important;
+    padding: 0.75rem 1rem !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    border: 2px solid var(--color-line) !important;
+    border-bottom-width: 1px !important;
+    border-radius: 1.25rem 1.25rem 0 0 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > header button {
+    min-height: 2.4rem;
+    padding: 0 0.65rem;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.65rem;
+    background: var(--color-surface-muted) !important;
+    color: var(--color-accent-strong) !important;
+    font-size: 0.86rem !important;
+    font-weight: 850 !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > header span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > header strong {
+    font-size: 0.98rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > main {
+    max-height: calc(100dvh - 4.75rem - 3.7rem - 3.35rem) !important;
+    padding: 1.35rem 1.5rem 1.6rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border: 2px solid var(--color-line) !important;
+    border-top: 0 !important;
+    border-radius: 0 0 1.25rem 1.25rem !important;
+    box-shadow: 0 1.35rem 3.5rem color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow {
+    gap: 1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow-head {
+    padding: 0 0.15rem 0.25rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow-head .eyebrow {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow-head h2 {
+    margin-top: 0.25rem !important;
+    font-size: 1.8rem !important;
+    line-height: 1.1;
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow-head > p:last-child {
+    margin-top: 0.45rem !important;
+    font-size: 0.86rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid {
+    gap: 0.65rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid legend {
+    margin-bottom: 0.2rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid label {
+    min-height: 4.2rem !important;
+    padding: 0.75rem 0.9rem !important;
+    grid-template-columns: 1.5rem minmax(0, 1fr) !important;
+    gap: 0.75rem !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid input {
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid strong {
+    font-size: 0.96rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid small {
+    margin-top: 0.2rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .body-area-entry,
+  .screen--record-input.screen-layout--record .sub-card,
+  .screen--record-input.screen-layout--record .sub-extra {
+    border-radius: 1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .body-area-entry,
+  .screen--record-input.screen-layout--record .sub-card {
+    padding: 1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-section-head small {
+    font-size: 0.7rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-section-head strong {
+    margin-top: 0.18rem !important;
+    font-size: 1.08rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-section-head span {
+    margin-top: 0.22rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subjective-body-map {
+    gap: 0.7rem !important;
+    margin-top: 0.8rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subjective-body-map figure {
+    padding: 0.6rem !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subjective-body-map figcaption {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subjective-body-map svg {
+    height: 15rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .selected-body-summary {
+    margin-top: 0.75rem !important;
+    padding: 0.65rem 0.75rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .selected-body-row strong {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .selected-body-row select {
+    height: 2.45rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-two-fields {
+    gap: 0.8rem !important;
+    margin-top: 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen .field {
+    gap: 0.4rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen .field > span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen .field input,
+  .screen--record-input.screen-layout--record .subscreen .field select,
+  .screen--record-input.screen-layout--record .subscreen .field textarea {
+    min-height: 3rem !important;
+    padding: 0.7rem 0.8rem !important;
+    font-size: 0.96rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-extra summary strong {
+    font-size: 0.94rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-extra summary small,
+  .screen--record-input.screen-layout--record .sub-extra-body > p {
+    font-size: 0.78rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .safety-check-grid label,
+  .screen--record-input.screen-layout--record .focus-tag-grid label {
+    min-height: 2.9rem;
+    padding: 0.65rem 0.75rem !important;
+    align-items: center !important;
+    font-size: 0.84rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-check {
+    padding: 0.7rem 0.8rem !important;
+    grid-template-columns: 1.4rem minmax(0, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-check strong {
+    font-size: 0.86rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-check small,
+  .screen--record-input.screen-layout--record .sub-note {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow-save {
+    min-height: 3.2rem !important;
+    border-radius: 0.8rem !important;
+    font-size: 0.92rem !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--record-input.screen-layout--record .activity-field,
+  .screen--record-input.screen-layout--record .activity-toggle {
+    width: 18rem !important;
+    max-width: 18rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) {
+    grid-template-columns: 10rem 15rem 18rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) input[name="steps"] {
+    width: 10rem !important;
+    max-width: 10rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) select[name="stepsProvenance"] {
+    width: 15rem !important;
+    max-width: 15rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) .field--running-format,
+  .screen--record-input.screen-layout--record .stage-body:has(input[name="steps"]) select[name="runningFormat"] {
+    width: 18rem !important;
+    max-width: 18rem !important;
+  }
+}
+
+/* ===== desktop-record-derived-v1.css ===== */
+/*
+ * Desktop derived-record surfaces.
+ * Course editor, body record and shoes are secondary screens of Record.
+ * Loaded last so these desktop-only frames are visually consistent.
+ */
+
+@media (min-width: 80rem) {
+  /* ===== Course editor as a derived Record surface ===== */
+  .screen--course-editor.screen-layout--course .editor {
+    position: fixed !important;
+    top: 4.75rem !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 90000 !important;
+    padding: 1.35rem 2rem 2rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    background: color-mix(in srgb, var(--color-ink) 14%, var(--color-paper)) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-head,
+  .screen--course-editor.screen-layout--course .editor-main {
+    width: min(70rem, calc(100vw - 9rem)) !important;
+    max-width: none !important;
+    margin-inline: auto !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-head {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 3 !important;
+    height: 4rem !important;
+    min-height: 4rem !important;
+    padding: 0.7rem 1.1rem !important;
+    grid-template-columns: minmax(13rem, 1fr) auto minmax(8rem, 1fr) !important;
+    gap: 1rem;
+    border: 2px solid var(--color-line) !important;
+    border-bottom-width: 1px !important;
+    border-radius: 1.35rem 1.35rem 0 0 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 1.3rem 3.2rem color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+
+  .screen--course-editor.screen-layout--course .editor-head a {
+    min-height: 2.45rem;
+    padding: 0 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: 0.7rem;
+    background: var(--color-surface-muted);
+    color: var(--color-accent-strong);
+    font-size: 0.84rem;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-back-link {
+    justify-self: start;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-manager-link {
+    justify-self: end;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-head > strong {
+    font-size: 1rem !important;
+    line-height: 1.2;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-main {
+    padding: 1.45rem 1.6rem 1.8rem !important;
+    border: 2px solid var(--color-line) !important;
+    border-top: 0 !important;
+    border-radius: 0 0 1.35rem 1.35rem !important;
+    box-shadow: 0 1.3rem 3.2rem color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+
+  .screen--course-editor.screen-layout--course .editor-main > .eyebrow {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-main > h1 {
+    margin-top: 0.25rem !important;
+    font-size: 2rem !important;
+    line-height: 1.08;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-main > p {
+    margin-top: 0.45rem !important;
+    font-size: 0.84rem !important;
+    line-height: 1.5;
+  }
+
+  .screen--course-editor.screen-layout--course .e-card {
+    margin-top: 1rem !important;
+    padding: 1.15rem 1.25rem !important;
+    border-radius: 1rem !important;
+    box-shadow: none !important;
+  }
+
+  .screen--course-editor.screen-layout--course .e-title {
+    gap: 0.8rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .e-title b {
+    width: 2.45rem !important;
+    height: 2.45rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .e-title small {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .e-title h2 {
+    margin-top: 0.12rem !important;
+    font-size: 1.22rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .field > span,
+  .screen--course-editor.screen-layout--course .mfield > span,
+  .screen--course-editor.screen-layout--course .section-field > span {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .field input,
+  .screen--course-editor.screen-layout--course .field select,
+  .screen--course-editor.screen-layout--course .section-field select,
+  .screen--course-editor.screen-layout--course .percent-control {
+    min-height: 3rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.94rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course input[name="courseName"] {
+    width: min(100%, 34rem) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .grade-mode {
+    width: min(100%, 42rem) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mode.three {
+    width: min(100%, 32rem) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mode button {
+    min-height: 3rem !important;
+    font-size: 0.84rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .note,
+  .screen--course-editor.screen-layout--course .support-copy,
+  .screen--course-editor.screen-layout--course .support-title span,
+  .screen--course-editor.screen-layout--course .support-title small {
+    font-size: 0.76rem !important;
+    line-height: 1.45;
+  }
+
+  .screen--course-editor.screen-layout--course .support-title strong,
+  .screen--course-editor.screen-layout--course .preview > h2 {
+    font-size: 1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .preview {
+    margin-top: 1rem !important;
+    padding: 1rem 1.15rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-actions .primary {
+    min-height: 3.25rem !important;
+    font-size: 0.92rem !important;
+  }
+
+  /* ===== Body record / shoes: derived panel over Record ===== */
+  .screen--record-input.screen-layout--record .subscreen {
+    padding: 1.25rem 2rem 2rem !important;
+    background: color-mix(in srgb, var(--color-ink) 16%, transparent) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > header,
+  .screen--record-input.screen-layout--record .subscreen > main {
+    width: min(74rem, calc(100vw - 9rem)) !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > header {
+    height: 4rem !important;
+    min-height: 4rem !important;
+    padding: 0.7rem 1.05rem !important;
+    border: 2px solid var(--color-line) !important;
+    border-bottom-width: 1px !important;
+    border-radius: 1.35rem 1.35rem 0 0 !important;
+    background: var(--color-surface) !important;
+    box-shadow: 0 1.35rem 3.4rem color-mix(in srgb, var(--color-ink) 20%, transparent);
+  }
+
+  .screen--record-input.screen-layout--record .record-subscreen__back {
+    min-height: 2.45rem !important;
+    padding: 0 0.8rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.7rem !important;
+    background: var(--color-surface-muted) !important;
+    font-size: 0.84rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > header strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen > main {
+    max-height: calc(100dvh - 4.75rem - 4rem - 3rem) !important;
+    padding: 1.35rem 1.5rem 1.65rem !important;
+    border: 2px solid var(--color-line) !important;
+    border-top: 0 !important;
+    border-radius: 0 0 1.35rem 1.35rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: 0 1.35rem 3.4rem color-mix(in srgb, var(--color-ink) 20%, transparent);
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow-head h2 {
+    font-size: 2rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow-head > p:last-child {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid label {
+    min-height: 4.4rem !important;
+    padding: 0.8rem 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid strong {
+    font-size: 0.98rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-choice-grid small {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .body-area-entry {
+    padding: 1.1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subjective-body-map {
+    gap: 0.85rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subjective-body-map figure {
+    padding: 0.7rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subjective-body-map figcaption {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subjective-body-map svg {
+    height: 16rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-section-head strong {
+    font-size: 1.12rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-section-head span,
+  .screen--record-input.screen-layout--record .selected-body-summary {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen .field > span {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen .field input,
+  .screen--record-input.screen-layout--record .subscreen .field select,
+  .screen--record-input.screen-layout--record .subscreen .field textarea {
+    min-height: 3.05rem !important;
+    font-size: 0.98rem !important;
+  }
+
+  /* Shoes gets a wider, two-column desktop composition. */
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-flow {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-flow-head,
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-note[data-record-personal-subflow-summary],
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-flow-save {
+    grid-column: 1 / -1 !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-card {
+    margin: 0 !important;
+    padding: 1.1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen--personal select[name="personalShoeId"] {
+    width: min(100%, 24rem) !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen--personal input[name="personalShoeLabel"] {
+    width: min(100%, 30rem) !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen--personal .focus-tag-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.65rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .subscreen--personal .focus-tag-grid label {
+    min-height: 3rem !important;
+    font-size: 0.86rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow-save {
+    min-height: 3.25rem !important;
+    font-size: 0.94rem !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--course-editor.screen-layout--course .editor-head,
+  .screen--course-editor.screen-layout--course .editor-main,
+  .screen--record-input.screen-layout--record .subscreen > header,
+  .screen--record-input.screen-layout--record .subscreen > main {
+    width: min(66rem, calc(100vw - 7rem)) !important;
+  }
+}
+
+/* ===== desktop-course-derived-v2.css ===== */
+/*
+ * Desktop course-derived screens v2.
+ * Course Library, Course Editor and GPX are treated as secondary RECORD screens.
+ * The document itself is locked; only the derived panel body scrolls.
+ */
+
+@media (min-width: 80rem) {
+  body.course-derived-open {
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  body.course-derived-open #app,
+  body.course-derived-open #app > .app-shell:not(.app-shell--immersive),
+  body.course-derived-open #app > .app-shell:not(.app-shell--immersive) > .app-main {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.course-derived-open > #desktop-header-root,
+  body.course-derived-open > #desktop-header-root > .app-header--desktop {
+    position: fixed !important;
+    top: 0 !important;
+    transform: none !important;
+  }
+
+  .course-derived-screen {
+    position: fixed !important;
+    top: 4.75rem !important;
+    right: max(var(--pc-content-right), env(safe-area-inset-right)) !important;
+    bottom: 0 !important;
+    left: max(var(--pc-content-left), env(safe-area-inset-left)) !important;
+    z-index: 80 !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 1.2rem 0 1.35rem !important;
+    display: grid !important;
+    place-items: stretch center;
+    overflow: hidden !important;
+    background: color-mix(in srgb, var(--color-ink) 10%, var(--color-paper)) !important;
+    overscroll-behavior: contain;
+  }
+
+  .course-derived-frame {
+    width: min(100%, 74rem) !important;
+    max-width: 74rem !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+    border: 2px solid var(--color-line) !important;
+    border-radius: 1.35rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: 0 1.45rem 3.7rem color-mix(in srgb, var(--color-ink) 20%, transparent) !important;
+  }
+
+  .course-derived-head {
+    position: relative !important;
+    top: auto !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    min-height: 4rem !important;
+    height: 4rem !important;
+    margin: 0 !important;
+    padding: 0.68rem 1rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(13rem, 1fr) auto minmax(10rem, 1fr) !important;
+    gap: 0.9rem !important;
+    align-items: center !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--color-line) !important;
+    border-radius: 0 !important;
+    background: var(--color-surface) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .course-derived-head > strong {
+    justify-self: center;
+    font-size: 1.02rem !important;
+    line-height: 1.2;
+  }
+
+  .course-derived-head > :last-child {
+    justify-self: end;
+  }
+
+  .course-derived-back,
+  .course-derived-head .editor-back-link,
+  .course-derived-head .editor-manager-link {
+    min-height: 2.55rem !important;
+    padding: 0 0.82rem !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.72rem !important;
+    background: var(--color-surface-muted) !important;
+    color: var(--color-accent-strong) !important;
+    font-size: 0.84rem !important;
+    line-height: 1.2;
+    font-weight: 850 !important;
+    text-decoration: none !important;
+  }
+
+  .course-derived-body {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 1.35rem 1.5rem 1.65rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    background: var(--color-surface) !important;
+  }
+
+  /* Existing editor shell becomes the common fixed panel instead of its own viewport. */
+  .screen--course-editor.screen-layout--course .editor.course-derived-frame {
+    position: relative !important;
+    inset: auto !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-head.course-derived-head {
+    position: relative !important;
+    top: auto !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-main.course-derived-body {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 1.35rem 1.5rem 1.65rem !important;
+  }
+
+  /* ===== Course Library ===== */
+  .screen--course-library.screen-layout--course .course-derived-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.5fr) minmax(20rem, 0.75fr) !important;
+    gap: 1.05rem 1.25rem !important;
+    align-content: start;
+  }
+
+  .screen--course-library.screen-layout--course .head {
+    grid-column: 1 / -1;
+    margin: 0 !important;
+  }
+
+  .screen--course-library.screen-layout--course .head .eyebrow {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .head h1 {
+    margin-top: 0.25rem !important;
+    font-size: 2rem !important;
+    line-height: 1.08;
+  }
+
+  .screen--course-library.screen-layout--course .head p:last-child {
+    margin: 0.42rem 0 0 !important;
+    color: var(--color-muted);
+    font-size: 0.86rem !important;
+    line-height: 1.45;
+  }
+
+  .screen--course-library.screen-layout--course .current {
+    grid-column: 1 / -1;
+    width: 100% !important;
+    margin: 0 !important;
+    min-height: 5.4rem;
+    padding: 1rem 1.1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .current small {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .current strong {
+    margin-top: 0.18rem !important;
+    font-size: 1.12rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .current span,
+  .screen--course-library.screen-layout--course .current b {
+    font-size: 0.78rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .saved-section,
+  .screen--course-library.screen-layout--course .assist-section {
+    width: 100% !important;
+    min-width: 0;
+    margin: 0 !important;
+  }
+
+  .screen--course-library.screen-layout--course .saved-section {
+    grid-column: 1;
+  }
+
+  .screen--course-library.screen-layout--course .assist-section {
+    grid-column: 2;
+  }
+
+  .screen--course-library.screen-layout--course .section-head {
+    min-height: 3.1rem;
+    align-items: end !important;
+    gap: 0.8rem;
+  }
+
+  .screen--course-library.screen-layout--course .section-head small {
+    font-size: 0.7rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .section-head h2 {
+    margin-top: 0.18rem !important;
+    font-size: 1.16rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .new {
+    min-height: 2.65rem !important;
+    padding: 0 0.85rem !important;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0.7rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .card {
+    min-width: 0;
+    padding: 0.9rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .card-head strong {
+    font-size: 0.94rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .card-head span,
+  .screen--course-library.screen-layout--course .fact small,
+  .screen--course-library.screen-layout--course .empty-course-card p {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .fact strong {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .import-helper {
+    width: 100% !important;
+    margin: 0.65rem 0 0 !important;
+    padding: 0.9rem !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.75rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .import-helper small {
+    font-size: 0.7rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .import-helper strong {
+    font-size: 0.92rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .import-helper span {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .import-helper a {
+    min-height: 2.65rem;
+    justify-content: center;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .boundary {
+    grid-column: 1 / -1;
+    margin: 0 !important;
+    font-size: 0.74rem !important;
+  }
+
+  /* ===== Course Editor ===== */
+  .screen--course-editor.screen-layout--course .editor-main > .eyebrow {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-main > h1 {
+    margin: 0.24rem 0 0 !important;
+    font-size: 2rem !important;
+    line-height: 1.08;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-main > p {
+    margin: 0.42rem 0 0 !important;
+    font-size: 0.84rem !important;
+    line-height: 1.45;
+  }
+
+  .screen--course-editor.screen-layout--course #course-editor-form {
+    display: grid;
+    gap: 0.9rem;
+    margin-top: 1rem;
+  }
+
+  .screen--course-editor.screen-layout--course .e-card {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 1.05rem 1.15rem !important;
+    border-radius: 1rem !important;
+    box-shadow: none !important;
+  }
+
+  .screen--course-editor.screen-layout--course .e-title b {
+    width: 2.4rem !important;
+    height: 2.4rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .e-title small {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .e-title h2 {
+    margin-top: 0.1rem !important;
+    font-size: 1.18rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .field {
+    gap: 0.36rem !important;
+    margin-top: 0.8rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .field > span,
+  .screen--course-editor.screen-layout--course .mfield > span,
+  .screen--course-editor.screen-layout--course .section-field > span {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .field input,
+  .screen--course-editor.screen-layout--course .field select,
+  .screen--course-editor.screen-layout--course .section-field select,
+  .screen--course-editor.screen-layout--course .percent-control {
+    min-height: 3rem !important;
+    font-size: 0.94rem !important;
+    border-radius: 0.72rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course input[name="courseName"] {
+    width: min(100%, 36rem) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mode {
+    margin-top: 0.8rem !important;
+    padding: 0.3rem !important;
+    gap: 0.3rem !important;
+    border-radius: 0.8rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .grade-mode {
+    width: min(100%, 46rem) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mode.three {
+    width: min(100%, 34rem) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mode button {
+    min-height: 3rem !important;
+    padding-inline: 0.75rem !important;
+    border-radius: 0.58rem !important;
+    font-size: 0.84rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .note,
+  .screen--course-editor.screen-layout--course .support-copy {
+    font-size: 0.76rem !important;
+    line-height: 1.45;
+  }
+
+  .screen--course-editor.screen-layout--course .gpx-inline {
+    margin-top: 0.8rem !important;
+    min-height: 3.7rem !important;
+    padding: 0.7rem 0.85rem !important;
+    border-radius: 0.78rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .gpx-inline small {
+    font-size: 0.68rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .gpx-inline strong {
+    font-size: 0.86rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .preview {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 1rem 1.1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .preview > h2 {
+    font-size: 1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .preview > strong {
+    font-size: 1.12rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .preview-grid small {
+    font-size: 0.7rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .preview-grid span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-actions {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-actions .primary {
+    min-height: 3.25rem !important;
+    font-size: 0.92rem !important;
+  }
+
+  /* ===== GPX ===== */
+  .screen--gpx-analysis.screen-layout--gpx .course-derived-body {
+    display: grid !important;
+    gap: 0.9rem !important;
+    align-content: start;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .intro,
+  .screen--gpx-analysis.screen-layout--gpx .import-card,
+  .screen--gpx-analysis.screen-layout--gpx .status-card,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-card,
+  .screen--gpx-analysis.screen-layout--gpx .compact-boundary,
+  .screen--gpx-analysis.screen-layout--gpx .profile-card,
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid,
+  .screen--gpx-analysis.screen-layout--gpx #gpx-result-area {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .intro {
+    margin: 0 !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .intro .eyebrow {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .intro h1 {
+    margin-top: 0.25rem !important;
+    font-size: 2rem !important;
+    line-height: 1.08;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .intro p:last-child {
+    margin-top: 0.42rem !important;
+    font-size: 0.84rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .import-card {
+    margin: 0 !important;
+    padding: 1.1rem 1.2rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 16rem !important;
+    gap: 0.85rem 1.2rem !important;
+    align-items: center;
+    border-radius: 1rem !important;
+    box-shadow: none !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .import-copy small {
+    font-size: 0.7rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .import-copy h2 {
+    margin-top: 0.2rem !important;
+    font-size: 1.2rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .import-copy p {
+    margin-top: 0.35rem !important;
+    font-size: 0.8rem !important;
+    line-height: 1.45;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .file-button {
+    grid-column: 2;
+    grid-row: 1;
+    width: 16rem !important;
+    min-height: 3.2rem !important;
+    margin: 0 !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.88rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .import-meta {
+    grid-column: 1 / -1;
+    margin: 0 !important;
+    gap: 0.45rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .import-meta span {
+    font-size: 0.7rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help,
+  .screen--gpx-analysis.screen-layout--gpx .file-note {
+    grid-column: 1 / -1;
+    margin: 0 !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help summary {
+    min-height: 3.3rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help summary strong {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help summary small,
+  .screen--gpx-analysis.screen-layout--gpx .file-note,
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help-body p {
+    font-size: 0.74rem !important;
+    line-height: 1.45;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .status-card {
+    margin: 0 !important;
+    padding: 0.75rem 0.85rem !important;
+    border-radius: 0.78rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .result-head {
+    margin-top: 0.35rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .result-head h2 {
+    font-size: 1.18rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .result-head small,
+  .screen--gpx-analysis.screen-layout--gpx .profile-heading small,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-heading small {
+    font-size: 0.7rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .profile-card,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-card {
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .profile-heading strong,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-heading h2 {
+    font-size: 1rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .profile-frame #gpx-profile-svg {
+    width: 100% !important;
+    min-height: 17rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0.7rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid article {
+    min-width: 0;
+    padding: 0.85rem !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid small,
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid span,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values small,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values span,
+  .screen--gpx-analysis.screen-layout--gpx .compact-boundary {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid strong,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.7rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .primary-action {
+    min-height: 3.2rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .course-derived-screen {
+    right: 1.25rem !important;
+    left: calc(var(--pc-nav-left) + var(--pc-nav-width) + 1.5rem) !important;
+  }
+
+  .course-derived-frame {
+    width: min(100%, 68rem) !important;
+    max-width: 68rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .course-derived-body {
+    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.75fr) !important;
+  }
+}
+
+/* ===== desktop-course-derived-v3.css ===== */
+/*
+ * Desktop course-derived screens v3.
+ * Final unification with the BODY RECORD / SHOES derived-panel pattern.
+ * The course editor frame is never a scroll surface; only .course-derived-body scrolls.
+ */
+
+@media (min-width: 80rem) {
+  /* Same overlay treatment as the body/shoes derived screens. */
+  .course-derived-screen {
+    left: 0 !important;
+    right: 0 !important;
+    padding:
+      1.25rem
+      max(2rem, env(safe-area-inset-right))
+      1.35rem
+      max(var(--pc-content-left), env(safe-area-inset-left)) !important;
+    background: color-mix(in srgb, var(--color-ink) 16%, transparent) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+  }
+
+  .course-derived-frame {
+    width: min(74rem, 100%) !important;
+    max-width: 74rem !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+    border: 2px solid var(--color-line) !important;
+    border-radius: 1.35rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: 0 1.35rem 3.4rem color-mix(in srgb, var(--color-ink) 20%, transparent) !important;
+  }
+
+  /* Header dimensions exactly match the BODY RECORD derived header. */
+  .course-derived-head {
+    height: 4rem !important;
+    min-height: 4rem !important;
+    padding: 0.7rem 1.05rem !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    gap: 0.9rem !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--color-line) !important;
+    border-radius: 0 !important;
+    background: var(--color-surface) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .course-derived-head > a,
+  .course-derived-back,
+  .course-derived-head .editor-back-link,
+  .course-derived-head .editor-manager-link {
+    width: max-content !important;
+    max-width: 100% !important;
+    min-height: 2.45rem !important;
+    padding: 0 0.8rem !important;
+    justify-self: start !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.7rem !important;
+    background: var(--color-surface-muted) !important;
+    color: var(--color-accent-strong) !important;
+    font-size: 0.84rem !important;
+    font-weight: 850 !important;
+    text-decoration: none !important;
+  }
+
+  .course-derived-head .editor-manager-link {
+    justify-self: end !important;
+  }
+
+  .course-derived-head > strong {
+    justify-self: center !important;
+    font-size: 1rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Critical fix: eliminate the legacy .editor scroll container.
+     The header is a non-scrolling grid row and only editor-main scrolls. */
+  .screen--course-editor.screen-layout--course .editor.course-derived-frame {
+    position: relative !important;
+    inset: auto !important;
+    z-index: auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+    overscroll-behavior: contain !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-head.course-derived-head {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--color-line) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-head.course-derived-head a {
+    width: max-content !important;
+    min-height: 2.45rem !important;
+    padding: 0 0.8rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.7rem !important;
+    background: var(--color-surface-muted) !important;
+    font-size: 0.84rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-main.course-derived-body {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 1.35rem 1.5rem 1.65rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: var(--color-surface) !important;
+    box-shadow: none !important;
+  }
+
+  /* Course Library typography: remove the remaining mobile-size text. */
+  .screen--course-library.screen-layout--course .head .eyebrow,
+  .screen--course-editor.screen-layout--course .editor-main > .eyebrow,
+  .screen--gpx-analysis.screen-layout--gpx .intro .eyebrow {
+    font-size: 0.75rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .head p:last-child,
+  .screen--course-editor.screen-layout--course .editor-main > p,
+  .screen--gpx-analysis.screen-layout--gpx .intro p:last-child {
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--course-library.screen-layout--course .current small,
+  .screen--course-library.screen-layout--course .section-head small,
+  .screen--course-library.screen-layout--course .import-helper small,
+  .screen--course-library.screen-layout--course .card-head span,
+  .screen--course-library.screen-layout--course .fact small {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .current strong {
+    font-size: 1.15rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .current span,
+  .screen--course-library.screen-layout--course .current b,
+  .screen--course-library.screen-layout--course .empty-course-card p,
+  .screen--course-library.screen-layout--course .boundary {
+    font-size: 0.8rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--course-library.screen-layout--course .section-head h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .card-head strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .fact strong {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .new,
+  .screen--course-library.screen-layout--course .use,
+  .screen--course-library.screen-layout--course .edit,
+  .screen--course-library.screen-layout--course .delete,
+  .screen--course-library.screen-layout--course .import-helper a {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .import-helper strong {
+    font-size: 0.96rem !important;
+  }
+
+  .screen--course-library.screen-layout--course .import-helper span {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Course Editor typography and controls. */
+  .screen--course-editor.screen-layout--course .e-title small,
+  .screen--course-editor.screen-layout--course .support-title small,
+  .screen--course-editor.screen-layout--course .gpx-inline small,
+  .screen--course-editor.screen-layout--course .preview-grid small {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .e-title h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .field > span,
+  .screen--course-editor.screen-layout--course .mfield > span,
+  .screen--course-editor.screen-layout--course .section-field > span {
+    font-size: 0.84rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .field input,
+  .screen--course-editor.screen-layout--course .field select,
+  .screen--course-editor.screen-layout--course .section-field select,
+  .screen--course-editor.screen-layout--course .percent-control {
+    font-size: 0.96rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mode button {
+    font-size: 0.9rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .note,
+  .screen--course-editor.screen-layout--course .support-copy,
+  .screen--course-editor.screen-layout--course .support-title span {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--course-editor.screen-layout--course .support-title strong,
+  .screen--course-editor.screen-layout--course .gpx-inline strong {
+    font-size: 0.92rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .preview-grid span {
+    font-size: 0.86rem !important;
+  }
+
+  /* GPX typography. */
+  .screen--gpx-analysis.screen-layout--gpx .import-copy small,
+  .screen--gpx-analysis.screen-layout--gpx .result-head small,
+  .screen--gpx-analysis.screen-layout--gpx .profile-heading small,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-heading small,
+  .screen--gpx-analysis.screen-layout--gpx .import-meta span {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .import-copy p,
+  .screen--gpx-analysis.screen-layout--gpx .status-card {
+    font-size: 0.84rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help summary strong {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help summary small,
+  .screen--gpx-analysis.screen-layout--gpx .file-note,
+  .screen--gpx-analysis.screen-layout--gpx .gpx-help-body p,
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid small,
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid span,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values small,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values span,
+  .screen--gpx-analysis.screen-layout--gpx .compact-boundary {
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--gpx-analysis.screen-layout--gpx .summary-grid strong,
+  .screen--gpx-analysis.screen-layout--gpx .candidate-values strong {
+    font-size: 1.05rem !important;
+  }
+}
+
+/* ===== desktop-ui-refinement.css ===== */
+/* ===== Consolidated from styles/desktop-ui-pass-v1.css ===== */
+/*
+ * Desktop UI refinement pass v1.
+ * Scope: untouched primary screens (History, More) and secondary screens
+ * derived from Home / More. Record and Result families are intentionally
+ * excluded because they are handled in dedicated passes.
+ */
+
+@media (min-width: 80rem) {
+  /* ===== Shared typography hierarchy ===== */
+  .screen--history.screen-layout--history,
+  .screen--more.screen-layout--more,
+  .secondary-derived-screen {
+    font-family: inherit !important;
+  }
+
+  .screen--history.screen-layout--history .eyebrow,
+  .screen--more.screen-layout--more .eyebrow,
+  .secondary-derived-screen .eyebrow {
+    font-size: 0.76rem !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.14em !important;
+  }
+
+  .screen--history.screen-layout--history :is(.page-head h1),
+  .screen--more.screen-layout--more :is(.head h1),
+  .secondary-derived-screen :is(.page-head h1, .head h1) {
+    font-size: clamp(2.15rem, 2.45vw, 2.75rem) !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.035em !important;
+  }
+
+  .screen--history.screen-layout--history .page-head > div > p:last-child,
+  .screen--more.screen-layout--more .head > p:last-child,
+  .secondary-derived-screen :is(.page-head p:last-child, .head p:last-child) {
+    font-size: 0.9rem !important;
+    line-height: 1.55 !important;
+  }
+
+  /* ===== Primary screen: History ===== */
+  .screen--history.screen-layout--history {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .screen--history.screen-layout--history .page-head {
+    width: 100%;
+  }
+
+  .screen--history.screen-layout--history .history-mode {
+    width: min(100%, 38rem) !important;
+    margin-top: 1.25rem !important;
+    padding: 0.3rem !important;
+    gap: 0.3rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-mode button {
+    min-height: 3.5rem !important;
+    padding: 0.65rem 0.85rem !important;
+    border-radius: 0.7rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-mode button span {
+    font-size: 0.95rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-mode button small {
+    margin-top: 0.18rem !important;
+    font-size: 0.76rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-view {
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 1.5rem !important;
+  }
+
+  .screen--history.screen-layout--history .records-head,
+  .screen--history.screen-layout--history .comparison-head {
+    min-height: 3.25rem;
+  }
+
+  .screen--history.screen-layout--history .comparison-title small {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--history.screen-layout--history .comparison-title h2 {
+    font-size: 1.45rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-total {
+    padding: 0.45rem 0.7rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-view--records {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+  }
+
+  .screen--history.screen-layout--history .record-filters {
+    width: 100% !important;
+    margin-top: 0.85rem !important;
+    padding: 0.9rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(18rem, 30rem) max-content !important;
+    gap: 0.9rem 1rem !important;
+    align-items: end !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-filters label > span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-filters input {
+    height: 3rem !important;
+    margin-top: 0.35rem !important;
+    padding-inline: 0.85rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.94rem !important;
+  }
+
+  .screen--history.screen-layout--history .type-toggle {
+    width: 18rem !important;
+    max-width: 18rem !important;
+    margin: 0 !important;
+    padding: 0.25rem !important;
+    gap: 0.25rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  .screen--history.screen-layout--history .type-toggle button {
+    min-height: 2.55rem !important;
+    font-size: 0.84rem !important;
+    border-radius: 0.55rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-list {
+    margin-top: 0.9rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.9rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-item {
+    min-width: 0;
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-item time {
+    font-size: 0.9rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-kind {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-item h3 {
+    margin-top: 0.65rem !important;
+    font-size: 1.05rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--history.screen-layout--history .record-item p {
+    margin-top: 0.3rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .screen--history.screen-layout--history .record-actions {
+    margin-top: 0.75rem !important;
+    gap: 0.45rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-actions :is(button, a) {
+    min-height: 2.55rem !important;
+    padding: 0 0.8rem !important;
+    font-size: 0.8rem !important;
+    border-radius: 0.65rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-view--compare {
+    width: 100% !important;
+  }
+
+  .screen--history.screen-layout--history .region-picker-trigger {
+    min-width: 18rem !important;
+    min-height: 4rem !important;
+    padding: 0.7rem 0.8rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--history.screen-layout--history .region-picker-trigger small {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--history.screen-layout--history .region-picker-trigger strong {
+    font-size: 0.95rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-toolbar {
+    margin-top: 0.9rem !important;
+    padding: 0.7rem 0.2rem !important;
+  }
+
+  .screen--history.screen-layout--history .period-control > span,
+  .screen--history.screen-layout--history .compare-count small {
+    font-size: 0.78rem !important;
+  }
+
+  .screen--history.screen-layout--history .period-control button {
+    min-width: 3.4rem !important;
+    min-height: 2.5rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--history.screen-layout--history .compare-count strong {
+    font-size: 0.98rem !important;
+  }
+
+  .screen--history.screen-layout--history .comparison-layout {
+    margin-top: 1rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 21rem !important;
+    gap: 1rem 1.2rem !important;
+    align-items: start !important;
+  }
+
+  .screen--history.screen-layout--history .chart-card {
+    grid-column: 1 !important;
+    min-width: 0;
+    padding: 1rem 1.1rem !important;
+    border-radius: 1.15rem !important;
+  }
+
+  .screen--history.screen-layout--history .chart-card-head h2 {
+    font-size: 1.15rem !important;
+  }
+
+  .screen--history.screen-layout--history .display-toggle button {
+    min-height: 2.45rem !important;
+    padding-inline: 0.7rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .screen--history.screen-layout--history .chart-wrap svg {
+    width: 100% !important;
+    min-height: 22rem !important;
+  }
+
+  .screen--history.screen-layout--history .chart-legend {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--history.screen-layout--history .selected-card {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    position: sticky !important;
+    top: 5.8rem !important;
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--history.screen-layout--history .selected-card-head small,
+  .screen--history.screen-layout--history .selected-main-value small,
+  .screen--history.screen-layout--history .selected-main-value span,
+  .screen--history.screen-layout--history .selected-facts dt,
+  .screen--history.screen-layout--history .result-link small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--history.screen-layout--history .selected-card-head h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .screen--history.screen-layout--history .selected-facts dd,
+  .screen--history.screen-layout--history .result-link strong {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--history.screen-layout--history .records-disclosure,
+  .screen--history.screen-layout--history .comparison-side,
+  .screen--history.screen-layout--history .screen-footnote {
+    grid-column: 1 / -1 !important;
+  }
+
+  .screen--history.screen-layout--history .records-disclosure > summary strong,
+  .screen--history.screen-layout--history .condition-details summary,
+  .screen--history.screen-layout--history .excluded-details summary {
+    font-size: 0.86rem !important;
+  }
+
+  .screen--history.screen-layout--history .records-disclosure > summary small,
+  .screen--history.screen-layout--history .condition-details > div,
+  .screen--history.screen-layout--history .excluded-details > p,
+  .screen--history.screen-layout--history .screen-footnote {
+    font-size: 0.78rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--history.screen-layout--history .table-scroll table {
+    min-width: 0 !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--history.screen-layout--history .table-scroll th {
+    font-size: 0.75rem !important;
+  }
+
+  .screen--history.screen-layout--history .table-scroll :is(th, td) {
+    padding: 0.72rem 0.75rem !important;
+  }
+
+  /* ===== Primary screen: More ===== */
+  .screen--more.screen-layout--more {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1.25rem 1.4rem !important;
+    align-content: start;
+  }
+
+  .screen--more.screen-layout--more .head {
+    grid-column: 1 / -1;
+  }
+
+  .screen--more.screen-layout--more .group {
+    min-width: 0;
+    margin-top: 0.5rem !important;
+  }
+
+  .screen--more.screen-layout--more .group-title {
+    margin: 0 0.2rem 0.55rem !important;
+    font-size: 0.76rem !important;
+  }
+
+  .screen--more.screen-layout--more .list {
+    border-radius: 1.1rem !important;
+  }
+
+  .screen--more.screen-layout--more .row {
+    min-height: 5.4rem !important;
+    padding: 0.9rem 1rem !important;
+    grid-template-columns: 3rem minmax(0, 1fr) auto !important;
+    gap: 0.8rem !important;
+  }
+
+  .screen--more.screen-layout--more .icon {
+    width: 3rem !important;
+    height: 3rem !important;
+    border-radius: 0.85rem !important;
+    font-size: 1.05rem;
+  }
+
+  .screen--more.screen-layout--more .copy small {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--more.screen-layout--more .copy strong {
+    margin-top: 0.15rem !important;
+    font-size: 1rem !important;
+  }
+
+  .screen--more.screen-layout--more .copy span {
+    margin-top: 0.2rem !important;
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* ===== Secondary screen architecture ===== */
+  body.secondary-derived-open {
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  body.secondary-derived-open #app,
+  body.secondary-derived-open #app > .app-shell:not(.app-shell--immersive),
+  body.secondary-derived-open #app > .app-shell:not(.app-shell--immersive) > .app-main {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .secondary-derived-screen {
+    position: fixed !important;
+    top: 5.85rem !important;
+    bottom: 1.25rem !important;
+    left: calc(var(--pc-content-left) + 0.7rem) !important;
+    right: max(1.25rem, var(--pc-content-right)) !important;
+    z-index: 70 !important;
+    width: min(72rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 2rem)) !important;
+    max-width: 72rem !important;
+    min-height: 0 !important;
+    margin-inline: auto !important;
+    padding: 1.15rem 1.35rem 1.5rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    border: 2px solid var(--color-line) !important;
+    border-radius: 1.35rem !important;
+    background: var(--color-surface) !important;
+    box-shadow:
+      0 1.4rem 3.5rem color-mix(in srgb, var(--color-ink) 20%, transparent),
+      0 0 0 100vmax color-mix(in srgb, var(--color-ink) 12%, transparent) !important;
+  }
+
+  .secondary-derived-back {
+    position: sticky;
+    top: -1.15rem;
+    z-index: 4;
+    width: max-content;
+    min-height: 2.45rem;
+    margin: -0.15rem 0 0.85rem;
+    padding: 0 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: 0.7rem;
+    background: var(--color-surface-muted);
+    color: var(--color-accent-strong);
+    font-size: 0.84rem;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  /* Plan is Home-derived but uses the widest form composition. */
+  .screen--plan.screen-layout--plan {
+    width: min(74rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 2rem)) !important;
+    max-width: 74rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .page-head h1 {
+    font-size: 2.35rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .date-pill {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .carry {
+    margin-top: 1rem !important;
+    padding: 0.85rem 0.95rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .carry small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .carry strong {
+    font-size: 0.94rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .carry span {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .layout {
+    margin-top: 1rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 20rem !important;
+    gap: 1rem 1.15rem !important;
+    align-items: start !important;
+  }
+
+  .screen--plan.screen-layout--plan .panel {
+    min-width: 0;
+    border-radius: 1rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .panel-head {
+    padding: 0.9rem 1rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .panel-head small {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .panel-head h2 {
+    font-size: 1.15rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .panel-head p {
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--plan.screen-layout--plan .panel-body {
+    padding: 1rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .seg {
+    width: 18rem !important;
+    max-width: 18rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .seg button {
+    min-height: 2.8rem !important;
+    font-size: 0.88rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .plan-date-field {
+    width: 20rem !important;
+    max-width: 20rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .plan-date-label span,
+  .screen--plan.screen-layout--plan .metric-field > span,
+  .screen--plan.screen-layout--plan .field > span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .plan-date-control,
+  .screen--plan.screen-layout--plan .metric-field > div,
+  .screen--plan.screen-layout--plan .field :is(select, textarea) {
+    min-height: 3rem !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.96rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .two {
+    width: max-content !important;
+    grid-template-columns: 12rem 14rem !important;
+    gap: 0.8rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .course-choice,
+  .screen--plan.screen-layout--plan .details,
+  .screen--plan.screen-layout--plan .assist-link {
+    width: min(100%, 44rem) !important;
+  }
+
+  .screen--plan.screen-layout--plan .course-choice small,
+  .screen--plan.screen-layout--plan .details small,
+  .screen--plan.screen-layout--plan .assist-link small,
+  .screen--plan.screen-layout--plan .summary-card small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .course-choice strong,
+  .screen--plan.screen-layout--plan .details strong,
+  .screen--plan.screen-layout--plan .assist-link strong,
+  .screen--plan.screen-layout--plan .summary-card strong {
+    font-size: 0.92rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .course-choice span,
+  .screen--plan.screen-layout--plan .details span,
+  .screen--plan.screen-layout--plan .assist-link span,
+  .screen--plan.screen-layout--plan .summary-card span,
+  .screen--plan.screen-layout--plan .note {
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--plan.screen-layout--plan .confirm-panel {
+    position: sticky !important;
+    top: 0 !important;
+  }
+
+  .screen--plan.screen-layout--plan .summary-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .screen--plan.screen-layout--plan .summary-row > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .screen--plan.screen-layout--plan .save {
+    min-height: 3rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .saved {
+    margin-top: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  /* Settings derived from More. */
+  .screen--settings.screen-layout--settings .display-setting-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.8rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting,
+  .screen--settings.screen-layout--settings .disclosure {
+    border-radius: 1rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting summary,
+  .screen--settings.screen-layout--settings .disclosure summary {
+    min-height: 4.2rem !important;
+    padding: 0.8rem 0.9rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting__title small,
+  .screen--settings.screen-layout--settings .disclosure summary small,
+  .screen--settings.screen-layout--settings .sub-section-head small,
+  .screen--settings.screen-layout--settings .subdetails summary small,
+  .screen--settings.screen-layout--settings .shoe small,
+  .screen--settings.screen-layout--settings .data-overview small,
+  .screen--settings.screen-layout--settings .about-grid small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting__title strong,
+  .screen--settings.screen-layout--settings .disclosure summary strong {
+    font-size: 0.96rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting__current {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-choice strong {
+    font-size: 0.86rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .disclosure summary span,
+  .screen--settings.screen-layout--settings .boundary,
+  .screen--settings.screen-layout--settings .field small,
+  .screen--settings.screen-layout--settings .note,
+  .screen--settings.screen-layout--settings .restore-preview,
+  .screen--settings.screen-layout--settings .danger-box p {
+    font-size: 0.78rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--settings.screen-layout--settings .field > span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .field :is(input, select) {
+    min-height: 3rem !important;
+    font-size: 0.94rem !important;
+    border-radius: 0.72rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .goal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.65rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .goal-grid label {
+    min-height: 3rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .data-overview,
+  .screen--settings.screen-layout--settings .about-grid {
+    width: 100% !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.screen-layout--settings .data-overview strong {
+    font-size: 0.98rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .about-grid strong,
+  .screen--settings.screen-layout--settings .shoe strong,
+  .screen--settings.screen-layout--settings .subdetails summary strong,
+  .screen--settings.screen-layout--settings .danger-box strong {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .action-row :is(button, label, a) {
+    min-height: 2.75rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Privacy derived from More. */
+  .screen--privacy.screen-layout--privacy .lead {
+    margin-top: 1rem !important;
+    padding: 1rem !important;
+    font-size: 0.86rem !important;
+    line-height: 1.55 !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .list {
+    margin-top: 0.9rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.8rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item {
+    min-width: 0;
+    margin: 0 !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item summary {
+    min-height: 5rem !important;
+    padding: 0.85rem 0.95rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .icon {
+    width: 2.8rem !important;
+    height: 2.8rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .copy small {
+    font-size: 0.72rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .copy strong {
+    font-size: 0.96rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .copy span,
+  .screen--privacy.screen-layout--privacy .body,
+  .screen--privacy.screen-layout--privacy .warning {
+    font-size: 0.8rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .warning,
+  .screen--privacy.screen-layout--privacy .actions {
+    grid-column: 1 / -1;
+  }
+
+  /* Support derived from More / body record. 3 cards become 1 + 2. */
+  .screen--support-guidance.screen-layout--support .notice {
+    margin-top: 1rem !important;
+    padding: 0.9rem 1rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .cards {
+    margin-top: 0.9rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.8rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card {
+    min-width: 0;
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .screen--support-guidance.screen-layout--support .card small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card strong {
+    margin-top: 0.2rem !important;
+    font-size: 1rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card p {
+    margin-top: 0.4rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card a {
+    min-height: 2.8rem !important;
+    margin-top: 0.7rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support > .back {
+    display: none !important;
+  }
+
+  /* Reading derived from More. No horizontal-only filter on desktop. */
+  .screen--reading.screen-layout--reading .recommend {
+    margin-top: 1rem !important;
+    padding: 1rem 1.1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .recommend small,
+  .screen--reading.screen-layout--reading .article-card small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .recommend strong,
+  .screen--reading.screen-layout--reading .article-card strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .recommend p,
+  .screen--reading.screen-layout--reading .article-card p {
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--reading.screen-layout--reading .recommend button,
+  .screen--reading.screen-layout--reading .article-card button {
+    min-height: 2.7rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .filter-strip {
+    margin-top: 1rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .filter-strip-head small {
+    display: none !important;
+  }
+
+  .screen--reading.screen-layout--reading .filters {
+    overflow: visible !important;
+    flex-wrap: wrap !important;
+    gap: 0.45rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .filters button {
+    min-height: 2.6rem !important;
+    padding: 0 0.8rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .grid {
+    margin-top: 0.9rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.8rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .article-card {
+    min-width: 0;
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .drawer .sheet {
+    width: min(54rem, calc(100vw - 8rem)) !important;
+    max-width: 54rem !important;
+    padding: 1.2rem 1.3rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .sheet-head strong {
+    font-size: 1.15rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .sheet :is(.lead, .body-copy p, .points, .caution, .source-note) {
+    font-size: 0.84rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Consultation derived from More / Result. */
+  .screen--consultation.screen-layout--consultation .source {
+    margin-top: 1rem !important;
+    padding: 0.9rem 1rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .source small,
+  .screen--consultation.screen-layout--consultation .section-head small,
+  .screen--consultation.screen-layout--consultation .support-link small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .source strong,
+  .screen--consultation.screen-layout--consultation .section-head h2,
+  .screen--consultation.screen-layout--consultation .support-link strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .source span,
+  .screen--consultation.screen-layout--consultation .section-head p,
+  .screen--consultation.screen-layout--consultation .boundary {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .section {
+    margin-top: 0.9rem !important;
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .field > span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .field :is(textarea, select, input) {
+    min-height: 3rem !important;
+    font-size: 0.94rem !important;
+    border-radius: 0.72rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .share-source-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.65rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .support-link {
+    margin-top: 0.9rem !important;
+    min-height: 4rem !important;
+    padding: 0.8rem 0.9rem !important;
+    border-radius: 0.9rem !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .secondary-derived-screen {
+    left: calc(var(--pc-nav-left) + var(--pc-nav-width) + 1.5rem) !important;
+    right: 1.25rem !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  .screen--plan.screen-layout--plan .layout {
+    grid-template-columns: minmax(0, 1fr) 18rem !important;
+  }
+
+  .screen--history.screen-layout--history .comparison-layout {
+    grid-template-columns: minmax(0, 1fr) 19rem !important;
+  }
+}
+
+/* ===== Consolidated from styles/desktop-ui-pass-v2.css ===== */
+/*
+ * Desktop UI refinement pass v2.
+ * Typography/detail audit after v1. Loaded last.
+ * Record and Result families remain outside this pass.
+ */
+
+@media (min-width: 80rem) {
+  /* Prevent accidental typography drift and awkward label wrapping. */
+  .screen--history.screen-layout--history,
+  .screen--more.screen-layout--more,
+  .secondary-derived-screen {
+    font-family: inherit !important;
+    line-break: strict;
+  }
+
+  .screen--history.screen-layout--history :is(h1,h2,h3),
+  .screen--more.screen-layout--more :is(h1,h2,h3),
+  .secondary-derived-screen :is(h1,h2,h3) {
+    text-wrap: balance;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .screen--history.screen-layout--history :is(button,a),
+  .screen--more.screen-layout--more :is(button,a),
+  .secondary-derived-screen :is(button,a) {
+    font-family: inherit !important;
+  }
+
+  /* ===== History: explicit removal of remaining mobile-size labels ===== */
+  .screen--history.screen-layout--history .sample-badge,
+  .screen--history.screen-layout--history .region-picker-trigger i,
+  .screen--history.screen-layout--history .chart-card-head small,
+  .screen--history.screen-layout--history .records-disclosure > summary small,
+  .screen--history.screen-layout--history .region-picker-trigger .region-picker-copy em,
+  .screen--history.screen-layout--history .chart-region-heading small,
+  .screen--history.screen-layout--history .chart-region-heading span,
+  .screen--history.screen-layout--history .region-option-copy small,
+  .screen--history.screen-layout--history .selected-focus-heading small,
+  .screen--history.screen-layout--history .selected-focus-value span,
+  .screen--history.screen-layout--history .selected-facts-compact dt {
+    font-size: 0.76rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--history.screen-layout--history .chart-meaning span,
+  .screen--history.screen-layout--history .condition-details > div,
+  .screen--history.screen-layout--history .excluded-details > p,
+  .screen--history.screen-layout--history .empty-records {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--history.screen-layout--history .chart-meaning strong,
+  .screen--history.screen-layout--history .selected-weekday,
+  .screen--history.screen-layout--history .selected-facts-compact dd {
+    font-size: 0.86rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--history.screen-layout--history .chart-meaning {
+    padding: 0.75rem 0.85rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  .screen--history.screen-layout--history .selected-card-head > span {
+    min-width: 2rem !important;
+    height: 2rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--history.screen-layout--history .region-picker-copy {
+    min-width: 0;
+  }
+
+  .screen--history.screen-layout--history .region-picker-copy strong,
+  .screen--history.screen-layout--history .region-picker-copy em {
+    white-space: normal !important;
+  }
+
+  /* ===== Plan: complete label/control hierarchy ===== */
+  .screen--plan.screen-layout--plan .field > span b,
+  .screen--plan.screen-layout--plan .plan-date-label b,
+  .screen--plan.screen-layout--plan .quick small,
+  .screen--plan.screen-layout--plan .summary-row small,
+  .screen--plan.screen-layout--plan .saved-card small {
+    font-size: 0.74rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--plan.screen-layout--plan .metric-field em,
+  .screen--plan.screen-layout--plan .details summary span,
+  .screen--plan.screen-layout--plan .saved summary span,
+  .screen--plan.screen-layout--plan .saved-card span,
+  .screen--plan.screen-layout--plan .compare-row {
+    font-size: 0.8rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--plan.screen-layout--plan .details summary strong,
+  .screen--plan.screen-layout--plan .quick strong,
+  .screen--plan.screen-layout--plan .summary-row strong,
+  .screen--plan.screen-layout--plan .saved summary strong {
+    font-size: 0.92rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--plan.screen-layout--plan .course-choice a,
+  .screen--plan.screen-layout--plan .saved-actions :is(button,a) {
+    min-height: 2.55rem !important;
+    padding-inline: 0.75rem !important;
+    font-size: 0.8rem !important;
+    white-space: nowrap;
+  }
+
+  .screen--plan.screen-layout--plan .summary-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--plan.screen-layout--plan .summary-row > div:last-child {
+    grid-column: auto !important;
+  }
+
+  /* ===== Settings: balance the three display controls and remaining microcopy ===== */
+  .screen--settings.screen-layout--settings .display-setting-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
+    grid-column: auto !important;
+  }
+
+  .screen--settings.screen-layout--settings .group-title,
+  .screen--settings.screen-layout--settings .row small,
+  .screen--settings.screen-layout--settings .theme-preview small,
+  .screen--settings.screen-layout--settings .shoe button {
+    font-size: 0.76rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--settings.screen-layout--settings .row span,
+  .screen--settings.screen-layout--settings .theme-preview span,
+  .screen--settings.screen-layout--settings .value {
+    font-size: 0.8rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--settings.screen-layout--settings .segment button,
+  .screen--settings.screen-layout--settings .theme-preview strong {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .action-row :is(button,label,a) {
+    font-size: 0.82rem !important;
+    white-space: nowrap;
+  }
+
+  /* ===== Privacy: readable expanded content ===== */
+  .screen--privacy.screen-layout--privacy .body p,
+  .screen--privacy.screen-layout--privacy .body ul {
+    font-size: 0.82rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .body li + li {
+    margin-top: 0.35rem;
+  }
+
+  .screen--privacy.screen-layout--privacy .actions a {
+    min-height: 2.8rem !important;
+    padding-inline: 0.9rem !important;
+    font-size: 0.84rem !important;
+  }
+
+  /* ===== Reading: article-detail typography and a balanced 3xN grid ===== */
+  .screen--reading.screen-layout--reading .filter-strip-head span,
+  .screen--reading.screen-layout--reading .sheet-head small {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--reading.screen-layout--reading .points strong {
+    font-size: 0.9rem !important;
+  }
+
+  .screen--reading.screen-layout--reading .points ul,
+  .screen--reading.screen-layout--reading .lead,
+  .screen--reading.screen-layout--reading .body-copy p,
+  .screen--reading.screen-layout--reading .caution,
+  .screen--reading.screen-layout--reading .source-note {
+    font-size: 0.84rem !important;
+    line-height: 1.65 !important;
+  }
+
+  .screen--reading.screen-layout--reading .article-card strong,
+  .screen--reading.screen-layout--reading .article-card p {
+    overflow-wrap: anywhere;
+  }
+
+  /* ===== Consultation: explicit microcopy and output typography ===== */
+  .screen--consultation.screen-layout--consultation .source a,
+  .screen--consultation.screen-layout--consultation .actions button,
+  .screen--consultation.screen-layout--consultation .route span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .field span,
+  .screen--consultation.screen-layout--consultation .share-purpose-step .field span,
+  .screen--consultation.screen-layout--consultation .share-region-detail span,
+  .screen--consultation.screen-layout--consultation .share-preview > header span,
+  .screen--consultation.screen-layout--consultation .share-viewer-purpose small,
+  .screen--consultation.screen-layout--consultation .share-viewer-shell > footer {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .route small,
+  .screen--consultation.screen-layout--consultation .panel-head small,
+  .screen--consultation.screen-layout--consultation .status,
+  .screen--consultation.screen-layout--consultation .report header small,
+  .screen--consultation.screen-layout--consultation .report section small,
+  .screen--consultation.screen-layout--consultation .field small,
+  .screen--consultation.screen-layout--consultation .share-source small,
+  .screen--consultation.screen-layout--consultation .share-preview > header small,
+  .screen--consultation.screen-layout--consultation .share-card small,
+  .screen--consultation.screen-layout--consultation .share-output-actions .output small,
+  .screen--consultation.screen-layout--consultation .share-viewer-head small,
+  .screen--consultation.screen-layout--consultation .share-viewer-grid .share-card small {
+    font-size: 0.74rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .select-list strong,
+  .screen--consultation.screen-layout--consultation .share-card strong,
+  .screen--consultation.screen-layout--consultation .share-region-detail b {
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .select-list span,
+  .screen--consultation.screen-layout--consultation .share-source em,
+  .screen--consultation.screen-layout--consultation .report header span,
+  .screen--consultation.screen-layout--consultation .report section p,
+  .screen--consultation.screen-layout--consultation .memo,
+  .screen--consultation.screen-layout--consultation .share-card--regional .share-region-detail span {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .share-source-list > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  /* ===== Support: avoid long single-line button labels ===== */
+  .screen--support-guidance.screen-layout--support .card a span:first-child {
+    overflow-wrap: anywhere;
+  }
+
+  .secondary-derived-back,
+  .screen--support-guidance.screen-layout--support .card a,
+  .screen--plan.screen-layout--plan .course-choice a {
+    text-wrap: nowrap;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--reading.screen-layout--reading .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* ===== Consolidated from styles/desktop-ui-pass-v3.css ===== */
+/*
+ * Desktop UI refinement pass v3.
+ * Final explicit typography selectors found by the post-v2 audit.
+ */
+
+@media (min-width: 80rem) {
+  .screen--history.screen-layout--history .period-control > span,
+  .screen--history.screen-layout--history .record-filters label > span,
+  .screen--history.screen-layout--history .records-disclosure > summary small {
+    font-size: 0.78rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--history.screen-layout--history .selected-card-head > span {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--history.screen-layout--history .condition-details > div,
+  .screen--history.screen-layout--history .excluded-details > p {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--history.screen-layout--history .record-actions button,
+  .screen--history.screen-layout--history .record-actions a {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--history.screen-layout--history .page-head > div > p:last-child,
+  .screen--plan.screen-layout--plan .page-head p:last-child,
+  .screen--consultation.screen-layout--consultation .head p:last-child,
+  .screen--support-guidance.screen-layout--support .head p:last-child,
+  .screen--reading.screen-layout--reading .head p:last-child,
+  .screen--privacy.screen-layout--privacy .head p:last-child,
+  .screen--more.screen-layout--more .head p:last-child,
+  .screen--settings.screen-layout--settings .head p:last-child {
+    font-size: 0.9rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .screen--plan.screen-layout--plan .eyebrow,
+  .screen--consultation.screen-layout--consultation .eyebrow,
+  .screen--support-guidance.screen-layout--support .eyebrow,
+  .screen--reading.screen-layout--reading .eyebrow,
+  .screen--privacy.screen-layout--privacy .eyebrow,
+  .screen--settings.screen-layout--settings .eyebrow {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .field > span,
+  .screen--plan.screen-layout--plan .metric-field span,
+  .screen--settings.screen-layout--settings .field > span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .field > span b {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .saved-actions button {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .action-row button,
+  .screen--settings.screen-layout--settings .action-row label,
+  .screen--settings.screen-layout--settings .action-row a {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .large-text .field > span {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .share-preview > header small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .share-preview > header span,
+  .screen--consultation.screen-layout--consultation .share-viewer-shell > footer {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Legacy bottom navigation belongs to mobile only. */
+  .screen--history.screen-layout--history .bottom-nav {
+    display: none !important;
+  }
+}
+
+/* ===== Consolidated from styles/desktop-ui-pass-v4.css ===== */
+/*
+ * Desktop UI refinement pass v4.
+ * Keep equal-type card groups visually balanced at narrower desktop widths.
+ */
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--settings.screen-layout--settings .display-setting-list,
+  .screen--reading.screen-layout--reading .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
+    grid-column: auto !important;
+  }
+}
+
+/* ===== Consolidated from styles/desktop-ui-pass-v5.css ===== */
+/*
+ * Desktop UI refinement pass v5.
+ * Unified secondary-screen frame: fixed toolbar + independently scrolling body.
+ * Matches the interaction pattern established for BODY RECORD / SHOES.
+ */
+
+@media (min-width: 80rem) {
+  .secondary-derived-screen {
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+
+  .secondary-derived-head {
+    width: 100%;
+    min-width: 0;
+    height: 4rem;
+    min-height: 4rem;
+    padding: 0.7rem 1.05rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: center;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-surface);
+  }
+
+  .secondary-derived-head > strong {
+    justify-self: center;
+    min-width: 0;
+    color: var(--color-ink);
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: 900;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .secondary-derived-head > span:last-child {
+    justify-self: end;
+  }
+
+  .secondary-derived-head .secondary-derived-back {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    min-height: 2.45rem !important;
+    margin: 0 !important;
+    padding: 0 0.8rem !important;
+    justify-self: start;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.7rem !important;
+    background: var(--color-surface-muted) !important;
+    color: var(--color-accent-strong) !important;
+    font-size: 0.84rem !important;
+    line-height: 1.2;
+    font-weight: 850 !important;
+    text-decoration: none !important;
+    white-space: nowrap;
+  }
+
+  .secondary-derived-body {
+    min-width: 0;
+    min-height: 0;
+    padding: 1.15rem 1.35rem 1.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    background: var(--color-surface);
+  }
+
+  .secondary-derived-body > :first-child {
+    margin-top: 0 !important;
+  }
+
+  .secondary-derived-body :is(
+    .source,
+    .carry,
+    .recommend,
+    .lead,
+    .notice
+  ) {
+    max-width: 100%;
+  }
+}
+
+/* ===== Consolidated from styles/desktop-ui-pass-v6.css ===== */
+/*
+ * Desktop UI refinement pass v6.
+ * State-aware layout and light/dark readability audit.
+ * Record-input and Result families remain outside this pass.
+ */
+
+@media (min-width: 80rem) {
+  /* Strengthen secondary text without hard-coding a light or dark color. */
+  .screen--history.screen-layout--history,
+  .screen--more.screen-layout--more,
+  .secondary-derived-screen {
+    --muted: color-mix(in srgb, var(--color-muted) 88%, var(--color-ink));
+  }
+
+  /*
+   * The previous derived-screen overlay used --color-ink as a shadow source.
+   * In dark mode that becomes a light halo. Use the theme's dedicated dialog
+   * shadow/overlay tokens instead.
+   */
+  .secondary-derived-screen {
+    box-shadow:
+      var(--shadow-dialog),
+      0 0 0 100vmax var(--overlay-dialog) !important;
+  }
+
+  /* ===== History states ===== */
+  .screen--history.screen-layout--history .empty-records {
+    width: 100%;
+    min-height: 12rem;
+    margin-top: 1rem;
+    padding: 1.25rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.9rem !important;
+    line-height: 1.55;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: calc(50% - 0.45rem);
+    justify-self: center;
+  }
+
+  /* ===== Reading states =====
+   * Two equal columns avoid the visually awkward 3 + 1 desktop pattern.
+   */
+  .screen--reading.screen-layout--reading .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: calc(50% - 0.4rem);
+    justify-self: center;
+  }
+
+  /* ===== Consultation empty state ===== */
+  .screen--consultation.screen-layout--consultation .secondary-derived-body > .panel {
+    width: min(100%, 46rem);
+    min-height: 11rem;
+    margin: 1rem auto 0;
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+
+  .screen--consultation.screen-layout--consultation .secondary-derived-body > .panel .actions {
+    margin-top: 0.9rem;
+  }
+
+  /* Remaining desktop microcopy found by Chromium visual-state audit. */
+  .screen--settings.screen-layout--settings .sub-section-head strong,
+  .screen--consultation.screen-layout--consultation .share-source strong,
+  .screen--consultation.screen-layout--consultation .share-card strong,
+  .screen--consultation.screen-layout--consultation .share-output-actions .output strong {
+    font-size: 0.88rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--plan.screen-layout--plan .saved-card strong,
+  .screen--privacy.screen-layout--privacy .lead strong {
+    font-size: 0.92rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--history.screen-layout--history .chart-wrap svg text {
+    font-size: 0.75rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .secondary-derived-body > .back[data-context-back-duplicate] {
+    display: none !important;
+  }
+
+  /* Empty/save-status copy must remain readable in both appearance modes. */
+  .screen--history.screen-layout--history :is(.empty-records, .screen-footnote),
+  .screen--plan.screen-layout--plan :is(.note, .saved-card span),
+  .screen--settings.screen-layout--settings :is(.note, .muted-text),
+  .screen--privacy.screen-layout--privacy :is(.body, .warning),
+  .screen--reading.screen-layout--reading :is(.article-card p, .source-note),
+  .screen--consultation.screen-layout--consultation :is(.boundary, .memo),
+  .screen--support-guidance.screen-layout--support :is(.notice, .card p) {
+    color: var(--muted) !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--reading.screen-layout--reading .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: state completeness and odd-card balance ===== */
+@media (min-width: 80rem) {
+  /* History: make the first-use state actionable rather than a large blank card. */
+  .screen--history.screen-layout--history .empty-records--initial {
+    min-height: 14rem;
+    padding: 1.4rem;
+    display: grid;
+    grid-template-columns: minmax(0, 34rem);
+    place-content: center;
+    justify-content: center;
+    gap: 0.35rem;
+    text-align: center;
+  }
+
+  .screen--history.screen-layout--history .empty-records--initial small {
+    color: var(--accent);
+    font-size: 0.76rem !important;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+  }
+
+  .screen--history.screen-layout--history .empty-records--initial strong {
+    margin-top: 0.15rem;
+    color: var(--ink);
+    font-size: 1.12rem !important;
+    line-height: 1.35;
+  }
+
+  .screen--history.screen-layout--history .empty-records--initial p {
+    margin: 0.15rem 0 0;
+    color: var(--muted);
+    font-size: 0.84rem !important;
+    line-height: 1.55;
+  }
+
+  .screen--history.screen-layout--history .empty-records--initial a {
+    width: max-content;
+    min-height: 2.75rem;
+    margin: 0.7rem auto 0;
+    padding: 0 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.72rem;
+    background: var(--accent);
+    color: var(--color-on-accent);
+    font-size: 0.84rem !important;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .screen--history.screen-layout--history .empty-records:not(.empty-records--initial) {
+    min-height: 8rem;
+  }
+
+  /* History: an odd final record becomes an intentional full-width row. */
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) {
+    width: 100% !important;
+    grid-column: 1 / -1 !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "head actions"
+      "summary actions"
+      "memo actions";
+    column-gap: 1.2rem;
+    align-items: center;
+  }
+
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) .record-item-head {
+    grid-area: head;
+  }
+
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) h3 {
+    grid-area: summary;
+  }
+
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) > p {
+    grid-area: memo;
+  }
+
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) .record-actions {
+    grid-area: actions;
+    margin-top: 0 !important;
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  /* Reading: avoid a centered half-width orphan when the article count is odd. */
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
+    width: 100% !important;
+    grid-column: 1 / -1 !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1.2rem;
+    align-items: center;
+  }
+
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) > :not(.text-link) {
+    grid-column: 1;
+  }
+
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) .text-link {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    align-self: center;
+    white-space: nowrap;
+  }
+
+  /* Consultation: the no-record state should read as a deliberate state, not a small leftover panel. */
+  .screen--consultation.screen-layout--consultation .consultation-empty-state {
+    width: min(100%, 52rem) !important;
+    min-height: 13rem !important;
+    margin: 1.25rem auto 0 !important;
+    padding: 1.2rem 1.25rem !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem 1.5rem;
+    align-items: center;
+  }
+
+  .screen--consultation.screen-layout--consultation .consultation-empty-state__copy {
+    min-width: 0;
+  }
+
+  .screen--consultation.screen-layout--consultation .consultation-empty-state__copy small {
+    color: var(--accent);
+    font-size: 0.76rem !important;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+  }
+
+  .screen--consultation.screen-layout--consultation .consultation-empty-state__copy strong {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--ink);
+    font-size: 1.05rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--consultation.screen-layout--consultation .consultation-empty-state__copy p {
+    margin: 0.4rem 0 0;
+    color: var(--muted);
+    font-size: 0.82rem !important;
+    line-height: 1.55;
+  }
+
+  .screen--consultation.screen-layout--consultation .consultation-empty-state .actions {
+    margin: 0 !important;
+    align-self: center;
+  }
+
+  .screen--consultation.screen-layout--consultation .consultation-empty-state .actions a {
+    min-height: 2.8rem;
+    padding-inline: 1rem;
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd),
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: secondary empty-state completion ===== */
+@media (min-width: 80rem) {
+  .screen--history.screen-layout--history .empty-records--filtered {
+    min-height: 9rem;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.3rem;
+    text-align: center;
+  }
+
+  .screen--history.screen-layout--history .empty-records--filtered strong {
+    color: var(--ink);
+    font-size: 1rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--history.screen-layout--history .empty-records--filtered p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.82rem !important;
+    line-height: 1.5;
+  }
+
+  .screen--plan.screen-layout--plan .saved-card--empty {
+    min-height: 7.5rem;
+    padding: 1rem 1.1rem !important;
+    display: grid;
+    align-content: center;
+    gap: 0.25rem;
+    text-align: center;
+  }
+
+  .screen--plan.screen-layout--plan .saved-card--empty strong {
+    font-size: 0.94rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--plan.screen-layout--plan .saved-card--empty span {
+    color: var(--muted);
+    font-size: 0.8rem !important;
+    line-height: 1.5;
+  }
+
+  .screen--settings.screen-layout--settings .settings-empty-state {
+    min-height: 6rem;
+    padding: 0.9rem 1rem;
+    display: grid;
+    align-content: center;
+    gap: 0.25rem;
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: var(--surface);
+  }
+
+  .screen--settings.screen-layout--settings .settings-empty-state strong {
+    color: var(--ink);
+    font-size: 0.9rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--settings.screen-layout--settings .settings-empty-state span {
+    color: var(--muted);
+    font-size: 0.78rem !important;
+    line-height: 1.5;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: cross-screen visual hierarchy and theme safety ===== */
+@media (min-width: 80rem) {
+  /* History: desktop typography left behind by the mobile UI. */
+  .screen--history.screen-layout--history .section-index,
+  .screen--history.screen-layout--history .chart-axis-label,
+  .screen--history.screen-layout--history .chart-date {
+    font-size: 0.75rem !important;
+  }
+
+  .screen--history.screen-layout--history .chart-value,
+  .screen--history.screen-layout--history .chart-region-heading h2,
+  .screen--history.screen-layout--history .region-option-copy strong {
+    font-size: 0.86rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--history.screen-layout--history .region-option-copy small {
+    font-size: 0.74rem !important;
+    line-height: 1.35 !important;
+  }
+
+  /* History region selection is a desktop dialog, not a mobile bottom sheet. */
+  .screen--history.screen-layout--history .sheet-overlay {
+    align-items: center !important;
+    padding: 5.75rem 1.5rem 1.5rem !important;
+    background: var(--overlay-dialog) !important;
+  }
+
+  .screen--history.screen-layout--history .region-sheet {
+    width: min(48rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
+    max-height: min(78dvh, 46rem) !important;
+    padding: 1rem 1.1rem 1.2rem !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 1.25rem !important;
+    background: var(--surface) !important;
+    box-shadow: var(--shadow-dialog) !important;
+  }
+
+  .screen--history.screen-layout--history .region-sheet .grip {
+    display: none !important;
+  }
+
+  .screen--history.screen-layout--history .region-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.65rem !important;
+  }
+
+  .screen--history.screen-layout--history .region-option {
+    min-height: 4.4rem !important;
+    padding: 0.65rem 0.7rem !important;
+  }
+
+  /* Selected segmented controls should not turn into light halos in dark mode. */
+  .screen--history.screen-layout--history .history-mode button.active,
+  .screen--history.screen-layout--history .display-toggle button.active,
+  .screen--plan.screen-layout--plan .seg button.active {
+    box-shadow: none !important;
+  }
+
+  /* Plan: number/text controls use the same desktop input grammar. */
+  .screen--plan.screen-layout--plan .field input,
+  .screen--plan.screen-layout--plan .field select,
+  .screen--plan.screen-layout--plan .field textarea {
+    min-height: 3rem !important;
+    padding: 0.7rem 0.8rem !important;
+    border-radius: 0.72rem !important;
+    font-size: 0.94rem !important;
+    font-family: inherit !important;
+  }
+
+  .screen--plan.screen-layout--plan .saved-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .saved-list > .saved-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  /* Settings: six goal choices are a balanced 3 x 2 desktop group. */
+  .screen--settings.screen-layout--settings .row strong {
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--settings.screen-layout--settings .goal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  /* Reading: nine visible articles form a 3 x 3 grid on desktop. */
+  .screen--reading.screen-layout--reading .filter-strip-head b {
+    font-size: 0.88rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--reading.screen-layout--reading .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
+    width: auto !important;
+    grid-column: auto !important;
+    display: block !important;
+  }
+
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) > :not(.text-link),
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) .text-link {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  /* Article detail is a bounded desktop dialog rather than a bottom sheet. */
+  .screen--reading.screen-layout--reading .drawer {
+    align-items: center !important;
+    justify-items: center !important;
+    padding: 5.75rem 1.5rem 1.5rem !important;
+    background: var(--overlay-dialog) !important;
+  }
+
+  .screen--reading.screen-layout--reading .drawer .sheet {
+    width: min(54rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
+    max-height: min(80dvh, 50rem) !important;
+    margin: 0 !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 1.25rem !important;
+    box-shadow: var(--shadow-dialog) !important;
+  }
+
+  /* Consultation/share preview: finish the desktop type scale and theme-safe overlay. */
+  .screen--consultation.screen-layout--consultation .report section strong,
+  .screen--consultation.screen-layout--consultation .share-card--regional .share-region-detail b {
+    font-size: 0.88rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .share-viewer-purpose p {
+    font-size: 0.82rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .share-viewer {
+    display: grid !important;
+    place-items: center !important;
+    padding: 5.75rem 1.5rem 1.5rem !important;
+    background: var(--overlay-dialog) !important;
+    overflow: hidden !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .share-viewer-shell {
+    width: min(60rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 7.25rem) !important;
+    overflow-y: auto !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 1.25rem !important;
+    box-shadow: var(--shadow-dialog) !important;
+  }
+
+  .screen--history.screen-layout--history .history-mode button,
+  .screen--history.screen-layout--history .display-toggle button,
+  .screen--plan.screen-layout--plan .seg button,
+  .screen--reading.screen-layout--reading .filters button {
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  .screen--history.screen-layout--history .region-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.screen-layout--settings .goal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--reading.screen-layout--reading .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: zero-comparable History state ===== */
+@media (min-width: 80rem) {
+  .screen--history.screen-layout--history .history-comparison-empty {
+    width: min(100%, 54rem);
+    min-height: 14rem;
+    margin: 1rem auto 0;
+    padding: 1.35rem 1.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 36rem);
+    place-content: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: var(--surface);
+    text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+
+  .screen--history.screen-layout--history .history-comparison-empty small {
+    color: var(--accent);
+    font-size: 0.76rem !important;
+    line-height: 1.3;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+  }
+
+  .screen--history.screen-layout--history .history-comparison-empty strong {
+    margin-top: 0.1rem;
+    color: var(--ink);
+    font-size: 1.08rem !important;
+    line-height: 1.4;
+  }
+
+  .screen--history.screen-layout--history .history-comparison-empty p {
+    margin: 0.15rem 0 0;
+    color: var(--muted);
+    font-size: 0.82rem !important;
+    line-height: 1.55;
+  }
+
+  .screen--history.screen-layout--history .history-comparison-empty a {
+    width: max-content;
+    min-height: 2.75rem;
+    margin: 0.7rem auto 0;
+    padding: 0 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.72rem;
+    background: var(--accent);
+    color: var(--color-on-accent);
+    font-size: 0.84rem !important;
+    line-height: 1.2;
+    font-weight: 850;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .screen--history.screen-layout--history .history-comparison-empty + .comparison-side {
+    width: min(100%, 54rem);
+    margin: 0.8rem auto 0;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: variable-count Settings collections ===== */
+@media (min-width: 80rem) {
+  .screen--settings.screen-layout--settings .shoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .shoe {
+    min-width: 0;
+    min-height: 4.2rem;
+    padding: 0.8rem 0.9rem !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .shoe > span {
+    min-width: 0;
+  }
+
+  .screen--settings.screen-layout--settings .shoe strong,
+  .screen--settings.screen-layout--settings .shoe small {
+    overflow-wrap: anywhere;
+  }
+
+  .screen--settings.screen-layout--settings .shoe button {
+    min-height: 2.5rem !important;
+    padding-inline: 0.75rem !important;
+    white-space: nowrap;
+  }
+
+  .screen--settings.screen-layout--settings .shoes > .shoe:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: export font consistency ===== */
+@media print {
+  .screen-layout--consultation .share-print-document {
+    font-family: var(--font-sans) !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: Settings field sizing by content ===== */
+@media (min-width: 80rem) {
+  /* Long text/select fields stay moderate instead of stretching across the panel. */
+  .screen--settings.screen-layout--settings .disclosure-body > .fields.two-fields {
+    width: auto !important;
+    grid-template-columns: 22rem 20rem !important;
+    gap: 0.85rem !important;
+    justify-content: start;
+  }
+
+  /* Height/weight are short numeric values; age/sex need slightly wider selects. */
+  .screen--settings.screen-layout--settings .subdetails-body > .fields.two-fields {
+    width: auto !important;
+    grid-template-columns: 11rem 11rem 16rem 16rem !important;
+    gap: 0.8rem !important;
+    justify-content: start;
+    align-items: end;
+  }
+
+  .screen--settings.screen-layout--settings .subdetails-body > .fields.two-fields .field {
+    min-width: 0;
+  }
+
+  /* Four compact counters belong on one desktop row; descriptive ABOUT cards remain 2 x 2. */
+  .screen--settings.screen-layout--settings .data-overview {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .about-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 86rem) {
+  .screen--settings.screen-layout--settings .subdetails-body > .fields.two-fields {
+    grid-template-columns: 10rem 10rem 14rem 14rem !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: modal background scroll isolation ===== */
+@media (min-width: 80rem) {
+  body:has(.screen--history.screen-layout--history .sheet-overlay:not([hidden])) {
+    overflow: hidden !important;
+  }
+
+  body:has(.screen--reading.screen-layout--reading .drawer:not([hidden]))
+    .screen--reading.screen-layout--reading .secondary-derived-body,
+  html:has(.screen--consultation.screen-layout--consultation .share-viewer:not([hidden]))
+    .screen--consultation.screen-layout--consultation .secondary-derived-body {
+    overflow: hidden !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: normalized semantic spacing hooks ===== */
+@media (min-width: 80rem) {
+  .screen--plan.screen-layout--plan .plan-rest-summary,
+  .screen--plan.screen-layout--plan .plan-memo-field {
+    margin-top: 0.8rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .profile-goal-head {
+    margin-top: 0.75rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .action-chevron {
+    margin-left: 0.5rem;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: dark-mode chart emphasis ===== */
+@media (min-width: 80rem) {
+  .screen--history.screen-layout--history .chart-point.selected {
+    filter: none !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: unavailable-state readability ===== */
+@media (min-width: 80rem) {
+  .screen--consultation.screen-layout--consultation .share-source.is-unavailable {
+    opacity: 1 !important;
+    background: var(--surface2) !important;
+    color: var(--muted) !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .share-source.is-unavailable strong,
+  .screen--consultation.screen-layout--consultation .share-source.is-unavailable em {
+    color: var(--muted) !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: History undo state ===== */
+@media (min-width: 80rem) {
+  .screen--history.screen-layout--history .history-undo {
+    position: fixed;
+    right: max(var(--pc-content-right), env(safe-area-inset-right));
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    z-index: 75;
+    width: min(28rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 2rem));
+    padding: 0.8rem 0.9rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.8rem;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 0.9rem;
+    background: var(--surface);
+    box-shadow: var(--shadow-dialog);
+  }
+
+  .screen--history.screen-layout--history .history-undo p {
+    margin: 0;
+    color: var(--ink);
+    font-size: 0.82rem !important;
+    line-height: 1.45;
+  }
+
+  .screen--history.screen-layout--history .history-undo button {
+    min-height: 2.55rem;
+    padding: 0 0.8rem;
+    border: 1px solid var(--accent);
+    border-radius: 0.65rem;
+    background: var(--surface2);
+    color: var(--accent2);
+    font-size: 0.8rem !important;
+    font-weight: 850;
+    white-space: nowrap;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: Settings saved-status state ===== */
+@media (min-width: 80rem) {
+  .screen--settings.screen-layout--settings .parity-save-message {
+    width: min(100%, 32rem);
+    margin: 1rem 0 0;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid color-mix(in srgb, var(--color-success) 42%, var(--line));
+    border-radius: 0.75rem;
+    background: var(--color-success-soft);
+    color: var(--ink);
+    font-size: 0.82rem !important;
+    line-height: 1.45;
+    font-weight: 800;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: derived-screen width alignment ===== */
+@media (min-width: 80rem) {
+  .secondary-derived-screen {
+    width: min(74rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 2rem)) !important;
+    max-width: 74rem !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: variable Reading filter counts ===== */
+@media (min-width: 80rem) {
+  /*
+   * The unfiltered view contains nine cards, but filters can leave one or two.
+   * auto-fit keeps 3 columns when space/data allow and expands smaller result
+   * sets instead of leaving two empty desktop columns.
+   */
+  .screen--reading.screen-layout--reading .grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)) !important;
+  }
+
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
+    width: auto !important;
+    grid-column: auto !important;
+    display: block !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: HOME typography without changing the approved layout ===== */
+@media (min-width: 80rem) {
+  .screen--home.screen-layout--home {
+    font-family: inherit !important;
+    --muted: color-mix(in srgb, var(--color-muted) 88%, var(--color-ink));
+  }
+
+  .screen--home.screen-layout--home > .page-head .eyebrow,
+  .screen--home.screen-layout--home > .section .section-head small,
+  .screen--home.screen-layout--home > .focus .focus-copy small,
+  .screen--home.screen-layout--home > .focus .source b,
+  .screen--home.screen-layout--home > .section .card-head small,
+  .screen--home.screen-layout--home > .section .pill,
+  .screen--home.screen-layout--home > .section .metrics small,
+  .screen--home.screen-layout--home > .section .plan small {
+    font-size: 0.76rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--home.screen-layout--home > .focus .carry {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--home.screen-layout--home > .focus .source span,
+  .screen--home.screen-layout--home > .section .plan span {
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--home.screen-layout--home > .section .card-head strong,
+  .screen--home.screen-layout--home > .section .plan strong {
+    font-size: 0.96rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .screen--home.screen-layout--home > .section .card {
+    box-shadow: var(--shadow-card) !important;
+  }
+}
+
+
+/* ===== Re-audit 2026-09-22: minimum desktop micro-label scale ===== */
+@media (min-width: 80rem) {
+  #desktop-header-root .app-screen-context small,
+  .app-shell:not(.app-shell--immersive) .primary-navigation__link {
+    font-size: 0.75rem !important;
+  }
+
+  .screen--history.screen-layout--history :is(
+    .sample-badge,
+    .region-picker-trigger small,
+    .chart-card-head small,
+    .records-disclosure > summary small,
+    .chart-region-heading small,
+    .region-option-copy small,
+    .selected-focus-heading small,
+    .selected-main-value small,
+    .selected-facts dt,
+    .result-link small
+  ),
+  .screen--more.screen-layout--more .copy small,
+  .screen--plan.screen-layout--plan :is(
+    .panel-head small,
+    .course-choice small,
+    .details small,
+    .assist-link small,
+    .summary-card small,
+    .quick small,
+    .summary-row small,
+    .saved-card small,
+    .field > span b,
+    .plan-date-label b
+  ),
+  .screen--settings.screen-layout--settings :is(
+    .display-setting__title small,
+    .disclosure summary small,
+    .sub-section-head small,
+    .subdetails summary small,
+    .shoe small,
+    .data-overview small,
+    .about-grid small,
+    .group-title,
+    .row small,
+    .theme-preview small
+  ),
+  .screen--privacy.screen-layout--privacy .copy small,
+  .screen--reading.screen-layout--reading :is(
+    .recommend small,
+    .article-card small,
+    .filter-strip-head span,
+    .sheet-head small
+  ),
+  .screen--consultation.screen-layout--consultation :is(
+    .source small,
+    .section-head small,
+    .support-link small,
+    .route small,
+    .panel-head small,
+    .status,
+    .report header small,
+    .report section small,
+    .field small,
+    .share-source small,
+    .share-preview > header small,
+    .share-card small,
+    .share-output-actions .output small,
+    .share-viewer-head small,
+    .share-viewer-grid .share-card small
+  ),
+  .screen--support-guidance.screen-layout--support .card small {
+    font-size: 0.75rem !important;
+    line-height: 1.35 !important;
+  }
+}
+
+
+/* ===== Final desktop visual audit: 2026-09-22 ===== */
+@media (min-width: 80rem) {
+  /* HISTORY: status chips are semantic labels, not microcopy. */
+  .screen--history.screen-layout--history .record-kind {
+    font-size: 0.75rem !important;
+    line-height: 1.25 !important;
+  }
+
+  /* PLAN: keep short units intact and give numeric controls enough room. */
+  .screen--plan.screen-layout--plan .two {
+    grid-template-columns: 13.5rem 15rem !important;
+  }
+
+  .screen--plan.screen-layout--plan .metric-field > div {
+    min-width: 0;
+  }
+
+  .screen--plan.screen-layout--plan .metric-field em {
+    flex: 0 0 auto;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+  }
+
+  /* SETTINGS: the three equal display controls should use the available row width. */
+  .screen--settings.screen-layout--settings .display-setting-list {
+    width: min(100%, 54rem) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting__title small {
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+  }
+
+  /* READING: the mobile horizontal-scroll fade is not meaningful on wrapped desktop filters. */
+  .screen--reading.screen-layout--reading .filter-strip::after {
+    display: none !important;
+  }
+
+  .screen--reading.screen-layout--reading .filter-strip .filters {
+    padding-right: 0 !important;
+  }
+
+  /* CONSULTATION: higher desktop specificity must never override the hidden state. */
+  .screen--consultation.screen-layout--consultation .share-viewer[hidden] {
+    display: none !important;
+  }
+}
