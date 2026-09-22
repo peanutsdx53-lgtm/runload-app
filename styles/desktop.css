@@ -4709,7 +4709,7 @@
 
 /* ===== Re-audit 2026-09-22: cross-screen visual hierarchy and theme safety ===== */
 @media (min-width: 80rem) {
-  /* History: desktop typography left behind by the mobile prototype. */
+  /* History: desktop typography inherited from the mobile layout. */
   .screen--history.screen-layout--history .section-index,
   .screen--history.screen-layout--history .chart-axis-label,
   .screen--history.screen-layout--history .chart-date {
