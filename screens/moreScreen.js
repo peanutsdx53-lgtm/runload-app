@@ -23,7 +23,7 @@ function renderRow(item) {
 }
 
 export function renderMoreScreen() {
-  return `<div class="screen screen--more prototype-parity prototype-parity--more">
+  return `<div class="screen screen--more screen-layout screen-layout--more">
     <section class="head"><p class="eyebrow">MORE</p><h1>その他</h1><p>必要な機能だけ、ここから開きます。</p></section>
     ${GROUPS.map((group) => `<section class="group"><p class="group-title">${escapeHtml(group.label)}</p><div class="list">${group.items.map(renderRow).join("")}</div></section>`).join("")}
   </div>`;
