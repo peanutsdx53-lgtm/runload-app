@@ -63,7 +63,7 @@ await testCase('INITIALIZATION-NORMALIZES-HIDDEN-CONSULTATION-FACTS',()=>{
 
 await testCase('PUBLIC-UNDERSTANDING-UI-OMITS-INTERNAL-NAME',()=>{
   const files=[
-    'ui/interpretationRoomPresentation.js',
+    'ui/interpretationRoomPresentationV3.js',
     'ui/screenArchitecture.js',
     'ui/appShell.js',
     'screens/bodyPartDetailScreen.js',
