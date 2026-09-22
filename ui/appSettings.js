@@ -16,7 +16,7 @@ export const APPEARANCE_MODE_OPTIONS = Object.freeze([
 ]);
 
 export const COLOR_THEME_OPTIONS = Object.freeze([
-  Object.freeze({ value: "standard", label: "シンプル", description: "Prototypeを基準にした青灰色の標準配色です。" }),
+  Object.freeze({ value: "standard", label: "シンプル", description: "青灰色を基調とした標準配色です。" }),
   Object.freeze({ value: "natural", label: "ナチュラル", description: "従来の暖色系背景と深い緑を残した配色です。" }),
   Object.freeze({ value: "green", label: "やさしい緑", description: "緑系の配色で、目にやさしく落ち着いた画面にします。" }),
   Object.freeze({ value: "blue", label: "すっきり青", description: "寒色の青系配色で、情報を整理して見やすい画面にします。" }),
