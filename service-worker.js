@@ -54,7 +54,7 @@ const PRECACHE_URLS = [
   "./ui/hierarchicalExplanation.js",
   "./ui/historyPresentation.js",
   "./ui/interpretationRoomPresentationV3.js",
-  "./ui/prototypeBodyRegionVisuals.js",
+  "./ui/bodyRegionVisuals.js",
   "./ui/interactions/browserUtilities.js",
   "./ui/interactions/consultationInteractions.js",
   "./ui/interactions/readingInteractions.js",
