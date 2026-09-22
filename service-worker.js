@@ -1,9 +1,9 @@
-// Runtime revision: desktop-final-visual-audit-20260922-37
-const CACHE_NAME = "runload-app-current-20260922-37";
+// Runtime revision: interpretation-v3-preview-20260922-38
+const CACHE_NAME = "runload-app-interpretation-v3-preview-20260922-38";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
-  "./core/interpretationCore.js",
+  "./core/interpretationCore.js",\n  "./core/interpretationCoreV3.js",
   "./core/runloadCore.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -32,7 +32,7 @@ const PRECACHE_URLS = [
   "./styles/screens.css",
   "./styles/prototype-fidelity-v2.css",
   "./styles/prototype-mobile-parity.css",
-  "./styles/interpretation-room.css",
+  "./styles/interpretation-room.css",\n  "./styles/interpretation-room-v3.css",
   "./styles/product-quality.css",
   "./styles/desktop-workspace.css",
   "./styles/desktop-shell-v4.css",
@@ -53,7 +53,7 @@ const PRECACHE_URLS = [
   "./ui/guideContent.js",
   "./ui/hierarchicalExplanation.js",
   "./ui/historyPresentation.js",
-  "./ui/interpretationRoomPresentation.js",
+  "./ui/interpretationRoomPresentation.js",\n  "./ui/interpretationRoomPresentationV3.js",
   "./ui/prototypeBodyRegionVisuals.js",
   "./ui/interactions/browserUtilities.js",
   "./ui/interactions/consultationInteractions.js",
