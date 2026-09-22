@@ -2215,3 +2215,12 @@
     font-weight: 800;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: derived-screen width alignment ===== */
+@media (min-width: 80rem) {
+  .secondary-derived-screen {
+    width: min(74rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 2rem)) !important;
+    max-width: 74rem !important;
+  }
+}
