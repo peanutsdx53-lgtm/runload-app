@@ -6,7 +6,7 @@
 
 @media (min-width: 80rem) {
   /* ===== Course editor as a derived Record surface ===== */
-  .screen--course-editor.prototype-parity--course .editor {
+  .screen--course-editor.screen-layout--course .editor {
     position: fixed !important;
     top: 4.75rem !important;
     right: 0 !important;
@@ -19,15 +19,15 @@
     background: color-mix(in srgb, var(--color-ink) 14%, var(--color-paper)) !important;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-head,
-  .screen--course-editor.prototype-parity--course .editor-main {
+  .screen--course-editor.screen-layout--course .editor-head,
+  .screen--course-editor.screen-layout--course .editor-main {
     width: min(70rem, calc(100vw - 9rem)) !important;
     max-width: none !important;
     margin-inline: auto !important;
     background: var(--color-surface) !important;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-head {
+  .screen--course-editor.screen-layout--course .editor-head {
     position: sticky !important;
     top: 0 !important;
     z-index: 3 !important;
@@ -44,7 +44,7 @@
     box-shadow: 0 1.3rem 3.2rem color-mix(in srgb, var(--color-ink) 18%, transparent);
   }
 
-  .screen--course-editor.prototype-parity--course .editor-head a {
+  .screen--course-editor.screen-layout--course .editor-head a {
     min-height: 2.45rem;
     padding: 0 0.8rem;
     display: inline-flex;
@@ -58,20 +58,20 @@
     text-decoration: none;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-back-link {
+  .screen--course-editor.screen-layout--course .editor-back-link {
     justify-self: start;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-manager-link {
+  .screen--course-editor.screen-layout--course .editor-manager-link {
     justify-self: end;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-head > strong {
+  .screen--course-editor.screen-layout--course .editor-head > strong {
     font-size: 1rem !important;
     line-height: 1.2;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-main {
+  .screen--course-editor.screen-layout--course .editor-main {
     padding: 1.45rem 1.6rem 1.8rem !important;
     border: 2px solid var(--color-line) !important;
     border-top: 0 !important;
@@ -79,119 +79,119 @@
     box-shadow: 0 1.3rem 3.2rem color-mix(in srgb, var(--color-ink) 18%, transparent);
   }
 
-  .screen--course-editor.prototype-parity--course .editor-main > .eyebrow {
+  .screen--course-editor.screen-layout--course .editor-main > .eyebrow {
     font-size: 0.72rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-main > h1 {
+  .screen--course-editor.screen-layout--course .editor-main > h1 {
     margin-top: 0.25rem !important;
     font-size: 2rem !important;
     line-height: 1.08;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-main > p {
+  .screen--course-editor.screen-layout--course .editor-main > p {
     margin-top: 0.45rem !important;
     font-size: 0.84rem !important;
     line-height: 1.5;
   }
 
-  .screen--course-editor.prototype-parity--course .e-card {
+  .screen--course-editor.screen-layout--course .e-card {
     margin-top: 1rem !important;
     padding: 1.15rem 1.25rem !important;
     border-radius: 1rem !important;
     box-shadow: none !important;
   }
 
-  .screen--course-editor.prototype-parity--course .e-title {
+  .screen--course-editor.screen-layout--course .e-title {
     gap: 0.8rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .e-title b {
+  .screen--course-editor.screen-layout--course .e-title b {
     width: 2.45rem !important;
     height: 2.45rem !important;
     border-radius: 0.75rem !important;
     font-size: 0.82rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .e-title small {
+  .screen--course-editor.screen-layout--course .e-title small {
     font-size: 0.72rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .e-title h2 {
+  .screen--course-editor.screen-layout--course .e-title h2 {
     margin-top: 0.12rem !important;
     font-size: 1.22rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .field > span,
-  .screen--course-editor.prototype-parity--course .mfield > span,
-  .screen--course-editor.prototype-parity--course .section-field > span {
+  .screen--course-editor.screen-layout--course .field > span,
+  .screen--course-editor.screen-layout--course .mfield > span,
+  .screen--course-editor.screen-layout--course .section-field > span {
     font-size: 0.8rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .field input,
-  .screen--course-editor.prototype-parity--course .field select,
-  .screen--course-editor.prototype-parity--course .section-field select,
-  .screen--course-editor.prototype-parity--course .percent-control {
+  .screen--course-editor.screen-layout--course .field input,
+  .screen--course-editor.screen-layout--course .field select,
+  .screen--course-editor.screen-layout--course .section-field select,
+  .screen--course-editor.screen-layout--course .percent-control {
     min-height: 3rem !important;
     border-radius: 0.75rem !important;
     font-size: 0.94rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course input[name="courseName"] {
+  .screen--course-editor.screen-layout--course input[name="courseName"] {
     width: min(100%, 34rem) !important;
   }
 
-  .screen--course-editor.prototype-parity--course .grade-mode {
+  .screen--course-editor.screen-layout--course .grade-mode {
     width: min(100%, 42rem) !important;
   }
 
-  .screen--course-editor.prototype-parity--course .mode.three {
+  .screen--course-editor.screen-layout--course .mode.three {
     width: min(100%, 32rem) !important;
   }
 
-  .screen--course-editor.prototype-parity--course .mode button {
+  .screen--course-editor.screen-layout--course .mode button {
     min-height: 3rem !important;
     font-size: 0.84rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .note,
-  .screen--course-editor.prototype-parity--course .support-copy,
-  .screen--course-editor.prototype-parity--course .support-title span,
-  .screen--course-editor.prototype-parity--course .support-title small {
+  .screen--course-editor.screen-layout--course .note,
+  .screen--course-editor.screen-layout--course .support-copy,
+  .screen--course-editor.screen-layout--course .support-title span,
+  .screen--course-editor.screen-layout--course .support-title small {
     font-size: 0.76rem !important;
     line-height: 1.45;
   }
 
-  .screen--course-editor.prototype-parity--course .support-title strong,
-  .screen--course-editor.prototype-parity--course .preview > h2 {
+  .screen--course-editor.screen-layout--course .support-title strong,
+  .screen--course-editor.screen-layout--course .preview > h2 {
     font-size: 1rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .preview {
+  .screen--course-editor.screen-layout--course .preview {
     margin-top: 1rem !important;
     padding: 1rem 1.15rem !important;
     border-radius: 1rem !important;
   }
 
-  .screen--course-editor.prototype-parity--course .editor-actions .primary {
+  .screen--course-editor.screen-layout--course .editor-actions .primary {
     min-height: 3.25rem !important;
     font-size: 0.92rem !important;
   }
 
   /* ===== Body record / shoes: derived panel over Record ===== */
-  .screen--record-input.prototype-parity--record .subscreen {
+  .screen--record-input.screen-layout--record .subscreen {
     padding: 1.25rem 2rem 2rem !important;
     background: color-mix(in srgb, var(--color-ink) 16%, transparent) !important;
     backdrop-filter: blur(4px) !important;
     -webkit-backdrop-filter: blur(4px) !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > header,
-  .screen--record-input.prototype-parity--record .subscreen > main {
+  .screen--record-input.screen-layout--record .subscreen > header,
+  .screen--record-input.screen-layout--record .subscreen > main {
     width: min(74rem, calc(100vw - 9rem)) !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > header {
+  .screen--record-input.screen-layout--record .subscreen > header {
     height: 4rem !important;
     min-height: 4rem !important;
     padding: 0.7rem 1.05rem !important;
@@ -202,7 +202,7 @@
     box-shadow: 0 1.35rem 3.4rem color-mix(in srgb, var(--color-ink) 20%, transparent);
   }
 
-  .screen--record-input.prototype-parity--record .record-subscreen__back {
+  .screen--record-input.screen-layout--record .record-subscreen__back {
     min-height: 2.45rem !important;
     padding: 0 0.8rem !important;
     border: 1px solid var(--color-line) !important;
@@ -211,11 +211,11 @@
     font-size: 0.84rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > header strong {
+  .screen--record-input.screen-layout--record .subscreen > header strong {
     font-size: 1rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen > main {
+  .screen--record-input.screen-layout--record .subscreen > main {
     max-height: calc(100dvh - 4.75rem - 4rem - 3rem) !important;
     padding: 1.35rem 1.5rem 1.65rem !important;
     border: 2px solid var(--color-line) !important;
@@ -225,118 +225,118 @@
     box-shadow: 0 1.35rem 3.4rem color-mix(in srgb, var(--color-ink) 20%, transparent);
   }
 
-  .screen--record-input.prototype-parity--record .sub-flow-head h2 {
+  .screen--record-input.screen-layout--record .sub-flow-head h2 {
     font-size: 2rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-flow-head > p:last-child {
+  .screen--record-input.screen-layout--record .sub-flow-head > p:last-child {
     font-size: 0.88rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid {
+  .screen--record-input.screen-layout--record .sub-choice-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.75rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid label {
+  .screen--record-input.screen-layout--record .sub-choice-grid label {
     min-height: 4.4rem !important;
     padding: 0.8rem 0.9rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid strong {
+  .screen--record-input.screen-layout--record .sub-choice-grid strong {
     font-size: 0.98rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-choice-grid small {
+  .screen--record-input.screen-layout--record .sub-choice-grid small {
     font-size: 0.8rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .body-area-entry {
+  .screen--record-input.screen-layout--record .body-area-entry {
     padding: 1.1rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subjective-body-map {
+  .screen--record-input.screen-layout--record .subjective-body-map {
     gap: 0.85rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subjective-body-map figure {
+  .screen--record-input.screen-layout--record .subjective-body-map figure {
     padding: 0.7rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subjective-body-map figcaption {
+  .screen--record-input.screen-layout--record .subjective-body-map figcaption {
     font-size: 0.8rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subjective-body-map svg {
+  .screen--record-input.screen-layout--record .subjective-body-map svg {
     height: 16rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-section-head strong {
+  .screen--record-input.screen-layout--record .sub-section-head strong {
     font-size: 1.12rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-section-head span,
-  .screen--record-input.prototype-parity--record .selected-body-summary {
+  .screen--record-input.screen-layout--record .sub-section-head span,
+  .screen--record-input.screen-layout--record .selected-body-summary {
     font-size: 0.82rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen .field > span {
+  .screen--record-input.screen-layout--record .subscreen .field > span {
     font-size: 0.84rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen .field input,
-  .screen--record-input.prototype-parity--record .subscreen .field select,
-  .screen--record-input.prototype-parity--record .subscreen .field textarea {
+  .screen--record-input.screen-layout--record .subscreen .field input,
+  .screen--record-input.screen-layout--record .subscreen .field select,
+  .screen--record-input.screen-layout--record .subscreen .field textarea {
     min-height: 3.05rem !important;
     font-size: 0.98rem !important;
   }
 
   /* Shoes gets a wider, two-column desktop composition. */
-  .screen--record-input.prototype-parity--record .subscreen--personal .sub-flow {
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-flow {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 1rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen--personal .sub-flow-head,
-  .screen--record-input.prototype-parity--record .subscreen--personal .sub-note[data-record-personal-subflow-summary],
-  .screen--record-input.prototype-parity--record .subscreen--personal .sub-flow-save {
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-flow-head,
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-note[data-record-personal-subflow-summary],
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-flow-save {
     grid-column: 1 / -1 !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen--personal .sub-card {
+  .screen--record-input.screen-layout--record .subscreen--personal .sub-card {
     margin: 0 !important;
     padding: 1.1rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen--personal select[name="personalShoeId"] {
+  .screen--record-input.screen-layout--record .subscreen--personal select[name="personalShoeId"] {
     width: min(100%, 24rem) !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen--personal input[name="personalShoeLabel"] {
+  .screen--record-input.screen-layout--record .subscreen--personal input[name="personalShoeLabel"] {
     width: min(100%, 30rem) !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen--personal .focus-tag-grid {
+  .screen--record-input.screen-layout--record .subscreen--personal .focus-tag-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.65rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .subscreen--personal .focus-tag-grid label {
+  .screen--record-input.screen-layout--record .subscreen--personal .focus-tag-grid label {
     min-height: 3rem !important;
     font-size: 0.86rem !important;
   }
 
-  .screen--record-input.prototype-parity--record .sub-flow-save {
+  .screen--record-input.screen-layout--record .sub-flow-save {
     min-height: 3.25rem !important;
     font-size: 0.94rem !important;
   }
 }
 
 @media (min-width: 80rem) and (max-width: 92rem) {
-  .screen--course-editor.prototype-parity--course .editor-head,
-  .screen--course-editor.prototype-parity--course .editor-main,
-  .screen--record-input.prototype-parity--record .subscreen > header,
-  .screen--record-input.prototype-parity--record .subscreen > main {
+  .screen--course-editor.screen-layout--course .editor-head,
+  .screen--course-editor.screen-layout--course .editor-main,
+  .screen--record-input.screen-layout--record .subscreen > header,
+  .screen--record-input.screen-layout--record .subscreen > main {
     width: min(66rem, calc(100vw - 7rem)) !important;
   }
 }
