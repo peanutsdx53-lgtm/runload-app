@@ -10,48 +10,41 @@ const read=(rel)=>fs.readFileSync(path.join(root,rel),'utf8');
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 
-await test('RESULT-REPLACES-ACTIVATION-WITH-INTERPRETATION-LAUNCH',()=>{
+await test('RESULT-LAUNCHES-CANONICAL-INTERPRETATION',()=>{
   const s=read('screens/resultScreen.js');
-  assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=result&experience=v3/);
+  assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=result/);
+  assert.doesNotMatch(s,/experience=v3/);
   assert.match(s,/今回の結果を整理する/);
   assert.match(s,/基準・過去・計算に使った情報と一緒に確認します/);
-  assert.doesNotMatch(s,/#\/activation\?recordId=\$\{encodeURIComponent\(record\.id\)\}/);
 });
 
-await test('HOME-LATEST-RECORD-SEPARATES-RESULT-AND-UNDERSTANDING',()=>{
+await test('HOME-LATEST-RECORD-SEPARATES-RESULT-AND-ORGANIZATION',()=>{
   const s=read('screens/homeScreen.js');
-  assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=home&experience=v3/);
+  assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=home/);
+  assert.doesNotMatch(s,/experience=v3/);
   assert.match(s,/結果を見る/);
   assert.match(s,/結果を整理する/);
-  assert.doesNotMatch(s,/>結果の活用</);
 });
 
-await test('BODY-DETAIL-HAS-CONTEXTUAL-COMPACT-LAUNCH',()=>{
+await test('BODY-DETAIL-HAS-CONTEXTUAL-LAUNCH',()=>{
   const s=read('screens/bodyPartDetailScreen.js');
-  assert.match(s,/origin=body-part-detail&regionId=\$\{encodeURIComponent\(regionId\)\}&experience=v3/);
+  assert.match(s,/origin=body-part-detail&regionId=\$\{encodeURIComponent\(regionId\)\}/);
+  assert.doesNotMatch(s,/experience=v3/);
   assert.match(s,/この部位の結果を整理する/);
 });
 
 await test('HISTORY-SELECTED-RECORD-HAS-CONTEXTUAL-LAUNCH',()=>{
   const s=read('screens/historyScreen.js');
-  assert.match(s,/origin=history&regionId=\$\{encodeURIComponent\(workspace\.regionId\)\}&experience=v3/);
+  assert.match(s,/origin=history&regionId=\$\{encodeURIComponent\(workspace\.regionId\)\}/);
+  assert.doesNotMatch(s,/experience=v3/);
   assert.match(s,/この記録の結果を整理する/);
 });
 
-await test('ACTIVATION-IS-ALIAS-NOT-A-PUBLIC-SCREEN',()=>{
+await test('LEGACY-ACTIVATION-ROUTE-IS-REMOVED',()=>{
   const app=read('app.js');
-  assert.doesNotMatch(app,/renderActivationScreen/);
-  assert.doesNotMatch(app,/activation:\s*renderActivationScreen/);
-  assert.match(app,/activation:\s*\(parameters\)\s*=>/);
-  assert.match(app,/screen:\s*"interpretation-room"/);
-  assert.match(app,/nextParameters\.set\("origin",\s*"result"\)/);
-});
-
-await test('SCREEN-ARCHITECTURE-KEEPS-ROOM-CONTEXT-AND-DROPS-RETIRED-ENTRIES',()=>{
-  const s=read('ui/screenArchitecture.js');
-  assert.match(s,/if \(screen === "interpretation-room"\)/);
-  assert.doesNotMatch(s,/screen: "activation", label: "結果の活用"/);
-  assert.doesNotMatch(s,/renderResultWorkspaceNavigation|resolveScreenWorkspace|renderManagementBoundary/);
+  assert.doesNotMatch(app,/renderActivationScreen|routeAliases|activation:\s*\(parameters\)\s*=>|#\/activation/);
+  const architecture=read('ui/screenArchitecture.js');
+  assert.doesNotMatch(architecture,/from === "activation"|screen: "activation"/);
 });
 
 await test('SIMULATION-FROM-ROOM-PRESERVES-RETURN-CONTEXT',()=>{
@@ -66,8 +59,9 @@ await test('SIMULATION-FROM-ROOM-PRESERVES-RETURN-CONTEXT',()=>{
   assert.match(html,/選択した記録/);
   assert.match(html,/value="3\.0"/);
   assert.doesNotMatch(html,/value="9\.0"/);
-  assert.match(html,/#\/interpretation-room\?recordId=old&amp;origin=history&amp;view=next&amp;intent=condition/);
-  assert.match(html,/結果の理解へ戻る/);
+  assert.match(html,/#\/interpretation-room\?recordId=old&amp;origin=history/);
+  assert.match(html,/結果の整理へ戻る/);
+  assert.doesNotMatch(html,/view=next|intent=condition|experience=v3|roomExperience/);
 });
 
 await test('SIMULATION-COURSE-ROUNDTRIP-PRESERVES-SOURCE-RECORD',()=>{
@@ -78,34 +72,27 @@ await test('SIMULATION-COURSE-ROUNDTRIP-PRESERVES-SOURCE-RECORD',()=>{
   assert.match(html,/returnTo=%23%2Fsimulation%3Ffrom%3Dinterpretation-room%26recordId%3Dold%26roomOrigin%3Dresult/);
 });
 
-await test('SIMULATION-V3-USES-RESULT-ORGANIZATION-WORDING',()=>{
-  const records=[{id:'old',date:'2026-09-10',createdAt:'2026-09-10T08:00:00Z',activityType:'run',distanceKm:3,durationMinutes:18,course:{name:'Old course'}}];
-  const services={storage:{records:{loadAll:()=>records,findById:(id)=>records.find((r)=>r.id===id)||null}}};
-  const context={parameters:new URLSearchParams('from=interpretation-room&recordId=old&roomOrigin=result&roomExperience=v3')};
-  const html=renderSimulationScreen({services,context});
-  assert.match(html,/#\/interpretation-room\?recordId=old&amp;origin=result&amp;experience=v3/);
-  assert.match(html,/結果の整理へ戻る/);
+await test('INTERPRETATION-ACTIONS-CARRY-ROOM-ORIGIN-WITHOUT-VERSION-STATE',()=>{
+  const s=read('ui/interpretationRoomPresentationV3.js');
+  assert.match(s,/query\.set\("from", "interpretation-room"\)/);
+  assert.match(s,/query\.set\("roomOrigin", output\?\.target\?\.origin \|\| "result"\)/);
+  assert.doesNotMatch(s,/roomExperience|experience=v3/);
 });
 
-await test('INTERPRETATION-SIMULATION-LINK-CARRIES-ROOM-ORIGIN-WITHOUT-CORE-MUTATION',()=>{
-  const s=read('ui/interpretationRoomPresentation.js');
-  assert.match(s,/function actionHref\(action, roomOrigin = ""\)/);
-  assert.match(s,/query\.set\("roomOrigin", roomOrigin\)/);
-  assert.match(s,/output\?\.context\?\.origin \|\| "result"/);
-});
-
-await test('SIMULATION-SCREEN-ARCHITECTURE-RETURNS-TO-ROOM',()=>{
+await test('SCREEN-ARCHITECTURE-RETURNS-SIMULATION-TO-CANONICAL-ROOM',()=>{
   const s=read('ui/screenArchitecture.js');
   assert.match(s,/from === "interpretation-room"/);
-  assert.match(s,/roomExperience === "v3" \? "結果の整理" : "結果の理解"/);
-  assert.match(s,/view: "next", intent: "condition"/);
+  assert.match(s,/backLabel: "結果の整理"/);
+  assert.match(s,/screenHref\("interpretation-room", \{ recordId, origin: roomOrigin \|\| "result" \}\)/);
+  assert.doesNotMatch(s,/roomExperience|view: "next"|intent: "condition"/);
 });
 
-await test('APP-SHELL-HAS-NO-PUBLIC-ACTIVATION-LABEL',()=>{
+await test('APP-SHELL-USES-CANONICAL-INTERPRETATION-WORDING',()=>{
   const s=read('ui/appShell.js');
-  assert.doesNotMatch(s,/activation: "RESULT USE"/);
+  assert.match(s,/title: "結果を整理する"/);
+  assert.doesNotMatch(s,/結果を理解する/);
 });
 
 const failed=results.filter((x)=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Room Launch Integration V1',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Launch Integration',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
