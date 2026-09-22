@@ -1,6 +1,6 @@
 /* RunLoad desktop layout and screen refinements. */
 
-/* ===== desktop-shell-v4.css ===== */
+/* ===== Desktop shell ===== */
 /*
  * Desktop frame v4.
  * Natural document scrolling is restored. The only desktop header that may
@@ -52,7 +52,7 @@
   /* Hide any legacy/cached desktop header that is still rendered inside #app.
      Only the dedicated body-level host is allowed on desktop. */
   #app .app-header--desktop,
-  #app .UI-mobile-topbar {
+  #app .mobile-topbar {
     display: none !important;
   }
 
@@ -185,7 +185,7 @@
   }
 }
 
-/* Record workspace: use the available PC canvas instead of a narrow UI column. */
+/* Record workspace: use the available PC canvas instead of a narrow content column. */
 @media (min-width: 55rem) {
   .app-shell:not(.app-shell--immersive) .screen--record-input.screen-layout--record {
     width: 100% !important;
@@ -947,7 +947,7 @@
   }
 }
 
-/* ===== desktop-record-refine.css ===== */
+/* ===== Record desktop refinements ===== */
 /*
  * Desktop record refinement.
  * Loaded after the desktop shell so record-input geometry can be tuned
@@ -1255,7 +1255,7 @@
   }
 }
 
-/* ===== desktop-record-polish-v2.css ===== */
+/* ===== Record visual polish ===== */
 /*
  * Desktop record polish v2.
  * Final-pass geometry for Step 1, Step 3, and embedded record subflows.
@@ -1667,7 +1667,7 @@
   }
 }
 
-/* ===== desktop-record-derived-v1.css ===== */
+/* ===== Record derived layout ===== */
 /*
  * Desktop derived-record surfaces.
  * Course editor, body record and shoes are secondary screens of Record.
@@ -2011,7 +2011,7 @@
   }
 }
 
-/* ===== desktop-course-derived-v2.css ===== */
+/* ===== Course desktop layout ===== */
 /*
  * Desktop course-derived screens v2.
  * Course Library, Course Editor and GPX are treated as secondary RECORD screens.
@@ -2648,7 +2648,7 @@
   }
 }
 
-/* ===== desktop-course-derived-v3.css ===== */
+/* ===== Course desktop refinements ===== */
 /*
  * Desktop course-derived screens v3.
  * Final unification with the BODY RECORD / SHOES derived-panel pattern.
@@ -2931,10 +2931,10 @@
   }
 }
 
-/* ===== desktop-ui-refinement.css ===== */
-/* ===== Consolidated from styles/desktop-ui-pass-v1.css ===== */
+/* ===== Desktop UI refinements ===== */
+/* ===== Desktop UI refinement section 1 ===== */
 /*
- * Desktop UI refinement pass v1.
+ * Desktop UI refinement section 1.
  * Scope: untouched primary screens (History, More) and secondary screens
  * derived from Home / More. Record and Result families are intentionally
  * excluded because they are handled in dedicated passes.
@@ -3872,9 +3872,9 @@
   }
 }
 
-/* ===== Consolidated from styles/desktop-ui-pass-v2.css ===== */
+/* ===== Desktop UI refinement section 2 ===== */
 /*
- * Desktop UI refinement pass v2.
+ * Desktop UI refinement section 2.
  * Typography/detail audit after v1. Loaded last.
  * Record and Result families remain outside this pass.
  */
@@ -4155,9 +4155,9 @@
   }
 }
 
-/* ===== Consolidated from styles/desktop-ui-pass-v3.css ===== */
+/* ===== Desktop UI refinement section 3 ===== */
 /*
- * Desktop UI refinement pass v3.
+ * Desktop UI refinement section 3.
  * Final explicit typography selectors found by the post-v2 audit.
  */
 
@@ -4245,9 +4245,9 @@
   }
 }
 
-/* ===== Consolidated from styles/desktop-ui-pass-v4.css ===== */
+/* ===== Desktop UI refinement section 4 ===== */
 /*
- * Desktop UI refinement pass v4.
+ * Desktop UI refinement section 4.
  * Keep equal-type card groups visually balanced at narrower desktop widths.
  */
 
@@ -4262,9 +4262,9 @@
   }
 }
 
-/* ===== Consolidated from styles/desktop-ui-pass-v5.css ===== */
+/* ===== Desktop UI refinement section 5 ===== */
 /*
- * Desktop UI refinement pass v5.
+ * Desktop UI refinement section 5.
  * Unified secondary-screen frame: fixed toolbar + independently scrolling body.
  * Matches the interaction pattern established for BODY RECORD / SHOES.
  */
@@ -4353,9 +4353,9 @@
   }
 }
 
-/* ===== Consolidated from styles/desktop-ui-pass-v6.css ===== */
+/* ===== Desktop UI refinement section 6 ===== */
 /*
- * Desktop UI refinement pass v6.
+ * Desktop UI refinement section 6.
  * State-aware layout and light/dark readability audit.
  * Record-input and Result families remain outside this pass.
  */
@@ -4709,7 +4709,7 @@
 
 /* ===== Re-audit 2026-09-22: cross-screen visual hierarchy and theme safety ===== */
 @media (min-width: 80rem) {
-  /* History: desktop typography left behind by the mobile UI. */
+  /* History: desktop typography left behind by the mobile prototype. */
   .screen--history.screen-layout--history .section-index,
   .screen--history.screen-layout--history .chart-axis-label,
   .screen--history.screen-layout--history .chart-date {
