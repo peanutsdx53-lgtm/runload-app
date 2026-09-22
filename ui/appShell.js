@@ -180,7 +180,7 @@ function renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult) 
 }
 
 function renderImmersiveHeader(currentScreen, currentLocation) {
-  const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { title: "結果を理解する", backHref: "#/home", backLabel: "Home" };
+  const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { title: "結果を整理する", backHref: "#/home", backLabel: "Home" };
   return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(context.title)}</strong><span class="interpretation-room-header__spacer" aria-hidden="true"></span></header>`;
 }
 
