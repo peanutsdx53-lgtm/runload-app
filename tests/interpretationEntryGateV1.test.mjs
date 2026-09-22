@@ -59,8 +59,8 @@ await test('REST-RECORD-DOES-NOT-OFFER-UNDERSTANDING-ENTRY',()=>{
 
 await test('ENTRY-STYLING-IS-SECONDARY-NOT-WARNING',()=>{
   const css=read('styles/prototype-mobile-parity.css');
-  const start=css.indexOf('.prototype-parity--result .understanding-link-wrap');
-  const end=css.indexOf('/* ===== Frozen prototype: history ===== */',start);
+  const start=css.indexOf('.screen-layout--result .understanding-link-wrap');
+  const end=css.indexOf('.screen-layout--history',start);
   const block=css.slice(start,end);
   assert.ok(start>=0);
   assert.match(block,/background:var\(--surface\)/);
