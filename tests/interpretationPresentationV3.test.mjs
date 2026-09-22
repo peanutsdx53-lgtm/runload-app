@@ -262,6 +262,18 @@ await test('NEXT-ACTION-USES-USER-GOAL-NOT-FEATURE-NAME',()=>{
   assert.match(html,/from=interpretation-room/);
 });
 
+await test('DERIVED-ACTIONS-PRESERVE-INTERPRETATION-CONTEXT',()=>{
+  const html=renderInterpretationRoomV3({output:baseOutput()});
+  assert.match(html,/次の走りや休養を準備する/);
+  assert.doesNotMatch(html,/次回確認したいことを残す/);
+  for(const destination of ['simulation','plan','consultation','reading']) {
+    assert.match(html,new RegExp(`#\\/${destination}\\?`));
+  }
+  assert.ok((html.match(/from=interpretation-room/g)||[]).length>=4);
+  assert.ok((html.match(/roomExperience=v3/g)||[]).length>=4);
+  assert.ok((html.match(/roomOrigin=result/g)||[]).length>=4);
+});
+
 await test('ADVANCED-EVIDENCE-IS-COLLAPSED-BEHIND-PLAIN-LANGUAGE',()=>{
   const html=renderInterpretationRoomV3({output:baseOutput()});
   assert.match(html,/<details class="interpretation-v3-advanced">/);
