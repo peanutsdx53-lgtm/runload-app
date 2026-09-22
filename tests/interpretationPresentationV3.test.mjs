@@ -114,6 +114,24 @@ await test('OVERVIEW-EXPLAINS-NO-CROSS-REGION-RANKING',()=>{
   assert.match(html,/部位どうしの数値を順位付けする図ではありません/);
 });
 
+await test('OVERVIEW-ADDS-NONCOLOR-DIRECTION-GROUPING',()=>{
+  const html=renderInterpretationRoomV3({output:baseOutput({selected:false})});
+  assert.match(html,/今回の分かれ方/);
+  assert.match(html,/基準より上側/);
+  assert.match(html,/基準付近/);
+  assert.match(html,/基準より下側/);
+  assert.match(html,/股関節部/);
+});
+
+await test('SELECTED-VIEW-DOES-NOT-REPEAT-WHOLE-BODY-MAP',()=>{
+  const html=renderInterpretationRoomV3({output:baseOutput()});
+  assert.match(html,/股関節部の結果を整理/);
+  assert.match(html,/身体全体から選び直す/);
+  assert.doesNotMatch(html,/class="interpretation-v3-map"/);
+  assert.doesNotMatch(html,/部位名から選ぶ/);
+  assert.match(html,/<span>1<\/span><div><small>選んだ部位を見る<\/small>/);
+});
+
 await test('SELECTED-REGION-SHOWS-NUMBER-WITH-REFERENCE-AND-PREVIOUS',()=>{
   const html=renderInterpretationRoomV3({output:baseOutput()});
   assert.match(html,/基準100より上側/);
