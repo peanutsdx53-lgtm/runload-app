@@ -14,10 +14,10 @@ await test('RETIRED-ACTIVATION-SCREEN-REMOVED',()=>{
   assert.equal(exists('screens/activationScreen.js'),false);
 });
 
-await test('LEGACY-ACTIVATION-URL-REDIRECT-RETAINED',()=>{
+await test('LEGACY-ACTIVATION-ALIAS-REMOVED',()=>{
   const app=read('app.js');
-  assert.match(app,/activation:\s*\(parameters\)\s*=>/);
-  assert.match(app,/screen:\s*"interpretation-room"/);
+  assert.doesNotMatch(app,/activation:\s*\(parameters\)\s*=>/);
+  assert.doesNotMatch(app,/#\/activation/);
 });
 
 await test('GLOBAL-FEATURE-MENU-DOES-NOT-DUPLICATE-UNDERSTANDING-ENTRY',()=>{
@@ -60,7 +60,7 @@ await test('PWA-RUNTIME-REVISION-IS-PRESENT',()=>{
 
 await test('PUBLIC-UI-OMITS-INTERNAL-INTERPRETATION-NAME',()=>{
   const files=[
-    'ui/interpretationRoomPresentation.js',
+    'ui/interpretationRoomPresentationV3.js',
     'ui/screenArchitecture.js',
     'ui/appShell.js',
     'screens/homeScreen.js',
