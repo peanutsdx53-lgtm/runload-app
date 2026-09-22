@@ -48,7 +48,7 @@ export function renderSettingsScreen({ services, context }) {
   const saved = context?.parameters?.get("status") === "saved";
   const goalValues = new Set(Array.isArray(profile.runningGoalTags) ? profile.runningGoalTags : []);
   const goals = ["健康づくり", "習慣化", "距離を伸ばす", "大会参加", "気分転換", "その他"];
-  return `<div class="screen screen--settings prototype-parity prototype-parity--settings secondary-derived-screen">
+  return `<div class="screen screen--settings screen-layout screen-layout--settings secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="#/more">← その他へ戻る</a><strong>設定</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">SETTINGS</p><h1>設定</h1><p>表示、使い回す情報、端末内データをまとめます。</p></section>
