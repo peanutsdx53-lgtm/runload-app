@@ -170,13 +170,13 @@ export function renderDesktopHeader({ currentScreen, currentLocation, hasResult 
   </header>`;
 }
 
-function renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult) {
+function renderMobileHeader(currentScreen, currentLocation, hasResult) {
   const menu = renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "mobile" });
   const context = resolveScreenContextNavigation(currentScreen, currentLocation);
   if (context) {
-    return `<header class="prototype-mobile-topbar prototype-mobile-topbar--context"><a class="prototype-mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong>${escapeHtml(context.title)}</strong><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
+    return `<header class="mobile-topbar mobile-topbar--context"><a class="mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong>${escapeHtml(context.title)}</strong><div class="mobile-topbar__actions">${menu}</div></header>`;
   }
-  return `<header class="prototype-mobile-topbar"><a class="prototype-mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen, currentLocation))}</small></a><div class="prototype-mobile-topbar__actions">${menu}</div></header>`;
+  return `<header class="mobile-topbar"><a class="mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen, currentLocation))}</small></a><div class="mobile-topbar__actions">${menu}</div></header>`;
 }
 
 function renderImmersiveHeader(currentScreen, currentLocation) {
@@ -197,7 +197,7 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
   }
   return `
     <div class="app-shell">
-      ${renderMobilePrototypeHeader(currentScreen, currentLocation, hasResult)}
+      ${renderMobileHeader(currentScreen, currentLocation, hasResult)}
 
       <main id="main-content" class="app-main" tabindex="-1">
         ${screenContent}
