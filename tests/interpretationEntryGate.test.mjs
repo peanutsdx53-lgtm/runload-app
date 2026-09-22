@@ -69,7 +69,7 @@ await test('ENTRY-STYLING-IS-SECONDARY-NOT-WARNING',()=>{
 });
 
 await test('HOME-UNDERSTANDING-ACTION-IS-VISUALLY-SECONDARY',()=>{
-  const css=read('styles/prototype-mobile-parity.css');
+  const css=read('styles/mobile.css');
   const line=css.split('\n').find((row)=>row.includes('.card-link--understanding'))||'';
   assert.match(line,/background:transparent/);
   assert.match(line,/border-color:transparent/);
