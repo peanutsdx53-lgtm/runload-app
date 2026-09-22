@@ -255,7 +255,7 @@ export function renderRecordInputScreen({ services, context }) {
     .slice(0, 3);
   const settings = services.storage.settings.load();
 
-  return `<div class="screen screen--record-input prototype-parity prototype-parity--record">
+  return `<div class="screen screen--record-input screen-layout screen-layout--record">
     <section class="page-head"><div><p class="eyebrow">RECORD</p><h1>${editing ? "保存した記録を確認・更新" : "今日の記録"}</h1></div></section>
     ${editing ? `<p class="parity-record-banner">保存済みの${escapeHtml(formatLocalDate(record.date))}の記録を更新します。</p>` : selectedPlan ? `<p class="parity-record-banner">保存した予定から今回の記録へ転記しています。</p>` : savedDraft ? `<p class="parity-record-banner">入力途中の下書きから再開しています。</p>` : ""}
     <form id="record-input-form" class="record-form prototype-record-form" data-editing="${editing ? "true" : "false"}" novalidate>
