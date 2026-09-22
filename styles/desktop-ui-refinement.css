@@ -2158,3 +2158,43 @@
     color: var(--muted) !important;
   }
 }
+
+
+/* ===== Re-audit 2026-09-22: History undo state ===== */
+@media (min-width: 80rem) {
+  .screen--history.prototype-parity--history .history-undo {
+    position: fixed;
+    right: max(var(--pc-content-right), env(safe-area-inset-right));
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    z-index: 75;
+    width: min(28rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 2rem));
+    padding: 0.8rem 0.9rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.8rem;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 0.9rem;
+    background: var(--surface);
+    box-shadow: var(--shadow-dialog);
+  }
+
+  .screen--history.prototype-parity--history .history-undo p {
+    margin: 0;
+    color: var(--ink);
+    font-size: 0.82rem !important;
+    line-height: 1.45;
+  }
+
+  .screen--history.prototype-parity--history .history-undo button {
+    min-height: 2.55rem;
+    padding: 0 0.8rem;
+    border: 1px solid var(--accent);
+    border-radius: 0.65rem;
+    background: var(--surface2);
+    color: var(--accent2);
+    font-size: 0.8rem !important;
+    font-weight: 850;
+    white-space: nowrap;
+  }
+}
