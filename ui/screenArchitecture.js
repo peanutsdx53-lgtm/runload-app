@@ -123,7 +123,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
         backHref: screenHref("interpretation-room", roomExperience === "v3"
           ? { recordId, origin: roomOrigin || "result", experience: "v3" }
           : { recordId, origin: roomOrigin || "result", view: "next", intent: "condition" }),
-        backLabel: "結果の理解",
+        backLabel: roomExperience === "v3" ? "結果の整理" : "結果の理解",
       };
     }
     if (from === "activation") {
