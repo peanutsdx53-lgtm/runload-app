@@ -717,6 +717,33 @@
 .button--danger { border-width: 2px; }
 
 .app-header__actions { display: flex; align-items: center; gap: var(--space-2); }
+.context-help-button {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 2.65rem;
+  height: 2.65rem;
+  flex: 0 0 2.65rem;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 2px solid var(--color-line);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-accent-strong);
+  box-shadow: var(--shadow-soft);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+.context-help-button:hover,
+.context-help-button:focus-visible {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  outline-offset: 3px;
+}
+.context-help-button--immersive { justify-self: end; }
 .feature-menu { position: relative !important; }
 .app-menu-button {
   appearance: none;
@@ -1644,6 +1671,12 @@ html.rl-appearance-dark .primary-navigation__link.is-current {
 
 
 @media (max-width: 35rem) {
+  .context-help-button {
+    width: 2.4rem;
+    height: 2.4rem;
+    flex-basis: 2.4rem;
+    font-size: 0.92rem;
+  }
   .app-menu-button {
     min-height: 2.5rem;
     padding: 0.42rem 0.82rem;

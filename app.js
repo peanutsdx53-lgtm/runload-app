@@ -2,7 +2,7 @@ import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkf
 
 import { createSecondPillarRofJServices } from "./core/secondPillarRofJ.js";
 import { createAppRouter } from "./ui/appRouter.js";
-import { resolveViewportDefaultEntryScreen } from "./ui/deviceLayout.js";
+import { matchesMobileLayout, resolveViewportDefaultEntryScreen } from "./ui/deviceLayout.js";
 import { focusScreenHeading, renderAppShell, renderDesktopHeader } from "./ui/appShell.js";
 import { applyJournalSettings } from "./ui/appSettings.js";
 import { APP_GUIDE_VERSION, DEFAULT_GUIDE_SECTION, normalizeGuideSection, shouldOpenGuide, withGuideVersionSeen } from "./ui/guideContent.js";
@@ -142,7 +142,12 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       saveGuideVersionSeen();
       guideOpen = false;
       guideFirstVisit = false;
-      renderCurrentLocation({ focusHeading: false, focusSelector: "#feature-menu-button-desktop" });
+      const focusSelector = currentLocation.screen === "start"
+        ? ".run-launch__top .context-help-button"
+        : matchesMobileLayout()
+          ? ".mobile-topbar .context-help-button"
+          : "#desktop-header-root .context-help-button";
+      renderCurrentLocation({ focusHeading: false, focusSelector });
     },
     onSelectGuideSection: (section) => {
       guideSection = normalizeGuideSection(section);
@@ -162,6 +167,9 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
     rerender: () => renderCurrentLocation({ focusHeading: false }),
   });
   bindScreenTutorial({ root: appRoot, screenName });
+  if (desktopHeaderRoot?.firstElementChild) {
+    bindScreenTutorial({ root: desktopHeaderRoot, screenName });
+  }
 
   window.requestAnimationFrame(() => {
     const requestedFocusSelector = focusSelector || recordInputReturnState?.focusSelector || "";
