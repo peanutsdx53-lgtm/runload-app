@@ -12660,6 +12660,16 @@ function buildPrivacyOverview(services) {
     version: PRIVACY_OVERVIEW_VERSION,
     storageMode: "DEVICE_LOCAL_BROWSER_STORAGE",
     automaticExternalTransfer: false,
+    automaticExternalTransferScope: "SAVED_RUNLOAD_DATA",
+    externalNetworkUses: Object.freeze([
+      Object.freeze({
+        id: "openstreetmap-standard-tiles",
+        trigger: "MAP_DISPLAYED",
+        purpose: "MAP_TILE_DISPLAY",
+        savedRunloadDataUploaded: false,
+        displayedAreaMayBeDisclosedByTileRequests: true,
+      }),
+    ]),
     storageGroups: Object.freeze(storageGroups),
     backup: Object.freeze({
       format: "JSON_PLAIN_TEXT",
