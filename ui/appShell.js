@@ -174,6 +174,15 @@ function renderImmersiveHeader(currentScreen, currentLocation) {
 }
 
 export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {} }) {
+  const standalone = ["start", "run-measurement"].includes(currentScreen);
+  if (standalone) {
+    return `
+      <div class="app-shell app-shell--standalone">
+        <main id="main-content" class="app-main" tabindex="-1">
+          ${screenContent}
+        </main>
+      </div>`;
+  }
   const immersive = currentScreen === "interpretation-room";
   if (immersive) {
     return `
