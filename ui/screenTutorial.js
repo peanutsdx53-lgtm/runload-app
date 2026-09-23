@@ -129,15 +129,16 @@ function renderTutorialStep(tutorial, stepIndex) {
     </div>`;
 }
 
-function closeTutorial(dialog, tutorialId) {
+function closeTutorial(dialog, tutorialId, returnFocus = null) {
   markSeen(tutorialId);
   document.body.classList.remove("has-open-dialog");
   dialog.remove();
-  document.querySelector(tutorialButtonSelector(tutorialId))?.focus();
+  if (returnFocus?.isConnected) returnFocus.focus();
+  else document.querySelector(tutorialButtonSelector(tutorialId))?.focus();
   updateRecommendationBadges(document);
 }
 
-function openScreenTutorial(tutorialId) {
+function openScreenTutorial(tutorialId, returnFocus = null) {
   const tutorial = SCREEN_TUTORIALS[tutorialId];
   if (!tutorial) return;
   let stepIndex = 0;
@@ -159,11 +160,11 @@ function openScreenTutorial(tutorialId) {
 
   dialog.addEventListener("click", (event) => {
     if (event.target.closest("[data-screen-tutorial-close]")) {
-      closeTutorial(dialog, tutorialId);
+      closeTutorial(dialog, tutorialId, returnFocus);
       return;
     }
     if (event.target.closest("[data-screen-tutorial-skip]")) {
-      closeTutorial(dialog, tutorialId);
+      closeTutorial(dialog, tutorialId, returnFocus);
       return;
     }
     if (event.target.closest("[data-screen-tutorial-prev]")) {
@@ -174,7 +175,7 @@ function openScreenTutorial(tutorialId) {
     }
     if (event.target.closest("[data-screen-tutorial-next]")) {
       if (stepIndex >= tutorial.steps.length - 1) {
-        closeTutorial(dialog, tutorialId);
+        closeTutorial(dialog, tutorialId, returnFocus);
         return;
       }
       stepIndex += 1;
@@ -184,7 +185,7 @@ function openScreenTutorial(tutorialId) {
   });
 
   dialog.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeTutorial(dialog, tutorialId);
+    if (event.key === "Escape") closeTutorial(dialog, tutorialId, returnFocus);
   });
 }
 
@@ -199,6 +200,6 @@ export function bindScreenTutorial({ root } = {}) {
       return;
     }
     button.dataset.screenTutorialBound = "true";
-    button.addEventListener("click", () => openScreenTutorial(tutorialId));
+    button.addEventListener("click", () => openScreenTutorial(tutorialId, button));
   });
 }
