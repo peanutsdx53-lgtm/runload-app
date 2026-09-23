@@ -91,6 +91,8 @@ await test('SIMULATION-EMBEDS-SOURCE-RECORD-ID-AND-SAVED-RUN-CONDITIONS',()=>{
   assert.match(html,/name="runningFormat"[^>]*>[\s\S]*value="RUN_WALK" selected/);
   assert.match(html,/name="runningDistanceKm"[^>]*value="2\.4"/);
   assert.match(html,/name="runningDurationMinutes"[^>]*value="14"/);
+  assert.match(html,/name="sourceConditionJson" value="[^"]*runningDistanceKm[^"]*2\.4/);
+  assert.match(html,/name="sourceConditionJson" value="[^"]*runningDurationMinutes[^"]*14/);
   assert.match(html,/Saved course/);
   assert.match(html,/元の記録を初期値に使用/);
 });
@@ -103,6 +105,9 @@ await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST
   assert.match(source,/\.\.\.source/);
   assert.match(source,/changedConditionLabels\(data\)/);
   assert.match(source,/変更なし/);
+  assert.match(source,/form\.addEventListener\("reset",\(event\)=>/);
+  assert.match(source,/event\.preventDefault\(\)/);
+  assert.match(source,/setValue\("courseJson",JSON\.stringify\(course\)\)/);
   assert.match(source,/name="sourceRecordId"/);
   assert.doesNotMatch(source,/function latestValues/);
   assert.match(source,/元の記録からの変化/);
