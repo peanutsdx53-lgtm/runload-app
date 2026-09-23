@@ -4,46 +4,50 @@ import { FEATURE_DESTINATION_GROUPS, PRIMARY_DESTINATIONS, resolveScreenContextN
 
 export const PRIMARY_NAVIGATION = PRIMARY_DESTINATIONS;
 
-const GUIDE_SECTION_BY_SCREEN = Object.freeze({
-  start: "first-use",
-  home: "first-use",
-  "run-measurement": "record",
-  "record-input": "record",
-  "course-library": "record",
-  "course-editor": "record",
-  "gpx-analysis": "record",
-  result: "result",
-  "body-part-detail": "parts",
-  "run-route": "result",
-  history: "records",
-  "interpretation-room": "result",
-  simulation: "result",
-  plan: "first-use",
-  consultation: "safety",
-  "support-guidance": "safety",
-  reading: "safety",
-  privacy: "safety",
-  settings: "safety",
-  more: "first-use",
-});
-
 const SCREEN_TUTORIAL_BY_SCREEN = Object.freeze({
+  start: "start",
+  home: "home",
+  "run-measurement": "run-measurement",
   "record-input": "record-input",
   "course-library": "course-library",
   "course-editor": "course-editor",
+  "gpx-analysis": "gpx-analysis",
   result: "result",
+  "body-part-detail": "body-part-detail",
+  "run-route": "run-route",
+  history: "history",
+  "interpretation-room": "interpretation-room",
+  simulation: "simulation",
   plan: "plan",
+  consultation: "consultation",
+  "support-guidance": "support-guidance",
+  reading: "reading",
+  privacy: "privacy",
+  settings: "settings",
+  more: "more",
 });
 
+const PRIMARY_HEADER_TITLES = Object.freeze({
+  home: "Home",
+  "record-input": "記録",
+  result: "結果",
+  history: "履歴",
+  more: "その他",
+});
+
+export function resolveHeaderTitle(currentScreen, currentLocation = null) {
+  const context = resolveScreenContextNavigation(currentScreen, currentLocation);
+  return context?.title || PRIMARY_HEADER_TITLES[currentScreen] || "RunLoad";
+}
+
 function renderContextHelpButton(currentScreen, className = "") {
-  const section = GUIDE_SECTION_BY_SCREEN[currentScreen] || "first-use";
   const tutorialId = SCREEN_TUTORIAL_BY_SCREEN[currentScreen] || "";
   const classes = ["context-help-button", "app-utility-button", className].filter(Boolean).join(" ");
   const content = '<span class="app-utility-button__question" aria-hidden="true">?</span>';
   if (tutorialId) {
     return `<button type="button" class="${classes}" data-screen-tutorial-start="${escapeHtml(tutorialId)}" aria-label="この画面の操作ガイドを開く">${content}</button>`;
   }
-  return `<button type="button" class="${classes}" data-open-guide="${escapeHtml(section)}" aria-label="この画面の説明を開く">${content}</button>`;
+  return `<button type="button" class="${classes}" data-open-guide="first-use" aria-label="アプリ説明を開く">${content}</button>`;
 }
 
 function menuIcon() {
@@ -160,8 +164,9 @@ function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix
 }
 
 export function renderDesktopHeader({ currentScreen, currentLocation, hasResult = false }) {
+  const title = resolveHeaderTitle(currentScreen, currentLocation);
   return `<header class="app-header app-header--desktop app-header--viewport-fixed">
-    <a class="app-header__brand" href="#/home" aria-label="RunLoad Home">RunLoad</a>
+    <strong class="app-header__brand app-header__screen-title">${escapeHtml(title)}</strong>
     <div class="app-header__actions" aria-label="画面操作">
       ${renderContextHelpButton(currentScreen)}
       ${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}
@@ -173,15 +178,18 @@ function renderMobileHeader(currentScreen, currentLocation, hasResult) {
   const menu = renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "mobile" });
   const help = renderContextHelpButton(currentScreen);
   const context = resolveScreenContextNavigation(currentScreen, currentLocation);
+  const title = resolveHeaderTitle(currentScreen, currentLocation);
+  const titleHtml = `<div class="mobile-topbar__brand mobile-topbar__screen-title"><strong>${escapeHtml(title)}</strong></div>`;
   if (context) {
-    return `<header class="mobile-topbar mobile-topbar--context"><a class="mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><div class="mobile-topbar__actions" aria-label="画面操作">${help}${menu}</div></header>`;
+    return `<header class="mobile-topbar mobile-topbar--context"><a class="mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a>${titleHtml}<div class="mobile-topbar__actions" aria-label="画面操作">${help}${menu}</div></header>`;
   }
-  return `<header class="mobile-topbar"><a class="mobile-topbar__brand" href="#/home" aria-label="RunLoad Home"><strong>RunLoad</strong></a><div class="mobile-topbar__actions" aria-label="画面操作">${help}${menu}</div></header>`;
+  return `<header class="mobile-topbar">${titleHtml}<div class="mobile-topbar__actions" aria-label="画面操作">${help}${menu}</div></header>`;
 }
 
 function renderImmersiveHeader(currentScreen, currentLocation, hasResult) {
-  const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { backHref: "#/home", backLabel: "Home" };
-  return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><div class="interpretation-room-header__actions" aria-label="画面操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "immersive" })}</div></header>`;
+  const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { backHref: "#/home", backLabel: "Home", title: "結果を整理する" };
+  const title = resolveHeaderTitle(currentScreen, currentLocation);
+  return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(title)}</strong><div class="interpretation-room-header__actions" aria-label="画面操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "immersive" })}</div></header>`;
 }
 
 export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {} }) {
