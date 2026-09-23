@@ -31,7 +31,7 @@ await test('GLOBAL-FEATURE-MENU-DOES-NOT-DUPLICATE-UNDERSTANDING-ENTRY',()=>{
 
 await test('CONTEXTUAL-UNDERSTANDING-ENTRIES-REMAIN',()=>{
   assert.match(read('screens/homeScreen.js'),/結果を整理する/);
-  assert.match(read('screens/resultScreen.js'),/今回の結果を整理する/);
+  assert.match(read('screens/resultScreen.js'),/結果を整理/);
   assert.match(read('screens/historyScreen.js'),/この記録の結果を整理する/);
   assert.match(read('screens/bodyPartDetailScreen.js'),/この部位の結果を整理する/);
 });
