@@ -1,5 +1,5 @@
 import { escapeHtml } from "../ui/commonComponents.js";
-import { formatLocalDate } from "../ui/recordPresentation.js";
+import { formatLocalDate, formatLocalTime } from "../ui/recordPresentation.js";
 import { courseSummaryText } from "../ui/coursePresentation.js";
 import { bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/runloadCore.js";
 import { officialRofJDescriptor } from "../core/secondPillarRofJ.js";
@@ -40,19 +40,35 @@ function signatureFor(record = {}, regionId = "") { return record?.comparison_si
 function signaturesComparable(a, b) { return Boolean(a && b && a.modelVersion === b.modelVersion && a.outputSemanticVersion === b.outputSemanticVersion && a.regionId === b.regionId && a.constructId === b.constructId && a.referenceId === b.referenceId); }
 function formatPace(record = {}) { const distance = Number(record.distanceKm); const duration = Number(record.durationMinutes); if (!(distance > 0) || !(duration > 0)) return "—"; const seconds = Math.round(duration * 60 / distance); return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; }
 function runFormatLabel(record = {}) { return String(record.runningFormat || "").toUpperCase() === "RUN_WALK" ? "走り＋歩き" : "連続して走った"; }
+function recordChronology(left = {}, right = {}) {
+  return String(left.date || "").localeCompare(String(right.date || ""))
+    || String(left.createdAt || "").localeCompare(String(right.createdAt || ""))
+    || String(left.id || "").localeCompare(String(right.id || ""));
+}
+function recordMomentLabel(record = {}) {
+  const time = formatLocalTime(record.createdAt);
+  return `${formatLocalDate(record.date)}${time ? ` ${time}` : ""}`;
+}
+function changeMagnitudeGlyph(delta) {
+  if (!finite(delta)) return "—";
+  const value = Number(delta);
+  if (Math.abs(value) < 1) return "→";
+  const marks = Math.min(3, Math.max(1, Math.ceil(Math.abs(value) / 10)));
+  return (value > 0 ? "▲" : "▼").repeat(marks);
+}
 function regionRows(resultRecord = null) { const rows = resultRecord?.result?.regions || []; const byId = new Map(rows.map((row) => [row.regionId, row])); return PRIMARY_REGIONAL_V2_REGION_DEFS.map((def) => byId.get(def.displayId) || { regionId: def.displayId, regionName: def.name, value: null }); }
 
 function latestComparablePrevious(resultRecord, experiences, regionId) {
   const signature = signatureFor(resultRecord, regionId);
   if (!signature) return null;
   const currentExperience = experiences.find((item) => item.regionalV2ResultRecord?.id === resultRecord?.id);
-  const currentDate = String(currentExperience?.record?.date || "");
+  const currentRecord = currentExperience?.record || null;
   return experiences
     .filter((item) => modelCurrent(item.regionalV2ResultRecord) && item.regionalV2ResultRecord?.id !== resultRecord?.id)
-    .filter((item) => !currentDate || String(item.record?.date || "") < currentDate)
+    .filter((item) => !currentRecord || recordChronology(item.record || {}, currentRecord) < 0)
     .map((item) => ({ experience: item, row: item.regionalV2Result?.regions?.find((candidate) => candidate.regionId === regionId), signature: signatureFor(item.regionalV2ResultRecord, regionId) }))
     .filter((item) => item.row && signaturesComparable(signature, item.signature) && finite(item.row.value))
-    .sort((a, b) => String(b.experience.record?.date || "").localeCompare(String(a.experience.record?.date || "")))[0] || null;
+    .sort((a, b) => recordChronology(b.experience.record || {}, a.experience.record || {}))[0] || null;
 }
 
 function rowInfo(resultRecord, experiences, row, index) {
@@ -92,10 +108,10 @@ function regionRow(resultRecord, info) {
   const row = info.row; const name = bodyRegionFormalName(row.regionId, row.regionName || row.regionId);
   const current = finite(row.value) ? fmt(row.value, 1) : "—";
   const referenceDelta = finite(row.value) ? Number(row.value) - 100 : null;
-  const originalPrevious = info.previous ? `${escapeHtml(formatLocalDate(info.previous.experience.record.date))}・前回 ${fmt(info.prev, 1)}` : "前回比較なし";
+  const originalPrevious = info.previous ? `${escapeHtml(recordMomentLabel(info.previous.experience.record))}・前回 ${fmt(info.prev, 1)}` : "前回比較なし";
   const originalDelta = finite(info.delta) ? `前回からの変化 ${signed(info.delta, 1)}` : "比較なし";
   const pcPrevious = info.previous
-    ? `前回（${escapeHtml(formatLocalDate(info.previous.experience.record.date))}） ${fmt(info.prev, 1)} → 今回 ${current}`
+    ? `前回（${escapeHtml(recordMomentLabel(info.previous.experience.record))}） ${fmt(info.prev, 1)} → 今回 ${current}`
     : `前回比較なし・今回 ${current}`;
   const mobileScale = finite(row.value) ? `<span class="region-scale region-scale--mobile"><i style="--pos:${position(row.value)}%"></i></span>` : "";
   const pcScale = finite(row.value)
@@ -191,9 +207,7 @@ function pcRegionGroups(infos, selectedId) {
       : `<span class="pc-mini-meter is-unavailable" aria-hidden="true"><i></i><small>100</small></span>`;
     const previousValue = finite(info.prev) ? fmt(info.prev, 1) : "—";
     const previousState = finite(info.prev) ? direction(info.prev) : "unavailable";
-    const magnitude = finite(info.delta) ? Math.abs(Number(info.delta)) : null;
-    const magnitudeMarks = finite(magnitude) && magnitude >= 1 ? Math.min(3, Math.max(1, Math.ceil(magnitude / 10))) : 0;
-    const magnitudeGlyph = changeState === "up" ? "▲".repeat(magnitudeMarks) : changeState === "down" ? "▼".repeat(magnitudeMarks) : changeState === "same" ? "→" : "—";
+    const magnitudeGlyph = changeMagnitudeGlyph(info.delta);
     const changeFlow = finite(info.delta)
       ? `<span class="pc-change-flow" data-change-direction="${changeState}"><span class="pc-change-flow__point" data-direction="${previousState}"><i aria-hidden="true"></i><span><small>前回</small><strong>${escapeHtml(previousValue)}</strong></span></span><span class="pc-change-flow__arrow" aria-hidden="true">→</span><span class="pc-change-flow__point is-current" data-direction="${state}"><i aria-hidden="true"></i><span><small>今回</small><strong>${escapeHtml(current)}</strong></span></span></span><span class="pc-change-delta" data-change-direction="${changeState}" aria-label="前回からの変化 ${escapeHtml(delta)}"><b>${magnitudeGlyph}</b><strong>${escapeHtml(delta)}</strong><small>前回から</small></span>`
       : `<span class="pc-change-flow is-unavailable"><span class="pc-change-flow__point" data-direction="unavailable"><i aria-hidden="true"></i><span><small>前回</small><strong>—</strong></span></span><span class="pc-change-flow__arrow" aria-hidden="true">→</span><span class="pc-change-flow__point is-current" data-direction="${state}"><i aria-hidden="true"></i><span><small>今回</small><strong>${escapeHtml(current)}</strong></span></span></span><span class="pc-change-delta is-unavailable"><strong>比較なし</strong></span>`;
@@ -207,6 +221,13 @@ function shortDateLabel(value = "") {
   return `${Number(parts[1])}/${Number(parts[2])}`;
 }
 
+function historyAxisLabel(point, points = []) {
+  const record = point?.experience?.record || {};
+  const sameDayCount = points.filter((item) => String(item?.experience?.record?.date || "") === String(record.date || "")).length;
+  const time = sameDayCount > 1 ? formatLocalTime(record.createdAt) : "";
+  return `${shortDateLabel(record.date)}${time ? ` ${time}` : ""}`;
+}
+
 function comparableRegionHistory(resultRecord, experiences, regionId) {
   const signature = signatureFor(resultRecord, regionId);
   if (!signature) return [];
@@ -216,7 +237,7 @@ function comparableRegionHistory(resultRecord, experiences, regionId) {
     const row = rows.find((candidate) => candidate.regionId === regionId);
     return { experience, row, signature: signatureFor(record, regionId) };
   }).filter((item) => item.row && signaturesComparable(signature, item.signature) && finite(item.row.value))
-    .sort((a, b) => String(a.experience?.record?.date || "").localeCompare(String(b.experience?.record?.date || "")))
+    .sort((a, b) => recordChronology(a.experience?.record || {}, b.experience?.record || {}))
     .slice(-4);
 }
 
@@ -227,14 +248,18 @@ function pcHistoryGraphic(points = []) {
   let minValue = Math.min(...scaleValues);
   let maxValue = Math.max(...scaleValues);
   if (maxValue - minValue < 20) { minValue -= 10; maxValue += 10; }
-  const width = 560, height = 118, left = 18, right = 16, top = 13, bottom = 24;
+  const width = 560, height = 148, left = 34, right = 18, top = 28, bottom = 34;
   const plotW = width - left - right, plotH = height - top - bottom;
   const xFor = (index) => points.length === 1 ? left + plotW / 2 : left + (plotW * index / (points.length - 1));
   const yFor = (value) => top + (maxValue - Number(value)) / (maxValue - minValue) * plotH;
   const coords = points.map((point, index) => [xFor(index), yFor(point.row.value)]);
   const path = coords.map(([x,y], index) => `${index ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
-  const baselineY = yFor(100).toFixed(1);
-  return `<svg class="pc-focus-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="選択部位の直近記録の推移"><line class="pc-focus-chart__baseline" x1="${left}" x2="${width-right}" y1="${baselineY}" y2="${baselineY}"></line><path class="pc-focus-chart__line" d="${path}"></path>${coords.map(([x,y], index) => `<circle class="pc-focus-chart__point${index === coords.length - 1 ? " is-current" : ""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${index === coords.length - 1 ? 5 : 3.7}"></circle><text class="pc-focus-chart__value" x="${x.toFixed(1)}" y="${(y-8).toFixed(1)}" text-anchor="middle">${escapeHtml(fmt(points[index].row.value, 1))}</text>`).join("")}${points.map((point,index) => `<text x="${xFor(index).toFixed(1)}" y="${height-5}" text-anchor="middle">${escapeHtml(shortDateLabel(point.experience?.record?.date || ""))}</text>`).join("")}</svg>`;
+  const baselineY = yFor(100);
+  const baselineLabelY = Math.max(14, baselineY - 7);
+  return `<svg class="pc-focus-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="選択部位の直近記録の推移"><line class="pc-focus-chart__baseline" x1="${left}" x2="${width-right}" y1="${baselineY.toFixed(1)}" y2="${baselineY.toFixed(1)}"></line><text class="pc-focus-chart__baseline-label" x="${left + 2}" y="${baselineLabelY.toFixed(1)}">基準100</text><path class="pc-focus-chart__line" d="${path}"></path>${coords.map(([x,y], index) => {
+    const valueY = Math.max(15, y - 10);
+    return `<circle class="pc-focus-chart__point${index === coords.length - 1 ? " is-current" : ""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${index === coords.length - 1 ? 5.4 : 4}"></circle><text class="pc-focus-chart__value${index === coords.length - 1 ? " is-current" : ""}" x="${x.toFixed(1)}" y="${valueY.toFixed(1)}" text-anchor="middle">${escapeHtml(fmt(points[index].row.value, 1))}</text>`;
+  }).join("")}${points.map((point,index) => `<text class="pc-focus-chart__date" x="${xFor(index).toFixed(1)}" y="${height-8}" text-anchor="middle">${escapeHtml(historyAxisLabel(point, points))}</text>`).join("")}</svg>`;
 }
 
 function renderPcDetailPanel(resultRecord, allExperiences, info, selectedId) {
@@ -248,8 +273,9 @@ function renderPcDetailPanel(resultRecord, allExperiences, info, selectedId) {
   const baselineDelta = finite(row.value) ? signed(Number(row.value) - 100, 1) : "—";
   const previous = finite(info.prev) ? fmt(info.prev, 1) : "—";
   const previousDelta = finite(info.delta) ? signed(info.delta, 1) : "—";
+  const previousGlyph = changeMagnitudeGlyph(info.delta);
   const currentPos = finite(row.value) ? position(row.value) : 50;
-  return `<div class="pc-detail-panel${row.regionId === selectedId ? " is-active" : ""}" data-pc-detail-region="${escapeHtml(row.regionId)}" data-direction="${state}"${row.regionId === selectedId ? "" : " hidden"}><header><div><small>選択中</small><h3>${escapeHtml(name)}</h3></div><span>${escapeHtml(stateLabel)}</span></header><div class="pc-detail-story"><div class="pc-detail-now"><span>今回と基準</span><div class="pc-detail-now__value"><strong>${escapeHtml(current)}</strong><em>今回</em></div><div class="pc-focus-baseline pc-focus-baseline--large" style="--pos:${currentPos}%;"><i></i><b></b><small>基準100</small></div><p>この部位自身の基準との差 <b>${escapeHtml(baselineDelta)}</b></p></div><div class="pc-detail-previous"><span>前回から</span><div class="pc-detail-previous__flow"><div><small>前回</small><strong>${escapeHtml(previous)}</strong></div><div class="pc-detail-previous__arrow"><i></i><b>${escapeHtml(previousDelta)}</b></div><div class="is-current"><small>今回</small><strong>${escapeHtml(current)}</strong></div></div><p>同じ部位の前回記録と比較しています。</p></div><div class="pc-detail-history"><div class="pc-detail-history__heading"><span>この部位の推移</span><small>同じ部位の過去記録のみ・破線＝基準100</small></div>${pcHistoryGraphic(history)}</div></div></div>`;
+  return `<div class="pc-detail-panel${row.regionId === selectedId ? " is-active" : ""}" data-pc-detail-region="${escapeHtml(row.regionId)}" data-direction="${state}"${row.regionId === selectedId ? "" : " hidden"}><header><div><small>選択中</small><h3>${escapeHtml(name)}</h3></div><span>${escapeHtml(stateLabel)}</span></header><div class="pc-detail-story"><div class="pc-detail-now"><span>今回と基準</span><div class="pc-detail-now__value"><strong>${escapeHtml(current)}</strong></div><div class="pc-focus-baseline pc-focus-baseline--large" style="--pos:${currentPos}%;"><i></i><b></b><small>基準100</small></div><p>この部位自身の基準との差 <b>${escapeHtml(baselineDelta)}</b></p></div><div class="pc-detail-previous"><span>前回から</span><div class="pc-detail-previous__flow"><div><small>前回</small><strong>${escapeHtml(previous)}</strong></div><div class="pc-detail-previous__arrow"><i></i><b><span aria-hidden="true">${escapeHtml(previousGlyph)}</span>${escapeHtml(previousDelta)}</b></div><div class="is-current"><small>今回</small><strong>${escapeHtml(current)}</strong></div></div><p>${info.previous ? `${escapeHtml(recordMomentLabel(info.previous.experience.record))} の同じ部位と比較` : "比較できる前回記録はありません。"}</p></div><div class="pc-detail-history"><div class="pc-detail-history__heading"><span>この部位の推移</span><small>同日は記録時刻順・破線＝基準100</small></div>${pcHistoryGraphic(history)}</div></div></div>`;
 }
 
 function renderPcInsights(resultRecord, allExperiences, infos, selectedInfo) {
@@ -272,7 +298,10 @@ function renderPcResultConsole({ services, record, resultRecord, allExperiences 
   const comparableCount = infos.filter((info) => finite(info.delta)).length;
   const selectedInfo = infos.filter((info) => info.focus).sort((a, b) => a.focusPriority - b.focusPriority || a.index - b.index)[0] || infos.find((info) => finite(info.row.value)) || infos[0];
   const fatigue = fatigueSnapshot(services, record);
-  return `<section class="pc-result-console" aria-label="今回の結果"><header class="pc-result-summary pc-result-summary--rail"><div class="pc-result-date"><small>記録日</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong></div><div class="pc-result-signals" aria-label="今回の結果サイン"><div><strong>${availableCount}</strong><span> / 12</span><small>数値あり</small></div><i></i><div><strong>${comparableCount}</strong><span> / 12</span><small>前回比較可</small></div><i></i><div><strong>${finite(fatigue.delta) ? escapeHtml(signed(fatigue.delta,0)) : "—"}</strong><span></span><small>疲労変化</small></div></div></header><section class="pc-result-main"><div class="pc-result-body"><header><div><small>BODY MAP</small><h2>身体の部位から見る</h2></div></header><ul class="pc-result-legend" aria-label="身体図の色"><li><i class="above"></i>基準より上</li><li><i class="reference"></i>基準付近</li><li><i class="below"></i>基準より下</li><li><i class="unavailable"></i>表示なし</li></ul><div class="body-map pc-result-body-map" aria-label="前面・後面・足裏の12部位図">${bodyMap(resultRecord, infos, "pc", selectedInfo?.row?.regionId || "")}</div></div><div class="pc-result-numbers"><header><div><small>12 REGIONS</small><h2>12部位を見渡す</h2></div><div class="pc-summary-controls"><span>表示</span><div role="group" aria-label="12部位の表示"><button type="button" class="is-active" data-pc-summary-mode="overview" aria-pressed="true">全体</button><button type="button" data-pc-summary-mode="change" aria-pressed="false">変化</button></div></div></header><div class="pc-result-region-groups">${pcRegionGroups(infos, selectedInfo?.row?.regionId || "")}</div><p class="pc-summary-hint"><span data-pc-summary-hint="overview">各メーターは、その部位自身の基準100との関係を示します。部位同士の順位・比較ではありません。</span><span data-pc-summary-hint="change" hidden>点の色は各時点の人体図と同じ状態色です。▲／▼は前回からの方向、数は変化幅を示します。</span></p></div></section><section class="pc-result-lower">${renderPcInsights(resultRecord, allExperiences, infos, selectedInfo)}${renderPcFatigue(fatigue)}</section><p class="visually-hidden">12部位の目安は各部位自身の基準条件を100として比較した値です。100は安全値、正常値、初心者平均を意味しません。</p></section>`;
+  const recordTime = formatLocalTime(record.createdAt);
+  const courseName = String(record.course?.name || "コース未設定");
+  const fatigueValue = finite(fatigue.delta) ? escapeHtml(signed(fatigue.delta,0)) : "未記録";
+  return `<section class="pc-result-console" aria-label="今回の結果"><header class="pc-result-summary pc-result-summary--rail"><div class="pc-result-session"><div class="pc-result-date"><small>記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong>${recordTime ? `<span>記録時刻 ${escapeHtml(recordTime)}</span>` : ""}</div><div class="pc-result-run-facts" aria-label="今回の走行概要"><span><b>${escapeHtml(fmt(record.distanceKm,2))}</b> km</span><span><b>${escapeHtml(fmt(record.durationMinutes,1))}</b> 分</span><span><b>${escapeHtml(formatPace(record))}</b> /km</span><em title="${escapeHtml(courseName)}">${escapeHtml(courseName)}</em></div></div><div class="pc-result-signals" aria-label="今回の結果サイン"><div><strong>${availableCount}</strong><span> / 12</span><small>数値あり</small></div><i></i><div><strong>${comparableCount}</strong><span> / 12</span><small>前回比較可</small></div><i></i><div><strong class="${finite(fatigue.delta) ? "" : "is-text"}">${fatigueValue}</strong><span></span><small>疲労変化</small></div></div></header><section class="pc-result-main"><div class="pc-result-body"><header><div><small>BODY MAP</small><h2>身体の部位から見る</h2></div></header><ul class="pc-result-legend" aria-label="身体図の色"><li><i class="above"></i>基準より上</li><li><i class="reference"></i>基準付近</li><li><i class="below"></i>基準より下</li><li><i class="unavailable"></i>表示なし</li></ul><div class="body-map pc-result-body-map" aria-label="前面・後面・足裏の12部位図">${bodyMap(resultRecord, infos, "pc", selectedInfo?.row?.regionId || "")}</div></div><div class="pc-result-numbers"><header><div><small>12 REGIONS</small><h2>12部位を見渡す</h2></div><div class="pc-summary-controls"><span>表示</span><div role="group" aria-label="12部位の表示"><button type="button" class="is-active" data-pc-summary-mode="overview" aria-pressed="true">全体</button><button type="button" data-pc-summary-mode="change" aria-pressed="false">変化</button></div></div></header><div class="pc-result-region-groups">${pcRegionGroups(infos, selectedInfo?.row?.regionId || "")}</div><p class="pc-summary-hint"><span data-pc-summary-hint="overview">枠線・値・点の色は人体図と同じ状態色です。各部位自身の基準100との関係を示し、部位同士の順位ではありません。</span><span data-pc-summary-hint="change" hidden>点の色は各時点の人体図と同じ状態色です。▲／▼は前回からの方向、数は変化幅を示します。</span></p></div></section><section class="pc-result-lower">${renderPcInsights(resultRecord, allExperiences, infos, selectedInfo)}${renderPcFatigue(fatigue)}</section><p class="visually-hidden">12部位の目安は各部位自身の基準条件を100として比較した値です。100は安全値、正常値、初心者平均を意味しません。</p></section>`;
 }
 
 function renderRegional(resultRecord, allExperiences, record) {
