@@ -210,47 +210,11 @@ function searchText(item) {
   ].filter(Boolean).join(" ").toLocaleLowerCase("ja-JP");
 }
 
-function chartLabelIndices(length) {
-  if (length <= 8) return new Set(Array.from({ length }, (_, index) => index));
-  const step = Math.ceil((length - 1) / 6);
-  const indices = new Set([0, length - 1]);
-  for (let index = step; index < length - 1; index += step) indices.add(index);
-  return indices;
-}
-
 function referenceRatioPercent(item) {
   const value = Number(item?.conditionIndexExact);
   const reference = Number(item?.referenceValue);
   if (!Number.isFinite(value) || !Number.isFinite(reference) || reference <= 0) return null;
   return (value / reference) * 100;
-}
-
-function referenceRatioGeometry(items) {
-  const ratios = items.map(referenceRatioPercent).filter(Number.isFinite);
-  const maxDeviation = ratios.length ? Math.max(...ratios.map((value) => Math.abs(value - 100))) : 0;
-  const halfRange = Math.max(10, Math.ceil((maxDeviation + 3) / 5) * 5);
-  const minValue = Math.max(0, 100 - halfRange);
-  const maxValue = 100 + halfRange;
-  const span = Math.max(1, maxValue - minValue);
-  const plotTop = 8;
-  const plotBottom = 43;
-  const projectY = (value) => plotBottom - ((Number(value) - minValue) / span) * (plotBottom - plotTop);
-  const ticks = [];
-  for (let value = Math.ceil(minValue / 5) * 5; value <= maxValue; value += 5) {
-    ticks.push(Object.freeze({ value, y: projectY(value) }));
-  }
-  return Object.freeze({
-    points: Object.freeze(items.map((item, index) => Object.freeze({
-      ...item,
-      ratioPercent: referenceRatioPercent(item),
-      x: items.length === 1 ? 54 : 11 + (index * 84) / (items.length - 1),
-      y: projectY(referenceRatioPercent(item)),
-    }))),
-    referenceY: projectY(100),
-    minValue,
-    maxValue,
-    ticks: Object.freeze(ticks),
-  });
 }
 
 function shortDateLabel(value = "") {
@@ -282,16 +246,6 @@ function trendSelectionHref(workspace, item) {
     display: workspace.regionalDisplay,
     recordId: item.experience.record.id,
   });
-}
-
-function formatPacePerKm(record = {}) {
-  const distance = Number(record.distanceKm);
-  const duration = Number(record.durationMinutes);
-  if (!(distance > 0) || !(duration > 0)) return "—";
-  const seconds = Math.round((duration * 60) / distance);
-  const minutes = Math.floor(seconds / 60);
-  const remainder = seconds % 60;
-  return `${minutes}:${String(remainder).padStart(2, "0")} /km`;
 }
 
 function signedGradeFromRecord(record = {}) {
@@ -326,29 +280,6 @@ function signedGradeFromRecord(record = {}) {
     return direction === "DOWNHILL" ? -Math.abs(raw) : direction === "UPHILL" ? Math.abs(raw) : raw;
   }
   return null;
-}
-
-function formatAverageGrade(record = {}) {
-  const grade = signedGradeFromRecord(record);
-  if (!Number.isFinite(grade)) return "—";
-  if (Math.abs(grade) < 0.05) return "0.0%";
-  return `${grade > 0 ? "+" : ""}${formatNumber(grade, 1)}%`;
-}
-
-function primarySurfaceLabel(record = {}) {
-  const course = record.course || {};
-  const candidates = [
-    ["pavedPercent", "舗装路"],
-    ["trackPercent", "トラック"],
-    ["treadmillPercent", "トレッドミル"],
-    ["soilPercent", "土"],
-    ["trailPercent", "トレイル"],
-    ["naturalGrassPercent", "天然芝"],
-    ["artificialTurfPercent", "人工芝"],
-    ["sandPercent", "砂"],
-  ].map(([key, label]) => ({ label, value: finite(course[key]) ? Number(course[key]) : 0 }));
-  const best = candidates.sort((a, b) => b.value - a.value)[0];
-  return best?.value > 0 ? best.label : (course.name || "—");
 }
 
 function previousComparableItem(items, selected) {
