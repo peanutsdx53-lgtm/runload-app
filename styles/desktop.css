@@ -9583,3 +9583,83 @@
     font-weight: 780;
   }
 }
+
+
+/* Shared segmented mode emphasis audit 2026-09-24 */
+@media (min-width: 55rem) {
+  .screen-layout :is(
+    .view-toggle,
+    .sheet-tabs,
+    .history-mode,
+    .period-control > div,
+    .display-toggle,
+    .type-toggle,
+    .seg,
+    .mode,
+    .filters,
+    .segment,
+    .pc-summary-controls > div
+  ) button:not(.active):not(.is-active):hover {
+    background: color-mix(in srgb, var(--color-accent-soft) 64%, var(--color-surface)) !important;
+    color: var(--color-accent-strong) !important;
+  }
+
+  .screen-layout :is(
+    .view-toggle,
+    .sheet-tabs,
+    .history-mode,
+    .period-control > div,
+    .display-toggle,
+    .type-toggle,
+    .seg,
+    .mode,
+    .filters,
+    .segment,
+    .pc-summary-controls > div
+  ) button:focus-visible,
+  .screen-layout--record .activity-toggle input:focus-visible + span {
+    outline: 3px solid color-mix(in srgb, var(--color-focus) 40%, transparent) !important;
+    outline-offset: 2px !important;
+  }
+
+  .screen-layout--record .activity-toggle label:hover span {
+    background: color-mix(in srgb, var(--color-accent-soft) 64%, var(--color-surface)) !important;
+    color: var(--color-accent-strong) !important;
+  }
+
+  .screen-layout--record .activity-toggle input:checked + span,
+  .screen-layout--result .view-toggle button.active,
+  .screen-layout--result .sheet-tabs button.active,
+  .screen-layout--result .pc-summary-controls button.is-active,
+  .screen-layout--history .history-mode button.active,
+  .screen-layout--history .period-control button.active,
+  .screen-layout--history .display-toggle button.active,
+  .screen-layout--history .type-toggle button.active,
+  .screen-layout--plan .seg button.active,
+  .screen-layout--course .mode button.active,
+  .screen-layout--reading .filters button.active,
+  .screen-layout--settings .segment button.active {
+    border-color: var(--color-segment-selected-border) !important;
+    background: var(--color-segment-selected-surface) !important;
+    color: var(--color-segment-selected-text) !important;
+    box-shadow: var(--shadow-segment-selected) !important;
+  }
+
+  .screen-layout--record .activity-toggle input:checked + span:hover,
+  .screen-layout :is(
+    .view-toggle,
+    .sheet-tabs,
+    .history-mode,
+    .period-control > div,
+    .display-toggle,
+    .type-toggle,
+    .seg,
+    .mode,
+    .filters,
+    .segment,
+    .pc-summary-controls > div
+  ) button:is(.active, .is-active):hover {
+    background: var(--color-segment-selected-surface) !important;
+    color: var(--color-segment-selected-text) !important;
+  }
+}
