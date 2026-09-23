@@ -474,3 +474,131 @@ body.run-standalone-open {
     font-size: 0.82rem;
   }
 }
+
+
+.run-route-link-wrap {
+  margin: 0.75rem 0;
+}
+
+.run-route-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  color: var(--color-ink);
+  text-decoration: none;
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+}
+
+.run-route-link span {
+  display: grid;
+  gap: 0.16rem;
+}
+
+.run-route-link small {
+  color: var(--color-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.run-route-link em {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-style: normal;
+}
+
+.run-route-view {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 64rem);
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.run-route-view__heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.run-route-view__heading h1,
+.run-route-view--empty h1 {
+  margin: 0.2rem 0 0;
+}
+
+.run-route-view__heading > span {
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.run-route-view__map-wrap {
+  position: relative;
+  min-height: min(62dvh, 36rem);
+  overflow: hidden;
+  background: var(--color-neutral-soft);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-large);
+}
+
+.run-route-view__map {
+  position: absolute;
+  inset: 0;
+}
+
+.run-route-view__summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+}
+
+.run-route-view__summary > div {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.9rem;
+}
+
+.run-route-view__summary > div + div {
+  border-left: 1px solid var(--color-line);
+}
+
+.run-route-view__summary small,
+.run-route-view__note {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.run-route-view__note {
+  margin: 0;
+}
+
+.run-route-view--empty {
+  align-content: start;
+  min-height: 60dvh;
+}
+
+@media (max-width: 640px) {
+  .run-route-view {
+    padding-inline: 0.75rem;
+  }
+
+  .run-route-view__map-wrap {
+    min-height: 52dvh;
+  }
+
+  .run-route-view__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .run-route-view__summary > div + div {
+    border-top: 1px solid var(--color-line);
+    border-left: 0;
+  }
+}
