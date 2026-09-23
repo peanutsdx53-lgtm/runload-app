@@ -9,6 +9,7 @@ import { bindSettings } from "./interactions/settingsInteractions.js";
 import { bindSimulation } from "./interactions/simulationInteractions.js";
 import { bindGpxAnalysis } from "./interactions/gpxAnalysisInteractions.js";
 import { bindRunMeasurement } from "./interactions/runMeasurementInteractions.js";
+import { bindRunRoute } from "./interactions/runRouteInteractions.js";
 
 const SCREEN_INTERACTION_BINDERS = Object.freeze({
   "record-input": bindRecordInput,
@@ -23,6 +24,7 @@ const SCREEN_INTERACTION_BINDERS = Object.freeze({
   simulation: bindSimulation,
   "gpx-analysis": bindGpxAnalysis,
   "run-measurement": bindRunMeasurement,
+  "run-route": bindRunRoute,
 });
 
 let activeCleanup = null;
