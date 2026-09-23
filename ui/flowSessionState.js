@@ -1,4 +1,4 @@
-const PREFIX = "runner-load-app-new-v1-ui";
+const PREFIX = "runner-load-app-flow-session-v1";
 const COURSE_SELECTION_KEY = `${PREFIX}-course-selection-v1`;
 const GPX_CANDIDATE_KEY = `${PREFIX}-gpx-candidate-v1`;
 const memory = new Map();
