@@ -231,12 +231,16 @@ function historyAxisLabel(point, points = []) {
 function comparableRegionHistory(resultRecord, experiences, regionId) {
   const signature = signatureFor(resultRecord, regionId);
   if (!signature) return [];
-  return experiences.map((experience) => {
-    const record = experience?.regionalV2ResultRecord;
-    const rows = record?.result?.regions || experience?.regionalV2Result?.regions || [];
-    const row = rows.find((candidate) => candidate.regionId === regionId);
-    return { experience, row, signature: signatureFor(record, regionId) };
-  }).filter((item) => item.row && signaturesComparable(signature, item.signature) && finite(item.row.value))
+  const currentExperience = experiences.find((item) => item.regionalV2ResultRecord?.id === resultRecord?.id);
+  const currentRecord = currentExperience?.record || null;
+  return experiences
+    .filter((experience) => !currentRecord || recordChronology(experience?.record || {}, currentRecord) <= 0)
+    .map((experience) => {
+      const record = experience?.regionalV2ResultRecord;
+      const rows = record?.result?.regions || experience?.regionalV2Result?.regions || [];
+      const row = rows.find((candidate) => candidate.regionId === regionId);
+      return { experience, row, signature: signatureFor(record, regionId) };
+    }).filter((item) => item.row && signaturesComparable(signature, item.signature) && finite(item.row.value))
     .sort((a, b) => recordChronology(a.experience?.record || {}, b.experience?.record || {}))
     .slice(-4);
 }
