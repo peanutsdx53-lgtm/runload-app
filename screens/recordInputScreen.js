@@ -147,46 +147,9 @@ function renderCourseHiddenFields(course = {}) {
   return `<div class="course-hidden-fields" hidden aria-hidden="true">${baseFields}${sectionFields}${surfaceFields}</div>`;
 }
 
- = {}) {
-  const saveText = editing
-    ? "同じ記録を更新し、結果画面を開きます。"
-    : selectedPlan
-      ? "予定の内容を今回の記録へ残し、結果画面を開きます。コース保存は選んだ場合だけ行います。"
-      : "今回の記録を保存し、結果画面を開きます。";
-  return renderScreenGuide({
-    id: "record-input-guide",
-    summary: "必須項目から順に入力できます。必要な説明だけ確認してください。",
-    sections: [
-      { title: "まずここでやること", body: "走行または休養を選び、日付と基本情報を入力します。" },
-      { title: "入力の4つの目的", items: INPUT_PURPOSE_GUIDANCE.map((item) => item.title) },
-      { title: "コースの扱い", body: "今回の条件として選びます。保存したコースは次回も使えます。" },
-      { title: "保存後", body: saveText },
-    ],
-    tutorialId: "record-input",
-  });
-
-}
-
 function renderEnvironmentContext(record = {}) {
   const context = record.environmentContext || {};
   return `<details class="inner-details"><summary><span>環境を残す</span><i>⌄</i></summary><div class="inner-body environment-fields"><input type="hidden" name="weather" value="${escapeHtml(context.weather || "")}"><input type="hidden" name="windSummary" value="${escapeHtml(context.windSummary || "")}"><label class="field"><span>気温（℃）</span><input name="temperatureC" type="number" inputmode="decimal" min="-50" max="60" step="0.1" value="${escapeHtml(context.temperatureC ?? "")}" placeholder="例：24"></label><label class="field"><span>環境メモ</span><textarea name="environmentNote" maxlength="500" rows="1" placeholder="例：暑い、向かい風、湿度が高い">${escapeHtml(context.environmentNote || "")}</textarea></label></div></details>`;
-}
-
-) {
-  const recovery = record.recoveryContext || {};
-  const reflection = record.reflectionContext || {};
-  const consultation = record.consultationContext || {};
-  const selectedData = new Set(Array.isArray(consultation.consultationDataSelection) ? consultation.consultationDataSelection : []);
-  return `<div class="record-context-details">
-    <div class="legacy-recovery-context" hidden aria-hidden="true"><input type="hidden" name="sleepSummary" value="${escapeHtml(recovery.sleepSummary || "")}"><input type="hidden" name="nutritionHydrationSummary" value="${escapeHtml(recovery.nutritionHydrationSummary || "")}"><input type="hidden" name="lifestyleNote" value="${escapeHtml(recovery.lifestyleNote || "")}"></div>
-    <details class="record-optional-details"><summary><span><strong>今回の振り返りと次回</strong><small>重複を避け、振り返り・普段との違い・次回確認したいことだけを任意で残します。</small></span></summary><div class="field-grid field-grid--two record-optional-details__body">
-      <label class="field"><span>今回の振り返り</span><textarea name="postRunReflection" maxlength="500" rows="3">${escapeHtml(reflection.postRunReflection || "")}</textarea></label>
-      <label class="field"><span>普段との違い</span><textarea name="perceivedDifference" maxlength="500" rows="3">${escapeHtml(reflection.perceivedDifference || "")}</textarea></label>
-      <input type="hidden" name="reflectionKeyPoint" value="${escapeHtml(reflection.reflectionKeyPoint || "")}">
-      <label class="field"><span>次回確認したいこと</span><textarea name="nextCheckPoint" maxlength="500" rows="3">${escapeHtml(reflection.nextCheckPoint || "")}</textarea></label>
-    </div></details>
-    <div class="legacy-consultation-context" hidden aria-hidden="true"><input type="hidden" name="consultationTarget" value="${escapeHtml(consultation.consultationTarget || "")}"><input type="hidden" name="consultationQuestion" value="${escapeHtml(consultation.consultationQuestion || "")}">${[...selectedData].map((value) => `<input type="checkbox" name="consultationDataSelection" value="${escapeHtml(value)}" checked>`).join("")}</div>
-  </div>`;
 }
 
 export function renderRecordInputScreen({ services, context }) {
