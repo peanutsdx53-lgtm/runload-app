@@ -165,8 +165,8 @@ function renderOverviewMap(output) {
   const groupedDirectionsHtml = groupedDirections.map((group) => `<div data-kind="${escapeHtml(group.kind)}"><strong>${escapeHtml(group.label)}</strong><span class="interpretation-room-overview-group-names">${group.names.map((name) => `<span class="interpretation-room-overview-group-name">${escapeHtml(name)}</span>`).join("")}</span></div>`).join("");
 
   return `<section class="interpretation-room-overview" aria-labelledby="interpretation-room-overview-title">
-    <div class="interpretation-room-section-head"><span>1</span><div><small>身体全体を見る</small><h2 id="interpretation-room-overview-title">部位ごとの位置を確認</h2></div></div>
-    <p class="interpretation-room-lead">同じ走りでも、各部位がそれぞれの基準100に対して同じ位置になるとは限りません。まず1部位を選びます。</p>
+    <div class="interpretation-room-section-head"><span>1</span><div><small>身体全体を見る</small><h2 id="interpretation-room-overview-title">12部位から選ぶ</h2></div></div>
+    <p class="interpretation-room-lead">12部位をそれぞれの基準で確認し、詳しく見る部位を1つ選びます。</p>
     <div class="interpretation-room-map" aria-label="12部位の基準100との位置">${views}</div>
     <div class="interpretation-room-overview-groups" aria-label="今回の部位ごとの分かれ方"><small>今回の分かれ方</small>${groupedDirectionsHtml}</div>
     <details class="interpretation-room-region-picker"><summary>部位名から選ぶ</summary><div>${choices}</div></details>
@@ -258,7 +258,7 @@ function renderCalculationPath(region, step = 2) {
     : "";
 
   return `<section class="interpretation-room-calculation" aria-labelledby="interpretation-room-calculation-title">
-    <div class="interpretation-room-section-head"><span>${escapeHtml(String(step))}</span><div><small>表示の作られ方</small><h2 id="interpretation-room-calculation-title">この数値に使われた情報</h2></div></div>
+    <div class="interpretation-room-section-head"><span>${escapeHtml(String(step))}</span><div><small>表示の作られ方</small><h2 id="interpretation-room-calculation-title">数値に使われた情報</h2></div></div>
     ${flow}${conditionalHtml}${contextHtml}
     <p class="interpretation-room-boundary-line">ここで示すのはRunLoad内部の計算経路です。身体で実際に起きた原因を示すものではありません。</p>
   </section>`;
@@ -297,7 +297,7 @@ function renderSubjective(output, step = 3) {
     : '<p class="interpretation-room-rof-difference">前後がそろっていないため、前後差は表示しません。</p>';
 
   return `<section class="interpretation-room-subjective" aria-labelledby="interpretation-room-subjective-title">
-    <div class="interpretation-room-section-head"><span>${escapeHtml(String(step))}</span><div><small>自分の感じ方</small><h2 id="interpretation-room-subjective-title">走る前後の疲れ</h2></div></div>
+    <div class="interpretation-room-section-head"><span>${escapeHtml(String(step))}</span><div><small>自分の感じ方</small><h2 id="interpretation-room-subjective-title">走る前後の疲労感</h2></div></div>
     <div class="interpretation-room-rof-readings">${rofPoint("走る前", pre)}${rofPoint("走った後", post)}</div>
     <div class="interpretation-room-rof-scale" aria-label="疲れの0から10までの尺度"><span>0</span><div>${marker(pre, "is-pre")}${marker(post, "is-post")}</div><span>10</span></div>
     ${comparison}
@@ -327,7 +327,7 @@ function renderUnderstanding(output, region, step = 4) {
   }
 
   return `<section class="interpretation-room-understanding" aria-labelledby="interpretation-room-understanding-title">
-    <div class="interpretation-room-section-head"><span>${escapeHtml(String(step))}</span><div><small>ここまでを整理</small><h2 id="interpretation-room-understanding-title">分かることと、まだ分からないこと</h2></div></div>
+    <div class="interpretation-room-section-head"><span>${escapeHtml(String(step))}</span><div><small>ここまでを整理</small><h2 id="interpretation-room-understanding-title">分かること / 分からないこと</h2></div></div>
     <div class="interpretation-room-understanding-grid"><article><strong>今回確認できること</strong><ul>${known.slice(0, 3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></article><article><strong>ここからは決められないこと</strong><ul>${unknown.slice(0, 3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></article></div>
   </section>`;
 }
@@ -338,7 +338,7 @@ function renderNext(output, step = 5) {
   if (!primary) return "";
   const others = next.otherActions || [];
   return `<section class="interpretation-room-next" aria-labelledby="interpretation-room-next-title">
-    <div class="interpretation-room-section-head"><span>${escapeHtml(String(step))}</span><div><small>次に確認するなら</small><h2 id="interpretation-room-next-title">今回の内容を次へつなぐ</h2></div></div>
+    <div class="interpretation-room-section-head"><span>${escapeHtml(String(step))}</span><div><small>次に確認するなら</small><h2 id="interpretation-room-next-title">次に確認する</h2></div></div>
     ${renderAction(primary, output, { primary: true })}
     ${others.length ? `<details class="interpretation-room-other-actions"><summary>ほかにできること</summary><div class="interpretation-room-secondary-actions">${others.map((action) => renderAction(action, output)).join("")}</div></details>` : ""}
   </section>`;
@@ -376,7 +376,7 @@ export function renderInterpretationRoom({ output } = {}) {
     <header class="interpretation-room-hero">
       <p>${escapeHtml(date)}</p>
       <h1>${selected ? `${output?.selectedRegion?.label || "選んだ部位"}の結果を整理` : "今回の身体を部位ごとに見る"}</h1>
-      <p>${selected ? "数値を基準・過去・計算に使われた情報と一緒に確認します。" : "12部位を一つの順位にせず、それぞれの基準100との位置から見ます。"}</p>
+      <p>${selected ? "基準・過去・計算情報を分けて確認します。" : "12部位をそれぞれの基準で確認します。"}</p>
     </header>
     ${selected ? `<a class="interpretation-room-back-to-overview" href="${escapeHtml(regionHref(output, ""))}">← 身体全体から選び直す</a>` : ""}
     ${selected ? "" : renderOverviewMap(output)}
