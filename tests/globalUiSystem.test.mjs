@@ -61,10 +61,12 @@ await test('UI-TUTORIAL-ACTIONS-ARE-THREE-COLUMN-ON-MOBILE',()=>{
   assert.doesNotMatch(tutorial,/title:\s*"[123]\/3 /);
 });
 
-await test('UI-JAPANESE-LABELS-NO-LONGER-USE-ANYWHERE-WRAP',()=>{
+await test('UI-JAPANESE-LABELS-USE-NATURAL-WRAPPING',()=>{
   const css=read('styles/base.css');
-  assert.doesNotMatch(css,/overflow-wrap:\s*anywhere/);
-  assert.match(css,/line-break:\s*strict/);
+  const uiLabelRule=css.slice(css.indexOf(':is(h1, h2, h3, button, summary, strong, small)'),css.indexOf('@media (prefers-reduced-motion'));
+  assert.doesNotMatch(uiLabelRule,/overflow-wrap:\s*anywhere/);
+  assert.match(uiLabelRule,/line-break:\s*strict/);
+  assert.match(css,/a\[href\^="http"\]::after[^}]*overflow-wrap:\s*anywhere/);
 });
 
 await test('UI-MOBILE-INPUTS-USE-READABLE-TYPE',()=>{
