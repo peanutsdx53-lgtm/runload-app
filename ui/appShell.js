@@ -139,11 +139,6 @@ function renderFeatureMenuGroup(label, items, currentScreen, currentLocation, ha
   return `<section class="feature-menu__group${groupClass}" aria-label="${escapeHtml(label)}"><p class="feature-menu__group-label">${escapeHtml(label)}</p><div class="feature-menu__links">${items.map((item) => renderFeatureMenuLink(item, currentScreen, currentLocation, hasResult, usePrimarySection)).join("")}</div></section>`;
 }
 
-function renderGuideMenuLink(item, index) {
-  const idAttribute = index === 0 ? ' id="app-guide-button"' : "";
-  return `<button type="button"${idAttribute} class="feature-menu__link feature-menu__link--button" data-open-guide="${escapeHtml(item.section)}" aria-label="${escapeHtml(`${item.label}: ${item.description}`)}"><span class="feature-menu__item-title">${escapeHtml(item.label)}</span><span class="feature-menu__item-description">${escapeHtml(item.description)}</span></button>`;
-}
-
 function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix = "global" }) {
   const buttonId = `feature-menu-button-${idSuffix}`;
   const panelId = `feature-menu-panel-${idSuffix}`;
