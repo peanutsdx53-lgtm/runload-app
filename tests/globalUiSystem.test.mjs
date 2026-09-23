@@ -75,6 +75,40 @@ await test('UI-MOBILE-INPUTS-USE-READABLE-TYPE',()=>{
   assert.ok(css.includes('font-size: 1rem !important;'));
 });
 
+await test('UI-HOME-REMOVES-REDUNDANT-EMPTY-STATE-COPY',()=>{
+  const home=read('screens/homeScreen.js');
+  const desktop=read('styles/desktop-foundation.css');
+  assert.ok(!home.includes('最新の保存記録'));
+  assert.ok(!home.includes('最初の記録'));
+  assert.ok(!home.includes('記録すると、ここから結果を開けます'));
+  assert.ok(desktop.includes('grid-template-rows: repeat(2, minmax(0, 1fr));'));
+});
+
+await test('UI-RECORD-SURFACES-OPTIONAL-ENTRY-STATUS',()=>{
+  const screen=read('screens/recordInputScreen.js');
+  const interactions=read('ui/interactions/recordInputInteractions.js');
+  assert.ok(!screen.includes('今日の記録</h1>'));
+  for(const key of ['course','compare','reflection']){
+    assert.ok(screen.includes(`data-optional-status="${key}"`),key);
+    assert.ok(screen.includes(`data-save-optional="${key}"`),key);
+  }
+  assert.ok(interactions.includes('function updateOptionalInputStatus(form)'));
+  assert.ok(interactions.includes('[data-run-fields], [data-run-optional]'));
+  assert.ok(!screen.includes('任意項目は空欄のままでも保存できます。'));
+  assert.ok(!screen.includes('入力途中は、この端末に下書きとして保存されます。'));
+});
+
+await test('UI-FATIGUE-SLIDER-HAS-DIRECT-MANIPULATION-AFFORDANCE',()=>{
+  const screen=read('screens/recordInputScreen.js');
+  const interactions=read('ui/interactions/recordInputInteractions.js');
+  const css=read('styles/mobile.css');
+  assert.ok(screen.includes('class="rof-close-button"'));
+  assert.ok(screen.includes('data-rof-slider-wrap'));
+  assert.ok(interactions.includes('is-untouched'));
+  assert.ok(css.includes('runload-rof-thumb-hint'));
+  assert.ok(css.includes('width: 44px !important;'));
+});
+
 await test('UI-RESULT-REMOVES-PERSISTENT-EXPLANATION-CLUTTER',()=>{
   const screen=read('screens/resultScreen.js');
   assert.ok(screen.includes('class="result-next-actions"'));
