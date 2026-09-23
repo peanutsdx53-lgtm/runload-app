@@ -9033,3 +9033,226 @@
     grid-template-columns:minmax(0,1fr) minmax(15.5rem,.29fr);
   }
 }
+
+
+/* PC interpretation-derived condition comparison V2 2026-09-23 */
+@media (min-width: 80rem) {
+  .screen--simulation.screen-layout--simulation {
+    width: min(100%, 76rem) !important;
+    max-width: 76rem !important;
+    margin-inline: auto !important;
+    gap: 1rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .intro,
+  .screen--simulation.screen-layout--simulation .carry-card {
+    width: 100% !important;
+    max-width: 76rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .intro h1 {
+    font-size: 2rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .intro p:last-child {
+    max-width: 58rem;
+    font-size: 0.96rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .workspace {
+    grid-template-columns: minmax(0, 1.55fr) minmax(22rem, 0.75fr) !important;
+    gap: 1rem !important;
+    align-items: start !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .preview-panel,
+  .screen--simulation.screen-layout--simulation .condition-panel {
+    border-radius: 1rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .condition-panel {
+    position: sticky !important;
+    top: 5.8rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .panel-head,
+  .screen--simulation.screen-layout--simulation .preview-head {
+    padding: 1rem 1.05rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .panel-head small,
+  .screen--simulation.screen-layout--simulation .preview-head small {
+    font-size: 0.78rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .panel-head h2,
+  .screen--simulation.screen-layout--simulation .preview-head h2 {
+    font-size: 1.3rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .panel-head > span,
+  .screen--simulation.screen-layout--simulation .calc-state {
+    font-size: 0.78rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .condition-body {
+    padding: 1rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .measure-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+    max-width: none !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .measure-field > span {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .measure-field > div {
+    height: 3.55rem !important;
+    padding-inline: 0.75rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .measure-field input {
+    font-size: 1.35rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .measure-field b {
+    font-size: 0.88rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .derived-pace {
+    min-height: 3rem !important;
+    padding: 0.7rem 0.8rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .derived-pace span {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .derived-pace strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .selected-course {
+    padding: 0.85rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .selected-course small,
+  .screen--simulation.screen-layout--simulation .selected-course span,
+  .screen--simulation.screen-layout--simulation .course-link b {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .selected-course strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .condition-compare {
+    padding: 1rem 1rem 0 !important;
+    gap: 0.65rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .condition-snapshot {
+    min-height: 6.4rem;
+    padding: 0.9rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .condition-snapshot small {
+    font-size: 0.8rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .condition-snapshot strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .condition-snapshot span {
+    font-size: 0.84rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .semantic-note {
+    margin: 0.85rem 1rem 0 !important;
+    padding: 0.85rem 0.9rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .semantic-note strong {
+    font-size: 0.9rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .semantic-note span {
+    font-size: 0.84rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .result-layout {
+    padding: 1rem !important;
+    grid-template-columns: minmax(18rem, 0.9fr) minmax(22rem, 1.1fr) !important;
+    gap: 1rem !important;
+    align-items: start !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .direction-legend {
+    font-size: 0.82rem !important;
+    gap: 0.55rem 0.85rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .body-view figcaption {
+    font-size: 0.82rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .body-view svg {
+    max-height: 19rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .map-note {
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .region-panel-head small {
+    font-size: 0.78rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .region-panel-head strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .region-panel-head button {
+    min-height: 2.7rem !important;
+    padding-inline: 0.8rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .region-row {
+    min-height: 3.65rem;
+    padding: 0.7rem 0.8rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .region-row strong {
+    font-size: 0.9rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .region-row small,
+  .screen--simulation.screen-layout--simulation .region-value span {
+    font-size: 0.78rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .region-value b {
+    font-size: 1rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .compact-boundary,
+  .screen--simulation.screen-layout--simulation .rof-boundary {
+    font-size: 0.84rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .screen--simulation.screen-layout--simulation .preview-actions :is(a, button) {
+    min-height: 3.15rem !important;
+    font-size: 0.9rem !important;
+  }
+}
