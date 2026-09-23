@@ -88,30 +88,6 @@
     line-height: 1.15;
     text-align: center;
   }
-
-  body > .app-header--desktop.app-header--viewport-fixed .app-screen-context {
-    min-width: 0;
-    display: grid;
-    gap: 0.1rem;
-    align-content: center;
-  }
-
-  body > .app-header--desktop.app-header--viewport-fixed .app-screen-context small {
-    margin: 0;
-    color: var(--color-muted);
-    font-size: 0.66rem;
-    line-height: 1.1;
-    font-weight: 850;
-    letter-spacing: 0.14em;
-  }
-
-  body > .app-header--desktop.app-header--viewport-fixed .app-screen-context strong {
-    color: var(--color-ink);
-    font-size: 1.35rem;
-    line-height: 1.05;
-    font-weight: 900;
-    letter-spacing: -0.025em;
-  }
 }
 
 
@@ -1767,5 +1743,15 @@
   .screen--simulation.screen-layout--simulation .field select {
     text-align: center;
     text-align-last: center;
+  }
+}
+
+
+/* Desktop brand in the fixed global header. */
+@media (min-width: 55rem) {
+  body > .app-header--desktop.app-header--viewport-fixed .app-header__brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
   }
 }
