@@ -3165,3 +3165,93 @@ html.consult-viewer-open{overflow:hidden}
   }
   .mobile-topbar--context > strong { max-width: calc(100% - 11.4rem); }
 }
+
+
+/* ==========================================================================
+   Mobile UI normalization
+   Keep short labels compact, balanced groups aligned, and text readable.
+   ========================================================================== */
+@media (max-width: 54.99rem) {
+  .screen-layout :is(
+    .eyebrow,
+    .section-index,
+    .date-badge,
+    .date-pill,
+    .pill,
+    .sample-badge,
+    .model-badge,
+    .local-badge
+  ) {
+    font-size: var(--type-label);
+    line-height: 1.25;
+  }
+
+  .screen-layout :is(
+    .stage-icon,
+    .core-stage-icon,
+    .course-chip small,
+    .assumption-chips span,
+    .surface-chips button,
+    .sub-choice-grid legend,
+    .sub-choice-grid small
+  ) {
+    font-size: var(--type-label);
+  }
+
+  .screen-layout :is(
+    .view-toggle button,
+    .type-toggle button,
+    .seg button,
+    .mode button
+  ) {
+    font-size: var(--type-control-compact);
+    line-height: var(--line-compact);
+    white-space: nowrap;
+  }
+
+  .screen-layout--result .view-toggle {
+    width: min(100%, 20rem);
+    justify-self: start;
+  }
+
+  .screen-layout--history .type-toggle {
+    width: min(100%, 22rem);
+    justify-self: start;
+  }
+
+  .screen-layout--plan .seg {
+    width: min(100%, 18rem);
+    justify-self: start;
+  }
+
+  .screen-layout--course .mode {
+    width: min(100%, 24rem);
+    justify-self: start;
+  }
+
+  .screen-layout--settings .goal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .screen-layout--settings .goal-grid label {
+    min-height: var(--button-height-medium);
+    padding: 0.55rem 0.65rem;
+    font-size: var(--type-control-compact);
+    line-height: var(--line-compact);
+  }
+
+  .subjective-body-part-chips {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .subjective-body-part-chip {
+    min-height: var(--button-height-medium);
+  }
+}
+
+@media (max-width: 22rem) {
+  .subjective-body-part-chips,
+  .screen-layout--settings .goal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
