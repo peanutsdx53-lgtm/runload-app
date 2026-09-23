@@ -8208,4 +8208,217 @@
     z-index: 2;
     border: 0;
     background: color-mix(in srgb, var(--color-accent-soft) 58%, var(--color-surface));
-    box-shadow: inset 0.2rem 0 0 var(--color-accent), ins
+    box-shadow: inset 0.2rem 0 0 var(--color-accent), inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 32%, transparent);
+  }
+
+  .pc-region-tile.pc-region-tile--matrix[data-direction="above"],
+  .pc-region-tile.pc-region-tile--matrix[data-direction="below"],
+  .pc-region-tile.pc-region-tile--matrix[data-direction="reference"] {
+    box-shadow: none;
+  }
+
+  .pc-region-tile.pc-region-tile--matrix.is-selected[data-direction] {
+    box-shadow: inset 0.2rem 0 0 var(--color-accent), inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 32%, transparent);
+  }
+
+  .pc-region-tile__heading small {
+    background: transparent;
+    padding: 0;
+    min-width: 1.85rem;
+    color: var(--color-muted);
+  }
+
+  .pc-region-tile__value b {
+    font-size: 1.22rem;
+    letter-spacing: -0.025em;
+  }
+
+  .pc-region-tile__value em {
+    font-size: 0.51rem;
+  }
+
+  .pc-region-tile.pc-region-tile--matrix .pc-region-axis {
+    height: 0.28rem;
+  }
+
+  /* Body map and number board share hover/selection as one interaction. */
+  .pc-result-body-map .region-path {
+    transition: opacity 150ms ease, stroke 150ms ease, stroke-width 150ms ease, filter 150ms ease;
+  }
+
+  .pc-result-body-map .region-path.is-linked-hover,
+  .pc-result-body-map .region-path.is-selected {
+    stroke: var(--color-focus);
+    stroke-width: 6;
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--color-focus) 22%, transparent));
+  }
+
+  .pc-result-body-map .region-path.is-selected {
+    stroke-width: 7;
+  }
+
+  /* Lower-left becomes a mode surface: one region or all regions. */
+  .pc-result-insights {
+    position: relative;
+    padding-top: 2.72rem;
+    overflow: hidden;
+  }
+
+  .pc-insight-tabs {
+    position: absolute;
+    top: 0.66rem;
+    right: 0.8rem;
+    display: inline-grid;
+    grid-template-columns: repeat(2, minmax(4.15rem, 1fr));
+    padding: 0.16rem;
+    border: 1px solid color-mix(in srgb, var(--color-line) 78%, transparent);
+    border-radius: 999px;
+    background: var(--color-surface-muted);
+  }
+
+  .pc-insight-tabs button {
+    min-height: 1.7rem;
+    padding: 0.18rem 0.68rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-muted);
+    font: inherit;
+    font-size: 0.62rem;
+    font-weight: 850;
+    cursor: pointer;
+  }
+
+  .pc-insight-tabs button.is-active {
+    background: var(--color-surface);
+    color: var(--color-accent-strong);
+    box-shadow: 0 0.12rem 0.4rem color-mix(in srgb, var(--color-ink) 10%, transparent);
+  }
+
+  .pc-detail-stack,
+  .pc-detail-panel {
+    min-height: 0;
+    height: 100%;
+  }
+
+  .pc-detail-panel[hidden],
+  .pc-compare-panel[hidden] {
+    display: none !important;
+  }
+
+  .pc-detail-panel > header {
+    min-height: 1.68rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 0.35rem;
+    padding: 0;
+    border: 0;
+  }
+
+  .pc-detail-panel > header > div {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    min-width: 0;
+  }
+
+  .pc-detail-panel > header small {
+    color: var(--color-accent);
+    font-size: 0.56rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+  }
+
+  .pc-detail-panel > header h3 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .pc-detail-panel > header > span {
+    color: var(--color-muted);
+    font-size: 0.58rem;
+    font-weight: 850;
+    white-space: nowrap;
+  }
+
+  .pc-detail-panel .pc-focus-content {
+    min-height: 7.25rem;
+    grid-template-columns: minmax(9.2rem, 0.82fr) minmax(9.4rem, 0.86fr) minmax(15rem, 1.32fr);
+    gap: 0.55rem;
+  }
+
+  .pc-detail-panel .pc-focus-highlight,
+  .pc-detail-panel .pc-focus-change,
+  .pc-detail-panel .pc-focus-trend {
+    padding: 0.62rem 0.72rem;
+  }
+
+  /* Integrated body comparison: two balanced columns, six rows each. */
+  .pc-compare-panel {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 0.36rem;
+    min-height: 0;
+  }
+
+  .pc-compare-toolbar {
+    min-height: 1.78rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .pc-compare-toolbar > div:first-child {
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.48rem;
+  }
+
+  .pc-compare-toolbar small {
+    color: var(--color-accent);
+    font-size: 0.52rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+  }
+
+  .pc-compare-toolbar strong {
+    font-size: 0.9rem;
+  }
+
+  .pc-compare-toolbar span {
+    overflow: hidden;
+    color: var(--color-muted);
+    font-size: 0.54rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pc-compare-display {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 0.18rem;
+    padding: 0.14rem;
+    border-radius: 999px;
+    background: var(--color-surface-muted);
+  }
+
+  .pc-compare-display button {
+    min-height: 1.48rem;
+    padding: 0.14rem 0.52rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-muted);
+    font: inherit;
+    font-size: 0.55rem;
+    font-weight: 850;
+    cursor: pointer;
+  }
+
+  .pc-compare-display button.is-active {
+    background
