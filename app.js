@@ -1,7 +1,8 @@
 import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkflow } from "./core/runloadCore.js";
 
 import { createSecondPillarRofJServices } from "./core/secondPillarRofJ.js";
-import { createAppRouter } from "./ui/appRouter.js";\nimport { resolveViewportDefaultEntryScreen } from "./ui/deviceLayout.js";
+import { createAppRouter } from "./ui/appRouter.js";
+import { resolveViewportDefaultEntryScreen } from "./ui/deviceLayout.js";
 import { focusScreenHeading, renderAppShell, renderDesktopHeader } from "./ui/appShell.js";
 import { applyJournalSettings } from "./ui/appSettings.js";
 import { APP_GUIDE_VERSION, DEFAULT_GUIDE_SECTION, normalizeGuideSection, shouldOpenGuide, withGuideVersionSeen } from "./ui/guideContent.js";
@@ -78,7 +79,8 @@ const applicationServices = Object.freeze({
 });
 const initialSettings = applicationServices.storage.settings.load();
 applyJournalSettings(initialSettings);
-let currentLocation = Object.freeze({ screen: "start", parameters: new URLSearchParams() });
+const initialScreen = resolveViewportDefaultEntryScreen();
+let currentLocation = Object.freeze({ screen: initialScreen, parameters: new URLSearchParams() });
 let guideOpen = shouldOpenGuide(initialSettings);
 let guideSection = DEFAULT_GUIDE_SECTION;
 let guideFirstVisit = guideOpen;
@@ -267,6 +269,7 @@ document.addEventListener("visibilitychange", () => {
 
 router = createAppRouter({
   availableScreens: Object.keys(screenRenderers),
+  defaultScreen: initialScreen,
   onScreenChange: renderScreen,
 });
 
