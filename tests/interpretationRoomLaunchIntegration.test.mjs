@@ -55,7 +55,7 @@ await test('SIMULATION-FROM-ROOM-PRESERVES-RETURN-CONTEXT',()=>{
   const services={storage:{records:{loadAll:()=>records,findById:(id)=>records.find((r)=>r.id===id)||null}}};
   const context={parameters:new URLSearchParams('from=interpretation-room&recordId=old&roomOrigin=history')};
   const html=renderSimulationScreen({services,context});
-  assert.match(html,/保存記録と条件を比べる/);
+  assert.match(html,/保存記録を基準に条件を比べる/);
   assert.match(html,/選択した記録/);
   assert.match(html,/value="3\.0"/);
   assert.doesNotMatch(html,/value="9\.0"/);
