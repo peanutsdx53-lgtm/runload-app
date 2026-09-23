@@ -2686,7 +2686,7 @@
   box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent);
 }
 
-/* Result: align ROF-J block with the main content column and demote its boundary note. */
+/* Result: keep the fatigue block aligned with the main content column. */
 .screen-layout--result .fatigue-section{
   margin-top:36px;
   margin-inline:0;
@@ -2708,34 +2708,6 @@
   max-width:none;
   margin:0;
   box-sizing:border-box;
-}
-.screen-layout--result .rof-boundary-details{
-  margin:10px 2px 0;
-  border-top:1px solid color-mix(in srgb,var(--line) 74%,transparent);
-}
-.screen-layout--result .rof-boundary-details summary{
-  min-height:38px;
-  display:flex;
-  align-items:center;
-  list-style:none;
-  cursor:pointer;
-  color:var(--muted);
-  font-size:8px;
-  font-weight:850;
-}
-.screen-layout--result .rof-boundary-details summary::-webkit-details-marker{display:none}
-.screen-layout--result .rof-boundary-details summary::after{
-  content:"＋";
-  margin-left:auto;
-  color:var(--accent-strong);
-  font-size:12px;
-}
-.screen-layout--result .rof-boundary-details[open] summary::after{content:"−"}
-.screen-layout--result .rof-boundary-details p{
-  margin:0 0 8px;
-  color:var(--muted);
-  font-size:8px;
-  line-height:1.55;
 }
 
 /* History: no orphan numeric section marker. */
@@ -3252,6 +3224,160 @@ html.consult-viewer-open{overflow:hidden}
 @media (max-width: 22rem) {
   .subjective-body-part-chips,
   .screen-layout--settings .goal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+/* ==========================================================================
+   Result visual hierarchy refinement
+   ========================================================================== */
+.screen-layout--result .intro,
+.screen-layout--result .regional-section,
+.screen-layout--result .fatigue-inner,
+.screen-layout--result .result-next-actions,
+.screen-layout--result .run-route-link-wrap {
+  width: min(100%, 52.5rem);
+  margin-inline: auto;
+}
+
+.screen-layout--result .intro-heading > span,
+.screen-layout--result .regional-topline > span {
+  font-size: var(--type-caption);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.screen-layout--result .run-summary {
+  margin-top: 1rem;
+  padding: 0.85rem 0.35rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+}
+.screen-layout--result .run-summary strong {
+  font-size: clamp(1.25rem, 6vw, 1.65rem);
+}
+.screen-layout--result .run-summary span,
+.screen-layout--result .run-summary small {
+  font-size: var(--type-caption);
+}
+
+.screen-layout--result .section-heading {
+  grid-template-columns: 2rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.65rem;
+}
+.screen-layout--result .section-heading small {
+  font-size: var(--type-label);
+}
+.screen-layout--result .section-heading h2 {
+  font-size: var(--type-heading);
+  line-height: 1.25;
+}
+
+.screen-layout--result .regional-shell {
+  padding: clamp(0.9rem, 3vw, 1.25rem);
+  border-radius: var(--radius-large);
+}
+.screen-layout--result .regional-topline p {
+  font-size: var(--type-body);
+}
+.screen-layout--result .direction-legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 0.8rem;
+  font-size: var(--type-caption);
+}
+.screen-layout--result .direction-legend li {
+  min-width: 0;
+}
+.screen-layout--result .body-view figcaption {
+  font-size: var(--type-caption);
+}
+.screen-layout--result .region-copy strong {
+  font-size: var(--type-body);
+}
+.screen-layout--result .region-copy small,
+.screen-layout--result .region-metric small,
+.screen-layout--result .focus-summary,
+.screen-layout--result .focus-more summary,
+.screen-layout--result .facts-grid span {
+  font-size: var(--type-caption);
+}
+.screen-layout--result .region-metric strong {
+  font-size: 1.1rem;
+}
+
+.screen-layout--result .facts-details summary {
+  width: fit-content;
+  max-width: 100%;
+  font-size: var(--type-control-compact);
+  white-space: nowrap;
+}
+.screen-layout--result .facts-grid strong {
+  font-size: var(--type-control-compact);
+}
+
+.screen-layout--result .fatigue-values small,
+.screen-layout--result .fatigue-axis,
+.screen-layout--result .fatigue-track em {
+  font-size: var(--type-caption);
+}
+.screen-layout--result .fatigue-values > div > strong {
+  font-size: clamp(2rem, 11vw, 2.8rem);
+}
+
+.screen-layout--result .result-next-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.65rem;
+  margin-top: 1.15rem;
+}
+.screen-layout--result .result-next-actions > a {
+  min-height: 4rem;
+  padding: 0.8rem 0.9rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  text-decoration: none;
+  box-shadow: var(--shadow-soft);
+}
+.screen-layout--result .result-next-actions > a:first-child {
+  border-color: color-mix(in srgb, var(--color-accent) 52%, var(--color-line));
+  background: color-mix(in srgb, var(--color-accent-soft) 42%, var(--color-surface));
+}
+.screen-layout--result .result-next-actions small,
+.screen-layout--result .result-next-actions strong {
+  display: block;
+}
+.screen-layout--result .result-next-actions small {
+  color: var(--color-muted);
+  font-size: var(--type-label);
+  font-weight: 800;
+}
+.screen-layout--result .result-next-actions strong {
+  margin-top: 0.15rem;
+  font-size: var(--type-control);
+  line-height: 1.35;
+}
+.screen-layout--result .result-next-actions i {
+  color: var(--color-accent-strong);
+  font-size: 1.25rem;
+  font-style: normal;
+}
+
+@media (min-width: 40rem) {
+  .screen-layout--result .direction-legend {
+    grid-template-columns: repeat(4, minmax(0, auto));
+    justify-content: start;
+  }
+  .screen-layout--result .result-next-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
