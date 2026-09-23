@@ -216,7 +216,8 @@ await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
   const marker='PC record status card audit 2026-09-23';
   const start=css.indexOf(marker);
   assert.ok(start>=0,'PC record status audit block');
-  const audit=css.slice(start);
+  const end=css.indexOf('PC course library workspace audit 2026-09-23',start);
+  const audit=css.slice(start,end>start?end:css.length);
   const remSize=(selector)=>{
     let offset=0;
     let maximum=0;
@@ -338,7 +339,8 @@ await test('UI-PC-COURSE-EDITOR-INPUTS-ARE-COMPACT-AND-READABLE',()=>{
   const marker='PC course editor input usability audit 2026-09-23';
   const start=css.indexOf(marker);
   assert.ok(start>=0,'PC course editor usability block');
-  const audit=css.slice(start);
+  const end=css.indexOf('PC course editor unit parity audit 2026-09-23',start);
+  const audit=css.slice(start,end>start?end:css.length);
 
   assert.match(audit,/@media \(min-width: 80rem\)/);
   assert.match(audit,/sub\[data-course-grade-summary\][\s\S]*width:\s*min\(100%, 52rem\)\s*!important/);
@@ -377,7 +379,8 @@ await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
   const marker='PC history record browser audit 2026-09-23';
   const start=css.indexOf(marker);
   assert.ok(start>=0,'PC history record browser audit block');
-  const audit=css.slice(start);
+  const end=css.indexOf('PC history single-purpose audit 2026-09-23',start);
+  const audit=css.slice(start,end>start?end:css.length);
 
   assert.ok(screen.includes('history-records-title-mobile'));
   assert.ok(screen.includes('history-records-title-pc'));
