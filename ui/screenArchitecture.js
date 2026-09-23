@@ -1,7 +1,5 @@
 import { escapeHtml } from "./commonComponents.js";
 
-export const SCREEN_ARCHITECTURE_VERSION = "runload-screen-architecture-current-v5";
-
 export const PRIMARY_DESTINATIONS = Object.freeze([
   Object.freeze({ screen: "home", label: "Home", description: "今日の入口", icon: "home" }),
   Object.freeze({ screen: "record-input", label: "記録", description: "走行・休養を残す", icon: "record" }),
@@ -219,6 +217,6 @@ export function renderRecordsWorkspaceNavigation({ active = "history", date = ""
   const items = [
     { key: "history", href: route("history", { view: "records", anchorDate: date }), label: "履歴", description: "保存した走行・休養記録と結果" },
   ];
-  return `<nav class="workspace-navigation workspace-navigation--records" data-screen-architecture="${SCREEN_ARCHITECTURE_VERSION}" aria-label="記録を見返す画面">${items.map((item) => workspaceLink({ ...item, current: item.key === active })).join("")}</nav>`;
+  return `<nav class="workspace-navigation workspace-navigation--records" aria-label="記録を見返す画面">${items.map((item) => workspaceLink({ ...item, current: item.key === active })).join("")}</nav>`;
 }
 
