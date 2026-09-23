@@ -14,7 +14,7 @@ function updateInputFormVisibility(form) {
   const activityType = form.querySelector('[name="activityType"]:checked')?.value || "run";
   const runningFormat = String(form.elements.namedItem("runningFormat")?.value || "UNKNOWN").toUpperCase();
   const runWalk = activityType === "run" && runningFormat === "RUN_WALK";
-  form.querySelectorAll("[data-run-fields]").forEach((element) => setHidden(element, activityType === "rest"));
+  form.querySelectorAll("[data-run-fields], [data-run-optional]").forEach((element) => setHidden(element, activityType === "rest"));
   form.querySelectorAll("[data-rest-fields]").forEach((element) => setHidden(element, activityType !== "rest"));
   form.querySelectorAll("[data-run-walk-fields], [data-run-walk-container]").forEach((element) => setHidden(element, !runWalk));
   form.querySelectorAll("[data-run-walk-required]").forEach((element) => { element.required = runWalk; });
@@ -485,6 +485,7 @@ function renderRecordSelectedBodyList(form) {
       if (side) side.value = BODY_AREA_LATERALITY.unknown;
       refreshRecordBodyUi(form);
       updateSubjectiveSummary(form);
+      updateOptionalInputStatus(form);
       saveDraftFromForm(form, form.__runloadServices, false);
     });
   });
@@ -602,6 +603,7 @@ function bindEmbeddedRecordSubflows(form, services) {
     }
     normalizeEmbeddedBodyStatus(form);
     updateSubjectiveSummary(form);
+    updateOptionalInputStatus(form);
     saveDraftFromForm(form, services, false);
     closeRecordSubflow(form);
   });
@@ -619,6 +621,7 @@ function bindEmbeddedRecordSubflows(form, services) {
     const saveCheckbox = form.elements.namedItem("saveCurrentShoePreset");
     if (saveCheckbox) saveCheckbox.checked = false;
     updatePersonalSummary(form);
+    updateOptionalInputStatus(form);
     saveDraftFromForm(form, services, false);
     closeRecordSubflow(form);
   });
@@ -887,6 +890,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
       }
       applyCoursePresetToForm(form, { ...preset.course, id: preset.id, name: preset.name });
       updateCourseSummary(form);
+      updateOptionalInputStatus(form);
       saveDraftFromForm(form, services, false);
       refreshActiveRecordInputWorkspace(form);
       if (returnStatus) {
@@ -898,6 +902,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
   form.querySelector('[data-action="clear-record-course"]')?.addEventListener("click", () => {
     applyCoursePresetToForm(form, {});
     updateCourseSummary(form);
+    updateOptionalInputStatus(form);
     saveDraftFromForm(form, services, false);
     refreshActiveRecordInputWorkspace(form);
     if (returnStatus) {
