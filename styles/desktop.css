@@ -5513,3 +5513,88 @@
     margin-inline: auto !important;
   }
 }
+/* PC record status card audit 2026-09-23: center and enlarge content without widening the rail. */
+@media (min-width: 69rem) {
+  .screen--record-input.screen-layout--record .desktop-save-area {
+    justify-items: center !important;
+    gap: 1.05rem !important;
+    padding: 1.3rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area__intro,
+  .screen--record-input.screen-layout--record .save-readiness,
+  .screen--record-input.screen-layout--record .draft-status,
+  .screen--record-input.screen-layout--record .desktop-save-area .primary-save {
+    width: min(18.5rem, 100%) !important;
+    max-width: 100% !important;
+    justify-self: center !important;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area__intro {
+    text-align: center;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area__intro > strong {
+    font-size: 1.35rem !important;
+    line-height: 1.3;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness {
+    gap: 0.9rem;
+    padding: 1rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__summary > span {
+    font-size: 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__summary > strong {
+    font-size: 1.25rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness__bar {
+    height: 0.52rem;
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist {
+    gap: 0.5rem;
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist > div,
+  .screen--record-input.screen-layout--record .optional-readiness > div {
+    min-height: 3.2rem;
+    padding: 0.68rem 0.82rem;
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist > div > span {
+    font-size: 0.95rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist > div > b {
+    font-size: 0.88rem;
+  }
+
+  .screen--record-input.screen-layout--record .optional-readiness {
+    gap: 0.5rem;
+    padding-top: 0.2rem;
+  }
+
+  .screen--record-input.screen-layout--record .optional-readiness > p {
+    margin-bottom: 0.08rem;
+    font-size: 0.9rem;
+  }
+
+  .screen--record-input.screen-layout--record .optional-readiness span {
+    font-size: 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .optional-readiness b {
+    font-size: 0.86rem;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area .primary-save {
+    min-height: 3.8rem !important;
+    padding-inline: 0.9rem !important;
+    font-size: 1rem !important;
+  }
+}
