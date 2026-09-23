@@ -1,5 +1,6 @@
 import { PRIMARY_REGIONAL_V2_REGION_DEFS, SURFACE_FIELDS } from "../../core/runloadCore.js";
 import { consumeCourseSelection } from "../flowSessionState.js";
+import { primarySurfaceSummary, slopeSummary } from "../coursePresentation.js";
 import { BODY_REGION_VIEWS } from "../bodyRegionVisuals.js";
 
 function finite(v){return v!==null&&v!==""&&Number.isFinite(Number(v));}
@@ -75,5 +76,27 @@ export function bindSimulation({services}){
   const form=document.getElementById("simulation-form"),target=document.getElementById("simulation-result");if(!form||!target)return;let compare=true;const sourceRecordId=String(form.querySelector('[name="sourceRecordId"]')?.value||"");const previous=sourceValues(services,sourceRecordId);
   function update(){const data=new FormData(form);const runWalk=String(data.get("runningFormat"))==="RUN_WALK";form.querySelector('[data-simulation-run-walk]').hidden=!runWalk;const chips=form.querySelector('[data-simulation-assumption-chips]');if(chips){const labels=changedConditionLabels(data);chips.innerHTML=labels.length?labels.map((label)=>`<span>${label}</span>`).join(""):'<span>変更なし</span>';}const built=engineInput(data);const warning=form.querySelector('[data-simulation-input-warning]');if(built.error){target.innerHTML="";if(warning){warning.hidden=false;warning.textContent=built.error;}return;}if(warning)warning.hidden=true;const result=services.model.primaryRegionalV2.calculatePrimaryRegionalV2(built.input);const d=Number(data.get("distanceKm")),t=Number(data.get("durationMinutes"));const p=pace(d,t);const set=(sel,text)=>{const el=form.querySelector(sel);if(el)el.textContent=text;};set('[data-simulation-derived-pace]',p);set('[data-simulation-current-summary]',`${d.toFixed(1)} km・${Math.round(t)}分`);set('[data-simulation-current-pace]',`${p}・${built.course.name||"コース未選択"}`);const calc=form.querySelector('.calc-state');if(calc)calc.textContent=result?.state==="OK"?"計算済み":"確認が必要";target.innerHTML=render(result,previous,compare,d,built.course);bindToggle();}
   function bindToggle(){target.querySelector('[data-action="simulation-toggle-compare"]')?.addEventListener("click",()=>{compare=!compare;update();});}
-  form.addEventListener("input",update);form.addEventListener("change",update);form.addEventListener("reset",()=>setTimeout(update,0));consumeCourseSelection("simulation");update();
+  form.addEventListener("input",update);
+  form.addEventListener("change",update);
+  form.addEventListener("reset",(event)=>{
+    event.preventDefault();
+    const current=new FormData(form);
+    const source=sourceConditionFrom(current);
+    const engine=sourceEngineInputFrom(current);
+    const setValue=(name,value)=>{const control=form.elements.namedItem(name);if(control)control.value=String(value??"");};
+    setValue("distanceKm",source.distanceKm);
+    setValue("durationMinutes",source.durationMinutes);
+    setValue("runningFormat",source.runningFormat||"CONTINUOUS_RUN");
+    setValue("runningDistanceKm",source.runningDistanceKm||engine.runningDistanceKm||"");
+    setValue("runningDurationMinutes",source.runningDurationMinutes||engine.runningDurationMinutes||"");
+    const course=source.course&&typeof source.course==="object"?source.course:{};
+    setValue("courseJson",JSON.stringify(course));
+    const courseName=form.querySelector("[data-simulation-course-name]");
+    if(courseName)courseName.textContent=course.name||"未選択";
+    const courseLink=form.querySelector(".selected-course span");
+    if(courseLink)courseLink.textContent=course.name?`${slopeSummary(course)}・${primarySurfaceSummary(course)}`:"坂・路面は未設定";
+    update();
+  });
+  consumeCourseSelection("simulation");
+  update();
 }
