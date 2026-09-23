@@ -16,22 +16,26 @@ await test('HEADER-SHELL-REMOVES-DUPLICATE-CONTEXT-LABELS',()=>{
   assert.ok(!shell.includes('app-menu-button__label'));
 });
 
-await test('HEADER-MOBILE-USES-BRAND-AND-UTILITY-CONTROLS',()=>{
+await test('HEADER-MOBILE-USES-SCREEN-NAME-AND-UTILITY-CONTROLS',()=>{
   const shell=read('ui/appShell.js');
-  assert.ok(shell.includes('mobile-topbar__brand'));
-  assert.ok(shell.includes('<strong>RunLoad</strong>'));
+  assert.ok(shell.includes('resolveHeaderTitle'));
+  assert.ok(shell.includes('mobile-topbar__screen-title'));
+  assert.ok(!shell.includes('<strong>RunLoad</strong>'));
   assert.ok(shell.includes('app-utility-button'));
   assert.ok(shell.includes('app-utility-button__icon'));
 });
 
-await test('HEADER-DESKTOP-USES-BRAND-NOT-SCREEN-NAME',()=>{
+await test('HEADER-DESKTOP-USES-SAME-SCREEN-NAME-AS-MOBILE',()=>{
   const shell=read('ui/appShell.js');
-  assert.ok(shell.includes('class="app-header__brand"'));
-  assert.ok(shell.includes('aria-label="RunLoad Home"'));
+  assert.ok(shell.includes('app-header__screen-title'));
+  assert.ok(shell.includes('PRIMARY_HEADER_TITLES'));
+  assert.ok(shell.includes('const title = resolveHeaderTitle(currentScreen, currentLocation);'));
+  assert.ok(!shell.includes('aria-label="RunLoad Home"'));
 });
 
 await test('HEADER-IMMERSIVE-HAS-BACK-HELP-AND-MENU',()=>{
   const shell=read('ui/appShell.js');
+  assert.ok(shell.includes('interpretation-room-header__title'));
   assert.ok(shell.includes('interpretation-room-header__actions'));
   assert.ok(shell.includes('idSuffix: "immersive"'));
 });
