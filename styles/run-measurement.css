@@ -347,7 +347,6 @@ body.run-standalone-open {
   font-weight: 800;
 }
 
-.run-measurement__plan p,
 .run-measurement__plan span {
   margin: 0;
   color: var(--color-muted);
