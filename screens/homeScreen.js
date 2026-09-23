@@ -58,10 +58,10 @@ function renderPcFocus(experience, draft) {
   let actions = `<a class="primary" href="#/record-input">今日の記録を始める</a>`;
 
   if (state === "first") {
-    eyebrow = "最初の記録";
-    title = "今日の記録から始めます";
-    body = "走行または休養を記録すると、結果と履歴につながります";
-    sourceText = "まだ保存記録はありません";
+    eyebrow = "記録なし";
+    title = "走行または休養を記録する";
+    body = "保存後に結果と履歴を確認できます";
+    sourceText = "";
     badge = "はじめる";
   } else if (state === "draft") {
     eyebrow = "入力途中";
@@ -86,26 +86,27 @@ function renderPcFocus(experience, draft) {
     actions = `<a class="primary" href="#/result?recordId=${encodeURIComponent(record.id)}">休養記録を見る</a>`;
   }
 
-  return `<section class="focus home-focus--pc focus--${escapeHtml(state)}"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${escapeHtml(eyebrow)}</small><h2>${escapeHtml(title)}</h2><p class="focus-text">${escapeHtml(body)}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">${escapeHtml(badge)}</span></div><div class="focus-actions">${actions}<a class="secondary home-measure-link" href="#/run-measurement">GPSで測定</a></div></section>`;
+  const sourceHtml = sourceText ? `<p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p>` : "";
+  return `<section class="focus home-focus--pc focus--${escapeHtml(state)}"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${escapeHtml(eyebrow)}</small><h2>${escapeHtml(title)}</h2><p class="focus-text">${escapeHtml(body)}</p>${sourceHtml}</div><span class="carry">${escapeHtml(badge)}</span></div><div class="focus-actions">${actions}<a class="secondary home-measure-link" href="#/run-measurement">GPSで測定</a></div></section>`;
 }
 
 function renderMobileFocus(experience, draft) {
   const record = experience?.record || null;
   const hasCarry = Boolean(String(record?.reflectionContext?.nextCheckPoint || "").trim());
   const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
-  const sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "今日の記録から次回へ引き継げます";
+  let sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "次回に確認したいことを記録できます";
   return `<section class="focus home-focus--mobile"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${hasCarry ? "前回から引き継いだ内容" : "今日の確認"}</small><h2>次のランで確認したいこと</h2><p class="focus-text">${escapeHtml(carryText(experience))}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">次回へ引継ぎ</span></div><div class="focus-actions"><a class="primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a><a class="secondary home-measure-link" href="#/run-measurement">GPSで測定</a></div></section>`;
 }
 
 function renderLatestRecord(experience) {
   if (!experience?.record) {
-    return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>まだありません</strong></div><span class="pill">—</span></div><div class="plan"><small>最初の記録</small><strong>今日の走行または休養</strong><span>記録すると、ここから結果を開けます</span></div></article>`;
+    return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>記録なし</strong></div><span class="pill">—</span></div><a class="card-link" href="#/record-input"><span>記録を始める</span><span>›</span></a></article>`;
   }
   const record = experience.record;
   if (record.activityType === "rest") {
-    return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">REST</span></div><div class="plan"><small>保存した内容</small><strong>休養</strong><span>走行による12部位結果は作成しません</span></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>記録を開く</span><span>›</span></a></article>`;
+    return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">REST</span></div><div class="plan"><strong>休養</strong></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>記録を開く</span><span>›</span></a></article>`;
   }
-  return `<article class="card"><div class="card-head"><div><small>最新の保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実際に走った時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><div class="card-actions"><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を見る</span><span>›</span></a><a class="card-link card-link--understanding" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=home"><span>結果を整理する</span><span>›</span></a></div></article>`;
+  return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実際に走った時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><div class="card-actions"><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を見る</span><span>›</span></a><a class="card-link card-link--understanding" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=home"><span>結果を整理する</span><span>›</span></a></div></article>`;
 }
 
 function nextPlan(services) {
@@ -116,13 +117,13 @@ function nextPlan(services) {
 function renderPlanCard(services) {
   const plan = nextPlan(services);
   if (!plan) {
-    return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>未設定</strong></div><span class="pill">—</span></div><div class="plan"><small>予定している内容</small><strong>まだありません</strong><span>必要なときに作成できます</span></div><a class="card-link" href="#/plan"><span>予定を作る</span><span>›</span></a></article>`;
+    return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>未設定</strong></div><span class="pill">—</span></div><a class="card-link" href="#/plan"><span>予定を作る</span><span>›</span></a></article>`;
   }
   const planned = plan.plannedSession || {};
   const rest = plan.planType === "rest" || planned.activityType === "rest";
   const main = rest ? "休養" : (Number(planned.distanceKm) > 0 ? `${formatNumber(planned.distanceKm, 2)} km` : "走行予定");
   const details = rest ? "内容はあとで変更できます" : [planned.course?.name, Number(planned.durationMinutes) > 0 ? `${formatNumber(planned.durationMinutes,0)}分` : ""].filter(Boolean).join("・") || "内容はあとで変更できます";
-  return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong></div><span class="pill">保存済み</span></div><div class="plan"><small>予定している内容</small><strong>${escapeHtml(main)}</strong><span>${escapeHtml(details)}</span></div><a class="card-link" href="#/plan?planId=${encodeURIComponent(plan.id)}"><span>予定を開く</span><span>›</span></a></article>`;
+  return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong></div><span class="pill">保存済み</span></div><div class="plan"><strong>${escapeHtml(main)}</strong><span>${escapeHtml(details)}</span></div><a class="card-link" href="#/plan?planId=${encodeURIComponent(plan.id)}"><span>予定を開く</span><span>›</span></a></article>`;
 }
 
 export function renderHomeScreen({ services }) {
@@ -130,9 +131,8 @@ export function renderHomeScreen({ services }) {
   const draft = services.storage.draft.load();
   const state = homeState(latestExperience, draft);
   return `<div class="screen screen--home screen-layout screen-layout--home home-state--${escapeHtml(state)}" data-home-state="${escapeHtml(state)}">
-    <section class="page-head"><div><h1>今日</h1></div></section>
     ${renderMobileFocus(latestExperience, draft)}
     ${renderPcFocus(latestExperience, draft)}
-    <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
+    <section class="section"><div class="section-head"><div><h2>記録と予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
   </div>`;
 }
