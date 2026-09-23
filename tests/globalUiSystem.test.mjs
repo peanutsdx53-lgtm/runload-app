@@ -173,10 +173,20 @@ await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
   assert.ok(start>=0,'PC record status audit block');
   const audit=css.slice(start);
   const remSize=(selector)=>{
-    const block=cssBlock(audit,selector);
-    const match=block.match(/font-size:\s*([0-9.]+)rem\s*!?important?\s*;/i)
-      || block.match(/font-size:\s*([0-9.]+)rem\s*;/i);
-    return match?Number(match[1]):0;
+    let offset=0;
+    let maximum=0;
+    while(offset<audit.length){
+      const startIndex=audit.indexOf(selector,offset);
+      if(startIndex<0)break;
+      const open=audit.indexOf('{',startIndex);
+      const close=audit.indexOf('}',open+1);
+      if(open<0||close<0)break;
+      const block=audit.slice(open+1,close);
+      const match=block.match(/font-size:\s*([0-9.]+)rem(?:\s*!important)?\s*;/i);
+      if(match)maximum=Math.max(maximum,Number(match[1]));
+      offset=startIndex+selector.length;
+    }
+    return maximum;
   };
 
   assert.match(audit,/^PC record status card audit|@media \(min-width: 69rem\)/m);
