@@ -432,9 +432,10 @@ function conditionRelationship(path = {}, differenceId = "") {
   const active = new Set((path?.activeInputs || []).map((item) => String(item.id || "")));
   const conditional = new Set((path?.conditionalInputs || []).map((item) => String(item.id || "")));
   const contextOnly = new Set((path?.contextOnlyInputs || []).map((item) => String(item.id || "")));
+  const exposureType = String(path?.exposure?.type || "");
   const map = {
-    distance: ["DISTANCE", "RUNNING_DISTANCE"],
-    duration: ["DURATION", "RUNNING_DURATION"],
+    distance: ["DISTANCE"],
+    duration: ["DURATION"],
     pace: ["SPEED"],
     cadence: ["CADENCE"],
     grade: ["GRADE"],
@@ -443,6 +444,9 @@ function conditionRelationship(path = {}, differenceId = "") {
   const ids = map[differenceId] || [];
   if (differenceId === "running-format") return "DEFINES_EXPOSURE";
   if (differenceId === "course") return "RECORDED_CONTEXT";
+  if (["distance", "duration", "pace"].includes(differenceId) && exposureType === "RUNNING_PHASE") {
+    return "RECORDED_CONTEXT";
+  }
   if (ids.some((id) => active.has(id))) return "USED_IN_CURRENT_ROUTE";
   if (ids.some((id) => conditional.has(id))) return "RECORDED_CONDITIONAL";
   if (ids.some((id) => contextOnly.has(id))) return "RECORDED_CONTEXT";
@@ -477,19 +481,20 @@ function nextCheckProjection(base = {}, selectedRegionId = "", attention = null)
   const key = directionCountKey(direction);
   const sameDirectionCount = Number(comparison?.historyReferenceDirectionCounts?.[key] || 0);
 
+  const userRecorded = String(base?.current?.facts?.nextCheckPoint || "");
   if (selectedRegionId && comparison.historyComparableCount === 0) {
-    return Object.freeze({ code: "ADD_COMPARABLE_RECORD", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))) });
+    return Object.freeze({ code: "ADD_COMPARABLE_RECORD", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))), userRecorded });
   }
   if (selectedRegionId && sameDirectionCount >= 2 && ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(direction)) {
-    return Object.freeze({ code: "RECHECK_REPEATED_DIRECTION", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))) });
+    return Object.freeze({ code: "RECHECK_REPEATED_DIRECTION", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))), userRecorded });
   }
   if (conditions.length) {
-    return Object.freeze({ code: "KEEP_CONDITIONS_VISIBLE", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))) });
+    return Object.freeze({ code: "KEEP_CONDITIONS_VISIBLE", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))), userRecorded });
   }
   if (changedCount > 0) {
-    return Object.freeze({ code: "RECORD_NEXT_COMPARABLE_RUN", regionId: selectedRegionId, conditionIds: Object.freeze([]) });
+    return Object.freeze({ code: "RECORD_NEXT_COMPARABLE_RUN", regionId: selectedRegionId, conditionIds: Object.freeze([]), userRecorded });
   }
-  return Object.freeze({ code: "CONTINUE_COMPARABLE_RECORDS", regionId: selectedRegionId, conditionIds: Object.freeze([]) });
+  return Object.freeze({ code: "CONTINUE_COMPARABLE_RECORDS", regionId: selectedRegionId, conditionIds: Object.freeze([]), userRecorded });
 }
 
 function nextProjection(base = {}, selectedRegionId = "") {
