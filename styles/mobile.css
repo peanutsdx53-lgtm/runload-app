@@ -3480,4 +3480,9 @@ html.consult-viewer-open{overflow:hidden}
   .mobile-topbar--context > strong {
     display: none;
   }
+
+  .course-derived-head,
+  .secondary-derived-head {
+    display: none !important;
+  }
 }
