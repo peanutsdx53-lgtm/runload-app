@@ -34,8 +34,9 @@ function buildHash(screenName, parameters = {}) {
   return `#/${screenName}${query ? `?${query}` : ""}`;
 }
 
-export function createAppRouter({ availableScreens, routeAliases = {}, onScreenChange }) {
+export function createAppRouter({ availableScreens, routeAliases = {}, defaultScreen = DEFAULT_SCREEN, onScreenChange }) {
   const validScreens = new Set(availableScreens);
+  const resolvedDefaultScreen = validScreens.has(defaultScreen) ? defaultScreen : DEFAULT_SCREEN;
 
   function readLocation() {
     return parseHashLocation(validScreens, routeAliases, resolvedDefaultScreen);
