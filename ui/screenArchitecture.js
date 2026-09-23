@@ -109,7 +109,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
       return { title: interpretationTitle, backHref: screenHref("simulation", { recordId, from: "interpretation-room" }), backLabel: "条件比較" };
     }
     if (origin === "home") {
-      return { title: interpretationTitle, backHref: "#/home", backLabel: "Home" };
+      return { title: interpretationTitle, backHref: "#/home", backLabel: "ホーム" };
     }
     return { title: interpretationTitle, backHref: screenHref("result", { recordId }), backLabel: "結果" };
   }
@@ -136,7 +136,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "plan") {
     const interpretationReturn = interpretationReturnContext(parameter, recordId || parameter("sourceRecordId"));
     if (interpretationReturn) return { ...interpretationReturn, title: "次の予定" };
-    return { title: "次の予定", backHref: "#/home", backLabel: "Home" };
+    return { title: "次の予定", backHref: "#/home", backLabel: "ホーム" };
   }
 
   if (screen === "consultation") {
