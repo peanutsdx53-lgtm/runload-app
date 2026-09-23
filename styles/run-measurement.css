@@ -535,20 +535,24 @@ body.run-standalone-open {
 
 
 .run-route-link-wrap {
-  margin: 0.75rem 0;
+  margin: 0.75rem 0 0;
 }
 
 .run-route-link {
+  width: fit-content;
+  max-width: 100%;
+  min-height: var(--button-height-medium);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
   color: var(--color-ink);
   text-decoration: none;
-  background: var(--color-accent-soft);
+  background: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-medium);
+  box-shadow: none;
 }
 
 .run-route-link span {
@@ -558,14 +562,18 @@ body.run-standalone-open {
 
 .run-route-link small {
   color: var(--color-muted);
-  font-size: 0.7rem;
+  font-size: var(--type-label);
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
+}
+
+.run-route-link strong {
+  font-size: var(--type-control);
 }
 
 .run-route-link em {
   color: var(--color-muted);
-  font-size: 0.8rem;
+  font-size: var(--type-caption);
   font-style: normal;
 }
 
@@ -659,29 +667,4 @@ body.run-standalone-open {
     border-top: 1px solid var(--color-line);
     border-left: 0;
   }
-}
-
-
-/* Result GPS route link refinement: route access is a compact secondary action. */
-.screen--result .run-route-link-wrap {
-  margin-top: 0.75rem;
-  margin-bottom: 0;
-}
-.screen--result .run-route-link {
-  width: fit-content;
-  max-width: 100%;
-  min-height: var(--button-height-medium);
-  padding: 0.65rem 0.85rem;
-  gap: 0.75rem;
-  background: var(--color-surface);
-  box-shadow: none;
-}
-.screen--result .run-route-link small {
-  font-size: var(--type-label);
-}
-.screen--result .run-route-link strong {
-  font-size: var(--type-control);
-}
-.screen--result .run-route-link em {
-  font-size: var(--type-caption);
 }
