@@ -27,6 +27,7 @@
   --type-caption: 0.8rem;
   --type-body: 0.94rem;
   --type-control: 0.92rem;
+  --type-control-compact: 0.82rem;
   --type-subheading: 1.08rem;
   --type-heading: clamp(1.35rem, 4vw, 1.8rem);
   --type-display: clamp(1.7rem, 6vw, 2.5rem);
