@@ -1,4 +1,4 @@
-const CACHE_NAME = "runload-app-runtime-v1";
+const CACHE_NAME = "runload-app-runtime-v2";
 const RUNLOAD_CACHE_PREFIX = "runload-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -16,6 +16,8 @@ const PRECACHE_URLS = [
   "./screens/historyScreen.js",
   "./screens/interpretationRoomScreen.js",
   "./screens/homeScreen.js",
+  "./screens/startScreen.js",
+  "./screens/runMeasurementScreen.js",
   "./screens/gpxAnalysisScreen.js",
   "./screens/moreScreen.js",
   "./screens/readingScreen.js",
@@ -36,6 +38,7 @@ const PRECACHE_URLS = [
   "./styles/desktop-foundation.css",
   "./styles/desktop.css",
   "./styles/tokens.css",
+  "./styles/run-measurement.css",
   "./ui/pwaUpdateBootstrap.js",
   "./ui/appRouter.js",
   "./ui/appSettings.js",
@@ -67,6 +70,10 @@ const PRECACHE_URLS = [
   "./ui/recordInputWorkspace.js",
   "./ui/flowSessionState.js",
   "./ui/gpxLocalAnalysis.js",
+  "./ui/runMeasurementCore.js",
+  "./ui/runMeasurementMap.js",
+  "./ui/runMeasurementState.js",
+  "./ui/interactions/runMeasurementInteractions.js",
   "./ui/recordPresentation.js",
   "./ui/restorePreviewPresentation.js",
   "./ui/screenArchitecture.js",
