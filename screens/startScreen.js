@@ -32,7 +32,7 @@ export function renderStartScreen({ services }) {
   const plan = nextRunPlan(services);
   return `<div class="screen screen--start run-launch">
     <main class="run-launch__panel">
-      <div class="run-launch__top"><p class="eyebrow">RUNLOAD</p><button type="button" class="context-help-button" data-open-guide="first-use" aria-label="使い方ガイドを開く">?</button></div>
+      <div class="run-launch__top"><p class="eyebrow">RUNLOAD</p><button type="button" class="context-help-button app-utility-button" data-screen-tutorial-start="start" aria-label="この画面の使い方を開く"><span class="app-utility-button__question" aria-hidden="true">?</span></button></div>
       <h1>今日は何をしますか</h1>
       <p class="run-launch__lead">記録を見る・入力する場合はアプリへ、走る場合はGPS測定へ進みます。</p>
       <p class="run-launch__device-note">PCでは通常のRunLoad画面を主に利用します。GPS測定はスマートフォン向けです。</p>
