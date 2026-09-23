@@ -255,6 +255,45 @@ function updatePersonalSummary(form) {
   if (detail) detail.textContent = summary.description;
 }
 
+function updateOptionalInputStatus(form) {
+  const formData = new FormData(form);
+  const distance = Number(form.elements.namedItem("distanceKm")?.value || 0);
+  const course = readCourse(formData, distance);
+  const hasCourse = Boolean(
+    String(course.name || "").trim()
+    || String(course.gradeKnowledge || "UNKNOWN") !== "UNKNOWN"
+    || String(course.modelSurfaceClass || "UNKNOWN") !== "UNKNOWN"
+    || Number(course.upPercent || 0) > 0
+    || Number(course.downPercent || 0) > 0
+  );
+  const hasCompare = Boolean(
+    String(formData.get("steps") || "").trim()
+    || String(formData.get("stepsProvenance") || "UNKNOWN") !== "UNKNOWN"
+    || String(formData.get("runningFormat") || "UNKNOWN") !== "UNKNOWN"
+    || String(formData.get("runWalkRunningDistanceKm") || "").trim()
+    || String(formData.get("runWalkRunningDurationMinutes") || "").trim()
+    || String(formData.get("temperatureC") || "").trim()
+    || String(formData.get("environmentNote") || "").trim()
+  );
+  const subjective = subjectiveSummaryFromFields(fieldsFromForm(form));
+  const personal = personalSummaryFromFields(readPersonalContextFieldsFromForm(form));
+  const hasReflection = Boolean(
+    !["", "deferred", "not_asked"].includes(String(subjective.status || ""))
+    || personal.hasInput
+    || ["postRunReflection", "perceivedDifference", "nextCheckPoint"].some((name) => String(formData.get(name) || "").trim())
+  );
+  const states = { course: hasCourse, compare: hasCompare, reflection: hasReflection };
+  Object.entries(states).forEach(([key, hasInput]) => {
+    const statusText = hasInput ? "入力あり" : "未入力";
+    form.querySelectorAll(`[data-optional-status="${key}"]`).forEach((node) => { node.textContent = statusText; });
+    form.querySelectorAll(`[data-save-optional="${key}"]`).forEach((row) => {
+      row.classList.toggle("is-complete", hasInput);
+      const state = row.querySelector("b");
+      if (state) state.textContent = statusText;
+    });
+  });
+}
+
 function readPersonalContext(formData) {
   const fields = {};
   PERSONAL_CONTEXT_FIELD_NAMES.forEach((name) => {
@@ -315,6 +354,8 @@ function bindSecondPillarLifecycle(form, { services, router, context }) {
 
   const refreshPreview = () => {
     if (!slider || !valueOutput || !descriptor || !anchor || !recordAction) return;
+    slider.classList.toggle("is-untouched", !touched);
+    form.querySelector("[data-rof-slider-wrap]")?.classList.toggle("is-untouched", !touched);
     if (!touched) {
       valueOutput.textContent = "—";
       descriptor.textContent = "数値を選択";
@@ -826,6 +867,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
   updateCourseSummary(form);
   updateSubjectiveSummary(form);
   updatePersonalSummary(form);
+  updateOptionalInputStatus(form);
   bindSecondPillarLifecycle(form, { services, router, context });
   const returnStatus = form.querySelector("[data-record-return-status]");
   if (returnStatus && returnState?.notice) {
@@ -878,10 +920,11 @@ export function bindRecordInput({ services, router, context, returnState = null 
     updateCourseSummary(form);
     updateSubjectiveSummary(form);
     updatePersonalSummary(form);
-      saveDraftFromForm(form, services, false);
+    updateOptionalInputStatus(form);
+    saveDraftFromForm(form, services, false);
     refreshActiveRecordInputWorkspace(form);
   });
-  form.addEventListener("input", () => { updateRecordSubmitAvailability(form); updateCourseSummary(form); updateSubjectiveSummary(form); updatePersonalSummary(form); saveDraftFromForm(form, services, false); refreshActiveRecordInputWorkspace(form); });
+  form.addEventListener("input", () => { updateRecordSubmitAvailability(form); updateCourseSummary(form); updateSubjectiveSummary(form); updatePersonalSummary(form); updateOptionalInputStatus(form); saveDraftFromForm(form, services, false); refreshActiveRecordInputWorkspace(form); });
   document.querySelectorAll('[data-action="save-record-draft"]').forEach((button) => button.addEventListener("click", () => saveDraftFromForm(form, services, true)));
 
   form.addEventListener("submit", (event) => {
