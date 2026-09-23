@@ -47,6 +47,16 @@ export function renderSimulationScreen({ services, context }) {
   const backLabel=from==="plan"?"予定へ戻る":from==="interpretation-room"?"結果の整理へ戻る":"Homeへ戻る";
 
   const recent=sourceRun(services,recordId);
+  const sourceExperience=recent?.id&&services?.workflows?.records?.loadExperience
+    ? services.workflows.records.loadExperience(recent.id)
+    : null;
+  const sourceEngineInput=sourceExperience?.regionalV2ResultRecord?.engine_input_snapshot || {};
+  const sourceCondition=Object.freeze({
+    distanceKm:Number(recent?.distanceKm)||0,
+    durationMinutes:Number(recent?.durationMinutes)||0,
+    runningFormat:runningFormatValue(recent),
+    course:recent?.course&&typeof recent.course==="object"?recent.course:{},
+  });
   const override=selectedCourse();
   const course=sourceCourse(recent,override);
   const distance=Number(recent?.distanceKm)>0?Number(recent.distanceKm):5;
@@ -74,6 +84,8 @@ export function renderSimulationScreen({ services, context }) {
     ${nextCheck?`<section class="carry-card" aria-label="今回から引き継いだ内容"><i aria-hidden="true"></i><div><small>今回の記録から</small><strong>次に確認したいこと</strong><p>${escapeHtml(nextCheck)}</p></div></section>`:""}
     <form id="simulation-form" class="workspace" novalidate>
       <input type="hidden" name="sourceRecordId" value="${escapeHtml(recent?.id||recordId||"")}">
+      <input type="hidden" name="sourceEngineInputJson" value="${escapeHtml(JSON.stringify(sourceEngineInput))}">
+      <input type="hidden" name="sourceConditionJson" value="${escapeHtml(JSON.stringify(sourceCondition))}">
       <input type="hidden" name="courseJson" value="${escapeHtml(JSON.stringify(course))}">
       <section class="condition-panel" aria-labelledby="conditionTitle">
         <div class="panel-head"><div><small>CHANGE CONDITIONS</small><h2 id="conditionTitle">条件を変更</h2></div><span>元の記録を初期値に使用</span></div>
