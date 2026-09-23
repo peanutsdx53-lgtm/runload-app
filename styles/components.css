@@ -517,7 +517,6 @@
   .guide-dialog__header { gap: var(--space-2); }
   .guide-tab { flex-basis: calc(33.333% - var(--space-2)); padding-inline: var(--space-1); }
   .guide-dialog__footer { display: flex; }
-  .guide-dialog__footer > .button { width: 100%; }
 }
 @media (forced-colors: active) {
   .guide-tab.is-current,
@@ -605,10 +604,6 @@
 
 /* 文字拡大・高コントラスト・狭幅の横断調整 */
 @media (max-width: 35rem) {
-  .screen-actions > .button,
-  .lead-action-card__actions > .button,
-  .form-submit-actions > .button,
-  .guide-dialog__footer > .button { flex: 1 1 100%; width: 100%; }
   .result-card__heading,
   .home-summary-card__header { display: grid; }
   .status-label { justify-self: start; }
@@ -1297,11 +1292,8 @@ details.ui-motion-details.is-ui-motion-closing > :not(summary) {
 }
 .screen-tutorial__actions .button--text { margin-right: auto; }
 @media (max-width: 34rem) {
-  .screen-guide__tutorial { align-items: stretch; }
-  .screen-guide__tutorial-button { width: 100%; }
+  .screen-guide__tutorial { align-items: flex-start; }
   .screen-tutorial__panel { padding: var(--space-4); }
-  .screen-tutorial__actions .button { flex: 1 1 100%; }
-  .screen-tutorial__actions .button--text { margin-right: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .screen-tutorial__backdrop { backdrop-filter: none; }
