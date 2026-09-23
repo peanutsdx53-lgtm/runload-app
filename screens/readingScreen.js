@@ -2,8 +2,13 @@ import { escapeHtml } from "../ui/commonComponents.js";
 import { V27_EMPHASIS_REGION_IDS, V27_REGIONS, BODY_AREA_BY_ID } from "../core/runloadCore.js";
 
 const REGION_BY_ID = new Map(V27_REGIONS.map((region) => [region.id, region]));
+const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep-v27";
+const PUBLIC_ARTICLE_ID_ALIASES = new Map([
+  [CONSULTATION_PREP_CORE_ARTICLE_ID, "consultation-prep"],
+]);
 const DEFERRED_READING_ARTICLE_IDS = new Set(["rpe-separated", "model-total-v27"]);
 const visibleArticles = (articles = []) => articles.filter((article) => !DEFERRED_READING_ARTICLE_IDS.has(article?.id));
+const publicArticleId = (articleId = "") => PUBLIC_ARTICLE_ID_ALIASES.get(String(articleId || "")) || String(articleId || "");
 
 function numberValue(value, fallback = 0) {
   const number = Number(value);
@@ -104,14 +109,14 @@ function buildColumnRecommendation(services, experience, allExperiences = [], co
   ].some((value) => String(value || "").trim());
 
   if (route === "consult" || route === "urgent") {
-    return recommendation("consultation-prep-v27", "入力した内容を共有前に整理する記事です。");
+    return recommendation(CONSULTATION_PREP_CORE_ARTICLE_ID, "入力した内容を共有前に整理する記事です。");
   }
   if (record.activityType === "rest") {
     return recommendation("history-compatible", "休養日や未記録日を数値の0と考えない、履歴の読み方に関連する記事です。");
   }
   if (repeatedAreas.length) {
     const labels = repeatedAreas.slice(0, 2).map((item) => item.label).join("、");
-    return recommendation("consultation-prep-v27", `${labels}の身体の記録が複数記録にあるため、事実を整理する記事です。`);
+    return recommendation(CONSULTATION_PREP_CORE_ARTICLE_ID, `${labels}の身体の記録が複数記録にあるため、事実を整理する記事です。`);
   }
   if (selectedRegionId && V27_EMPHASIS_REGION_IDS.includes(selectedRegionId)) {
     return recommendation("slope-endpoints", `${REGION_BY_ID.get(selectedRegionId)?.label || selectedRegionId}の値が表す内容と読み方に関連する記事です。`);
@@ -178,15 +183,15 @@ const READING_ITEMS = Object.freeze([
   Object.freeze({ id: "cooldown-stretching-limits", filter: "after" }),
   Object.freeze({ id: "hydration-not-more-is-better", filter: "after" }),
   Object.freeze({ id: "heat-not-temperature-only", filter: "before" }),
-  Object.freeze({ id: "consultation-prep-v27", filter: "share" }),
+  Object.freeze({ id: CONSULTATION_PREP_CORE_ARTICLE_ID, filter: "share" }),
 ]);
 
 function renderReadingArticle(article, filter) {
-  return `<article class="article-card" data-reading-card data-cat="${escapeHtml(filter)}"><small>${escapeHtml(article.category || "一般情報")}</small><strong>${escapeHtml(article.title || "読みもの")}</strong><p>${escapeHtml(article.lead || article.summary || "")}</p><button type="button" data-reading-open="${escapeHtml(article.id)}">読む</button></article>`;
+  return `<article class="article-card" data-reading-card data-cat="${escapeHtml(filter)}"><small>${escapeHtml(article.category || "一般情報")}</small><strong>${escapeHtml(article.title || "読みもの")}</strong><p>${escapeHtml(article.lead || article.summary || "")}</p><button type="button" data-reading-open="${escapeHtml(publicArticleId(article.id))}">読む</button></article>`;
 }
 
 function renderReadingDetail(article) {
-  return `<article data-reading-detail="${escapeHtml(article.id)}" hidden><div class="sheet-head"><div><small>${escapeHtml(article.category || "一般情報")}</small><strong id="articleTitle-${escapeHtml(article.id)}">${escapeHtml(article.title || "読みもの")}</strong></div><button class="close" type="button" data-reading-close aria-label="閉じる">×</button></div><p class="lead">${escapeHtml(article.lead || article.summary || "")}</p><div class="body-copy">${(article.body || []).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>${(article.practicePoints || []).length ? `<div class="points"><strong>見返すポイント</strong><ul>${article.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></div>` : ""}<p class="caution">${escapeHtml(article.caution || "一般情報であり、個別の診断・処方・走行可否判断には使用しません。")}</p><p class="source-note">Current Appで管理している公開資料・研究文献を背景にした一般情報です。個別の診断・処方ではありません。</p></article>`;
+  return `<article data-reading-detail="${escapeHtml(publicArticleId(article.id))}" hidden><div class="sheet-head"><div><small>${escapeHtml(article.category || "一般情報")}</small><strong id="articleTitle-${escapeHtml(publicArticleId(article.id))}">${escapeHtml(article.title || "読みもの")}</strong></div><button class="close" type="button" data-reading-close aria-label="閉じる">×</button></div><p class="lead">${escapeHtml(article.lead || article.summary || "")}</p><div class="body-copy">${(article.body || []).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>${(article.practicePoints || []).length ? `<div class="points"><strong>見返すポイント</strong><ul>${article.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></div>` : ""}<p class="caution">${escapeHtml(article.caution || "一般情報であり、個別の診断・処方・走行可否判断には使用しません。")}</p><p class="source-note">Current Appで管理している公開資料・研究文献を背景にした一般情報です。個別の診断・処方ではありません。</p></article>`;
 }
 
 function renderReadingContent({ services, context }) {
@@ -196,7 +201,7 @@ function renderReadingContent({ services, context }) {
   const target = resolveColumnTargetExperience(services, context);
   const recommendation = buildColumnRecommendation(services, target.experience, allExperiences, context);
   const featured = recommendation.article && available.has(recommendation.article.id) ? recommendation.article : available.get("regional-three-views") || items[0]?.article || null;
-  const initialArticleId = context.parameters.get("articleId") || "";
+  const initialArticleId = publicArticleId(context.parameters.get("articleId") || "");
   const origin = context.parameters.get("origin") || "";
   const recordId = context.parameters.get("recordId") || "";
   const regionId = context.parameters.get("regionId") || "";
@@ -220,7 +225,7 @@ function renderReadingContent({ services, context }) {
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>読みもの</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">READING</p><h1>読みもの</h1><p>結果の意味や、走った日の背景を確認するための一般情報です。</p></section>
-    ${featured ? `<section class="recommend"><small>今回の結果から</small><strong>${escapeHtml(featured.title)}</strong><p>${escapeHtml(recommendation.reason || featured.lead || "")}</p><button type="button" data-reading-open="${escapeHtml(featured.id)}">この記事を読む</button></section>` : ""}
+    ${featured ? `<section class="recommend"><small>今回の結果から</small><strong>${escapeHtml(featured.title)}</strong><p>${escapeHtml(recommendation.reason || featured.lead || "")}</p><button type="button" data-reading-open="${escapeHtml(publicArticleId(featured.id))}">この記事を読む</button></section>` : ""}
     <div class="filter-strip"><div class="filter-strip-head"><span>分類</span><small>横にスライド <b aria-hidden="true">→</b></small></div><div class="filters" role="group" aria-label="読みものの分類。横方向にスクロールできます"><button class="active" type="button" data-reading-filter="all">すべて</button><button type="button" data-reading-filter="result">結果</button><button type="button" data-reading-filter="record">記録・履歴</button><button type="button" data-reading-filter="running">走りとのつき合い方</button><button type="button" data-reading-filter="after">走った後</button><button type="button" data-reading-filter="before">走る前</button><button type="button" data-reading-filter="share">相談・共有</button></div></div>
     <div class="grid">${items.map((item) => renderReadingArticle(item.article, item.filter)).join("")}</div>
     <div class="drawer" data-reading-drawer hidden><section class="sheet" role="dialog" aria-modal="true" aria-label="読みもの本文">${[...detailArticles.values()].map(renderReadingDetail).join("")}</section></div>
