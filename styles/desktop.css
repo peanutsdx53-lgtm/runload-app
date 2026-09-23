@@ -5327,3 +5327,85 @@
     display: none !important;
   }
 }
+
+
+/* ==========================================================================
+   Desktop UI normalization
+   Use width for information structure, not oversized controls.
+   ========================================================================== */
+@media (min-width: 55rem) {
+  .screen-layout small {
+    font-size: var(--type-label) !important;
+    line-height: 1.4;
+  }
+
+  .screen-layout :is(button, summary) {
+    font-size: var(--type-control-compact) !important;
+  }
+
+  .screen-layout :is(button, summary) strong {
+    font-size: var(--type-control) !important;
+    line-height: var(--line-compact);
+  }
+
+  .screen-layout :is(input, select, textarea) {
+    font-size: var(--type-body) !important;
+    line-height: 1.4;
+  }
+
+  .screen-layout :is(.page-head, .intro) > div > p:last-child,
+  .screen-layout .section-introduction {
+    font-size: var(--type-body) !important;
+    line-height: var(--line-body);
+  }
+
+  .screen-layout :is(
+    .view-toggle button.active,
+    .type-toggle button.active,
+    .seg button.active,
+    .mode button.active,
+    .display-toggle button.active,
+    .history-mode button.active
+  ) {
+    box-shadow: none !important;
+  }
+}
+
+@media (min-width: 80rem) {
+  .screen--history.screen-layout--history .record-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) {
+    width: auto !important;
+    grid-column: auto !important;
+    display: block !important;
+  }
+
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) :is(
+    .record-item-head,
+    h3,
+    p,
+    .record-actions
+  ) {
+    grid-area: auto !important;
+  }
+
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) .record-actions {
+    margin-top: 0.75rem !important;
+    justify-self: auto;
+    white-space: normal;
+  }
+
+  .screen--plan.screen-layout--plan .saved-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .screen--plan.screen-layout--plan .saved-list > .saved-card:last-child:nth-child(odd) {
+    grid-column: auto !important;
+  }
+
+  .screen--course-library.screen-layout--course .list {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
