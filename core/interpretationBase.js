@@ -14,6 +14,10 @@ const REGION_ORDER = Object.freeze([
   "BA-DISP-025", "BA-DISP-027", "BA-DISP-028", "BA-DISP-029",
 ]);
 const REGION_ORDER_INDEX = new Map(REGION_ORDER.map((id, index) => [id, index]));
+const COURSE_SURFACE_KEYS = Object.freeze([
+  "pavedPercent", "trackPercent", "treadmillPercent", "soilPercent",
+  "trailPercent", "naturalGrassPercent", "artificialTurfPercent", "sandPercent",
+]);
 
 function clone(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -85,30 +89,33 @@ function paceSecondsPerKm(record = {}) {
 function gradeSummary(record = {}) {
   const course = record.course && typeof record.course === "object" ? record.course : {};
   const knowledge = String(course.gradeKnowledge || record.gradeKnowledge || "UNKNOWN");
-  const uphillSharePercent = finite(course.uphillSharePercent ?? record.uphillSharePercent)
-    ? Number(course.uphillSharePercent ?? record.uphillSharePercent)
-    : null;
-  const downhillSharePercent = finite(course.downhillSharePercent ?? record.downhillSharePercent)
-    ? Number(course.downhillSharePercent ?? record.downhillSharePercent)
-    : null;
-  const uphillGradePercent = finite(course.uphillGradePercent ?? record.uphillGradePercent)
-    ? Number(course.uphillGradePercent ?? record.uphillGradePercent)
-    : null;
-  const downhillGradePercent = finite(course.downhillGradePercent ?? record.downhillGradePercent)
-    ? Number(course.downhillGradePercent ?? record.downhillGradePercent)
-    : null;
+  const uphillSource = course.upPercent ?? course.uphillSharePercent ?? record.uphillSharePercent;
+  const downhillSource = course.downPercent ?? course.downhillSharePercent ?? record.downhillSharePercent;
+  const uphillGradeSource = course.upGradePercent ?? course.uphillGradePercent ?? record.uphillGradePercent;
+  const downhillGradeSource = course.downGradePercent ?? course.downhillGradePercent ?? record.downhillGradePercent;
+  const uphillSharePercent = finite(uphillSource) ? Number(uphillSource) : null;
+  const downhillSharePercent = finite(downhillSource) ? Number(downhillSource) : null;
+  const uphillGradePercent = finite(uphillGradeSource) ? Number(uphillGradeSource) : null;
+  const downhillGradePercent = finite(downhillGradeSource) ? Number(downhillGradeSource) : null;
   return Object.freeze({ knowledge, uphillSharePercent, downhillSharePercent, uphillGradePercent, downhillGradePercent });
 }
 
 function surfaceSummary(record = {}) {
   const course = record.course && typeof record.course === "object" ? record.course : {};
+  const savedShares = COURSE_SURFACE_KEYS
+    .map((key) => Object.freeze({ category: key, sharePercent: finite(course[key]) ? Number(course[key]) : null }))
+    .filter((item) => finite(item.sharePercent) && Number(item.sharePercent) > 0);
+  if (savedShares.length) return Object.freeze(savedShares);
+
   const raw = Array.isArray(course.surfaceComponents)
     ? course.surfaceComponents
     : Array.isArray(record.surfaceComponents)
       ? record.surfaceComponents
-      : [];
+      : Array.isArray(course.modelSurfaceProfile)
+        ? course.modelSurfaceProfile
+        : [];
   return Object.freeze(raw.map((item) => Object.freeze({
-    category: String(item?.category || item?.userCategory || item?.label || ""),
+    category: String(item?.category || item?.userCategory || item?.surfaceClass || item?.label || ""),
     sharePercent: finite(item?.sharePercent ?? item?.share_percent) ? Number(item.sharePercent ?? item.share_percent) : null,
   })));
 }
