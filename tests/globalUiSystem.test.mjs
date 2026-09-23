@@ -353,6 +353,28 @@ await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
   assert.doesNotMatch(audit,/grid-template-columns:\s*repeat\(3/);
 });
 
+
+await test('UI-HISTORY-IS-RECORD-BROWSING-ONLY',()=>{
+  const screen=read('screens/historyScreen.js');
+  const css=read('styles/desktop.css');
+  const renderStart=screen.indexOf('export function renderHistoryScreen');
+  assert.ok(renderStart>=0,'history render function');
+  const render=screen.slice(renderStart);
+  assert.match(screen,/function normalizedView\(\)\s*\{\s*return "records";\s*\}/);
+  assert.ok(render.includes('historyRecordView(workspace,context)'));
+  assert.ok(!render.includes('historyCompareView('));
+  assert.ok(!render.includes('history-mode'));
+  assert.ok(!render.includes('部位を比較'));
+  assert.ok(!render.includes('同じ部位の変化を見る'));
+  assert.match(render,/過去の記録を探して内容を確認します。/);
+
+  const marker='PC history single-purpose audit 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0,'PC history single-purpose block');
+  const audit=css.slice(start);
+  assert.match(audit,/\.history-view[\s\S]*margin-top:\s*0\s*!important/);
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;

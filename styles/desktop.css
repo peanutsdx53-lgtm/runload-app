@@ -6479,3 +6479,15 @@
     min-height: 9rem !important;
   }
 }
+
+
+/* PC history single-purpose audit 2026-09-23: history is record browsing only. */
+@media (min-width: 80rem) {
+  .screen--history.screen-layout--history .history-view {
+    margin-top: 0 !important;
+  }
+
+  .screen--history.screen-layout--history .history-view--records {
+    padding-top: 0.15rem;
+  }
+}
