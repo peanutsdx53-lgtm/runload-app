@@ -162,6 +162,9 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
     rerender: () => renderCurrentLocation({ focusHeading: false }),
   });
   bindScreenTutorial({ root: appRoot, screenName });
+  if (desktopHeaderRoot?.firstElementChild) {
+    bindScreenTutorial({ root: desktopHeaderRoot, screenName });
+  }
 
   window.requestAnimationFrame(() => {
     const requestedFocusSelector = focusSelector || recordInputReturnState?.focusSelector || "";
