@@ -117,6 +117,10 @@ body.run-standalone-open {
   border-radius: var(--radius-small);
 }
 
+.run-launch__device-note {
+  display: none;
+}
+
 .run-launch__privacy {
   margin: 1rem 0 0;
   color: var(--color-muted);
@@ -428,6 +432,46 @@ body.run-standalone-open {
 
 .home-measure-link {
   align-self: center;
+}
+
+@media (min-width: 55rem) {
+  .run-launch__device-note {
+    display: block;
+    margin: 0 0 1rem;
+    padding: 0.75rem 0.9rem;
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-small);
+  }
+
+  .run-launch__choice--app {
+    color: var(--color-on-accent);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .run-launch__choice--app small,
+  .run-launch__choice--app span {
+    color: color-mix(in srgb, var(--color-on-accent) 84%, transparent);
+  }
+
+  .run-launch__choice--measure {
+    color: var(--color-ink);
+    background: var(--color-surface-muted);
+    border-color: var(--color-line);
+  }
+
+  .run-launch__choice--measure small,
+  .run-launch__choice--measure span {
+    color: var(--color-muted);
+  }
+
+  .home-measure-link,
+  .plan-measure-link {
+    display: none !important;
+  }
 }
 
 @media (max-width: 640px) {

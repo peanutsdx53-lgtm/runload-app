@@ -42,6 +42,7 @@ const PRECACHE_URLS = [
   "./styles/run-measurement.css",
   "./ui/pwaUpdateBootstrap.js",
   "./ui/appRouter.js",
+  "./ui/deviceLayout.js",
   "./ui/appSettings.js",
   "./ui/appShell.js",
   "./ui/commonComponents.js",
