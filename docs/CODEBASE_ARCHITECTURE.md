@@ -28,9 +28,12 @@ Shared application-shell and browser presentation responsibilities:
 - interaction binding;
 - PWA/update UI;
 - reusable body-region visuals;
-- browser-only flow/session state.
+- browser-only flow/session state;
+- GPS measurement helpers, local route state, and map rendering that remain separate from scientific calculation logic.
 
 Screen-specific logic should stay in `screens/` unless it is genuinely reused.
+
+GPS measurement runtime responsibilities are documented in `docs/GPS_MEASUREMENT.md`. GPS-derived distance/time and saved route geometry must not be moved into the scientific calculation modules merely for UI convenience.
 
 ### `styles/`
 

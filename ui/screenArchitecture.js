@@ -79,6 +79,14 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     };
   }
 
+  if (screen === "run-route") {
+    return {
+      title: "走行軌跡",
+      backHref: screenHref("result", { recordId }),
+      backLabel: "結果",
+    };
+  }
+
   if (screen === "body-part-detail") {
     return {
       title: "部位詳細",

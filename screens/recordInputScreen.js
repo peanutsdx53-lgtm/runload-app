@@ -4,6 +4,7 @@ import { subjectiveFieldsFromFeedback, subjectiveSummaryFromFields } from "../ui
 import { personalContextSummary } from "../ui/personalContextPresentation.js";
 
 import { formatLocalDate } from "../ui/recordPresentation.js";
+import { peekPendingRunMeasurement } from "../ui/runMeasurementState.js";
 
 import { ROF_J_DESCRIPTOR_MAP } from "../core/secondPillarRofJ.js";
 import { renderEmbeddedPersonalSubflow, renderEmbeddedSubjectiveSubflow } from "../ui/recordEmbeddedSubflows.js";
@@ -156,16 +157,32 @@ export function renderRecordInputScreen({ services, context }) {
   const requestedRecordId = context?.parameters?.get("recordId") || "";
   const requestedPlanId = context?.parameters?.get("planId") || "";
   const startNew = context?.parameters?.get("new") === "1";
+  const measurementRequested = context?.parameters?.get("measurement") === "1";
+  const measurement = measurementRequested ? peekPendingRunMeasurement() : null;
   const selectedPlan = requestedPlanId ? services.storage.plans.findById(requestedPlanId) : null;
   const existingExperience = requestedRecordId
     ? services.workflows.records.loadExperience(requestedRecordId)
     : null;
-  const savedDraft = !existingExperience && !selectedPlan && !startNew ? services.storage.draft.load() : null;
+  const savedDraft = !existingExperience && !selectedPlan && !measurement && !startNew ? services.storage.draft.load() : null;
   const editing = Boolean(existingExperience);
   const plannedSession = selectedPlan?.plannedSession || {};
   const planUsesModelAssumptions = Boolean(plannedSession?.planModelAssumptions?.steps || plannedSession?.planModelAssumptions?.perceivedExertion);
   const draftRecord = savedDraft?.record || {};
-  const record = existingExperience?.record || (selectedPlan ? {
+  const measuredRecord = measurement ? {
+    id: "",
+    date: localToday(),
+    activityType: "run",
+    distanceKm: measurement.distanceKm ?? "",
+    durationMinutes: measurement.durationMinutes ?? "",
+    steps: "",
+    perceivedExertion: null,
+    rpeProvenance: "NOT_REPORTED",
+    runningFormat: plannedSession.runningFormat || "UNKNOWN",
+    stepsProvenance: "UNKNOWN",
+    course: plannedSession.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
+    memo: selectedPlan?.memo || "",
+  } : null;
+  const record = existingExperience?.record || measuredRecord || (selectedPlan ? {
     id: "",
     date: selectedPlan.scheduledDate || localToday(),
     activityType: selectedPlan.planType || "run",
@@ -217,7 +234,7 @@ export function renderRecordInputScreen({ services, context }) {
 
   return `<div class="screen screen--record-input screen-layout screen-layout--record">
     <section class="page-head"><div><p class="eyebrow">RECORD</p><h1>${editing ? "保存した記録を確認・更新" : "今日の記録"}</h1></div></section>
-    ${editing ? `<p class="parity-record-banner">保存済みの${escapeHtml(formatLocalDate(record.date))}の記録を更新します。</p>` : selectedPlan ? `<p class="parity-record-banner">保存した予定から今回の記録へ転記しています。</p>` : savedDraft ? `<p class="parity-record-banner">入力途中の下書きから再開しています。</p>` : ""}
+    ${editing ? `<p class="parity-record-banner">保存済みの${escapeHtml(formatLocalDate(record.date))}の記録を更新します。</p>` : measurement ? `<p class="parity-record-banner">GPS測定結果から距離と時間を転記しています。必要なら保存前に修正できます。</p>` : selectedPlan ? `<p class="parity-record-banner">保存した予定から今回の記録へ転記しています。</p>` : savedDraft ? `<p class="parity-record-banner">入力途中の下書きから再開しています。</p>` : ""}
     <form id="record-input-form" class="record-form" data-editing="${editing ? "true" : "false"}" novalidate>
       <input type="hidden" name="recordId" value="${escapeHtml(effectiveRecordId)}"><input type="hidden" name="planId" value="${escapeHtml(selectedPlan?.id || "")}"><div class="form-messages" data-form-messages tabindex="-1" hidden></div>
       <section class="core-card" data-information-role="fact"><div class="core-heading"><span class="core-stage-icon">1</span><div class="core-title-copy"><p class="stage-label">必須</p><h2>今日の走行</h2></div><span data-record-required-progress>距離・時間</span></div>

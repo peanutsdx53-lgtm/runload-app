@@ -1,4 +1,4 @@
-const DEFAULT_SCREEN = "home";
+const DEFAULT_SCREEN = "start";
 
 function applyAlias(rawScreen, parameters, aliases) {
   const alias = aliases?.[rawScreen];

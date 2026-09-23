@@ -10,6 +10,7 @@ const TOPBAR_CONTEXT_LABELS = Object.freeze({
   "gpx-analysis": "RECORD",
   result: "RESULT",
   "body-part-detail": "RESULT / REGION",
+  "run-route": "RESULT / ROUTE",
   history: "HISTORY",
   "interpretation-room": "RESULT REVIEW",
   simulation: "SIMULATION",
@@ -45,6 +46,7 @@ const PRIMARY_SECTION_BY_SCREEN = Object.freeze({
   "course-editor": "record-input",
   "gpx-analysis": "record-input",
   "body-part-detail": "result",
+  "run-route": "result",
   "interpretation-room": "result",
   simulation: "result",
   plan: "home",
@@ -174,6 +176,15 @@ function renderImmersiveHeader(currentScreen, currentLocation) {
 }
 
 export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {} }) {
+  const standalone = ["start", "run-measurement"].includes(currentScreen);
+  if (standalone) {
+    return `
+      <div class="app-shell app-shell--standalone">
+        <main id="main-content" class="app-main" tabindex="-1">
+          ${screenContent}
+        </main>
+      </div>`;
+  }
   const immersive = currentScreen === "interpretation-room";
   if (immersive) {
     return `

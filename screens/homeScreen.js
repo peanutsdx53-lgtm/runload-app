@@ -130,7 +130,7 @@ export function renderHomeScreen({ services }) {
   const draft = services.storage.draft.load();
   const state = homeState(latestExperience, draft);
   return `<div class="screen screen--home screen-layout screen-layout--home home-state--${escapeHtml(state)}" data-home-state="${escapeHtml(state)}">
-    <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div></section>
+    <section class="page-head"><div><p class="eyebrow">TODAY</p><h1>今日の入口</h1><p>前回自分で残した1点を持ち越し、今日の記録へつなげます。</p></div><a class="home-measure-link" href="#/run-measurement">GPS測定</a></section>
     ${renderMobileFocus(latestExperience, draft)}
     ${renderPcFocus(latestExperience, draft)}
     <section class="section"><div class="section-head"><div><small>CURRENT STATE</small><h2>最近の記録と次の予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>

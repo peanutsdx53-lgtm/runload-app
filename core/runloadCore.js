@@ -120,6 +120,7 @@ const STORAGE_KEYS = Object.freeze({
   settings: `${STORAGE_NAMESPACE}-settings-v1`,
   draft: `${STORAGE_NAMESPACE}-draft-v1`,
   courses: `${STORAGE_NAMESPACE}-courses-v1`,
+  runMeasurements: `${STORAGE_NAMESPACE}-run-measurements-v1`,
   backups: `${STORAGE_NAMESPACE}-backup-v1`,
   corruptStorageBackup: `${STORAGE_NAMESPACE}-corrupt-storage-backup-v1`,
   historyUndo: `${STORAGE_NAMESPACE}-history-undo-v1`,
@@ -137,6 +138,7 @@ const USER_DATA_STORAGE_KEYS = Object.freeze([
   STORAGE_KEYS.settings,
   STORAGE_KEYS.draft,
   STORAGE_KEYS.courses,
+  STORAGE_KEYS.runMeasurements,
   STORAGE_KEYS.secondPillarRofJ,
   STORAGE_KEYS.secondPillarRofJLifecycle,
 ]);
@@ -8028,6 +8030,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   const settings = collection(snapshot, STORAGE_KEYS.settings, null);
   const draft = collection(snapshot, STORAGE_KEYS.draft, null);
   const courses = collection(snapshot, STORAGE_KEYS.courses, []);
+  const runMeasurements = collection(snapshot, STORAGE_KEYS.runMeasurements, []);
   const secondPillarRofJ = collection(snapshot, STORAGE_KEYS.secondPillarRofJ, null);
   const secondPillarRofJLifecycle = collection(snapshot, STORAGE_KEYS.secondPillarRofJLifecycle, null);
 
@@ -8094,6 +8097,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
     [feedback, "subjectiveFeedback", "本人入力"],
     [plans, "plans", "予定"],
     [courses, "courses", "保存したコース"],
+    [runMeasurements, "runMeasurements", "GPS走行軌跡"],
   ];
   expectedArrays.forEach(([value, area, label]) => {
     if (!Array.isArray(value)) issues.push(issue("BLOCKING", "COLLECTION_SHAPE_INVALID", area, `${label}が一覧形式ではありません。`));
@@ -8108,6 +8112,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   const feedbackWithinLimit = withinCollectionLimit(feedback, INPUT_LIMITS.portableFeedbackEntries, "subjectiveFeedback", "本人入力", issues);
   const plansWithinLimit = withinCollectionLimit(plans, INPUT_LIMITS.portablePlans, "plans", "予定", issues);
   const coursesWithinLimit = withinCollectionLimit(courses, INPUT_LIMITS.portableCourses, "courses", "保存したコース", issues);
+  const measurementsWithinLimit = withinCollectionLimit(runMeasurements, INPUT_LIMITS.portableRecords, "runMeasurements", "GPS走行軌跡", issues);
 
   if (recordsWithinLimit) inspectRecords(records, issues);
   const recordIds = new Set(recordsWithinLimit ? records.map((item) => String(item?.id || "")).filter(Boolean) : []);
@@ -8116,6 +8121,37 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   if (feedbackWithinLimit) inspectFeedback(feedback, recordIds, issues);
   if (plansWithinLimit) inspectPlans(plans, recordIds, issues);
   if (coursesWithinLimit) inspectCourses(courses, issues);
+  if (measurementsWithinLimit) {
+    runMeasurements.forEach((measurement, index) => {
+      const itemId = String(measurement?.recordId || measurement?.id || index);
+      const measurementRecordId = String(measurement?.recordId || "");
+      if (!isObject(measurement) || !measurementRecordId) {
+        issues.push(issue("BLOCKING", "RUN_MEASUREMENT_INVALID", "runMeasurements", "GPS走行軌跡の記録IDを確認できません。", itemId));
+        return;
+      }
+      if (!recordIds.has(measurementRecordId)) {
+        issues.push(issue("BLOCKING", "RUN_MEASUREMENT_RECORD_MISSING", "runMeasurements", "GPS走行軌跡に対応する走行記録がありません。", itemId));
+      }
+      const track = measurement.track;
+      if (!Array.isArray(track) || track.length < 2 || track.length > 2000) {
+        issues.push(issue("BLOCKING", "RUN_MEASUREMENT_TRACK_INVALID", "runMeasurements", "GPS走行軌跡の地点数を確認できません。", itemId));
+        return;
+      }
+      const invalidPoint = track.some((point) => (
+        !isObject(point)
+        || !Number.isFinite(Number(point.lat))
+        || Number(point.lat) < -90
+        || Number(point.lat) > 90
+        || !Number.isFinite(Number(point.lon))
+        || Number(point.lon) < -180
+        || Number(point.lon) > 180
+        || !Number.isFinite(Number(point.timestamp))
+      ));
+      if (invalidPoint) {
+        issues.push(issue("BLOCKING", "RUN_MEASUREMENT_POINT_INVALID", "runMeasurements", "GPS走行軌跡に読み取れない地点があります。", itemId));
+      }
+    });
+  }
 
   if (profile != null) {
     const version = Number(profile.schemaVersion || 0);
@@ -8141,6 +8177,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
     regionalResults: Array.isArray(regionalResults) ? regionalResults.length : 0,
     plans: Array.isArray(plans) ? plans.length : 0,
     courses: Array.isArray(courses) ? courses.length : 0,
+    runMeasurements: Array.isArray(runMeasurements) ? runMeasurements.length : 0,
     profile: profile == null ? 0 : 1,
     settings: settings == null ? 0 : 1,
     draft: draft == null ? 0 : 1,
@@ -9533,8 +9570,14 @@ function createHistoryWorkflow({
     const plans = plansRead.items;
     const affectedPlans = plans.filter((plan) => plan.sourceRecordId === recordId || plan.actualRecordId === recordId);
     const nextPlans = plans.map((plan) => removeRecordReferencesFromPlan(plan, recordId));
+    const runMeasurementsRead = gateway.readJsonResult(STORAGE_KEYS.runMeasurements, []);
+    if (!runMeasurementsRead.ok || !Array.isArray(runMeasurementsRead.value)) {
+      return { ...(runMeasurementsRead || {}), ok: false, code: "HISTORY_SOURCE_READ_FAILED", sourceName: "runMeasurements" };
+    }
+    const runMeasurements = runMeasurementsRead.value;
+    const removedRunMeasurement = cloneValue(runMeasurements.find((item) => item?.recordId === recordId) || null);
     const undoEntry = {
-      version: 5,
+      version: 6,
       deletedAt: new Date().toISOString(),
       record,
       feedback: removedFeedback,
@@ -9542,6 +9585,7 @@ function createHistoryWorkflow({
       modelResultsRegionalV2: removedRegionalV2Results,
       secondPillarRofJ: removedSecondPillarRofJ,
       secondPillarLifecycle: removedSecondPillarLifecycle,
+      runMeasurement: removedRunMeasurement,
       affectedPlans,
     };
     const operations = [
@@ -9550,6 +9594,7 @@ function createHistoryWorkflow({
       { key: STORAGE_KEYS.modelResultsV27, value: modelResultItems.filter((item) => item.record_id !== recordId) },
       { key: STORAGE_KEYS.modelResultsRegionalV2, value: regionalV2Items.filter((item) => item.record_id !== recordId) },
       { key: STORAGE_KEYS.plans, value: nextPlans },
+      { key: STORAGE_KEYS.runMeasurements, value: runMeasurements.filter((item) => item?.recordId !== recordId) },
       { key: STORAGE_KEYS.historyUndo, value: undoEntry },
     ];
     if (secondPillarRofJRepository) operations.push({
@@ -9638,12 +9683,20 @@ function createHistoryWorkflow({
         : plan
     )).filter(Boolean);
 
+    const runMeasurementsRead = gateway.readJsonResult(STORAGE_KEYS.runMeasurements, []);
+    if (!runMeasurementsRead.ok || !Array.isArray(runMeasurementsRead.value)) {
+      return { ...(runMeasurementsRead || {}), ok: false, code: "HISTORY_SOURCE_READ_FAILED", sourceName: "runMeasurements" };
+    }
+    const nextRunMeasurements = runMeasurementsRead.value.filter((item) => item?.recordId !== recordId);
+    if (entry.runMeasurement) nextRunMeasurements.push(cloneValue(entry.runMeasurement));
+
     const operations = [
       { key: STORAGE_KEYS.records, value: records },
       { key: STORAGE_KEYS.subjectiveFeedback, value: feedbackItems },
       { key: STORAGE_KEYS.modelResultsV27, value: modelResultItems },
       { key: STORAGE_KEYS.modelResultsRegionalV2, value: regionalV2Items },
       { key: STORAGE_KEYS.plans, value: nextPlans },
+      { key: STORAGE_KEYS.runMeasurements, value: nextRunMeasurements },
       { key: STORAGE_KEYS.historyUndo, remove: true },
     ];
     if (secondPillarRofJRepository && Object.prototype.hasOwnProperty.call(entry, "secondPillarRofJ")) operations.push({
@@ -12524,7 +12577,7 @@ __mods[59] = __exp;
 const __exp = Object.create(null);
 const { CURRENT_APP_REMOVABLE_STORAGE_KEYS, INTERNAL_RECOVERY_STORAGE_KEYS, STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = __mods[1];
 
-const PRIVACY_OVERVIEW_VERSION = "runload-privacy-overview-v1";
+const PRIVACY_OVERVIEW_VERSION = "runload-privacy-overview-v2";
 
 const STORAGE_GROUPS = Object.freeze([
   Object.freeze({
@@ -12556,6 +12609,12 @@ const STORAGE_GROUPS = Object.freeze([
     description: "表示設定、任意プロフィール、保存シューズ、保存コースを次回の入力や表示に使うため保存します。変更しても過去記録に保存された内容は自動更新しません。",
   }),
   Object.freeze({
+    id: "run-measurements",
+    label: "GPS走行軌跡",
+    keys: Object.freeze([STORAGE_KEYS.runMeasurements]),
+    description: "GPS測定で保存を選んだ走行軌跡を、関連する記録IDとともに端末内へ保存します。",
+  }),
+  Object.freeze({
     id: "draft",
     label: "入力途中の下書き",
     keys: Object.freeze([STORAGE_KEYS.draft]),
@@ -12583,6 +12642,7 @@ function groupStatus(services, group) {
   if (group.id === "records-results") return `${countArray(values[STORAGE_KEYS.records])}件の記録`;
   if (group.id === "person-input") return `${countArray(values[STORAGE_KEYS.subjectiveFeedback])}件`;
   if (group.id === "plans") return `予定${countArray(values[STORAGE_KEYS.plans])}件`;
+  if (group.id === "run-measurements") return `GPS軌跡${countArray(values[STORAGE_KEYS.runMeasurements])}件`;
   if (group.id === "reusable-settings") {
     const profileCount = countProfileFields(values[STORAGE_KEYS.profile]);
     const courses = countArray(values[STORAGE_KEYS.courses]);
@@ -12600,6 +12660,16 @@ function buildPrivacyOverview(services) {
     version: PRIVACY_OVERVIEW_VERSION,
     storageMode: "DEVICE_LOCAL_BROWSER_STORAGE",
     automaticExternalTransfer: false,
+    automaticExternalTransferScope: "SAVED_RUNLOAD_DATA",
+    externalNetworkUses: Object.freeze([
+      Object.freeze({
+        id: "openstreetmap-standard-tiles",
+        trigger: "MAP_DISPLAYED",
+        purpose: "MAP_TILE_DISPLAY",
+        savedRunloadDataUploaded: false,
+        displayedAreaMayBeDisclosedByTileRequests: true,
+      }),
+    ]),
     storageGroups: Object.freeze(storageGroups),
     backup: Object.freeze({
       format: "JSON_PLAIN_TEXT",
