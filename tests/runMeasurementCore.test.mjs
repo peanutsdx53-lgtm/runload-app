@@ -11,7 +11,7 @@ import {
 } from '../ui/runMeasurementCore.js';
 
 const results=[];
-async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}
+async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 
 await test('GPS-HAVERSINE-KNOWN-DISTANCE',()=>{
   const distance=haversineDistanceMeters({lat:0,lon:0},{lat:0,lon:1});
