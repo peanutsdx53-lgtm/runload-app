@@ -34,8 +34,8 @@ function normalizedPeriod(value) {
   return [7, 28, 90, 180].includes(Number(value)) ? Number(value) : 28;
 }
 
-function normalizedView(value) {
-  return value === "trends" ? "trends" : "records";
+function normalizedView() {
+  return "records";
 }
 
 function normalizedMetric(value) {
