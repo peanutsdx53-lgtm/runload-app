@@ -32,6 +32,17 @@ body.run-standalone-open {
   box-shadow: var(--shadow-card);
 }
 
+.run-launch__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.run-launch__top .eyebrow {
+  margin: 0;
+}
+
 .run-launch__panel h1 {
   margin: 0.35rem 0 0.5rem;
   font-size: clamp(1.8rem, 7vw, 2.75rem);
@@ -147,6 +158,10 @@ body.run-standalone-open {
 
 .run-measurement__header strong {
   font-size: 0.95rem;
+}
+
+.context-help-button--measurement {
+  justify-self: end;
 }
 
 .run-measurement__back {
