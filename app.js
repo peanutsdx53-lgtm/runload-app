@@ -10,7 +10,7 @@ import { bindScreenInteractions } from "./ui/screenInteractions.js";
 import { prepareUiMotion } from "./ui/uiMotion.js";
 import { bindScreenTutorial } from "./ui/screenTutorial.js";
 import { handleRecordInputRouteChange, resolveRecordInputReturnState } from "./ui/recordInputWorkspace.js";
-import { renderHomeScreen } from "./screens/homeScreen.js";
+import { renderStartScreen } from "./screens/startScreen.js";\nimport { renderHomeScreen } from "./screens/homeScreen.js";\nimport { renderRunMeasurementScreen } from "./screens/runMeasurementScreen.js";
 import { renderRecordInputScreen } from "./screens/recordInputScreen.js";
 import { renderCourseLibraryScreen } from "./screens/courseLibraryScreen.js";
 import { renderCourseEditorScreen } from "./screens/courseEditorScreen.js";
@@ -72,7 +72,7 @@ const applicationServices = Object.freeze({
 });
 const initialSettings = applicationServices.storage.settings.load();
 applyJournalSettings(initialSettings);
-let currentLocation = Object.freeze({ screen: "home", parameters: new URLSearchParams() });
+let currentLocation = Object.freeze({ screen: "start", parameters: new URLSearchParams() });
 let guideOpen = shouldOpenGuide(initialSettings);
 let guideSection = DEFAULT_GUIDE_SECTION;
 let guideFirstVisit = guideOpen;
@@ -86,7 +86,7 @@ function saveGuideVersionSeen() {
 function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {}) {
   applyJournalSettings(applicationServices.storage.settings.load());
   const screenName = currentLocation.screen;
-  document.body.classList.toggle("course-derived-open", ["course-library", "course-editor", "gpx-analysis"].includes(screenName));
+  document.body.classList.toggle("course-derived-open", ["course-library", "course-editor", "gpx-analysis"].includes(screenName));\n  document.body.classList.toggle("run-standalone-open", ["start", "run-measurement"].includes(screenName));
   document.body.classList.toggle("secondary-derived-open", ["plan", "consultation", "support-guidance", "reading", "privacy", "settings"].includes(screenName));
   const recordInputReturnState = screenName === "record-input"
     ? resolveRecordInputReturnState(currentLocation)
