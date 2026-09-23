@@ -4879,3 +4879,8 @@ and minimal personal note */
 .course-library-pc-only {
   display: none;
 }
+
+/* History PC-only labels stay hidden outside the desktop layout. */
+.history-records-title-pc {
+  display: none;
+}
