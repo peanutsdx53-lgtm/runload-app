@@ -1,5 +1,5 @@
 
-import { PRIMARY_REGIONAL_V2_REGION_DEFS, bodyRegionFormalName, bodyAreaLateralityLabel, PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } from "../core/runloadCore.js";
+import { PRIMARY_REGIONAL_V2_REGION_DEFS, bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } from "../core/runloadCore.js";
 
 import { escapeHtml } from "../ui/commonComponents.js";
 import { addDaysIso, localTodayIso, parseIsoDate } from "../ui/historyPresentation.js";
@@ -210,31 +210,6 @@ function searchText(item) {
   ].filter(Boolean).join(" ").toLocaleLowerCase("ja-JP");
 }
 
-function chartGeometry(items) {
-  const reference100 = Boolean(items[0]?.isReference100);
-  const values = items.flatMap((item) => [Number(item.conditionIndexExact), ...(reference100 && finite(item.referenceValue) ? [Number(item.referenceValue)] : [])]).filter(Number.isFinite);
-  if (!reference100) values.push(100);
-  const rawMin = Math.min(...values);
-  const rawMax = Math.max(...values);
-  const padding = Math.max(2, (rawMax - rawMin) * 0.16);
-  const minValue = rawMin - padding;
-  const maxValue = rawMax + padding;
-  const span = Math.max(1, maxValue - minValue);
-  const projectY = (value) => 44 - ((Number(value) - minValue) / span) * 32;
-  return Object.freeze({
-    points: Object.freeze(items.map((item, index) => Object.freeze({
-      ...item,
-      x: items.length === 1 ? 54 : 12 + (index * 82) / (items.length - 1),
-      y: projectY(item.conditionIndexExact),
-      referenceY: reference100 && finite(item.referenceValue) ? projectY(item.referenceValue) : null,
-    }))),
-    referenceY: reference100 ? null : projectY(100),
-    minValue,
-    maxValue,
-    reference100,
-  });
-}
-
 function chartLabelIndices(length) {
   if (length <= 8) return new Set(Array.from({ length }, (_, index) => index));
   const step = Math.ceil((length - 1) / 6);
@@ -297,13 +272,6 @@ function weekendClass(value = "") {
   return "";
 }
 
-function trendDirectionLabel(delta) {
-  if (!Number.isFinite(Number(delta)) || Math.abs(Number(delta)) < 0.5) return Object.freeze({ arrow: "—", label: "基準と同程度", className: "is-near" });
-  return Number(delta) > 0
-    ? Object.freeze({ arrow: "↑", label: "基準より上", className: "is-above" })
-    : Object.freeze({ arrow: "↓", label: "基準より下", className: "is-below" });
-}
-
 function trendSelectionHref(workspace, item) {
   return buildHref({
     view: "trends",
@@ -314,58 +282,6 @@ function trendSelectionHref(workspace, item) {
     display: workspace.regionalDisplay,
     recordId: item.experience.record.id,
   });
-}
-
-function renderReferenceRatioTrendChart(items, regionName, workspace) {
-  if (!items.length) return '<p class="muted-text">比較できる記録が不足しています。</p>';
-  const geometry = referenceRatioGeometry(items);
-  const polyline = geometry.points.map((point) => `${point.x},${point.y}`).join(" ");
-  const labelIndices = chartLabelIndices(geometry.points.length);
-  const selectedId = workspace.anchor?.experience?.record?.id || items.at(-1)?.experience?.record?.id || "";
-  const gridLines = geometry.ticks.map((tick) => `<line x1="7" y1="${tick.y}" x2="97" y2="${tick.y}" class="regional-history-chart__grid${tick.value === 100 ? " is-reference" : ""}"></line><text x="5.6" y="${tick.y + 0.75}" text-anchor="end" class="regional-history-chart__tick-label${tick.value === 100 ? " is-reference" : ""}">${escapeHtml(formatNumber(tick.value, 0))}%</text>`).join("");
-  const valueLabels = geometry.points.map((point, index) => labelIndices.has(index)
-    ? `<text x="${point.x}" y="${Math.max(6.4, point.y - 2.6)}" text-anchor="middle" class="regional-history-chart__value-label">${escapeHtml(formatNumber(point.ratioPercent, 0))}%</text>`
-    : "").join("");
-  const dateLabels = geometry.points.map((point, index) => {
-    if (!labelIndices.has(index)) return "";
-    const isCurrent = point.experience.record.id === selectedId;
-    const weekday = weekdayLabel(point.experience.record.date);
-    return `<text x="${point.x}" y="48.7" text-anchor="middle" class="regional-history-chart__date-label${weekendClass(point.experience.record.date)}${isCurrent ? " is-current" : ""}"><tspan x="${point.x}" dy="0">${escapeHtml(shortDateLabel(point.experience.record.date))}</tspan><tspan x="${point.x}" dy="2.7">(${escapeHtml(weekday)})</tspan></text>`;
-  }).join("");
-  const hiddenReferences = geometry.points.map((point) => `<span>${escapeHtml(formatNumber(point.referenceValue, 0))}</span>`).join("");
-  const pointLinks = geometry.points.map((point) => {
-    const selected = point.experience.record.id === selectedId;
-    const delta = Number(point.ratioPercent) - 100;
-    const halo = selected ? `<circle cx="${point.x}" cy="${point.y}" r="1.9" class="regional-history-chart__point-halo"></circle>` : "";
-    return `<a href="${escapeHtml(trendSelectionHref(workspace, point))}" aria-label="${escapeHtml(`${formatLocalDate(point.experience.record.date)}、基準との比率${formatNumber(point.ratioPercent, 0)}%、基準との差${delta >= 0 ? "+" : ""}${formatNumber(delta, 0)}%`)}">${halo}<circle cx="${point.x}" cy="${point.y}" r="${selected ? 1.2 : 0.82}" class="regional-history-chart__point${selected ? " is-current" : ""}"><title>${escapeHtml(`${formatLocalDate(point.experience.record.date)} ${formatNumber(point.ratioPercent, 0)}%`)}</title></circle></a>`;
-  }).join("");
-  return `<figure class="regional-history-chart regional-history-chart--ratio" data-regional-history="true"><div class="regional-history-chart__meaning"><strong>その部位の基準との比率の推移</strong><span>基準線：その部位の基準（100）</span></div><svg viewBox="0 0 100 56" role="img" aria-label="${escapeHtml(regionName)}の部位の目安の推移">${gridLines}<g class="regional-history-chart__zone"><rect x="8.1" y="9.2" width="13.8" height="4.2" rx="1.3"></rect><text x="15" y="12" text-anchor="middle">基準より上</text></g><g class="regional-history-chart__zone"><rect x="8.1" y="38.4" width="13.8" height="4.2" rx="1.3"></rect><text x="15" y="41.2" text-anchor="middle">基準より下</text></g>${geometry.points.length > 1 ? `<polyline points="${polyline}" class="regional-history-chart__line"></polyline>` : ""}${valueLabels}${pointLinks}${dateLabels}</svg><figcaption class="regional-history-chart__axis regional-history-chart__axis--ratio"><span>古い記録</span><strong>横軸：記録日</strong><span>新しい記録</span></figcaption><div class="visually-hidden">基準からの差${hiddenReferences}</div></figure>`;
-}
-
-function renderReferenceDifferenceTrendChart(items, regionName, workspace) {
-  if (!items.length) return '<p class="muted-text">比較できる記録が不足しています。</p>';
-  const rows = items.map((item) => ({ ...item, difference: referenceRatioPercent(item) - 100 }));
-  const maxAbs = Math.max(5, ...rows.map((item) => Math.abs(item.difference)));
-  const limit = Math.ceil(maxAbs / 5) * 5;
-  const projectY = (value) => 26 - (Number(value) / limit) * 17;
-  const selectedId = workspace.anchor?.experience?.record?.id || rows.at(-1)?.experience?.record?.id || "";
-  const labelIndices = chartLabelIndices(rows.length);
-  const points = rows.map((item, index) => ({ ...item, x: rows.length === 1 ? 54 : 11 + (index * 84) / (rows.length - 1), y: projectY(item.difference) }));
-  const polyline = points.map((point) => `${point.x},${point.y}`).join(" ");
-  const dateLabels = points.map((point, index) => {
-    if (!labelIndices.has(index)) return "";
-    return `<text x="${point.x}" y="48.7" text-anchor="middle" class="regional-history-chart__date-label${weekendClass(point.experience.record.date)}${point.experience.record.id === selectedId ? " is-current" : ""}"><tspan x="${point.x}" dy="0">${escapeHtml(shortDateLabel(point.experience.record.date))}</tspan><tspan x="${point.x}" dy="2.7">(${escapeHtml(weekdayLabel(point.experience.record.date))})</tspan></text>`;
-  }).join("");
-  const valueLabels = points.map((point, index) => labelIndices.has(index) ? `<text x="${point.x}" y="${Math.max(6.5, point.y - 2.4)}" text-anchor="middle" class="regional-history-chart__value-label">${point.difference >= 0 ? "+" : ""}${escapeHtml(formatNumber(point.difference, 0))}</text>` : "").join("");
-  const pointLinks = points.map((point) => `<a href="${escapeHtml(trendSelectionHref(workspace, point))}" aria-label="${escapeHtml(`${formatLocalDate(point.experience.record.date)}、基準からの差${point.difference >= 0 ? "+" : ""}${formatNumber(point.difference, 0)}ポイント`)}"><circle cx="${point.x}" cy="${point.y}" r="${point.experience.record.id === selectedId ? 1.2 : .82}" class="regional-history-chart__point${point.experience.record.id === selectedId ? " is-current" : ""}"></circle></a>`).join("");
-  return `<figure class="regional-history-chart regional-history-chart--difference" data-regional-history="true"><div class="regional-history-chart__meaning"><strong>その部位の基準からの差</strong><span>0はその部位の基準と同じ位置です。</span></div><svg viewBox="0 0 100 56" role="img" aria-label="${escapeHtml(regionName)}の基準からの差"><line x1="7" y1="26" x2="97" y2="26" class="regional-history-chart__grid is-reference"></line><text x="5.6" y="26.75" text-anchor="end" class="regional-history-chart__tick-label is-reference">0</text>${points.length > 1 ? `<polyline points="${polyline}" class="regional-history-chart__line"></polyline>` : ""}${valueLabels}${pointLinks}${dateLabels}</svg><figcaption class="regional-history-chart__axis regional-history-chart__axis--ratio"><span>古い記録</span><strong>横軸：記録日　／　縦軸：基準からの差（ポイント）</strong><span>新しい記録</span></figcaption></figure>`;
-}
-
-function routeFamilyLabel(signature = null) {
-  const tier = String(signature?.auditSupportTier || "");
-  if (tier === "PROVISIONAL_AUTHORIZED") return "参考として計算";
-  if (tier === "FORMAL_DIRECT_IN_DOMAIN") return "確認できる範囲";
-  return "同じ意味の目安";
 }
 
 function formatPacePerKm(record = {}) {
@@ -435,39 +351,11 @@ function primarySurfaceLabel(record = {}) {
   return best?.value > 0 ? best.label : (course.name || "—");
 }
 
-function formatDuration(record = {}) {
-  const minutes = Number(record.durationMinutes);
-  if (!(minutes > 0)) return "—";
-  const totalSeconds = Math.round(minutes * 60);
-  const mm = Math.floor(totalSeconds / 60);
-  const ss = totalSeconds % 60;
-  return `${mm}:${String(ss).padStart(2, "0")}`;
-}
-
 function previousComparableItem(items, selected) {
   if (!selected) return null;
   const sorted = [...items].sort((left, right) => recordChronology(left.experience, right.experience));
   const index = sorted.findIndex((item) => item.experience.record.id === selected.experience.record.id);
   return index > 0 ? sorted[index - 1] : null;
-}
-
-function conditionDifferenceRows(selected, previous) {
-  if (!selected || !previous) return [];
-  const currentRecord = selected.experience.record;
-  const previousRecord = previous.experience.record;
-  return [
-    ["平均ペース", formatPacePerKm(previousRecord), formatPacePerKm(currentRecord)],
-    ["平均の坂の傾き", formatAverageGrade(previousRecord), formatAverageGrade(currentRecord)],
-    ["主な路面", primarySurfaceLabel(previousRecord), primarySurfaceLabel(currentRecord)],
-  ];
-}
-
-function renderFocusedPeriodTabs(workspace) {
-  return `<div class="history-focused-period"><strong>期間</strong><nav aria-label="表示期間">${[7, 28, 90, 180].map((period) => `<a class="${workspace.period === period ? "is-current" : ""}" href="${escapeHtml(buildHref({ view: "trends", metric: "region", period, anchorDate: workspace.endDate, regionId: workspace.regionId, display: workspace.regionalDisplay }))}"${workspace.period === period ? ' aria-current="page"' : ""}>${period}日</a>`).join("")}</nav></div>`;
-}
-
-function renderFocusedRegionPicker(workspace) {
-  return `<details class="history-focused-region-picker"><summary>部位を変更</summary><form id="regional-history-form"><input type="hidden" name="view" value="trends"><input type="hidden" name="metric" value="region"><input type="hidden" name="period" value="${workspace.period}"><input type="hidden" name="anchorDate" value="${escapeHtml(workspace.endDate)}"><label class="field"><span>表示する部位</span><select name="regionId">${REGIONS.map((region) => `<option value="${escapeHtml(region.id)}"${workspace.regionId === region.id ? " selected" : ""}>${escapeHtml(bodyRegionFormalName(region.id, region.name))}</option>`).join("")}</select></label><button class="button button--primary" type="submit">表示する</button></form></details>`;
 }
 
 function regionLocatorSvg(regionId) {
