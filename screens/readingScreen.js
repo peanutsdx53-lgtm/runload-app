@@ -1,16 +1,9 @@
-import { escapeHtml, renderStatusLabel } from "../ui/commonComponents.js";
+import { escapeHtml } from "../ui/commonComponents.js";
 import { V27_EMPHASIS_REGION_IDS, V27_REGIONS, BODY_AREA_BY_ID } from "../core/runloadCore.js";
-
-import { formatActivitySummary } from "../ui/recordPresentation.js";
 
 const REGION_BY_ID = new Map(V27_REGIONS.map((region) => [region.id, region]));
 const DEFERRED_READING_ARTICLE_IDS = new Set(["rpe-separated", "model-total-v27"]);
 const visibleArticles = (articles = []) => articles.filter((article) => !DEFERRED_READING_ARTICLE_IDS.has(article?.id));
-
-function articleHref(articleId, origin = "") {
-  const query = new URLSearchParams({ articleId, ...(origin ? { origin } : {}) }).toString();
-  return `#/reading?${query}`;
-}
 
 function numberValue(value, fallback = 0) {
   const number = Number(value);
