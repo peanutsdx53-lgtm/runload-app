@@ -141,9 +141,11 @@ function renderSummary(output) {
   const fatigueCopy = subjective?.difference?.eligible
     ? `本人が記録した疲労感は ${number(subjective.pre?.value, 0)} → ${number(subjective.post?.value, 0)}（差 ${signed(subjective.difference.value, 0)}）です。`
     : "走る前後の疲労感は、前後差としてそろっていません。";
-  const conditionCopy = conditionCount
-    ? `前回から変わった走行条件は${conditionCount}項目です。`
-    : "前回と比較できる走行条件に大きな変更項目はありません。";
+  const conditionCopy = !output?.conditions?.previousRecordId
+    ? "走行条件を比較できる前回記録はまだありません。"
+    : conditionCount
+      ? `前回から変わった走行条件は${conditionCount}項目です。`
+      : "前回と比較できる走行条件に変更項目はありません。";
 
   return `<section class="interpretation-room-summary" aria-labelledby="interpretation-summary-title">
     <div class="interpretation-room-kicker">RUNLOAD INTERPRETATION</div>
@@ -329,9 +331,14 @@ function renderSubjective(output) {
   const pre = context.pre || {};
   const post = context.post || {};
   const pair = context.difference?.eligible;
+  const preCard = pre.available ? `<div><small>走る前</small><strong>${escapeHtml(number(pre.value,0))}<em>/10</em></strong><span>${escapeHtml(rofMeaningText(pre))}</span></div>` : "";
+  const postCard = post.available ? `<div><small>走った後</small><strong>${escapeHtml(number(post.value,0))}<em>/10</em></strong><span>${escapeHtml(rofMeaningText(post))}</span></div>` : "";
+  const body = pair
+    ? `${preCard}<i aria-hidden="true">→</i>${postCard}<aside><small>前後差</small><strong>${escapeHtml(signed(context.difference.value,0))}</strong></aside>`
+    : `${preCard}${postCard}<aside><small>前後差</small><strong>—</strong><span>前後がそろっていないため差は出しません</span></aside>`;
   return `<section class="interpretation-room-subjective" aria-labelledby="interpretation-subjective-title">
     <div class="interpretation-room-section-title"><div><small>本人の記録</small><h2 id="interpretation-subjective-title">走る前後の疲労感</h2></div><p>12部位の数値とは別の主観情報として確認します。</p></div>
-    <div class="interpretation-room-fatigue">${pre.available ? `<div><small>走る前</small><strong>${escapeHtml(number(pre.value,0))}<em>/10</em></strong><span>${escapeHtml(rofMeaningText(pre))}</span></div>` : ""}<i aria-hidden="true">→</i>${post.available ? `<div><small>走った後</small><strong>${escapeHtml(number(post.value,0))}<em>/10</em></strong><span>${escapeHtml(rofMeaningText(post))}</span></div>` : ""}<aside><small>前後差</small><strong>${pair ? escapeHtml(signed(context.difference.value,0)) : "—"}</strong></aside></div>
+    <div class="interpretation-room-fatigue${pair ? "" : " is-partial"}">${body}</div>
     <p class="interpretation-room-boundary-line">疲労感と部位別の数値を足し合わせたり、どちらかを原因として扱いません。</p>
   </section>`;
 }
@@ -412,7 +419,7 @@ function renderNext(output) {
   const checkCopy = NEXT_CHECK_COPY[check.code] || NEXT_CHECK_COPY.CONTINUE_COMPARABLE_RECORDS;
   return `<section class="interpretation-room-next" aria-labelledby="interpretation-next-title">
     <div class="interpretation-room-section-title"><div><small>自己理解を次へつなぐ</small><h2 id="interpretation-next-title">次に確かめる</h2></div></div>
-    <div class="interpretation-room-next-check"><strong>次に確認すると理解が進むこと</strong><p>${escapeHtml(checkCopy)}</p></div>
+    <div class="interpretation-room-next-check"><strong>次に確認すると理解が進むこと</strong><p>${escapeHtml(checkCopy)}</p>${check.userRecorded ? `<aside><small>自分で残した次回確認</small><span>${escapeHtml(check.userRecorded)}</span></aside>` : ""}</div>
     ${renderAction(primary, output, { primary: true })}
     ${others.length ? `<details class="interpretation-room-other-actions"><summary>ほかにできること</summary><div class="interpretation-room-secondary-actions">${others.map((action) => renderAction(action, output)).join("")}</div></details>` : ""}
   </section>`;
