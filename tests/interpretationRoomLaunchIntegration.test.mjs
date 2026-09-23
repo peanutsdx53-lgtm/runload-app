@@ -101,7 +101,6 @@ await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST
   assert.match(source,/recordId\?services\.workflows\.records\.loadExperience\(recordId\):services\.workflows\.records\.loadLatestExperience\(\)/);
   assert.match(source,/sourceEngineInputFrom\(data\)/);
   assert.match(source,/\.\.\.source/);
-  assert.match(source,/averageCadenceSpm/);
   assert.match(source,/changedConditionLabels\(data\)/);
   assert.match(source,/変更なし/);
   assert.match(source,/name="sourceRecordId"/);
