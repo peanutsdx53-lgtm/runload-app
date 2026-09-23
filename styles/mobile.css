@@ -3600,3 +3600,122 @@ html.consult-viewer-open{overflow:hidden}
     animation: none;
   }
 }
+
+
+/* Interpretation-derived simulation readability audit 2026-09-23 */
+.screen-layout--simulation .back-link,
+.screen-layout--simulation .eyebrow,
+.screen-layout--simulation .carry-card small,
+.screen-layout--simulation .panel-head small,
+.screen-layout--simulation .preview-head small,
+.screen-layout--simulation .panel-head > span,
+.screen-layout--simulation .pace-control > span,
+.screen-layout--simulation .distance-control > span,
+.screen-layout--simulation .field > span,
+.screen-layout--simulation .custom-grade span,
+.screen-layout--simulation .runwalk-grid span,
+.screen-layout--simulation .details summary small,
+.screen-layout--simulation .runwalk-grid p,
+.screen-layout--simulation .context-note,
+.screen-layout--simulation .input-warning,
+.screen-layout--simulation .calc-state,
+.screen-layout--simulation .assumption-chips span,
+.screen-layout--simulation .semantic-note span,
+.screen-layout--simulation .direction-legend,
+.screen-layout--simulation .body-view figcaption,
+.screen-layout--simulation .map-note,
+.screen-layout--simulation .region-panel-head small,
+.screen-layout--simulation .region-row small,
+.screen-layout--simulation .region-value span,
+.screen-layout--simulation .rof-boundary > span,
+.screen-layout--simulation .rof-boundary p,
+.screen-layout--simulation .condition-snapshot small,
+.screen-layout--simulation .condition-snapshot span,
+.screen-layout--simulation .course-link b {
+  font-size: 0.78rem;
+}
+
+.screen-layout--simulation .intro p:last-child,
+.screen-layout--simulation .carry-card p,
+.screen-layout--simulation .selected-course span {
+  font-size: 0.86rem;
+}
+
+.screen-layout--simulation .carry-card strong,
+.screen-layout--simulation .details summary strong,
+.screen-layout--simulation .derived-pace strong,
+.screen-layout--simulation .selected-course strong,
+.screen-layout--simulation .region-panel-head strong,
+.screen-layout--simulation .condition-snapshot strong {
+  font-size: 0.95rem;
+}
+
+.screen-layout--simulation .field select,
+.screen-layout--simulation .field input {
+  min-height: 2.9rem;
+  font-size: 1rem;
+}
+
+.screen-layout--simulation .measure-field > span,
+.screen-layout--simulation .measure-field b {
+  font-size: 0.84rem;
+}
+
+.screen-layout--simulation .measure-field input {
+  font-size: 1.3rem;
+}
+
+.screen-layout--simulation .pace-inputs em,
+.screen-layout--simulation .distance-control em,
+.screen-layout--simulation .custom-grade em,
+.screen-layout--simulation .runwalk-grid em {
+  font-size: 0.82rem;
+}
+
+.screen-layout--simulation .custom-grade input,
+.screen-layout--simulation .runwalk-grid input {
+  min-height: 2.5rem;
+  font-size: 1.05rem;
+}
+
+.screen-layout--simulation .semantic-note strong {
+  font-size: 0.88rem;
+}
+
+.screen-layout--simulation .region-row {
+  min-height: 3.6rem;
+  padding: 0.7rem 0.75rem;
+}
+
+.screen-layout--simulation .region-row strong {
+  font-size: 0.9rem;
+}
+
+.screen-layout--simulation .region-value b {
+  font-size: 1rem;
+}
+
+.screen-layout--simulation .region-panel-head button {
+  min-height: 2.75rem;
+  font-size: 0.8rem;
+}
+
+.screen-layout--simulation .primary-action,
+.screen-layout--simulation .secondary-action {
+  min-height: 3rem;
+  font-size: 0.88rem;
+}
+
+@media (max-width: 620px) {
+  .screen-layout--simulation .intro p:last-child {
+    font-size: 0.86rem;
+  }
+
+  .screen-layout--simulation .condition-snapshot strong {
+    font-size: 0.92rem;
+  }
+
+  .screen-layout--simulation .condition-snapshot span {
+    font-size: 0.78rem;
+  }
+}
