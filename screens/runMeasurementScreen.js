@@ -19,7 +19,7 @@ export function renderRunMeasurementScreen({ services, context }) {
     <header class="run-measurement__header">
       <a href="#/start" class="run-measurement__back">← 戻る</a>
       <strong>ランニング測定</strong>
-      <button type="button" class="context-help-button context-help-button--measurement" data-screen-tutorial-start="run-measurement" aria-label="GPS測定の操作ガイドを開く">?</button>
+      <button type="button" class="context-help-button app-utility-button context-help-button--measurement" data-screen-tutorial-start="run-measurement" aria-label="GPS測定の使い方を開く"><span class="app-utility-button__question" aria-hidden="true">?</span></button>
     </header>
     <section class="run-measurement__map-wrap">
       <div id="run-measurement-map" class="run-measurement__map" role="img" aria-label="現在地と走行軌跡を表示する地図">
