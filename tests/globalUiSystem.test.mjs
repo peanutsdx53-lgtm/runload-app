@@ -324,6 +324,35 @@ await test('UI-PC-COURSE-EDITOR-PERCENT-UNITS-MATCH-AND-GPX-IS-NOT-DUPLICATED',(
   assert.match(audit,/\.gpx-inline[\s\S]*display:\s*none\s*!important/);
 });
 
+
+await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
+  const screen=read('screens/historyScreen.js');
+  const shared=read('styles/screens.css');
+  const css=read('styles/desktop.css');
+  const marker='PC history record browser audit 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0,'PC history record browser audit block');
+  const audit=css.slice(start);
+
+  assert.ok(screen.includes('history-records-title-mobile'));
+  assert.ok(screen.includes('history-records-title-pc'));
+  assert.match(shared,/\.history-records-title-pc\s*\{\s*display:\s*none;/);
+
+  assert.match(audit,/> \.page-head[\s\S]*clip-path:\s*inset\(50%\)\s*!important/);
+  assert.match(audit,/\.history-mode[\s\S]*width:\s*min\(100%, 44rem\)\s*!important/);
+  assert.match(audit,/\.history-mode button small[\s\S]*font-size:\s*0\.84rem\s*!important/);
+  assert.match(audit,/\.history-view--records[\s\S]*max-width:\s*72rem\s*!important/);
+  assert.match(audit,/\.record-filters[\s\S]*width:\s*min\(100%, 60rem\)\s*!important/);
+  assert.match(audit,/\.record-filters input[\s\S]*font-size:\s*1rem\s*!important/);
+  assert.match(audit,/\.type-toggle button[\s\S]*font-size:\s*0\.92rem\s*!important/);
+  assert.match(audit,/\.record-list[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\)\s*!important/);
+  assert.match(audit,/\.record-list > \.record-item,[\s\S]*width:\s*100%\s*!important/);
+  assert.match(audit,/\.record-item h3,[\s\S]*font-size:\s*1\.18rem\s*!important/);
+  assert.match(audit,/\.record-item > p,[\s\S]*font-size:\s*0\.9rem\s*!important/);
+  assert.match(audit,/\.record-actions :is\(button, a\)[\s\S]*font-size:\s*0\.9rem\s*!important/);
+  assert.doesNotMatch(audit,/grid-template-columns:\s*repeat\(3/);
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
