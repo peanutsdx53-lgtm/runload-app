@@ -78,10 +78,16 @@ await test('SIMULATION-EMBEDS-SOURCE-RECORD-ID-AND-SAVED-RUN-CONDITIONS',()=>{
     distanceKm:3,durationMinutes:20,runningFormat:'RUN_WALK',runningDistanceKm:2.4,runningDurationMinutes:14,
     course:{name:'Saved course',gradeKnowledge:'KNOWN_PROFILE',upPercent:20,downPercent:10,pavedPercent:100},
   }];
-  const services={storage:{records:{loadAll:()=>records,findById:(id)=>records.find((r)=>r.id===id)||null}}};
+  const experiences={old:{regionalV2ResultRecord:{engine_input_snapshot:{runningFormat:'RUN_WALK',distanceKm:3,durationMinutes:20,runningDistanceKm:2.4,runningDurationMinutes:14,averageCadenceSpm:172,footStrikeObservation:{value:'RFS'}}}}};
+  const services={
+    storage:{records:{loadAll:()=>records,findById:(id)=>records.find((r)=>r.id===id)||null}},
+    workflows:{records:{loadExperience:(id)=>experiences[id]||null}},
+  };
   const context={parameters:new URLSearchParams('from=interpretation-room&recordId=old&roomOrigin=result')};
   const html=renderSimulationScreen({services,context});
   assert.match(html,/name="sourceRecordId" value="old"/);
+  assert.match(html,/name="sourceEngineInputJson" value="[^"]*averageCadenceSpm[^"]*172/);
+  assert.match(html,/name="sourceConditionJson" value="[^"]*Saved course/);
   assert.match(html,/name="runningFormat"[^>]*>[\s\S]*value="RUN_WALK" selected/);
   assert.match(html,/name="runningDistanceKm"[^>]*value="2\.4"/);
   assert.match(html,/name="runningDurationMinutes"[^>]*value="14"/);
@@ -93,6 +99,11 @@ await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST
   const source=read('ui/interactions/simulationInteractions.js');
   assert.match(source,/function sourceValues\(services,recordId=""\)/);
   assert.match(source,/recordId\?services\.workflows\.records\.loadExperience\(recordId\):services\.workflows\.records\.loadLatestExperience\(\)/);
+  assert.match(source,/sourceEngineInputFrom\(data\)/);
+  assert.match(source,/\.\.\.source/);
+  assert.match(source,/averageCadenceSpm/);
+  assert.match(source,/changedConditionLabels\(data\)/);
+  assert.match(source,/変更なし/);
   assert.match(source,/name="sourceRecordId"/);
   assert.doesNotMatch(source,/function latestValues/);
   assert.match(source,/元の記録からの変化/);
