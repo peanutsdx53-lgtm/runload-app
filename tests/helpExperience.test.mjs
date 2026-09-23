@@ -11,9 +11,9 @@ async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catc
 
 await test('HELP-FIRST-USE-VERSION-UPDATED',()=>{
   const guide=read('ui/guideContent.js');
-  assert.match(guide,/guide-context-help-20260923/);
-  assert.match(guide,/最初に4つだけ確認します/);
-  assert.match(guide,/各画面の「\?」/);
+  assert.match(guide,/guide-context-help-20260923-v2/);
+  assert.match(guide,/最初に3つの流れだけ確認します/);
+  assert.doesNotMatch(guide,/後から確認できます/);
 });
 
 await test('HELP-FIRST-USE-HIDES-TABS-UNTIL-LATER',()=>{
@@ -44,23 +44,40 @@ await test('HELP-IMMERSIVE-SHELL-RENDERS-GUIDE',()=>{
   assert.match(shell,/app-shell--immersive[\s\S]*renderGuideDialog/);
 });
 
-await test('HELP-CONTEXT-BUTTONS-ROUTE-TO-GUIDE-OR-TUTORIAL',()=>{
+await test('HELP-CONTEXT-BUTTONS-USE-SCREEN-SPECIFIC-TUTORIALS',()=>{
   const shell=read('ui/appShell.js');
-  assert.match(shell,/data-open-guide/);
+  const tutorial=read('ui/screenTutorial.js');
+  for(const mapping of [
+    'home: "home"',
+    '"record-input": "record-input"',
+    'result: "result"',
+    'history: "history"',
+    'more: "more"',
+    '"body-part-detail": "body-part-detail"',
+    'simulation: "simulation"',
+    'consultation: "consultation"',
+    'reading: "reading"',
+    'privacy: "privacy"',
+    'settings: "settings"',
+  ]) assert.ok(shell.includes(mapping),mapping);
+  for(const tutorialId of ['home','record-input','result','history','more','body-part-detail','simulation','consultation','reading','privacy','settings']){
+    assert.ok(tutorial.includes(`${JSON.stringify(tutorialId)}: Object.freeze`) || tutorial.includes(`${tutorialId}: Object.freeze`),tutorialId);
+  }
   assert.match(shell,/data-screen-tutorial-start/);
   assert.match(shell,/アプリ説明/);
-  assert.doesNotMatch(shell,/APP_EXPLANATION_NAVIGATION/);
 });
 
-await test('HELP-START-SCREEN-HAS-QUESTION-BUTTON',()=>{
+await test('HELP-START-SCREEN-USES-SHARED-QUESTION-BUTTON',()=>{
   const start=read('screens/startScreen.js');
-  assert.match(start,/data-open-guide="first-use"/);
-  assert.match(start,/>\?<\/button>/);
+  assert.match(start,/class="context-help-button app-utility-button"/);
+  assert.match(start,/data-screen-tutorial-start="start"/);
+  assert.match(start,/app-utility-button__question/);
 });
 
 await test('HELP-GPS-SCREEN-HAS-OPERATION-GUIDE',()=>{
   const screen=read('screens/runMeasurementScreen.js');
   const tutorial=read('ui/screenTutorial.js');
+  assert.match(screen,/class="context-help-button app-utility-button context-help-button--measurement"/);
   assert.match(screen,/data-screen-tutorial-start="run-measurement"/);
   assert.match(tutorial,/"run-measurement": Object\.freeze/);
   assert.match(tutorial,/GPS測定の使い方/);
