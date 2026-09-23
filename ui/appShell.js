@@ -216,7 +216,6 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
   if (standalone) {
     return `
       <div class="app-shell app-shell--standalone">
-        ${currentScreen === "start" ? `<div class="standalone-help-control">${renderContextHelpButton(currentScreen)}</div>` : ""}
         <main id="main-content" class="app-main" tabindex="-1">
           ${screenContent}
         </main>
