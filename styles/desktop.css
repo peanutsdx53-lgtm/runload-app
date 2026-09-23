@@ -5974,3 +5974,246 @@
     line-height: 1.1 !important;
   }
 }
+
+
+/* PC course editor input usability audit 2026-09-23: compact work areas, larger controls, smaller final action. */
+@media (min-width: 80rem) {
+  .screen--course-editor.screen-layout--course #course-editor-form {
+    gap: 1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .e-card {
+    padding: 1.15rem 1.25rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mode {
+    margin-top: 0.85rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .grade-mode {
+    width: min(100%, 45rem) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mode.three {
+    width: min(100%, 34rem) !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mode button {
+    min-height: 3.25rem !important;
+    padding-inline: 0.9rem !important;
+    font-size: 0.94rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .field > span,
+  .screen--course-editor.screen-layout--course .mfield > span,
+  .screen--course-editor.screen-layout--course .section-field > span {
+    font-size: 0.9rem !important;
+    line-height: 1.35;
+    font-weight: 780;
+  }
+
+  .screen--course-editor.screen-layout--course input[name="courseName"] {
+    width: min(100%, 34rem) !important;
+    min-height: 3.35rem !important;
+    font-size: 1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .sub[data-course-grade-summary],
+  .screen--course-editor.screen-layout--course .sub[data-course-grade-sections],
+  .screen--course-editor.screen-layout--course .sub[data-course-surface-mixed] {
+    width: min(100%, 52rem) !important;
+    max-width: 52rem !important;
+    padding: 1rem !important;
+    justify-self: start;
+  }
+
+  .screen--course-editor.screen-layout--course .support-title {
+    width: 100%;
+    max-width: 46rem;
+  }
+
+  .screen--course-editor.screen-layout--course .support-title strong {
+    font-size: 1.05rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .support-title span {
+    font-size: 0.86rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .inputs {
+    width: fit-content !important;
+    max-width: 100%;
+    grid-template-columns: repeat(2, minmax(13rem, 17rem)) !important;
+    gap: 1rem 1.15rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mfield {
+    width: 100% !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mfield > div,
+  .screen--course-editor.screen-layout--course .percent-control {
+    width: 100% !important;
+    min-height: 3.35rem !important;
+    border-radius: 0.78rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mfield input,
+  .screen--course-editor.screen-layout--course .percent-control input {
+    min-height: 3.2rem !important;
+    padding: 0.65rem 0.8rem !important;
+    font-size: 1.06rem !important;
+    font-weight: 760;
+  }
+
+  .screen--course-editor.screen-layout--course .percent-control em {
+    padding-right: 0.78rem;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .easy-result {
+    width: min(100%, 35.15rem) !important;
+    margin-top: 0.85rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .easy-result .comp-head {
+    min-height: 2.8rem;
+    padding: 0.65rem 0.8rem;
+    align-items: center;
+    border-radius: 0.72rem;
+    background: var(--color-surface-muted);
+  }
+
+  .screen--course-editor.screen-layout--course .easy-result .comp-head span,
+  .screen--course-editor.screen-layout--course .easy-result .comp-head strong {
+    font-size: 0.9rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .section-rows {
+    display: grid;
+    gap: 0.8rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .section-row {
+    width: min(100%, 39rem) !important;
+    max-width: 39rem !important;
+    grid-template-columns: 9rem 12rem 11rem !important;
+    gap: 0.8rem 0.9rem !important;
+    padding: 0.9rem 1rem !important;
+    justify-content: start !important;
+    border-radius: 0.82rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .section-row-head strong {
+    font-size: 0.92rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .section-field select,
+  .screen--course-editor.screen-layout--course .section-field .percent-control {
+    min-height: 3.25rem !important;
+    font-size: 1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .add-section {
+    width: min(100%, 39rem) !important;
+    min-height: 3.1rem !important;
+    margin-top: 0 !important;
+    font-size: 0.92rem !important;
+    border-radius: 0.78rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .section-summary {
+    width: min(100%, 39rem) !important;
+    margin-top: 0.15rem !important;
+    padding: 0.6rem 0.75rem !important;
+    text-align: right;
+    font-size: 0.98rem !important;
+    line-height: 1.35;
+    font-weight: 850;
+  }
+
+  .screen--course-editor.screen-layout--course .sub[data-course-surface-mixed] .comp-head {
+    width: min(100%, 50rem);
+    min-height: 2.9rem;
+    padding: 0.65rem 0.8rem;
+    align-items: center;
+    border-radius: 0.72rem;
+    background: var(--color-surface-muted);
+  }
+
+  .screen--course-editor.screen-layout--course .sub[data-course-surface-mixed] .comp-head span {
+    font-size: 0.9rem !important;
+    font-weight: 800;
+  }
+
+  .screen--course-editor.screen-layout--course .sub[data-course-surface-mixed] .comp-head strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mix {
+    width: min(100%, 50rem) !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.65rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mix-row {
+    width: 100% !important;
+    min-width: 0;
+    min-height: 4.1rem;
+    padding: 0.7rem 0.8rem !important;
+    grid-template-columns: minmax(7.5rem, 1fr) 8.5rem !important;
+    gap: 0.75rem !important;
+    align-items: center !important;
+    justify-content: stretch !important;
+    border-radius: 0.82rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .mix-row > span:first-child {
+    min-width: 0;
+    font-size: 0.96rem !important;
+    line-height: 1.35;
+    font-weight: 800;
+  }
+
+  .screen--course-editor.screen-layout--course .mix-row .percent-control {
+    width: 8.5rem !important;
+    justify-self: end;
+  }
+
+  .screen--course-editor.screen-layout--course .field select[name="primarySurfaceKey"] {
+    width: min(100%, 22rem) !important;
+    min-height: 3.35rem !important;
+    font-size: 1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .preview {
+    width: min(100%, 52rem) !important;
+    max-width: 52rem !important;
+    padding: 0.9rem 1rem !important;
+    justify-self: start;
+  }
+
+  .screen--course-editor.screen-layout--course .preview > h2 {
+    font-size: 0.96rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .preview > strong {
+    font-size: 1.05rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-actions {
+    width: min(100%, 52rem) !important;
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 0.1rem !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor-actions .primary {
+    width: min(100%, 24rem) !important;
+    min-height: 3.2rem !important;
+    padding-inline: 1.1rem !important;
+    font-size: 0.94rem !important;
+    border-radius: 0.8rem !important;
+  }
+}
