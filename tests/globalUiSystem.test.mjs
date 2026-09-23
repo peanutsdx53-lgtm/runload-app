@@ -115,6 +115,22 @@ await test('UI-LIGHT-THEME-MUTED-TEXT-MEETS-CONTRAST',()=>{
   }
 });
 
+
+await test('UI-SEMANTIC-COLORS-MEET-CONTRAST-IN-LIGHT-AND-DARK',()=>{
+  const css=read('styles/tokens.css');
+  const rootBlock=cssBlock(css,':root');
+  const darkBlock=cssBlock(css,'html.rl-appearance-dark');
+  const names=['info','success','model','attention','danger'];
+  for(const name of names){
+    const lightForeground=variable(rootBlock,'--color-'+name);
+    const lightBackground=variable(rootBlock,'--color-'+name+'-soft');
+    assert.ok(contrast(lightForeground,lightBackground)>=4.5,'light '+name);
+    const darkForeground=variable(darkBlock,'--color-'+name)||lightForeground;
+    const darkBackground=variable(darkBlock,'--color-'+name+'-soft')||lightBackground;
+    assert.ok(contrast(darkForeground,darkBackground)>=4.5,'dark '+name);
+  }
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
