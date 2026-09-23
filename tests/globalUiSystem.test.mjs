@@ -206,6 +206,54 @@ await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
   assert.ok(remSize('.screen--record-input.screen-layout--record .desktop-save-area .primary-save')>=1,'save button font');
 });
 
+
+await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
+  const screen=read('screens/courseLibraryScreen.js');
+  const shared=read('styles/screens.css');
+  const css=read('styles/desktop.css');
+  const marker='PC course library workspace audit 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0,'PC course library audit block');
+  const audit=css.slice(start);
+  const remSize=(selector)=>{
+    let offset=0;
+    let maximum=0;
+    while(offset<audit.length){
+      const startIndex=audit.indexOf(selector,offset);
+      if(startIndex<0)break;
+      const open=audit.indexOf('{',startIndex);
+      const close=audit.indexOf('}',open+1);
+      if(open<0||close<0)break;
+      const block=audit.slice(open+1,close);
+      const match=block.match(/font-size:\s*([0-9.]+)rem(?:\s*!important)?\s*;/i);
+      if(match)maximum=Math.max(maximum,Number(match[1]));
+      offset=startIndex+selector.length;
+    }
+    return maximum;
+  };
+
+  assert.ok(screen.includes('course-library-pc-only course-library-pc-new'));
+  assert.ok(screen.includes('course-current-label--mobile'));
+  assert.ok(screen.includes('course-current-label--pc'));
+  assert.ok(screen.includes('course-library-pc-count'));
+  assert.match(shared,/\.course-library-pc-only\s*\{\s*display:\s*none;/);
+  assert.match(audit,/@media \(min-width: 80rem\)/);
+  assert.match(audit,/course-derived-frame--library[\s\S]*height:\s*auto\s*!important/);
+  assert.match(audit,/course-derived-head > strong[\s\S]*display:\s*none\s*!important/);
+  assert.match(audit,/\.course-library-list-new[\s\S]*display:\s*none\s*!important/);
+  assert.match(audit,/\.current > b[\s\S]*display:\s*none\s*!important/);
+  assert.match(audit,/\.list[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)\s*!important/);
+  assert.match(audit,/\.empty-course-card[\s\S]*grid-column:\s*1 \/ -1\s*!important/);
+  assert.match(audit,/\.assist-section > \.section-head[\s\S]*display:\s*none\s*!important/);
+  assert.match(audit,/\.boundary[\s\S]*grid-column:\s*2\s*!important/);
+
+  assert.ok(remSize('.screen--course-library.screen-layout--course .head p:last-child')>=0.9,'intro font');
+  assert.ok(remSize('.screen--course-library.screen-layout--course .current strong')>=1.05,'current selection font');
+  assert.ok(remSize('.screen--course-library.screen-layout--course .section-head h2')>=1.2,'saved courses heading font');
+  assert.ok(remSize('.screen--course-library.screen-layout--course .empty-course-card p')>=0.85,'empty state font');
+  assert.ok(remSize('.screen--course-library.screen-layout--course .import-helper span')>=0.8,'GPX helper font');
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
