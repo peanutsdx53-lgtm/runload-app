@@ -198,9 +198,9 @@ function renderAttentionGroups(output) {
   </section>`;
 }
 
-function historyChart(region) {
+function historyChart(region, currentDate = "") {
   const history = Array.isArray(region?.personalHistory?.lastFive) ? region.personalHistory.lastFive : [];
-  const points = history.concat(finite(region?.value) ? [{ date: region?.currentDate || "", value: Number(region.value), current: true }] : []);
+  const points = history.concat(finite(region?.value) ? [{ date: currentDate, value: Number(region.value), current: true }] : []);
   if (points.length <= 1) return '<div class="interpretation-room-history-empty">比較できる過去記録はまだありません。今回の値を次回の比較点として使えます。</div>';
   const values = points.map((item) => Number(item.value)).concat([100]);
   let min = Math.min(...values);
@@ -230,7 +230,7 @@ function renderSelectedRegion(output) {
   if (!region) return "";
   const reference = region.referenceComparison || {};
   const previous = region.previousComparison || {};
-  region.currentDate = output?.target?.date || "";
+  const currentDate = output?.target?.date || "";
   const current = finite(region.value) ? number(region.value) : "—";
   const previousBlock = previous.available
     ? `<div class="interpretation-room-region-stat"><small>前回</small><strong>${escapeHtml(number(previous.previousValue))}</strong><span>${escapeHtml(previous.date ? formatLocalDate(previous.date) : "前回")} → 今回 ${escapeHtml(signed(previous.difference))}</span></div>`
@@ -246,7 +246,7 @@ function renderSelectedRegion(output) {
       ${previousBlock}
       <div class="interpretation-room-region-stat"><small>比較できる過去</small><strong>${escapeHtml(String(Number(region?.personalHistory?.comparableCount || 0)))}</strong><span>同じ部位・同じ計算基準の保存記録</span></div>
     </div>
-    <div class="interpretation-room-history-panel"><header><strong>この部位の最近の推移</strong><small>破線＝この部位自身の基準100</small></header>${historyChart(region)}</div>
+    <div class="interpretation-room-history-panel"><header><strong>この部位の最近の推移</strong><small>破線＝この部位自身の基準100</small></header>${historyChart(region, currentDate)}</div>
   </section>`;
 }
 
