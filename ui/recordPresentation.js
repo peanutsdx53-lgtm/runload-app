@@ -37,6 +37,13 @@ export function formatLocalDate(dateText = "") {
   return `${Number(match[1])}年${Number(match[2])}月${Number(match[3])}日`;
 }
 
+export function formatLocalTime(timestamp = "") {
+  if (!timestamp) return "";
+  const date = new Date(String(timestamp));
+  if (Number.isNaN(date.getTime())) return "";
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
 export function formatNumber(value, digits = 1) {
   const number = Number(value);
   if (!Number.isFinite(number)) return "—";
