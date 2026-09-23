@@ -1,7 +1,7 @@
 import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkflow } from "./core/runloadCore.js";
 
 import { createSecondPillarRofJServices } from "./core/secondPillarRofJ.js";
-import { createAppRouter } from "./ui/appRouter.js";
+import { createAppRouter } from "./ui/appRouter.js";\nimport { resolveViewportDefaultEntryScreen } from "./ui/deviceLayout.js";
 import { focusScreenHeading, renderAppShell, renderDesktopHeader } from "./ui/appShell.js";
 import { applyJournalSettings } from "./ui/appSettings.js";
 import { APP_GUIDE_VERSION, DEFAULT_GUIDE_SECTION, normalizeGuideSection, shouldOpenGuide, withGuideVersionSeen } from "./ui/guideContent.js";
