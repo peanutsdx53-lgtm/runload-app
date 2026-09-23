@@ -6237,3 +6237,245 @@
     display: none !important;
   }
 }
+
+
+/* PC history record browser audit 2026-09-23: compact hierarchy, readable controls, full-width record rows. */
+@media (min-width: 80rem) {
+  .screen--history.screen-layout--history > .page-head {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  .screen--history.screen-layout--history .history-mode {
+    width: min(100%, 44rem) !important;
+    margin-top: 0 !important;
+    padding: 0.32rem !important;
+    gap: 0.32rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-mode button {
+    min-height: 4rem !important;
+    padding: 0.7rem 1rem !important;
+    border-radius: 0.68rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-mode button span {
+    font-size: 1rem !important;
+    line-height: 1.25;
+  }
+
+  .screen--history.screen-layout--history .history-mode button small {
+    margin-top: 0.2rem !important;
+    font-size: 0.84rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--history.screen-layout--history .history-view {
+    margin-top: 1.15rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-view--records {
+    width: min(100%, 72rem) !important;
+    max-width: 72rem !important;
+    margin-inline: 0 !important;
+  }
+
+  .screen--history.screen-layout--history .history-view--records .records-head {
+    width: 100% !important;
+    min-height: 2.8rem !important;
+    display: flex !important;
+    align-items: end !important;
+    justify-content: flex-start !important;
+    gap: 0.65rem !important;
+  }
+
+  .screen--history.screen-layout--history .history-view--records .comparison-title small {
+    display: none !important;
+  }
+
+  .screen--history.screen-layout--history .history-records-title-mobile {
+    display: none !important;
+  }
+
+  .screen--history.screen-layout--history .history-records-title-pc {
+    display: inline !important;
+  }
+
+  .screen--history.screen-layout--history .history-view--records .comparison-title h2 {
+    margin: 0 !important;
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .screen--history.screen-layout--history .record-total {
+    margin: 0 0 0.08rem !important;
+    padding: 0.38rem 0.65rem !important;
+    font-size: 0.9rem !important;
+    line-height: 1.2 !important;
+    font-weight: 850;
+  }
+
+  .screen--history.screen-layout--history .record-filters {
+    width: min(100%, 60rem) !important;
+    max-width: 60rem !important;
+    margin-top: 0.7rem !important;
+    padding: 1rem 1.05rem !important;
+    grid-template-columns: minmax(26rem, 1fr) 19rem !important;
+    gap: 0.9rem 1rem !important;
+    align-items: end !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-filters label {
+    min-width: 0;
+  }
+
+  .screen--history.screen-layout--history .record-filters label > span {
+    font-size: 0.9rem !important;
+    line-height: 1.3;
+    font-weight: 800;
+  }
+
+  .screen--history.screen-layout--history .record-filters input {
+    width: 100% !important;
+    height: 3.25rem !important;
+    margin-top: 0.4rem !important;
+    padding-inline: 0.95rem !important;
+    border-radius: 0.72rem !important;
+    font-size: 1rem !important;
+  }
+
+  .screen--history.screen-layout--history .type-toggle {
+    width: 19rem !important;
+    max-width: 19rem !important;
+    min-height: 3.25rem;
+    margin: 0 !important;
+    padding: 0.28rem !important;
+    gap: 0.28rem !important;
+    border-radius: 0.72rem !important;
+  }
+
+  .screen--history.screen-layout--history .type-toggle button {
+    min-height: 2.7rem !important;
+    padding-inline: 0.8rem !important;
+    font-size: 0.92rem !important;
+    border-radius: 0.52rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-list {
+    width: 100% !important;
+    margin-top: 0.85rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0.7rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-list > .record-item,
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) {
+    width: 100% !important;
+    min-width: 0;
+    min-height: 7rem;
+    padding: 1rem 1.1rem !important;
+    display: grid !important;
+    grid-column: 1 !important;
+    grid-template-columns: minmax(13rem, 15rem) minmax(0, 1fr) auto !important;
+    grid-template-areas:
+      "head summary actions"
+      "head memo actions" !important;
+    column-gap: 1.2rem !important;
+    row-gap: 0.25rem !important;
+    align-items: center !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--history.screen-layout--history .record-item .record-item-head,
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) .record-item-head {
+    grid-area: head !important;
+    min-width: 0;
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start !important;
+    justify-content: center;
+    gap: 0.45rem;
+  }
+
+  .screen--history.screen-layout--history .record-item time {
+    font-size: 0.96rem !important;
+    line-height: 1.35;
+    font-weight: 850;
+  }
+
+  .screen--history.screen-layout--history .record-kind {
+    min-height: 1.8rem;
+    padding: 0.25rem 0.55rem !important;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.82rem !important;
+    line-height: 1.2;
+    font-weight: 850;
+  }
+
+  .screen--history.screen-layout--history .record-item h3,
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) h3 {
+    grid-area: summary !important;
+    min-width: 0;
+    margin: 0 !important;
+    font-size: 1.18rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .screen--history.screen-layout--history .record-item > p,
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) > p {
+    grid-area: memo !important;
+    min-width: 0;
+    margin: 0 !important;
+    color: var(--color-muted);
+    font-size: 0.9rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .screen--history.screen-layout--history .record-actions,
+  .screen--history.screen-layout--history .record-list > .record-item:last-child:nth-child(odd) .record-actions {
+    grid-area: actions !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end !important;
+    gap: 0.5rem !important;
+    justify-self: end !important;
+    white-space: nowrap;
+  }
+
+  .screen--history.screen-layout--history .record-actions :is(button, a) {
+    min-height: 2.8rem !important;
+    padding: 0 0.9rem !important;
+    border-radius: 0.62rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 850;
+  }
+
+  .screen--history.screen-layout--history .record-actions a {
+    border-color: color-mix(in srgb, var(--color-accent) 58%, var(--color-line)) !important;
+    background: color-mix(in srgb, var(--color-accent-soft) 72%, var(--color-surface)) !important;
+    color: var(--color-accent-strong) !important;
+  }
+
+  .screen--history.screen-layout--history .record-actions button {
+    background: var(--color-surface) !important;
+    color: var(--color-muted) !important;
+  }
+
+  .screen--history.screen-layout--history .empty-records--filtered {
+    width: 100% !important;
+    min-height: 9rem !important;
+  }
+}
