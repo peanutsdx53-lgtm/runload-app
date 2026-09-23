@@ -2,35 +2,6 @@ import { escapeHtml } from "./commonComponents.js";
 import { renderGuideDialog } from "./guideContent.js";
 import { FEATURE_DESTINATION_GROUPS, PRIMARY_DESTINATIONS, resolveScreenContextNavigation } from "./screenArchitecture.js";
 
-const TOPBAR_CONTEXT_LABELS = Object.freeze({
-  home: "HOME",
-  "record-input": "RECORD",
-  "course-library": "RECORD",
-  "course-editor": "RECORD",
-  "gpx-analysis": "RECORD",
-  result: "RESULT",
-  "body-part-detail": "RESULT / REGION",
-  "run-route": "RESULT / ROUTE",
-  history: "HISTORY",
-  "interpretation-room": "RESULT REVIEW",
-  simulation: "SIMULATION",
-  plan: "HOME",
-  consultation: "MORE",
-  "support-guidance": "MORE",
-  reading: "MORE",
-  privacy: "MORE",
-  settings: "MORE",
-  more: "MORE",
-});
-
-function topbarContextLabel(screen = "", currentLocation = null) {
-  const contextDerivedScreens = new Set(["plan", "consultation", "support-guidance", "reading", "privacy", "settings"]);
-  const resolvedScreen = contextDerivedScreens.has(screen)
-    ? resolveCurrentPrimaryScreen(screen, currentLocation)
-    : screen;
-  return TOPBAR_CONTEXT_LABELS[resolvedScreen] || "RUNLOAD";
-}
-
 export const PRIMARY_NAVIGATION = PRIMARY_DESTINATIONS;
 
 const GUIDE_SECTION_BY_SCREEN = Object.freeze({
@@ -67,11 +38,16 @@ const SCREEN_TUTORIAL_BY_SCREEN = Object.freeze({
 function renderContextHelpButton(currentScreen, className = "") {
   const section = GUIDE_SECTION_BY_SCREEN[currentScreen] || "first-use";
   const tutorialId = SCREEN_TUTORIAL_BY_SCREEN[currentScreen] || "";
-  const classes = ["context-help-button", className].filter(Boolean).join(" ");
+  const classes = ["context-help-button", "app-utility-button", className].filter(Boolean).join(" ");
+  const content = '<span class="app-utility-button__question" aria-hidden="true">?</span>';
   if (tutorialId) {
-    return `<button type="button" class="${classes}" data-screen-tutorial-start="${escapeHtml(tutorialId)}" aria-label="この画面の操作ガイドを開く">?</button>`;
+    return `<button type="button" class="${classes}" data-screen-tutorial-start="${escapeHtml(tutorialId)}" aria-label="この画面の操作ガイドを開く">${content}</button>`;
   }
-  return `<button type="button" class="${classes}" data-open-guide="${escapeHtml(section)}" aria-label="この画面の説明を開く">?</button>`;
+  return `<button type="button" class="${classes}" data-open-guide="${escapeHtml(section)}" aria-label="この画面の説明を開く">${content}</button>`;
+}
+
+function menuIcon() {
+  return '<svg class="app-utility-button__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 7h14M5 12h14M5 17h14"/></svg>';
 }
 
 const PRIMARY_SECTION_BY_SCREEN = Object.freeze({
@@ -180,16 +156,13 @@ function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix
   const titleId = `feature-menu-title-${idSuffix}`;
   const groupedDestinations = FEATURE_DESTINATION_GROUPS.map((group) => renderFeatureMenuGroup(group.label, group.items, currentScreen, currentLocation, hasResult, false)).join("");
   const guideEntry = `<section class="feature-menu__group feature-menu__group--guide" aria-label="説明"><p class="feature-menu__group-label">HELP</p><div class="feature-menu__links"><button type="button" class="feature-menu__link feature-menu__link--button" data-open-guide="first-use"><span class="feature-menu__item-title">アプリ説明</span><span class="feature-menu__item-description">使い方・結果・履歴・限界を確認</span></button></div></section>`;
-  return `<div class="feature-menu" data-feature-menu><button type="button" id="${escapeHtml(buttonId)}" class="app-menu-button" aria-label="画面メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="${escapeHtml(panelId)}"><span class="app-menu-button__label">メニュー</span></button><div id="${escapeHtml(panelId)}" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="${escapeHtml(titleId)}" hidden><header class="feature-menu__header"><p>画面メニュー</p><strong id="${escapeHtml(titleId)}">補助画面を開く</strong></header><nav class="feature-menu__nav" aria-label="補助画面">${groupedDestinations}${guideEntry}</nav></div></div>`;
+  return `<div class="feature-menu" data-feature-menu><button type="button" id="${escapeHtml(buttonId)}" class="app-menu-button app-utility-button" aria-label="画面メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="${escapeHtml(panelId)}">${menuIcon()}<span class="visually-hidden">メニュー</span></button><div id="${escapeHtml(panelId)}" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="${escapeHtml(titleId)}" hidden><header class="feature-menu__header"><p>画面メニュー</p><strong id="${escapeHtml(titleId)}">補助画面を開く</strong></header><nav class="feature-menu__nav" aria-label="補助画面">${groupedDestinations}${guideEntry}</nav></div></div>`;
 }
 
 export function renderDesktopHeader({ currentScreen, currentLocation, hasResult = false }) {
   return `<header class="app-header app-header--desktop app-header--viewport-fixed">
-    <div class="app-screen-context" aria-label="現在の画面">
-      <small>SCREEN</small>
-      <strong>${escapeHtml(topbarContextLabel(currentScreen, currentLocation))}</strong>
-    </div>
-    <div class="app-header__actions">
+    <a class="app-header__brand" href="#/home" aria-label="RunLoad Home">RunLoad</a>
+    <div class="app-header__actions" aria-label="画面操作">
       ${renderContextHelpButton(currentScreen)}
       ${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}
     </div>
@@ -201,14 +174,14 @@ function renderMobileHeader(currentScreen, currentLocation, hasResult) {
   const help = renderContextHelpButton(currentScreen);
   const context = resolveScreenContextNavigation(currentScreen, currentLocation);
   if (context) {
-    return `<header class="mobile-topbar mobile-topbar--context"><a class="mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong>${escapeHtml(context.title)}</strong><div class="mobile-topbar__actions">${help}${menu}</div></header>`;
+    return `<header class="mobile-topbar mobile-topbar--context"><a class="mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><div class="mobile-topbar__actions" aria-label="画面操作">${help}${menu}</div></header>`;
   }
-  return `<header class="mobile-topbar"><a class="mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen, currentLocation))}</small></a><div class="mobile-topbar__actions">${help}${menu}</div></header>`;
+  return `<header class="mobile-topbar"><a class="mobile-topbar__brand" href="#/home" aria-label="RunLoad Home"><strong>RunLoad</strong></a><div class="mobile-topbar__actions" aria-label="画面操作">${help}${menu}</div></header>`;
 }
 
-function renderImmersiveHeader(currentScreen, currentLocation) {
-  const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { title: "結果を整理する", backHref: "#/home", backLabel: "Home" };
-  return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(context.title)}</strong>${renderContextHelpButton(currentScreen, "context-help-button--immersive")}</header>`;
+function renderImmersiveHeader(currentScreen, currentLocation, hasResult) {
+  const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { backHref: "#/home", backLabel: "Home" };
+  return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><div class="interpretation-room-header__actions" aria-label="画面操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "immersive" })}</div></header>`;
 }
 
 export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {} }) {
@@ -231,7 +204,7 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
   if (immersive) {
     return `
       <div class="app-shell app-shell--immersive">
-        ${renderImmersiveHeader(currentScreen, currentLocation)}
+        ${renderImmersiveHeader(currentScreen, currentLocation, hasResult)}
         <main id="main-content" class="app-main" tabindex="-1">
           ${screenContent}
         </main>
