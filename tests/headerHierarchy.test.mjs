@@ -48,10 +48,15 @@ await test('HEADER-UTILITY-CONTROLS-SHARE-GEOMETRY',()=>{
   assert.ok(css.includes('border-radius: 0.9rem;'));
 });
 
-await test('HEADER-HOME-HAS-SINGLE-PAGE-TITLE',()=>{
+await test('HEADER-HOME-USES-GLOBAL-JAPANESE-SCREEN-NAME',()=>{
+  const shell=read('ui/appShell.js');
+  const architecture=read('ui/screenArchitecture.js');
   const home=read('screens/homeScreen.js');
-  assert.ok(home.includes('<section class="page-head"><div><h1>今日</h1></div></section>'));
-  assert.ok(!home.includes('<p class="eyebrow">TODAY</p>'));
+  assert.ok(shell.includes('home: "ホーム"'));
+  assert.ok(!architecture.includes('backLabel: "Home"'));
+  assert.ok(!home.includes('<h1>今日</h1>'));
+  assert.ok(!home.includes('CURRENT STATE'));
+  assert.ok(home.includes('<h2>記録と予定</h2>'));
   assert.ok(home.includes('class="secondary home-measure-link"'));
   assert.ok(home.includes('GPSで測定'));
 });
