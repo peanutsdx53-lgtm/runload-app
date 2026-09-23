@@ -743,12 +743,6 @@
   background: var(--color-accent-soft);
   outline-offset: 3px;
 }
-.standalone-help-control {
-  position: fixed;
-  top: max(0.75rem, env(safe-area-inset-top));
-  right: max(0.75rem, env(safe-area-inset-right));
-  z-index: 30;
-}
 .context-help-button--immersive { justify-self: end; }
 .feature-menu { position: relative !important; }
 .app-menu-button {
