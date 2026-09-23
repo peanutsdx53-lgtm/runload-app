@@ -10,7 +10,9 @@ import { bindScreenInteractions } from "./ui/screenInteractions.js";
 import { prepareUiMotion } from "./ui/uiMotion.js";
 import { bindScreenTutorial } from "./ui/screenTutorial.js";
 import { handleRecordInputRouteChange, resolveRecordInputReturnState } from "./ui/recordInputWorkspace.js";
-import { renderStartScreen } from "./screens/startScreen.js";\nimport { renderHomeScreen } from "./screens/homeScreen.js";\nimport { renderRunMeasurementScreen } from "./screens/runMeasurementScreen.js";
+import { renderStartScreen } from "./screens/startScreen.js";
+import { renderHomeScreen } from "./screens/homeScreen.js";
+import { renderRunMeasurementScreen } from "./screens/runMeasurementScreen.js";
 import { renderRecordInputScreen } from "./screens/recordInputScreen.js";
 import { renderCourseLibraryScreen } from "./screens/courseLibraryScreen.js";
 import { renderCourseEditorScreen } from "./screens/courseEditorScreen.js";
@@ -29,7 +31,9 @@ import { renderSimulationScreen } from "./screens/simulationScreen.js";
 import { renderGpxAnalysisScreen } from "./screens/gpxAnalysisScreen.js";
 
 const screenRenderers = {
+  start: renderStartScreen,
   home: renderHomeScreen,
+  "run-measurement": renderRunMeasurementScreen,
   "record-input": renderRecordInputScreen,
   "course-library": renderCourseLibraryScreen,
   "course-editor": renderCourseEditorScreen,
@@ -86,7 +90,8 @@ function saveGuideVersionSeen() {
 function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {}) {
   applyJournalSettings(applicationServices.storage.settings.load());
   const screenName = currentLocation.screen;
-  document.body.classList.toggle("course-derived-open", ["course-library", "course-editor", "gpx-analysis"].includes(screenName));\n  document.body.classList.toggle("run-standalone-open", ["start", "run-measurement"].includes(screenName));
+  document.body.classList.toggle("course-derived-open", ["course-library", "course-editor", "gpx-analysis"].includes(screenName));
+  document.body.classList.toggle("run-standalone-open", ["start", "run-measurement"].includes(screenName));
   document.body.classList.toggle("secondary-derived-open", ["plan", "consultation", "support-guidance", "reading", "privacy", "settings"].includes(screenName));
   const recordInputReturnState = screenName === "record-input"
     ? resolveRecordInputReturnState(currentLocation)
@@ -94,7 +99,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
   const renderSelectedScreen = screenRenderers[screenName] ?? screenRenderers.home;
   const latestExperience = applicationServices.workflows.records.loadLatestExperience();
   if (desktopHeaderRoot) {
-    desktopHeaderRoot.innerHTML = screenName === "interpretation-room"
+    desktopHeaderRoot.innerHTML = ["interpretation-room", "start", "run-measurement"].includes(screenName)
       ? ""
       : renderDesktopHeader({
           currentScreen: screenName,
