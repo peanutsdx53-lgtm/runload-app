@@ -22,11 +22,35 @@
   --space-7: 3rem;
   --content-width: 72rem;
 
+  /* UI role scale: roles stay consistent across screens and themes. */
+  --type-label: 0.72rem;
+  --type-caption: 0.8rem;
+  --type-body: 0.94rem;
+  --type-control: 0.92rem;
+  --type-control-compact: 0.82rem;
+  --type-subheading: 1.08rem;
+  --type-heading: clamp(1.35rem, 4vw, 1.8rem);
+  --type-display: clamp(1.7rem, 6vw, 2.5rem);
+  --line-body: 1.65;
+  --line-compact: 1.35;
+
+  --button-height-small: 2.5rem;
+  --button-height-medium: 2.75rem;
+  --button-height-large: 3rem;
+  --button-min-inline-small: 5.5rem;
+  --button-min-inline-medium: 7rem;
+  --button-min-inline-large: 9rem;
+  --button-padding-inline: 1.15rem;
+  --button-gap: 0.55rem;
+  --control-group-gap: 0.55rem;
+  --card-padding-compact: 0.85rem;
+  --card-padding-standard: 1rem;
+
   /* RunLoad standard blue-gray palette. */
   --color-paper: #e3ebf1;
   --color-surface: #fbfdff;
   --color-ink: #1e2630;
-  --color-muted: #5d6d79;
+  --color-muted: #596a77;
   --color-line: #afc4d2;
   --color-accent: #2f6385;
   --color-accent-strong: #214964;
@@ -123,7 +147,7 @@ html.rl-color-green {
   --color-paper: #dcebd6;
   --color-surface: #fbfff4;
   --color-ink: #1b2d21;
-  --color-muted: #586e5d;
+  --color-muted: #546a59;
   --color-line: #accdab;
   --color-accent: #2f7650;
   --color-accent-strong: #1e563a;
@@ -148,7 +172,7 @@ html.rl-color-blue {
   --color-paper: #e3ebf1;
   --color-surface: #fbfdff;
   --color-ink: #1e2630;
-  --color-muted: #5d6d79;
+  --color-muted: #596a77;
   --color-line: #afc4d2;
   --color-accent: #2f6385;
   --color-accent-strong: #214964;

@@ -632,3 +632,249 @@ html.rl-appearance-dark .interpretation-room-region-shape[data-reference-directi
   }
   .interpretation-room-rof-readings { grid-template-columns: 1fr; }
 }
+
+
+/* ==========================================================================
+   Responsive interpretation workspace
+   Mobile reads in sequence; desktop uses the available width as a workspace.
+   ========================================================================== */
+.interpretation-room {
+  --interpretation-reading-width: 52.5rem;
+  gap: clamp(1.35rem, 4vw, 2.2rem);
+}
+.interpretation-room-hero {
+  padding-block: 0.35rem 0.9rem;
+}
+.interpretation-room-hero h1 {
+  font-size: var(--type-display);
+  line-height: 1.15;
+}
+.interpretation-room-hero > p:first-child,
+.interpretation-room-section-head small {
+  font-size: var(--type-label);
+}
+.interpretation-room-hero > p:last-child,
+.interpretation-room-lead {
+  font-size: var(--type-body);
+  line-height: var(--line-body);
+}
+
+.interpretation-room-overview,
+.interpretation-room-selected,
+.interpretation-room-calculation,
+.interpretation-room-subjective,
+.interpretation-room-understanding,
+.interpretation-room-next,
+.interpretation-room-advanced {
+  padding-left: 0;
+}
+.interpretation-room-overview::before,
+.interpretation-room-selected::before,
+.interpretation-room-calculation::before,
+.interpretation-room-subjective::before,
+.interpretation-room-understanding::before,
+.interpretation-room-next::before {
+  display: none;
+}
+.interpretation-room-section-head {
+  grid-template-columns: 1.9rem minmax(0, 1fr);
+  gap: 0.65rem;
+  margin-left: 0;
+  align-items: center;
+}
+.interpretation-room-section-head > span {
+  width: 1.9rem;
+  height: 1.9rem;
+  margin-left: 0;
+  font-size: var(--type-label);
+}
+.interpretation-room-section-head h2 {
+  margin-top: 0.1rem;
+  font-size: var(--type-heading);
+  line-height: 1.25;
+}
+.interpretation-room-lead {
+  margin-top: 0.7rem;
+}
+
+.interpretation-room-current-result {
+  margin-top: 0.85rem;
+}
+.interpretation-room-current-result > span {
+  font-size: var(--type-subheading);
+}
+.interpretation-room-current-result > strong {
+  font-size: clamp(2.35rem, 10vw, 3.5rem);
+}
+.interpretation-room-current-result > small,
+.interpretation-room-comparison-row > span,
+.interpretation-room-comparison-row > small,
+.interpretation-room-no-history,
+.interpretation-room-input-facts small,
+.interpretation-room-flow-step small,
+.interpretation-room-flow-step span,
+.interpretation-room-conditional small,
+.interpretation-room-context-only small,
+.interpretation-room-rof-reading small,
+.interpretation-room-action small {
+  font-size: var(--type-caption);
+}
+.interpretation-room-input-facts strong,
+.interpretation-room-action strong {
+  font-size: var(--type-control);
+}
+.interpretation-room-conditional > strong,
+.interpretation-room-conditional b,
+.interpretation-room-context-only strong,
+.interpretation-room-understanding-grid strong {
+  font-size: var(--type-control-compact);
+}
+
+.interpretation-room-region-picker > div {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.interpretation-room-region-choice {
+  min-height: var(--button-height-large);
+  padding: 0.65rem 0.75rem;
+}
+.interpretation-room-region-choice strong {
+  font-size: var(--type-control-compact);
+}
+.interpretation-room-region-choice span {
+  font-size: var(--type-caption);
+}
+
+.interpretation-room-action {
+  width: 100%;
+  min-height: var(--button-height-large);
+  padding: 0.75rem 0;
+}
+.interpretation-room-action--primary {
+  width: min(100%, 28rem);
+  padding: 0.8rem 0.9rem;
+}
+.interpretation-room-secondary-actions {
+  gap: 0.35rem;
+}
+
+@media (max-width: 34rem) {
+  .app-shell--immersive .app-main {
+    width: 100%;
+    padding-inline: 0.9rem;
+  }
+  .interpretation-room {
+    gap: 1.35rem;
+    padding-top: 0.25rem;
+  }
+  .interpretation-room-map {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+    padding: 0.7rem;
+  }
+  .interpretation-room-overview-groups > div {
+    grid-template-columns: minmax(6.5rem, auto) minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+  .interpretation-room-region-picker > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .interpretation-room-rof-readings {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .interpretation-room-understanding-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 55rem) {
+  .app-shell--immersive .app-main {
+    width: min(100%, 76rem);
+    padding: 1rem clamp(1.25rem, 3vw, 2rem) 3rem;
+  }
+  .interpretation-room {
+    --interpretation-reading-width: 72rem;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1.15rem 1.25rem;
+    align-items: start;
+    padding-top: 0.4rem;
+  }
+  .interpretation-room-hero,
+  .interpretation-room-back-to-overview,
+  .interpretation-room-overview,
+  .interpretation-room-next,
+  .interpretation-room-advanced {
+    grid-column: 1 / -1;
+  }
+  .interpretation-room--selected .interpretation-room-selected {
+    grid-column: 1 / 6;
+  }
+  .interpretation-room--selected .interpretation-room-calculation {
+    grid-column: 6 / 13;
+  }
+  .interpretation-room--selected .interpretation-room-subjective {
+    grid-column: 1 / 6;
+  }
+  .interpretation-room--selected .interpretation-room-understanding {
+    grid-column: 6 / 13;
+  }
+
+  .interpretation-room--selected > :is(
+    .interpretation-room-selected,
+    .interpretation-room-calculation,
+    .interpretation-room-subjective,
+    .interpretation-room-understanding
+  ) {
+    height: 100%;
+    padding: 1.1rem 1.15rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-large);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .interpretation-room-overview {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(16rem, 0.85fr);
+    gap: 0.7rem 1.25rem;
+    align-items: start;
+  }
+  .interpretation-room-overview .interpretation-room-section-head,
+  .interpretation-room-overview .interpretation-room-lead {
+    grid-column: 1 / -1;
+  }
+  .interpretation-room-overview .interpretation-room-map {
+    grid-column: 1;
+    grid-row: 3 / span 3;
+    margin-top: 0.35rem;
+  }
+  .interpretation-room-overview .interpretation-room-overview-groups,
+  .interpretation-room-overview .interpretation-room-region-picker,
+  .interpretation-room-overview .interpretation-room-boundary-line {
+    grid-column: 2;
+  }
+  .interpretation-room-overview .interpretation-room-overview-groups {
+    margin-top: 0.35rem;
+  }
+  .interpretation-room-map {
+    padding: 1rem 1.25rem;
+  }
+  .interpretation-room-body-view svg {
+    max-height: 19rem;
+  }
+  .interpretation-room-region-picker > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .interpretation-room-understanding-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .interpretation-room-next .interpretation-room-action--primary {
+    width: min(100%, 28rem);
+  }
+  .interpretation-room-secondary-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+  .interpretation-room-advanced {
+    padding-left: 0;
+  }
+}

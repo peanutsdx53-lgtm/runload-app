@@ -517,7 +517,6 @@
   .guide-dialog__header { gap: var(--space-2); }
   .guide-tab { flex-basis: calc(33.333% - var(--space-2)); padding-inline: var(--space-1); }
   .guide-dialog__footer { display: flex; }
-  .guide-dialog__footer > .button { width: 100%; }
 }
 @media (forced-colors: active) {
   .guide-tab.is-current,
@@ -605,10 +604,6 @@
 
 /* 文字拡大・高コントラスト・狭幅の横断調整 */
 @media (max-width: 35rem) {
-  .screen-actions > .button,
-  .lead-action-card__actions > .button,
-  .form-submit-actions > .button,
-  .guide-dialog__footer > .button { flex: 1 1 100%; width: 100%; }
   .result-card__heading,
   .home-summary-card__header { display: grid; }
   .status-label { justify-self: start; }
@@ -1297,11 +1292,8 @@ details.ui-motion-details.is-ui-motion-closing > :not(summary) {
 }
 .screen-tutorial__actions .button--text { margin-right: auto; }
 @media (max-width: 34rem) {
-  .screen-guide__tutorial { align-items: stretch; }
-  .screen-guide__tutorial-button { width: 100%; }
+  .screen-guide__tutorial { align-items: flex-start; }
   .screen-tutorial__panel { padding: var(--space-4); }
-  .screen-tutorial__actions .button { flex: 1 1 100%; }
-  .screen-tutorial__actions .button--text { margin-right: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .screen-tutorial__backdrop { backdrop-filter: none; }
@@ -1743,4 +1735,161 @@ html.rl-appearance-dark .primary-navigation__link.is-current {
 @media (max-width: 35rem) and (max-height: 40rem) {
   .guide-dialog__header > div > p:first-child { display: none; }
   .guide-dialog__header p:last-child { font-size: 0.78rem; }
+}
+
+
+/* ==========================================================================
+   Global UI sizing system
+   Short controls size to their role/content. Full-width actions are opt-in.
+   ========================================================================== */
+.button {
+  box-sizing: border-box;
+  width: fit-content;
+  max-width: 100%;
+  min-width: var(--button-min-inline-medium);
+  min-height: var(--button-height-medium);
+  padding: 0.55rem var(--button-padding-inline);
+  font-size: var(--type-control);
+  line-height: var(--line-compact);
+  white-space: nowrap;
+}
+.button--primary { min-width: var(--button-min-inline-large); }
+.button--text { min-width: var(--button-min-inline-small); }
+.button--block { width: 100%; }
+
+:is(.screen-actions, .lead-action-card__actions, .form-submit-actions, .history-item__actions, .saved-plan__actions, .action-row, .saved-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--button-gap);
+}
+:is(.screen-actions, .lead-action-card__actions, .form-submit-actions, .action-row, .saved-actions) > :is(.button, .text-link, button, a) {
+  flex: 0 1 auto;
+  width: auto;
+  max-width: 100%;
+}
+:is(.button, .app-menu-button, .context-help-button, .guide-tab, .screen-tutorial__close) {
+  font-family: var(--font-sans);
+}
+
+.status-label,
+.date-pill {
+  min-height: 1.8rem;
+  padding-inline: 0.65rem;
+  font-size: var(--type-caption);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.guide-dialog__footer > .button {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: var(--button-min-inline-large);
+}
+.screen-tutorial__panel {
+  width: min(31rem, calc(100% - 0.5rem));
+  gap: 1rem;
+  padding: clamp(1rem, 4vw, 1.35rem);
+}
+.screen-tutorial__header h2 {
+  font-size: var(--type-heading);
+  line-height: 1.22;
+}
+.screen-tutorial__header p:last-child {
+  font-size: var(--type-body);
+  line-height: 1.55;
+}
+.screen-tutorial__progress {
+  min-height: 2.2rem;
+  padding: 0.25rem 0.65rem;
+  font-size: var(--type-caption);
+}
+.screen-tutorial__step {
+  gap: 0.55rem;
+  padding: var(--card-padding-standard);
+}
+.screen-tutorial__step h3 {
+  font-size: var(--type-subheading);
+  line-height: 1.35;
+}
+.screen-tutorial__step p {
+  font-size: var(--type-body);
+  line-height: 1.65;
+}
+.screen-tutorial__actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--button-gap);
+}
+.screen-tutorial__actions .button {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: var(--button-min-inline-small);
+}
+.screen-tutorial__actions .button--primary { min-width: var(--button-min-inline-medium); }
+.screen-tutorial__actions .button--text { margin-right: auto; }
+
+@media (max-width: 34rem) {
+  .button {
+    min-height: var(--button-height-medium);
+    padding-inline: 0.9rem;
+  }
+  .screen-guide__tutorial-button { width: auto; }
+  .screen-tutorial {
+    padding: max(0.55rem, env(safe-area-inset-top)) 0.55rem max(0.55rem, env(safe-area-inset-bottom));
+  }
+  .screen-tutorial__panel {
+    width: 100%;
+    max-height: calc(100dvh - max(1.1rem, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+    gap: 0.85rem;
+    padding: 1rem;
+  }
+  .screen-tutorial__actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+  .screen-tutorial__actions .button,
+  .screen-tutorial__actions .button--primary,
+  .screen-tutorial__actions .button--text {
+    width: 100%;
+    min-width: 0;
+    margin-right: 0;
+    padding-inline: 0.5rem;
+  }
+  .guide-dialog__footer {
+    justify-content: flex-end;
+  }
+  .guide-dialog__footer > .button {
+    width: auto;
+    min-width: var(--button-min-inline-large);
+  }
+}
+
+
+/* Shared compact label geometry. */
+:is(
+  .status-label,
+  .date-badge,
+  .date-pill,
+  .pill,
+  .sample-badge,
+  .model-badge,
+  .local-badge
+) {
+  box-sizing: border-box;
+  min-height: 1.8rem;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: var(--type-label);
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
 }
