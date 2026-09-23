@@ -13,7 +13,7 @@ function applyAlias(rawScreen, parameters, aliases) {
   return Object.freeze({ screen: alias.screen, parameters: nextParameters });
 }
 
-function parseHashLocation(validScreens, aliases) {
+function parseHashLocation(validScreens, aliases, defaultScreen = DEFAULT_SCREEN) {
   const rawHash = window.location.hash.replace(/^#\/?/, "");
   const [rawScreen = "", rawQuery = ""] = rawHash.split("?");
   const requestedScreen = rawScreen.trim();
@@ -23,7 +23,7 @@ function parseHashLocation(validScreens, aliases) {
   }
   const aliased = applyAlias(requestedScreen, parameters, aliases);
   if (aliased && validScreens.has(aliased.screen)) return aliased;
-  return Object.freeze({ screen: DEFAULT_SCREEN, parameters: new URLSearchParams() });
+  return Object.freeze({ screen: defaultScreen, parameters: new URLSearchParams() });
 }
 
 function buildHash(screenName, parameters = {}) {
@@ -38,7 +38,7 @@ export function createAppRouter({ availableScreens, routeAliases = {}, onScreenC
   const validScreens = new Set(availableScreens);
 
   function readLocation() {
-    return parseHashLocation(validScreens, routeAliases);
+    return parseHashLocation(validScreens, routeAliases, resolvedDefaultScreen);
   }
 
   function canonicalizeLocation(location) {
@@ -48,7 +48,7 @@ export function createAppRouter({ availableScreens, routeAliases = {}, onScreenC
   }
 
   function navigateToScreen(screenName, parameters = {}) {
-    const target = validScreens.has(screenName) ? screenName : DEFAULT_SCREEN;
+    const target = validScreens.has(screenName) ? screenName : resolvedDefaultScreen;
     const nextHash = buildHash(target, parameters);
     if (window.location.hash === nextHash) {
       onScreenChange(readLocation());
@@ -64,7 +64,7 @@ export function createAppRouter({ availableScreens, routeAliases = {}, onScreenC
   function start() {
     window.addEventListener("hashchange", handleLocationChange);
     if (!window.location.hash) {
-      window.location.hash = buildHash(DEFAULT_SCREEN);
+      window.location.hash = buildHash(resolvedDefaultScreen);
       return;
     }
     handleLocationChange();
