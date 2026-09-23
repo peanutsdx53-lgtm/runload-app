@@ -5,7 +5,6 @@ import {
   formatPace,
   normalizeGeolocationPosition,
   rollingPaceSecondsPerKm,
-  RUN_MEASUREMENT_OPTIONS,
   updatePaceWarningState,
 } from "../runMeasurementCore.js";
 import { createRunMeasurementMap } from "../runMeasurementMap.js";
