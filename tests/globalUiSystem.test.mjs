@@ -165,6 +165,47 @@ await test('UI-SEMANTIC-COLORS-MEET-CONTRAST-IN-LIGHT-AND-DARK',()=>{
   }
 });
 
+
+await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
+  const css=read('styles/desktop.css');
+  const marker='PC record status card audit 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0,'PC record status audit block');
+  const audit=css.slice(start);
+  const remSize=(selector)=>{
+    let offset=0;
+    let maximum=0;
+    while(offset<audit.length){
+      const startIndex=audit.indexOf(selector,offset);
+      if(startIndex<0)break;
+      const open=audit.indexOf('{',startIndex);
+      const close=audit.indexOf('}',open+1);
+      if(open<0||close<0)break;
+      const block=audit.slice(open+1,close);
+      const match=block.match(/font-size:\s*([0-9.]+)rem(?:\s*!important)?\s*;/i);
+      if(match)maximum=Math.max(maximum,Number(match[1]));
+      offset=startIndex+selector.length;
+    }
+    return maximum;
+  };
+
+  assert.match(audit,/^PC record status card audit|@media \(min-width: 69rem\)/m);
+  assert.match(audit,/justify-items:\s*center\s*!important/);
+  assert.match(audit,/width:\s*min\(18\.5rem, 100%\)\s*!important/);
+  assert.doesNotMatch(audit,/grid-template-columns/);
+  assert.doesNotMatch(audit,/transform:\s*scale/);
+
+  assert.ok(remSize('.screen--record-input.screen-layout--record .desktop-save-area__intro > strong')>=1.3,'title font');
+  assert.ok(remSize('.screen--record-input.screen-layout--record .save-readiness__summary > span')>=0.9,'required label font');
+  assert.ok(remSize('.screen--record-input.screen-layout--record .save-readiness__summary > strong')>=1.2,'progress font');
+  assert.ok(remSize('.screen--record-input.screen-layout--record .save-checklist > div > span')>=0.95,'required item font');
+  assert.ok(remSize('.screen--record-input.screen-layout--record .save-checklist > div > b')>=0.85,'required state font');
+  assert.ok(remSize('.screen--record-input.screen-layout--record .optional-readiness > p')>=0.9,'optional label font');
+  assert.ok(remSize('.screen--record-input.screen-layout--record .optional-readiness span')>=0.9,'optional item font');
+  assert.ok(remSize('.screen--record-input.screen-layout--record .optional-readiness b')>=0.85,'optional state font');
+  assert.ok(remSize('.screen--record-input.screen-layout--record .desktop-save-area .primary-save')>=1,'save button font');
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
