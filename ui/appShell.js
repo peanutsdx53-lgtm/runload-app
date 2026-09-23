@@ -28,7 +28,7 @@ const SCREEN_TUTORIAL_BY_SCREEN = Object.freeze({
 });
 
 const PRIMARY_HEADER_TITLES = Object.freeze({
-  home: "Home",
+  home: "ホーム",
   "record-input": "記録",
   result: "結果",
   history: "履歴",
