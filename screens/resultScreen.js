@@ -227,14 +227,14 @@ function pcHistoryGraphic(points = []) {
   let minValue = Math.min(...scaleValues);
   let maxValue = Math.max(...scaleValues);
   if (maxValue - minValue < 20) { minValue -= 10; maxValue += 10; }
-  const width = 440, height = 84, left = 12, right = 10, top = 10, bottom = 20;
+  const width = 560, height = 118, left = 18, right = 16, top = 13, bottom = 24;
   const plotW = width - left - right, plotH = height - top - bottom;
   const xFor = (index) => points.length === 1 ? left + plotW / 2 : left + (plotW * index / (points.length - 1));
   const yFor = (value) => top + (maxValue - Number(value)) / (maxValue - minValue) * plotH;
   const coords = points.map((point, index) => [xFor(index), yFor(point.row.value)]);
   const path = coords.map(([x,y], index) => `${index ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
   const baselineY = yFor(100).toFixed(1);
-  return `<svg class="pc-focus-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="選択部位の直近記録の推移"><line class="pc-focus-chart__baseline" x1="${left}" x2="${width-right}" y1="${baselineY}" y2="${baselineY}"></line><path class="pc-focus-chart__line" d="${path}"></path>${coords.map(([x,y], index) => `<circle class="pc-focus-chart__point${index === coords.length - 1 ? " is-current" : ""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${index === coords.length - 1 ? 4.5 : 3.4}"></circle>`).join("")}${points.map((point,index) => `<text x="${xFor(index).toFixed(1)}" y="${height-4}" text-anchor="middle">${escapeHtml(shortDateLabel(point.experience?.record?.date || ""))}</text>`).join("")}</svg>`;
+  return `<svg class="pc-focus-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="選択部位の直近記録の推移"><line class="pc-focus-chart__baseline" x1="${left}" x2="${width-right}" y1="${baselineY}" y2="${baselineY}"></line><path class="pc-focus-chart__line" d="${path}"></path>${coords.map(([x,y], index) => `<circle class="pc-focus-chart__point${index === coords.length - 1 ? " is-current" : ""}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${index === coords.length - 1 ? 5 : 3.7}"></circle><text class="pc-focus-chart__value" x="${x.toFixed(1)}" y="${(y-8).toFixed(1)}" text-anchor="middle">${escapeHtml(fmt(points[index].row.value, 1))}</text>`).join("")}${points.map((point,index) => `<text x="${xFor(index).toFixed(1)}" y="${height-5}" text-anchor="middle">${escapeHtml(shortDateLabel(point.experience?.record?.date || ""))}</text>`).join("")}</svg>`;
 }
 
 function renderPcDetailPanel(resultRecord, allExperiences, info, selectedId) {
@@ -249,31 +249,13 @@ function renderPcDetailPanel(resultRecord, allExperiences, info, selectedId) {
   const previous = finite(info.prev) ? fmt(info.prev, 1) : "—";
   const previousDelta = finite(info.delta) ? signed(info.delta, 1) : "—";
   const currentPos = finite(row.value) ? position(row.value) : 50;
-  const previousPos = finite(info.prev) ? position(info.prev) : null;
-  return `<div class="pc-detail-panel${row.regionId === selectedId ? " is-active" : ""}" data-pc-detail-region="${escapeHtml(row.regionId)}" data-direction="${state}"${row.regionId === selectedId ? "" : " hidden"}><header><div><small>選択中</small><h3>${escapeHtml(name)}</h3></div><span>${escapeHtml(stateLabel)}</span></header><div class="pc-focus-content"><div class="pc-focus-highlight"><span>基準から見る</span><div><strong>${escapeHtml(current)}</strong><em>今回</em></div><p>基準100との差 <b>${escapeHtml(baselineDelta)}</b></p><div class="pc-focus-baseline" style="--pos:${currentPos}%;${finite(previousPos) ? `--prev:${previousPos}%;` : ""}"><i></i><b></b>${finite(previousPos) ? `<em></em>` : ""}<small>100</small></div></div><div class="pc-focus-change"><span>前回から見る</span><div class="pc-focus-compare"><div><small>前回</small><strong>${escapeHtml(previous)}</strong></div><i>→</i><div class="is-current"><small>今回</small><strong>${escapeHtml(current)}</strong></div></div><p><b>${escapeHtml(previousDelta)}</b><span> の変化</span></p></div><div class="pc-focus-trend"><span>過去から見る</span>${pcHistoryGraphic(history)}</div></div></div>`;
-}
-
-function comparisonPosition(value) {
-  if (!finite(value)) return 50;
-  return Math.max(7, Math.min(93, 50 + (Number(value) - 100) * 0.72));
-}
-
-function renderPcComparison(infos, selectedId) {
-  return `<div class="pc-compare-panel" data-pc-compare-panel hidden><div class="pc-compare-toolbar"><div><small>12 REGIONS</small><strong>部位を比べる</strong><span>同じ基準100を中心に、今回の12部位を見比べます。</span></div><div class="pc-compare-display" role="group" aria-label="部位比較の表示"><button type="button" class="is-active" data-pc-compare-display="ratio" aria-pressed="true">比率</button><button type="button" data-pc-compare-display="difference" aria-pressed="false">差分</button></div></div><div class="pc-compare-grid">${infos.map((info) => {
-    const row = info.row;
-    const name = bodyRegionFormalName(row.regionId, row.regionName || row.regionId);
-    const current = finite(row.value) ? fmt(row.value, 1) : "—";
-    const difference = finite(row.value) ? signed(Number(row.value) - 100, 1) : "—";
-    const state = direction(row.value);
-    const pos = comparisonPosition(row.value);
-    return `<button type="button" class="pc-compare-row${row.regionId === selectedId ? " is-selected" : ""}" data-region-id="${escapeHtml(row.regionId)}" data-pc-region-select="${escapeHtml(row.regionId)}" data-direction="${state}"><span class="pc-compare-row__name">${escapeHtml(name)}</span><span class="pc-compare-row__axis" style="--pos:${pos}%"><i></i><b></b></span><strong><span data-pc-compare-value="ratio">${escapeHtml(current)}</span><span data-pc-compare-value="difference" hidden>${escapeHtml(difference)}</span></strong></button>`;
-  }).join("")}</div><p class="pc-compare-note">値の高低は、良し悪し・安全性・けがの危険性を示すものではありません。</p></div>`;
+  return `<div class="pc-detail-panel${row.regionId === selectedId ? " is-active" : ""}" data-pc-detail-region="${escapeHtml(row.regionId)}" data-direction="${state}"${row.regionId === selectedId ? "" : " hidden"}><header><div><small>選択中</small><h3>${escapeHtml(name)}</h3></div><span>${escapeHtml(stateLabel)}</span></header><div class="pc-detail-story"><div class="pc-detail-now"><span>今回と基準</span><div class="pc-detail-now__value"><strong>${escapeHtml(current)}</strong><em>今回</em></div><div class="pc-focus-baseline pc-focus-baseline--large" style="--pos:${currentPos}%;"><i></i><b></b><small>基準100</small></div><p>この部位自身の基準との差 <b>${escapeHtml(baselineDelta)}</b></p></div><div class="pc-detail-previous"><span>前回から</span><div class="pc-detail-previous__flow"><div><small>前回</small><strong>${escapeHtml(previous)}</strong></div><div class="pc-detail-previous__arrow"><i></i><b>${escapeHtml(previousDelta)}</b></div><div class="is-current"><small>今回</small><strong>${escapeHtml(current)}</strong></div></div><p>同じ部位の前回記録と比較しています。</p></div><div class="pc-detail-history"><div class="pc-detail-history__heading"><span>この部位の推移</span><small>同じ部位の過去記録のみ・破線＝基準100</small></div>${pcHistoryGraphic(history)}</div></div></div>`;
 }
 
 function renderPcInsights(resultRecord, allExperiences, infos, selectedInfo) {
   if (!selectedInfo) return `<section class="pc-result-focus"><div class="pc-focus-empty">部位の数値を表示できません。</div></section>`;
   const selectedId = selectedInfo.row.regionId;
-  return `<section class="pc-result-focus pc-result-insights" aria-label="部位の詳細と比較"><div class="pc-insight-tabs" role="tablist" aria-label="部位の表示"><button type="button" class="is-active" data-pc-insight-mode="detail" aria-selected="true">詳細</button><button type="button" data-pc-insight-mode="compare" aria-selected="false">比較</button></div><div class="pc-detail-stack" data-pc-detail-stack>${infos.map((info) => renderPcDetailPanel(resultRecord, allExperiences, info, selectedId)).join("")}</div>${renderPcComparison(infos, selectedId)}</section>`;
+  return `<section class="pc-result-focus pc-result-insights pc-result-insights--history" aria-label="選択部位の詳細と過去推移"><div class="pc-detail-stack" data-pc-detail-stack>${infos.map((info) => renderPcDetailPanel(resultRecord, allExperiences, info, selectedId)).join("")}</div></section>`;
 }
 
 function renderPcFatigue(snapshot) {
