@@ -25,7 +25,7 @@ function renderRofJInlineAndOverlay({ services, linkedRunId = "", editing = fals
   const phase = hasPre ? "after" : "before";
   const sourceFingerprint = entry?.sourceFingerprint || "";
   return `<div class="fatigue-inline" data-second-pillar-lifecycle data-run-id="${escapeHtml(linkedRunId)}"><div class="fatigue-inline__label"><small>任意</small><strong>${hasPre ? "走る前後の疲労感" : "走る前の疲労感"}</strong></div><div class="fatigue-inline__status"><small>記録状況</small><span data-record-rof-status>${escapeHtml(status)}</span></div><button type="button" data-action="open-record-rof" data-phase="${phase}"${actionDisabled}>${escapeHtml(actionText)}</button><p class="form-messages" data-second-pillar-message hidden></p></div>
-  <div class="overlay" data-record-rof-overlay hidden aria-modal="true" role="dialog" aria-labelledby="record-rof-title"><section class="sheet rof-sheet"><div class="grip"></div><header class="sheet-head"><div><p class="eyebrow">疲労感の記録</p><h2 id="record-rof-title" data-record-rof-title>${phase === "after" ? "走った後の疲労感" : "走る前の疲労感"}</h2></div><button type="button" data-action="close-record-rof" aria-label="閉じる">×</button></header><p class="rof-question" data-record-rof-question>今の疲労感を0〜10で選んでください。</p><div class="rof-scale-panel"><div class="rof-current"><span>選択値</span><strong data-record-rof-value>—</strong><em data-record-rof-descriptor>数値を選択</em></div><div class="rof-slider-wrap"><input type="range" min="0" max="10" step="1" value="5" data-record-rof-slider aria-label="疲労感 0から10"><div class="rof-ticks" aria-hidden="true">${Array.from({ length: 11 }, (_, value) => `<span>${value}</span>`).join("")}</div></div><div class="rof-anchor-guide"><small>尺度の正式な言葉</small><div data-record-rof-anchor>2・${escapeHtml(ROF_J_DESCRIPTOR_MAP[2])} ／ 4・${escapeHtml(ROF_J_DESCRIPTOR_MAP[4])}</div></div></div><button type="button" class="primary-sheet-action" data-action="record-rof-value" disabled>この値を記録</button><button type="button" class="text-action" data-action="record-rof-post-only"${phase === "after" ? " hidden" : ""}>すでに走り終えている場合：走った後だけ記録</button><details class="rof-about"><summary>尺度について</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p>${sourceFingerprint ? `<small>使用尺度：ROF-J</small>` : ""}</div></details></section></div>`;
+  <div class="overlay" data-record-rof-overlay hidden aria-modal="true" role="dialog" aria-labelledby="record-rof-title"><section class="sheet rof-sheet"><div class="grip"></div><header class="sheet-head"><div><p class="eyebrow">疲労感の記録</p><h2 id="record-rof-title" data-record-rof-title>${phase === "after" ? "走った後の疲労感" : "走る前の疲労感"}</h2></div><button type="button" class="rof-close-button" data-action="close-record-rof" aria-label="閉じる">×</button></header><p class="rof-question" data-record-rof-question>今の疲労感を0〜10で選んでください。</p><div class="rof-scale-panel"><div class="rof-current"><span>選択値</span><strong data-record-rof-value>—</strong><em data-record-rof-descriptor>数値を選択</em></div><div class="rof-slider-wrap" data-rof-slider-wrap><input type="range" min="0" max="10" step="1" value="5" data-record-rof-slider aria-label="疲労感 0から10"><div class="rof-ticks" aria-hidden="true">${Array.from({ length: 11 }, (_, value) => `<span>${value}</span>`).join("")}</div></div><div class="rof-anchor-guide"><small>尺度の正式な言葉</small><div data-record-rof-anchor>2・${escapeHtml(ROF_J_DESCRIPTOR_MAP[2])} ／ 4・${escapeHtml(ROF_J_DESCRIPTOR_MAP[4])}</div></div></div><button type="button" class="primary-sheet-action" data-action="record-rof-value" disabled>この値を記録</button><button type="button" class="text-action" data-action="record-rof-post-only"${phase === "after" ? " hidden" : ""}>すでに走り終えている場合：走った後だけ記録</button><details class="rof-about"><summary>尺度について</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p>${sourceFingerprint ? `<small>使用尺度：ROF-J</small>` : ""}</div></details></section></div>`;
 }
 
 const RUN_WALK_SURFACE_OPTIONS = Object.freeze([
@@ -96,6 +96,35 @@ function hasDetailedCourse(course = {}) {
   if (String(course.modelSurfaceClass || "UNKNOWN") !== "UNKNOWN") return true;
   if (["upPercent", "downPercent", "upGradePercent", "downGradePercent"].some((key) => Number(course[key] || 0) > 0)) return true;
   return SURFACE_FIELDS.some(({ recordKey }) => Number(course[recordKey] || 0) > 0);
+}
+
+function hasComparisonInfo(record = {}) {
+  const environment = record.environmentContext || {};
+  return Boolean(
+    String(record.steps ?? "").trim()
+    || String(record.stepsProvenance || "UNKNOWN") !== "UNKNOWN"
+    || String(record.runningFormat || "UNKNOWN") !== "UNKNOWN"
+    || String(record.runWalkRunningDistanceKm ?? "").trim()
+    || String(record.runWalkRunningDurationMinutes ?? "").trim()
+    || String(environment.temperatureC ?? "").trim()
+    || String(environment.environmentNote || "").trim()
+  );
+}
+
+function hasReflectionInfo(record = {}, feedback = {}) {
+  const reflection = record.reflectionContext || {};
+  const subjectiveStatus = String(feedback.checkStatus || "deferred");
+  return Boolean(
+    !["", "deferred", "not_asked"].includes(subjectiveStatus)
+    || personalContextSummary(record).hasInput
+    || String(reflection.postRunReflection || "").trim()
+    || String(reflection.perceivedDifference || "").trim()
+    || String(reflection.nextCheckPoint || "").trim()
+  );
+}
+
+function optionalInputStatus(hasInput) {
+  return hasInput ? "入力あり" : "未入力";
 }
 
 function renderPlanCourseLibrarySaveOption(course = {}, { fromPlan = false, isRest = false } = {}) {
@@ -233,7 +262,6 @@ export function renderRecordInputScreen({ services, context }) {
   const settings = services.storage.settings.load();
 
   return `<div class="screen screen--record-input screen-layout screen-layout--record">
-    <section class="page-head"><div><p class="eyebrow">RECORD</p><h1>${editing ? "保存した記録を確認・更新" : "今日の記録"}</h1></div></section>
     ${editing ? `<p class="parity-record-banner">保存済みの${escapeHtml(formatLocalDate(record.date))}の記録を更新します。</p>` : measurement ? `<p class="parity-record-banner">GPS測定結果から距離と時間を転記しています。必要なら保存前に修正できます。</p>` : selectedPlan ? `<p class="parity-record-banner">保存した予定から今回の記録へ転記しています。</p>` : savedDraft ? `<p class="parity-record-banner">入力途中の下書きから再開しています。</p>` : ""}
     <form id="record-input-form" class="record-form" data-editing="${editing ? "true" : "false"}" novalidate>
       <input type="hidden" name="recordId" value="${escapeHtml(effectiveRecordId)}"><input type="hidden" name="planId" value="${escapeHtml(selectedPlan?.id || "")}"><div class="form-messages" data-form-messages tabindex="-1" hidden></div>
@@ -246,36 +274,33 @@ export function renderRecordInputScreen({ services, context }) {
       </section>
 
       <section class="optional-stack">
-        <details class="stage-card" data-run-fields${isRest ? " hidden" : ""}><summary><span class="stage-icon">2</span><span class="summary-copy"><small>任意</small><strong>コースと走行条件</strong><em>${hasDetailedCourse(course) ? "選択済み" : "未選択"}</em></span><i>⌄</i></summary><div class="stage-body">${renderRecentCourseShortcuts(recentCourses)}<p class="record-return-status" data-record-return-status role="status" aria-live="polite" hidden></p>${renderCourseEntry(course, isRest, { fromPlan: Boolean(selectedPlan) })}</div></details>
+        <details class="stage-card" data-run-fields${isRest ? " hidden" : ""}><summary><span class="stage-icon">2</span><span class="summary-copy"><small>任意</small><strong>コースと走行条件</strong><em data-optional-status="course">${optionalInputStatus(hasDetailedCourse(course))}</em></span><i>⌄</i></summary><div class="stage-body">${renderRecentCourseShortcuts(recentCourses)}<p class="record-return-status" data-record-return-status role="status" aria-live="polite" hidden></p>${renderCourseEntry(course, isRest, { fromPlan: Boolean(selectedPlan) })}</div></details>
         ${renderCourseHiddenFields(course)}
 
-        <details class="stage-card" data-run-fields${isRest ? " hidden" : ""}><summary><span class="stage-icon">3</span><span class="summary-copy"><small>任意</small><strong>比較しやすくする情報</strong><em>必要な項目だけ</em></span><i>⌄</i></summary><div class="stage-body"><div class="two-fields"><label class="field"><span>歩数</span><input name="steps" type="number" inputmode="numeric" min="0" max="10000000" step="1" value="${escapeHtml(record.steps || "")}" placeholder="例：6000"></label><label class="field"><span>歩数の取得方法</span><select name="stepsProvenance"><option value="UNKNOWN"${selected(record.stepsProvenance, "UNKNOWN")}>不明・未設定</option><option value="DEVICE_MEASURED"${selected(record.stepsProvenance, "DEVICE_MEASURED")}>端末・時計で計測</option><option value="ESTIMATED"${selected(record.stepsProvenance, "ESTIMATED")}>手入力・おおよそ</option></select></label></div><label class="field field--running-format"><span>走り方</span><select name="runningFormat"><option value="UNKNOWN"${selected(record.runningFormat, "UNKNOWN")}>覚えていない・未設定</option><option value="CONTINUOUS_RUN"${selected(record.runningFormat, "CONTINUOUS_RUN")}>途中で歩かず走った</option><option value="RUN_WALK"${selected(record.runningFormat, "RUN_WALK")}>走りと歩きを混ぜた</option></select></label><div class="nested-panel" data-run-walk-container${String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK" ? "" : " hidden"}>${renderRunWalkDetails(record)}</div>${renderEnvironmentContext(record)}</div></details>
+        <details class="stage-card" data-run-fields${isRest ? " hidden" : ""}><summary><span class="stage-icon">3</span><span class="summary-copy"><small>任意</small><strong>比較しやすくする情報</strong><em data-optional-status="compare">${optionalInputStatus(hasComparisonInfo(record))}</em></span><i>⌄</i></summary><div class="stage-body"><div class="two-fields"><label class="field"><span>歩数</span><input name="steps" type="number" inputmode="numeric" min="0" max="10000000" step="1" value="${escapeHtml(record.steps || "")}" placeholder="例：6000"></label><label class="field"><span>歩数の取得方法</span><select name="stepsProvenance"><option value="UNKNOWN"${selected(record.stepsProvenance, "UNKNOWN")}>不明・未設定</option><option value="DEVICE_MEASURED"${selected(record.stepsProvenance, "DEVICE_MEASURED")}>端末・時計で計測</option><option value="ESTIMATED"${selected(record.stepsProvenance, "ESTIMATED")}>手入力・おおよそ</option></select></label></div><label class="field field--running-format"><span>走り方</span><select name="runningFormat"><option value="UNKNOWN"${selected(record.runningFormat, "UNKNOWN")}>覚えていない・未設定</option><option value="CONTINUOUS_RUN"${selected(record.runningFormat, "CONTINUOUS_RUN")}>途中で歩かず走った</option><option value="RUN_WALK"${selected(record.runningFormat, "RUN_WALK")}>走りと歩きを混ぜた</option></select></label><div class="nested-panel" data-run-walk-container${String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK" ? "" : " hidden"}>${renderRunWalkDetails(record)}</div>${renderEnvironmentContext(record)}</div></details>
 
-        <details class="stage-card"><summary><span class="stage-icon">4</span><span class="summary-copy"><small>任意</small><strong>気づきと次回</strong><em>必要な内容だけ</em></span><i>⌄</i></summary><div class="stage-body"><div class="linked-records"><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="subjective"><span class="linked-icon">＋</span><span><small>身体の記録</small><strong>今回の身体記録</strong><em data-subjective-summary-status>${escapeHtml(subjectiveSummaryFromFields(subjectiveFieldsFromFeedback(feedback)).label)}</em></span><i>›</i></button><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="personal"><span class="linked-icon">＋</span><span><small>使用したもの</small><strong>今回のシューズ</strong><em data-personal-summary-status>${escapeHtml(personalContextSummary(record).hasInput ? personalContextSummary(record).description : "未選択")}</em></span><i>›</i></button></div><div class="reflection-fields"><label class="field"><span>今回の気づき</span><textarea name="postRunReflection" maxlength="500" rows="2">${escapeHtml(record.reflectionContext?.postRunReflection || "")}</textarea></label><label class="field"><span>いつもとの違い</span><textarea name="perceivedDifference" maxlength="500" rows="2">${escapeHtml(record.reflectionContext?.perceivedDifference || "")}</textarea></label><label class="field"><span>次回確認したいこと</span><textarea name="nextCheckPoint" maxlength="500" rows="2">${escapeHtml(record.reflectionContext?.nextCheckPoint || "")}</textarea></label></div><input type="hidden" name="reflectionKeyPoint" value="${escapeHtml(record.reflectionContext?.reflectionKeyPoint || "")}"><input type="hidden" name="memo" value=""><div hidden aria-hidden="true"><input type="hidden" name="sleepSummary" value=""><input type="hidden" name="nutritionHydrationSummary" value=""><input type="hidden" name="lifestyleNote" value=""><input type="hidden" name="consultationTarget" value=""><input type="hidden" name="consultationQuestion" value=""></div></div></details>
+        <details class="stage-card"><summary><span class="stage-icon">4</span><span class="summary-copy"><small>任意</small><strong>気づきと次回</strong><em data-optional-status="reflection">${optionalInputStatus(hasReflectionInfo(record, feedback))}</em></span><i>⌄</i></summary><div class="stage-body"><div class="linked-records"><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="subjective"><span class="linked-icon">＋</span><span><small>身体の記録</small><strong>今回の身体記録</strong><em data-subjective-summary-status>${escapeHtml(subjectiveSummaryFromFields(subjectiveFieldsFromFeedback(feedback)).label)}</em></span><i>›</i></button><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="personal"><span class="linked-icon">＋</span><span><small>使用したもの</small><strong>今回のシューズ</strong><em data-personal-summary-status>${escapeHtml(personalContextSummary(record).hasInput ? personalContextSummary(record).description : "未選択")}</em></span><i>›</i></button></div><div class="reflection-fields"><label class="field"><span>今回の気づき</span><textarea name="postRunReflection" maxlength="500" rows="2">${escapeHtml(record.reflectionContext?.postRunReflection || "")}</textarea></label><label class="field"><span>いつもとの違い</span><textarea name="perceivedDifference" maxlength="500" rows="2">${escapeHtml(record.reflectionContext?.perceivedDifference || "")}</textarea></label><label class="field"><span>次回確認したいこと</span><textarea name="nextCheckPoint" maxlength="500" rows="2">${escapeHtml(record.reflectionContext?.nextCheckPoint || "")}</textarea></label></div><input type="hidden" name="reflectionKeyPoint" value="${escapeHtml(record.reflectionContext?.reflectionKeyPoint || "")}"><input type="hidden" name="memo" value=""><div hidden aria-hidden="true"><input type="hidden" name="sleepSummary" value=""><input type="hidden" name="nutritionHydrationSummary" value=""><input type="hidden" name="lifestyleNote" value=""><input type="hidden" name="consultationTarget" value=""><input type="hidden" name="consultationQuestion" value=""></div></div></details>
       </section>
 
       ${renderEmbeddedSubjectiveSubflow(feedback)}${renderEmbeddedPersonalSubflow(record, settings)}
-      <aside class="desktop-save-area" aria-label="保存状況">
-        <div class="desktop-save-area__intro">
-          <strong>${editing ? "入力内容を確認して更新" : "必須項目を確認して保存"}</strong>
-          <span data-record-save-hint>${isRest ? "休養日として保存できます。" : "距離と実際に走った時間を入力してください。"}</span>
-        </div>
+      <aside class="desktop-save-area" aria-label="入力状況">
+        <div class="desktop-save-area__intro"><strong>入力状況</strong></div>
         <div class="save-readiness" data-save-readiness>
           <div class="save-readiness__summary">
-            <span>保存まで</span>
+            <span>必須</span>
             <strong data-save-readiness-progress>${isRest ? "保存可" : "0 / 2"}</strong>
           </div>
           <div class="save-readiness__bar" aria-hidden="true"><i data-save-readiness-bar style="width:${isRest ? "100" : "0"}%"></i></div>
-          <dl class="save-context">
-            <div><dt>記録</dt><dd data-save-context-activity>${isRest ? "休養" : "走行"}</dd></div>
-            <div><dt>日付</dt><dd data-save-context-date>${escapeHtml(recordDateLabel(record.date))}</dd></div>
-          </dl>
           <div class="save-checklist" data-save-run-checklist${isRest ? " hidden" : ""}>
             <div data-save-check="distance"><span>距離</span><b data-save-check-state="distance">未入力</b></div>
             <div data-save-check="duration"><span>実際に走った時間</span><b data-save-check-state="duration">未入力</b></div>
           </div>
-          <p class="save-readiness__note">任意項目は空欄のままでも保存できます。</p>
-          ${editing ? "" : '<p class="save-readiness__draft">入力途中は、この端末に下書きとして保存されます。</p>'}
+          <div class="optional-readiness" aria-label="任意項目の入力状況">
+            <p>任意</p>
+            <div data-save-optional="course" data-run-optional${isRest ? " hidden" : ""}><span>コースと走行条件</span><b>${optionalInputStatus(hasDetailedCourse(course))}</b></div>
+            <div data-save-optional="compare" data-run-optional${isRest ? " hidden" : ""}><span>比較しやすくする情報</span><b>${optionalInputStatus(hasComparisonInfo(record))}</b></div>
+            <div data-save-optional="reflection"><span>気づきと次回</span><b>${optionalInputStatus(hasReflectionInfo(record, feedback))}</b></div>
+          </div>
         </div>
         <span class="draft-status" data-draft-status role="status" aria-live="polite"></span>
         <button class="primary-save" type="submit">${editing ? "記録を更新して結果を見る" : "記録を保存して結果を見る"}</button>
