@@ -340,6 +340,158 @@ function selectRegion(base = {}, selectedRegionId = "") {
   return { region, comparison };
 }
 
+function directionCountKey(direction = "") {
+  if (direction === "ABOVE_REFERENCE") return "above";
+  if (direction === "REFERENCE_VICINITY") return "near";
+  if (direction === "BELOW_REFERENCE") return "below";
+  return "unavailable";
+}
+
+function buildAttentionOverview(base = {}) {
+  const regions = Array.isArray(base?.current?.regions) ? base.current.regions : [];
+  const comparisons = base?.comparison?.regionalById || {};
+  const groups = {
+    REPEATED_DIRECTION: [],
+    PREVIOUS_CHANGE: [],
+    REFERENCE_POSITION: [],
+    REFERENCE_NEAR: [],
+  };
+  let available = 0;
+  let previousComparable = 0;
+  let previousChanged = 0;
+  let repeated = 0;
+  let above = 0;
+  let near = 0;
+  let below = 0;
+
+  regions.forEach((region) => {
+    if (!finite(region?.value)) return;
+    available += 1;
+    const comparison = comparisons[region.regionId] || {};
+    if (comparison.comparablePreviousRecordId) previousComparable += 1;
+    const changed = ["UP", "DOWN"].includes(String(comparison.previousDirection || ""));
+    if (changed) previousChanged += 1;
+    const direction = String(region.referenceDirection || referenceDirection(region.value));
+    if (direction === "ABOVE_REFERENCE") above += 1;
+    else if (direction === "BELOW_REFERENCE") below += 1;
+    else if (direction === "REFERENCE_VICINITY") near += 1;
+
+    const countKey = directionCountKey(direction);
+    const pastMatchingCount = Number(comparison?.historyReferenceDirectionCounts?.[countKey] || 0);
+    const repeatedDirection = ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(direction)
+      && Number(comparison.historyComparableCount || 0) >= 2
+      && pastMatchingCount >= 2;
+    if (repeatedDirection) repeated += 1;
+
+    const reasonCode = repeatedDirection
+      ? "REPEATED_DIRECTION"
+      : changed
+        ? "PREVIOUS_CHANGE"
+        : ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(direction)
+          ? "REFERENCE_POSITION"
+          : "REFERENCE_NEAR";
+
+    groups[reasonCode].push(Object.freeze({
+      regionId: String(region.regionId || ""),
+      primaryRegionId: String(region.primaryRegionId || ""),
+      label: String(region.label || ""),
+      value: Number(region.value),
+      referenceDirection: direction,
+      previousAvailable: Boolean(comparison.comparablePreviousRecordId) && finite(comparison.previousValue),
+      previousRecordId: String(comparison.comparablePreviousRecordId || ""),
+      previousDate: String(comparison.comparablePreviousDate || ""),
+      previousValue: finite(comparison.previousValue) ? Number(comparison.previousValue) : null,
+      previousDifference: finite(comparison.delta) ? Number(comparison.delta) : null,
+      previousDirection: String(comparison.previousDirection || "NONE"),
+      historyComparableCount: Number(comparison.historyComparableCount || 0),
+      pastMatchingDirectionCount: pastMatchingCount,
+      reasonCode,
+    }));
+  });
+
+  const order = ["REPEATED_DIRECTION", "PREVIOUS_CHANGE", "REFERENCE_POSITION", "REFERENCE_NEAR"];
+  return Object.freeze({
+    counts: Object.freeze({
+      total: regions.length,
+      available,
+      unavailable: Math.max(0, regions.length - available),
+      previousComparable,
+      previousChanged,
+      repeated,
+      above,
+      near,
+      below,
+      conditionDifferences: Array.isArray(base?.comparison?.conditionDifferences) ? base.comparison.conditionDifferences.length : 0,
+    }),
+    groups: Object.freeze(order.map((code) => Object.freeze({ code, regions: Object.freeze(groups[code]) })).filter((group) => group.regions.length)),
+    noCrossRegionRanking: true,
+  });
+}
+
+function conditionRelationship(path = {}, differenceId = "") {
+  const active = new Set((path?.activeInputs || []).map((item) => String(item.id || "")));
+  const conditional = new Set((path?.conditionalInputs || []).map((item) => String(item.id || "")));
+  const contextOnly = new Set((path?.contextOnlyInputs || []).map((item) => String(item.id || "")));
+  const map = {
+    distance: ["DISTANCE", "RUNNING_DISTANCE"],
+    duration: ["DURATION", "RUNNING_DURATION"],
+    pace: ["SPEED"],
+    cadence: ["CADENCE"],
+    grade: ["GRADE"],
+    surface: ["SURFACE"],
+  };
+  const ids = map[differenceId] || [];
+  if (differenceId === "running-format") return "DEFINES_EXPOSURE";
+  if (differenceId === "course") return "RECORDED_CONTEXT";
+  if (ids.some((id) => active.has(id))) return "USED_IN_CURRENT_ROUTE";
+  if (ids.some((id) => conditional.has(id))) return "RECORDED_CONDITIONAL";
+  if (ids.some((id) => contextOnly.has(id))) return "RECORDED_CONTEXT";
+  return "NOT_IDENTIFIED_IN_REGION_ROUTE";
+}
+
+function conditionProjection(base = {}, selectedRegion = null) {
+  const differences = Array.isArray(base?.comparison?.conditionDifferences) ? base.comparison.conditionDifferences : [];
+  const path = selectedRegion?.calculationPath || null;
+  return Object.freeze({
+    previousRecordId: String(base?.comparison?.conditionPreviousRecordId || ""),
+    previousDate: String(base?.comparison?.conditionPreviousDate || ""),
+    differences: frozenArray(differences.map((item) => ({
+      id: String(item?.id || ""),
+      labelToken: String(item?.labelToken || ""),
+      previous: item?.previous ?? null,
+      current: item?.current ?? null,
+      delta: finite(item?.delta) ? Number(item.delta) : null,
+      relationship: path ? conditionRelationship(path, String(item?.id || "")) : "NO_REGION_SELECTED",
+    }))),
+    boundaryCodes: Object.freeze(differences.length ? ["DESCRIPTIVE_ONLY", "NO_CAUSAL_INFERENCE"] : []),
+  });
+}
+
+function nextCheckProjection(base = {}, selectedRegionId = "", attention = null) {
+  const comparison = selectedRegionId ? base?.comparison?.regionalById?.[selectedRegionId] || {} : {};
+  const conditions = Array.isArray(base?.comparison?.conditionDifferences) ? base.comparison.conditionDifferences : [];
+  const changedCount = Number(attention?.counts?.previousChanged || 0);
+  const direction = selectedRegionId
+    ? String((base?.current?.regions || []).find((region) => region.regionId === selectedRegionId)?.referenceDirection || "")
+    : "";
+  const key = directionCountKey(direction);
+  const sameDirectionCount = Number(comparison?.historyReferenceDirectionCounts?.[key] || 0);
+
+  if (selectedRegionId && comparison.historyComparableCount === 0) {
+    return Object.freeze({ code: "ADD_COMPARABLE_RECORD", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))) });
+  }
+  if (selectedRegionId && sameDirectionCount >= 2 && ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(direction)) {
+    return Object.freeze({ code: "RECHECK_REPEATED_DIRECTION", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))) });
+  }
+  if (conditions.length) {
+    return Object.freeze({ code: "KEEP_CONDITIONS_VISIBLE", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))) });
+  }
+  if (changedCount > 0) {
+    return Object.freeze({ code: "RECORD_NEXT_COMPARABLE_RUN", regionId: selectedRegionId, conditionIds: Object.freeze([]) });
+  }
+  return Object.freeze({ code: "CONTINUE_COMPARABLE_RECORDS", regionId: selectedRegionId, conditionIds: Object.freeze([]) });
+}
+
 function nextProjection(base = {}, selectedRegionId = "") {
   const actions = Array.isArray(base?.actions) ? base.actions : [];
   const enabled = actions.filter((action) => action?.enabled !== false);
@@ -347,12 +499,8 @@ function nextProjection(base = {}, selectedRegionId = "") {
     const action = enabled[0] || null;
     return Object.freeze({ selectionRequired: false, primaryAction: action, otherActions: frozenArray(enabled.slice(1)) });
   }
-  if (!selectedRegionId) {
-    return Object.freeze({ selectionRequired: true, primaryAction: null, otherActions: Object.freeze([]) });
-  }
-  const comparison = base?.comparison?.regionalById?.[selectedRegionId] || {};
   const hasConditionDifference = Array.isArray(base?.comparison?.conditionDifferences) && base.comparison.conditionDifferences.length > 0;
-  const preferredId = hasConditionDifference ? "simulation" : comparison.historyComparableCount > 0 ? "history" : "plan";
+  const preferredId = hasConditionDifference ? "simulation" : "plan";
   const primary = enabled.find((action) => action.actionId === preferredId) || enabled[0] || null;
   return Object.freeze({
     selectionRequired: false,
@@ -394,6 +542,9 @@ export function buildRunLoadInterpretation({
 
   const regions = (base?.current?.regions || []).map((region) => overviewRegion(region, base?.comparison?.regionalById?.[region.regionId] || {}));
   const subjectiveContext = buildSubjectiveContext(base?.current?.rof || {});
+  const attention = buildAttentionOverview(base);
+  const conditions = conditionProjection(base, selectedRegion);
+  const nextCheck = nextCheckProjection(base, selectedRegionId, attention);
 
   return Object.freeze({
     schemaVersion: INTERPRETATION_OUTPUT_SCHEMA_VERSION,
@@ -416,15 +567,21 @@ export function buildRunLoadInterpretation({
     }),
     overview: Object.freeze({
       regions: frozenArray(regions),
-      selectionMode: selectedRegionId ? "EXPLICIT" : "USER_SELECT",
+      selectionMode: selectedRegionId ? "EXPLICIT" : "REASON_GROUPS",
       guidanceTokens: Object.freeze(["REGIONS_USE_OWN_REFERENCE", "NO_CROSS_REGION_RANKING", "NUMBERS_REQUIRE_CONTEXT"]),
+      attention,
     }),
+    runFacts: base?.current?.facts || Object.freeze({}),
     selectedRegion,
     subjectiveContext,
+    conditions,
     understanding: Object.freeze({
+      meaningCode: String(base?.interpretation?.meaning?.primaryCode || ""),
+      secondaryCodes: base?.interpretation?.meaning?.secondaryCodes || Object.freeze([]),
       facts: base?.interpretation?.meaning?.factsUsed || Object.freeze([]),
       boundaryCodes: base?.interpretation?.limitationCodes || Object.freeze([]),
     }),
+    nextCheck,
     next: nextProjection(base, selectedRegionId),
     advanced: Object.freeze({ evidence: base?.evidence || null }),
     safety: base?.safety || Object.freeze({ route: "normal", reasons: Object.freeze([]), blocks: Object.freeze([]), nextActions: Object.freeze([]) }),
