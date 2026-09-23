@@ -8124,9 +8124,13 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   if (measurementsWithinLimit) {
     runMeasurements.forEach((measurement, index) => {
       const itemId = String(measurement?.recordId || measurement?.id || index);
-      if (!isObject(measurement) || !String(measurement.recordId || "")) {
+      const measurementRecordId = String(measurement?.recordId || "");
+      if (!isObject(measurement) || !measurementRecordId) {
         issues.push(issue("BLOCKING", "RUN_MEASUREMENT_INVALID", "runMeasurements", "GPS走行軌跡の記録IDを確認できません。", itemId));
         return;
+      }
+      if (!recordIds.has(measurementRecordId)) {
+        issues.push(issue("BLOCKING", "RUN_MEASUREMENT_RECORD_MISSING", "runMeasurements", "GPS走行軌跡に対応する走行記録がありません。", itemId));
       }
       const track = measurement.track;
       if (!Array.isArray(track) || track.length < 2 || track.length > 2000) {
@@ -9566,8 +9570,14 @@ function createHistoryWorkflow({
     const plans = plansRead.items;
     const affectedPlans = plans.filter((plan) => plan.sourceRecordId === recordId || plan.actualRecordId === recordId);
     const nextPlans = plans.map((plan) => removeRecordReferencesFromPlan(plan, recordId));
+    const runMeasurementsRead = gateway.readJsonResult(STORAGE_KEYS.runMeasurements, []);
+    if (!runMeasurementsRead.ok || !Array.isArray(runMeasurementsRead.value)) {
+      return { ...(runMeasurementsRead || {}), ok: false, code: "HISTORY_SOURCE_READ_FAILED", sourceName: "runMeasurements" };
+    }
+    const runMeasurements = runMeasurementsRead.value;
+    const removedRunMeasurement = cloneValue(runMeasurements.find((item) => item?.recordId === recordId) || null);
     const undoEntry = {
-      version: 5,
+      version: 6,
       deletedAt: new Date().toISOString(),
       record,
       feedback: removedFeedback,
@@ -9575,6 +9585,7 @@ function createHistoryWorkflow({
       modelResultsRegionalV2: removedRegionalV2Results,
       secondPillarRofJ: removedSecondPillarRofJ,
       secondPillarLifecycle: removedSecondPillarLifecycle,
+      runMeasurement: removedRunMeasurement,
       affectedPlans,
     };
     const operations = [
@@ -9583,6 +9594,7 @@ function createHistoryWorkflow({
       { key: STORAGE_KEYS.modelResultsV27, value: modelResultItems.filter((item) => item.record_id !== recordId) },
       { key: STORAGE_KEYS.modelResultsRegionalV2, value: regionalV2Items.filter((item) => item.record_id !== recordId) },
       { key: STORAGE_KEYS.plans, value: nextPlans },
+      { key: STORAGE_KEYS.runMeasurements, value: runMeasurements.filter((item) => item?.recordId !== recordId) },
       { key: STORAGE_KEYS.historyUndo, value: undoEntry },
     ];
     if (secondPillarRofJRepository) operations.push({
@@ -9671,12 +9683,20 @@ function createHistoryWorkflow({
         : plan
     )).filter(Boolean);
 
+    const runMeasurementsRead = gateway.readJsonResult(STORAGE_KEYS.runMeasurements, []);
+    if (!runMeasurementsRead.ok || !Array.isArray(runMeasurementsRead.value)) {
+      return { ...(runMeasurementsRead || {}), ok: false, code: "HISTORY_SOURCE_READ_FAILED", sourceName: "runMeasurements" };
+    }
+    const nextRunMeasurements = runMeasurementsRead.value.filter((item) => item?.recordId !== recordId);
+    if (entry.runMeasurement) nextRunMeasurements.push(cloneValue(entry.runMeasurement));
+
     const operations = [
       { key: STORAGE_KEYS.records, value: records },
       { key: STORAGE_KEYS.subjectiveFeedback, value: feedbackItems },
       { key: STORAGE_KEYS.modelResultsV27, value: modelResultItems },
       { key: STORAGE_KEYS.modelResultsRegionalV2, value: regionalV2Items },
       { key: STORAGE_KEYS.plans, value: nextPlans },
+      { key: STORAGE_KEYS.runMeasurements, value: nextRunMeasurements },
       { key: STORAGE_KEYS.historyUndo, remove: true },
     ];
     if (secondPillarRofJRepository && Object.prototype.hasOwnProperty.call(entry, "secondPillarRofJ")) operations.push({
