@@ -1876,3 +1876,28 @@ html.rl-appearance-dark .primary-navigation__link.is-current {
     min-width: var(--button-min-inline-large);
   }
 }
+
+
+/* Shared compact label geometry. */
+:is(
+  .status-label,
+  .date-badge,
+  .date-pill,
+  .pill,
+  .sample-badge,
+  .model-badge,
+  .local-badge
+) {
+  box-sizing: border-box;
+  min-height: 1.8rem;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: var(--type-label);
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
