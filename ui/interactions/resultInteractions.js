@@ -50,7 +50,8 @@ function bindPcResultConsole() {
   const consoleRoot = document.querySelector(".pc-result-console");
   if (!consoleRoot) return;
 
-  const linked = (regionId) => consoleRoot.querySelectorAll(`[data-region-id="${CSS.escape(regionId)}"]`);
+  const cssEscape = (value) => globalThis.CSS?.escape ? CSS.escape(value) : String(value).replace(/["\\]/g, "\\$&");
+  const linked = (regionId) => consoleRoot.querySelectorAll(`[data-region-id="${cssEscape(regionId)}"]`);
 
   const setSelectedRegion = (regionId) => {
     if (!regionId) return;
@@ -66,41 +67,34 @@ function bindPcResultConsole() {
     });
   };
 
+  const setSummaryMode = (mode) => {
+    consoleRoot.classList.toggle("is-summary-change", mode === "change");
+    consoleRoot.querySelectorAll("[data-pc-summary-mode]").forEach((button) => {
+      const active = button.getAttribute("data-pc-summary-mode") === mode;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    consoleRoot.querySelectorAll("[data-pc-summary-view]").forEach((view) => {
+      view.hidden = view.getAttribute("data-pc-summary-view") !== mode;
+    });
+    consoleRoot.querySelectorAll("[data-pc-summary-hint]").forEach((hint) => {
+      hint.hidden = hint.getAttribute("data-pc-summary-hint") !== mode;
+    });
+  };
+
   consoleRoot.addEventListener("click", (event) => {
+    const summaryModeButton = event.target.closest("[data-pc-summary-mode]");
+    if (summaryModeButton) {
+      setSummaryMode(summaryModeButton.getAttribute("data-pc-summary-mode"));
+      return;
+    }
+
     const regionNode = event.target.closest("[data-region-id]");
     if (regionNode && consoleRoot.contains(regionNode)) {
       const regionId = regionNode.getAttribute("data-region-id");
-      if (regionId) {
-        event.preventDefault();
-        setSelectedRegion(regionId);
-      }
-    }
-
-    const modeButton = event.target.closest("[data-pc-insight-mode]");
-    if (modeButton) {
-      const mode = modeButton.getAttribute("data-pc-insight-mode");
-      consoleRoot.querySelectorAll("[data-pc-insight-mode]").forEach((button) => {
-        const active = button.getAttribute("data-pc-insight-mode") === mode;
-        button.classList.toggle("is-active", active);
-        button.setAttribute("aria-selected", String(active));
-      });
-      const detail = consoleRoot.querySelector("[data-pc-detail-stack]");
-      const compare = consoleRoot.querySelector("[data-pc-compare-panel]");
-      if (detail) detail.hidden = mode !== "detail";
-      if (compare) compare.hidden = mode !== "compare";
-    }
-
-    const displayButton = event.target.closest("[data-pc-compare-display]");
-    if (displayButton) {
-      const display = displayButton.getAttribute("data-pc-compare-display");
-      consoleRoot.querySelectorAll("[data-pc-compare-display]").forEach((button) => {
-        const active = button.getAttribute("data-pc-compare-display") === display;
-        button.classList.toggle("is-active", active);
-        button.setAttribute("aria-pressed", String(active));
-      });
-      consoleRoot.querySelectorAll("[data-pc-compare-value]").forEach((value) => {
-        value.hidden = value.getAttribute("data-pc-compare-value") !== display;
-      });
+      if (!regionId) return;
+      event.preventDefault();
+      setSelectedRegion(regionId);
     }
   });
 
@@ -115,10 +109,12 @@ function bindPcResultConsole() {
     const node = event.target.closest("[data-region-id]");
     const regionId = node?.getAttribute("data-region-id");
     if (!regionId) return;
-    const related = event.relatedTarget?.closest?.(`[data-region-id="${CSS.escape(regionId)}"]`);
+    const related = event.relatedTarget?.closest?.(`[data-region-id="${cssEscape(regionId)}"]`);
     if (related && consoleRoot.contains(related)) return;
     linked(regionId).forEach((item) => item.classList.remove("is-linked-hover"));
   });
+
+  setSummaryMode("overview");
 }
 
 export function bindResult() {
