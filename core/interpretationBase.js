@@ -347,7 +347,6 @@ export function resolveInterpretationActions({ targetExperience = null, availabi
   } else if (safety.route === "review") {
     actions.push(action("review-input", "REVIEW_INPUT", "record-input", { recordId, returnTo: `#/interpretation-room?recordId=${encodeURIComponent(recordId)}` }));
   }
-  if (availability.regionalHistory) actions.push(action("history", "HISTORY", "history", { recordId, regionId: selectedRegionId || "", view: "trends", metric: "region" }));
   if (targetExperience?.record?.activityType === "run") {
     actions.push(action("simulation", "SIMULATION", "simulation", common, !normalPlanBlocked, normalPlanBlocked ? "EXISTING_SUPPORT_BLOCK" : ""));
     actions.push(action("plan", "PLAN", "plan", { sourceRecordId: recordId, from: "interpretation-room" }, !normalPlanBlocked, normalPlanBlocked ? "EXISTING_SUPPORT_BLOCK" : ""));
