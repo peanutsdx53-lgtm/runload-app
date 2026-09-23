@@ -145,6 +145,35 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
     renderOverlay();
   }
 
+  function fitTrack(points = []) {
+    const rows = Array.isArray(points)
+      ? points.filter((point) => Number.isFinite(Number(point?.lat)) && Number.isFinite(Number(point?.lon)))
+      : [];
+    if (!rows.length) return;
+    track = rows;
+    const minLat = Math.min(...rows.map((point) => Number(point.lat)));
+    const maxLat = Math.max(...rows.map((point) => Number(point.lat)));
+    const minLon = Math.min(...rows.map((point) => Number(point.lon)));
+    const maxLon = Math.max(...rows.map((point) => Number(point.lon)));
+    center = { lat: (minLat + maxLat) / 2, lon: (minLon + maxLon) / 2 };
+    const { width, height } = dimensions();
+    const usableWidth = Math.max(64, width - 48);
+    const usableHeight = Math.max(64, height - 48);
+    let selectedZoom = MIN_ZOOM;
+    for (let candidate = MAX_ZOOM; candidate >= MIN_ZOOM; candidate -= 1) {
+      const nw = worldPixel(maxLat, minLon, candidate);
+      const se = worldPixel(minLat, maxLon, candidate);
+      if (Math.abs(se.x - nw.x) <= usableWidth && Math.abs(se.y - nw.y) <= usableHeight) {
+        selectedZoom = candidate;
+        break;
+      }
+    }
+    zoom = selectedZoom;
+    tileNodes.forEach((node) => node.remove());
+    tileNodes.clear();
+    render();
+  }
+
   function setZoom(nextZoom) {
     const next = clamp(Math.round(Number(nextZoom)), MIN_ZOOM, MAX_ZOOM);
     if (next === zoom) return zoom;
@@ -169,5 +198,5 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
     container.replaceChildren();
   }
 
-  return Object.freeze({ setCenter, setTrack, setZoom, getZoom, destroy });
+  return Object.freeze({ setCenter, setTrack, fitTrack, setZoom, getZoom, destroy });
 }
