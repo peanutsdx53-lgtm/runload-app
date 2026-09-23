@@ -1,10 +1,10 @@
 import { SURFACE_FIELDS } from "../core/runloadCore.js";
-import { escapeHtml, renderScreenGuide } from "../ui/commonComponents.js";
+import { escapeHtml } from "../ui/commonComponents.js";
 import { subjectiveFieldsFromFeedback, subjectiveSummaryFromFields } from "../ui/subjectivePresentation.js";
 import { personalContextSummary } from "../ui/personalContextPresentation.js";
 
 import { formatLocalDate } from "../ui/recordPresentation.js";
-import { INPUT_PURPOSE_GUIDANCE } from "../ui/hierarchicalExplanation.js";
+
 import { ROF_J_DESCRIPTOR_MAP } from "../core/secondPillarRofJ.js";
 import { renderEmbeddedPersonalSubflow, renderEmbeddedSubjectiveSubflow } from "../ui/recordEmbeddedSubflows.js";
 
