@@ -35,6 +35,7 @@ export function renderStartScreen({ services }) {
       <p class="eyebrow">RUNLOAD</p>
       <h1>今日は何をしますか</h1>
       <p class="run-launch__lead">記録を見る・入力する場合はアプリへ、走る場合はGPS測定へ進みます。</p>
+      <p class="run-launch__device-note">PCでは通常のRunLoad画面を主に利用します。GPS測定はスマートフォン向けです。</p>
       <div class="run-launch__choices">
         <a class="run-launch__choice run-launch__choice--app" href="#/home">
           <small>APP</small><strong>RunLoadを使う</strong><span>記録・結果・履歴・予定を開く</span>
