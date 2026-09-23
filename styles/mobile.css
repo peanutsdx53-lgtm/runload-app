@@ -3417,3 +3417,72 @@ html.consult-viewer-open{overflow:hidden}
     line-height: 1.2;
   }
 }
+
+
+/* ==========================================================================
+   Unified mobile global header
+   ========================================================================== */
+@media (max-width: 54.99rem) {
+  .mobile-topbar {
+    min-height: calc(58px + env(safe-area-inset-top));
+    padding:
+      max(8px, env(safe-area-inset-top))
+      max(0.9rem, env(safe-area-inset-right))
+      8px
+      max(0.9rem, env(safe-area-inset-left));
+    gap: 0.75rem;
+  }
+
+  .mobile-topbar__brand {
+    max-width: none;
+    flex: 0 1 auto;
+  }
+
+  .mobile-topbar__brand strong {
+    font-size: 1.18rem;
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+
+  .mobile-topbar__brand small {
+    display: none;
+  }
+
+  .mobile-topbar__actions {
+    gap: 0.45rem;
+  }
+
+  .mobile-topbar .app-utility-button,
+  .mobile-topbar .app-menu-button.app-utility-button {
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0;
+    border-radius: 0.9rem;
+  }
+
+  .mobile-topbar--context {
+    display: flex;
+    grid-template-columns: none;
+    justify-content: space-between;
+  }
+
+  .mobile-topbar--context > .mobile-topbar__back,
+  .mobile-topbar--context > a {
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: 0 0.25rem;
+    font-size: var(--type-control-compact);
+    line-height: 1.25;
+  }
+
+  .mobile-topbar--context > strong {
+    display: none;
+  }
+
+  .course-derived-head,
+  .secondary-derived-head {
+    display: none !important;
+  }
+}
