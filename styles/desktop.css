@@ -8030,4 +8030,182 @@
   }
 
   .pc-axis-key {
-    min-width: 11.
+    min-width: 11.6rem;
+    grid-template-columns: auto 6.4rem auto;
+    font-size: 0.61rem;
+  }
+
+  .pc-axis-key > em {
+    font-size: 0.56rem;
+  }
+
+  .pc-number-guides .pc-marker-key {
+    margin-top: 0.03rem;
+    padding-left: 0.72rem;
+    border-left: 1px solid var(--color-line);
+    display: grid;
+    gap: 0.18rem;
+    font-size: 0.56rem;
+  }
+
+  .pc-result-region-groups {
+    margin-top: 0.28rem;
+  }
+
+  .pc-region-matrix {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 0.48rem;
+  }
+
+  .pc-region-tile.pc-region-tile--matrix {
+    min-height: 5.15rem;
+    padding: 0.5rem 0.58rem 0.44rem;
+    grid-template-rows: auto auto auto auto;
+    gap: 0.24rem;
+    border-color: color-mix(in srgb, var(--color-line) 58%, transparent);
+    border-radius: 0.76rem;
+    background: color-mix(in srgb, var(--color-surface-muted) 50%, var(--color-surface));
+  }
+
+  .pc-region-tile.pc-region-tile--matrix[data-direction="above"] {
+    box-shadow: inset 0.17rem 0 0 color-mix(in srgb, var(--color-model) 72%, var(--color-line));
+  }
+
+  .pc-region-tile.pc-region-tile--matrix[data-direction="below"] {
+    box-shadow: inset 0.17rem 0 0 color-mix(in srgb, var(--color-info) 72%, var(--color-line));
+  }
+
+  .pc-region-tile.pc-region-tile--matrix[data-direction="reference"] {
+    box-shadow: inset 0.17rem 0 0 color-mix(in srgb, var(--color-accent) 42%, var(--color-line));
+  }
+
+  .pc-region-tile.pc-region-tile--matrix.is-selected {
+    border-color: color-mix(in srgb, var(--color-accent) 72%, var(--color-line));
+    background: color-mix(in srgb, var(--color-accent-soft) 50%, var(--color-surface));
+    box-shadow: inset 0.2rem 0 0 var(--color-accent), 0 0.18rem 0.7rem color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+
+  .pc-region-tile__heading {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .pc-region-tile__heading small {
+    flex: 0 0 auto;
+    padding: 0.12rem 0.3rem;
+    border-radius: 999px;
+    background: var(--color-neutral-soft);
+    color: var(--color-muted);
+    font-size: 0.48rem;
+    line-height: 1;
+    font-weight: 850;
+  }
+
+  .pc-region-tile__heading strong {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--color-ink);
+    font-size: 0.66rem;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pc-region-tile__value {
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.45rem;
+  }
+
+  .pc-region-tile__value b {
+    color: var(--color-accent-strong);
+    font-size: 1.17rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pc-region-tile__value em {
+    overflow: hidden;
+    color: var(--color-muted);
+    font-size: 0.53rem;
+    font-style: normal;
+    font-weight: 850;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pc-region-tile.pc-region-tile--matrix .pc-region-axis {
+    width: 100%;
+    max-width: none;
+    height: 0.32rem;
+  }
+
+  .pc-region-tile.pc-region-tile--matrix .pc-region-tile__meta {
+    font-size: 0.54rem;
+  }
+
+  .pc-region-tile.pc-region-tile--matrix .pc-region-tile__meta em {
+    min-width: 2.1rem;
+    padding: 0.1rem 0.25rem;
+    font-size: 0.5rem;
+  }
+
+  .pc-result-lower {
+    min-height: 11.05rem;
+  }
+}
+
+/* ========================================================================== 
+   Result / PC layout candidate V0.4 — interactive result console.
+   Keeps the shared shell/theme/font unchanged. PC only.
+   ========================================================================== */
+@media (min-width: 80rem) {
+  /* Turn the 12 regions into one instrument board rather than 12 floating cards. */
+  .pc-result-region-groups {
+    margin-top: 0.34rem;
+    border: 1px solid color-mix(in srgb, var(--color-line) 72%, transparent);
+    border-radius: 0.9rem;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-surface-muted) 38%, var(--color-surface));
+  }
+
+  .pc-region-matrix {
+    gap: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    background: var(--color-line);
+  }
+
+  .pc-region-tile.pc-region-tile--matrix {
+    min-height: 5.05rem;
+    margin: 0;
+    padding: 0.5rem 0.62rem 0.46rem;
+    border: 0;
+    border-radius: 0;
+    appearance: none;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    background: var(--color-surface);
+    box-shadow: none;
+    transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  }
+
+  .pc-region-tile.pc-region-tile--matrix:hover,
+  .pc-region-tile.pc-region-tile--matrix:focus-visible,
+  .pc-region-tile.pc-region-tile--matrix.is-linked-hover {
+    z-index: 1;
+    background: color-mix(in srgb, var(--color-accent-soft) 34%, var(--color-surface));
+    outline: 0;
+  }
+
+  .pc-region-tile.pc-region-tile--matrix.is-selected {
+    z-index: 2;
+    border: 0;
+    background: color-mix(in srgb, var(--color-accent-soft) 58%, var(--color-surface));
+    box-shadow: inset 0.2rem 0 0 var(--color-accent), ins
