@@ -1,13 +1,13 @@
 * { box-sizing: border-box; }
 html { min-width: 0; background: var(--color-paper); }
-body { margin: 0; min-height: 100dvh; min-width: 0; color: var(--color-ink); background: var(--color-paper); font-family: var(--font-sans); line-height: 1.65; font-variant-numeric: tabular-nums lining-nums; font-feature-settings: "tnum" 1, "lnum" 1; }
+body { margin: 0; min-height: 100dvh; min-width: 0; color: var(--color-ink); background: var(--color-paper); font-family: var(--font-sans); font-size: var(--type-body); line-height: var(--line-body); font-variant-numeric: tabular-nums lining-nums; font-feature-settings: "tnum" 1, "lnum" 1; }
 a { color: inherit; }
 button, input, select, textarea { font: inherit; font-family: var(--font-sans); }
 button, summary, a { -webkit-tap-highlight-color: transparent; }
 summary { list-style-position: outside; }
 :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
 h1, h2, h3, p { margin-top: 0; }
-h1, h2 { text-wrap: balance; }
+h1, h2 { text-wrap: balance; font-family: var(--font-editorial); }
 img, svg { max-width: 100%; }
 .skip-link { position: fixed; top: var(--space-3); left: var(--space-3); z-index: 100; transform: translateY(-180%); padding: var(--space-3) var(--space-4); background: var(--color-ink); color: var(--color-on-ink); border-radius: var(--radius-small); }
 .skip-link:focus { transform: translateY(0); }
@@ -47,9 +47,14 @@ small { line-height: 1.45; }
   letter-spacing: 0.01em;
 }
 
-/* 長い本人入力や識別子が画面幅を押し広げないための共通折返し */
-:is(h1, h2, h3, p, li, dd, dt, a, button, label, summary, strong, small, span) {
-  overflow-wrap: anywhere;
+/* Long user-entered text may wrap, while short UI labels keep natural Japanese line breaks. */
+:is(p, li, dd, dt, label) {
+  overflow-wrap: break-word;
+}
+:is(h1, h2, h3, button, summary, strong, small) {
+  overflow-wrap: normal;
+  word-break: normal;
+  line-break: strict;
 }
 
 @media (prefers-reduced-motion: reduce) {
