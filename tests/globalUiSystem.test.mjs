@@ -212,6 +212,36 @@ await test('UI-SEMANTIC-COLORS-MEET-CONTRAST-IN-LIGHT-AND-DARK',()=>{
 });
 
 
+await test('UI-SHARED-SEGMENTED-MODES-USE-STRONG-THEME-SELECTION',()=>{
+  const tokens=read('styles/tokens.css');
+  const mobile=read('styles/mobile.css');
+  const desktop=read('styles/desktop.css');
+
+  assert.match(tokens,/--color-segment-selected-surface:\s*var\(--color-accent\)/);
+  assert.match(tokens,/--color-segment-selected-border:\s*var\(--color-accent\)/);
+  assert.match(tokens,/--color-segment-selected-text:\s*var\(--color-on-accent\)/);
+  assert.match(tokens,/--shadow-segment-selected:/);
+
+  assert.match(mobile,/Shared segmented mode state/);
+  assert.match(mobile,/\.screen-layout--result \.pc-summary-controls button\.is-active/);
+  assert.match(mobile,/\.screen-layout--history \.display-toggle button\.active/);
+  assert.match(mobile,/\.screen-layout--history \.type-toggle button\.active/);
+  assert.match(mobile,/\.screen-layout--record \.activity-toggle input:checked \+ span/);
+  assert.match(mobile,/background:\s*var\(--color-segment-selected-surface\)/);
+  assert.match(mobile,/color:\s*var\(--color-segment-selected-text\)/);
+
+  const marker='Shared segmented mode emphasis audit 2026-09-24';
+  const start=desktop.indexOf(marker);
+  assert.ok(start>=0,'desktop shared segmented audit');
+  const audit=desktop.slice(start);
+  assert.match(audit,/\.screen-layout--result \.pc-summary-controls button\.is-active/);
+  assert.match(audit,/\.screen-layout--history \.period-control button\.active/);
+  assert.match(audit,/\.screen-layout--course \.mode button\.active/);
+  assert.match(audit,/background:\s*var\(--color-segment-selected-surface\)\s*!important/);
+  assert.match(audit,/color:\s*var\(--color-segment-selected-text\)\s*!important/);
+  assert.match(audit,/outline:\s*3px solid color-mix\(in srgb, var\(--color-focus\) 40%, transparent\)/);
+});
+
 await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
   const css=read('styles/desktop.css');
   const marker='PC record status card audit 2026-09-23';
