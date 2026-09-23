@@ -1982,9 +1982,26 @@ html.rl-appearance-dark .primary-navigation__link.is-current {
 /* Primary page titles do not repeat an English location label already implied by navigation. */
 .screen > .page-head > div > .eyebrow,
 .screen > .head > .eyebrow,
+.screen > .intro > .eyebrow,
 .screen > .intro .intro-heading .eyebrow,
+.screen .detail-main > .detail-title > .eyebrow,
+.screen--run-route .run-route-view > .eyebrow,
+.screen--run-route .run-route-view__heading .eyebrow,
+.course-derived-body > .eyebrow,
 .course-derived-body > .head .eyebrow,
 .course-derived-body > .intro .eyebrow,
 .secondary-derived-body > .head .eyebrow {
   display: none;
+}
+
+.screen > .page-head h1,
+.screen > .head h1,
+.screen > .intro h1,
+.screen .detail-main > .detail-title h1,
+.screen--run-route .run-route-view h1,
+.course-derived-body > h1,
+.course-derived-body > .head h1,
+.course-derived-body > .intro h1,
+.secondary-derived-body > .head h1 {
+  margin-top: 0;
 }
