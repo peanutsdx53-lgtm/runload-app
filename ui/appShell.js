@@ -56,9 +56,21 @@ const GUIDE_SECTION_BY_SCREEN = Object.freeze({
   more: "first-use",
 });
 
+const SCREEN_TUTORIAL_BY_SCREEN = Object.freeze({
+  "record-input": "record-input",
+  "course-library": "course-library",
+  "course-editor": "course-editor",
+  result: "result",
+  plan: "plan",
+});
+
 function renderContextHelpButton(currentScreen, className = "") {
   const section = GUIDE_SECTION_BY_SCREEN[currentScreen] || "first-use";
+  const tutorialId = SCREEN_TUTORIAL_BY_SCREEN[currentScreen] || "";
   const classes = ["context-help-button", className].filter(Boolean).join(" ");
+  if (tutorialId) {
+    return `<button type="button" class="${classes}" data-screen-tutorial-start="${escapeHtml(tutorialId)}" aria-label="この画面の操作ガイドを開く">?</button>`;
+  }
   return `<button type="button" class="${classes}" data-open-guide="${escapeHtml(section)}" aria-label="この画面の説明を開く">?</button>`;
 }
 
@@ -167,7 +179,8 @@ function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix
   const panelId = `feature-menu-panel-${idSuffix}`;
   const titleId = `feature-menu-title-${idSuffix}`;
   const groupedDestinations = FEATURE_DESTINATION_GROUPS.map((group) => renderFeatureMenuGroup(group.label, group.items, currentScreen, currentLocation, hasResult, false)).join("");
-  return `<div class="feature-menu" data-feature-menu><button type="button" id="${escapeHtml(buttonId)}" class="app-menu-button" aria-label="画面メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="${escapeHtml(panelId)}"><span class="app-menu-button__label">メニュー</span></button><div id="${escapeHtml(panelId)}" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="${escapeHtml(titleId)}" hidden><header class="feature-menu__header"><p>画面メニュー</p><strong id="${escapeHtml(titleId)}">補助画面を開く</strong></header><nav class="feature-menu__nav" aria-label="補助画面">${groupedDestinations}</nav></div></div>`;
+  const guideEntry = `<section class="feature-menu__group feature-menu__group--guide" aria-label="説明"><p class="feature-menu__group-label">HELP</p><div class="feature-menu__links"><button type="button" class="feature-menu__link feature-menu__link--button" data-open-guide="first-use"><span class="feature-menu__item-title">アプリ説明</span><span class="feature-menu__item-description">使い方・結果・履歴・限界を確認</span></button></div></section>`;
+  return `<div class="feature-menu" data-feature-menu><button type="button" id="${escapeHtml(buttonId)}" class="app-menu-button" aria-label="画面メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="${escapeHtml(panelId)}"><span class="app-menu-button__label">メニュー</span></button><div id="${escapeHtml(panelId)}" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="${escapeHtml(titleId)}" hidden><header class="feature-menu__header"><p>画面メニュー</p><strong id="${escapeHtml(titleId)}">補助画面を開く</strong></header><nav class="feature-menu__nav" aria-label="補助画面">${groupedDestinations}${guideEntry}</nav></div></div>`;
 }
 
 export function renderDesktopHeader({ currentScreen, currentLocation, hasResult = false }) {
@@ -190,7 +203,7 @@ function renderMobileHeader(currentScreen, currentLocation, hasResult) {
   if (context) {
     return `<header class="mobile-topbar mobile-topbar--context"><a class="mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong>${escapeHtml(context.title)}</strong><div class="mobile-topbar__actions">${help}${menu}</div></header>`;
   }
-  return `<header class="mobile-topbar"><a class="mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen, currentLocation))}</small></a><div class="mobile-topbar__actions">${menu}</div></header>`;
+  return `<header class="mobile-topbar"><a class="mobile-topbar__brand" href="#/home"><strong>RunLoad</strong><small>${escapeHtml(topbarContextLabel(currentScreen, currentLocation))}</small></a><div class="mobile-topbar__actions">${help}${menu}</div></header>`;
 }
 
 function renderImmersiveHeader(currentScreen, currentLocation) {
