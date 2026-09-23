@@ -248,40 +248,6 @@ function trendSelectionHref(workspace, item) {
   });
 }
 
-function signedGradeFromRecord(record = {}) {
-  const course = record.course || {};
-  if (String(course.gradeKnowledge || "").toUpperCase() === "KNOWN_FLAT") return 0;
-  const sections = Array.isArray(course.sections) ? course.sections : [];
-  if (sections.length) {
-    let weighted = 0;
-    let weightSum = 0;
-    sections.forEach((section) => {
-      const share = finite(section.sharePercent) ? Number(section.sharePercent) : (finite(section.distanceKm) ? Number(section.distanceKm) : null);
-      const raw = finite(section.gradePercent) ? Number(section.gradePercent) : null;
-      if (!(share > 0) || raw === null) return;
-      const direction = String(section.gradeDirection || "").toUpperCase();
-      const signed = direction === "DOWNHILL" ? -Math.abs(raw) : direction === "UPHILL" ? Math.abs(raw) : raw;
-      weighted += signed * share;
-      weightSum += share;
-    });
-    if (weightSum > 0) return weighted / weightSum;
-  }
-  if (finite(course.upPercent) || finite(course.downPercent)) {
-    const upShare = finite(course.upPercent) ? Number(course.upPercent) : 0;
-    const downShare = finite(course.downPercent) ? Number(course.downPercent) : 0;
-    const upGrade = finite(course.upGradePercent) ? Math.abs(Number(course.upGradePercent)) : 0;
-    const downGrade = finite(course.downGradePercent) ? Math.abs(Number(course.downGradePercent)) : 0;
-    const denominator = upShare + downShare;
-    if (denominator > 0) return ((upShare * upGrade) - (downShare * downGrade)) / denominator;
-  }
-  const raw = finite(course.gradePercent) ? Number(course.gradePercent) : null;
-  if (raw !== null) {
-    const direction = String(course.gradeDirection || "").toUpperCase();
-    return direction === "DOWNHILL" ? -Math.abs(raw) : direction === "UPHILL" ? Math.abs(raw) : raw;
-  }
-  return null;
-}
-
 function previousComparableItem(items, selected) {
   if (!selected) return null;
   const sorted = [...items].sort((left, right) => recordChronology(left.experience, right.experience));
