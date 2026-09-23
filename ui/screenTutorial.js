@@ -1,67 +1,189 @@
 const SCREEN_TUTORIAL_STORAGE_KEY = "runload.screenTutorial.seen.v1";
 
 const SCREEN_TUTORIALS = Object.freeze({
+  start: Object.freeze({
+    title: "スタート画面の使い方",
+    lead: "目的に合わせて入口を選びます。",
+    steps: Object.freeze([
+      Object.freeze({ title: "RunLoadを使う", body: "記録の入力、結果、履歴、予定を確認するときに開きます。" }),
+      Object.freeze({ title: "GPSで測定する", body: "スマートフォンで距離・時間・走行軌跡を測定するときに開きます。測定後は記録入力へ進みます。" }),
+    ]),
+  }),
   "run-measurement": Object.freeze({
     title: "GPS測定の使い方",
-    lead: "測定開始から記録入力までの要点だけ確認します。",
+    lead: "測定開始から記録入力までを確認します。",
     steps: Object.freeze([
-      Object.freeze({ title: "測定を開始する", body: "位置情報を許可してから測定を開始します。測定中はRunLoadを前面表示したままにします。" }),
-      Object.freeze({ title: "距離とペースを見る", body: "距離・時間・現在ペース・平均ペースを確認できます。予定と連携している場合は、予定平均ペースより速い状態が続いたときに知らせます。" }),
-      Object.freeze({ title: "終了して記録へ進む", body: "測定終了後、距離と時間を記録入力へ引き継ぎます。走行軌跡を保存する設定は、保存する記録と関連付けて端末内へ残します。" }),
+      Object.freeze({ title: "測定を開始する", body: "位置情報を許可して測定を開始します。測定中はRunLoadを前面表示したまま使用します。" }),
+      Object.freeze({ title: "走行中の値を見る", body: "距離・時間・現在ペース・平均ペースを確認できます。予定と連携している場合はペース通知も表示します。" }),
+      Object.freeze({ title: "終了して記録へ進む", body: "測定を終了すると、距離と時間を今日の記録へ引き継げます。軌跡保存を選んだ場合は記録と関連付けます。" }),
+    ]),
+  }),
+  home: Object.freeze({
+    title: "Homeの使い方",
+    lead: "今日の操作と直近の記録をまとめて確認します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "今日の操作を選ぶ", body: "記録を始める、入力を再開する、GPSで測定する操作へ進めます。" }),
+      Object.freeze({ title: "前回からの確認点を見る", body: "前回の記録で残した「次に確認したいこと」がある場合は、ここに表示されます。" }),
+      Object.freeze({ title: "結果や予定へ進む", body: "最新結果や次の予定など、続きの操作へ進めます。" }),
     ]),
   }),
   "record-input": Object.freeze({
-    title: "今日の記録の流れ",
-    lead: "入力から保存までを3つに分けて確認します。",
+    title: "今日の記録の使い方",
+    lead: "入力から保存までを確認します。",
     steps: Object.freeze([
-      Object.freeze({ title: "今日の基本項目を入れる", body: "走行または休養を選びます。走行日は、分かる範囲で距離・時間・歩数を入れます。" }),
-      Object.freeze({ title: "必要な内容だけ追加する", body: "コース、身体記録、シューズと走り方のメモは必要なときだけ開きます。すべてを毎回埋める必要はありません。" }),
-      Object.freeze({ title: "記録として保存する", body: "保存すると結果画面へ進みます。予定から来たコースは、チェックした場合だけ保存コースにも残します。" }),
+      Object.freeze({ title: "走行か休養を選ぶ", body: "走行日は距離と実際に走った時間を入力します。歩数は分かる場合に追加できます。" }),
+      Object.freeze({ title: "必要な項目を追加する", body: "コース、身体の記録、シューズや走り方のメモは必要なときだけ追加します。" }),
+      Object.freeze({ title: "保存して結果を見る", body: "保存すると今回の結果へ進みます。入力途中の内容は再開できます。" }),
     ]),
   }),
   "course-library": Object.freeze({
-    title: "保存したコースの使い方",
-    lead: "いつものコースを今回の入力へ写す流れを確認します。",
+    title: "コース設定の使い方",
+    lead: "保存したコースを選ぶか、新しいコースを作ります。",
     steps: Object.freeze([
-      Object.freeze({ title: "コースを選ぶ", body: "保存したコースの中から、今日使うコースを選びます。" }),
-      Object.freeze({ title: "今回の入力へ写す", body: "選んだコース名、坂道の入力方法、路面材質と割合が今回のコースへ入ります。" }),
-      Object.freeze({ title: "今日の内容だけ直せる", body: "入力画面へ戻ったあと、今日だけ距離や時間を変えて記録できます。" }),
+      Object.freeze({ title: "保存したコースを選ぶ", body: "いつものコースを選ぶと、坂や路面の設定を今回の入力へ反映できます。" }),
+      Object.freeze({ title: "新しいコースを作る", body: "コース名、坂、路面を設定して次回以降も使える形で保存できます。" }),
+      Object.freeze({ title: "今回だけ変更する", body: "入力画面へ戻ったあと、今日の記録だけ内容を調整できます。" }),
     ]),
   }),
   "course-editor": Object.freeze({
-    title: "コース作成の流れ",
-    lead: "次回以降も選べるコースを保存する流れです。",
+    title: "コース編集の使い方",
+    lead: "コース名、坂、路面を順に設定します。",
     steps: Object.freeze([
-      Object.freeze({ title: "コース名を入れる", body: "あとで選びやすい名前を入れます。同じ名前の扱いは保存時に確認します。" }),
-      Object.freeze({ title: "坂道を区別する", body: "不明、ほぼ平坦、上り・下りの割合、坂道区間の詳細から選びます。不明を「坂の傾き0%」へ置き換えません。" }),
-      Object.freeze({ title: "基本路面を選ぶ", body: "舗装路などの基本名を選びます。複数路面のときだけ割合を入力し、例外状態は必要時だけ追加します。" }),
+      Object.freeze({ title: "コース名を決める", body: "あとで見分けやすい名前を入力します。" }),
+      Object.freeze({ title: "坂を設定する", body: "平坦、上り・下りの割合、区間の詳細など、分かる方法を選びます。" }),
+      Object.freeze({ title: "路面を設定して保存する", body: "基本の路面を選び、複数ある場合は割合を追加して保存します。" }),
+    ]),
+  }),
+  "gpx-analysis": Object.freeze({
+    title: "GPX入力の使い方",
+    lead: "GPXの標高情報から坂の入力候補を作ります。",
+    steps: Object.freeze([
+      Object.freeze({ title: "GPXファイルを選ぶ", body: "標高情報を含むGPXファイルを端末から選びます。" }),
+      Object.freeze({ title: "読み取り結果を確認する", body: "標高の変化、上り・平坦・下りの割合、代表的な傾きの候補を確認します。" }),
+      Object.freeze({ title: "コース設定へ渡す", body: "候補をコース設定へ反映し、内容を確認してから保存します。" }),
     ]),
   }),
   result: Object.freeze({
-    title: "結果画面の読み方",
-    lead: "結果を点数として決めつけず、分けて見返す流れです。",
+    title: "結果画面の使い方",
+    lead: "保存した記録と12部位の目安を順に確認します。",
     steps: Object.freeze([
-      Object.freeze({ title: "保存した記録を見る", body: "距離、時間、コースなど、自分で保存した走行事実を確認します。" }),
-      Object.freeze({ title: "12部位の身体図を見る", body: "12部位それぞれについて、その部位自身の基準を100とした目安を確認します。走行距離は別の走行事実として扱い、部位どうしを順位付けしません。" }),
-      Object.freeze({ title: "同じ部位の履歴を見る", body: "同じ部位・同じ計算方法・同じ基準で比べられる過去記録だけを見比べます。高低は良し悪しを示しません。" }),
+      Object.freeze({ title: "今回の記録を見る", body: "距離、時間、コースなど、保存した走行内容を確認します。" }),
+      Object.freeze({ title: "12部位を見る", body: "身体図から部位ごとの目安を確認します。各値は、その部位自身の基準100に対する位置を示します。" }),
+      Object.freeze({ title: "詳しく見たい部位を開く", body: "部位を選ぶと、その部位の保存記録の推移や結果整理へ進めます。" }),
+    ]),
+  }),
+  "body-part-detail": Object.freeze({
+    title: "部位詳細の使い方",
+    lead: "選んだ部位の今回値と過去の推移を確認します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "今回の目安を見る", body: "選んだ部位の今回値と、比較できる場合は前回からの変化を確認します。" }),
+      Object.freeze({ title: "同じ部位の推移を見る", body: "同じ部位・同じ計算方法で比較できる保存記録の推移を確認します。" }),
+      Object.freeze({ title: "結果を整理する", body: "「この部位の結果を整理する」から、走行事実と関連情報をまとめて見返せます。" }),
+    ]),
+  }),
+  "run-route": Object.freeze({
+    title: "走行軌跡の使い方",
+    lead: "GPS測定で保存した走行軌跡を確認します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "地図で軌跡を見る", body: "保存した走行ルートを地図上で確認します。" }),
+      Object.freeze({ title: "今回の結果へ戻る", body: "確認後は結果画面へ戻り、同じ記録の内容を続けて見られます。" }),
+    ]),
+  }),
+  history: Object.freeze({
+    title: "履歴の使い方",
+    lead: "記録を探す表示と、同じ部位を比べる表示を使い分けます。",
+    steps: Object.freeze([
+      Object.freeze({ title: "保存記録を探す", body: "日付、走行・休養、コースやメモから過去の記録を探せます。" }),
+      Object.freeze({ title: "同じ部位を比べる", body: "部位と期間を選び、比較できる保存記録の推移を表示します。" }),
+      Object.freeze({ title: "記録を選んで詳しく見る", body: "グラフや一覧から記録を選ぶと、その記録の結果へ進めます。" }),
+    ]),
+  }),
+  "interpretation-room": Object.freeze({
+    title: "結果整理の使い方",
+    lead: "気になる部位を起点に、今回の記録を整理します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "部位を選ぶ", body: "12部位から、今回詳しく見たい部位を選びます。" }),
+      Object.freeze({ title: "事実と関連情報を見る", body: "保存した走行内容、その部位の目安、関連する説明を分けて確認します。" }),
+      Object.freeze({ title: "次の操作へ進む", body: "必要に応じて条件比較、予定、共有用の整理へ進めます。" }),
+    ]),
+  }),
+  simulation: Object.freeze({
+    title: "条件比較の使い方",
+    lead: "保存記録を基準に、条件を変えた表示を比較します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "条件を変更する", body: "距離、時間、コース、走り方を変更します。" }),
+      Object.freeze({ title: "12部位の変化を見る", body: "変更前と変更後を、同じ計算方法で確認します。" }),
+      Object.freeze({ title: "記録入力へつなげる", body: "確認した条件を見ながら今日の記録を始められます。" }),
     ]),
   }),
   "plan-empty": Object.freeze({
-    title: "プランを始める前に",
-    lead: "まだ予定候補が作れないときの進め方です。",
+    title: "予定を始める前に",
+    lead: "予定作成の基準にする記録を用意します。",
     steps: Object.freeze([
-      Object.freeze({ title: "まず記録を作る", body: "プランは保存済みの走行記録を出発点にします。最初に今日の記録を作ります。" }),
-      Object.freeze({ title: "コースを用意できる", body: "よく使うコースがある場合は、先に保存しておくと入力が楽になります。" }),
-      Object.freeze({ title: "記録後に予定を作る", body: "記録が保存されると、次に走る予定を候補から考えられます。" }),
+      Object.freeze({ title: "まず記録を保存する", body: "走行または休養の記録を1件保存します。" }),
+      Object.freeze({ title: "必要ならコースを保存する", body: "よく使うコースがある場合は、先に保存しておくと予定入力で選べます。" }),
+      Object.freeze({ title: "次の予定を作る", body: "保存記録を確認したあと、次の走行または休養予定を作れます。" }),
     ]),
   }),
   plan: Object.freeze({
-    title: "予定を作る流れ",
-    lead: "候補から予定にするまでを確認します。",
+    title: "次の予定の使い方",
+    lead: "走行または休養の予定を作って保存します。",
     steps: Object.freeze([
-      Object.freeze({ title: "予定の種類を選ぶ", body: "走行予定または休養予定を選びます。予定は自分で入力する事実で、処方ではありません。" }),
-      Object.freeze({ title: "予定条件を入力する", body: "距離、実際に走る予定時間、走り方、コースを分かる範囲で入力します。" }),
-      Object.freeze({ title: "予定として保存する", body: "保存した予定は、あとで「この予定で入力」から今日の入力へ入れられます。" }),
+      Object.freeze({ title: "予定の種類を選ぶ", body: "走行予定または休養予定を選びます。" }),
+      Object.freeze({ title: "予定条件を入力する", body: "走行予定では、距離、時間、走り方、コースを入力できます。" }),
+      Object.freeze({ title: "保存して次回使う", body: "保存した予定は、今日の記録やGPS測定の入口として使えます。" }),
+    ]),
+  }),
+  consultation: Object.freeze({
+    title: "共有用整理の使い方",
+    lead: "見せる内容を選び、用途に合う形へ整えます。",
+    steps: Object.freeze([
+      Object.freeze({ title: "共有の目的を選ぶ", body: "何を伝えたいかを選びます。" }),
+      Object.freeze({ title: "見せる情報を選ぶ", body: "保存記録から、相手に見せる項目だけを選びます。" }),
+      Object.freeze({ title: "見せ方を選ぶ", body: "画面表示、印刷・PDF、テキストコピーから選べます。" }),
+    ]),
+  }),
+  "support-guidance": Object.freeze({
+    title: "公的サポートの使い方",
+    lead: "公的な相談先や連絡先を確認します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "案内を確認する", body: "表示された公的な窓口と用途を確認します。" }),
+      Object.freeze({ title: "必要な窓口を開く", body: "利用する場合は、自分で電話や外部ページを開きます。" }),
+    ]),
+  }),
+  reading: Object.freeze({
+    title: "読みものの使い方",
+    lead: "知りたい内容を分類や結果から探します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "記事を探す", body: "分類から絞り込むか、結果から表示された記事を選びます。" }),
+      Object.freeze({ title: "本文と見返すポイントを読む", body: "記事本文と、記録を振り返るときの確認点を読めます。" }),
+      Object.freeze({ title: "出典を確認する", body: "記事の背景にある資料や研究文献を確認できます。" }),
+    ]),
+  }),
+  privacy: Object.freeze({
+    title: "データの扱いの見方",
+    lead: "端末内に保存する情報と外部機能を使う場面を確認します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "保存される内容を見る", body: "記録、設定、GPS軌跡など、端末内に保存する内容を確認します。" }),
+      Object.freeze({ title: "外部機能を使う場面を見る", body: "地図、外部ページ、電話など、端末外の機能を開く場面を確認します。" }),
+      Object.freeze({ title: "データ管理へ進む", body: "バックアップや削除は設定画面から操作できます。" }),
+    ]),
+  }),
+  settings: Object.freeze({
+    title: "設定の使い方",
+    lead: "表示、プロフィール、保存データを管理します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "表示を調整する", body: "文字サイズ、明るさ、配色を変更できます。" }),
+      Object.freeze({ title: "使い回す情報を保存する", body: "プロフィールやシューズなど、入力で再利用する情報を管理できます。" }),
+      Object.freeze({ title: "データを管理する", body: "バックアップ、復元、端末内データの削除を行えます。" }),
+    ]),
+  }),
+  more: Object.freeze({
+    title: "その他画面の使い方",
+    lead: "補助機能と設定への入口です。",
+    steps: Object.freeze([
+      Object.freeze({ title: "目的の機能を選ぶ", body: "設定、共有用整理、公的サポート、プライバシー、読みものを開けます。" }),
+      Object.freeze({ title: "各画面の「?」を使う", body: "開いた画面では、その画面専用の使い方を確認できます。" }),
     ]),
   }),
 });
