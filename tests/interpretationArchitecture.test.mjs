@@ -31,7 +31,7 @@ await test('GLOBAL-FEATURE-MENU-DOES-NOT-DUPLICATE-UNDERSTANDING-ENTRY',()=>{
 
 await test('CONTEXTUAL-UNDERSTANDING-ENTRIES-REMAIN',()=>{
   assert.match(read('screens/homeScreen.js'),/結果を整理する/);
-  assert.match(read('screens/resultScreen.js'),/今回の結果を整理する/);
+  assert.match(read('screens/resultScreen.js'),/結果を整理/);
   assert.match(read('screens/historyScreen.js'),/この記録の結果を整理する/);
   assert.match(read('screens/bodyPartDetailScreen.js'),/この部位の結果を整理する/);
 });
@@ -59,9 +59,11 @@ await test('PWA-CACHE-NAME-IS-STABLE',()=>{
   assert.doesNotMatch(read('service-worker.js'),/desktop-final-visual-audit|20260922-37/);
 });
 
-await test('PUBLIC-UI-OMITS-INTERNAL-INTERPRETATION-NAME',()=>{
-  const files=[
-    'ui/interpretationRoomPresentation.js',
+await test('RUNLOAD-INTERPRETATION-NAME-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-WORKSPACE',()=>{
+  const room=read('ui/interpretationRoomPresentation.js');
+  assert.match(room,/今回のRunLoad解釈/);
+  assert.match(room,/RUNLOAD INTERPRETATION/);
+  const outside=[
     'ui/screenArchitecture.js',
     'ui/appShell.js',
     'screens/homeScreen.js',
@@ -69,9 +71,8 @@ await test('PUBLIC-UI-OMITS-INTERNAL-INTERPRETATION-NAME',()=>{
     'screens/historyScreen.js',
     'screens/bodyPartDetailScreen.js',
     'screens/simulationScreen.js',
-  ];
-  const combined=files.map(read).join('\n');
-  assert.doesNotMatch(combined,/RunLoad解釈|RUNLOAD INTERPRETATION/);
+  ].map(read).join('\n');
+  assert.doesNotMatch(outside,/RunLoad解釈|RUNLOAD INTERPRETATION|解釈エンジン/);
 });
 
 const failed=results.filter((x)=>x.status==='FAIL');

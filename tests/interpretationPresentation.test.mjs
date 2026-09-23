@@ -9,30 +9,8 @@ const root=path.resolve(here,'..');
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 
-const REGION_IDS=['BA-DISP-014','BA-DISP-015','BA-DISP-016','BA-DISP-018','BA-DISP-019','BA-DISP-021','BA-DISP-023','BA-DISP-024','BA-DISP-025','BA-DISP-027','BA-DISP-028','BA-DISP-029'];
-const REGION_LABELS=['股関節部','殿部','大腿前面','大腿後面','膝蓋大腿関節部','脛骨部','下腿後面','足関節部','アキレス腱部','後足部','足底中部・内側縦足弓','前足部'];
-
-function overviewRegions(){
-  return REGION_IDS.map((id,index)=>({
-    regionId:id,
-    primaryRegionId:`R${String(index+1).padStart(2,'0')}`,
-    label:REGION_LABELS[index],
-    value:112+index,
-    availability:'AVAILABLE',
-    reference:{
-      available:true,
-      reference:100,
-      value:112+index,
-      difference:12+index,
-      direction:index%3===0?'ABOVE_REFERENCE':index%3===1?'REFERENCE_VICINITY':'BELOW_REFERENCE',
-    },
-    previous:{available:false,recordId:'',date:'',previousValue:null,currentValue:null,difference:null,direction:'NONE'},
-  }));
-}
-
 function actions(){
   return [
-    {actionId:'history',destination:'history',parameters:{recordId:'r1'},enabled:true},
     {actionId:'simulation',destination:'simulation',parameters:{recordId:'r1'},enabled:true},
     {actionId:'plan',destination:'plan',parameters:{sourceRecordId:'r1'},enabled:true},
     {actionId:'reading',destination:'reading',parameters:{recordId:'r1'},enabled:true},
@@ -40,290 +18,203 @@ function actions(){
   ];
 }
 
-function exactPath(overrides={}){
+function exactPath(){
   return {
     resolutionStatus:'EXACT',
-    resolutionBasis:'VERSION_LOCKED_REGION_ROUTE',
     activeRoute:'SPEED',
-    exposure:{type:'WHOLE_RUN',distanceKm:5,durationMinutes:30,speedMps:2.7777778,segmentCount:0},
+    exposure:{type:'WHOLE_RUN',distanceKm:6,durationMinutes:34,speedMps:2.941176,segmentCount:0},
     activeInputs:[
-      {id:'DISTANCE',value:5,role:'DERIVE_SPEED',source:'engine_input_snapshot'},
-      {id:'DURATION',value:30,role:'DERIVE_SPEED',source:'engine_input_snapshot'},
-      {id:'SPEED',value:2.7777778,role:'PRIMARY_NUMERIC_ROUTE',source:'persisted_result.exposure'},
+      {id:'DISTANCE',value:6,role:'DERIVE_SPEED'},
+      {id:'DURATION',value:34,role:'DERIVE_SPEED'},
+      {id:'SPEED',value:2.941176,role:'PRIMARY_NUMERIC_ROUTE'},
     ],
     conditionalInputs:[],
-    contextOnlyInputs:[],
-    explanationTokens:['DISTANCE_DURATION_DERIVE_SPEED','SPEED_USED_FOR_REGION'],
-    ...overrides,
+    contextOnlyInputs:[{id:'SURFACE',value:[{category:'ASPHALT',sharePercent:100}],role:'CONTEXT_ONLY'}],
+    explanationTokens:[],
   };
 }
 
-function baseOutput({selected=true}={}){
-  const overview=overviewRegions();
+function regionItem(reasonCode='PREVIOUS_CHANGE'){
+  return {
+    regionId:'BA-DISP-014',primaryRegionId:'R01',label:'股関節部',value:112.9,
+    referenceDirection:'ABOVE_REFERENCE',previousAvailable:true,previousRecordId:'p1',previousDate:'2026-09-19',
+    previousValue:93.9,previousDifference:19,previousDirection:'UP',historyComparableCount:3,pastMatchingDirectionCount:2,reasonCode,
+  };
+}
+
+function baseOutput({selected=false}={}){
+  const allActions=actions();
   const selectedRegion=selected?{
-    regionId:'BA-DISP-014',
-    primaryRegionId:'R01',
-    label:'股関節部',
-    value:112,
-    referenceComparison:{available:true,reference:100,value:112,difference:12,direction:'ABOVE_REFERENCE'},
-    previousComparison:{available:true,recordId:'p1',date:'2026-09-19',previousValue:106,currentValue:112,difference:6,direction:'UP'},
-    personalHistory:{comparableCount:3,lastFive:[{recordId:'p1',date:'2026-09-19',value:106,referenceDirection:'ABOVE_REFERENCE'}],referenceDirectionCounts:{above:3,near:0,below:0,unavailable:0}},
+    regionId:'BA-DISP-014',primaryRegionId:'R01',label:'股関節部',value:112.9,
+    referenceComparison:{available:true,reference:100,value:112.9,difference:12.9,direction:'ABOVE_REFERENCE'},
+    previousComparison:{available:true,recordId:'p1',date:'2026-09-19',previousValue:93.9,currentValue:112.9,difference:19,direction:'UP'},
+    personalHistory:{comparableCount:3,lastFive:[
+      {recordId:'p0',date:'2026-09-10',value:98.2,referenceDirection:'BELOW_REFERENCE'},
+      {recordId:'p1',date:'2026-09-19',value:93.9,referenceDirection:'BELOW_REFERENCE'},
+    ],referenceDirectionCounts:{above:1,near:0,below:2,unavailable:0}},
     calculationPath:exactPath(),
   }:null;
-  const allActions=actions();
   return {
-    schemaVersion:'RUNLOAD_INTERPRETATION_OUTPUT_V3',
-    target:{recordId:'r1',resultRecordId:'res1',date:'2026-09-20',activityType:'run',origin:'result',selectedRegionId:selected?'BA-DISP-014':''},
+    schemaVersion:'RUNLOAD_INTERPRETATION_OUTPUT_V4',
+    target:{recordId:'r1',resultRecordId:'res1',date:'2026-09-23',activityType:'run',origin:'result',selectedRegionId:selected?'BA-DISP-014':''},
     state:{targetAvailable:true,regional:'AVAILABLE',history:'AVAILABLE',subjective:'PAIR',support:'NORMAL',legacy:false},
-    overview:{regions:overview,selectionMode:selected?'EXPLICIT':'USER_SELECT',guidanceTokens:['REGIONS_USE_OWN_REFERENCE','NO_CROSS_REGION_RANKING']},
+    overview:{
+      regions:[],selectionMode:selected?'EXPLICIT':'REASON_GROUPS',guidanceTokens:[],
+      attention:{
+        counts:{total:12,available:12,unavailable:0,previousComparable:12,previousChanged:4,repeated:1,above:4,near:3,below:5,conditionDifferences:2},
+        groups:[
+          {code:'REPEATED_DIRECTION',regions:[regionItem('REPEATED_DIRECTION')]},
+          {code:'PREVIOUS_CHANGE',regions:[{...regionItem('PREVIOUS_CHANGE'),regionId:'BA-DISP-015',label:'殿部',value:94.4,referenceDirection:'BELOW_REFERENCE',pastMatchingDirectionCount:0}]},
+        ],
+        noCrossRegionRanking:true,
+      },
+    },
+    runFacts:{distanceKm:6,durationMinutes:34,paceSecondsPerKm:340},
     selectedRegion,
     subjectiveContext:{
       state:'PAIR',
       pre:{available:true,value:4,descriptorType:'EXACT',descriptor:'少し疲れている',lowerAnchor:null,upperAnchor:null},
-      post:{available:true,value:6,descriptorType:'EXACT',descriptor:'中程度に疲れている',lowerAnchor:null,upperAnchor:null},
-      difference:{eligible:true,value:2,direction:'UP'},
-      recentReferences:{pre:null,post:null,delta:null},
-      boundaryTokens:['ROF_IS_SUBJECTIVE','ROF_SEPARATE_FROM_REFERENCE100'],
+      post:{available:true,value:8,descriptorType:'EXACT',descriptor:'とても疲れている',lowerAnchor:null,upperAnchor:null},
+      difference:{eligible:true,value:4,direction:'UP'},
+      recentReferences:{},boundaryTokens:[],
     },
-    understanding:{facts:[],boundaryCodes:['NO_DIAGNOSIS','NO_INJURY_RISK','NO_CAUSAL_INFERENCE']},
-    next:{selectionRequired:!selected,primaryAction:selected?allActions[1]:null,otherActions:selected?allActions.filter((_,i)=>i!==1):[]},
+    conditions:{
+      previousRecordId:'p1',previousDate:'2026-09-19',
+      differences:[
+        {id:'distance',labelToken:'DISTANCE',previous:5,current:6,delta:1,relationship:selected?'USED_IN_CURRENT_ROUTE':'NO_REGION_SELECTED'},
+        {id:'course',labelToken:'COURSE',previous:'A',current:'B',delta:null,relationship:selected?'RECORDED_CONTEXT':'NO_REGION_SELECTED'},
+      ],
+      boundaryCodes:['DESCRIPTIVE_ONLY','NO_CAUSAL_INFERENCE'],
+    },
+    understanding:{meaningCode:'CONDITION_AND_RESULT_CHANGED',secondaryCodes:[],facts:[],boundaryCodes:['NO_DIAGNOSIS','NO_INJURY_RISK','NO_CAUSAL_INFERENCE']},
+    nextCheck:{code:selected?'KEEP_CONDITIONS_VISIBLE':'RECORD_NEXT_COMPARABLE_RUN',regionId:selected?'BA-DISP-014':'',conditionIds:['distance','course']},
+    next:{selectionRequired:false,primaryAction:allActions[0],otherActions:allActions.slice(1)},
     advanced:{evidence:{regions:{'BA-DISP-014':{construct:'股関節の機械的仕事に基づく部位内Reference-100',sources:[{label:'Fukuchi et al. 2017',role:'速度応答'}]}}}},
     safety:{route:'normal',reasons:[],blocks:[],nextActions:[]},
   };
 }
 
-await test('OVERVIEW-STARTS-WITH-WHOLE-BODY-NOT-QUESTION-MENU',()=>{
-  const html=renderInterpretationRoom({output:baseOutput({selected:false})});
-  assert.match(html,/今回の身体を部位ごとに見る/);
-  assert.match(html,/部位ごとの位置を確認/);
-  assert.match(html,/まず1部位を選びます/);
-  assert.doesNotMatch(html,/今、確認したいことはどちらですか/);
-  assert.doesNotMatch(html,/この結果を理解したい/);
-});
-
-await test('OVERVIEW-DOES-NOT-DUMP-TWELVE-NUMERIC-VALUES',()=>{
-  const html=renderInterpretationRoom({output:baseOutput({selected:false})});
-  assert.match(html,/股関節部：基準100より上側/);
-  assert.match(html,/殿部：基準100付近/);
-  assert.doesNotMatch(html,/>112</);
-  assert.doesNotMatch(html,/今回 112/);
-});
-
-await test('OVERVIEW-EXPLAINS-NO-CROSS-REGION-RANKING',()=>{
-  const html=renderInterpretationRoom({output:baseOutput({selected:false})});
-  assert.match(html,/部位どうしの数値を順位付けする図ではありません/);
-});
-
-await test('OVERVIEW-ADDS-NONCOLOR-DIRECTION-GROUPING',()=>{
-  const html=renderInterpretationRoom({output:baseOutput({selected:false})});
-  assert.match(html,/今回の分かれ方/);
-  assert.doesNotMatch(html,/class="interpretation-room-legend"/);
-  assert.match(html,/interpretation-room-overview-group-name/);
-  assert.match(html,/基準より上側/);
-  assert.match(html,/基準付近/);
-  assert.match(html,/基準より下側/);
-  assert.match(html,/股関節部/);
-});
-
-await test('SELECTED-VIEW-DOES-NOT-REPEAT-WHOLE-BODY-MAP',()=>{
+await test('OVERVIEW-STARTS-WITH-RUNLOAD-INTERPRETATION-NOT-BODY-MAP',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/股関節部の結果を整理/);
-  assert.match(html,/身体全体から選び直す/);
-  assert.doesNotMatch(html,/class="interpretation-room-map"/);
-  assert.doesNotMatch(html,/部位名から選ぶ/);
-  assert.match(html,/<span>1<\/span><div><small>選んだ部位を見る<\/small>/);
+  assert.match(html,/今回の結果をRunLoadで整理/);
+  assert.match(html,/今回のRunLoad解釈/);
+  assert.doesNotMatch(html,/12部位から選ぶ/);
+  assert.doesNotMatch(html,/interpretation-room-map/);
 });
 
-await test('SELECTED-REGION-SHOWS-NUMBER-WITH-REFERENCE-AND-PREVIOUS',()=>{
+await test('SUMMARY-INTEGRATES-REGION-HISTORY-FATIGUE-AND-CONDITIONS',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/基準100より上側/);
-  assert.match(html,/>112</);
-  assert.match(html,/基準100との差 \+12/);
-  assert.match(html,/106/);
-  assert.match(html,/差 \+6/);
+  assert.match(html,/12<\/strong><span>\/ 12/);
+  assert.match(html,/4<\/strong><span>部位<\/span><small>前回から変化/);
+  assert.match(html,/\+4/);
+  assert.match(html,/2<\/strong><span>項目<\/span><small>前回から条件変更/);
+  assert.match(html,/原因と結果としては結び付けません/);
 });
 
-await test('NO-HISTORY-EXPLAINS-WHAT-THE-CURRENT-VALUE-BECOMES',()=>{
-  const out=baseOutput();
-  out.selectedRegion.previousComparison={available:false,recordId:'',date:'',previousValue:null,currentValue:null,difference:null,direction:'NONE'};
-  const html=renderInterpretationRoom({output:out});
-  assert.match(html,/同じ方法で比べられる過去記録はまだありません/);
-  assert.match(html,/今回の値を次回の比較点として使えます/);
-});
-
-await test('EXACT-CALCULATION-PATH-IS-SIMPLE-AND-NONCAUSAL',()=>{
+await test('REGIONS-ARE-GROUPED-BY-REASON-NOT-RANKED',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/この数値に使われた情報/);
+  assert.match(html,/注目する理由から見る/);
+  assert.match(html,/過去にも同じ方向が確認された/);
+  assert.match(html,/前回から変化がある/);
+  assert.match(html,/部位どうしの数値の大小を、身体負荷や重要度の順位として扱いません/);
+});
+
+await test('REGION-LINK-CARRIES-RECORD-AND-REGION',()=>{
+  const html=renderInterpretationRoom({output:baseOutput()});
+  assert.match(html,/#\/interpretation-room\?recordId=r1&amp;origin=result&amp;regionId=BA-DISP-014/);
+});
+
+await test('SELECTED-REGION-SHOWS-CURRENT-PREVIOUS-AND-HISTORY-CHART',()=>{
+  const html=renderInterpretationRoom({output:baseOutput({selected:true})});
+  assert.match(html,/股関節部をRunLoadで整理/);
+  assert.match(html,/112\.9/);
+  assert.match(html,/93\.9/);
+  assert.match(html,/\+19/);
+  assert.match(html,/interpretation-room-history-chart/);
+  assert.match(html,/基準100/);
+});
+
+await test('CONDITION-TABLE-SEPARATES-DESCRIPTION-FROM-CAUSAL-CLAIM',()=>{
+  const html=renderInterpretationRoom({output:baseOutput({selected:true})});
+  assert.match(html,/条件の違いを並べる/);
   assert.match(html,/距離/);
   assert.match(html,/5 km/);
-  assert.match(html,/時間/);
-  assert.match(html,/30 分/);
-  assert.match(html,/6:00 \/km/);
-  assert.match(html,/RunLoad内部の計算経路/);
-  assert.match(html,/身体で実際に起きた原因を示すものではありません/);
+  assert.match(html,/6 km/);
+  assert.match(html,/この部位の計算に使用/);
+  assert.match(html,/原因だったとは判断しません/);
 });
 
-await test('RUN-WALK-COPY-USES-RUNNING-PHASE-NOT-WHOLE-RUN',()=>{
-  const out=baseOutput();
-  out.selectedRegion.calculationPath=exactPath({
-    exposure:{type:'RUNNING_PHASE',distanceKm:3.8,durationMinutes:24,speedMps:2.6388889,segmentCount:0},
-    activeInputs:[
-      {id:'RUNNING_DISTANCE',value:3.8,role:'DERIVE_SPEED'},
-      {id:'RUNNING_DURATION',value:24,role:'DERIVE_SPEED'},
-      {id:'SPEED',value:2.6388889,role:'PRIMARY_NUMERIC_ROUTE'},
-    ],
-  });
-  const html=renderInterpretationRoom({output:out});
-  assert.match(html,/走った区間の距離/);
-  assert.match(html,/走った区間の時間/);
-  assert.match(html,/走った区間から計算/);
-});
-
-await test('SEGMENTED-PATH-DOES-NOT-PRETEND-EXACT-PER-SEGMENT-ROUTE',()=>{
-  const out=baseOutput();
-  out.selectedRegion.calculationPath=exactPath({
-    resolutionStatus:'PARTIAL',
-    activeRoute:'SECTION_COMPOSED',
-    exposure:{type:'SEGMENTED',distanceKm:5,durationMinutes:30,speedMps:2.8,segmentCount:3},
-  });
-  const html=renderInterpretationRoom({output:out});
-  assert.match(html,/3区間/);
-  assert.match(html,/区間ごとに計算/);
-  assert.match(html,/距離に応じてまとめる/);
-  assert.match(html,/各区間の最終採用経路まで断定しません/);
-});
-
-await test('CONDITIONAL-INPUT-IS-NOT-CALLED-APPLIED',()=>{
-  const out=baseOutput();
-  out.selectedRegion.calculationPath=exactPath({
-    resolutionStatus:'PARTIAL',
-    activeRoute:'SPEED_WITH_CONDITIONAL_INPUTS',
-    conditionalInputs:[{id:'CADENCE',value:172,role:'CONDITIONAL_NUMERIC_ROUTE'}],
-  });
-  const html=renderInterpretationRoom({output:out});
-  assert.match(html,/関係する条件として記録されています/);
-  assert.match(html,/ピッチ/);
-  assert.match(html,/172 spm/);
-  assert.match(html,/最終値へ採用された経路をここで断定しません/);
-  assert.doesNotMatch(html,/ピッチを使って計算しています/);
-});
-
-await test('CONTEXT-ONLY-INPUTS-ARE-CLEARLY-SEPARATED',()=>{
-  const out=baseOutput();
-  out.selectedRegion.calculationPath=exactPath({
-    contextOnlyInputs:[
-      {id:'SURFACE',value:[{category:'ASPHALT'}],role:'CONTEXT_ONLY'},
-      {id:'GRADE',value:'RECORDED',role:'NOT_ACTIVE_FOR_THIS_REGION'},
-    ],
-  });
-  const html=renderInterpretationRoom({output:out});
-  assert.match(html,/記録はあるが、この部位の現在の数値計算には使わない情報/);
-  assert.match(html,/路面/);
-  assert.match(html,/坂/);
-});
-
-await test('ROF-EXACT-DESCRIPTORS-ARE-SHOWN-WITH-NUMBERS',()=>{
+await test('OVERVIEW-CONDITION-TABLE-ASKS-FOR-REGION-BEFORE-ROUTE-RELATION',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/走る前/);
+  assert.match(html,/部位を選ぶと関係を確認/);
+});
+
+await test('SUBJECTIVE-FATIGUE-REMAINS-SEPARATE-LAYER',()=>{
+  const html=renderInterpretationRoom({output:baseOutput()});
+  assert.match(html,/本人の記録/);
+  assert.match(html,/走る前後の疲労感/);
   assert.match(html,/4<em>\/10/);
-  assert.match(html,/少し疲れている/);
-  assert.match(html,/6<em>\/10/);
-  assert.match(html,/中程度に疲れている/);
+  assert.match(html,/8<em>\/10/);
+  assert.match(html,/疲労感と部位別の数値を足し合わせたり/);
 });
 
-await test('ROF-UNLABELED-VALUE-USES-OFFICIAL-ANCHORS',()=>{
-  const out=baseOutput();
-  out.subjectiveContext.post={available:true,value:3,descriptorType:'BETWEEN_ANCHORS',descriptor:'',lowerAnchor:{value:2,descriptor:'まったく疲れていない'},upperAnchor:{value:4,descriptor:'少し疲れている'}};
-  out.subjectiveContext.difference={eligible:true,value:-1,direction:'DOWN'};
-  const html=renderInterpretationRoom({output:out});
-  assert.match(html,/2「まったく疲れていない」と4「少し疲れている」の間/);
-  assert.doesNotMatch(html,/やや疲れている/);
-});
-
-await test('NO-SUBJECTIVE-RECORD-OMITS-SUBJECTIVE-SECTION',()=>{
-  const out=baseOutput();
-  out.state.subjective='NONE';
-  out.subjectiveContext={state:'NONE',pre:{available:false},post:{available:false},difference:{eligible:false},recentReferences:{},boundaryTokens:[]};
-  const html=renderInterpretationRoom({output:out});
-  assert.doesNotMatch(html,/走る前後の疲れ/);
-});
-
-await test('UNDERSTANDING-PAIRS-KNOWN-AND-UNKNOWN',()=>{
+await test('UNDERSTANDING-IS-COMPACT-AND-BOUNDARY-AWARE',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
+  assert.match(html,/分かること \/ 決めないこと/);
   assert.match(html,/今回確認できること/);
-  assert.match(html,/ここからは決められないこと/);
-  assert.match(html,/身体的な原因やけがの可能性は判断できません/);
+  assert.match(html,/ここからは決めないこと/);
+  assert.match(html,/けがの可能性/);
 });
 
-await test('NEXT-ACTION-USES-USER-GOAL-NOT-FEATURE-NAME',()=>{
-  const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/条件を変えた表示を確かめる/);
-  assert.doesNotMatch(html,/>Simulation</);
-  assert.match(html,/from=interpretation-room/);
+await test('NEXT-CHECK-IS-A-SELF-UNDERSTANDING-SUGGESTION',()=>{
+  const html=renderInterpretationRoom({output:baseOutput({selected:true})});
+  assert.match(html,/次に確かめる/);
+  assert.match(html,/次回も距離・時間・コース条件を残すと/);
+  assert.match(html,/条件を変えて確かめる/);
+});
+
+await test('CALCULATION-AND-EVIDENCE-ARE-PROGRESSIVELY-DISCLOSED',()=>{
+  const html=renderInterpretationRoom({output:baseOutput({selected:true})});
+  assert.match(html,/<details class="interpretation-room-calculation">/);
+  assert.match(html,/この部位の数値に使われた情報を確認/);
+  assert.match(html,/数値計算に使用/);
+  assert.match(html,/<details class="interpretation-room-advanced">/);
+  assert.match(html,/計算方法と研究上の背景を詳しく見る/);
 });
 
 await test('DERIVED-ACTIONS-PRESERVE-INTERPRETATION-CONTEXT',()=>{
-  const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/次の走りや休養を準備する/);
-  assert.doesNotMatch(html,/次回確認したいことを残す/);
+  const html=renderInterpretationRoom({output:baseOutput({selected:true})});
   for(const destination of ['simulation','plan','consultation','reading']) {
     assert.match(html,new RegExp(`#\\/${destination}\\?`));
   }
   assert.ok((html.match(/from=interpretation-room/g)||[]).length>=4);
   assert.ok((html.match(/roomOrigin=result/g)||[]).length>=4);
-  assert.doesNotMatch(html,/roomExperience|experience=v3/);
+  assert.doesNotMatch(html,/view=trends|metric=region/);
 });
 
-await test('ADVANCED-EVIDENCE-IS-COLLAPSED-BEHIND-PLAIN-LANGUAGE',()=>{
-  const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/<details class="interpretation-room-advanced">/);
-  assert.match(html,/計算方法と研究上の背景を詳しく見る/);
-  assert.match(html,/全文献の完全な一覧ではありません/);
-  assert.match(html,/Reference-100/);
+await test('NO-SUBJECTIVE-PAIR-DOES-NOT-INVENT-DIFFERENCE',()=>{
+  const out=baseOutput();
+  out.subjectiveContext={state:'NONE',pre:{available:false},post:{available:false},difference:{eligible:false},recentReferences:{},boundaryTokens:[]};
+  const html=renderInterpretationRoom({output:out});
+  assert.doesNotMatch(html,/class="interpretation-room-fatigue"/);
 });
 
-await test('BEGINNER-V3-FLOW-OMITS-INTERNAL-JARGON',()=>{
-  const html=renderInterpretationRoom({output:baseOutput()});
-  const beginnerHtml=html.replace(/<details class="interpretation-room-advanced">[\s\S]*?<\/details>/,'');
-  assert.doesNotMatch(beginnerHtml,/ROF-J/);
-  assert.doesNotMatch(beginnerHtml,/Reference-100/);
-  assert.doesNotMatch(beginnerHtml,/primaryCode/);
-  assert.doesNotMatch(beginnerHtml,/P1_SOURCE|P2_CROSS/);
+await test('SUPPORT-STATE-TAKES-PRECEDENCE',()=>{
+  const out=baseOutput();
+  out.state.support='URGENT';
+  out.next={selectionRequired:false,primaryAction:{actionId:'official-help',destination:'support-guidance',parameters:{},enabled:true},otherActions:[]};
+  const html=renderInterpretationRoom({output:out});
+  assert.match(html,/先に確認することがあります/);
+  assert.doesNotMatch(html,/今回のRunLoad解釈/);
 });
 
 await test('REST-STATE-DOES-NOT-FABRICATE-REGIONAL-RESULTS',()=>{
-  const out=baseOutput({selected:false});
+  const out=baseOutput();
   out.target.activityType='rest';
   out.state.regional='REST';
-  out.overview.regions=[];
   const html=renderInterpretationRoom({output:out});
   assert.match(html,/今回は休養の記録です/);
-  assert.match(html,/12部位の数値を作りません/);
-  assert.doesNotMatch(html,/部位ごとの位置を確認/);
-});
-
-await test('LEGACY-STATE-DOES-NOT-REINTERPRET-AS-CURRENT',()=>{
-  const out=baseOutput({selected:false});
-  out.state.legacy=true;
-  out.state.regional='LEGACY';
-  const html=renderInterpretationRoom({output:out});
-  assert.match(html,/現在の計算方法とは分けて扱います/);
-  assert.match(html,/現在の基準100の結果として読み替えません/);
-  assert.doesNotMatch(html,/部位ごとの位置を確認/);
-});
-
-await test('SUPPORT-STATE-TAKES-PRECEDENCE-OVER-NORMAL-INTERPRETATION',()=>{
-  const out=baseOutput();
-  out.state.support='URGENT';
-  out.next={
-    selectionRequired:false,
-    primaryAction:{actionId:'official-help',destination:'support-guidance',parameters:{},enabled:true},
-    otherActions:[{actionId:'share',destination:'consultation',parameters:{recordId:'r1'},enabled:true}],
-  };
-  const html=renderInterpretationRoom({output:out});
-  assert.match(html,/先に確認することがあります/);
-  assert.match(html,/公的サポートを確認する/);
-  assert.doesNotMatch(html,/この数値に使われた情報/);
+  assert.doesNotMatch(html,/今回のRunLoad解釈/);
 });
 
 await test('EMPTY-STATE-HAS-DIRECT-RECORD-ACTION',()=>{
@@ -332,19 +223,20 @@ await test('EMPTY-STATE-HAS-DIRECT-RECORD-ACTION',()=>{
   assert.match(html,/#\/record-input/);
 });
 
-await test('V3-CSS-USES-THEME-TOKENS-AND-NO-HARDCODED-HEX-COLORS',()=>{
+await test('CSS-HAS-READABLE-PC-SIZES-AND-RESPONSIVE-LAYOUT',()=>{
   const css=fs.readFileSync(path.join(root,'styles/interpretation-room.css'),'utf8');
-  assert.match(css,/var\(--color-surface\)/);
-  assert.match(css,/var\(--color-map-high\)/);
+  assert.match(css,/width: min\(100%, 76rem\)/);
+  assert.match(css,/font-size: 1\.06rem/);
+  assert.match(css,/grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
+  assert.match(css,/@media \(max-width: 60rem\)/);
   assert.match(css,/@media \(max-width: 420px\)/);
   assert.doesNotMatch(css,/#[0-9a-fA-F]{3,8}\b/);
 });
 
-await test('V3-CSS-DOES-NOT-USE-RED-GREEN-GOOD-BAD-SEMANTICS',()=>{
-  const css=fs.readFileSync(path.join(root,'styles/interpretation-room.css'),'utf8');
-  assert.doesNotMatch(css,/\bred\b|\bgreen\b/i);
+await test('PRESENTATION-DOES-NOT-USE-GOOD-BAD-OR-DIAGNOSTIC-REGION-LABELS',()=>{
   const presentation=fs.readFileSync(path.join(root,'ui/interpretationRoomPresentation.js'),'utf8');
   assert.doesNotMatch(presentation,/安全な部位|危険な部位|良い部位|悪い部位/);
+  assert.doesNotMatch(presentation,/原因だったと判断します|けがです|診断/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');

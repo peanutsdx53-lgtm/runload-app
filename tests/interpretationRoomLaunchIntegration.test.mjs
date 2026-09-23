@@ -14,8 +14,8 @@ await test('RESULT-LAUNCHES-CANONICAL-INTERPRETATION',()=>{
   const s=read('screens/resultScreen.js');
   assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=result/);
   assert.doesNotMatch(s,/experience=v3/);
-  assert.match(s,/今回の結果を整理する/);
-  assert.match(s,/基準・過去・計算に使った情報と一緒に確認します/);
+  assert.match(s,/結果を整理/);
+  assert.match(s,/基準・過去と一緒に見る/);
 });
 
 await test('HOME-LATEST-RECORD-SEPARATES-RESULT-AND-ORGANIZATION',()=>{
@@ -55,7 +55,7 @@ await test('SIMULATION-FROM-ROOM-PRESERVES-RETURN-CONTEXT',()=>{
   const services={storage:{records:{loadAll:()=>records,findById:(id)=>records.find((r)=>r.id===id)||null}}};
   const context={parameters:new URLSearchParams('from=interpretation-room&recordId=old&roomOrigin=history')};
   const html=renderSimulationScreen({services,context});
-  assert.match(html,/保存記録と条件を比べる/);
+  assert.match(html,/保存記録を基準に条件を比べる/);
   assert.match(html,/選択した記録/);
   assert.match(html,/value="3\.0"/);
   assert.doesNotMatch(html,/value="9\.0"/);
@@ -70,6 +70,73 @@ await test('SIMULATION-COURSE-ROUNDTRIP-PRESERVES-SOURCE-RECORD',()=>{
   const context={parameters:new URLSearchParams('from=interpretation-room&recordId=old&roomOrigin=result')};
   const html=renderSimulationScreen({services,context});
   assert.match(html,/returnTo=%23%2Fsimulation%3Ffrom%3Dinterpretation-room%26recordId%3Dold%26roomOrigin%3Dresult/);
+});
+
+await test('SIMULATION-EMBEDS-SOURCE-RECORD-ID-AND-SAVED-RUN-CONDITIONS',()=>{
+  const records=[{
+    id:'old',date:'2026-09-10',createdAt:'2026-09-10T08:00:00Z',activityType:'run',
+    distanceKm:3,durationMinutes:20,runningFormat:'RUN_WALK',runningDistanceKm:2.4,runningDurationMinutes:14,
+    course:{name:'Saved course',gradeKnowledge:'KNOWN_PROFILE',upPercent:20,downPercent:10,pavedPercent:100},
+  }];
+  const experiences={old:{regionalV2ResultRecord:{engine_input_snapshot:{runningFormat:'RUN_WALK',distanceKm:3,durationMinutes:20,runningDistanceKm:2.4,runningDurationMinutes:14,averageCadenceSpm:172,footStrikeObservation:{value:'RFS'}}}}};
+  const services={
+    storage:{records:{loadAll:()=>records,findById:(id)=>records.find((r)=>r.id===id)||null}},
+    workflows:{records:{loadExperience:(id)=>experiences[id]||null}},
+  };
+  const context={parameters:new URLSearchParams('from=interpretation-room&recordId=old&roomOrigin=result')};
+  const html=renderSimulationScreen({services,context});
+  assert.match(html,/name="sourceRecordId" value="old"/);
+  assert.match(html,/name="sourceEngineInputJson" value="[^"]*averageCadenceSpm[^"]*172/);
+  assert.match(html,/name="sourceConditionJson" value="[^"]*Saved course/);
+  assert.match(html,/name="runningFormat"[^>]*>[\s\S]*value="RUN_WALK" selected/);
+  assert.match(html,/name="runningDistanceKm"[^>]*value="2\.4"/);
+  assert.match(html,/name="runningDurationMinutes"[^>]*value="14"/);
+  assert.match(html,/name="sourceConditionJson" value="[^"]*runningDistanceKm[^"]*2\.4/);
+  assert.match(html,/name="sourceConditionJson" value="[^"]*runningDurationMinutes[^"]*14/);
+  assert.match(html,/Saved course/);
+  assert.match(html,/元の記録を初期値に使用/);
+});
+
+await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST',()=>{
+  const source=read('ui/interactions/simulationInteractions.js');
+  assert.match(source,/function sourceValues\(services,recordId=""\)/);
+  assert.match(source,/recordId\?services\.workflows\.records\.loadExperience\(recordId\):services\.workflows\.records\.loadLatestExperience\(\)/);
+  assert.match(source,/sourceEngineInputFrom\(data\)/);
+  assert.match(source,/\.\.\.source/);
+  assert.match(source,/changedConditionLabels\(data\)/);
+  assert.match(source,/変更なし/);
+  assert.match(source,/form\.addEventListener\("reset",\(event\)=>/);
+  assert.match(source,/event\.preventDefault\(\)/);
+  assert.match(source,/setValue\("courseJson",JSON\.stringify\(course\)\)/);
+  assert.match(source,/name="sourceRecordId"/);
+  assert.doesNotMatch(source,/function latestValues/);
+  assert.match(source,/元の記録からの変化/);
+});
+
+await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
+  const css=read('styles/desktop.css');
+  const marker='PC interpretation-derived condition comparison V2 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0);
+  const audit=css.slice(start);
+  assert.match(audit,/\.measure-field > span[\s\S]*font-size:\s*0\.88rem\s*!important/);
+  assert.match(audit,/\.measure-field input[\s\S]*font-size:\s*1\.35rem\s*!important/);
+  assert.match(audit,/\.region-row strong[\s\S]*font-size:\s*0\.9rem\s*!important/);
+  assert.match(audit,/\.region-value b[\s\S]*font-size:\s*1rem\s*!important/);
+  assert.match(audit,/\.result-layout[\s\S]*grid-template-columns:\s*minmax\(18rem, 0\.9fr\) minmax\(22rem, 1\.1fr\)\s*!important/);
+});
+
+await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
+  const css=read('styles/mobile.css');
+  const marker='Interpretation-derived simulation readability audit 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0);
+  const audit=css.slice(start);
+  assert.match(audit,/\.region-row small,[\s\S]*font-size:\s*0\.78rem/);
+  assert.match(audit,/\.region-row strong[\s\S]*font-size:\s*0\.9rem/);
+  assert.match(audit,/\.region-value b[\s\S]*font-size:\s*1rem/);
+  assert.match(audit,/\.measure-field input[\s\S]*font-size:\s*1\.3rem/);
+  assert.match(audit,/\.primary-action,[\s\S]*font-size:\s*0\.88rem/);
 });
 
 await test('INTERPRETATION-ACTIONS-CARRY-ROOM-ORIGIN-WITHOUT-VERSION-STATE',()=>{

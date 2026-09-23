@@ -15,20 +15,21 @@ async function test(id,fn){
 
 await test('RESULT-GATE-COMES-AFTER-TWO-RESULT-BLOCKS',()=>{
   const source=read('screens/resultScreen.js');
-  const line=source.split('\n').find((row)=>row.includes('understanding-link-wrap'))||'';
+  const line=source.split('\n').find((row)=>row.includes('result-next-actions')&&row.includes('understanding-link'))||'';
   assert.ok(line);
   const regional=line.indexOf('renderRegional(');
   const fatigue=line.indexOf('renderFatigue(');
-  const gate=line.indexOf('understanding-link-wrap');
-  const history=line.indexOf('history-link-wrap');
-  assert.ok(regional>=0 && fatigue>regional && gate>fatigue && history>gate);
+  const gate=line.indexOf('result-next-actions');
+  const understand=line.indexOf('understanding-link');
+  const history=line.indexOf('history-link');
+  assert.ok(regional>=0 && fatigue>regional && gate>fatigue && understand>gate && history>understand);
 });
 
 await test('RESULT-GATE-USES-PLAIN-LANGUAGE',()=>{
   const source=read('screens/resultScreen.js');
-  const gate=source.match(/<section class="understanding-link-wrap"[\s\S]*?<\/section>/)?.[0]||'';
-  assert.match(gate,/今回の結果を整理する/);
-  assert.match(gate,/基準・過去・計算に使った情報と一緒に確認します/);
+  const gate=source.match(/<nav class="result-next-actions"[\s\S]*?<\/nav>/)?.[0]||'';
+  assert.match(gate,/結果を整理/);
+  assert.match(gate,/基準・過去と一緒に見る/);
   assert.match(gate,/origin=result/);
   assert.doesNotMatch(gate,/RunLoad解釈|解釈エンジン|計算エンジン|Reference-100/);
 });
@@ -57,15 +58,15 @@ await test('REST-RECORD-DOES-NOT-OFFER-UNDERSTANDING-ENTRY',()=>{
   assert.doesNotMatch(restLine,/interpretation-room|結果を整理する|結果を理解する/);
 });
 
-await test('ENTRY-STYLING-IS-SECONDARY-NOT-WARNING',()=>{
+await test('ENTRY-STYLING-IS-CALM-NOT-WARNING',()=>{
   const css=read('styles/mobile.css');
-  const start=css.indexOf('.screen-layout--result .understanding-link-wrap');
-  const end=css.indexOf('.screen-layout--history',start);
+  const start=css.indexOf('.screen-layout--result .result-next-actions {');
+  const end=css.indexOf('/* Mobile typography floor',start);
   const block=css.slice(start,end);
-  assert.ok(start>=0);
-  assert.match(block,/background:var\(--surface\)/);
-  assert.match(block,/border:1px solid var\(--line\)/);
-  assert.doesNotMatch(block,/urgent|warn|danger|color-danger|gradient/i);
+  assert.ok(start>=0 && end>start);
+  assert.match(block,/border:\s*1px solid var\(--color-line\)/);
+  assert.match(block,/background:\s*color-mix\(in srgb, var\(--color-accent-soft\) 42%, var\(--color-surface\)\)/);
+  assert.doesNotMatch(block,/urgent|warn|danger|color-danger/i);
 });
 
 await test('HOME-UNDERSTANDING-ACTION-IS-VISUALLY-SECONDARY',()=>{

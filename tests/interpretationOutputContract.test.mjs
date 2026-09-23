@@ -73,18 +73,21 @@ function build(opts={}){
 
 await test('OUTPUT-SCHEMA-AND-READONLY-PROVENANCE',()=>{
   const out=buildRunLoadInterpretation();
-  assert.equal(INTERPRETATION_CORE_VERSION,'runload-interpretation-core-v3.0');
+  assert.equal(INTERPRETATION_CORE_VERSION,'runload-interpretation-core-v4.0');
   assert.equal(out.schemaVersion,INTERPRETATION_OUTPUT_SCHEMA_VERSION);
   assert.equal(out.state.targetAvailable,false);
   assert.equal(out.provenance.primaryRecalculated,false);
   assert.equal(out.provenance.rofRecalculated,false);
 });
 
-await test('GENERAL-ENTRY-DOES-NOT-AUTO-SELECT-REGION',()=>{
+await test('GENERAL-ENTRY-USES-REASON-GROUPS-WITHOUT-AUTO-SELECTING-REGION',()=>{
   const out=build();
-  assert.equal(out.overview.selectionMode,'USER_SELECT');
+  assert.equal(out.overview.selectionMode,'REASON_GROUPS');
   assert.equal(out.selectedRegion,null);
-  assert.equal(out.next.selectionRequired,true);
+  assert.equal(out.next.selectionRequired,false);
+  assert.equal(out.next.primaryAction.actionId,'plan');
+  assert.ok(out.overview.attention.counts.available>=1);
+  assert.ok(Array.isArray(out.overview.attention.groups));
 });
 
 await test('EXPLICIT-REGION-GETS-REFERENCE-CONTEXT',()=>{
@@ -241,16 +244,56 @@ await test('SELECTED-REGION-WITH-CONDITION-DIFFERENCE-PREFERS-CONDITION-CHECK-AC
   assert.equal(out.next.primaryAction.actionId,'simulation');
 });
 
-await test('SELECTED-REGION-WITH-HISTORY-AND-NO-CONDITION-DIFFERENCE-PREFERS-HISTORY',()=>{
+await test('SELECTED-REGION-WITH-HISTORY-AND-NO-CONDITION-DIFFERENCE-PREFERS-NEXT-RECORD',()=>{
   const prior=fakeExperience({id:'prior',date:'2026-09-19',value:106});
   const target=fakeExperience({id:'target',date:'2026-09-20',value:112});
   const out=build({target,all:[prior,target],selectedRegionId:'BA-DISP-014'});
-  assert.equal(out.next.primaryAction.actionId,'history');
+  assert.equal(out.next.primaryAction.actionId,'plan');
+  assert.equal(out.next.selectionRequired,false);
 });
 
 await test('SELECTED-REGION-WITHOUT-HISTORY-PREFERS-PLAN',()=>{
   const out=build({selectedRegionId:'BA-DISP-014'});
   assert.equal(out.next.primaryAction.actionId,'plan');
+});
+
+await test('CONDITION-PROJECTION-EXPLAINS-SELECTED-REGION-RELATIONSHIP',()=>{
+  const prior=fakeExperience({id:'prior',date:'2026-09-19',distanceKm:5,durationMinutes:30});
+  const target=fakeExperience({id:'target',date:'2026-09-20',distanceKm:6,durationMinutes:31});
+  const out=build({target,all:[prior,target],selectedRegionId:'BA-DISP-014'});
+  const distance=out.conditions.differences.find(x=>x.id==='distance');
+  const duration=out.conditions.differences.find(x=>x.id==='duration');
+  assert.equal(distance.relationship,'USED_IN_CURRENT_ROUTE');
+  assert.equal(duration.relationship,'USED_IN_CURRENT_ROUTE');
+  assert.ok(out.conditions.boundaryCodes.includes('NO_CAUSAL_INFERENCE'));
+});
+
+await test('RUN-WALK-WHOLE-RUN-DISTANCE-IS-NOT-MISLABELED-AS-DIRECT-REGION-INPUT',()=>{
+  const prior=fakeExperience({id:'prior',date:'2026-09-19',distanceKm:5,durationMinutes:30});
+  const target=fakeExperience({
+    id:'target',date:'2026-09-20',distanceKm:6,durationMinutes:36,runningFormat:'RUN_WALK',
+    engine:engineInput({runningFormat:'RUN_WALK',distanceKm:6,durationMinutes:36,runningDistanceKm:4,runningDurationMinutes:24}),
+  });
+  const out=build({target,all:[prior,target],selectedRegionId:'BA-DISP-014'});
+  const distance=out.conditions.differences.find(x=>x.id==='distance');
+  const format=out.conditions.differences.find(x=>x.id==='running-format');
+  assert.equal(out.selectedRegion.calculationPath.exposure.type,'RUNNING_PHASE');
+  assert.equal(distance.relationship,'RECORDED_CONTEXT');
+  assert.equal(format.relationship,'DEFINES_EXPOSURE');
+});
+
+await test('NEXT-CHECK-PRESERVES-USER-RECORDED-NEXT-POINT',()=>{
+  const target=fakeExperience();
+  target.record.reflectionContext={nextCheckPoint:'同じコースで確認する'};
+  const out=build({target,selectedRegionId:'BA-DISP-014'});
+  assert.equal(out.nextCheck.userRecorded,'同じコースで確認する');
+});
+
+await test('NEXT-CHECK-IS-STRUCTURED-AND-NON-DIAGNOSTIC',()=>{
+  const out=build({selectedRegionId:'BA-DISP-014'});
+  assert.equal(out.nextCheck.code,'ADD_COMPARABLE_RECORD');
+  assert.equal(out.nextCheck.regionId,'BA-DISP-014');
+  assert.equal(typeof out.nextCheck.code,'string');
 });
 
 await test('V3-BUILD-DOES-NOT-MUTATE-INPUT',()=>{

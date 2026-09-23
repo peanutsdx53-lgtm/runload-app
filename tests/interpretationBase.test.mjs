@@ -173,6 +173,30 @@ await test('CONDITION-DIFFERENCE-IS-DESCRIPTIVE',()=>{
   assert.ok(summary.differences.some(x=>x.id==='grade'));
 });
 
+await test('CURRENT-COURSE-SCHEMA-DETECTS-GRADE-AND-SURFACE-DIFFERENCES',()=>{
+  const prior=fakeExperience({id:'prior',date:'2026-09-19',course:{
+    gradeKnowledge:'KNOWN_PROFILE',upPercent:10,downPercent:0,upGradePercent:3,downGradePercent:0,
+    pavedPercent:100,trailPercent:0,
+  }});
+  const target=fakeExperience({id:'target',course:{
+    gradeKnowledge:'KNOWN_PROFILE',upPercent:30,downPercent:10,upGradePercent:5,downGradePercent:2,
+    pavedPercent:60,trailPercent:40,
+  }});
+  const summary=buildConditionDifferenceSummary(target,[prior,target]);
+  const grade=summary.differences.find(x=>x.id==='grade');
+  const surface=summary.differences.find(x=>x.id==='surface');
+  assert.ok(grade);
+  assert.equal(grade.previous.uphillSharePercent,10);
+  assert.equal(grade.current.uphillSharePercent,30);
+  assert.equal(grade.current.downhillSharePercent,10);
+  assert.ok(surface);
+  assert.deepEqual(surface.previous,[{category:'pavedPercent',sharePercent:100}]);
+  assert.deepEqual(surface.current,[
+    {category:'pavedPercent',sharePercent:60},
+    {category:'trailPercent',sharePercent:40},
+  ]);
+});
+
 await test('COEXISTING-CONDITION-AND-REGIONAL-DIFFERENCE-REQUIRES-NONCAUSAL-BOUNDARY',()=>{
   const prior=fakeExperience({id:'prior',date:'2026-09-19',value:100,distanceKm:5});
   const target=fakeExperience({id:'target',value:110,distanceKm:7});
