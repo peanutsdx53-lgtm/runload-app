@@ -1,7 +1,7 @@
 import { escapeHtml } from "./commonComponents.js";
 import { BODY_REGION_TERMINOLOGY } from "../core/runloadCore.js";
 
-export const APP_GUIDE_VERSION = "guide-context-help-20260923";
+export const APP_GUIDE_VERSION = "guide-context-help-20260923-v2";
 export const DEFAULT_GUIDE_SECTION = "first-use";
 
 export const GUIDE_SECTIONS = Object.freeze([
@@ -19,21 +19,6 @@ const GUIDE_SECTION_ALIASES = Object.freeze({
   scope: "safety",
   reading: "result",
   evidence: "safety",
-});
-
-const SCREEN_HINTS = Object.freeze({
-  start: "通常のRunLoad利用と、スマートフォン向けGPS測定を選ぶ入口です。",
-  "run-measurement": "GPSで距離・時間・軌跡を測定し、終了後に記録入力へ引き継ぎます。",
-  home: "今日の記録、最新結果、予定から、今行うことを選ぶ入口です。",
-  "record-input": "距離と実際に走った時間を中心に、分かる条件だけを入力します。",
-  result: "12部位の目安と疲労感を別々に確認します。",
-  "body-part-detail": "選んだ部位の目安、関連する一般知識、身体の記録を確認します。",
-  history: "記録一覧と、同じ計算方法・同じ基準で比べられる記録の推移を分けて確認します。",
-  plan: "予定条件から作る参考表示を確認します。保存後の結果とは分けて扱います。",
-  consultation: "身体の記録と数値表示を区別し、相手へ見せる内容を整理します。",
-  reading: "走行条件と身体の使われ方に関する一般知識を、参考資料と一緒に確認します。",
-  more: "設定、共有準備、公的案内、プライバシー、読みものへの入口です。",
-  simulation: "条件を変えたときの同じ部位の目安を比較します。",
 });
 
 const RESULT_REGION_GUIDE = Object.freeze(BODY_REGION_TERMINOLOGY.map((item) => Object.freeze([
@@ -57,16 +42,13 @@ export function withGuideVersionSeen(settings = {}) {
   return Object.freeze({ ...source, guideVersionSeen: APP_GUIDE_VERSION });
 }
 
-function renderFirstUse(currentScreen) {
-  const hint = SCREEN_HINTS[currentScreen]
-    || "入力した事実、数値表示、身体の記録を分けて確認します。";
+function renderFirstUse() {
   const steps = [
-    ["記録する", "走行では距離と実際に走った時間を中心に、分かる条件だけを追加します。スマートフォンではGPS測定から距離と時間を引き継げます。"],
-    ["結果を見る", "12部位の目安、距離、疲労感を分けて確認します。数値の高低だけで良し悪しを決めません。"],
-    ["履歴で比べる", "同じ部位を同じ基準で見返します。比較できない記録は無理に数値へ置き換えません。"],
-    ["必要な説明だけ開く", "各画面の「?」から説明を開けます。詳しい説明を常に画面へ出さず、必要なときだけ確認できます。"],
+    ["記録する", "走行または休養を記録します。走行日は距離と時間を入力し、必要に応じてコースや身体の記録を追加します。"],
+    ["結果を確認する", "保存後は、走行内容と12部位の目安を確認できます。気になる部位は詳細を開いて見返せます。"],
+    ["履歴で振り返る", "過去の記録を探したり、同じ部位の変化を見返したりして、次に確認したいことへつなげます。"],
   ];
-  return `<div class="guide-lead"><p>RunLoadは、走行事実・数値結果・身体の記録を分けて見返し、自己理解と自己判断の材料を整理するアプリです。</p><p class="guide-screen-hint"><strong>この画面：</strong>${escapeHtml(hint)}</p></div><div class="guide-step-list">${steps.map(([title, body], index) => `<article class="guide-step-card"><span aria-hidden="true">${index + 1}</span><div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(body)}</p></div></article>`).join("")}</div><div class="guide-note"><h3>後から確認できます</h3><p>各画面の「?」またはメニューから、入力・結果・履歴・限界・部位の説明を開けます。</p></div>`;
+  return `<div class="guide-lead"><p>RunLoadは、走行の記録・結果・履歴をつなげて振り返るアプリです。</p></div><div class="guide-step-list">${steps.map(([title, body], index) => `<article class="guide-step-card"><span aria-hidden="true">${index + 1}</span><div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(body)}</p></div></article>`).join("")}</div>`;
 }
 
 function renderRecordGuide() {
@@ -76,7 +58,7 @@ function renderRecordGuide() {
     <article><h3>坂と路面</h3><p>上り・下りや路面の違いは、身体の使われ方を振り返る手掛かりになります。分からない場合は「不明」のまま残せます。</p></article>
     <article><h3>シューズ・走り方</h3><p>今回の走りを思い出し、関連する一般説明を読むための補足として残します。自由記述は自分のメモとして扱います。</p></article>
     <article><h3>身体記録</h3><p>詳細部位、程度、気づいた時点を保存します。走行前からの状態を今回の走行原因として扱いません。</p></article>
-    <article><h3>走る前後の疲労感</h3><p>0〜10の疲労感尺度（ROF-J）で、自分が感じた疲労感を記録します。部位の目安とは別の情報として扱います。回復・安全・走行可否の判定には使いません。</p></article>
+    <article><h3>走る前後の疲労感</h3><p>0〜10の疲労感尺度（ROF-J）で、走る前後に自分が感じた疲労感を記録します。部位の目安とは別に見返せます。</p></article>
   </div><div class="guide-note"><h3>分からない内容はそのままで構いません</h3><p>不明な坂・路面や、確認していない身体の状態を推測で入力する必要はありません。</p></div>`;
 }
 
@@ -85,16 +67,16 @@ function renderResultGuide() {
     <li><strong>12部位の目安</strong><span>各部位を、その部位自身の基準に対して確認します。異なる部位どうしの大小順位には使いません。</span></li>
     <li><strong>距離</strong><span>距離は走行事実として別に表示します。部位の目安へ自動的に掛け合わせません。</span></li>
     <li><strong>表示できない条件</strong><span>資料上扱えない条件や不足情報は、0や100へ置き換えず、表示できない情報として残します。</span></li>
-    <li><strong>疲労感</strong><span>走る前・走った後の疲労感は、回答した時点で自分が感じた情報です。回復、準備状態、安全、けがの危険性には変換しません。</span></li>
-  </ol><div class="guide-note"><h3>比べるときの注意</h3><p>同じ部位の記録を、その部位自身の基準に対して見返します。部位の目安と距離、疲労感を一つの総合点にはしません。</p></div>`;
+    <li><strong>疲労感</strong><span>走る前・走った後に記録した疲労感を、12部位の目安とは別に確認します。</span></li>
+  </ol><div class="guide-note"><h3>比べるときの注意</h3><p>同じ部位の履歴を見返し、距離や疲労感はそれぞれの記録として確認します。</p></div>`;
 }
 
 function renderRecordsGuide() {
   return `<div class="guide-lead"><p>履歴では、保存した事実と比較可能な結果を分けて見返します。</p></div><div class="guide-card-grid">
     <article><h3>記録一覧</h3><p>走行・休養、距離、時間、コース、保存結果を日付から探します。</p></article>
     <article><h3>同じ部位を比較</h3><p>同じ部位の目安を履歴として見返します。数値がない記録を0として線でつなぎません。</p></article>
-    <article><h3>距離は別に確認</h3><p>距離は走行事実として確認し、部位の目安へ自動的に掛け合わせません。</p></article>
-    <article><h3>疲労感は別の情報</h3><p>疲労感は回答した時点で自分が感じた情報として保存し、部位の目安と一つの数値にまとめません。</p></article>
+    <article><h3>距離は別に確認</h3><p>距離は各記録の走行量として確認できます。</p></article>
+    <article><h3>疲労感は別の情報</h3><p>走る前後に記録した疲労感も履歴から確認できます。</p></article>
     <article><h3>比較できない記録</h3><p>必要な情報がない記録は値を補わず、記録自体は一覧から確認できます。</p></article>
     <article><h3>バックアップ</h3><p>新しいアプリで作成した記録を対象に、本人の操作で保存・復元します。</p></article>
   </div>`;
@@ -136,5 +118,5 @@ export function renderGuideDialog({
     ? ""
     : `<div class="guide-tabs" role="tablist" aria-label="アプリ説明の内容">${GUIDE_SECTIONS.map((item) => `<button type="button" role="tab" id="guide-tab-${item.id}" aria-selected="${item.id === normalized}" aria-controls="guide-panel" tabindex="${item.id === normalized ? "0" : "-1"}" class="guide-tab${item.id === normalized ? " is-current" : ""}" data-guide-section="${item.id}">${escapeHtml(item.label)}</button>`).join("")}</div>`;
   const panelLabel = firstVisit ? 'aria-labelledby="guide-dialog-title"' : `aria-labelledby="guide-tab-${normalized}"`;
-  return `<div class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guide-dialog-title" aria-describedby="guide-dialog-description"><button type="button" class="guide-dialog__backdrop" data-guide-close aria-label="アプリ説明を閉じる"></button><section class="guide-dialog__panel${firstVisit ? " guide-dialog__panel--first-visit" : ""}" tabindex="-1" data-guide-panel><header class="guide-dialog__header"><div><p>アプリ説明</p><h2 id="guide-dialog-title">${firstVisit ? "はじめての使い方" : "アプリ説明"}</h2><p id="guide-dialog-description">${firstVisit ? "最初に4つだけ確認します。詳しい説明は各画面の「?」から開けます。" : "必要な説明を選んで確認できます。"}</p></div><button type="button" class="guide-dialog__close app-utility-button" data-guide-close aria-label="アプリ説明を閉じる"><span class="guide-dialog__close-symbol" aria-hidden="true">×</span></button></header>${tabs}<div id="guide-panel" class="guide-dialog__body" role="tabpanel" ${panelLabel}>${renderGuideSection(normalized, currentScreen)}</div><footer class="guide-dialog__footer"><button type="button" class="button button--primary" data-guide-complete>${completeLabel}</button></footer></section></div>`;
+  return `<div class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guide-dialog-title" aria-describedby="guide-dialog-description"><button type="button" class="guide-dialog__backdrop" data-guide-close aria-label="アプリ説明を閉じる"></button><section class="guide-dialog__panel${firstVisit ? " guide-dialog__panel--first-visit" : ""}" tabindex="-1" data-guide-panel><header class="guide-dialog__header"><div><p>アプリ説明</p><h2 id="guide-dialog-title">${firstVisit ? "はじめての使い方" : "アプリ説明"}</h2><p id="guide-dialog-description">${firstVisit ? "最初に3つの流れだけ確認します。" : "必要な説明を選んで確認できます。"}</p></div><button type="button" class="guide-dialog__close app-utility-button" data-guide-close aria-label="アプリ説明を閉じる"><span class="guide-dialog__close-symbol" aria-hidden="true">×</span></button></header>${tabs}<div id="guide-panel" class="guide-dialog__body" role="tabpanel" ${panelLabel}>${renderGuideSection(normalized, currentScreen)}</div><footer class="guide-dialog__footer"><button type="button" class="button button--primary" data-guide-complete>${completeLabel}</button></footer></section></div>`;
 }
