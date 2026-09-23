@@ -12,10 +12,6 @@ function articleHref(articleId, origin = "") {
   return `#/reading?${query}`;
 }
 
-function renderArticleCard(article, { compact = false } = {}) {
-  return `<article class="article-card${compact ? " article-card--compact" : ""}"><p>${escapeHtml(article.category)}</p><h3>${escapeHtml(article.title)}</h3><p>${escapeHtml(article.lead)}</p><div class="article-card__tags">${(article.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div><a class="text-link" href="${escapeHtml(articleHref(article.id))}">記事を読む</a></article>`;
-}
-
 function numberValue(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
@@ -178,33 +174,6 @@ function resolveColumnTargetExperience(services, context) {
   const experience = byRecordId || byDate || latest;
   const targetKind = byRecordId ? "selected-record" : byDate ? "selected-date" : latest ? "latest" : "none";
   return Object.freeze({ experience, allExperiences, targetKind });
-}
-
-function sourceKey(source = {}) {
-  return source.sourceId || [source.organization || "", source.title || "", source.url || ""].join("|");
-}
-
-function isUserFacingSource(source = {}) {
-  return String(source.sourceType || "") !== "designSpecification";
-}
-
-function sourceBeginnerLabel(source = {}) {
-  const type = String(source.sourceType || "");
-  if (type === "primaryStudy") return "参考資料";
-  if (type === "publicGuidance") return "公的な運動資料";
-  if (type === "publicHealthInfo") return "公的な相談目安";
-  if (type === "medicalInstitution") return "医療機関の一般情報";
-  if (["systematicReview", "scopingReview", "reviewPaper", "clinicalReview"].includes(type)) return "専門資料をもとにした資料";
-  return "参考資料";
-}
-
-function sourceBeginnerNote(source = {}) {
-  const type = String(source.sourceType || "");
-  if (type === "primaryStudy") return "限定された対象者・条件・指標の参考資料です。この記事では、記載された条件と範囲に限って紹介します。";
-  if (type === "publicGuidance") return "運動の強さ、暑さ、活動量などを見返すために参照した資料です。";
-  if (type === "publicHealthInfo" || type === "medicalInstitution") return "相談につなげる目安や一般的な注意点を確認するために参照した資料です。";
-  if (["systematicReview", "scopingReview", "reviewPaper", "clinicalReview"].includes(type)) return "記事の背景を整理するために参照した資料です。個別の診断や効果判定には使いません。";
-  return "記事を書くときに参考にした資料です。";
 }
 
 const READING_ITEMS = Object.freeze([
