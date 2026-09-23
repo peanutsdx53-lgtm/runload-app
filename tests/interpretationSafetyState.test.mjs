@@ -61,18 +61,18 @@ await testCase('INITIALIZATION-NORMALIZES-HIDDEN-CONSULTATION-FACTS',()=>{
   assert.match(bind,/normalizeEmbeddedBodyStatus\(form\);/);
 });
 
-await testCase('PUBLIC-UNDERSTANDING-UI-OMITS-INTERNAL-NAME',()=>{
-  const files=[
-    'ui/interpretationRoomPresentation.js',
+await testCase('RUNLOAD-INTERPRETATION-NAME-STAYS-INSIDE-ITS-WORKSPACE',()=>{
+  const room=read('ui/interpretationRoomPresentation.js');
+  assert.match(room,/今回のRunLoad解釈/);
+  const outside=[
     'ui/screenArchitecture.js',
     'ui/appShell.js',
     'screens/bodyPartDetailScreen.js',
     'screens/historyScreen.js',
     'screens/simulationScreen.js',
-  ];
-  const combined=files.map(read).join('\n');
-  assert.doesNotMatch(combined,/RunLoad解釈|RUNLOAD INTERPRETATION/);
-  assert.match(combined,/結果を整理する/);
+  ].map(read).join('\n');
+  assert.doesNotMatch(outside,/RunLoad解釈|RUNLOAD INTERPRETATION|解釈エンジン/);
+  assert.match(outside,/結果を整理する/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
