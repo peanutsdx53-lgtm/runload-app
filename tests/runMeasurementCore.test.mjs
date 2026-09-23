@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createApplicationServices, createMemoryStorage, STORAGE_KEYS } from '../core/runloadCore.js';
 import {
   haversineDistanceMeters,
   evaluateTrackPoint,
@@ -84,6 +85,51 @@ await test('GPS-STORED-TRACK-IS-CAPPED',()=>{
   assert.equal(stored.length,2000);
   assert.deepEqual(stored[0],{lat:35,lon:140,timestamp:0,accuracyM:null});
   assert.equal(stored.at(-1).timestamp,2999);
+});
+
+await test('GPS-ROUTE-FOLLOWS-RECORD-DELETE-AND-UNDO',()=>{
+  const services=createApplicationServices({storage:createMemoryStorage()});
+  const saved=services.workflows.records.saveRecordAndFeedback({
+    id:'gps-delete-test',
+    date:'2026-09-23',
+    createdAt:'2026-09-23T08:00:00Z',
+    activityType:'run',
+    distanceKm:5,
+    durationMinutes:30,
+    runningFormat:'CONTINUOUS_RUN',
+    stepsProvenance:'UNKNOWN',
+    course:{gradeKnowledge:'UNKNOWN',modelSurfaceClass:'UNKNOWN'},
+  },{checkStatus:'deferred',bodyAreaObservations:[],safetyFlags:{}});
+  assert.equal(saved.ok,true,JSON.stringify(saved));
+
+  const route={
+    version:1,
+    id:'measurement-gps-delete-test',
+    recordId:'gps-delete-test',
+    capturedAt:'2026-09-23T08:30:00Z',
+    startedAt:'2026-09-23T08:00:00Z',
+    endedAt:'2026-09-23T08:30:00Z',
+    distanceKm:5,
+    durationMinutes:30,
+    planId:'',
+    acceptedPointCount:2,
+    rejectedPointCount:0,
+    track:[
+      {lat:35,lon:140,timestamp:1,accuracyM:5},
+      {lat:35.001,lon:140.001,timestamp:2,accuracyM:5},
+    ],
+  };
+  assert.equal(services.storage.gateway.writeJson(STORAGE_KEYS.runMeasurements,[route]).ok,true);
+
+  const deleted=services.workflows.history.deleteRecord('gps-delete-test');
+  assert.equal(deleted.ok,true,JSON.stringify(deleted));
+  assert.deepEqual(services.storage.gateway.readJson(STORAGE_KEYS.runMeasurements,[]),[]);
+
+  const restored=services.workflows.history.undoDelete();
+  assert.equal(restored.ok,true,JSON.stringify(restored));
+  const restoredRoutes=services.storage.gateway.readJson(STORAGE_KEYS.runMeasurements,[]);
+  assert.equal(restoredRoutes.length,1);
+  assert.equal(restoredRoutes[0].recordId,'gps-delete-test');
 });
 
 const failed=results.filter((item)=>item.status==='FAIL');
