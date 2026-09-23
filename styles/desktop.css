@@ -134,30 +134,6 @@
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
-
-  #desktop-header-root .app-screen-context {
-    min-width: 0;
-    display: grid;
-    gap: 0.1rem;
-    align-content: center;
-  }
-
-  #desktop-header-root .app-screen-context small {
-    margin: 0;
-    color: var(--color-muted);
-    font-size: 0.66rem;
-    line-height: 1.1;
-    font-weight: 850;
-    letter-spacing: 0.14em;
-  }
-
-  #desktop-header-root .app-screen-context strong {
-    color: var(--color-ink);
-    font-size: 1.35rem;
-    line-height: 1.05;
-    font-weight: 900;
-    letter-spacing: -0.025em;
-  }
 }
 
 @media (min-width: 80rem) {
@@ -5206,7 +5182,6 @@
 
 /* ===== minimum desktop micro-label scale ===== */
 @media (min-width: 80rem) {
-  #desktop-header-root .app-screen-context small,
   .app-shell:not(.app-shell--immersive) .primary-navigation__link {
     font-size: 0.75rem !important;
   }
@@ -5407,5 +5382,37 @@
 
   .screen--course-library.screen-layout--course .list {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+
+/* ==========================================================================
+   Unified desktop global header
+   ========================================================================== */
+@media (min-width: 55rem) {
+  #desktop-header-root > .app-header--desktop {
+    justify-content: space-between;
+  }
+
+  #desktop-header-root .app-header__brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--color-ink);
+    font-size: 1.25rem;
+  }
+
+  #desktop-header-root .app-header__actions {
+    gap: 0.5rem;
+  }
+
+  #desktop-header-root .app-utility-button,
+  #desktop-header-root .app-menu-button.app-utility-button {
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0;
+    border-radius: 0.9rem;
   }
 }
