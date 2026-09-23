@@ -1893,3 +1893,98 @@ html.rl-appearance-dark .primary-navigation__link.is-current {
   line-height: 1.2;
   white-space: nowrap;
 }
+
+
+/* ==========================================================================
+   Global header and utility controls
+   The header identifies RunLoad; the page body owns the current screen title.
+   ========================================================================== */
+.app-header__brand {
+  color: var(--color-ink);
+  font-family: var(--font-editorial);
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-header__actions,
+.mobile-topbar__actions,
+.interpretation-room-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.app-utility-button {
+  box-sizing: border-box;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  flex: 0 0 2.75rem;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 0.9rem;
+  background: var(--color-surface);
+  color: var(--color-accent-strong);
+  box-shadow: none;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.context-help-button.app-utility-button,
+.app-menu-button.app-utility-button {
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 0.9rem;
+  background: var(--color-surface);
+  color: var(--color-accent-strong);
+  box-shadow: none;
+}
+
+.app-utility-button__question {
+  font-size: 1.02rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.app-utility-button__icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.context-help-button.app-utility-button:hover,
+.context-help-button.app-utility-button:focus-visible,
+.feature-menu > .app-menu-button.app-utility-button:hover,
+.feature-menu > .app-menu-button.app-utility-button:focus-visible,
+.feature-menu.is-open > .app-menu-button.app-utility-button {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+/* Primary page titles do not repeat an English location label already implied by navigation. */
+.screen > .page-head > div > .eyebrow,
+.screen > .head > .eyebrow,
+.screen > .intro .intro-heading .eyebrow,
+.course-derived-body > .head .eyebrow,
+.course-derived-body > .intro .eyebrow,
+.secondary-derived-body > .head .eyebrow {
+  display: none;
+}
