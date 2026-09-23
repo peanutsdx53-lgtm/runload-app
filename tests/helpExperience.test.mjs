@@ -22,6 +22,15 @@ await test('HELP-FIRST-USE-HIDES-TABS-UNTIL-LATER',()=>{
   assert.match(guide,/const normalized = firstVisit \? DEFAULT_GUIDE_SECTION/);
 });
 
+await test('HELP-FIRST-USE-HAS-ALWAYS-VISIBLE-DISMISS-CONTROLS',()=>{
+  const guide=read('ui/guideContent.js');
+  const css=read('styles/components.css');
+  assert.match(guide,/guide-dialog__panel--first-visit/);
+  assert.match(guide,/data-guide-close/);
+  assert.match(guide,/data-guide-complete/);
+  assert.match(css,/\.guide-dialog__panel--first-visit\s*\{[^}]*grid-template-rows:\s*auto minmax\(0, 1fr\) auto;/s);
+});
+
 await test('HELP-STANDALONE-SHELL-RENDERS-GUIDE',()=>{
   const shell=read('ui/appShell.js');
   const standalone=shell.slice(shell.indexOf('if (standalone)'),shell.indexOf('const immersive'));

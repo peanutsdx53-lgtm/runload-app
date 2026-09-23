@@ -365,6 +365,18 @@
   background: var(--color-surface);
   box-shadow: var(--shadow-dialog);
 }
+.guide-dialog__panel--first-visit {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.guide-dialog__close {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+.guide-dialog__close-symbol {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+}
 .guide-dialog__header {
   display: flex;
   align-items: flex-start;
