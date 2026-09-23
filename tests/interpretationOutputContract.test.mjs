@@ -268,6 +268,27 @@ await test('CONDITION-PROJECTION-EXPLAINS-SELECTED-REGION-RELATIONSHIP',()=>{
   assert.ok(out.conditions.boundaryCodes.includes('NO_CAUSAL_INFERENCE'));
 });
 
+await test('RUN-WALK-WHOLE-RUN-DISTANCE-IS-NOT-MISLABELED-AS-DIRECT-REGION-INPUT',()=>{
+  const prior=fakeExperience({id:'prior',date:'2026-09-19',distanceKm:5,durationMinutes:30});
+  const target=fakeExperience({
+    id:'target',date:'2026-09-20',distanceKm:6,durationMinutes:36,runningFormat:'RUN_WALK',
+    engine:engineInput({runningFormat:'RUN_WALK',distanceKm:6,durationMinutes:36,runningDistanceKm:4,runningDurationMinutes:24}),
+  });
+  const out=build({target,all:[prior,target],selectedRegionId:'BA-DISP-014'});
+  const distance=out.conditions.differences.find(x=>x.id==='distance');
+  const format=out.conditions.differences.find(x=>x.id==='running-format');
+  assert.equal(out.selectedRegion.calculationPath.exposure.type,'RUNNING_PHASE');
+  assert.equal(distance.relationship,'RECORDED_CONTEXT');
+  assert.equal(format.relationship,'DEFINES_EXPOSURE');
+});
+
+await test('NEXT-CHECK-PRESERVES-USER-RECORDED-NEXT-POINT',()=>{
+  const target=fakeExperience();
+  target.record.reflectionContext={nextCheckPoint:'同じコースで確認する'};
+  const out=build({target,selectedRegionId:'BA-DISP-014'});
+  assert.equal(out.nextCheck.userRecorded,'同じコースで確認する');
+});
+
 await test('NEXT-CHECK-IS-STRUCTURED-AND-NON-DIAGNOSTIC',()=>{
   const out=build({selectedRegionId:'BA-DISP-014'});
   assert.equal(out.nextCheck.code,'ADD_COMPARABLE_RECORD');
