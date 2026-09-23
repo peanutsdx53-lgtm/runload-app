@@ -55,6 +55,8 @@ export function renderSimulationScreen({ services, context }) {
     distanceKm:Number(recent?.distanceKm)||0,
     durationMinutes:Number(recent?.durationMinutes)||0,
     runningFormat:runningFormatValue(recent),
+    runningDistanceKm:Number(recent?.runningDistanceKm)||0,
+    runningDurationMinutes:Number(recent?.runningDurationMinutes)||0,
     course:recent?.course&&typeof recent.course==="object"?recent.course:{},
   });
   const override=selectedCourse();
