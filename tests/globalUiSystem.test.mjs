@@ -287,6 +287,28 @@ await test('UI-PC-COURSE-DERIVED-MATCHES-RECORD-SUBFLOW-CHROME',()=>{
   assert.match(audit,/\.head \.eyebrow[\s\S]*display:\s*block\s*!important/);
 });
 
+
+await test('UI-PC-COURSE-EDITOR-INPUTS-ARE-COMPACT-AND-READABLE',()=>{
+  const css=read('styles/desktop.css');
+  const marker='PC course editor input usability audit 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0,'PC course editor usability block');
+  const audit=css.slice(start);
+
+  assert.match(audit,/@media \(min-width: 80rem\)/);
+  assert.match(audit,/sub\[data-course-grade-summary\][\s\S]*width:\s*min\(100%, 52rem\)\s*!important/);
+  assert.match(audit,/\.inputs[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(13rem, 17rem\)\)\s*!important/);
+  assert.match(audit,/\.mfield input,[\s\S]*font-size:\s*1\.06rem\s*!important/);
+  assert.match(audit,/\.section-row[\s\S]*width:\s*min\(100%, 39rem\)\s*!important/);
+  assert.match(audit,/\.section-summary[\s\S]*font-size:\s*0\.98rem\s*!important/);
+  assert.match(audit,/sub\[data-course-surface-mixed\] \.comp-head[\s\S]*font-size:\s*1rem\s*!important/);
+  assert.match(audit,/\.mix[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)\s*!important/);
+  assert.match(audit,/\.mix-row > span:first-child[\s\S]*font-size:\s*0\.96rem\s*!important/);
+  assert.match(audit,/\.mix-row \.percent-control[\s\S]*width:\s*8\.5rem\s*!important/);
+  assert.match(audit,/\.editor-actions \.primary[\s\S]*width:\s*min\(100%, 24rem\)\s*!important/);
+  assert.doesNotMatch(audit,/transform:\s*scale/);
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
