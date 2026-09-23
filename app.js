@@ -144,9 +144,11 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       guideFirstVisit = false;
       const focusSelector = currentLocation.screen === "start"
         ? ".run-launch__top .context-help-button"
-        : matchesMobileLayout()
-          ? ".mobile-topbar .context-help-button"
-          : "#desktop-header-root .context-help-button";
+        : currentLocation.screen === "interpretation-room"
+          ? ".interpretation-room-header .context-help-button"
+          : matchesMobileLayout()
+            ? ".mobile-topbar .context-help-button"
+            : "#desktop-header-root .context-help-button";
       renderCurrentLocation({ focusHeading: false, focusSelector });
     },
     onSelectGuideSection: (section) => {
