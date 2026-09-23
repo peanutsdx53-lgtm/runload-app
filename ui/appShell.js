@@ -37,6 +37,10 @@ const PRIMARY_HEADER_TITLES = Object.freeze({
 
 export function resolveHeaderTitle(currentScreen, currentLocation = null) {
   const context = resolveScreenContextNavigation(currentScreen, currentLocation);
+  if (["course-library", "course-editor", "gpx-analysis"].includes(currentScreen)) {
+    const primary = resolveCurrentPrimaryScreen(currentScreen, currentLocation);
+    return PRIMARY_HEADER_TITLES[primary] || context?.title || "RunLoad";
+  }
   return context?.title || PRIMARY_HEADER_TITLES[currentScreen] || "RunLoad";
 }
 
