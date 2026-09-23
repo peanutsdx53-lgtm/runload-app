@@ -172,20 +172,32 @@ function pcRegionTile(info, selectedId, recordId) {
   return `<a class="pc-region-tile${selected}" data-direction="${state}" href="#/body-part-detail?recordId=${encodeURIComponent(recordId || "")}&regionId=${encodeURIComponent(row.regionId)}" data-region-id="${escapeHtml(row.regionId)}"><span class="pc-region-tile__top"><span class="pc-region-tile__copy"><strong>${escapeHtml(name)}</strong><small>${escapeHtml(stateLabel)}</small></span><b>${escapeHtml(current)}</b></span>${pcRegionAxis(info)}<span class="pc-region-tile__meta"><span>前回 <strong>${escapeHtml(previousLabel)}</strong></span><em class="${deltaClass.trim()}">${escapeHtml(delta)}</em></span></a>`;
 }
 
-function pcRegionGroups(infos, selectedId, recordId) {
+function pcRegionGroups(infos, selectedId) {
   const viewByRegion = new Map(VIEWS.flatMap((view) => view.paths.map(([id]) => [id, view.title])));
-  return `<div class="pc-region-matrix" role="list" aria-label="12部位の数値">${infos.map((info) => {
+  return `<div class="pc-region-matrix pc-region-matrix--summary" role="list" aria-label="12部位の数値">${infos.map((info) => {
     const row = info.row;
     const name = bodyRegionFormalName(row.regionId, row.regionName || row.regionId);
     const current = finite(row.value) ? fmt(row.value, 1) : "—";
-    const previous = finite(info.prev) ? fmt(info.prev, 1) : "—";
-    const delta = finite(info.delta) ? signed(info.delta, 1) : "比較なし";
+    const delta = finite(info.delta) ? signed(info.delta, 1) : "—";
     const state = direction(row.value);
     const selected = row.regionId === selectedId ? " is-selected" : "";
     const stateLabel = state === "above" ? "基準より上" : state === "below" ? "基準より下" : state === "reference" ? "基準付近" : "表示なし";
-    const deltaClass = finite(info.delta) ? (Number(info.delta) > 0 ? " is-up" : Number(info.delta) < 0 ? " is-down" : "") : "";
+    const changeState = !finite(info.delta) ? "unavailable" : Number(info.delta) > 0 ? "up" : Number(info.delta) < 0 ? "down" : "same";
+    const changeLabel = changeState === "up" ? "前回より上" : changeState === "down" ? "前回より下" : changeState === "same" ? "前回と同じ" : "前回比較なし";
     const viewLabel = viewByRegion.get(row.regionId) || "部位";
-    return `<button type="button" class="pc-region-tile pc-region-tile--matrix${selected}" data-direction="${state}" data-region-id="${escapeHtml(row.regionId)}" data-pc-region-select="${escapeHtml(row.regionId)}" aria-pressed="${row.regionId === selectedId ? "true" : "false"}" role="listitem"><span class="pc-region-tile__heading"><small>${escapeHtml(viewLabel)}</small><strong>${escapeHtml(name)}</strong></span><span class="pc-region-tile__value"><b>${escapeHtml(current)}</b><em>${escapeHtml(stateLabel)}</em></span>${pcRegionAxis(info)}<span class="pc-region-tile__meta"><span>前回 <strong>${escapeHtml(previous)}</strong></span><em class="${deltaClass.trim()}">${escapeHtml(delta)}</em></span></button>`;
+    const overviewPos = state === "above" ? 76 : state === "below" ? 24 : 50;
+    const overviewMeter = finite(row.value)
+      ? `<span class="pc-mini-meter" style="--pos:${overviewPos}%" aria-hidden="true"><i></i><b></b><small>100</small></span>`
+      : `<span class="pc-mini-meter is-unavailable" aria-hidden="true"><i></i><small>100</small></span>`;
+    const previousValue = finite(info.prev) ? fmt(info.prev, 1) : "—";
+    const previousState = finite(info.prev) ? direction(info.prev) : "unavailable";
+    const magnitude = finite(info.delta) ? Math.abs(Number(info.delta)) : null;
+    const magnitudeMarks = finite(magnitude) && magnitude >= 1 ? Math.min(3, Math.max(1, Math.ceil(magnitude / 10))) : 0;
+    const magnitudeGlyph = changeState === "up" ? "▲".repeat(magnitudeMarks) : changeState === "down" ? "▼".repeat(magnitudeMarks) : changeState === "same" ? "→" : "—";
+    const changeFlow = finite(info.delta)
+      ? `<span class="pc-change-flow" data-change-direction="${changeState}"><span class="pc-change-flow__point" data-direction="${previousState}"><i aria-hidden="true"></i><span><small>前回</small><strong>${escapeHtml(previousValue)}</strong></span></span><span class="pc-change-flow__arrow" aria-hidden="true">→</span><span class="pc-change-flow__point is-current" data-direction="${state}"><i aria-hidden="true"></i><span><small>今回</small><strong>${escapeHtml(current)}</strong></span></span></span><span class="pc-change-delta" data-change-direction="${changeState}" aria-label="前回からの変化 ${escapeHtml(delta)}"><b>${magnitudeGlyph}</b><strong>${escapeHtml(delta)}</strong><small>前回から</small></span>`
+      : `<span class="pc-change-flow is-unavailable"><span class="pc-change-flow__point" data-direction="unavailable"><i aria-hidden="true"></i><span><small>前回</small><strong>—</strong></span></span><span class="pc-change-flow__arrow" aria-hidden="true">→</span><span class="pc-change-flow__point is-current" data-direction="${state}"><i aria-hidden="true"></i><span><small>今回</small><strong>${escapeHtml(current)}</strong></span></span></span><span class="pc-change-delta is-unavailable"><strong>比較なし</strong></span>`;
+    return `<button type="button" class="pc-region-tile pc-region-tile--summary${selected}" data-direction="${state}" data-change-direction="${changeState}" data-region-id="${escapeHtml(row.regionId)}" data-pc-region-select="${escapeHtml(row.regionId)}" aria-pressed="${row.regionId === selectedId ? "true" : "false"}" role="listitem"><span class="pc-region-summary__head"><small>${escapeHtml(viewLabel)}</small><strong>${escapeHtml(name)}</strong></span><span class="pc-region-summary__body pc-region-summary__body--overview" data-pc-summary-view="overview"><span class="pc-region-summary__value"><b>${escapeHtml(current)}</b><em>${escapeHtml(stateLabel)}</em></span>${overviewMeter}</span><span class="pc-region-summary__body pc-region-summary__body--change" data-pc-summary-view="change" hidden>${changeFlow}</span></button>`;
   }).join("")}</div>`;
 }
 
