@@ -5475,3 +5475,41 @@
     color: var(--color-accent-strong);
   }
 }
+
+
+/* PC audit 2026-09-23: make the record status rail use its full card width. */
+@media (min-width: 69rem) {
+  .screen--record-input.screen-layout--record .desktop-save-area {
+    justify-items: stretch !important;
+  }
+
+  .screen--record-input.screen-layout--record .desktop-save-area__intro {
+    width: 100% !important;
+    text-align: center;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness,
+  .screen--record-input.screen-layout--record .save-checklist,
+  .screen--record-input.screen-layout--record .optional-readiness,
+  .screen--record-input.screen-layout--record .desktop-save-area .primary-save {
+    width: 100% !important;
+    max-width: none !important;
+    justify-self: stretch !important;
+  }
+
+  .screen--record-input.screen-layout--record .save-readiness {
+    padding: 0.9rem !important;
+  }
+
+  .screen--record-input.screen-layout--record .save-checklist > div,
+  .screen--record-input.screen-layout--record .optional-readiness > div {
+    min-height: 2.45rem;
+    padding-inline: 0.75rem;
+  }
+
+  .screen--record-input.screen-layout--record .sub-flow-save {
+    width: min(30rem, 100%) !important;
+    justify-self: center !important;
+    margin-inline: auto !important;
+  }
+}
