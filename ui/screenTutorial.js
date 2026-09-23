@@ -1,6 +1,15 @@
 const SCREEN_TUTORIAL_STORAGE_KEY = "runload.screenTutorial.seen.v1";
 
 const SCREEN_TUTORIALS = Object.freeze({
+  "run-measurement": Object.freeze({
+    title: "GPS測定の使い方",
+    lead: "測定開始から記録入力までの要点だけ確認します。",
+    steps: Object.freeze([
+      Object.freeze({ title: "1/3 測定を開始する", body: "位置情報を許可してから測定を開始します。測定中はRunLoadを前面表示したままにします。" }),
+      Object.freeze({ title: "2/3 距離とペースを見る", body: "距離・時間・現在ペース・平均ペースを確認できます。予定と連携している場合は、予定平均ペースより速い状態が続いたときに知らせます。" }),
+      Object.freeze({ title: "3/3 終了して記録へ進む", body: "測定終了後、距離と時間を記録入力へ引き継ぎます。走行軌跡を保存する設定は、保存する記録と関連付けて端末内へ残します。" }),
+    ]),
+  }),
   "record-input": Object.freeze({
     title: "今日の記録の流れ",
     lead: "入力から保存までを3つに分けて確認します。",
