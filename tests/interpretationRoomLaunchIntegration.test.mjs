@@ -72,6 +72,45 @@ await test('SIMULATION-COURSE-ROUNDTRIP-PRESERVES-SOURCE-RECORD',()=>{
   assert.match(html,/returnTo=%23%2Fsimulation%3Ffrom%3Dinterpretation-room%26recordId%3Dold%26roomOrigin%3Dresult/);
 });
 
+await test('SIMULATION-EMBEDS-SOURCE-RECORD-ID-AND-SAVED-RUN-CONDITIONS',()=>{
+  const records=[{
+    id:'old',date:'2026-09-10',createdAt:'2026-09-10T08:00:00Z',activityType:'run',
+    distanceKm:3,durationMinutes:20,runningFormat:'RUN_WALK',runningDistanceKm:2.4,runningDurationMinutes:14,
+    course:{name:'Saved course',gradeKnowledge:'KNOWN_PROFILE',upPercent:20,downPercent:10,pavedPercent:100},
+  }];
+  const services={storage:{records:{loadAll:()=>records,findById:(id)=>records.find((r)=>r.id===id)||null}}};
+  const context={parameters:new URLSearchParams('from=interpretation-room&recordId=old&roomOrigin=result')};
+  const html=renderSimulationScreen({services,context});
+  assert.match(html,/name="sourceRecordId" value="old"/);
+  assert.match(html,/name="runningFormat"[^>]*>[\s\S]*value="RUN_WALK" selected/);
+  assert.match(html,/name="runningDistanceKm"[^>]*value="2\.4"/);
+  assert.match(html,/name="runningDurationMinutes"[^>]*value="14"/);
+  assert.match(html,/Saved course/);
+  assert.match(html,/元の記録を初期値に使用/);
+});
+
+await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST',()=>{
+  const source=read('ui/interactions/simulationInteractions.js');
+  assert.match(source,/function sourceValues\(services,recordId=""\)/);
+  assert.match(source,/recordId\?services\.workflows\.records\.loadExperience\(recordId\):services\.workflows\.records\.loadLatestExperience\(\)/);
+  assert.match(source,/name="sourceRecordId"/);
+  assert.doesNotMatch(source,/function latestValues/);
+  assert.match(source,/元の記録からの変化/);
+});
+
+await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
+  const css=read('styles/desktop.css');
+  const marker='PC interpretation-derived condition comparison V2 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0);
+  const audit=css.slice(start);
+  assert.match(audit,/\.measure-field > span[\s\S]*font-size:\s*0\.88rem\s*!important/);
+  assert.match(audit,/\.measure-field input[\s\S]*font-size:\s*1\.35rem\s*!important/);
+  assert.match(audit,/\.region-row strong[\s\S]*font-size:\s*0\.9rem\s*!important/);
+  assert.match(audit,/\.region-value b[\s\S]*font-size:\s*1rem\s*!important/);
+  assert.match(audit,/\.result-layout[\s\S]*grid-template-columns:\s*minmax\(18rem, 0\.9fr\) minmax\(22rem, 1\.1fr\)\s*!important/);
+});
+
 await test('INTERPRETATION-ACTIONS-CARRY-ROOM-ORIGIN-WITHOUT-VERSION-STATE',()=>{
   const s=read('ui/interpretationRoomPresentation.js');
   assert.match(s,/query\.set\("from", "interpretation-room"\)/);
