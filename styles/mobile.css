@@ -3381,3 +3381,53 @@ html.consult-viewer-open{overflow:hidden}
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+
+/* Mobile typography floor: supersedes legacy prototype pixel sizes. */
+@media (max-width: 54.99rem) {
+  .screen-layout small {
+    font-size: var(--type-label) !important;
+    line-height: 1.4;
+  }
+
+  .screen-layout :is(button, summary) {
+    font-size: var(--type-control-compact) !important;
+  }
+
+  .screen-layout :is(button, summary) strong {
+    font-size: var(--type-control) !important;
+    line-height: var(--line-compact);
+  }
+
+  .screen-layout :is(input, select, textarea) {
+    font-size: 1rem !important;
+    line-height: 1.4;
+  }
+
+  .screen-layout :is(.page-head, .intro, .detail-title) > div > p:last-child,
+  .screen-layout .page-head > div > p:last-child,
+  .screen-layout .section-introduction {
+    font-size: var(--type-body) !important;
+    line-height: var(--line-body);
+  }
+
+  .screen-layout :is(
+    .note,
+    .micro-note,
+    .sub-note,
+    .snapshot-note,
+    .candidate-note,
+    .compact-boundary,
+    .source-boundary,
+    .screen-boundary-note
+  ) {
+    font-size: var(--type-caption) !important;
+    line-height: 1.55;
+  }
+
+  .primary-navigation__link small,
+  .bottom-nav small {
+    font-size: var(--type-label) !important;
+    line-height: 1.2;
+  }
+}
