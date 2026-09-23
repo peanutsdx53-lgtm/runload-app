@@ -4,9 +4,11 @@
 
 The GPS measurement flow records observable run facts before the existing RunLoad record flow.
 
-Flow:
+Flow on the mobile layout:
 
 `start -> run-measurement -> record-input -> result -> run-route`
+
+The root entry follows the existing responsive breakpoint rather than browser/OS identification. Mobile-width layouts open the start choice screen; desktop-width layouts open the normal RunLoad home screen. GPS actions are de-emphasized on desktop, while records, plans, results, history, settings, storage, and scientific logic remain shared.
 
 GPS measurement does not replace or modify the scientific calculation model. It supplies measured distance and elapsed time to the existing record input screen. A saved route is stored separately and linked to the saved record ID.
 
@@ -82,6 +84,11 @@ Surface and other course facts that affect the existing model remain user-confir
 ## Verification
 
 The repository contains `tests/runMeasurementCore.test.mjs` for the deterministic GPS calculation helpers. Runtime files remain covered by `RUNTIME_SHA256SUMS.txt`.
+
+Manual acceptance status (2026-09-23):
+
+- iPhone: launch screen, screen transitions, map display, and location movement tracking passed.
+- Run-dependent distance/pace behavior, pace warning, finish-to-record flow, and saved route behavior still require an actual run.
 
 Real-device acceptance testing is still required for:
 
