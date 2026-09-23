@@ -3719,3 +3719,18 @@ html.consult-viewer-open{overflow:hidden}
     font-size: 0.78rem;
   }
 }
+
+
+/* Saved-record time label audit 2026-09-24 */
+.screen-layout--history .record-item time > span {
+  display: block;
+}
+
+.screen-layout--history .record-item .record-time {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  line-height: 1.25;
+  font-weight: 760;
+}
