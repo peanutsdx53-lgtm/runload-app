@@ -309,6 +309,21 @@ await test('UI-PC-COURSE-EDITOR-INPUTS-ARE-COMPACT-AND-READABLE',()=>{
   assert.doesNotMatch(audit,/transform:\s*scale/);
 });
 
+
+await test('UI-PC-COURSE-EDITOR-PERCENT-UNITS-MATCH-AND-GPX-IS-NOT-DUPLICATED',()=>{
+  const css=read('styles/desktop.css');
+  const marker='PC course editor unit parity audit 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0,'PC course editor percent-unit parity block');
+  const audit=css.slice(start);
+
+  assert.match(audit,/\.mfield > div > em,[\s\S]*\.percent-control > em/);
+  assert.match(audit,/font-size:\s*0\.95rem\s*!important/);
+  assert.match(audit,/font-style:\s*normal\s*!important/);
+  assert.match(audit,/font-weight:\s*800\s*!important/);
+  assert.match(audit,/\.gpx-inline[\s\S]*display:\s*none\s*!important/);
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
