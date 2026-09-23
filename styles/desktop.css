@@ -7820,4 +7820,214 @@
     font-size: 0.51rem;
   }
 
-  .pc-r
+  .pc-region-tile__top > b {
+    min-width: 2.15rem;
+    font-size: 0.96rem;
+  }
+
+  .pc-region-axis {
+    width: 100%;
+    max-width: none;
+  }
+
+  .pc-region-tile__meta {
+    font-size: 0.52rem;
+  }
+
+  .pc-region-tile__meta em {
+    min-width: 2.15rem;
+    padding-inline: 0.24rem;
+    font-size: 0.51rem;
+  }
+
+  .pc-marker-key {
+    margin-top: 0.3rem;
+  }
+
+  .pc-result-lower {
+    min-height: 11.25rem;
+  }
+}
+
+/* Remove the shared mobile-era body-map minimum height on the PC result stage. */
+@media (min-width: 80rem) {
+  .screen-layout--result .pc-result-body-map {
+    min-height: 0;
+  }
+}
+
+/* PC body-stage specificity override: supersedes the shared desktop 31rem body-map floor. */
+@media (min-width: 80rem) {
+  .screen--result.screen-layout--result .pc-result-body-map {
+    min-height: 0;
+    height: 23.3rem;
+    margin-top: 0.15rem;
+    padding: 0.25rem 0.12rem 0.05rem;
+    gap: 0.28rem;
+    background: transparent;
+  }
+
+  .screen--result.screen-layout--result .pc-result-body-map .body-view svg {
+    width: 100%;
+    height: 21.55rem;
+    max-height: none;
+    transform: scale(1.12);
+    transform-origin: center 48%;
+  }
+}
+
+/* ========================================================================== 
+   Result / PC layout candidate V0.3 — balance and legibility pass.
+   Shared shell, theme tokens and typography remain unchanged.
+   ========================================================================== */
+@media (min-width: 80rem) {
+  .screen--result.screen-layout--result > .pc-result-console {
+    gap: 0.72rem;
+  }
+
+  /* Use the former title band as a compact result rail. */
+  .pc-result-summary.pc-result-summary--rail {
+    min-height: 3.45rem;
+    padding: 0.28rem 0.2rem 0.62rem;
+    display: grid;
+    grid-template-columns: minmax(11rem, 0.7fr) minmax(34rem, 1.3fr);
+    align-items: center;
+    gap: 1.2rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .pc-result-date {
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.65rem;
+  }
+
+  .pc-result-date small {
+    color: var(--color-muted);
+    font-size: 0.65rem;
+    font-weight: 850;
+  }
+
+  .pc-result-date strong {
+    color: var(--color-ink);
+    font-size: 0.92rem;
+    line-height: 1;
+    font-weight: 850;
+    white-space: nowrap;
+  }
+
+  .pc-result-summary--rail .pc-result-signals {
+    min-width: 0;
+    grid-template-columns: minmax(8.5rem, 1fr) 1px minmax(8.5rem, 1fr) 1px minmax(8.5rem, 1fr);
+    gap: 0.8rem;
+  }
+
+  .pc-result-summary--rail .pc-result-signals > div {
+    min-width: 0;
+    grid-template-columns: auto auto;
+    justify-content: center;
+  }
+
+  .pc-result-summary--rail .pc-result-signals > i {
+    height: 1.8rem;
+  }
+
+  .pc-result-summary--rail .pc-result-signals strong {
+    font-size: 1.32rem;
+  }
+
+  .pc-result-summary--rail .pc-result-signals small {
+    margin-top: 0.16rem;
+    font-size: 0.64rem;
+  }
+
+  .pc-result-main {
+    min-height: 28.65rem;
+    grid-template-columns: minmax(32rem, 0.93fr) minmax(41rem, 1.07fr);
+  }
+
+  .pc-result-body,
+  .pc-result-numbers {
+    padding: 0.85rem 1rem 0.78rem;
+  }
+
+  .pc-result-body > header,
+  .pc-result-numbers > header {
+    min-height: 2.35rem;
+  }
+
+  .pc-result-main h2 {
+    margin-top: 0.08rem;
+    font-size: 1.18rem;
+  }
+
+  /* Legend gets its own uninterrupted row. */
+  .pc-result-legend {
+    max-width: none;
+    min-height: 1.7rem;
+    margin: 0.05rem 0 0.06rem;
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
+    align-items: center;
+    justify-content: start;
+    gap: 0.85rem;
+    font-size: 0.65rem;
+  }
+
+  .pc-result-legend li {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  /* Body labels sit below the artwork; the silhouettes are kept fully in frame. */
+  .screen--result.screen-layout--result .pc-result-body-map {
+    min-height: 0;
+    height: 23.45rem;
+    margin-top: 0;
+    padding: 0.1rem 0.1rem 0.2rem;
+    grid-template-columns: 1fr 1fr 0.82fr;
+    gap: 0.4rem;
+    align-items: stretch;
+    overflow: visible;
+  }
+
+  .screen--result.screen-layout--result .pc-result-body-map .body-view {
+    grid-template-rows: minmax(0, 1fr) auto;
+    padding: 0.05rem 0.18rem 0.1rem;
+    overflow: visible;
+  }
+
+  .screen--result.screen-layout--result .pc-result-body-map .body-view figcaption {
+    grid-row: 2;
+    margin: 0.02rem auto 0;
+    padding: 0.18rem 0.56rem;
+    font-size: 0.66rem;
+  }
+
+  .screen--result.screen-layout--result .pc-result-body-map .body-view svg {
+    grid-row: 1;
+    width: 100%;
+    height: 21.2rem;
+    max-height: none;
+    align-self: center;
+    transform: scale(1.035);
+    transform-origin: center center;
+    overflow: visible;
+  }
+
+  .screen--result.screen-layout--result .pc-result-body-map .body-view + .body-view::before {
+    top: 0.4rem;
+    bottom: 1.65rem;
+  }
+
+  /* Keep axis explanation and marker legend together instead of using a footer row. */
+  .pc-number-guides {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 0.85rem;
+  }
+
+  .pc-axis-key {
+    min-width: 11.
