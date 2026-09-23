@@ -1,0 +1,118 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const here=path.dirname(fileURLToPath(import.meta.url));
+const root=path.resolve(here,'..');
+const read=(rel)=>fs.readFileSync(path.join(root,rel),'utf8');
+const results=[];
+async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
+
+function hexRgb(value){
+  const match=String(value||'').trim().match(/^#([0-9a-f]{6})$/i);
+  if(!match)return null;
+  const n=parseInt(match[1],16);
+  return [(n>>16)&255,(n>>8)&255,n&255];
+}
+function luminance(value){
+  const rgb=hexRgb(value);
+  if(!rgb)return null;
+  const channels=rgb.map((v)=>{const x=v/255;return x<=0.04045?x/12.92:Math.pow((x+0.055)/1.055,2.4);});
+  return channels[0]*0.2126+channels[1]*0.7152+channels[2]*0.0722;
+}
+function contrast(a,b){
+  const left=luminance(a),right=luminance(b);
+  if(left==null||right==null)return null;
+  return (Math.max(left,right)+0.05)/(Math.min(left,right)+0.05);
+}
+function cssBlock(css,selector){
+  const start=css.indexOf(selector);
+  if(start<0)return '';
+  const open=css.indexOf('{',start);
+  const close=css.indexOf('}',open+1);
+  return open>=0&&close>=0?css.slice(open+1,close):'';
+}
+function variable(cssBlockText,name){
+  const start=cssBlockText.indexOf(name+':');
+  if(start<0)return '';
+  const valueStart=start+name.length+1;
+  const end=cssBlockText.indexOf(';',valueStart);
+  return end>=0?cssBlockText.slice(valueStart,end).trim():'';
+}
+
+await test('UI-TOKENS-DEFINE-ROLE-SIZES',()=>{
+  const css=read('styles/tokens.css');
+  for(const token of ['--type-label','--type-caption','--type-body','--type-control','--button-height-medium','--button-min-inline-medium']){
+    assert.ok(css.includes(token),token);
+  }
+});
+
+await test('UI-NO-LEGACY-GLOBAL-FULL-WIDTH-BUTTON-FORCING',()=>{
+  const css=read('styles/components.css');
+  assert.equal((css.match(/flex:\s*1 1 100%/g)||[]).length,0);
+  assert.ok(css.includes('width: fit-content;'));
+});
+
+await test('UI-TUTORIAL-ACTIONS-ARE-THREE-COLUMN-ON-MOBILE',()=>{
+  const css=read('styles/components.css');
+  assert.ok(css.includes('grid-template-columns: repeat(3, minmax(0, 1fr));'));
+  const tutorial=read('ui/screenTutorial.js');
+  assert.doesNotMatch(tutorial,/title:\s*"[123]\/3 /);
+});
+
+await test('UI-JAPANESE-LABELS-NO-LONGER-USE-ANYWHERE-WRAP',()=>{
+  const css=read('styles/base.css');
+  assert.doesNotMatch(css,/overflow-wrap:\s*anywhere/);
+  assert.match(css,/line-break:\s*strict/);
+});
+
+await test('UI-MOBILE-INPUTS-USE-READABLE-TYPE',()=>{
+  const css=read('styles/mobile.css');
+  assert.ok(css.includes('Mobile typography floor'));
+  assert.ok(css.includes('font-size: 1rem !important;'));
+});
+
+await test('UI-RESULT-REMOVES-PERSISTENT-EXPLANATION-CLUTTER',()=>{
+  const screen=read('screens/resultScreen.js');
+  assert.ok(screen.includes('class="result-next-actions"'));
+  assert.ok(!screen.includes('rof-boundary-details'));
+  assert.ok(!screen.includes('class="compact-boundary"'));
+  assert.ok(!screen.includes('色で12部位を確認'));
+});
+
+await test('UI-INTERPRETATION-HAS-DESKTOP-WORKSPACE',()=>{
+  const css=read('styles/interpretation-room.css');
+  const presentation=read('ui/interpretationRoomPresentation.js');
+  assert.ok(css.includes('Responsive interpretation workspace'));
+  assert.ok(css.includes('grid-template-columns: repeat(12, minmax(0, 1fr));'));
+  assert.ok(css.includes('.interpretation-room--selected .interpretation-room-selected'));
+  assert.ok(presentation.includes('12部位から選ぶ'));
+  assert.ok(presentation.includes('分かること / 分からないこと'));
+});
+
+await test('UI-DESKTOP-WIDE-GRIDS-ARE-BALANCED',()=>{
+  const css=read('styles/desktop.css');
+  assert.ok(css.includes('.screen--history.screen-layout--history .record-list {\n    grid-template-columns: repeat(3'));
+  assert.ok(css.includes('.screen--plan.screen-layout--plan .saved-list {\n    grid-template-columns: repeat(3'));
+  assert.ok(css.includes('.screen--course-library.screen-layout--course .list {\n    grid-template-columns: repeat(3'));
+});
+
+await test('UI-LIGHT-THEME-MUTED-TEXT-MEETS-CONTRAST',()=>{
+  const css=read('styles/tokens.css');
+  const rootBlock=cssBlock(css,':root');
+  const standardMuted=variable(rootBlock,'--color-muted');
+  const standardPaper=variable(rootBlock,'--color-paper');
+  assert.ok(contrast(standardMuted,standardPaper)>=4.5,'standard');
+
+  for(const selector of ['html.rl-color-green','html.rl-color-blue']){
+    const theme=cssBlock(css,selector);
+    const muted=variable(theme,'--color-muted')||standardMuted;
+    const paper=variable(theme,'--color-paper')||standardPaper;
+    assert.ok(contrast(muted,paper)>=4.5,selector);
+  }
+});
+
+const failed=results.filter((item)=>item.status==='FAIL');
+console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+if(failed.length)process.exitCode=1;
