@@ -42,7 +42,7 @@ export function bindRunMeasurement({ router }) {
   if (!root) return undefined;
 
   const mapContainer = root.querySelector("#run-measurement-map");
-  const map = createRunMeasurementMap(mapContainer, { initialZoom: 16 });
+  let map = null;
   const elapsedNode = root.querySelector("[data-measurement-elapsed]");
   const distanceNode = root.querySelector("[data-measurement-distance]");
   const currentPaceNode = root.querySelector("[data-measurement-current-pace]");
@@ -137,6 +137,7 @@ export function bindRunMeasurement({ router }) {
     track = [...track, accepted];
     acceptedPointCount += 1;
 
+    map ||= createRunMeasurementMap(mapContainer, { initialZoom: 16 });
     map?.setCenter(accepted);
     map?.setTrack(track);
     if (gpsStatus) {
