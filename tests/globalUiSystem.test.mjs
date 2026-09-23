@@ -254,6 +254,39 @@ await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
   assert.ok(remSize('.screen--course-library.screen-layout--course .import-helper span')>=0.8,'GPX helper font');
 });
 
+
+await test('UI-PC-COURSE-DERIVED-MATCHES-RECORD-SUBFLOW-CHROME',()=>{
+  const screen=read('screens/courseLibraryScreen.js');
+  const shell=read('ui/appShell.js');
+  const css=read('styles/desktop.css');
+  const marker='PC course derived parity audit 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0,'PC course derived parity block');
+  const audit=css.slice(start);
+
+  assert.ok(screen.includes('course-library-title-mobile'));
+  assert.ok(screen.includes('course-library-pc-only course-library-title-pc'));
+  assert.ok(screen.includes('今回のコース'));
+  assert.ok(shell.includes('["course-library", "course-editor", "gpx-analysis"].includes(currentScreen)'));
+  assert.ok(shell.includes('PRIMARY_HEADER_TITLES[primary]'));
+
+  assert.match(audit,/top:\s*4\.75rem\s*!important/);
+  assert.match(audit,/right:\s*0\s*!important/);
+  assert.match(audit,/left:\s*0\s*!important/);
+  assert.match(audit,/padding:\s*1\.35rem 2rem 2rem\s*!important/);
+  assert.match(audit,/background:\s*color-mix\(in srgb, var\(--color-paper\) 64%, transparent\)\s*!important/);
+  assert.match(audit,/backdrop-filter:\s*blur\(5px\)\s*!important/);
+  assert.match(audit,/width:\s*min\(72rem, calc\(100vw - 10rem\)\)\s*!important/);
+  assert.match(audit,/height:\s*100%\s*!important/);
+  assert.match(audit,/height:\s*3\.7rem\s*!important/);
+  assert.match(audit,/grid-template-columns:\s*1fr auto 1fr\s*!important/);
+  assert.match(audit,/course-derived-head > strong[\s\S]*display:\s*block\s*!important/);
+  assert.match(audit,/course-derived-back[\s\S]*min-height:\s*2\.45rem\s*!important/);
+  assert.match(audit,/course-derived-body[\s\S]*border:\s*2px solid var\(--color-line\)\s*!important/);
+  assert.match(audit,/border-radius:\s*0 0 1\.35rem 1\.35rem\s*!important/);
+  assert.match(audit,/\.head \.eyebrow[\s\S]*display:\s*block\s*!important/);
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;

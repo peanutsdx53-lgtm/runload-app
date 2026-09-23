@@ -164,7 +164,10 @@ function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix
 }
 
 export function renderDesktopHeader({ currentScreen, currentLocation, hasResult = false }) {
-  const title = resolveHeaderTitle(currentScreen, currentLocation);
+  const primary = ["course-library", "course-editor", "gpx-analysis"].includes(currentScreen)
+    ? resolveCurrentPrimaryScreen(currentScreen, currentLocation)
+    : currentScreen;
+  const title = PRIMARY_HEADER_TITLES[primary] || resolveHeaderTitle(currentScreen, currentLocation);
   return `<header class="app-header app-header--desktop app-header--viewport-fixed">
     <strong class="app-header__brand app-header__screen-title">${escapeHtml(title)}</strong>
     <div class="app-header__actions" aria-label="画面操作">
