@@ -1755,3 +1755,32 @@
     min-height: 2.75rem;
   }
 }
+
+
+/* Home audit: keep the primary focus and record/plan column equal in height. */
+@media (min-width: 80rem) {
+  .screen--home.screen-layout--home { align-items: stretch; }
+  .screen--home.screen-layout--home > .focus,
+  .screen--home.screen-layout--home > .section {
+    min-height: 29rem;
+    height: 100%;
+    align-self: stretch;
+  }
+  .screen--home.screen-layout--home > .section {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .screen--home.screen-layout--home > .section .grid {
+    min-height: 0;
+    height: 100%;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+  .screen--home.screen-layout--home > .section .card {
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .screen--home.screen-layout--home > .section .card > .card-link,
+  .screen--home.screen-layout--home > .section .card > .card-actions { margin-top: auto; }
+}
