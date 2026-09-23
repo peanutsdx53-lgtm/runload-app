@@ -2495,15 +2495,56 @@
   }
 }
 
-/* ===== Shared segmented selection state ===== */
+/* ===== Shared segmented mode state ===== */
 /*
- * Selected options use the same semantic theme tokens across screen-layout
- * segmented controls. This keeps light/dark and accent themes consistent and
- * prevents a selected option from blending into its surrounding surface.
+ * Mode/segment controls use one state grammar across screens:
+ * inactive = quiet surface, selected = solid theme accent, focus = focus ring.
+ * Layout, radius and sizing remain screen-specific.
  */
+.screen-layout :is(
+  .view-toggle,
+  .sheet-tabs,
+  .history-mode,
+  .period-control > div,
+  .display-toggle,
+  .type-toggle,
+  .seg,
+  .mode,
+  .filters,
+  .segment,
+  .pc-summary-controls > div
+) button:not(.active):not(.is-active):hover {
+  background: color-mix(in srgb, var(--color-accent-soft) 64%, var(--color-surface));
+  color: var(--color-accent-strong);
+}
+
+.screen-layout :is(
+  .view-toggle,
+  .sheet-tabs,
+  .history-mode,
+  .period-control > div,
+  .display-toggle,
+  .type-toggle,
+  .seg,
+  .mode,
+  .filters,
+  .segment,
+  .pc-summary-controls > div
+) button:focus-visible,
+.screen-layout--record .activity-toggle input:focus-visible + span {
+  outline: 3px solid color-mix(in srgb, var(--color-focus) 40%, transparent);
+  outline-offset: 2px;
+}
+
+.screen-layout--record .activity-toggle label:hover span {
+  background: color-mix(in srgb, var(--color-accent-soft) 64%, var(--color-surface));
+  color: var(--color-accent-strong);
+}
+
 .screen-layout--record .activity-toggle input:checked + span,
 .screen-layout--result .view-toggle button.active,
 .screen-layout--result .sheet-tabs button.active,
+.screen-layout--result .pc-summary-controls button.is-active,
 .screen-layout--history .history-mode button.active,
 .screen-layout--history .period-control button.active,
 .screen-layout--history .display-toggle button.active,
@@ -2512,12 +2553,28 @@
 .screen-layout--course .mode button.active,
 .screen-layout--reading .filters button.active,
 .screen-layout--settings .segment button.active {
-  border-color: var(--color-selection-border);
-  background: var(--color-selection-surface);
-  color: var(--color-accent-strong);
-  box-shadow:
-    inset 0 0 0 1px var(--color-selection-border),
-    0 3px 10px color-mix(in srgb, var(--color-accent) 10%, transparent);
+  border-color: var(--color-segment-selected-border);
+  background: var(--color-segment-selected-surface);
+  color: var(--color-segment-selected-text);
+  box-shadow: var(--shadow-segment-selected);
+}
+
+.screen-layout--record .activity-toggle input:checked + span:hover,
+.screen-layout :is(
+  .view-toggle,
+  .sheet-tabs,
+  .history-mode,
+  .period-control > div,
+  .display-toggle,
+  .type-toggle,
+  .seg,
+  .mode,
+  .filters,
+  .segment,
+  .pc-summary-controls > div
+) button:is(.active, .is-active):hover {
+  background: var(--color-segment-selected-surface);
+  color: var(--color-segment-selected-text);
 }
 
 /* ===== iOS resume scroll-surface resilience ===== */

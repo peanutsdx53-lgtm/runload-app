@@ -98,6 +98,12 @@
   --color-surface-muted: color-mix(in srgb, var(--color-surface) 84%, var(--color-neutral-soft));
   --color-selection-surface: color-mix(in srgb, var(--color-accent-soft) 88%, var(--color-accent));
   --color-selection-border: color-mix(in srgb, var(--color-accent) 82%, var(--color-line));
+  --color-segment-selected-surface: var(--color-accent);
+  --color-segment-selected-border: var(--color-accent);
+  --color-segment-selected-text: var(--color-on-accent);
+  --shadow-segment-selected:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-on-accent) 18%, transparent),
+    0 0.16rem 0.5rem color-mix(in srgb, var(--color-accent) 22%, transparent);
   --color-text: var(--color-ink);
   --color-text-muted: var(--color-muted);
   --color-surface-subtle: var(--color-surface-muted);
