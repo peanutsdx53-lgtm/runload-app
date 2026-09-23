@@ -3448,6 +3448,17 @@ html.consult-viewer-open{overflow:hidden}
     display: none;
   }
 
+  .mobile-topbar__screen-title {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .mobile-topbar__screen-title strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .mobile-topbar__actions {
     gap: 0.45rem;
   }
@@ -3463,9 +3474,20 @@ html.consult-viewer-open{overflow:hidden}
   }
 
   .mobile-topbar--context {
-    display: flex;
-    grid-template-columns: none;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(5rem, auto) minmax(0, 1fr);
+    justify-content: initial;
+  }
+
+  .mobile-topbar--context .mobile-topbar__screen-title {
+    justify-self: center;
+    width: 100%;
+    max-width: 12rem;
+    text-align: center;
+  }
+
+  .mobile-topbar--context .mobile-topbar__actions {
+    justify-self: end;
   }
 
   .mobile-topbar--context > .mobile-topbar__back,
