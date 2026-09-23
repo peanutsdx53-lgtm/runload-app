@@ -8,6 +8,7 @@ import { subjectiveSummaryFromFields } from "../subjectivePresentation.js";
 import { RECORD_REGIONAL_SUBJECTIVE_AREAS } from "../recordEmbeddedSubflows.js";
 import { PERSONAL_CONTEXT_FIELD_NAMES, personalContextFromFields, personalSummaryFromFields } from "../personalContextPresentation.js";
 import { confirmGradeDomain } from "./gradeDomainConfirmation.js";
+import { commitPendingRunMeasurement } from "../runMeasurementState.js";
 
 function updateInputFormVisibility(form) {
   const activityType = form.querySelector('[name="activityType"]:checked')?.value || "run";
@@ -930,6 +931,10 @@ export function bindRecordInput({ services, router, context, returnState = null 
     if (planId) {
       const planResult = services.workflows.plans.markActualRecord(planId, result.record.id);
       if (!planResult.ok) postSaveWarnings.push("記録は保存しましたが、予定との関連付けを保存できませんでした。");
+    }
+    if (context?.parameters?.get("measurement") === "1") {
+      const measurementResult = commitPendingRunMeasurement(result.record.id);
+      if (!measurementResult.ok) postSaveWarnings.push("記録は保存しましたが、GPS走行軌跡を端末内へ保存できませんでした。");
     }
     const draftResult = services.storage.draft.clear();
     if (!draftResult.ok) postSaveWarnings.push("記録は保存しましたが、入力途中データを削除できませんでした。");
