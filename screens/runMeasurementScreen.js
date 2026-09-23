@@ -41,7 +41,6 @@ export function renderRunMeasurementScreen({ services, context }) {
 
     ${validPlan ? `<section class="run-measurement__plan">
       <div><small>予定と連携</small><strong>${escapeHtml(planSummary(validPlan))}</strong><span>予定平均ペース ${escapeHtml(formatPace(targetPace))}/km</span></div>
-      <p>直近20秒のペースが予定平均より速い状態が10秒続いた場合に画面と音で知らせます。</p>
     </section>` : `<section class="run-measurement__plan run-measurement__plan--empty"><div><small>予定</small><strong>予定なしで測定</strong><span>距離・時間・軌跡を測定します。</span></div></section>`}
 
     <div class="run-measurement__warning" data-pace-warning role="status" aria-live="assertive" hidden>
