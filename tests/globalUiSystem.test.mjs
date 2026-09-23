@@ -117,14 +117,59 @@ await test('UI-RESULT-REMOVES-PERSISTENT-EXPLANATION-CLUTTER',()=>{
   assert.ok(!screen.includes('色で12部位を確認'));
 });
 
-await test('UI-INTERPRETATION-HAS-DESKTOP-WORKSPACE',()=>{
+await test('UI-INTERPRETATION-HAS-MEANING-FIRST-WORKSPACE',()=>{
   const css=read('styles/interpretation-room.css');
   const presentation=read('ui/interpretationRoomPresentation.js');
-  assert.ok(css.includes('Responsive interpretation workspace'));
-  assert.ok(css.includes('grid-template-columns: repeat(12, minmax(0, 1fr));'));
-  assert.ok(css.includes('.interpretation-room--selected .interpretation-room-selected'));
-  assert.ok(presentation.includes('12部位から選ぶ'));
-  assert.ok(presentation.includes('分かること / 分からないこと'));
+  assert.ok(css.includes('width: min(100%, 76rem);'));
+  assert.ok(css.includes('.interpretation-room-summary__metrics'));
+  assert.ok(css.includes('.interpretation-room-reason-groups'));
+  assert.ok(presentation.includes('今回のRunLoad解釈'));
+  assert.ok(presentation.includes('注目する理由から見る'));
+  assert.ok(presentation.includes('分かること / 決めないこと'));
+  assert.ok(!presentation.includes('12部位から選ぶ'));
+});
+
+await test('UI-PC-RESULT-USES-TIME-AWARE-CHRONOLOGY-AND-STATE-LINKED-COLOR',()=>{
+  const screen=read('screens/resultScreen.js');
+  const history=read('screens/historyScreen.js');
+  const css=read('styles/desktop.css');
+  const mobile=read('styles/mobile.css');
+  const marker='PC result chronology + state-link visual audit 2026-09-24';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0,'PC result chronology/state-link audit block');
+  const audit=css.slice(start);
+
+  assert.ok(screen.includes('function recordChronology(left = {}, right = {})'));
+  assert.ok(screen.includes('String(left.createdAt || "").localeCompare(String(right.createdAt || ""))'));
+  assert.ok(screen.includes('recordChronology(item.record || {}, currentRecord) < 0'));
+  assert.ok(screen.includes('.sort((a, b) => recordChronology(a.experience?.record || {}, b.experience?.record || {}))'));
+  assert.ok(screen.includes('function historyAxisLabel(point, points = [])'));
+  assert.ok(screen.includes('sameDayCount > 1 ? formatLocalTime(record.createdAt) : ""'));
+  assert.ok(screen.includes('class="pc-result-run-facts"'));
+  assert.ok(screen.includes('記録時刻'));
+  assert.ok(screen.includes('fatigueValue = finite(fatigue.delta) ? escapeHtml(signed(fatigue.delta,0)) : "未記録"'));
+  assert.ok(screen.includes('同日は記録時刻順・破線＝基準100'));
+  assert.ok(screen.includes('pc-focus-chart__baseline-label'));
+  assert.ok(screen.includes('pc-focus-chart__date'));
+
+  assert.ok(history.includes('formatLocalTime'));
+  assert.ok(history.includes('class="record-time"'));
+  assert.match(mobile,/Saved-record time label audit 2026-09-24/);
+
+  assert.match(audit,/pc-result-summary\.pc-result-summary--rail[\s\S]*border-radius:\s*1rem/);
+  assert.match(audit,/\.pc-result-run-facts[\s\S]*display:\s*flex/);
+  assert.match(audit,/pc-region-tile\.pc-region-tile--summary\[data-direction="above"\][\s\S]*--result-region-color:\s*var\(--color-model\)/);
+  assert.match(audit,/pc-region-tile\.pc-region-tile--summary\[data-direction="reference"\][\s\S]*--result-region-color:\s*var\(--color-accent-strong\)/);
+  assert.match(audit,/pc-region-tile\.pc-region-tile--summary\[data-direction="below"\][\s\S]*--result-region-color:\s*var\(--color-info\)/);
+  assert.match(audit,/border-color:\s*color-mix\(in srgb, var\(--result-region-color\) 46%, var\(--color-line\)\)/);
+  assert.match(audit,/box-shadow:\s*inset 0\.2rem 0 0 color-mix\(in srgb, var\(--result-region-color\) 84%, transparent\)/);
+  assert.match(audit,/\.pc-region-summary__value > b[\s\S]*color:\s*var\(--result-region-color\)/);
+  assert.match(audit,/\.pc-focus-baseline\.pc-focus-baseline--large > small[\s\S]*top:\s*0\.78rem/);
+  assert.match(audit,/\.pc-detail-previous__arrow > b[\s\S]*font-size:\s*0\.76rem/);
+  assert.match(audit,/\.pc-focus-chart__value[\s\S]*font-size:\s*10px/);
+  assert.match(audit,/\.pc-focus-chart__baseline-label[\s\S]*display:\s*block/);
+  assert.match(audit,/\.pc-focus-chart__date[\s\S]*font-size:\s*8\.5px/);
+  assert.match(audit,/\.pc-change-delta > strong[\s\S]*font-size:\s*0\.96rem/);
 });
 
 await test('UI-DESKTOP-WIDE-GRIDS-ARE-BALANCED',()=>{
