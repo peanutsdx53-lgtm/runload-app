@@ -121,6 +121,19 @@ await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   assert.match(audit,/\.result-layout[\s\S]*grid-template-columns:\s*minmax\(18rem, 0\.9fr\) minmax\(22rem, 1\.1fr\)\s*!important/);
 });
 
+await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
+  const css=read('styles/mobile.css');
+  const marker='Interpretation-derived simulation readability audit 2026-09-23';
+  const start=css.indexOf(marker);
+  assert.ok(start>=0);
+  const audit=css.slice(start);
+  assert.match(audit,/\.region-row small,[\s\S]*font-size:\s*0\.78rem/);
+  assert.match(audit,/\.region-row strong[\s\S]*font-size:\s*0\.9rem/);
+  assert.match(audit,/\.region-value b[\s\S]*font-size:\s*1rem/);
+  assert.match(audit,/\.measure-field input[\s\S]*font-size:\s*1\.3rem/);
+  assert.match(audit,/\.primary-action,[\s\S]*font-size:\s*0\.88rem/);
+});
+
 await test('INTERPRETATION-ACTIONS-CARRY-ROOM-ORIGIN-WITHOUT-VERSION-STATE',()=>{
   const s=read('ui/interpretationRoomPresentation.js');
   assert.match(s,/query\.set\("from", "interpretation-room"\)/);
