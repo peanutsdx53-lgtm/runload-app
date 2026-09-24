@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Interpretation selected visual harness</title>
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link rel="stylesheet" href="../styles/layout.css">
+  <link rel="stylesheet" href="../styles/components.css">
+  <link rel="stylesheet" href="../styles/screens.css">
+  <link rel="stylesheet" href="../styles/responsive.css">
+  <link rel="stylesheet" href="../styles/mobile.css">
+  <link rel="stylesheet" href="../styles/desktop-foundation.css">
+  <link rel="stylesheet" href="../styles/interpretation-room.css">
+  <link rel="stylesheet" href="../styles/desktop.css">
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
+    const output={
+      schemaVersion:"RUNLOAD_INTERPRETATION_OUTPUT_V4",
+      target:{recordId:"visual-r1",resultRecordId:"visual-res",date:"2026-09-20",activityType:"run",origin:"result",selectedRegionId:"BA-DISP-005"},
+      state:{targetAvailable:true,regional:"AVAILABLE",history:"AVAILABLE",subjective:"PAIR",support:"NORMAL",legacy:false},
+      overview:{regions:[],selectionMode:"EXPLICIT",guidanceTokens:[],attention:{counts:{total:12,available:12,unavailable:0,previousComparable:12,previousChanged:3,repeated:2,above:3,near:4,below:5,conditionDifferences:3},groups:[],noCrossRegionRanking:true}},
+      runFacts:{distanceKm:6,durationMinutes:33,paceSecondsPerKm:330},
+      selectedRegion:{
+        regionId:"BA-DISP-005",primaryRegionId:"R05",label:"大腿前面",value:93.6,
+        referenceComparison:{available:true,reference:100,value:93.6,difference:-6.4,direction:"BELOW_REFERENCE"},
+        previousComparison:{available:true,recordId:"visual-p1",date:"2026-09-19",previousValue:94.1,currentValue:93.6,difference:-0.5,direction:"DOWN"},
+        personalHistory:{comparableCount:5,lastFive:[
+          {recordId:"p0",date:"2026-09-14",value:96.2,referenceDirection:"BELOW_REFERENCE"},
+          {recordId:"p1",date:"2026-09-15",value:92.7,referenceDirection:"BELOW_REFERENCE"},
+          {recordId:"p2",date:"2026-09-17",value:93.6,referenceDirection:"BELOW_REFERENCE"},
+          {recordId:"p3",date:"2026-09-18",value:92.1,referenceDirection:"BELOW_REFERENCE"},
+          {recordId:"p4",date:"2026-09-19",value:94.1,referenceDirection:"BELOW_REFERENCE"}
+        ],referenceDirectionCounts:{above:0,near:0,below:5,unavailable:0}},
+        calculationPath:{
+          resolutionStatus:"EXACT",activeRoute:"SPEED",
+          exposure:{type:"WHOLE_RUN",distanceKm:6,durationMinutes:33,speedMps:3.03,segmentCount:0},
+          activeInputs:[
+            {id:"DISTANCE",value:6,role:"DERIVE_SPEED"},
+            {id:"DURATION",value:33,role:"DERIVE_SPEED"},
+            {id:"SPEED",value:3.03,role:"PRIMARY_NUMERIC_ROUTE"}
+          ],
+          conditionalInputs:[],contextOnlyInputs:[],explanationTokens:[]
+        }
+      },
+      subjectiveContext:{
+        state:"PAIR",
+        pre:{available:true,value:3,descriptorType:"EXACT",descriptor:"まだ疲れていない",lowerAnchor:null,upperAnchor:null},
+        post:{available:true,value:8,descriptorType:"EXACT",descriptor:"とても疲れている",lowerAnchor:null,upperAnchor:null},
+        difference:{eligible:true,value:5,direction:"UP"},recentReferences:{},boundaryTokens:[]
+      },
+      conditions:{
+        previousRecordId:"visual-p1",previousDate:"2026-09-19",
+        differences:[
+          {id:"distance",labelToken:"DISTANCE",previous:5,current:6,delta:1,relationship:"USED_IN_CURRENT_ROUTE"},
+          {id:"duration",labelToken:"DURATION",previous:28,current:33,delta:5,relationship:"USED_IN_CURRENT_ROUTE"},
+          {id:"pace",labelToken:"PACE",previous:336,current:330,delta:-6,relationship:"USED_IN_CURRENT_ROUTE"}
+        ],
+        boundaryCodes:["DESCRIPTIVE_ONLY","NO_CAUSAL_INFERENCE"]
+      },
+      understanding:{meaningCode:"CONDITION_AND_RESULT_CHANGED",secondaryCodes:[],facts:[],boundaryCodes:["NO_DIAGNOSIS","NO_INJURY_RISK","NO_CAUSAL_INFERENCE"]},
+      nextCheck:{code:"KEEP_CONDITIONS_VISIBLE",regionId:"BA-DISP-005",conditionIds:["distance","duration","pace"]},
+      next:{
+        selectionRequired:false,
+        primaryAction:{actionId:"simulation",destination:"simulation",parameters:{recordId:"visual-r1"},enabled:true},
+        otherActions:[
+          {actionId:"plan",destination:"plan",parameters:{sourceRecordId:"visual-r1"},enabled:true},
+          {actionId:"reading",destination:"reading",parameters:{recordId:"visual-r1"},enabled:true},
+          {actionId:"share",destination:"consultation",parameters:{recordId:"visual-r1"},enabled:true}
+        ]
+      },
+      advanced:{evidence:{regions:{"BA-DISP-005":{construct:"大腿前面の部位内基準100",sources:[{label:"Visual fixture",role:"確認用"}]}}}},
+      safety:{route:"normal",reasons:[],blocks:[],nextActions:[]}
+    };
+    document.getElementById("app").innerHTML =
+      '<div class="app-shell app-shell--immersive">' +
+      '<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="#">‹ ホーム</a><strong class="interpretation-room-header__title">結果を整理する</strong><div class="interpretation-room-header__actions"><button class="app-utility-button" type="button">?</button><button class="app-utility-button" type="button">☰</button></div></header>' +
+      '<main id="main-content" class="app-main"><section class="screen screen--interpretation-room">' +
+      renderInterpretationRoom({output}) +
+      '</section></main></div>';
+  </script>
+</body>
+</html>
