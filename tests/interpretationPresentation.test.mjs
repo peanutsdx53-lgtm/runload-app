@@ -253,6 +253,8 @@ await test('CSS-HAS-V4-COMPACT-RESPONSIVE-DASHBOARD',()=>{
   assert.match(desktop,/PC Interpretation V4 detail fit audit/);
   assert.match(desktop,/PC Interpretation V4 screenshot final pass/);
   assert.match(desktop,/PC Interpretation selected detail layout repair/);
+  assert.match(desktop,/PC Interpretation immersive full desktop canvas/);
+  assert.match(desktop,/#app>\.app-shell\.app-shell--immersive[\s\S]*width:100%\s*!important[\s\S]*border:0\s*!important/);
   assert.match(desktop,/@media \(min-width:64rem\)[\s\S]*\.interpretation-room-selected-dashboard[\s\S]*minmax\(18rem,20rem\)/);
   assert.match(desktop,/\.interpretation-room-selected-context \.interpretation-room-section-title[\s\S]*grid-template-columns:minmax\(0,1fr\)/);
   assert.match(desktop,/\.interpretation-room-selected-context \.interpretation-room-subjective-layout[\s\S]*grid-template-columns:minmax\(0,1fr\)/);
