@@ -9,12 +9,12 @@ function safeOrigin(parameters) {
 }
 
 function rofContext(services, recordId) {
-  if (!recordId || !services?.secondPillar?.summarizeRun) {
+  if (!recordId || !services?.fatigue?.summarizeRun) {
     return { summary: null, recentReferences: Object.freeze({ pre: null, post: null, delta: null }) };
   }
-  const recentReference = services.secondPillar.recentReference;
+  const recentReference = services.fatigue.recentReference;
   return {
-    summary: services.secondPillar.summarizeRun(recordId),
+    summary: services.fatigue.summarizeRun(recordId),
     recentReferences: Object.freeze({
       pre: typeof recentReference === "function" ? recentReference(recordId, "PRE") : null,
       post: typeof recentReference === "function" ? recentReference(recordId, "POST") : null,
