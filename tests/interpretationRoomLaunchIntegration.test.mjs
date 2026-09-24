@@ -109,8 +109,9 @@ await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST
   assert.match(source,/simulation-change-groups/);
   assert.match(source,/data-simulation-adjust/);
   assert.match(source,/data-simulation-condition-count/);
-  assert.match(source,/simulation-v3-result--idle/);
-  assert.match(source,/まだ条件を変更していません/);
+  assert.match(source,/classList\.toggle\("is-unchanged",unchanged\)/);
+  assert.match(source,/simulation-v3-overview-idle/);
+  assert.doesNotMatch(source,/simulation-v3-result--idle/);
   assert.match(source,/set\('\[data-simulation-condition-count\]',String\(labels\.length\)\)/);
   assert.match(source,/set\('\[data-simulation-region-count\]',String\(stats\.changed\)\)/);
   assert.match(source,/form\.addEventListener\("reset",\(event\)=>/);
@@ -156,8 +157,8 @@ await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   assert.match(audit,/\.simulation-change-group>summary[\s\S]*font-size:\.88rem/);
   assert.match(audit,/PC Condition Compare V3 readability final/);
   assert.match(audit,/\.simulation-v3-adjust button,[\s\S]*font-size:\.8rem/);
-  assert.match(audit,/PC Condition Compare idle state/);
-  assert.match(audit,/\.simulation-idle-state[\s\S]*min-height:10rem/);
+  assert.match(audit,/Condition Compare V3 unchanged overview compact/);
+  assert.match(audit,/\.simulation-v3-overview-idle[\s\S]*font-size:14px/);
 });
 
 await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
@@ -177,14 +178,16 @@ await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
   assert.match(audit,/Condition Compare V3 mobile readability final/);
   assert.match(audit,/\.simulation-v3-adjust button,[\s\S]*font-size:12px/);
   assert.match(audit,/\.simulation-change-row__copy small,[\s\S]*font-size:11px/);
-  assert.match(audit,/Condition Compare V3 idle state/);
-  assert.match(audit,/\.simulation-idle-state[\s\S]*min-height:154px/);
+  assert.match(audit,/Condition Compare V3 unchanged overview compact/);
+  assert.match(audit,/\.simulation-v3-overview-idle[\s\S]*font-size:14px/);
 });
 
 await test('SIMULATION-SCREEN-HAS-V3-SUMMARY-QUICK-ADJUST-AND-NEXT-ACTIONS',()=>{
   const source=read('screens/simulationScreen.js');
   assert.match(source,/simulation-v3-overview/);
   assert.match(source,/今回の比較で見えること/);
+  assert.match(source,/simulation-v3-overview-idle/);
+  assert.match(source,/条件を1項目変更すると比較が始まります/);
   assert.match(source,/<span data-simulation-condition-count>0<\/span><em>項目<\/em>/);
   assert.match(source,/<span data-simulation-region-count>0<\/span><em>部位<\/em>/);
   assert.match(source,/data-simulation-adjust="distanceKm:-0\.5"/);
