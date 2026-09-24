@@ -1,4 +1,4 @@
-export const DEFAULT_JOURNAL_SETTINGS = Object.freeze({
+export const DEFAULT_APP_SETTINGS = Object.freeze({
   appearanceMode: "system",
   colorTheme: "standard",
   textSize: "standard",
@@ -21,8 +21,8 @@ export const COLOR_THEME_OPTIONS = Object.freeze([
 ]);
 
 export const TEXT_SIZE_OPTIONS = Object.freeze([
-  Object.freeze({ value: "standard", label: "標準", description: "RunLoadの標準文字サイズで表示します。" }),
-  Object.freeze({ value: "large", label: "大きめ", description: "RunLoadが数値、部位名、説明文を少し大きく表示します。" }),
+  Object.freeze({ value: "standard", label: "標準", description: "標準の文字サイズで表示します。" }),
+  Object.freeze({ value: "large", label: "大きめ", description: "数値、部位名、説明文を少し大きく表示します。" }),
 ]);
 
 
@@ -67,24 +67,24 @@ function pick(value, allowedValues, fallback) {
   return allowedValues.has(normalized) ? normalized : fallback;
 }
 
-export function normalizeJournalSettings(settings = {}) {
+export function normalizeAppSettings(settings = {}) {
   const source = settings && typeof settings === "object" ? settings : {};
   return Object.freeze({
     ...source,
-    appearanceMode: pick(source.appearanceMode, APPEARANCE_VALUES, DEFAULT_JOURNAL_SETTINGS.appearanceMode),
-    colorTheme: pick(source.colorTheme, COLOR_VALUES, DEFAULT_JOURNAL_SETTINGS.colorTheme),
-    textSize: pick(source.textSize, TEXT_SIZE_VALUES, DEFAULT_JOURNAL_SETTINGS.textSize),
-    resultDisplayMode: pick(source.resultDisplayMode, RESULT_DISPLAY_VALUES, DEFAULT_JOURNAL_SETTINGS.resultDisplayMode),
-    selectedRegionalView: pick(source.selectedRegionalView, REGIONAL_VIEW_VALUES, DEFAULT_JOURNAL_SETTINGS.selectedRegionalView),
-    regionalResultInitialView: pick(source.regionalResultInitialView, REGIONAL_RESULT_INITIAL_VIEW_VALUES, DEFAULT_JOURNAL_SETTINGS.regionalResultInitialView),
-    regionalResultLastView: pick(source.regionalResultLastView, REGIONAL_RESULT_VIEW_VALUES, DEFAULT_JOURNAL_SETTINGS.regionalResultLastView),
+    appearanceMode: pick(source.appearanceMode, APPEARANCE_VALUES, DEFAULT_APP_SETTINGS.appearanceMode),
+    colorTheme: pick(source.colorTheme, COLOR_VALUES, DEFAULT_APP_SETTINGS.colorTheme),
+    textSize: pick(source.textSize, TEXT_SIZE_VALUES, DEFAULT_APP_SETTINGS.textSize),
+    resultDisplayMode: pick(source.resultDisplayMode, RESULT_DISPLAY_VALUES, DEFAULT_APP_SETTINGS.resultDisplayMode),
+    selectedRegionalView: pick(source.selectedRegionalView, REGIONAL_VIEW_VALUES, DEFAULT_APP_SETTINGS.selectedRegionalView),
+    regionalResultInitialView: pick(source.regionalResultInitialView, REGIONAL_RESULT_INITIAL_VIEW_VALUES, DEFAULT_APP_SETTINGS.regionalResultInitialView),
+    regionalResultLastView: pick(source.regionalResultLastView, REGIONAL_RESULT_VIEW_VALUES, DEFAULT_APP_SETTINGS.regionalResultLastView),
     showRegionalPreviousComparison: source.showRegionalPreviousComparison !== false && source.showRegionalPreviousComparison !== "hide",
   });
 }
 
-export function mergeJournalSettings(currentSettings = {}, settingsUpdate = {}) {
+export function mergeAppSettings(currentSettings = {}, settingsUpdate = {}) {
   const current = currentSettings && typeof currentSettings === "object" ? currentSettings : {};
-  return normalizeJournalSettings({ ...current, ...settingsUpdate });
+  return normalizeAppSettings({ ...current, ...settingsUpdate });
 }
 
 function replaceClassByPrefix(element, prefix, nextClass) {
@@ -108,9 +108,9 @@ function themeColorForSettings(settings) {
   return palette[settings.colorTheme] || palette.standard;
 }
 
-export function applyJournalSettings(settings = {}) {
+export function applyAppSettings(settings = {}) {
   if (typeof document === "undefined") return;
-  const normalized = normalizeJournalSettings(settings);
+  const normalized = normalizeAppSettings(settings);
   const root = document.documentElement;
   replaceClassByPrefix(root, "rl-appearance-", `rl-appearance-${normalized.appearanceMode}`);
   replaceClassByPrefix(root, "rl-color-", `rl-color-${normalized.colorTheme}`);
