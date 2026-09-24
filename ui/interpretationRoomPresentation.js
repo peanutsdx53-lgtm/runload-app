@@ -185,7 +185,7 @@ function renderSummary(output) {
   const available = Number(counts.available || 0);
   return `<section class="interpretation-room-summary interpretation-room-summary--v3" aria-labelledby="interpretation-summary-title" data-tone="${escapeHtml(label.tone)}">
     <div class="interpretation-room-summary__top">
-      <div class="interpretation-room-summary__heading"><span class="interpretation-room-summary__mark">${interpretationIcon("interpretation")}</span><div><div class="interpretation-room-kicker">RUNLOAD INTERPRETATION</div><h2 id="interpretation-summary-title">今回のRunLoad解釈</h2></div></div>
+      <div class="interpretation-room-summary__heading"><span class="interpretation-room-summary__mark">${interpretationIcon("interpretation")}</span><div><div class="interpretation-room-kicker">RESULT INTERPRETATION</div><h2 id="interpretation-summary-title">今回のRunLoad解釈</h2></div></div>
       <div class="interpretation-room-summary__label">${interpretationIcon(label.tone)}<span>${escapeHtml(label.label)}</span></div>
     </div>
     <p class="interpretation-room-summary__lead">${escapeHtml(meaningLead(output))}</p>
