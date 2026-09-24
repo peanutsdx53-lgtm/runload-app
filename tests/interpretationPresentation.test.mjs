@@ -94,61 +94,60 @@ function baseOutput({selected=false}={}){
   };
 }
 
-await test('OVERVIEW-STARTS-WITH-RUNLOAD-INTERPRETATION-NOT-BODY-MAP',()=>{
+await test('OVERVIEW-LEADS-WITH-SYNTHESIS-NOT-INPUT-RECAP',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/今回の結果をRunLoadで整理/);
-  assert.match(html,/今回のRunLoad解釈/);
-  assert.doesNotMatch(html,/12部位から選ぶ/);
+  assert.match(html,/interpretation-room--dashboard/);
+  assert.match(html,/今回の解釈/);
+  assert.match(html,/前回と比べられる部位のうち4部位で差があります/);
+  assert.match(html,/走行条件が2項目変わり/);
+  assert.match(html,/本人の疲労感も4→8（\+4）/);
+  assert.match(html,/「部位」「走行条件」「本人の感覚」を分けて見る/);
+  assert.doesNotMatch(html,/今回のRunLoad解釈/);
+  assert.doesNotMatch(html,/今回の結果を読む順序/);
   assert.doesNotMatch(html,/interpretation-room-map/);
 });
 
-await test('SUMMARY-INTEGRATES-REGION-HISTORY-FATIGUE-AND-CONDITIONS',()=>{
+await test('OVERVIEW-USES-COMPACT-SIGNALS-AND-ACTIONABLE-NEXT-COMPARISON',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/interpretation-room-summary--v3/);
-  assert.match(html,/前回から変化/);
-  assert.match(html,/4<em>部位<\/em>/);
-  assert.match(html,/同じ方向の継続/);
-  assert.match(html,/本人記録の前後差/);
-  assert.match(html,/\+4/);
-  assert.match(html,/前回からの条件差/);
-  assert.match(html,/2<em>項目<\/em>/);
-  assert.match(html,/まず条件差と部位差を分けて確認します/);
+  assert.match(html,/継続して確認/);
+  assert.match(html,/前回との差/);
+  assert.match(html,/今回の背景/);
+  assert.match(html,/条件 2・疲労 \+4/);
+  assert.match(html,/次の比較を読みやすくするには/);
+  assert.match(html,/比較したい条件を意識し/);
 });
 
-await test('REGIONS-ARE-GROUPED-BY-REASON-NOT-RANKED',()=>{
+await test('REGION-PATTERNS-ARE-COMPACT-AND-NOT-RANKED',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/注目する理由で見る/);
+  assert.match(html,/どの部位で、どのような傾向が続いているか/);
   assert.match(html,/同じ方向が続いている/);
   assert.match(html,/前回から変化している/);
-  assert.match(html,/部位間の順位ではなく、確認する理由を示します/);
+  assert.ok((html.match(/region-chip__copy/g)||[]).length>=2);
+  assert.match(html,/部位どうしを順位付けせず/);
   assert.doesNotMatch(html,/変化が大きい部位.*上位/);
 });
 
-await test('OVERVIEW-HAS-INTERPRETATION-ENTRY-AND-PICTOGRAMS',()=>{
+await test('OVERVIEW-CONTEXT-COMBINES-CONDITIONS-AND-SUBJECTIVE-WITHOUT-MAKING-THEM-THE-MAIN-RESULT',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/今回の結果を読む順序/);
-  assert.match(html,/data-count="4"/);
-  assert.match(html,/注目する理由を見る/);
-  assert.match(html,/条件の違いを確認/);
-  assert.match(html,/本人の記録と並べる/);
-  assert.match(html,/次に確かめる/);
-  for(const step of ['1','2','3','4'])assert.match(html,new RegExp(`<b>${step}<\\/b>`));
-  for(const target of ['interpretation-attention-title','interpretation-conditions-title','interpretation-subjective-title','interpretation-next-title'])assert.match(html,new RegExp(`href="#${target}"`));
-  assert.ok((html.match(/class="interpretation-room-icon/g)||[]).length>=8);
+  assert.match(html,/部位の変化と分けて残しておく情報/);
+  assert.match(html,/前回から変わった条件/);
+  assert.match(html,/距離/);
+  assert.match(html,/\+1 km/);
+  assert.match(html,/本人の感覚/);
+  assert.match(html,/4<em>\/10/);
+  assert.match(html,/8<em>\/10/);
+  assert.match(html,/同じ日の本人記録です/);
 });
 
-await test('OVERVIEW-ENTRY-FALLS-BACK-TO-EXISTING-SECTIONS',()=>{
-  const out=baseOutput();
-  out.overview.attention.groups=[];
-  out.overview.attention.counts.conditionDifferences=0;
-  out.conditions.differences=[];
-  out.subjectiveContext={state:'NONE',pre:{available:false},post:{available:false},difference:{eligible:false},recentReferences:{},boundaryTokens:[]};
-  const html=renderInterpretationRoom({output:out});
-  assert.doesNotMatch(html,/href="#interpretation-attention-title"/);
-  assert.doesNotMatch(html,/href="#interpretation-conditions-title"/);
-  assert.match(html,/data-count="1"/);
-  assert.match(html,/href="#interpretation-next-title"/);
-  assert.equal((html.match(/interpretation-room-entry-step/g)||[]).length,1);
+await test('OVERVIEW-NEXT-ACTIONS-ARE-COMPACT-RAIL',()=>{
+  const html=renderInterpretationRoom({output:baseOutput()});
+  assert.match(html,/interpretation-room-next-rail/);
+  assert.match(html,/次に確かめる/);
+  assert.match(html,/条件を変えて比較する/);
+  assert.match(html,/次の記録条件を整理する/);
+  assert.match(html,/関連する読みものを確認する/);
+  assert.match(html,/共有用に整理する/);
+  assert.doesNotMatch(html,/interpretation-room-action-grid/);
 });
 
 await test('ADVANCED-COPY-HIDES-INTERNAL-REFERENCE-LABEL',()=>{
@@ -164,58 +163,28 @@ await test('REGION-LINK-CARRIES-RECORD-AND-REGION',()=>{
   assert.match(html,/#\/interpretation-room\?recordId=r1&amp;origin=result&amp;regionId=BA-DISP-014/);
 });
 
-await test('SELECTED-REGION-SHOWS-CURRENT-PREVIOUS-AND-HISTORY-CHART',()=>{
+await test('SELECTED-REGION-IS-A-DEDICATED-DETAIL-WORKSPACE',()=>{
   const html=renderInterpretationRoom({output:baseOutput({selected:true})});
-  assert.match(html,/股関節部をRunLoadで整理/);
-  assert.doesNotMatch(html,/今回のRunLoad解釈/);
-  assert.doesNotMatch(html,/今回の結果を読む順序/);
-  assert.match(html,/この部位の読み方を整理/);
+  assert.match(html,/interpretation-room--selected-v4/);
+  assert.match(html,/<h1>股関節部<\/h1>/);
+  assert.match(html,/12部位の整理へ戻る/);
   assert.match(html,/112\.9/);
   assert.match(html,/93\.9/);
   assert.match(html,/\+19/);
   assert.match(html,/interpretation-room-history-chart/);
   assert.match(html,/基準100/);
+  assert.match(html,/interpretation-room-next-rail/);
+  assert.doesNotMatch(html,/今回の解釈/);
+  assert.doesNotMatch(html,/今回のRunLoad解釈/);
 });
 
-await test('CONDITION-CARDS-SEPARATE-DESCRIPTION-FROM-CAUSAL-CLAIM',()=>{
+await test('SELECTED-REGION-KEEPS-CONDITION-RELATION-AND-SUBJECTIVE-CONTEXT',()=>{
   const html=renderInterpretationRoom({output:baseOutput({selected:true})});
   assert.match(html,/条件の違いを整理/);
-  assert.match(html,/interpretation-room-condition-cards/);
-  assert.match(html,/距離/);
-  assert.match(html,/5 km/);
-  assert.match(html,/6 km/);
   assert.match(html,/この部位の計算に使用/);
-  assert.match(html,/複数回の比較で関係を確かめます/);
-});
-
-await test('OVERVIEW-CONDITION-CARDS-ASK-FOR-REGION-BEFORE-ROUTE-RELATION',()=>{
-  const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/部位を選択すると、その条件が選択部位の計算でどのように扱われたかも確認できます/);
-});
-
-await test('SUBJECTIVE-FATIGUE-REMAINS-SEPARATE-LAYER',()=>{
-  const html=renderInterpretationRoom({output:baseOutput()});
+  assert.match(html,/関連情報として記録/);
   assert.match(html,/本人の記録との関係/);
-  assert.match(html,/RunLoadでの見方/);
-  assert.match(html,/4<em>\/10/);
-  assert.match(html,/8<em>\/10/);
   assert.match(html,/12部位の数値とは別に、同じ日の主観記録として確認します/);
-});
-
-await test('UNDERSTANDING-IS-COMPACT-AND-BOUNDARY-AWARE',()=>{
-  const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/今回の読み方を整理/);
-  assert.match(html,/今回確認できること/);
-  assert.match(html,/次回以降で確かめること/);
-  assert.match(html,/複数回の比較で関係を確かめます/);
-});
-
-await test('NEXT-CHECK-IS-A-SELF-UNDERSTANDING-SUGGESTION',()=>{
-  const html=renderInterpretationRoom({output:baseOutput({selected:true})});
-  assert.match(html,/次に確かめる/);
-  assert.match(html,/次回も距離・時間・コース条件を残すと/);
-  assert.match(html,/条件を変えて比較する/);
-  assert.match(html,/interpretation-room-action-grid/);
 });
 
 await test('CALCULATION-AND-EVIDENCE-ARE-PROGRESSIVELY-DISCLOSED',()=>{
@@ -241,7 +210,8 @@ await test('NO-SUBJECTIVE-PAIR-DOES-NOT-INVENT-DIFFERENCE',()=>{
   const out=baseOutput();
   out.subjectiveContext={state:'NONE',pre:{available:false},post:{available:false},difference:{eligible:false},recentReferences:{},boundaryTokens:[]};
   const html=renderInterpretationRoom({output:out});
-  assert.doesNotMatch(html,/class="interpretation-room-fatigue"/);
+  assert.doesNotMatch(html,/本人の感覚/);
+  assert.doesNotMatch(html,/疲労 \+/);
 });
 
 await test('SUPPORT-STATE-TAKES-PRECEDENCE',()=>{
@@ -250,7 +220,7 @@ await test('SUPPORT-STATE-TAKES-PRECEDENCE',()=>{
   out.next={selectionRequired:false,primaryAction:{actionId:'official-help',destination:'support-guidance',parameters:{},enabled:true},otherActions:[]};
   const html=renderInterpretationRoom({output:out});
   assert.match(html,/先に確認することがあります/);
-  assert.doesNotMatch(html,/今回のRunLoad解釈/);
+  assert.doesNotMatch(html,/interpretation-room--dashboard/);
 });
 
 await test('REST-STATE-DOES-NOT-FABRICATE-REGIONAL-RESULTS',()=>{
@@ -259,7 +229,7 @@ await test('REST-STATE-DOES-NOT-FABRICATE-REGIONAL-RESULTS',()=>{
   out.state.regional='REST';
   const html=renderInterpretationRoom({output:out});
   assert.match(html,/今回は休養の記録です/);
-  assert.doesNotMatch(html,/今回のRunLoad解釈/);
+  assert.doesNotMatch(html,/interpretation-room--dashboard/);
 });
 
 await test('EMPTY-STATE-HAS-DIRECT-RECORD-ACTION',()=>{
@@ -268,21 +238,22 @@ await test('EMPTY-STATE-HAS-DIRECT-RECORD-ACTION',()=>{
   assert.match(html,/#\/record-input/);
 });
 
-await test('CSS-HAS-READABLE-PC-SIZES-AND-RESPONSIVE-LAYOUT',()=>{
-  const css=fs.readFileSync(path.join(root,'styles/interpretation-room.css'),'utf8');
-  assert.match(css,/Interpretation Room V3 experience/);
-  assert.match(css,/width:min\(100%,84rem\)/);
-  assert.match(css,/font-size:clamp\(2\.45rem,4\.4vw,3\.65rem\)/);
-  assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
-  assert.match(css,/\.interpretation-room-entry-grid/);
-  assert.match(css,/data-count="4"/);
-  assert.match(css,/interpretation-room-entry-step>b/);
-  assert.match(css,/scroll-margin-top:6\.5rem/);
-  assert.match(css,/\.interpretation-room-condition-cards/);
-  assert.match(css,/\.interpretation-room-action-grid/);
-  assert.match(css,/@media \(max-width:60rem\)/);
-  assert.match(css,/@media \(max-width:34rem\)/);
-  assert.doesNotMatch(css,/#[0-9a-fA-F]{3,8}\b/);
+await test('CSS-HAS-V4-COMPACT-RESPONSIVE-DASHBOARD',()=>{
+  const shared=fs.readFileSync(path.join(root,'styles/interpretation-room.css'),'utf8');
+  const desktop=fs.readFileSync(path.join(root,'styles/desktop.css'),'utf8');
+  const mobile=fs.readFileSync(path.join(root,'styles/mobile.css'),'utf8');
+  assert.match(shared,/Interpretation Room V4 synthesis dashboard/);
+  assert.match(shared,/\.interpretation-room-dashboard/);
+  assert.match(shared,/\.interpretation-room-region-chips/);
+  assert.match(shared,/\.interpretation-room-next-rail/);
+  assert.match(desktop,/PC Interpretation V4 wide dashboard/);
+  assert.match(desktop,/grid-template-areas:[\s\S]*"insight next"[\s\S]*"patterns next"[\s\S]*"context next"/);
+  assert.match(desktop,/\.interpretation-room-region-chips[\s\S]*repeat\(4,minmax\(0,1fr\)\)/);
+  assert.match(desktop,/position:sticky/);
+  assert.match(mobile,/Mobile Interpretation V4 touch layout/);
+  assert.match(mobile,/\.interpretation-room-next-rail>\.interpretation-room-action[\s\S]*min-height:56px/);
+  assert.match(mobile,/\.interpretation-room-region-chips>a[\s\S]*min-height:58px/);
+  assert.doesNotMatch(shared,/#[0-9a-fA-F]{3,8}\b/);
 });
 
 await test('PRESENTATION-DOES-NOT-USE-GOOD-BAD-OR-DIAGNOSTIC-REGION-LABELS',()=>{
