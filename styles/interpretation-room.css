@@ -2631,3 +2631,48 @@
     transform:none !important;
   }
 }
+
+
+/* ===== Interpretation Room V4 detail stabilization 2026-09-24 ===== */
+.interpretation-room-selected-dashboard,
+.interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3,
+.interpretation-room-selected-dashboard>.interpretation-room-next-rail{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  box-sizing:border-box;
+  justify-self:stretch;
+}
+.interpretation-room-region-detail__summary{
+  display:grid;
+  gap:.25rem;
+}
+.interpretation-room-region-detail__summary>small{
+  color:var(--color-accent-strong);
+  font-size:.78rem;
+  font-weight:900;
+  letter-spacing:.04em;
+}
+.interpretation-room-region-detail__summary>h2{
+  margin:0;
+  font-size:1.35rem;
+  line-height:1.25;
+}
+.interpretation-room-region-detail__summary>p{
+  max-width:56rem;
+  margin:.3rem 0 0;
+  color:var(--color-muted);
+  font-size:.9rem;
+  line-height:1.6;
+}
+.region-chip__copy strong{
+  overflow:visible;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  white-space:normal;
+  text-overflow:clip;
+}
+.region-chip__copy small{
+  white-space:nowrap;
+}
