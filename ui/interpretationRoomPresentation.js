@@ -199,12 +199,14 @@ function renderInterpretationEntry(output) {
   const groups = output?.overview?.attention?.groups || [];
   const hasSubjective = output?.subjectiveContext?.state && output.subjectiveContext.state !== "NONE";
   const conditionCount = Number(output?.overview?.attention?.counts?.conditionDifferences || 0);
+  const resultTarget = groups.length ? "#interpretation-attention-title" : conditionCount ? "#interpretation-conditions-title" : hasSubjective ? "#interpretation-subjective-title" : "#interpretation-next-title";
+  const relationTarget = hasSubjective ? "#interpretation-subjective-title" : conditionCount ? "#interpretation-conditions-title" : "#interpretation-next-title";
   return `<section class="interpretation-room-entry" aria-labelledby="interpretation-entry-title">
     <div class="interpretation-room-section-title interpretation-room-section-title--compact"><div><small>解釈の入口</small><h2 id="interpretation-entry-title">今回の結果を読む順序</h2></div><p>数値そのものより先に、何を確認する結果なのかを整理します。</p></div>
     <div class="interpretation-room-entry-grid">
-      <a href="#interpretation-attention-title"><span>${interpretationIcon("trend")}</span><div><strong>今回わかること</strong><p>${escapeHtml(entryKnownText(output))}</p></div><i aria-hidden="true">›</i></a>
-      <a href="${groups.length ? "#interpretation-attention-title" : "#interpretation-conditions-title"}"><span>${interpretationIcon(groups.length ? "interpretation" : "conditions")}</span><div><strong>注目する理由を確認</strong><p>${groups.length ? `部位を数値順ではなく、${groups.length}種類の「確認する理由」で整理しています。` : conditionCount ? "部位表示と条件差を分けて確認します。" : "今回の基準位置から確認します。"}</p></div><i aria-hidden="true">›</i></a>
-      <a href="${hasSubjective ? "#interpretation-subjective-title" : conditionCount ? "#interpretation-conditions-title" : "#interpretation-next-title"}"><span>${interpretationIcon(hasSubjective ? "person" : "conditions")}</span><div><strong>${hasSubjective ? "本人の記録と分けて見る" : "条件と結果を分けて見る"}</strong><p>${hasSubjective ? "本人が記録した疲労感は、12部位の数値とは別の情報として並べて確認します。" : conditionCount ? "前回から変わった条件を、数値変化の原因と決めずに並べて確認します。" : "今回確認できる事実を整理して、次の比較につなげます。"}</p></div><i aria-hidden="true">›</i></a>
+      <a href="${resultTarget}"><span>${interpretationIcon("trend")}</span><div><strong>今回わかること</strong><p>${escapeHtml(entryKnownText(output))}</p></div><i aria-hidden="true">›</i></a>
+      <a href="${resultTarget}"><span>${interpretationIcon(groups.length ? "interpretation" : "conditions")}</span><div><strong>${groups.length ? "注目する理由を確認" : conditionCount ? "条件差を確認" : "次の比較につなげる"}</strong><p>${groups.length ? `部位を数値順ではなく、${groups.length}種類の「確認する理由」で整理しています。` : conditionCount ? "部位表示と条件差を分けて確認します。" : "今回確認できる事実を整理して、次の比較につなげます。"}</p></div><i aria-hidden="true">›</i></a>
+      <a href="${relationTarget}"><span>${interpretationIcon(hasSubjective ? "person" : "conditions")}</span><div><strong>${hasSubjective ? "本人の記録と分けて見る" : conditionCount ? "条件と結果を分けて見る" : "次に確かめる"}</strong><p>${hasSubjective ? "本人が記録した疲労感は、12部位の数値とは別の情報として並べて確認します。" : conditionCount ? "前回から変わった条件を、数値変化の原因と決めずに並べて確認します。" : "今回を比較点として、次の記録で確かめる内容を確認します。"}</p></div><i aria-hidden="true">›</i></a>
     </div>
   </section>`;
 }
@@ -446,12 +448,19 @@ function renderNext(output) {
   const check = output?.nextCheck || {}, checkCopy = NEXT_CHECK_COPY[check.code] || NEXT_CHECK_COPY.CONTINUE_COMPARABLE_RECORDS;
   return `<section class="interpretation-room-next interpretation-room-next--v3" aria-labelledby="interpretation-next-title"><div class="interpretation-room-section-title"><div><small>自己理解を次へつなぐ</small><h2 id="interpretation-next-title">次に確かめる</h2></div><p>今回の解釈を次の比較につなげるため、確認方法を選べます。</p></div><div class="interpretation-room-next-check"><span class="next-icon">${interpretationIcon("flag")}</span><div><small>次の確認ポイント</small><strong>${escapeHtml(checkCopy)}</strong>${check.userRecorded ? `<p><b>自分で残した次回確認</b><span>${escapeHtml(check.userRecorded)}</span></p>` : ""}</div></div><div class="interpretation-room-action-grid">${actions.map((action, index) => renderAction(action, output, { primary: index === 0 })).join("")}</div></section>`;
 }
+function publicConstructText(value = "") {
+  return String(value || "")
+    .replace(/Reference[- ]?100/gi, "基準100")
+    .replace(/reference[- ]?100/gi, "基準100")
+    .replace(/Reference/gi, "基準");
+}
+
 function renderAdvanced(output, region) {
   if (!region) return "";
   const evidence = output?.advanced?.evidence?.regions?.[region.regionId] || null;
   if (!evidence) return renderCalculationDetails(region);
   const sources = Array.isArray(evidence.sources) ? evidence.sources : [];
-  return `${renderCalculationDetails(region)}<details class="interpretation-room-advanced"><summary>計算の考え方と根拠を詳しく見る</summary><div>${evidence.construct ? `<p><strong>この数値が表す内容</strong><br>${escapeHtml(evidence.construct)}</p>` : ""}${sources.length ? `<p><strong>この計算の背景資料</strong></p><ul>${sources.map((source) => `<li>${escapeHtml(source.label || "参考資料")}${source.role ? ` — ${escapeHtml(source.role)}` : ""}</li>`).join("")}</ul>` : ""}<p class="interpretation-room-boundary-line">ここでは、選択した部位の計算に関係する情報を確認できます。</p></div></details>`;
+  return `${renderCalculationDetails(region)}<details class="interpretation-room-advanced"><summary>計算の考え方と根拠を詳しく見る</summary><div>${evidence.construct ? `<p><strong>この数値が表す内容</strong><br>${escapeHtml(publicConstructText(evidence.construct))}</p>` : ""}${sources.length ? `<p><strong>この計算の背景資料</strong></p><ul>${sources.map((source) => `<li>${escapeHtml(source.label || "参考資料")}${source.role ? ` — ${escapeHtml(source.role)}` : ""}</li>`).join("")}</ul>` : ""}<p class="interpretation-room-boundary-line">ここでは、選択した部位の計算に関係する情報を確認できます。</p></div></details>`;
 }
 export function renderInterpretationRoom({ output } = {}) {
   if (!output?.state?.targetAvailable) {
