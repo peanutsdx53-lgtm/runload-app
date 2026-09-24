@@ -255,7 +255,7 @@ const REASON_COPY = Object.freeze({
 });
 function reasonRegionMeta(region = {}) {
   if (region.reasonCode === "REPEATED_DIRECTION") {
-    return `過去${Number(region.pastMatchingDirectionCount || 0)}回でも同じ方向`;
+    return `同方向 ${Number(region.pastMatchingDirectionCount || 0)}回`;
   }
   if (region.reasonCode === "PREVIOUS_CHANGE" && finite(region.previousDifference)) {
     return `前回から ${signed(region.previousDifference)}`;
