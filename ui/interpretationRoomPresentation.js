@@ -45,6 +45,9 @@ const INTERPRETATION_ICONS = Object.freeze({
   plan: '<rect x="5" y="5" width="14" height="15" rx="2"/><path d="M8 3v4M16 3v4M8 11h8M8 15h5"/>',
   record: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>',
   support: '<circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/>',
+  up: '<path d="m6 15 6-6 6 6"/><path d="M12 9v10"/>',
+  down: '<path d="m6 9 6 6 6-6"/><path d="M12 5v10"/>',
+  near: '<path d="M5 12h14"/><circle cx="12" cy="12" r="3"/>',
 });
 function interpretationIcon(name, className = "") {
   const paths = INTERPRETATION_ICONS[name] || INTERPRETATION_ICONS.interpretation;
@@ -78,6 +81,12 @@ function directionKey(direction = "") {
   if (direction === "BELOW_REFERENCE") return "below";
   if (direction === "REFERENCE_VICINITY") return "near";
   return "unavailable";
+}
+function directionIconName(direction = "") {
+  if (direction === "ABOVE_REFERENCE") return "up";
+  if (direction === "BELOW_REFERENCE") return "down";
+  if (direction === "REFERENCE_VICINITY") return "near";
+  return "reference";
 }
 
 function regionHref(output, regionId = "") {
@@ -491,7 +500,7 @@ function renderPatternBoard(output) {
       const copy = REASON_COPY[group.code] || { title: group.code, note: "", icon: "interpretation", tone: "neutral" };
       return `<article class="interpretation-room-pattern-group" data-tone="${escapeHtml(copy.tone)}">
         <header><span>${interpretationIcon(copy.icon)}</span><div><strong>${escapeHtml(copy.title)}</strong><small>${escapeHtml(copy.note)}</small></div><b>${group.regions.length}部位</b></header>
-        <div class="interpretation-room-region-chips">${group.regions.map((region) => `<a href="${escapeHtml(regionHref(output, region.regionId))}" data-direction="${escapeHtml(directionKey(region.referenceDirection))}"><span class="region-chip__marker">${interpretationIcon(region.referenceDirection === "REFERENCE_VICINITY" ? "reference" : "trend")}</span><span class="region-chip__copy"><strong>${escapeHtml(region.label)}</strong><small>${escapeHtml(reasonRegionMeta(region))}</small></span><b>${escapeHtml(number(region.value))}</b><i aria-hidden="true">›</i></a>`).join("")}</div>
+        <div class="interpretation-room-region-chips">${group.regions.map((region) => `<a href="${escapeHtml(regionHref(output, region.regionId))}" data-direction="${escapeHtml(directionKey(region.referenceDirection))}"><span class="region-chip__marker">${interpretationIcon(directionIconName(region.referenceDirection))}</span><span class="region-chip__copy"><strong>${escapeHtml(region.label)}</strong><small>${escapeHtml(reasonRegionMeta(region))}</small></span><b>${escapeHtml(number(region.value))}</b><i aria-hidden="true">›</i></a>`).join("")}</div>
       </article>`;
     }).join("")}</div>
   </section>`;
