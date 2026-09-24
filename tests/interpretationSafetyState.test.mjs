@@ -61,9 +61,9 @@ await testCase('INITIALIZATION-NORMALIZES-HIDDEN-CONSULTATION-FACTS',()=>{
   assert.match(bind,/normalizeEmbeddedBodyStatus\(form\);/);
 });
 
-await testCase('RUNLOAD-INTERPRETATION-NAME-STAYS-INSIDE-ITS-WORKSPACE',()=>{
+await testCase('INTERPRETATION-LABEL-STAYS-INSIDE-ITS-WORKSPACE',()=>{
   const room=read('ui/interpretationRoomPresentation.js');
-  assert.match(room,/今回のRunLoad解釈/);
+  assert.match(room,/今回の結果の解釈/);
   const outside=[
     'ui/screenArchitecture.js',
     'ui/appShell.js',
@@ -71,7 +71,7 @@ await testCase('RUNLOAD-INTERPRETATION-NAME-STAYS-INSIDE-ITS-WORKSPACE',()=>{
     'screens/historyScreen.js',
     'screens/simulationScreen.js',
   ].map(read).join('\n');
-  assert.doesNotMatch(outside,/RunLoad解釈|RUNLOAD INTERPRETATION|解釈エンジン/);
+  assert.doesNotMatch(outside,/今回の結果の解釈|RESULT INTERPRETATION|解釈エンジン/);
   assert.match(outside,/結果を整理する/);
 });
 
