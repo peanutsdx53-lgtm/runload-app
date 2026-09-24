@@ -1,4 +1,4 @@
-import { BODY_AREA_TAXONOMY, normalizeBodyAreaObservations, SAFETY_FLAG_KEYS } from "../core/runloadCore.js";
+import { BODY_AREA_TAXONOMY, normalizeBodyAreaObservations, SAFETY_FLAG_KEYS } from "../core/appCore.js";
 
 import { SUBJECTIVE_STATUS_LABELS } from "./recordPresentation.js";
 
