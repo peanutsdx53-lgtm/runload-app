@@ -1,4 +1,4 @@
-import { normalizePlanFactSession } from "../../core/runloadCore.js";
+import { normalizePlanFactSession } from "../../core/appCore.js";
 import { consumeCourseSelection } from "../flowSessionState.js";
 import { setHidden, showFormMessages } from "./formUtilities.js";
 
