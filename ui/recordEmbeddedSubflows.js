@@ -1,4 +1,4 @@
-import { BODY_AREA_LATERALITY, BODY_AREA_TAXONOMY, SAFETY_FLAG_KEYS, bodyRegionFamiliarName } from "../core/runloadCore.js";
+import { BODY_AREA_LATERALITY, BODY_AREA_TAXONOMY, SAFETY_FLAG_KEYS, bodyRegionFamiliarName } from "../core/appCore.js";
 import { escapeHtml } from "./commonComponents.js";
 import { SAFETY_FLAG_LABELS } from "./recordPresentation.js";
 import { subjectiveFieldsFromFeedback, subjectiveSummaryFromFields } from "./subjectivePresentation.js";
