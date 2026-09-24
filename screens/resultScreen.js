@@ -1,7 +1,7 @@
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate, formatLocalTime } from "../ui/recordPresentation.js";
 import { courseSummaryText } from "../ui/coursePresentation.js";
-import { bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/runloadCore.js";
+import { bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/appCore.js";
 import { officialRofJDescriptor } from "../core/rofJCore.js";
 import { findSavedRunMeasurement } from "../ui/runMeasurementState.js";
 
