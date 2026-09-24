@@ -10184,3 +10184,16 @@
     transform:none !important;
   }
 }
+
+/* Reading: every article card keeps the same vertical action alignment.
+ * Legacy odd-card layout rules must not turn the ninth card into block layout. */
+@media (min-width:80rem){
+  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd){
+    width:auto !important;
+    grid-column:auto !important;
+    justify-self:stretch !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+  }
+}

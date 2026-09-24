@@ -65,6 +65,16 @@ await test('READING-INTERACTIONS-PRESERVE-CONTEXT',()=>{
   assert.ok(source.includes('count.textContent'));
 });
 
+await test('READING-LAST-ODD-CARD-KEEPS-ACTION-ALIGNED',()=>{
+  const desktop=read('styles/desktop.css');
+  const finalFix=desktop.lastIndexOf('.screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd)');
+  assert.ok(finalFix>=0);
+  const tail=desktop.slice(finalFix,finalFix+420);
+  assert.ok(tail.includes('display:flex !important'));
+  assert.ok(tail.includes('flex-direction:column !important'));
+  assert.ok(tail.includes('align-items:stretch !important'));
+});
+
 await test('READING-LAYOUT-HAS-SEARCH-LARGER-TYPE-AND-RELATED-CARDS',()=>{
   const mobile=read('styles/mobile.css');
   const desktop=read('styles/desktop.css');
