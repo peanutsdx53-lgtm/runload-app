@@ -120,12 +120,15 @@ await test('UI-RESULT-REMOVES-PERSISTENT-EXPLANATION-CLUTTER',()=>{
 await test('UI-INTERPRETATION-HAS-MEANING-FIRST-WORKSPACE',()=>{
   const css=read('styles/interpretation-room.css');
   const presentation=read('ui/interpretationRoomPresentation.js');
-  assert.ok(css.includes('width: min(100%, 76rem);'));
+  assert.ok(css.includes('Interpretation Room V3 experience'));
+  assert.ok(css.includes('width:min(100%,84rem)'));
   assert.ok(css.includes('.interpretation-room-summary__metrics'));
+  assert.ok(css.includes('.interpretation-room-entry-grid'));
   assert.ok(css.includes('.interpretation-room-reason-groups'));
   assert.ok(presentation.includes('今回のRunLoad解釈'));
-  assert.ok(presentation.includes('注目する理由から見る'));
-  assert.ok(presentation.includes('分かること / 決めないこと'));
+  assert.ok(presentation.includes('今回の結果を読む順序'));
+  assert.ok(presentation.includes('注目する理由で見る'));
+  assert.ok(presentation.includes('確認できること / 今回だけでは決めないこと'));
   assert.ok(!presentation.includes('12部位から選ぶ'));
 });
 
