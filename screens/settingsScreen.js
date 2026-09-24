@@ -1,6 +1,6 @@
 import { APPEARANCE_MODE_OPTIONS, COLOR_THEME_OPTIONS, TEXT_SIZE_OPTIONS, normalizeAppSettings } from "../ui/appSettings.js";
 import { escapeHtml } from "../ui/commonComponents.js";
-import { PROFILE_AGE_BAND_OPTIONS } from "../core/runloadCore.js";
+import { PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
 
 function checked(current, value) {
   return current === value ? " checked" : "";
