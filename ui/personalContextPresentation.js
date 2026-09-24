@@ -8,7 +8,7 @@ import {
   labelForOption,
   normalizePersonalContext,
   summarizePersonalContext,
-} from "../core/runloadCore.js";
+} from "../core/appCore.js";
 
 function stringValue(value, fallback = "") {
   return value === undefined || value === null ? String(fallback) : String(value);
