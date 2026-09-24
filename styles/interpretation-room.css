@@ -2302,8 +2302,18 @@
   font-size:1rem;
   font-style:normal;
 }
-.interpretation-room-region-chips>a[data-direction="above"] .region-chip__marker{color:var(--color-map-high)}
-.interpretation-room-region-chips>a[data-direction="below"] .region-chip__marker{color:var(--color-map-low)}
+.interpretation-room-region-chips>a[data-direction="above"] .region-chip__marker{
+  color:var(--color-model);
+  background:var(--color-model-soft);
+}
+.interpretation-room-region-chips>a[data-direction="below"] .region-chip__marker{
+  color:var(--color-info);
+  background:var(--color-info-soft);
+}
+.interpretation-room-region-chips>a[data-direction="near"] .region-chip__marker{
+  color:var(--color-accent-strong);
+  background:var(--color-accent-soft);
+}
 
 .interpretation-room-context{
   grid-area:context;
