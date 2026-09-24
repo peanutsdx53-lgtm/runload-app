@@ -11082,3 +11082,28 @@
     grid-template-columns:2.6rem minmax(0,1fr) !important;
   }
 }
+
+
+/* ===== PC Interpretation immersive full desktop canvas 2026-09-24 ===== */
+@media (min-width:80rem){
+  #app>.app-shell.app-shell--immersive{
+    width:100% !important;
+    max-width:none !important;
+    min-height:100dvh !important;
+    margin:0 !important;
+    overflow:visible !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+  }
+
+  .app-shell--immersive .interpretation-room-header{
+    padding-inline:max(2rem,calc((100vw - 96rem)/2 + 1rem)) !important;
+  }
+
+  .app-shell--immersive .app-main{
+    width:100% !important;
+    max-width:none !important;
+    padding-inline:2rem !important;
+  }
+}
