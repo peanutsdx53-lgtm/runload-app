@@ -9,7 +9,7 @@ This document describes the current application structure. Historical audits, te
 Domain and deterministic interpretation logic only.
 
 - `runloadCore.js`: protected Primary Reference-100 calculation core.
-- `secondPillarRofJ.js`: protected ROF-J logic.
+- `rofJCore.js`: protected ROF-J logic.
 - `interpretationBase.js`: reusable persisted-result interpretation primitives.
 - `interpretationCore.js`: current beginner-facing interpretation projection. It consumes persisted outputs and does not recalculate Primary Reference-100 or ROF-J.
 
