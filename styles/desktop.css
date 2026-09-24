@@ -11178,7 +11178,7 @@
   }
 }
 
-@media (min-width:64rem){
+@media (min-width:76rem){
   .interpretation-room-selected-dashboard{
     grid-template-columns:minmax(0,1fr) 20rem !important;
     grid-template-areas:"detail next" !important;
@@ -11191,7 +11191,7 @@
   }
 
   .interpretation-room-selected-context{
-    grid-template-columns:minmax(0,1fr) 22rem !important;
+    grid-template-columns:minmax(0,1fr) 20rem !important;
     grid-template-areas:"conditions subjective" !important;
     gap:1.15rem !important;
   }
@@ -11214,6 +11214,10 @@
   }
 
   .interpretation-room-selected-v4 .interpretation-room-region-stats{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  .interpretation-room-selected-context .interpretation-room-condition-cards{
     grid-template-columns:repeat(3,minmax(0,1fr)) !important;
   }
 
