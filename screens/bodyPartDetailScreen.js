@@ -3,7 +3,7 @@ import { formatLocalDate } from "../ui/recordPresentation.js";
 import {
   bodyRegionFormalName,
   PRIMARY_REGIONAL_V2_MODEL_VERSION,
-} from "../core/runloadCore.js";
+} from "../core/appCore.js";
 
 function finite(value) { return value !== null && value !== "" && Number.isFinite(Number(value)); }
 function fmt(value, digits = 1) { return finite(value) ? Number(value).toFixed(digits).replace(/\.0$/, "") : "—"; }
