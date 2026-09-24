@@ -142,11 +142,7 @@ function render(result,previous,compare,data,course){
   const items=comparisonItems(result,previous,compare);
   const stats=comparisonStats(result,previous);
   const labels=changedConditionLabels(data);
-  if(!labels.length&&stats.changed===0){
-    return `<div class="simulation-v3-result simulation-v3-result--idle">
-      <section class="simulation-idle-state"><span>${simulationResultIcon("conditions")}</span><div><small>比較を始める</small><h3>まだ条件を変更していません</h3><p>右側で距離・時間・コースなどを変更すると、元の保存記録との差がここに表示されます。</p><strong>まず1項目だけ変えると、違いを読みやすくなります。</strong></div></section>
-    </div>`;
-  }
+  if(!labels.length&&stats.changed===0)return "";
   const message=`変更した条件は「${labels.join("、")}」です。元の記録との差を部位ごとに確認し、条件差と部位差を分けて読みます。`;
   return `<div class="simulation-v3-result">
     <section class="simulation-change-overview"><div class="simulation-change-overview__head"><div><small>RUNLOAD COMPARISON</small><h3>変化の見立て</h3><p>${message}</p></div><button type="button" data-action="simulation-toggle-compare" aria-pressed="${compare}">${compare?"基準100との位置を見る":"元の記録との差に戻る"}</button></div>
