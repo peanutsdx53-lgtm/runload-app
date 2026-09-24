@@ -48,7 +48,7 @@ function renderFirstUse() {
     ["結果を確認する", "保存後は、走行内容と12部位の目安を確認できます。気になる部位は詳細を開いて見返せます。"],
     ["履歴で振り返る", "過去の記録を探したり、同じ部位の変化を見返したりして、次に確認したいことへつなげます。"],
   ];
-  return `<div class="guide-lead"><p>RunLoadは、走行の記録・結果・履歴をつなげて振り返るアプリです。</p></div><div class="guide-step-list">${steps.map(([title, body], index) => `<article class="guide-step-card"><span aria-hidden="true">${index + 1}</span><div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(body)}</p></div></article>`).join("")}</div>`;
+  return `<div class="guide-lead"><p>このアプリは、走行の記録・結果・履歴をつなげて振り返るアプリです。</p></div><div class="guide-step-list">${steps.map(([title, body], index) => `<article class="guide-step-card"><span aria-hidden="true">${index + 1}</span><div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(body)}</p></div></article>`).join("")}</div>`;
 }
 
 function renderRecordGuide() {
@@ -83,8 +83,8 @@ function renderRecordsGuide() {
 }
 
 function renderSafetyGuide() {
-  return `<div class="guide-lead"><p>RunLoadは走行条件を整理して振り返るためのアプリで、身体や障害を判定するものではありません。</p></div><div class="guide-scope-grid"><article><h3>支援すること</h3><ul><li>走行・休養・コース事実の保存</li><li>12部位の目安（分かっている条件を使った比較用座標）</li><li>身体の記録と数値結果の区別</li><li>履歴、共有準備、読みもの</li></ul></article><article><h3>主張しないこと</h3><ul><li>実際の筋・腱・関節力</li><li>診断、原因、危険度、傷害確率</li><li>走行可否、受診要否、個別処方</li><li>部位間の物理的な大小順位</li></ul></article></div><div class="guide-card-grid">
-    <article><h3>身体の記録と公的な案内を分ける</h3><p>伝えたい身体情報は数値表示と分けて保存します。公式の救急案内と重なる種類の項目を選んだ場合は、RunLoadが緊急性を判定せず、公的な相談先を確認する導線を先に示します。</p></article>
+  return `<div class="guide-lead"><p>このアプリは走行条件を整理して振り返るためのアプリで、身体や障害を判定するものではありません。</p></div><div class="guide-scope-grid"><article><h3>支援すること</h3><ul><li>走行・休養・コース事実の保存</li><li>12部位の目安（分かっている条件を使った比較用座標）</li><li>身体の記録と数値結果の区別</li><li>履歴、共有準備、読みもの</li></ul></article><article><h3>主張しないこと</h3><ul><li>実際の筋・腱・関節力</li><li>診断、原因、危険度、傷害確率</li><li>走行可否、受診要否、個別処方</li><li>部位間の物理的な大小順位</li></ul></article></div><div class="guide-card-grid">
+    <article><h3>身体の記録と公的な案内を分ける</h3><p>伝えたい身体情報は数値表示と分けて保存します。公式の救急案内と重なる種類の項目を選んだ場合は、このアプリが緊急性を判定せず、公的な相談先を確認する導線を先に示します。</p></article>
     <article><h3>表示できる範囲</h3><p>部位ごとに扱える条件の範囲が異なります。扱えない条件では、数値を無理に示さず「範囲外」などと表示します。</p></article>
     <article><h3>自動送信しません</h3><p>共有する内容、相手、タイミングは自分で選びます。</p></article>
     <article><h3>確認できている範囲</h3><p>アプリの動作と表示は確認していますが、利用者を対象にした有効性の検証は行っていません。</p></article>
