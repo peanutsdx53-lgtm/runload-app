@@ -1,4 +1,4 @@
-import { SURFACE_FIELDS } from "../core/runloadCore.js";
+import { SURFACE_FIELDS } from "../core/appCore.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { subjectiveFieldsFromFeedback, subjectiveSummaryFromFields } from "../ui/subjectivePresentation.js";
 import { personalContextSummary } from "../ui/personalContextPresentation.js";
