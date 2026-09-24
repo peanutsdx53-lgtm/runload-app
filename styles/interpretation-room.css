@@ -1923,3 +1923,58 @@
     transform:none !important;
   }
 }
+
+
+/* ===== Interpretation Room V3 readability refinement 2026-09-24 ===== */
+.interpretation-room-summary--v3 .interpretation-room-summary__metrics p{
+  font-size:.86rem;
+  line-height:1.58;
+}
+.interpretation-room-condition-card .condition-title small{
+  font-size:.82rem;
+}
+.interpretation-room-condition-card .condition-values small{
+  font-size:.78rem;
+}
+.interpretation-room-condition-card>p{
+  font-size:.84rem;
+  line-height:1.55;
+}
+.interpretation-room-fatigue-flow small{
+  font-size:.8rem;
+}
+.interpretation-room-fatigue-flow strong em{
+  font-size:.76rem;
+}
+.interpretation-room-fatigue-flow p{
+  font-size:.84rem;
+  line-height:1.5;
+}
+.interpretation-room-subjective-note small{
+  font-size:.82rem;
+  line-height:1.55;
+}
+.interpretation-room-next-check>div>small{
+  font-size:.8rem;
+}
+.interpretation-room-next-check p b{
+  font-size:.78rem;
+}
+.interpretation-room-action__copy small{
+  font-size:.84rem;
+  line-height:1.55;
+}
+@media (max-width:34rem){
+  .interpretation-room-summary--v3 .interpretation-room-summary__metrics p,
+  .interpretation-room-condition-card>p,
+  .interpretation-room-fatigue-flow p,
+  .interpretation-room-action__copy small{
+    font-size:.88rem;
+  }
+  .interpretation-room-condition-card .condition-values small,
+  .interpretation-room-fatigue-flow small,
+  .interpretation-room-subjective-note small,
+  .interpretation-room-next-check>div>small{
+    font-size:.82rem;
+  }
+}
