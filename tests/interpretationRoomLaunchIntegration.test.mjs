@@ -109,7 +109,12 @@ await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST
   assert.match(source,/simulation-change-groups/);
   assert.match(source,/data-simulation-adjust/);
   assert.match(source,/data-simulation-condition-count/);
+  assert.match(source,/simulation-v3-result--idle/);
+  assert.match(source,/まだ条件を変更していません/);
+  assert.match(source,/set\('\[data-simulation-condition-count\]',String\(labels\.length\)\)/);
+  assert.match(source,/set\('\[data-simulation-region-count\]',String\(stats\.changed\)\)/);
   assert.match(source,/form\.addEventListener\("reset",\(event\)=>/);
+  assert.match(source,/compare=true/);
   assert.match(source,/event\.preventDefault\(\)/);
   assert.match(source,/setValue\("courseJson",JSON\.stringify\(course\)\)/);
   assert.doesNotMatch(source,/BODY_REGION_VIEWS/);
@@ -151,6 +156,8 @@ await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   assert.match(audit,/\.simulation-change-group>summary[\s\S]*font-size:\.88rem/);
   assert.match(audit,/PC Condition Compare V3 readability final/);
   assert.match(audit,/\.simulation-v3-adjust button,[\s\S]*font-size:\.8rem/);
+  assert.match(audit,/PC Condition Compare idle state/);
+  assert.match(audit,/\.simulation-idle-state[\s\S]*min-height:10rem/);
 });
 
 await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
@@ -170,6 +177,8 @@ await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
   assert.match(audit,/Condition Compare V3 mobile readability final/);
   assert.match(audit,/\.simulation-v3-adjust button,[\s\S]*font-size:12px/);
   assert.match(audit,/\.simulation-change-row__copy small,[\s\S]*font-size:11px/);
+  assert.match(audit,/Condition Compare V3 idle state/);
+  assert.match(audit,/\.simulation-idle-state[\s\S]*min-height:154px/);
 });
 
 await test('SIMULATION-SCREEN-HAS-V3-SUMMARY-QUICK-ADJUST-AND-NEXT-ACTIONS',()=>{
