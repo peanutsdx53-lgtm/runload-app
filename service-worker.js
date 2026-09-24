@@ -49,7 +49,6 @@ const PRECACHE_URLS = [
   "./ui/consultationPresentation.js",
   "./ui/coursePresentation.js",
   "./ui/guideContent.js",
-  "./ui/hierarchicalExplanation.js",
   "./ui/historyPresentation.js",
   "./ui/interpretationRoomPresentation.js",
   "./ui/bodyRegionVisuals.js",
