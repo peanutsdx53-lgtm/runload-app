@@ -514,7 +514,7 @@ function nextProjection(base = {}, selectedRegionId = "") {
   });
 }
 
-export function buildRunLoadInterpretation({
+export function buildInterpretation({
   targetExperience = null,
   allExperiences = [],
   rofSummary = null,
