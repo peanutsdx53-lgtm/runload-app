@@ -90,9 +90,11 @@ export function renderSimulationScreen({ services, context }) {
   const recordDate=dateLabel(recent?.date||"");
   const shareQuery=new URLSearchParams();
   if(recordId)shareQuery.set("recordId",recordId);
-  shareQuery.set("from","interpretation-room");
-  shareQuery.set("roomOrigin",safeRoomOrigin);
-  const shareHref=`#/consultation?${shareQuery.toString()}`;
+  if(from==="interpretation-room"){
+    shareQuery.set("from","interpretation-room");
+    shareQuery.set("roomOrigin",safeRoomOrigin);
+  }
+  const shareHref=`#/consultation${shareQuery.size?`?${shareQuery.toString()}`:""}`;
 
   const selfQuery=new URLSearchParams();
   if(from)selfQuery.set("from",from);
