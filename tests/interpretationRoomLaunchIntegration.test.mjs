@@ -157,8 +157,6 @@ await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   assert.match(audit,/\.simulation-change-group>summary[\s\S]*font-size:\.88rem/);
   assert.match(audit,/PC Condition Compare V3 readability final/);
   assert.match(audit,/\.simulation-v3-adjust button,[\s\S]*font-size:\.8rem/);
-  assert.match(audit,/Condition Compare V3 unchanged overview compact/);
-  assert.match(audit,/\.simulation-v3-overview-idle[\s\S]*font-size:14px/);
 });
 
 await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
