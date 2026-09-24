@@ -24,8 +24,13 @@ jobs:
       - name: Test suites
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          failures=0
           for file in tests/*.test.mjs; do
             echo "==> $file"
-            node "$file"
+            if ! node "$file"; then
+              failures=$((failures + 1))
+            fi
           done
+          echo "Failing suites: $failures"
+          test "$failures" -eq 0
