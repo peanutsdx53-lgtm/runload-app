@@ -1,6 +1,6 @@
 import { normalizeBodyProfile, STORAGE_KEYS } from "../../core/runloadCore.js";
 
-import { DEFAULT_JOURNAL_SETTINGS, applyJournalSettings, mergeJournalSettings } from "../appSettings.js";
+import { DEFAULT_APP_SETTINGS, applyAppSettings, mergeAppSettings } from "../appSettings.js";
 import { downloadJsonText } from "./browserUtilities.js";
 import { showDataMessage, showFormMessages } from "./formUtilities.js";
 import { clearRecordInputWorkspace } from "../recordInputWorkspace.js";
@@ -33,23 +33,23 @@ function readProfileForm(form) {
 
 function saveSettings(services, settingsUpdate) {
   const current = services.storage.settings.load();
-  const next = mergeJournalSettings(current, settingsUpdate);
+  const next = mergeAppSettings(current, settingsUpdate);
   const result = services.storage.settings.save(next);
   if (!result.ok) return { ...result, settings: next };
-  applyJournalSettings(next);
+  applyAppSettings(next);
   return { ok: true, settings: next };
 }
 
 export function saveSettingsAndProfile(services, settingsUpdate, profileUpdate) {
   const current = services.storage.settings.load();
-  const nextSettings = mergeJournalSettings(current, settingsUpdate);
+  const nextSettings = mergeAppSettings(current, settingsUpdate);
   const nextProfile = normalizeBodyProfile(profileUpdate);
   const result = services.storage.gateway.transact([
     { key: STORAGE_KEYS.settings, value: nextSettings },
     { key: STORAGE_KEYS.profile, value: nextProfile },
   ]);
   if (!result.ok) return result;
-  applyJournalSettings(nextSettings);
+  applyAppSettings(nextSettings);
   return { ok: true, settings: nextSettings, profile: nextProfile };
 }
 
@@ -193,7 +193,7 @@ export function bindSettings({ services, router, rerender }) {
   });
   bindImmediateDisplaySettings({ services, form });
   form?.querySelector('[data-action="reset-journal-settings"]')?.addEventListener("click", () => {
-    const result = saveSettings(services, DEFAULT_JOURNAL_SETTINGS);
+    const result = saveSettings(services, DEFAULT_APP_SETTINGS);
     if (!result.ok) {
       showFormMessages(form, ["標準設定を保存できませんでした。端末の保存状態を確認してください。"]);
       return;
