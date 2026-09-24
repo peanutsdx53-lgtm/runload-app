@@ -1,4 +1,4 @@
-import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkflow } from "./core/runloadCore.js";
+import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkflow } from "./core/appCore.js";
 
 import { createRofJServices } from "./core/rofJCore.js";
 import { createAppRouter } from "./ui/appRouter.js";
