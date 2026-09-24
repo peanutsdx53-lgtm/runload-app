@@ -188,26 +188,53 @@ function renderSummary(output) {
     </div>
   </section>`;
 }
-function entryKnownText(output) {
-  const counts = output?.overview?.attention?.counts || {};
-  const changed = Number(counts.previousChanged || 0), repeated = Number(counts.repeated || 0);
-  if (repeated) return `過去にも同じ方向が確認された部位が${repeated}部位あります。今回だけの変化と分けて確認できます。`;
-  if (changed) return `前回と比べられる部位のうち、${changed}部位で変化を確認できます。`;
-  return "今回の12部位を、それぞれの部位自身の基準100との関係で確認できます。";
-}
-function renderInterpretationEntry(output) {
+function interpretationSteps(output) {
   const groups = output?.overview?.attention?.groups || [];
   const hasSubjective = output?.subjectiveContext?.state && output.subjectiveContext.state !== "NONE";
   const conditionCount = Number(output?.overview?.attention?.counts?.conditionDifferences || 0);
-  const resultTarget = groups.length ? "#interpretation-attention-title" : conditionCount ? "#interpretation-conditions-title" : hasSubjective ? "#interpretation-subjective-title" : "#interpretation-next-title";
-  const relationTarget = hasSubjective ? "#interpretation-subjective-title" : conditionCount ? "#interpretation-conditions-title" : "#interpretation-next-title";
+  const steps = [];
+  if (groups.length) {
+    steps.push(Object.freeze({
+      target: "#interpretation-attention-title",
+      icon: "interpretation",
+      title: "注目する理由を見る",
+      note: `部位を数値順ではなく、${groups.length}種類の確認理由で整理します。`,
+    }));
+  }
+  if (conditionCount) {
+    steps.push(Object.freeze({
+      target: "#interpretation-conditions-title",
+      icon: "conditions",
+      title: "条件の違いを確認",
+      note: `前回から変わった${conditionCount}項目を、部位の変化とは分けて確認します。`,
+    }));
+  }
+  if (hasSubjective) {
+    steps.push(Object.freeze({
+      target: "#interpretation-subjective-title",
+      icon: "person",
+      title: "本人の記録と並べる",
+      note: "本人が記録した疲労感を、12部位の数値とは別の情報として確認します。",
+    }));
+  }
+  steps.push(Object.freeze({
+    target: "#interpretation-next-title",
+    icon: "flag",
+    title: "次に確かめる",
+    note: "今回の結果を比較点として、次の記録で確認する内容へ進みます。",
+  }));
+  return steps;
+}
+
+function renderInterpretationEntry(output) {
+  const steps = interpretationSteps(output);
   return `<section class="interpretation-room-entry" aria-labelledby="interpretation-entry-title">
-    <div class="interpretation-room-section-title interpretation-room-section-title--compact"><div><small>解釈の入口</small><h2 id="interpretation-entry-title">今回の結果を読む順序</h2></div><p>数値そのものより先に、何を確認する結果なのかを整理します。</p></div>
-    <div class="interpretation-room-entry-grid">
-      <a href="${resultTarget}"><span>${interpretationIcon("trend")}</span><div><strong>今回わかること</strong><p>${escapeHtml(entryKnownText(output))}</p></div><i aria-hidden="true">›</i></a>
-      <a href="${resultTarget}"><span>${interpretationIcon(groups.length ? "interpretation" : "conditions")}</span><div><strong>${groups.length ? "注目する理由を確認" : conditionCount ? "条件差を確認" : "次の比較につなげる"}</strong><p>${groups.length ? `部位を数値順ではなく、${groups.length}種類の「確認する理由」で整理しています。` : conditionCount ? "部位表示と条件差を分けて確認します。" : "今回確認できる事実を整理して、次の比較につなげます。"}</p></div><i aria-hidden="true">›</i></a>
-      <a href="${relationTarget}"><span>${interpretationIcon(hasSubjective ? "person" : "conditions")}</span><div><strong>${hasSubjective ? "本人の記録と分けて見る" : conditionCount ? "条件と結果を分けて見る" : "次に確かめる"}</strong><p>${hasSubjective ? "本人が記録した疲労感は、12部位の数値とは別の情報として並べて確認します。" : conditionCount ? "前回から変わった条件を、数値変化の原因と決めずに並べて確認します。" : "今回を比較点として、次の記録で確かめる内容を確認します。"}</p></div><i aria-hidden="true">›</i></a>
-    </div>
+    <div class="interpretation-room-section-title interpretation-room-section-title--compact"><div><small>解釈の入口</small><h2 id="interpretation-entry-title">今回の結果を読む順序</h2></div><p>確認できる情報だけを順に並べます。各項目から該当する整理内容へ移動できます。</p></div>
+    <div class="interpretation-room-entry-grid" data-count="${steps.length}">${steps.map((step, index) => `<a href="${step.target}">
+      <span class="interpretation-room-entry-step"><b>${index + 1}</b>${interpretationIcon(step.icon)}</span>
+      <div><strong>${escapeHtml(step.title)}</strong><p>${escapeHtml(step.note)}</p></div>
+      <i aria-hidden="true">›</i>
+    </a>`).join("")}</div>
   </section>`;
 }
 
@@ -423,16 +450,29 @@ function renderCalculationDetails(region) {
 }
 
 function renderUnderstanding(output) {
-  const counts = output?.overview?.attention?.counts || {}, known = [];
-  if (Number(counts.available || 0)) known.push(`${Number(counts.available)}部位を、それぞれの部位自身の基準100との関係で確認できます。`);
-  if (Number(counts.previousComparable || 0)) known.push(`前回と比較できる${Number(counts.previousComparable)}部位について、今回との差を確認できます。`);
-  if (Number(counts.repeated || 0)) known.push(`過去にも同じ方向が複数回確認された部位が${Number(counts.repeated)}部位あります。`);
-  if (output?.subjectiveContext?.difference?.eligible) known.push("本人が記録した走る前後の疲労感を、部位数値とは別に確認できます。");
+  const selected = output?.selectedRegion || null;
+  const counts = output?.overview?.attention?.counts || {};
+  const known = [];
   const pending = [];
-  if ((output?.conditions?.differences || []).length) pending.push("条件差と部位の変化は別々に整理し、複数回の比較で関係を確かめます。");
-  pending.push("各部位は、その部位自身の基準100・前回差・推移の順に確認します。");
+  if (selected) {
+    const previous = selected.previousComparison || {};
+    const comparableCount = Number(selected?.personalHistory?.comparableCount || 0);
+    known.push(`${selected.label}の今回値を、この部位自身の基準100との位置で確認できます。`);
+    if (previous.available) known.push(`比較できる前回記録からの差を確認できます。`);
+    if (comparableCount) known.push(`同じ部位・同じ計算基準で比較できる過去記録が${comparableCount}件あります。`);
+    if (output?.subjectiveContext?.difference?.eligible) known.push("本人が記録した走る前後の疲労感を、部位数値とは別に確認できます。");
+    if ((output?.conditions?.differences || []).length) pending.push("条件差と選択部位の変化は別々に整理し、複数回の比較で関係を確かめます。");
+    pending.push("この部位は他の部位と順位付けせず、基準100・前回差・推移の順に確認します。");
+  } else {
+    if (Number(counts.available || 0)) known.push(`${Number(counts.available)}部位を、それぞれの部位自身の基準100との関係で確認できます。`);
+    if (Number(counts.previousComparable || 0)) known.push(`前回と比較できる${Number(counts.previousComparable)}部位について、今回との差を確認できます。`);
+    if (Number(counts.repeated || 0)) known.push(`過去にも同じ方向が複数回確認された部位が${Number(counts.repeated)}部位あります。`);
+    if (output?.subjectiveContext?.difference?.eligible) known.push("本人が記録した走る前後の疲労感を、部位数値とは別に確認できます。");
+    if ((output?.conditions?.differences || []).length) pending.push("条件差と部位の変化は別々に整理し、複数回の比較で関係を確かめます。");
+    pending.push("各部位は、その部位自身の基準100・前回差・推移の順に確認します。");
+  }
   if (output?.subjectiveContext?.difference?.eligible) pending.push("本人の疲労感と部位数値は別々に記録し、それぞれの推移を確認します。");
-  return `<section class="interpretation-room-understanding interpretation-room-understanding--v3" aria-labelledby="interpretation-understanding-title"><div class="interpretation-room-section-title interpretation-room-section-title--compact"><div><small>解釈の確認事項</small><h2 id="interpretation-understanding-title">今回の読み方を整理</h2></div></div><div class="interpretation-room-understanding-grid"><article data-kind="known"><span>${interpretationIcon("interpretation")}</span><div><strong>今回確認できること</strong><ul>${known.slice(0,4).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div></article><article data-kind="pending"><span>${interpretationIcon("compare")}</span><div><strong>次回以降で確かめること</strong><ul>${pending.slice(0,3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div></article></div></section>`;
+  return `<section class="interpretation-room-understanding interpretation-room-understanding--v3" aria-labelledby="interpretation-understanding-title"><div class="interpretation-room-section-title interpretation-room-section-title--compact"><div><small>解釈の確認事項</small><h2 id="interpretation-understanding-title">${selected ? "この部位の読み方を整理" : "今回の読み方を整理"}</h2></div></div><div class="interpretation-room-understanding-grid"><article data-kind="known"><span>${interpretationIcon("interpretation")}</span><div><strong>今回確認できること</strong><ul>${known.slice(0,4).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div></article><article data-kind="pending"><span>${interpretationIcon("compare")}</span><div><strong>次回以降で確かめること</strong><ul>${pending.slice(0,3).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div></article></div></section>`;
 }
 const NEXT_CHECK_COPY = Object.freeze({
   ADD_COMPARABLE_RECORD: "同じ部位を次回も記録すると、今回を比較点にして前回差と推移を確認できます。",
@@ -473,7 +513,7 @@ export function renderInterpretationRoom({ output } = {}) {
   const selected = Boolean(output?.selectedRegion);
   return `<div class="interpretation-room${selected ? " interpretation-room--selected" : " interpretation-room--overview"}" data-interpretation-room-state="${selected ? "selected" : "overview"}">
     <header class="interpretation-room-hero interpretation-room-hero--v3"><div class="interpretation-room-hero__copy"><p>${escapeHtml(date)}</p><h1>${selected ? `${escapeHtml(output.selectedRegion.label)}をRunLoadで整理` : "今回の結果をRunLoadで整理"}</h1><p>${selected ? "この部位の基準100、前回差、最近の推移、走行条件を順に確認し、次の比較につなげます。" : "今回の数値、過去の記録、本人の記録、走行条件を分けて確認し、結果の意味と次の確認ポイントを整理します。"}</p></div><div class="interpretation-room-hero__mark"><span>${interpretationIcon("interpretation")}</span><div><strong>RunLoad Interpretation</strong><small>12部位を個別基準で整理</small></div></div></header>
-    ${renderSummary(output)}
+    ${selected ? "" : renderSummary(output)}
     ${selected ? "" : renderInterpretationEntry(output)}
     ${selected ? renderSelectedRegion(output) : renderAttentionGroups(output)}
     ${renderConditions(output)}
