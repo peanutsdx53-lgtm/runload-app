@@ -11230,3 +11230,85 @@
     min-height:4.25rem;
   }
 }
+
+
+/* ===== PC Interpretation independent selected columns 2026-09-24 ===== */
+@media (min-width:55rem){
+  .interpretation-room--selected-v4{
+    width:min(100%,90rem) !important;
+    max-width:90rem !important;
+    gap:1rem !important;
+  }
+
+  .interpretation-room-selected-workspace{
+    min-width:0;
+  }
+
+  .interpretation-room-selected-workspace :is(
+    .interpretation-room-region-detail--v3,
+    .interpretation-room-next-rail,
+    .interpretation-room-conditions,
+    .interpretation-room-subjective,
+    .interpretation-room-selected-advanced-stack
+  ){
+    min-width:0;
+    width:100%;
+    max-width:none;
+    box-sizing:border-box;
+  }
+}
+
+@media (min-width:76rem){
+  .interpretation-room-selected-workspace{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 22rem;
+    grid-template-areas:none;
+    gap:1.15rem;
+    align-items:start;
+  }
+
+  .interpretation-room-selected-main,
+  .interpretation-room-selected-side{
+    min-width:0;
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:1rem;
+    align-content:start;
+  }
+
+  .interpretation-room-selected-main{
+    grid-column:1;
+  }
+
+  .interpretation-room-selected-side{
+    grid-column:2;
+  }
+
+  .interpretation-room-selected-main>*,
+  .interpretation-room-selected-side>*{
+    grid-area:auto !important;
+  }
+
+  .interpretation-room-selected-main .interpretation-room-condition-cards{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  .interpretation-room-selected-side .interpretation-room-section-title{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:.4rem !important;
+    align-items:start !important;
+  }
+
+  .interpretation-room-selected-side .interpretation-room-subjective-layout{
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+
+  .interpretation-room-selected-side .interpretation-room-fatigue-flow{
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important;
+  }
+
+  .interpretation-room-selected-side .interpretation-room-fatigue-flow>aside{
+    grid-column:1/-1;
+    min-height:4.25rem;
+  }
+}
