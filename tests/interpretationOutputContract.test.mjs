@@ -3,7 +3,7 @@ import {
   INTERPRETATION_CORE_VERSION,
   INTERPRETATION_OUTPUT_SCHEMA_VERSION,
   buildRofValueMeaning,
-  buildRunLoadInterpretation,
+  buildInterpretation,
 } from '../core/interpretationCore.js';
 
 const results=[];
@@ -68,11 +68,11 @@ function fakeExperience({
 function build(opts={}){
   const target=opts.target||fakeExperience(opts);
   const all=opts.all||[target];
-  return buildRunLoadInterpretation({targetExperience:target,allExperiences:all,selectedRegionId:opts.selectedRegionId||'',origin:opts.origin||'result',rofSummary:opts.rofSummary||null,rofRecentReferences:opts.rofRecentReferences||{},supportDecision:opts.supportDecision||target.supportDecision});
+  return buildInterpretation({targetExperience:target,allExperiences:all,selectedRegionId:opts.selectedRegionId||'',origin:opts.origin||'result',rofSummary:opts.rofSummary||null,rofRecentReferences:opts.rofRecentReferences||{},supportDecision:opts.supportDecision||target.supportDecision});
 }
 
 await test('OUTPUT-SCHEMA-AND-READONLY-PROVENANCE',()=>{
-  const out=buildRunLoadInterpretation();
+  const out=buildInterpretation();
   assert.equal(INTERPRETATION_CORE_VERSION,'runload-interpretation-core-v4.0');
   assert.equal(out.schemaVersion,INTERPRETATION_OUTPUT_SCHEMA_VERSION);
   assert.equal(out.state.targetAvailable,false);
