@@ -5128,3 +5128,43 @@ html.consult-viewer-open{overflow:hidden}
   font-size:13px;
   line-height:1.5;
 }
+
+
+/* ===== Condition Compare V3 unchanged overview compact 2026-09-24 ===== */
+.screen-layout--simulation.simulation-v3.is-unchanged .simulation-v3-overview-grid{
+  display:none;
+}
+.screen-layout--simulation.simulation-v3 .simulation-v3-overview-idle{
+  margin-top:12px;
+  padding:12px 13px;
+  display:grid;
+  grid-template-columns:40px minmax(0,1fr);
+  gap:10px;
+  align-items:start;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--surface2);
+}
+.screen-layout--simulation.simulation-v3 .simulation-v3-overview-idle[hidden]{
+  display:none;
+}
+.screen-layout--simulation.simulation-v3 .simulation-v3-overview-idle>span{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  color:var(--accent-strong);
+  background:var(--accent-soft);
+}
+.screen-layout--simulation.simulation-v3 .simulation-v3-overview-idle strong{
+  display:block;
+  font-size:14px;
+  line-height:1.4;
+}
+.screen-layout--simulation.simulation-v3 .simulation-v3-overview-idle p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+}
