@@ -118,6 +118,18 @@ await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST
   assert.doesNotMatch(source,/function latestValues/);
 });
 
+await test('SIMULATION-CHANGES-CAN-BE-REVERTED-INDIVIDUALLY',()=>{
+  const source=read('ui/interactions/simulationInteractions.js');
+  assert.match(source,/function changedConditionItems\(data\)/);
+  assert.match(source,/data-simulation-revert/);
+  assert.match(source,/if\(id==="distanceKm"\)/);
+  assert.match(source,/if\(id==="durationMinutes"\)/);
+  assert.match(source,/if\(id==="runningFormat"\)/);
+  assert.match(source,/if\(id==="courseJson"\)/);
+  assert.match(source,/simulation-change-group--collapsed/);
+  assert.match(source,/const order=\["above","below","reference","unavailable"\]/);
+});
+
 await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   const css=read('styles/desktop.css');
   const marker='PC Condition Compare V3 experience 2026-09-24';
@@ -130,6 +142,9 @@ await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   assert.match(audit,/\.simulation-change-groups[\s\S]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(audit,/\.simulation-change-row__copy strong[\s\S]*font-size:\.92rem/);
   assert.match(audit,/\.simulation-v3-next-grid[\s\S]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+  assert.match(audit,/PC Condition Compare V3 reversible controls/);
+  assert.match(audit,/\.assumption-chips button[\s\S]*font-size:\.76rem/);
+  assert.match(audit,/\.simulation-change-group>summary[\s\S]*font-size:\.88rem/);
 });
 
 await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
@@ -143,6 +158,9 @@ await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
   assert.match(audit,/\.measure-field input[\s\S]*font-size:24px/);
   assert.match(audit,/\.simulation-change-row__copy strong[\s\S]*font-size:13px/);
   assert.match(audit,/\.simulation-v3-next-grid strong[\s\S]*font-size:13px/);
+  assert.match(audit,/Condition Compare V3 reversible chips/);
+  assert.match(audit,/\.assumption-chips button[\s\S]*font-size:11px/);
+  assert.match(audit,/\.simulation-change-group>summary strong[\s\S]*font-size:13px/);
 });
 
 await test('SIMULATION-SCREEN-HAS-V3-SUMMARY-QUICK-ADJUST-AND-NEXT-ACTIONS',()=>{
