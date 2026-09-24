@@ -3791,3 +3791,190 @@ html.consult-viewer-open{overflow:hidden}
   line-height: 1.25;
   font-weight: 760;
 }
+
+
+/* ===== Reading experience refresh 2026-09-24 ===== */
+.screen-layout--reading .reading-intro{
+  max-width:44rem;
+}
+.screen-layout--reading .reading-intro h1{
+  font-size:clamp(24px,7vw,32px);
+  letter-spacing:-.035em;
+}
+.screen-layout--reading .reading-intro p:last-child{
+  max-width:38rem;
+  font-size:9px;
+  line-height:1.65;
+}
+.screen-layout--reading .recommend{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:12px;
+  margin-top:16px;
+  padding:15px 16px;
+  border-color:color-mix(in srgb,var(--accent) 34%,var(--line));
+  background:linear-gradient(135deg,color-mix(in srgb,var(--soft) 78%,var(--surface)),var(--surface));
+  box-shadow:0 12px 28px rgba(22,37,47,.08);
+}
+.screen-layout--reading .recommend__copy{
+  min-width:0;
+}
+.screen-layout--reading .recommend small{
+  color:var(--accent);
+  letter-spacing:.04em;
+}
+.screen-layout--reading .recommend strong{
+  margin-top:4px;
+  color:var(--ink);
+  line-height:1.4;
+}
+.screen-layout--reading .recommend p{
+  margin-top:6px;
+}
+.screen-layout--reading .recommend button{
+  width:100%;
+  min-height:42px;
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 13px;
+  border-color:var(--accent);
+  background:var(--accent);
+  color:var(--color-on-accent);
+}
+.screen-layout--reading .recommend button b,
+.screen-layout--reading .article-card__open b{
+  font-size:15px;
+  line-height:1;
+}
+.screen-layout--reading .filter-strip{
+  margin-top:20px;
+}
+.screen-layout--reading .filter-strip-head span{
+  color:var(--ink);
+  font-size:9px;
+  font-weight:900;
+}
+.screen-layout--reading .filters{
+  margin-top:8px;
+}
+.screen-layout--reading .filters button{
+  min-height:36px;
+  padding-inline:12px;
+  font-size:8.5px;
+}
+.screen-layout--reading .reading-list-head{
+  margin-top:14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.screen-layout--reading .reading-list-head strong{
+  font-size:10px;
+}
+.screen-layout--reading .reading-list-head span{
+  color:var(--muted);
+  font-size:8px;
+  font-weight:800;
+}
+.screen-layout--reading .grid{
+  margin-top:8px;
+  gap:10px;
+}
+.screen-layout--reading .article-card{
+  min-width:0;
+  min-height:174px;
+  padding:14px 15px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  border-radius:18px;
+  box-shadow:0 8px 22px rgba(22,37,47,.055);
+}
+.screen-layout--reading .article-card__copy{
+  min-width:0;
+  display:grid;
+  gap:5px;
+}
+.screen-layout--reading .article-card small{
+  margin:0;
+  color:var(--accent);
+  font-size:7.5px;
+  letter-spacing:.02em;
+}
+.screen-layout--reading .article-card strong{
+  margin:0;
+  font-size:12.5px;
+  line-height:1.45;
+}
+.screen-layout--reading .article-card p{
+  margin:0;
+  font-size:8.5px;
+  line-height:1.6;
+}
+.screen-layout--reading .article-card__open{
+  width:100%;
+  min-height:40px;
+  margin:auto 0 0;
+  padding:8px 2px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border:0;
+  border-top:1px solid var(--line);
+  border-radius:0;
+  background:transparent;
+  color:var(--accent2);
+  font-size:8.5px;
+  font-weight:900;
+}
+.screen-layout--reading .drawer{
+  background:rgba(22,37,47,.42);
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
+}
+.screen-layout--reading .sheet{
+  overscroll-behavior:contain;
+}
+.screen-layout--reading .reading-detail{
+  max-width:100%;
+}
+.screen-layout--reading .sheet-head{
+  padding-bottom:12px;
+  border-bottom:1px solid var(--line);
+}
+.screen-layout--reading .sheet-head strong{
+  max-width:28ch;
+}
+.screen-layout--reading .reading-detail>.lead{
+  margin-top:14px;
+  color:var(--ink);
+  font-size:9.5px;
+  font-weight:750;
+  line-height:1.65;
+}
+.screen-layout--reading .body-copy{
+  margin-top:16px;
+  gap:12px;
+}
+.screen-layout--reading .body-copy p{
+  font-size:9px;
+  line-height:1.8;
+}
+.screen-layout--reading .points{
+  margin-top:18px;
+  padding:13px 14px;
+  background:color-mix(in srgb,var(--soft) 64%,var(--surface));
+}
+.screen-layout--reading .points strong{
+  font-size:9.5px;
+}
+.screen-layout--reading .points ul{
+  margin-top:8px;
+  font-size:8.8px;
+  line-height:1.7;
+}
