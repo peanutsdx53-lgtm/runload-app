@@ -112,6 +112,7 @@ export function renderSimulationScreen({ services, context }) {
     ${nextCheck?`<section class="carry-card simulation-v3-carry" aria-label="今回から引き継いだ内容"><span>${simulationScreenIcon("flag")}</span><div><small>今回の記録から</small><strong>次に確認したいこと</strong><p>${escapeHtml(nextCheck)}</p></div></section>`:""}
     <section class="simulation-v3-overview" aria-labelledby="simulationOverviewTitle">
       <div class="simulation-v3-section-head"><div><small>比較の要約</small><h2 id="simulationOverviewTitle">今回の比較で見えること</h2></div><p>条件を変更した結果を、元の記録との差として整理します。</p></div>
+      <div class="simulation-v3-overview-idle" hidden><span>${simulationScreenIcon("conditions")}</span><div><strong>条件を1項目変更すると比較が始まります</strong><p>右側で距離・時間・コースなどを変更すると、元の保存記録との差だけを表示します。</p></div></div>
       <div class="simulation-v3-overview-grid">
         <article><span>${simulationScreenIcon("conditions")}</span><div><small>変更した条件</small><strong><span data-simulation-condition-count>0</span><em>項目</em></strong><p>元の記録から変更した条件の数です。</p></div></article>
         <article><span>${simulationScreenIcon("compare")}</span><div><small>変化を確認</small><strong><span data-simulation-region-count>0</span><em>部位</em></strong><p>元の記録から1ポイント以上の差がある部位です。</p></div></article>
