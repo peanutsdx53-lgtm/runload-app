@@ -232,7 +232,7 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
   return `<div class="screen screen--consultation screen-layout screen-layout--consultation secondary-derived-screen" data-consultation-screen data-share-prep>
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>共有用にまとめる</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
-    <section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録から、指導者などに見せる内容を整理します。RunLoadから相手へ自動送信はしません。</p></section>
+    <section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録から、指導者などに見せる内容を整理します。このアプリから相手へ自動送信はしません。</p></section>
 
     <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果を確認</a></section>
 
@@ -264,7 +264,7 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
 
     <div class="share-viewer" data-consult-viewer hidden>
       <div class="share-viewer-shell">
-        <header class="share-viewer-head"><div><small>RUNLOAD SHARE</small><strong>共有内容</strong></div><button type="button" data-action="close-consult-viewer" aria-label="共有表示を閉じる">×</button></header>
+        <header class="share-viewer-head"><div><small>SHARE</small><strong>共有内容</strong></div><button type="button" data-action="close-consult-viewer" aria-label="共有表示を閉じる">×</button></header>
         <section class="share-viewer-purpose"><small>確認内容</small><strong data-consult-viewer-question>${escapeHtml(initialQuestion || "未入力")}</strong></section>
         <div class="share-viewer-grid">${viewerCards}</div>
         <footer>走行距離は部位の数値へ掛けず、別の走行事実として扱います。部位の目安は診断や安全性を判定する数値ではありません。</footer>
@@ -272,10 +272,10 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
     </div>
 
     <article class="share-print-document" data-consult-share-document>
-      <header class="share-document-head"><div><small>RUNLOAD SHARE</small><h1>共有資料</h1></div><div><span>${escapeHtml(formatLocalDate(record.date))}</span></div></header>
+      <header class="share-document-head"><div><small>SHARE</small><h1>共有資料</h1></div><div><span>${escapeHtml(formatLocalDate(record.date))}</span></div></header>
       <section class="share-document-purpose"><small>確認内容</small><strong data-consult-document-question>${escapeHtml(initialQuestion || "未入力")}</strong></section>
       <div class="share-document-flow">${documentBlocks}</div>
-      <footer><strong>RunLoadの表示について</strong><p>部位の目安は記録を振り返るための参考です。走行距離は部位の数値へ掛けず、別の走行事実として扱います。診断や安全性、けがの危険性、走行可否を判定する数値ではありません。</p></footer>
+      <footer><strong>表示内容について</strong><p>部位の目安は記録を振り返るための参考です。走行距離は部位の数値へ掛けず、別の走行事実として扱います。診断や安全性、けがの危険性、走行可否を判定する数値ではありません。</p></footer>
     </article>
 
     <p class="boundary">共有する内容は本人が選びます。個人的なメモなどは、必要な場合だけ含めてください。</p>
