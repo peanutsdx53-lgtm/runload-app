@@ -125,6 +125,10 @@ await test('SIMULATION-CHANGES-CAN-BE-REVERTED-INDIVIDUALLY',()=>{
   assert.match(source,/if\(id==="distanceKm"\)/);
   assert.match(source,/if\(id==="durationMinutes"\)/);
   assert.match(source,/if\(id==="runningFormat"\)/);
+  assert.match(source,/id:"runningDistanceKm"/);
+  assert.match(source,/id:"runningDurationMinutes"/);
+  assert.match(source,/if\(id==="runningDistanceKm"\)/);
+  assert.match(source,/if\(id==="runningDurationMinutes"\)/);
   assert.match(source,/if\(id==="courseJson"\)/);
   assert.match(source,/simulation-change-group--collapsed/);
   assert.match(source,/const order=\["above","below","reference","unavailable"\]/);
@@ -167,8 +171,8 @@ await test('SIMULATION-SCREEN-HAS-V3-SUMMARY-QUICK-ADJUST-AND-NEXT-ACTIONS',()=>
   const source=read('screens/simulationScreen.js');
   assert.match(source,/simulation-v3-overview/);
   assert.match(source,/今回の比較で見えること/);
-  assert.match(source,/data-simulation-condition-count/);
-  assert.match(source,/data-simulation-region-count/);
+  assert.match(source,/<span data-simulation-condition-count>0<\/span><em>項目<\/em>/);
+  assert.match(source,/<span data-simulation-region-count>0<\/span><em>部位<\/em>/);
   assert.match(source,/data-simulation-adjust="distanceKm:-0\.5"/);
   assert.match(source,/data-simulation-adjust="durationMinutes:5"/);
   assert.match(source,/この比較から確かめること/);
