@@ -1,5 +1,5 @@
 import { escapeHtml } from "../ui/commonComponents.js";
-import { V27_EMPHASIS_REGION_IDS, V27_REGIONS, BODY_AREA_BY_ID } from "../core/runloadCore.js";
+import { V27_EMPHASIS_REGION_IDS, V27_REGIONS, BODY_AREA_BY_ID } from "../core/appCore.js";
 
 const REGION_BY_ID = new Map(V27_REGIONS.map((region) => [region.id, region]));
 const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep-v27";
