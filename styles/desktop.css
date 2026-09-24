@@ -10896,3 +10896,29 @@
     min-width:0;
   }
 }
+
+
+/* ===== PC Condition Compare idle state 2026-09-24 ===== */
+@media (min-width:80rem){
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-result--idle{
+    padding:1rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state{
+    min-height:10rem;
+    padding:1.1rem 1.15rem;
+    grid-template-columns:3rem minmax(0,1fr);
+    gap:.9rem;
+    align-items:start;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state>span{
+    width:3rem;
+    height:3rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state h3{
+    font-size:1.22rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state p,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state strong{
+    font-size:.88rem;
+  }
+}
