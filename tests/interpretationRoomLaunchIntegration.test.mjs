@@ -149,6 +149,8 @@ await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   assert.match(audit,/PC Condition Compare V3 reversible controls/);
   assert.match(audit,/\.assumption-chips button[\s\S]*font-size:\.82rem/);
   assert.match(audit,/\.simulation-change-group>summary[\s\S]*font-size:\.88rem/);
+  assert.match(audit,/PC Condition Compare V3 readability final/);
+  assert.match(audit,/\.simulation-v3-adjust button,[\s\S]*font-size:\.8rem/);
 });
 
 await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
@@ -165,6 +167,9 @@ await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
   assert.match(audit,/Condition Compare V3 reversible chips/);
   assert.match(audit,/\.assumption-chips button[\s\S]*font-size:11px/);
   assert.match(audit,/\.simulation-change-group>summary strong[\s\S]*font-size:13px/);
+  assert.match(audit,/Condition Compare V3 mobile readability final/);
+  assert.match(audit,/\.simulation-v3-adjust button,[\s\S]*font-size:12px/);
+  assert.match(audit,/\.simulation-change-row__copy small,[\s\S]*font-size:11px/);
 });
 
 await test('SIMULATION-SCREEN-HAS-V3-SUMMARY-QUICK-ADJUST-AND-NEXT-ACTIONS',()=>{
