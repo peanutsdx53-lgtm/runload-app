@@ -59,10 +59,10 @@ await test('PWA-CACHE-NAME-IS-STABLE',()=>{
   assert.doesNotMatch(read('service-worker.js'),/desktop-final-visual-audit|20260922-37/);
 });
 
-await test('RUNLOAD-INTERPRETATION-NAME-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-WORKSPACE',()=>{
+await test('INTERPRETATION-LABEL-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-WORKSPACE',()=>{
   const room=read('ui/interpretationRoomPresentation.js');
-  assert.match(room,/今回のRunLoad解釈/);
-  assert.match(room,/RUNLOAD INTERPRETATION/);
+  assert.match(room,/今回の結果の解釈/);
+  assert.match(room,/RESULT INTERPRETATION/);
   const outside=[
     'ui/screenArchitecture.js',
     'ui/appShell.js',
@@ -72,7 +72,7 @@ await test('RUNLOAD-INTERPRETATION-NAME-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-W
     'screens/bodyPartDetailScreen.js',
     'screens/simulationScreen.js',
   ].map(read).join('\n');
-  assert.doesNotMatch(outside,/RunLoad解釈|RUNLOAD INTERPRETATION|解釈エンジン/);
+  assert.doesNotMatch(outside,/今回の結果の解釈|RESULT INTERPRETATION|解釈エンジン/);
 });
 
 const failed=results.filter((x)=>x.status==='FAIL');
