@@ -2482,9 +2482,11 @@
 }
 
 .interpretation-room-next-rail{
-  grid-area:next;
   padding:1rem;
   align-self:start;
+}
+.interpretation-room-dashboard>.interpretation-room-next-rail{
+  grid-area:next;
 }
 .interpretation-room-next-rail__head{
   display:grid;
