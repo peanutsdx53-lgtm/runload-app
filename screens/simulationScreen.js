@@ -107,7 +107,7 @@ export function renderSimulationScreen({ services, context }) {
     <a class="back-link" data-context-back-duplicate href="${escapeHtml(back)}">‹ ${escapeHtml(backLabel)}</a>
     <section class="intro simulation-v3-hero">
       <div class="simulation-v3-hero__copy">${recordDate?`<time>${escapeHtml(recordDate)}</time>`:""}<p class="eyebrow">CONDITION COMPARE</p><h1>${escapeHtml(comparisonTitle)}</h1><p>保存された記録を基準に、変更した条件だけで12部位を再計算し、元の記録との差を整理します。</p></div>
-      <div class="simulation-v3-hero__mark"><span>${simulationScreenIcon("compare")}</span><div><strong>RunLoad Condition Compare</strong><small>条件差と部位差を分けて確認</small></div></div>
+      <div class="simulation-v3-hero__mark"><span>${simulationScreenIcon("compare")}</span><div><strong>条件比較</strong><small>条件差と部位差を分けて確認</small></div></div>
     </section>
     ${nextCheck?`<section class="carry-card simulation-v3-carry" aria-label="今回から引き継いだ内容"><span>${simulationScreenIcon("flag")}</span><div><small>今回の記録から</small><strong>次に確認したいこと</strong><p>${escapeHtml(nextCheck)}</p></div></section>`:""}
     <section class="simulation-v3-overview" aria-labelledby="simulationOverviewTitle">
