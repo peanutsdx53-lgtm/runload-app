@@ -56,7 +56,7 @@ The application does not bulk-download tiles or provide offline map tile storage
 
 GPS permission is requested only when the user starts measurement.
 
-During measurement, RunLoad processes location points in the browser. If the user keeps **Save route on this device** enabled, the simplified route is stored in browser local storage after the corresponding saved record is successfully saved.
+During measurement, the application processes location points in the browser. If the user keeps **Save route on this device** enabled, the simplified route is stored in browser local storage after the corresponding saved record is successfully saved.
 
 Saved GPS routes:
 
