@@ -58,6 +58,13 @@ await test('SETTINGS-SHARE-PROFILE-BASIC-FIELDS-STAY-WITHIN-DISCLOSURE',()=>{
   assert.match(css,/select\[name="profileAgeBand"\],[\s\S]*?select\[name="profileSex"\][\s\S]*?width:\s*min\(13rem, 100%\)\s*!important;[\s\S]*?min-width:\s*0\s*!important;/);
 });
 
+await test('SETTINGS-OMITS-REDUNDANT-ABOUT-SECTION',()=>{
+  const source=read('screens/settingsScreen.js');
+  assert.doesNotMatch(source,/このアプリについて/);
+  assert.doesNotMatch(source,/ABOUT RUNLOAD/);
+  assert.doesNotMatch(source,/<p class="group-title">ABOUT<\/p>/);
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Settings Share Profile',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;

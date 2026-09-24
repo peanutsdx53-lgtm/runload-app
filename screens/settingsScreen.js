@@ -91,12 +91,6 @@ export function renderSettingsScreen({ services, context }) {
       </div></details>
     </section>
 
-    <section class="group"><p class="group-title">ABOUT</p><details class="disclosure"><summary><span><small>ABOUT RUNLOAD</small><strong>このアプリについて</strong><span>目的と扱わない範囲</span></span><i>⌄</i></summary><div class="disclosure-body"><div class="about-grid">
-      <div><small>目的</small><strong>初心者ランナーが、自分の記録を理解し自分で判断するための材料を整理する</strong></div>
-      <div><small>扱わないこと</small><strong>診断、処方、けがの危険性、安全性、走行可否の自動判断</strong></div>
-      <div><small>データ</small><strong>新アプリ公開後に作成した記録だけを対象とする</strong></div>
-      <div><small>現在の段階</small><strong>リリース前正規版。スマートフォンUI/UXを仕上げています</strong></div>
-    </div></div></details></section>
     </div>
   </div>`;
 }
