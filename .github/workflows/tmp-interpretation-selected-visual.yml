@@ -1,0 +1,40 @@
+name: Temporary interpretation visual audit
+
+on:
+  push:
+    branches:
+      - fix/interpretation-selected-composition-20260924
+  workflow_dispatch:
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find browser
+        shell: bash
+        run: |
+          set -e
+          command -v google-chrome || command -v chromium || command -v chromium-browser
+      - name: Start local server
+        shell: bash
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/runload-http.log 2>&1 &
+          echo $! >/tmp/runload-http.pid
+          sleep 2
+          curl -I http://127.0.0.1:8000/tmp/interpretation-selected-visual.html
+      - name: Capture desktop screenshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          mkdir -p visual-audit
+          for spec in "1348,2048:user" "1440,1600:desktop" "1920,1400:wide" "1024,1500:compact"; do
+            size="${spec%%:*}"
+            name="${spec##*:}"
+            "$BROWSER" --headless --no-sandbox --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size="$size" --virtual-time-budget=1500 --screenshot="visual-audit/$name.png" http://127.0.0.1:8000/tmp/interpretation-selected-visual.html
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: interpretation-selected-visual-audit
+          path: visual-audit/*.png
