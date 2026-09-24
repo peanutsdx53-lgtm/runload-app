@@ -1,6 +1,6 @@
 import { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents, BODY_AREA_LATERALITY, BODY_AREA_LATERALITY_LABELS, BODY_AREA_TAXONOMY, SAFETY_FLAG_KEYS } from "../../core/runloadCore.js";
 
-import { ROF_J_DESCRIPTOR_MAP } from "../../core/secondPillarRofJ.js";
+import { ROF_J_DESCRIPTOR_MAP } from "../../core/rofJCore.js";
 import { booleanValue, numberValue, optionalNumberValue, setHidden, showFormMessages } from "./formUtilities.js";
 import { primarySurfaceSummary, slopeSummary } from "../coursePresentation.js";
 import { beginRecordInputJourney, clearRecordInputWorkspace, refreshActiveRecordInputWorkspace, restoreRecordInputWorkspace, saveRecordInputWorkspace } from "../recordInputWorkspace.js";
@@ -310,8 +310,8 @@ function recordInputReturnTo(context) {
   return `#/record-input${query ? `?${query}` : ""}`;
 }
 
-function secondPillarMessage(form, message, { error = false } = {}) {
-  const target = form.querySelector("[data-second-pillar-message]");
+function fatigueMessage(form, message, { error = false } = {}) {
+  const target = form.querySelector("[data-fatigue-message]");
   if (!target) return;
   target.hidden = false;
   target.textContent = message;
@@ -338,8 +338,8 @@ function rofAnchorText(value) {
   return `8・${ROF_J_DESCRIPTOR_MAP[8]} ／ 10・${ROF_J_DESCRIPTOR_MAP[10]}`;
 }
 
-function bindSecondPillarLifecycle(form, { services, router, context }) {
-  if (!services.secondPillar) return;
+function bindFatigueLifecycle(form, { services, router, context }) {
+  if (!services.fatigue) return;
   const overlay = form.querySelector("[data-record-rof-overlay]");
   const slider = form.querySelector("[data-record-rof-slider]");
   const valueOutput = form.querySelector("[data-record-rof-value]");
@@ -401,35 +401,35 @@ function bindSecondPillarLifecycle(form, { services, router, context }) {
     if (!touched) return;
     const value = Number(slider?.value);
     if (!Number.isInteger(value) || value < 0 || value > 10) {
-      secondPillarMessage(form, "疲労感を0〜10の整数から選択してください。", { error: true });
+      fatigueMessage(form, "疲労感を0〜10の整数から選択してください。", { error: true });
       return;
     }
     if (phase === "before") {
-      const begun = services.secondPillar.beginLifecycle({ createdAt: new Date().toISOString() });
-      if (!begun.ok) return secondPillarMessage(form, "疲労感の記録を開始できませんでした。通常の走行記録はそのまま保存できます。", { error: true });
+      const begun = services.fatigue.beginLifecycle({ createdAt: new Date().toISOString() });
+      if (!begun.ok) return fatigueMessage(form, "疲労感の記録を開始できませんでした。通常の走行記録はそのまま保存できます。", { error: true });
       const runId = begun.state.runId;
-      const pre = services.secondPillar.capturePreDirect(runId, value, new Date().toISOString());
-      if (!pre.ok) return secondPillarMessage(form, "走る前の疲労感を保存できませんでした。", { error: true });
-      const started = services.secondPillar.markRunStart(runId, new Date().toISOString());
-      if (!started.ok) return secondPillarMessage(form, "疲労感は保存しましたが、走行開始時刻を保存できませんでした。", { error: true });
+      const pre = services.fatigue.capturePreDirect(runId, value, new Date().toISOString());
+      if (!pre.ok) return fatigueMessage(form, "走る前の疲労感を保存できませんでした。", { error: true });
+      const started = services.fatigue.markRunStart(runId, new Date().toISOString());
+      if (!started.ok) return fatigueMessage(form, "疲労感は保存しましたが、走行開始時刻を保存できませんでした。", { error: true });
       close();
       bindRunAndNavigate(runId);
       return;
     }
 
     let runId = String(recordIdControl?.value || "");
-    if (!runId || !services.secondPillar.getPendingRun(runId)) {
-      const begun = services.secondPillar.beginLifecycle({ createdAt: new Date().toISOString() });
-      if (!begun.ok) return secondPillarMessage(form, "走った後の疲労感の記録を開始できませんでした。", { error: true });
+    if (!runId || !services.fatigue.getPendingRun(runId)) {
+      const begun = services.fatigue.beginLifecycle({ createdAt: new Date().toISOString() });
+      if (!begun.ok) return fatigueMessage(form, "走った後の疲労感の記録を開始できませんでした。", { error: true });
       runId = begun.state.runId;
     }
-    const state = services.secondPillar.getPendingRun(runId);
+    const state = services.fatigue.getPendingRun(runId);
     if (!state?.runEndAt) {
-      const ended = services.secondPillar.markRunEnd(runId, new Date().toISOString());
-      if (!ended.ok) return secondPillarMessage(form, "走行終了時刻を保存できませんでした。", { error: true });
+      const ended = services.fatigue.markRunEnd(runId, new Date().toISOString());
+      if (!ended.ok) return fatigueMessage(form, "走行終了時刻を保存できませんでした。", { error: true });
     }
-    const post = services.secondPillar.capturePostDirect(runId, value, new Date().toISOString());
-    if (!post.ok) return secondPillarMessage(form, "走った後の疲労感を保存できませんでした。走行記録自体は通常どおり保存できます。", { error: true });
+    const post = services.fatigue.capturePostDirect(runId, value, new Date().toISOString());
+    if (!post.ok) return fatigueMessage(form, "走った後の疲労感を保存できませんでした。走行記録自体は通常どおり保存できます。", { error: true });
     close();
     bindRunAndNavigate(runId);
   });
@@ -871,7 +871,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
   updateSubjectiveSummary(form);
   updatePersonalSummary(form);
   updateOptionalInputStatus(form);
-  bindSecondPillarLifecycle(form, { services, router, context });
+  bindFatigueLifecycle(form, { services, router, context });
   const returnStatus = form.querySelector("[data-record-return-status]");
   if (returnStatus && returnState?.notice) {
     returnStatus.hidden = false;
@@ -946,7 +946,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
       restoreSubmitButtons();
       return;
     }
-    const linkedPendingRun = recordInput.id ? services.secondPillar?.getPendingRun?.(recordInput.id) : null;
+    const linkedPendingRun = recordInput.id ? services.fatigue?.getPendingRun?.(recordInput.id) : null;
     if (linkedPendingRun && recordInput.activityType !== "run") {
       showFormMessages(form, ["走る前後の疲労感を記録した走行は、休養記録として保存できません。記録の種類を「走行」に戻してください。"]);
       restoreSubmitButtons();
@@ -967,8 +967,8 @@ export function bindRecordInput({ services, router, context, returnState = null 
       return;
     }
     const postSaveWarnings = [];
-    if (recordInput.id && services.secondPillar?.getPendingRun?.(result.record.id)) {
-      const lifecycleResult = services.secondPillar.finalizeSavedRun(result.record.id);
+    if (recordInput.id && services.fatigue?.getPendingRun?.(result.record.id)) {
+      const lifecycleResult = services.fatigue.finalizeSavedRun(result.record.id);
       if (!lifecycleResult.ok) postSaveWarnings.push("記録は保存しましたが、疲労感の入力状態を終了できませんでした。保存した記録は保持されています。");
     }
     const courseLibraryResult = savePlanCourseToLibraryIfRequested(formData, services, recordInput);
