@@ -12,9 +12,9 @@ async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catc
 
 await test('INTERPRETATION-SCREEN-USES-ONE-CANONICAL-PRESENTATION',()=>{
   const s=read('screens/interpretationRoomScreen.js');
-  assert.match(s,/buildRunLoadInterpretation/);
+  assert.match(s,/buildInterpretation/);
   assert.match(s,/renderInterpretationRoom/);
-  assert.doesNotMatch(s,/ALLOWED_EXPERIENCES|data-experience|buildRunLoadInterpretation\(buildArgs\)/);
+  assert.doesNotMatch(s,/ALLOWED_EXPERIENCES|data-experience|buildInterpretation\(buildArgs\)/);
   assert.equal(exists('ui/interpretationRoomPresentation.js'),true);
   assert.equal(exists('ui/interpretationRoomPresentationV3.js'),false);
   assert.equal(exists('core/interpretationCoreV3.js'),false);
