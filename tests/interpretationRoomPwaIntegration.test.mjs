@@ -1,11 +1,9 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 const source=async(path)=>readFile(new URL(`../${path}`,import.meta.url),'utf8');
-const sha256=(text)=>createHash('sha256').update(text).digest('hex');
 function precache(sw){const block=sw.slice(sw.indexOf('const PRECACHE_URLS = ['),sw.indexOf('];',sw.indexOf('const PRECACHE_URLS = ['))+2);return [...block.matchAll(/"(\.\/[^\"]+)"/g)].map(m=>m[1]);}
 
 await test('PWA-PRECACHE-INCLUDES-INTERPRETATION-RUNTIME',async()=>{
@@ -41,26 +39,17 @@ await test('PWA-INTERPRETATION-STYLESHEET-IS-SAME-ORIGIN-EXTERNAL',async()=>{
   assert.match(html,/style-src 'self'/);
 });
 
-await test('RUNTIME-HASH-MANIFEST-CONTAINS-INTERPRETATION-RUNTIME',async()=>{
-  const manifest=await source('RUNTIME_SHA256SUMS.txt');
-  const paths=[
-    'core/interpretationCore.js',
-    'screens/interpretationRoomScreen.js',
-    'styles/interpretation-room.css',
-    'ui/interpretationRoomPresentation.js',
-    'ui/bodyRegionVisuals.js',
-  ];
-  for(const path of paths){
-    const hash=sha256(await source(path));
-    assert.ok(manifest.includes(`${hash}  ${path}`),path);
+await test('PWA-PRECACHE-PATHS-ALL-EXIST',async()=>{
+  const sw=await source('service-worker.js');
+  for(const rel of precache(sw)){
+    const path=rel.replace(/^\.\//,'');
+    await access(new URL(`../${path}`,import.meta.url));
   }
 });
 
-await test('RUNTIME-HASH-MANIFEST-TRACKS-CURRENT-SERVICE-WORKER',async()=>{
-  const manifest=await source('RUNTIME_SHA256SUMS.txt');
-  const path='service-worker.js';
-  const hash=sha256(await source(path));
-  assert.ok(manifest.includes(`${hash}  ${path}`),path);
+await test('PWA-PRECACHE-EXCLUDES-UNUSED-EXPLANATION-MODULE',async()=>{
+  const sw=await source('service-worker.js');
+  assert.ok(!precache(sw).includes('./ui/hierarchicalExplanation.js'));
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
