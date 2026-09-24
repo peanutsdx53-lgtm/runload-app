@@ -128,7 +128,7 @@ await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   assert.match(audit,/\.measure-field>span[\s\S]*font-size:\.84rem\s*!important/);
   assert.match(audit,/\.measure-field input[\s\S]*font-size:1\.3rem\s*!important/);
   assert.match(audit,/\.simulation-change-groups[\s\S]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
-  assert.match(audit,/\.simulation-change-row__copy strong[\s\S]*font-size:\.86rem/);
+  assert.match(audit,/\.simulation-change-row__copy strong[\s\S]*font-size:\.92rem/);
   assert.match(audit,/\.simulation-v3-next-grid[\s\S]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
 });
 
