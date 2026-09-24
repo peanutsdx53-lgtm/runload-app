@@ -113,8 +113,8 @@ export function renderSimulationScreen({ services, context }) {
     <section class="simulation-v3-overview" aria-labelledby="simulationOverviewTitle">
       <div class="simulation-v3-section-head"><div><small>比較の要約</small><h2 id="simulationOverviewTitle">今回の比較で見えること</h2></div><p>条件を変更した結果を、元の記録との差として整理します。</p></div>
       <div class="simulation-v3-overview-grid">
-        <article><span>${simulationScreenIcon("conditions")}</span><div><small>変更した条件</small><strong data-simulation-condition-count>0<em>項目</em></strong><p>元の記録から変更した条件の数です。</p></div></article>
-        <article><span>${simulationScreenIcon("compare")}</span><div><small>変化を確認</small><strong data-simulation-region-count>0<em>部位</em></strong><p>元の記録から1ポイント以上の差がある部位です。</p></div></article>
+        <article><span>${simulationScreenIcon("conditions")}</span><div><small>変更した条件</small><strong><span data-simulation-condition-count>0</span><em>項目</em></strong><p>元の記録から変更した条件の数です。</p></div></article>
+        <article><span>${simulationScreenIcon("compare")}</span><div><small>変化を確認</small><strong><span data-simulation-region-count>0</span><em>部位</em></strong><p>元の記録から1ポイント以上の差がある部位です。</p></div></article>
         <article><span>${simulationScreenIcon("compare")}</span><div><small>変化の見立て</small><strong class="is-text" data-simulation-change-label>計算中</strong><p>差の方向を部位ごとに整理します。</p></div></article>
         <article><span>${simulationScreenIcon("flag")}</span><div><small>比較方法</small><strong class="is-text">条件を一つずつ確認</strong><p>何を変えたときに表示がどう変わるかを確認します。</p></div></article>
       </div>
