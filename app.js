@@ -1,6 +1,6 @@
 import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkflow } from "./core/runloadCore.js";
 
-import { createSecondPillarRofJServices } from "./core/secondPillarRofJ.js";
+import { createRofJServices } from "./core/rofJCore.js";
 import { createAppRouter } from "./ui/appRouter.js";
 import { matchesMobileLayout, resolveViewportDefaultEntryScreen } from "./ui/deviceLayout.js";
 import { focusScreenHeading, renderAppShell, renderDesktopHeader } from "./ui/appShell.js";
@@ -58,7 +58,7 @@ const screenRenderers = {
 const appRoot = document.getElementById("app");
 const desktopHeaderRoot = document.getElementById("desktop-header-root");
 const baseApplicationServices = createApplicationServices();
-const secondPillar = createSecondPillarRofJServices({
+const fatigue = createRofJServices({
   gateway: baseApplicationServices.storage.gateway,
   recordsRepository: baseApplicationServices.storage.records,
 });
@@ -69,12 +69,12 @@ const linkedHistoryWorkflow = createHistoryWorkflow({
   modelResultRegionalV2Repository: baseApplicationServices.storage.modelResultsRegionalV2,
   subjectiveFeedbackRepository: baseApplicationServices.storage.subjectiveFeedback,
   planRepository: baseApplicationServices.storage.plans,
-  secondPillarRofJRepository: secondPillar.repository,
-  secondPillarLifecycleRepository: secondPillar.lifecycle,
+  secondPillarRofJRepository: fatigue.repository,
+  secondPillarLifecycleRepository: fatigue.lifecycle,
 });
 const applicationServices = Object.freeze({
   ...baseApplicationServices,
-  secondPillar,
+  fatigue,
   workflows: Object.freeze({ ...baseApplicationServices.workflows, history: linkedHistoryWorkflow }),
 });
 const initialSettings = applicationServices.storage.settings.load();
