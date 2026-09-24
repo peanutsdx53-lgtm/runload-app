@@ -87,7 +87,7 @@ function renderPcFocus(experience, draft) {
   }
 
   const sourceHtml = sourceText ? `<p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p>` : "";
-  return `<section class="focus home-focus--pc focus--${escapeHtml(state)}"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${escapeHtml(eyebrow)}</small><h2>${escapeHtml(title)}</h2><p class="focus-text">${escapeHtml(body)}</p>${sourceHtml}</div><span class="carry">${escapeHtml(badge)}</span></div><div class="focus-actions">${actions}<a class="secondary home-measure-link" href="#/run-measurement">GPSで測定</a></div></section>`;
+  return `<section class="focus home-focus--pc focus--${escapeHtml(state)}"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${escapeHtml(eyebrow)}</small><h2>${escapeHtml(title)}</h2><p class="focus-text">${escapeHtml(body)}</p>${sourceHtml}</div><span class="carry">${escapeHtml(badge)}</span></div><div class="focus-actions">${actions}</div></section>`;
 }
 
 function renderMobileFocus(experience, draft) {
