@@ -1,4 +1,4 @@
-import { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents, BODY_AREA_LATERALITY, BODY_AREA_LATERALITY_LABELS, BODY_AREA_TAXONOMY, SAFETY_FLAG_KEYS } from "../../core/runloadCore.js";
+import { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents, BODY_AREA_LATERALITY, BODY_AREA_LATERALITY_LABELS, BODY_AREA_TAXONOMY, SAFETY_FLAG_KEYS } from "../../core/appCore.js";
 
 import { ROF_J_DESCRIPTOR_MAP } from "../../core/rofJCore.js";
 import { booleanValue, numberValue, optionalNumberValue, setHidden, showFormMessages } from "./formUtilities.js";
