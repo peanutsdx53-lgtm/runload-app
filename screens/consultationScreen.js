@@ -1,6 +1,6 @@
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
-import { bodyRegionFormalName, PROFILE_AGE_BAND_OPTIONS } from "../core/runloadCore.js";
+import { bodyRegionFormalName, PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
 import { buildReportPresentation } from "../ui/consultationPresentation.js";
 
 function localDateKey() {
