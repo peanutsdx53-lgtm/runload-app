@@ -1,4 +1,4 @@
-import { SURFACE_FIELDS, validateCoursePresetInput } from "../../core/runloadCore.js";
+import { SURFACE_FIELDS, validateCoursePresetInput } from "../../core/appCore.js";
 
 import { courseFormValues } from "./recordInputInteractions.js";
 import { setHidden, showFormMessages } from "./formUtilities.js";
