@@ -1,4 +1,4 @@
-# RunLoad Codebase Architecture
+# Codebase Architecture
 
 This document describes the current application structure. Historical audits, temporary implementation notes, and superseded file layouts belong in Git history and pull requests rather than the live code tree.
 
