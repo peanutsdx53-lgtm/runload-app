@@ -56,7 +56,7 @@ export function renderSettingsScreen({ services, context }) {
 
       <section class="group"><p class="group-title">SHARE PROFILE</p>
         <details class="disclosure"><summary><span><small>OPTIONAL PROFILE</small><strong>共有用プロフィール</strong><span>共有用にまとめる画面で、必要な項目だけ選んで使える任意情報</span></span><i>⌄</i></summary><div class="disclosure-body">
-          <div class="boundary"><strong>共有するときだけ使用します。</strong> 保存したプロフィールは「共有用にまとめる」で本人が選んだ場合だけ共有内容に含めます。</div>
+          <div class="boundary"><strong>共有用の任意情報です。</strong> 「共有用にまとめる」で本人が選んだ項目だけ共有内容に含めます。</div>
           <div class="fields two-fields">
             <label class="field"><span>ランニング開始時期（任意）</span><input name="runningStartDateOrBand" maxlength="80" value="${escapeHtml(profile.runningStartDateOrBand || "")}" placeholder="例：2026年春、3か月前"><small>共有時に含めるか選べます</small></label>
             <label class="field"><span>走ることへの慣れ（任意）</span><select name="experienceSelfAssessment"><option value=""${!profile.experienceSelfAssessment ? " selected" : ""}>未設定</option>${["始めたばかり","まだ慣れていない","少し慣れてきた","自分なりに継続している"].map((x) => `<option value="${escapeHtml(x)}"${profile.experienceSelfAssessment === x ? " selected" : ""}>${escapeHtml(x)}</option>`).join("")}</select><small>共有時に含めるか選べます</small></label>
