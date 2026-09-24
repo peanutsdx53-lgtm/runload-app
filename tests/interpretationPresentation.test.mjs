@@ -167,6 +167,10 @@ await test('REGION-LINK-CARRIES-RECORD-AND-REGION',()=>{
 await test('SELECTED-REGION-IS-A-DEDICATED-DETAIL-WORKSPACE',()=>{
   const html=renderInterpretationRoom({output:baseOutput({selected:true})});
   assert.match(html,/interpretation-room--selected-v4/);
+  assert.match(html,/interpretation-room-selected-workspace/);
+  assert.match(html,/interpretation-room-selected-main/);
+  assert.match(html,/interpretation-room-selected-side/);
+  assert.match(html,/interpretation-room-selected-advanced-stack/);
   assert.match(html,/<h1>股関節部<\/h1>/);
   assert.match(html,/12部位の整理へ戻る/);
   assert.match(html,/112\.9/);
@@ -248,12 +252,18 @@ await test('CSS-HAS-V4-COMPACT-RESPONSIVE-DASHBOARD',()=>{
   assert.match(shared,/\.interpretation-room-region-chips/);
   assert.match(shared,/\.interpretation-room-next-rail/);
   assert.match(shared,/Interpretation Room V4 detail stabilization/);
+  assert.match(shared,/Interpretation Room V4 selected workspace composition/);
+  assert.match(shared,/grid-template-areas:[\s\S]*"detail"[\s\S]*"next"[\s\S]*"conditions"[\s\S]*"subjective"[\s\S]*"advanced"/);
   assert.match(shared,/\.interpretation-room-selected-dashboard>\.interpretation-room-region-detail--v3[\s\S]*width:100%/);
   assert.match(desktop,/PC Interpretation V4 wide dashboard/);
   assert.match(desktop,/PC Interpretation V4 detail fit audit/);
   assert.match(desktop,/PC Interpretation V4 screenshot final pass/);
   assert.match(desktop,/PC Interpretation selected detail layout repair/);
   assert.match(desktop,/PC Interpretation immersive full desktop canvas/);
+  assert.match(desktop,/PC Interpretation independent selected columns/);
+  assert.match(desktop,/\.interpretation-room-selected-workspace[\s\S]*grid-template-columns:minmax\(0,1fr\) 22rem/);
+  assert.match(desktop,/\.interpretation-room-selected-main,[\s\S]*\.interpretation-room-selected-side[\s\S]*display:grid/);
+  assert.match(desktop,/\.interpretation-room-selected-main \.interpretation-room-condition-cards[\s\S]*repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(desktop,/#app>\.app-shell\.app-shell--immersive[\s\S]*width:100%\s*!important[\s\S]*border:0\s*!important/);
   assert.match(desktop,/@media \(min-width:64rem\)[\s\S]*\.interpretation-room-selected-dashboard[\s\S]*minmax\(18rem,20rem\)/);
   assert.match(desktop,/\.interpretation-room-selected-context \.interpretation-room-section-title[\s\S]*grid-template-columns:minmax\(0,1fr\)/);
