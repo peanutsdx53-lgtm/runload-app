@@ -2688,3 +2688,42 @@
 .region-chip__copy small{
   white-space:nowrap;
 }
+
+
+/* ===== Interpretation Room V4 selected workspace composition 2026-09-24 ===== */
+.interpretation-room-selected-workspace{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-areas:
+    "detail"
+    "next"
+    "conditions"
+    "subjective"
+    "advanced";
+  gap:1rem;
+  align-items:start;
+}
+.interpretation-room-selected-main,
+.interpretation-room-selected-side{
+  display:contents;
+}
+.interpretation-room-selected-main>.interpretation-room-region-detail--v3{
+  grid-area:detail;
+}
+.interpretation-room-selected-side>.interpretation-room-next-rail{
+  grid-area:next;
+}
+.interpretation-room-selected-main>.interpretation-room-conditions{
+  grid-area:conditions;
+}
+.interpretation-room-selected-side>.interpretation-room-subjective{
+  grid-area:subjective;
+}
+.interpretation-room-selected-main>.interpretation-room-selected-advanced-stack{
+  grid-area:advanced;
+}
+.interpretation-room-selected-advanced-stack{
+  min-width:0;
+  display:grid;
+  gap:.75rem;
+}
