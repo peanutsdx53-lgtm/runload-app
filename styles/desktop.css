@@ -10859,3 +10859,40 @@
     width:100%;
   }
 }
+
+
+/* ===== PC Interpretation V4 detail fit audit 2026-09-24 ===== */
+@media (min-width:55rem){
+  .interpretation-room--selected-v4{
+    width:min(100%,96rem) !important;
+    max-width:96rem !important;
+  }
+  .interpretation-room-selected-dashboard{
+    grid-template-columns:minmax(0,1.85fr) minmax(17rem,.72fr) !important;
+    gap:1rem !important;
+    align-items:start !important;
+  }
+  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3{
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+  }
+  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    position:sticky;
+    top:5.6rem;
+  }
+}
+@media (min-width:64rem){
+  .interpretation-room-selected-context{
+    grid-template-columns:minmax(0,1.25fr) minmax(20rem,.75fr);
+    align-items:start;
+  }
+  .interpretation-room-selected-context>.interpretation-room-conditions,
+  .interpretation-room-selected-context>.interpretation-room-subjective{
+    width:100%;
+    min-width:0;
+  }
+}
