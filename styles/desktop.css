@@ -10672,3 +10672,18 @@
     font-size:.76rem;
   }
 }
+
+
+/* ===== PC Condition Compare V3 readability final 2026-09-24 ===== */
+@media (min-width:80rem){
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-adjust button,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head small,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics small,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+    font-size:.8rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head button{
+    font-size:.84rem;
+  }
+}
