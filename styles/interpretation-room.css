@@ -1739,6 +1739,18 @@
   gap:.75rem;
   margin-top:.9rem;
 }
+.interpretation-room-action{
+  grid-template-columns:2.6rem minmax(0,1fr) auto;
+}
+.interpretation-room-support-panel .interpretation-room-action,
+.interpretation-room--empty .interpretation-room-action{
+  align-items:center;
+}
+.interpretation-room-support-panel .interpretation-room-action__icon,
+.interpretation-room--empty .interpretation-room-action__icon{
+  align-self:center;
+}
+
 .interpretation-room-action-grid .interpretation-room-action{
   min-height:8.5rem;
   padding:1rem;
