@@ -1,6 +1,6 @@
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
-import { bodyRegionFormalName } from "../core/runloadCore.js";
+import { bodyRegionFormalName, PROFILE_AGE_BAND_OPTIONS } from "../core/runloadCore.js";
 import { buildReportPresentation } from "../ui/consultationPresentation.js";
 
 function localDateKey() {
@@ -121,9 +121,28 @@ function consultationBodyRecordSummary(presentation) {
   return `${visible.join("／")}${remaining > 0 ? `／ほか${remaining}件` : ""}`;
 }
 
-function consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan }) {
+function consultationProfileSummary(profile = {}) {
+  const parts = [];
+  if (Number(profile.heightCm) > 0) parts.push(`身長 ${formatNumber(profile.heightCm, 1)} cm`);
+  if (Number(profile.weightKg) > 0) parts.push(`体重 ${formatNumber(profile.weightKg, 1)} kg`);
+  const age = PROFILE_AGE_BAND_OPTIONS.find((item) => item.key === profile.ageBand)?.label || "";
+  if (age) parts.push(`年齢帯 ${age}`);
+  if (profile.sex === "male") parts.push("性別 男性");
+  if (profile.sex === "female") parts.push("性別 女性");
+  if (profile.runningStartDateOrBand) parts.push(`開始時期 ${profile.runningStartDateOrBand}`);
+  if (profile.experienceSelfAssessment) parts.push(`走ることへの慣れ ${profile.experienceSelfAssessment}`);
+  const goals = Array.isArray(profile.runningGoalTags) ? profile.runningGoalTags.filter(Boolean) : [];
+  if (goals.length) parts.push(`目的 ${goals.join("・")}`);
+  return {
+    available: parts.length > 0,
+    value: parts.length ? parts.join("／") : "未設定",
+  };
+}
+
+function consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan, profile }) {
   const hasPlan = Boolean(plan && plan !== "未設定");
   return [
+    { key: "profile", label: "共有用プロフィール", value: profile.value, note: "設定に保存した任意プロフィール・共有時だけ選択", checked: false, available: profile.available },
     { key: "body", label: "身体の記録", value: bodyRecord, note: "本人が入力した部位・程度", checked: bodyRecord !== "未記録", available: bodyRecord !== "未記録" },
     { key: "run", label: "今回の走行", value: facts, note: "距離・時間・コース", checked: true, available: true },
     { key: "fatigue", label: "疲労感", value: fatigue, note: "走る前と走った後", checked: !fatigue.includes("未記録"), available: !fatigue.includes("未記録") },
@@ -196,12 +215,13 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
   const facts = consultationFacts(experience);
   const fatigue = consultationFatigueLine(services, experience);
   const bodyRecord = consultationBodyRecordSummary(presentation);
+  const profile = consultationProfileSummary(services.storage.profile.load());
   const next = consultationNextCheck(experience);
   const regional = consultationRegionalSummary(decision);
   const planValue = plan
     ? `${plan.scheduledDate ? formatLocalDate(plan.scheduledDate) : "日付未設定"}・${planSummary(plan)}`
     : "未設定";
-  const items = consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan: planValue });
+  const items = consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan: planValue, profile });
   const regionOptions = consultationRegionOptions({ services, experience, allExperiences, decision });
   const initialQuestion = "";
   const previewCards = consultationShareCards(items, "preview");
