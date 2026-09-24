@@ -489,6 +489,30 @@ await test('UI-SETTINGS-USES-TWO-QUALITY-THEMES-AND-SHARE-PROFILE',()=>{
   assert.match(consultation,/性別 女性/);
 });
 
+
+await test('UI-GPS-MEASUREMENT-STAYS-IN-MOBILE-NORMAL-FLOWS',()=>{
+  const start=read('screens/startScreen.js');
+  const home=read('screens/homeScreen.js');
+  const desktop=read('styles/desktop.css');
+
+  assert.match(start,/matchesMobileLayout/);
+  assert.match(start,/mobile \? `<a class="run-launch__choice run-launch__choice--measure"/);
+  assert.match(start,/mobile && plan/);
+
+  const pcStart=home.indexOf('function renderPcFocus');
+  const mobileStart=home.indexOf('function renderMobileFocus');
+  assert.ok(pcStart>=0&&mobileStart>pcStart);
+  const pcBlock=home.slice(pcStart,mobileStart);
+  const mobileBlock=home.slice(mobileStart,home.indexOf('function renderLatestRecord',mobileStart));
+  assert.doesNotMatch(pcBlock,/#\/run-measurement/);
+  assert.match(mobileBlock,/#\/run-measurement/);
+
+  const cssStart=desktop.indexOf('PC mobile-only GPS separation 2026-09-24');
+  assert.ok(cssStart>=0);
+  const audit=desktop.slice(cssStart);
+  assert.match(audit,/\.screen--plan \.plan-measure-link[\s\S]*display:none\s*!important/);
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
