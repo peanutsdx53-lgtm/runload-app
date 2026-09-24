@@ -316,7 +316,7 @@ function renderSelectedRegion(output) {
   const previousValue = previous.available ? number(previous.previousValue) : "—";
   const previousDelta = previous.available && finite(previous.difference) ? signed(previous.difference) : "—";
   return `<section class="interpretation-room-region-detail interpretation-room-region-detail--v3" aria-labelledby="interpretation-region-title">
-    <div class="interpretation-room-region-detail__heading"><div><small>この部位を整理</small><h2 id="interpretation-region-title">${escapeHtml(region.label)}</h2><p>${escapeHtml(selectedRegionInterpretation(region))}</p></div><a href="${escapeHtml(regionHref(output, ""))}">部位一覧へ戻る</a></div>
+    <div class="interpretation-room-region-detail__summary"><small>この部位の位置と推移</small><h2 id="interpretation-region-title">今回をどう読むか</h2><p>${escapeHtml(selectedRegionInterpretation(region))}</p></div>
     <div class="interpretation-room-region-reading-order"><div><span>1</span><strong>基準100</strong><small>${escapeHtml(referenceText(reference.direction))}</small></div><i aria-hidden="true">→</i><div><span>2</span><strong>前回</strong><small>${previous.available ? `差 ${escapeHtml(previousDelta)}` : "比較記録なし"}</small></div><i aria-hidden="true">→</i><div><span>3</span><strong>推移</strong><small>比較記録 ${escapeHtml(String(Number(region?.personalHistory?.comparableCount || 0)))}件</small></div></div>
     <div class="interpretation-room-region-stats"><article class="interpretation-room-region-stat is-current" data-direction="${escapeHtml(directionKey(reference.direction))}"><span class="metric-icon">${interpretationIcon("reference")}</span><small>今回</small><strong>${escapeHtml(current)}</strong><span>基準との差 ${escapeHtml(signed(reference.difference))}</span></article><article class="interpretation-room-region-stat"><span class="metric-icon">${interpretationIcon("compare")}</span><small>前回</small><strong>${escapeHtml(previousValue)}</strong><span>${previous.available ? `${escapeHtml(previous.date ? formatLocalDate(previous.date) : "前回")} → 今回 ${escapeHtml(previousDelta)}` : "比較できる過去記録なし"}</span></article><article class="interpretation-room-region-stat"><span class="metric-icon">${interpretationIcon("history")}</span><small>比較できる過去</small><strong>${escapeHtml(String(Number(region?.personalHistory?.comparableCount || 0)))}</strong><span>同じ部位・同じ計算基準の保存記録</span></article></div>
     <div class="interpretation-room-history-panel"><header><strong>この部位の最近の推移</strong><small>破線は、この部位自身の基準100です</small></header>${historyChart(region, currentDate)}</div>
@@ -424,8 +424,8 @@ function overviewHeadline(output) {
   const available = Number(counts.available || 0);
   const repeated = Number(counts.repeated || 0);
   const changed = Number(counts.previousChanged || 0);
-  if (available > 0 && repeated === available) return `${available}部位すべてで、過去と同じ方向が繰り返し確認されています`;
-  if (available > 0 && repeated >= Math.max(2, Math.ceil(available / 2))) return `${repeated}/${available}部位で、過去と同じ方向が繰り返し確認されています`;
+  if (available > 0 && repeated === available) return `${available}部位すべてで、同じ方向の繰り返しを確認`;
+  if (available > 0 && repeated >= Math.max(2, Math.ceil(available / 2))) return `${repeated}/${available}部位で、同じ方向の繰り返しを確認`;
   if (changed > 0) return `${changed}部位で、前回からの変化を確認できます`;
   return "今回の記録を、次回比較の基準点として使えます";
 }
@@ -495,7 +495,7 @@ function renderPatternBoard(output) {
   const groups = output?.overview?.attention?.groups || [];
   if (!groups.length) return "";
   return `<section class="interpretation-room-patterns" aria-labelledby="interpretation-attention-title">
-    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>部位のパターン</small><h2 id="interpretation-attention-title">どの部位で、どのような傾向が続いているか</h2></div><p>部位どうしを順位付けせず、「確認する理由」でまとめます。部位を選ぶと、その部位の基準100・前回差・推移を確認できます。</p></div>
+    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>部位のパターン</small><h2 id="interpretation-attention-title">続いている部位パターン</h2></div><p>順位ではなく確認理由でまとめます。部位を選ぶと、その部位の基準100・前回差・推移を確認できます。</p></div>
     <div class="interpretation-room-pattern-groups">${groups.map((group) => {
       const copy = REASON_COPY[group.code] || { title: group.code, note: "", icon: "interpretation", tone: "neutral" };
       return `<article class="interpretation-room-pattern-group" data-tone="${escapeHtml(copy.tone)}">
@@ -513,7 +513,7 @@ function renderContextBoard(output) {
   const pair = Boolean(context?.difference?.eligible);
   if (!rows.length && context.state === "NONE") return "";
   return `<section class="interpretation-room-context" aria-labelledby="interpretation-context-title">
-    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>今回の背景</small><h2 id="interpretation-context-title">部位の変化と分けて残しておく情報</h2></div><p>入力内容を再掲するのではなく、次回の比較で読み分けるための背景としてまとめます。</p></div>
+    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>今回の背景</small><h2 id="interpretation-context-title">比較の背景</h2></div><p>次回の比較で部位の変化と読み分けるため、変わった条件と本人の感覚だけを残します。</p></div>
     <div class="interpretation-room-context-grid">
       ${rows.length ? `<article class="interpretation-room-context-card interpretation-room-context-card--conditions"><header><span>${interpretationIcon("conditions")}</span><div><strong>前回から変わった条件</strong><small>${rows.length}項目</small></div></header><div class="interpretation-room-context-rows">${rows.map((item) => `<div><span><small>${escapeHtml(conditionLabel(item.id))}</small><strong>${escapeHtml(conditionDeltaText(item))}</strong></span><span class="context-values">${escapeHtml(conditionValue(item.id, item.previous))}<i>→</i>${escapeHtml(conditionValue(item.id, item.current))}</span></div>`).join("")}</div></article>` : ""}
       ${context.state !== "NONE" ? `<article class="interpretation-room-context-card interpretation-room-context-card--subjective"><header><span>${interpretationIcon("person")}</span><div><strong>本人の感覚</strong><small>疲労感</small></div></header><div class="interpretation-room-context-fatigue"><span><small>走る前</small><strong>${escapeHtml(pre.available ? number(pre.value,0) : "—")}<em>/10</em></strong></span><i>→</i><span><small>走った後</small><strong>${escapeHtml(post.available ? number(post.value,0) : "—")}<em>/10</em></strong></span><b>${escapeHtml(pair ? signed(context.difference.value,0) : "—")}</b></div><p>${escapeHtml(pair ? "同じ日の本人記録です。部位数値とは別の推移として次回も比較します。" : "記録できている側だけを、本人の感覚として残します。")}</p></article>` : ""}
