@@ -54,21 +54,21 @@ export function renderSettingsScreen({ services, context }) {
         <p class="visually-hidden" data-display-settings-status role="status" aria-live="polite"></p>
       </section>
 
-      <section class="group"><p class="group-title">PROFILE</p>
-        <details class="disclosure"><summary><span><small>OPTIONAL PROFILE</small><strong>振り返りプロフィール</strong><span>一度設定し、必要な画面で使い回す任意情報</span></span><i>⌄</i></summary><div class="disclosure-body">
-          <div class="boundary"><strong>数値結果には使いません。</strong> 身長・体重・年齢帯・性別・経験・目的を12部位の数値や安全判断の係数にしません。</div>
+      <section class="group"><p class="group-title">SHARE PROFILE</p>
+        <details class="disclosure"><summary><span><small>OPTIONAL PROFILE</small><strong>共有用プロフィール</strong><span>共有用にまとめる画面で、必要な項目だけ選んで使える任意情報</span></span><i>⌄</i></summary><div class="disclosure-body">
+          <div class="boundary"><strong>共有するときだけ使用します。</strong> 保存したプロフィールは「共有用にまとめる」で本人が選んだ場合だけ共有内容に含めます。</div>
           <div class="fields two-fields">
-            <label class="field"><span>ランニング開始時期・任意</span><input name="runningStartDateOrBand" maxlength="80" value="${escapeHtml(profile.runningStartDateOrBand || "")}" placeholder="例：2026年春、3か月前"><small>振り返り・相談時の文脈として保存</small></label>
-            <label class="field"><span>走ることへの慣れ・任意</span><select name="experienceSelfAssessment"><option value=""${!profile.experienceSelfAssessment ? " selected" : ""}>未設定</option>${["始めたばかり","まだ慣れていない","少し慣れてきた","自分なりに継続している"].map((x) => `<option value="${escapeHtml(x)}"${profile.experienceSelfAssessment === x ? " selected" : ""}>${escapeHtml(x)}</option>`).join("")}</select><small>数値の補正には使いません</small></label>
+            <label class="field"><span>ランニング開始時期（任意）</span><input name="runningStartDateOrBand" maxlength="80" value="${escapeHtml(profile.runningStartDateOrBand || "")}" placeholder="例：2026年春、3か月前"><small>共有時に含めるか選べます</small></label>
+            <label class="field"><span>走ることへの慣れ（任意）</span><select name="experienceSelfAssessment"><option value=""${!profile.experienceSelfAssessment ? " selected" : ""}>未設定</option>${["始めたばかり","まだ慣れていない","少し慣れてきた","自分なりに継続している"].map((x) => `<option value="${escapeHtml(x)}"${profile.experienceSelfAssessment === x ? " selected" : ""}>${escapeHtml(x)}</option>`).join("")}</select><small>共有時に含めるか選べます</small></label>
           </div>
-          <div class="sub-section-head profile-goal-head"><small>GOAL</small><strong>記録を続ける主な目的・任意</strong></div>
+          <div class="sub-section-head profile-goal-head"><small>GOAL</small><strong>記録を続ける主な目的（任意）</strong></div>
           <div class="goal-grid">${goals.map((goal) => `<label><input type="checkbox" name="runningGoalTags" value="${escapeHtml(goal)}"${goalValues.has(goal) ? " checked" : ""}><span>${escapeHtml(goal)}</span></label>`).join("")}</div>
           <details class="subdetails"><summary><span><strong>身体に関する任意情報</strong><small>必要な場合だけ入力</small></span><span>⌄</span></summary><div class="subdetails-body"><div class="fields two-fields">
             <label class="field"><span>身長（cm）</span><input name="profileHeightCm" type="number" inputmode="decimal" min="100" max="230" step="0.1" value="${escapeHtml(profile.heightCm ?? "")}"></label>
             <label class="field"><span>体重（kg）</span><input name="profileWeightKg" type="number" inputmode="decimal" min="25" max="180" step="0.1" value="${escapeHtml(profile.weightKg ?? "")}"></label>
             <label class="field"><span>年齢帯</span><select name="profileAgeBand"><option value="">未設定・回答しない</option>${PROFILE_AGE_BAND_OPTIONS.map((item) => `<option value="${escapeHtml(item.key)}"${item.key === profile.ageBand ? " selected" : ""}>${escapeHtml(item.label)}</option>`).join("")}</select></label>
             <label class="field"><span>性別関連入力</span><select name="profileSex"><option value="">未設定・回答しない</option><option value="male"${profile.sex === "male" ? " selected" : ""}>男性区分</option><option value="female"${profile.sex === "female" ? " selected" : ""}>女性区分</option></select></label>
-          </div><p class="note">すべて任意です。個人補正、診断、性別判定には使いません。</p></div></details>
+          </div><p class="note">すべて任意です。「共有用にまとめる」で、共有内容に含めるか本人が選べます。</p></div></details>
           <details class="subdetails"><summary><span><strong>保存シューズ</strong><small>Recordで次回も選べる名称</small></span><span>⌄</span></summary><div class="subdetails-body">${renderSavedShoes(settings)}<p class="visually-hidden">保存候補から削除しても、過去記録に保存されたシューズ情報は変わりません。</p></div></details>
           <div class="action-row"><button type="submit" class="primary">プロフィールを保存</button><button type="button" data-action="reset-journal-settings">標準設定に戻す</button></div>
           <p class="visually-hidden">ルートファイル（GPX）は端末内で読み取り、外部サービスへ自動送信しません。</p>
