@@ -1253,7 +1253,7 @@
   gap:.8rem;
   margin-top:1rem;
 }
-.interpretation-room-entry-grid[data-count="1"]{grid-template-columns:minmax(0,1fr)}
+.interpretation-room-entry-grid[data-count="1"]{grid-template-columns:minmax(0,34rem);justify-content:start}
 .interpretation-room-entry-grid[data-count="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
 .interpretation-room-entry-grid[data-count="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
 .interpretation-room-entry-grid[data-count="4"]{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -2004,4 +2004,13 @@
   .interpretation-room-next-check>div>small{
     font-size:.82rem;
   }
+}
+
+
+/* ===== Interpretation Room V3 anchor refinement 2026-09-24 ===== */
+#interpretation-attention-title,
+#interpretation-conditions-title,
+#interpretation-subjective-title,
+#interpretation-next-title{
+  scroll-margin-top:6.5rem;
 }
