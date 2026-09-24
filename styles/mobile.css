@@ -4936,3 +4936,146 @@ html.consult-viewer-open{overflow:hidden}
 .screen-layout--simulation.simulation-v3 .simulation-condition-readout small{
   line-height:1.5;
 }
+
+
+/* ===== Mobile Interpretation V4 touch layout 2026-09-24 ===== */
+@media (max-width:54.99rem){
+  .interpretation-room--dashboard,
+  .interpretation-room--selected-v4{
+    width:100%;
+  }
+  .interpretation-room-dashboard{
+    gap:.8rem;
+  }
+  .interpretation-room-insight,
+  .interpretation-room-patterns,
+  .interpretation-room-context,
+  .interpretation-room-next-rail,
+  .interpretation-room-selected-head{
+    border-radius:16px;
+  }
+  .interpretation-room-insight{
+    padding:16px;
+  }
+  .interpretation-room-insight h1{
+    font-size:28px;
+    line-height:1.18;
+  }
+  .interpretation-room-insight__lead{
+    font-size:15px;
+    line-height:1.65;
+  }
+  .interpretation-room-insight__hint{
+    padding:12px;
+  }
+  .interpretation-room-insight__hint strong{
+    font-size:14px;
+    line-height:1.55;
+  }
+  .interpretation-room-insight__signals{
+    grid-template-columns:1fr;
+  }
+  .interpretation-room-insight__signals article{
+    min-height:74px;
+    padding:11px 12px;
+  }
+  .interpretation-room-insight__signals small{
+    font-size:12px;
+  }
+  .interpretation-room-insight__signals strong{
+    font-size:22px;
+  }
+  .interpretation-room-insight__signals p{
+    font-size:12px;
+  }
+  .interpretation-room-next-rail{
+    padding:14px;
+  }
+  .interpretation-room-next-rail__check{
+    font-size:14px;
+  }
+  .interpretation-room-next-rail>.interpretation-room-action{
+    min-height:56px;
+  }
+  .interpretation-room-next-rail__secondary .interpretation-room-action{
+    min-height:50px;
+  }
+  .interpretation-room-next-rail__secondary .interpretation-room-action__copy strong{
+    font-size:13px;
+  }
+  .interpretation-room-patterns,
+  .interpretation-room-context{
+    padding:14px;
+  }
+  .interpretation-room-section-title--dense h2{
+    font-size:21px;
+  }
+  .interpretation-room-section-title--dense>p{
+    font-size:13px;
+  }
+  .interpretation-room-pattern-group>header{
+    padding:12px;
+  }
+  .interpretation-room-pattern-group>header strong{
+    font-size:14px;
+  }
+  .interpretation-room-pattern-group>header small{
+    font-size:12px;
+  }
+  .interpretation-room-region-chips{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    padding:10px;
+  }
+  .interpretation-room-region-chips>a{
+    min-height:58px;
+    padding:9px 10px;
+  }
+  .region-chip__copy strong{
+    font-size:13px;
+  }
+  .region-chip__copy small{
+    font-size:11px;
+  }
+  .interpretation-room-context-card{
+    padding:12px;
+  }
+  .interpretation-room-context-card>header strong{
+    font-size:14px;
+  }
+  .interpretation-room-context-rows>div{
+    min-height:56px;
+  }
+  .interpretation-room-context-rows small{
+    font-size:11px;
+  }
+  .interpretation-room-context-rows strong{
+    font-size:13px;
+  }
+  .context-values{
+    font-size:12px;
+  }
+  .interpretation-room-context-card--subjective>p{
+    font-size:12px;
+  }
+  .interpretation-room-context__takeaway strong{
+    font-size:13px;
+  }
+  .interpretation-room-selected-head{
+    padding:14px;
+  }
+  .interpretation-room-selected-head h1{
+    font-size:28px;
+  }
+  .interpretation-room-selected-head span{
+    font-size:13px;
+  }
+  .interpretation-room-selected-head>a{
+    min-height:44px;
+  }
+}
+@media (max-width:28rem){
+  .interpretation-room-region-chips{
+    grid-template-columns:1fr;
+  }
+}
