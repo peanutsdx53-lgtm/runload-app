@@ -83,7 +83,7 @@ Surface and other course facts that affect the existing model remain user-confir
 
 ## Verification
 
-The repository contains `tests/runMeasurementCore.test.mjs` for the deterministic GPS calculation helpers. Runtime files remain covered by `RUNTIME_SHA256SUMS.txt`.
+The repository contains `tests/runMeasurementCore.test.mjs` for the deterministic GPS calculation helpers. PWA precache references are verified directly by integration tests.
 
 Manual acceptance status (2026-09-23):
 
