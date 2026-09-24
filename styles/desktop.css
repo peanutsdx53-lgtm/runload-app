@@ -10687,3 +10687,160 @@
     font-size:.84rem;
   }
 }
+
+
+/* ===== PC Interpretation V4 wide dashboard 2026-09-24 ===== */
+@media (min-width:64rem){
+  .interpretation-room--dashboard,
+  .interpretation-room--selected-v4{
+    width:min(100%,96rem) !important;
+    max-width:96rem !important;
+  }
+  .interpretation-room-dashboard{
+    grid-template-columns:minmax(0,2.55fr) minmax(18rem,.78fr);
+    grid-template-areas:
+      "insight next"
+      "patterns next"
+      "context next";
+    gap:1rem;
+    align-items:start;
+  }
+  .interpretation-room-insight{
+    padding:1.45rem 1.55rem;
+    grid-template-columns:minmax(0,1.55fr) minmax(17rem,.75fr);
+    gap:1.25rem;
+    align-items:start;
+  }
+  .interpretation-room-insight__copy{
+    align-self:stretch;
+    display:flex;
+    flex-direction:column;
+  }
+  .interpretation-room-insight h1{
+    font-size:clamp(2.05rem,3vw,2.8rem);
+    max-width:54rem;
+  }
+  .interpretation-room-insight__lead{
+    font-size:1rem;
+    line-height:1.72;
+  }
+  .interpretation-room-insight__hint{
+    margin-top:auto;
+  }
+  .interpretation-room-insight__signals{
+    grid-template-columns:1fr;
+    gap:.65rem;
+  }
+  .interpretation-room-insight__signals article{
+    min-height:5.25rem;
+    padding:.8rem .85rem;
+    align-items:center;
+  }
+  .interpretation-room-insight__signals p{
+    font-size:.78rem;
+  }
+  .interpretation-room-next-rail{
+    position:sticky;
+    top:5.6rem;
+    padding:1.05rem;
+  }
+  .interpretation-room-next-rail>.interpretation-room-action{
+    min-height:5rem;
+  }
+  .interpretation-room-patterns,
+  .interpretation-room-context{
+    padding:1.2rem 1.25rem;
+  }
+  .interpretation-room-section-title--dense{
+    grid-template-columns:minmax(0,1fr) minmax(20rem,34rem);
+    gap:1rem;
+    align-items:end;
+  }
+  .interpretation-room-section-title--dense h2{
+    font-size:1.55rem;
+  }
+  .interpretation-room-section-title--dense>p{
+    font-size:.88rem;
+  }
+  .interpretation-room-region-chips{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:.55rem;
+    padding:.75rem;
+  }
+  .interpretation-room-region-chips>a{
+    min-height:4.15rem;
+    padding:.6rem .65rem;
+  }
+  .region-chip__copy strong{
+    font-size:.86rem;
+  }
+  .region-chip__copy small{
+    font-size:.74rem;
+  }
+  .interpretation-room-context-grid{
+    grid-template-columns:minmax(0,1.45fr) minmax(18rem,.75fr);
+    align-items:stretch;
+  }
+  .interpretation-room-context-card{
+    padding:.9rem 1rem;
+  }
+  .interpretation-room-context-rows{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:.45rem;
+  }
+  .interpretation-room-context-rows>div{
+    min-height:4.2rem;
+    grid-template-columns:1fr;
+    align-content:center;
+  }
+  .context-values{
+    justify-self:start;
+    text-align:left;
+    font-size:.76rem;
+  }
+  .interpretation-room-context-fatigue{
+    min-height:5rem;
+  }
+  .interpretation-room-selected-head{
+    padding:1rem 1.2rem;
+  }
+  .interpretation-room-selected-head h1{
+    font-size:2.25rem;
+  }
+  .interpretation-room-selected-dashboard{
+    grid-template-columns:minmax(0,1fr) minmax(18rem,.3fr);
+    align-items:start;
+  }
+  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
+    position:sticky;
+    top:5.6rem;
+  }
+  .interpretation-room-selected-v4 .interpretation-room-region-detail--v3{
+    padding:1.2rem 1.25rem;
+  }
+  .interpretation-room-selected-v4 .interpretation-room-region-stats{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .interpretation-room-selected-v4 .interpretation-room-history-panel{
+    margin-top:.9rem;
+  }
+  .interpretation-room-region-chips>a:hover{
+    transform:translateY(-1px);
+    border-color:color-mix(in srgb,var(--color-accent) 38%,var(--color-line));
+    background:color-mix(in srgb,var(--color-accent-soft) 24%,var(--color-surface));
+  }
+}
+@media (min-width:64rem) and (max-width:78rem){
+  .interpretation-room-dashboard{
+    grid-template-columns:minmax(0,2.2fr) minmax(17rem,.8fr);
+  }
+  .interpretation-room-insight{
+    grid-template-columns:1fr;
+  }
+  .interpretation-room-insight__signals{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .interpretation-room-region-chips{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
