@@ -112,7 +112,7 @@ await test('SUMMARY-INTEGRATES-REGION-HISTORY-FATIGUE-AND-CONDITIONS',()=>{
   assert.match(html,/\+4/);
   assert.match(html,/前回からの条件差/);
   assert.match(html,/2<em>項目<\/em>/);
-  assert.match(html,/原因と結果としては結び付けません/);
+  assert.match(html,/まず条件差と部位差を分けて確認します/);
 });
 
 await test('REGIONS-ARE-GROUPED-BY-REASON-NOT-RANKED',()=>{
@@ -176,7 +176,7 @@ await test('CONDITION-CARDS-SEPARATE-DESCRIPTION-FROM-CAUSAL-CLAIM',()=>{
   assert.match(html,/5 km/);
   assert.match(html,/6 km/);
   assert.match(html,/この部位の計算に使用/);
-  assert.match(html,/今回だけでは原因として確定しません/);
+  assert.match(html,/複数回の比較で関係を確かめます/);
 });
 
 await test('OVERVIEW-CONDITION-CARDS-ASK-FOR-REGION-BEFORE-ROUTE-RELATION',()=>{
@@ -195,10 +195,10 @@ await test('SUBJECTIVE-FATIGUE-REMAINS-SEPARATE-LAYER',()=>{
 
 await test('UNDERSTANDING-IS-COMPACT-AND-BOUNDARY-AWARE',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/確認できること \/ 今回だけでは決めないこと/);
+  assert.match(html,/今回の読み方を整理/);
   assert.match(html,/今回確認できること/);
-  assert.match(html,/今回だけでは決めないこと/);
-  assert.match(html,/原因として確定しません/);
+  assert.match(html,/次回以降で確かめること/);
+  assert.match(html,/複数回の比較で関係を確かめます/);
 });
 
 await test('NEXT-CHECK-IS-A-SELF-UNDERSTANDING-SUGGESTION',()=>{
