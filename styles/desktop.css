@@ -10197,3 +10197,369 @@
     align-items:stretch !important;
   }
 }
+
+
+/* ===== PC Condition Compare V3 experience 2026-09-24 ===== */
+@media (min-width:80rem){
+  .screen--simulation.screen-layout--simulation.simulation-v3{
+    width:min(100%,84rem) !important;
+    max-width:84rem !important;
+    margin-inline:auto !important;
+    gap:1.2rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero{
+    min-height:11rem;
+    padding:1.55rem 1.7rem !important;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:2rem;
+    align-items:center;
+    border-radius:1.35rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero h1{
+    font-size:2.55rem !important;
+    line-height:1.12 !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero p:last-child{
+    max-width:58rem;
+    font-size:1rem !important;
+    line-height:1.7 !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero__mark{
+    width:16rem;
+    padding:.9rem 1rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry{
+    width:100% !important;
+    max-width:none !important;
+    padding:.9rem 1rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry small{
+    font-size:.78rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry strong{
+    font-size:.95rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry p{
+    font-size:.88rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next{
+    padding:1.35rem 1.45rem;
+    border-radius:1.25rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head{
+    grid-template-columns:minmax(0,1fr) minmax(18rem,30rem);
+    gap:1rem;
+    align-items:end;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head small{
+    font-size:.78rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head h2{
+    font-size:1.55rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head>p{
+    font-size:.88rem;
+    line-height:1.6;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:.8rem;
+    margin-top:1rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid article{
+    min-height:8.8rem;
+    padding:1rem;
+    grid-template-columns:2.6rem minmax(0,1fr);
+    gap:.75rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid article>span{
+    width:2.6rem;
+    height:2.6rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid small{
+    font-size:.78rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid strong{
+    font-size:1.65rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid strong em{
+    font-size:.76rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid strong.is-text{
+    font-size:1.05rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid p{
+    font-size:.8rem;
+    line-height:1.55;
+  }
+
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-workspace{
+    grid-template-columns:minmax(0,1fr) minmax(21rem,.36fr) !important;
+    gap:1rem !important;
+    align-items:start !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-preview{
+    order:1 !important;
+    grid-column:1;
+    grid-row:1;
+    border-radius:1.2rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-condition{
+    order:2 !important;
+    grid-column:2;
+    grid-row:1;
+    position:sticky !important;
+    top:5.8rem !important;
+    border-radius:1.2rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .preview-head{
+    padding:1.1rem 1.15rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head small,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .preview-head small{
+    font-size:.76rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head h2,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .preview-head h2{
+    font-size:1.35rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head>span,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .calc-state{
+    font-size:.76rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-body{
+    padding:1rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-condition__lead{
+    margin-bottom:.9rem;
+    font-size:.84rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:.7rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field>span{
+    font-size:.84rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field>div{
+    height:3.5rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field input{
+    font-size:1.3rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field b{
+    font-size:.82rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-adjust button{
+    min-height:2rem;
+    font-size:.74rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .derived-pace{
+    min-height:3rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .derived-pace span{
+    font-size:.78rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .derived-pace strong{
+    font-size:.94rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course{
+    padding:.85rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course small,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course span,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .course-link b{
+    font-size:.76rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course strong{
+    font-size:.96rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-details summary strong{
+    font-size:.88rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-details summary small{
+    font-size:.75rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-reset{
+    min-height:2.55rem !important;
+    font-size:.8rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-compare{
+    padding:1rem 1.05rem 0 !important;
+    gap:.75rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot{
+    min-height:7rem;
+    padding:1rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot small{
+    font-size:.78rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot strong{
+    font-size:1.05rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot span{
+    font-size:.82rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips{
+    padding:.75rem 1.05rem 0;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips span{
+    font-size:.76rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note{
+    margin:.75rem 1.05rem 0 !important;
+    padding:.8rem .9rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note strong{
+    font-size:.84rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note span{
+    font-size:.8rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-result{
+    padding:1rem 1.05rem;
+    gap:1rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview{
+    padding:1rem 1.05rem;
+    border-radius:1rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head{
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:start;
+    gap:1rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head small{
+    font-size:.74rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head h3{
+    font-size:1.25rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head p{
+    max-width:42rem;
+    font-size:.82rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head button{
+    min-height:2.45rem;
+    font-size:.78rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:.7rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics article{
+    min-height:4.9rem;
+    padding:.8rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics small{
+    font-size:.74rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics strong{
+    font-size:1.35rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-groups{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:.8rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header{
+    min-height:6rem;
+    padding:.85rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header strong{
+    font-size:.88rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header small{
+    font-size:.75rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row{
+    min-height:4.5rem;
+    padding:.75rem .8rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy strong{
+    font-size:.86rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy small{
+    font-size:.72rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row>b{
+    font-size:.78rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout{
+    padding:.85rem .9rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout strong{
+    font-size:.84rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout p{
+    font-size:.82rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout small{
+    font-size:.74rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-boundary{
+    font-size:.78rem !important;
+    line-height:1.55 !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note{
+    margin:0 1.05rem 1rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note p{
+    font-size:.78rem !important;
+  }
+
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:.8rem;
+    margin-top:1rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button{
+    min-height:8rem;
+    padding:1rem;
+    grid-template-columns:2.7rem minmax(0,1fr) auto;
+    gap:.75rem;
+    border-radius:1rem;
+    transition:transform 150ms ease,border-color 150ms ease,background 150ms ease;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a:hover,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button:hover{
+    transform:translateY(-2px);
+    border-color:color-mix(in srgb,var(--color-accent) 42%,var(--color-line));
+    background:color-mix(in srgb,var(--color-accent-soft) 26%,var(--color-surface));
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a>span,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button>span{
+    width:2.7rem;
+    height:2.7rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid strong{
+    font-size:.9rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid small{
+    font-size:.77rem;
+  }
+}
+@media (min-width:80rem) and (max-width:92rem){
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-workspace{
+    grid-template-columns:minmax(0,1fr) 20rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-groups{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button{
+    transition:none !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a:hover,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button:hover{
+    transform:none !important;
+  }
+}
