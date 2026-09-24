@@ -63,7 +63,7 @@ export function bindReading({ router }) {
     root.querySelectorAll("[data-reading-open]").forEach((button) => button.addEventListener("click", () => openArticle(button.dataset.readingOpen || "", button)));
     root.querySelectorAll("[data-reading-close]").forEach((button) => button.addEventListener("click", closeArticle));
     drawer?.addEventListener("click", (event) => { if (event.target === drawer) closeArticle(); });
-    document.addEventListener("keydown", (event) => {
+    root.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && drawer && !drawer.hidden) closeArticle();
     });
 
