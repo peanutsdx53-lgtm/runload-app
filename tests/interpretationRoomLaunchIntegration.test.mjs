@@ -104,39 +104,57 @@ await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST
   assert.match(source,/sourceEngineInputFrom\(data\)/);
   assert.match(source,/\.\.\.source/);
   assert.match(source,/changedConditionLabels\(data\)/);
-  assert.match(source,/変更なし/);
+  assert.match(source,/comparisonStats\(result,previous\)/);
+  assert.match(source,/renderChangeGroups\(items,compare\)/);
+  assert.match(source,/simulation-change-groups/);
+  assert.match(source,/data-simulation-adjust/);
+  assert.match(source,/data-simulation-condition-count/);
   assert.match(source,/form\.addEventListener\("reset",\(event\)=>/);
   assert.match(source,/event\.preventDefault\(\)/);
   assert.match(source,/setValue\("courseJson",JSON\.stringify\(course\)\)/);
-  assert.match(source,/name="sourceRecordId"/);
+  assert.doesNotMatch(source,/BODY_REGION_VIEWS/);
+  assert.doesNotMatch(source,/function bodyMap/);
+  assert.doesNotMatch(source,/result-layout/);
   assert.doesNotMatch(source,/function latestValues/);
-  assert.match(source,/元の記録からの変化/);
 });
 
 await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   const css=read('styles/desktop.css');
-  const marker='PC interpretation-derived condition comparison V2 2026-09-23';
+  const marker='PC Condition Compare V3 experience 2026-09-24';
   const start=css.indexOf(marker);
   assert.ok(start>=0);
   const audit=css.slice(start);
-  assert.match(audit,/\.measure-field > span[\s\S]*font-size:\s*0\.88rem\s*!important/);
-  assert.match(audit,/\.measure-field input[\s\S]*font-size:\s*1\.35rem\s*!important/);
-  assert.match(audit,/\.region-row strong[\s\S]*font-size:\s*0\.9rem\s*!important/);
-  assert.match(audit,/\.region-value b[\s\S]*font-size:\s*1rem\s*!important/);
-  assert.match(audit,/\.result-layout[\s\S]*grid-template-columns:\s*minmax\(18rem, 0\.9fr\) minmax\(22rem, 1\.1fr\)\s*!important/);
+  assert.match(audit,/\.simulation-v3-hero h1[\s\S]*font-size:2\.55rem\s*!important/);
+  assert.match(audit,/\.measure-field>span[\s\S]*font-size:\.84rem\s*!important/);
+  assert.match(audit,/\.measure-field input[\s\S]*font-size:1\.3rem\s*!important/);
+  assert.match(audit,/\.simulation-change-groups[\s\S]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+  assert.match(audit,/\.simulation-change-row__copy strong[\s\S]*font-size:\.86rem/);
+  assert.match(audit,/\.simulation-v3-next-grid[\s\S]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
 });
 
 await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
   const css=read('styles/mobile.css');
-  const marker='Interpretation-derived simulation readability audit 2026-09-23';
+  const marker='Condition Compare V3 experience';
   const start=css.indexOf(marker);
   assert.ok(start>=0);
   const audit=css.slice(start);
-  assert.match(audit,/\.region-row small,[\s\S]*font-size:\s*0\.78rem/);
-  assert.match(audit,/\.region-row strong[\s\S]*font-size:\s*0\.9rem/);
-  assert.match(audit,/\.region-value b[\s\S]*font-size:\s*1rem/);
-  assert.match(audit,/\.measure-field input[\s\S]*font-size:\s*1\.3rem/);
-  assert.match(audit,/\.primary-action,[\s\S]*font-size:\s*0\.88rem/);
+  assert.match(audit,/\.simulation-v3-hero p:last-child[\s\S]*font-size:14px/);
+  assert.match(audit,/\.measure-field>span[\s\S]*font-size:13px/);
+  assert.match(audit,/\.measure-field input[\s\S]*font-size:24px/);
+  assert.match(audit,/\.simulation-change-row__copy strong[\s\S]*font-size:13px/);
+  assert.match(audit,/\.simulation-v3-next-grid strong[\s\S]*font-size:13px/);
+});
+
+await test('SIMULATION-SCREEN-HAS-V3-SUMMARY-QUICK-ADJUST-AND-NEXT-ACTIONS',()=>{
+  const source=read('screens/simulationScreen.js');
+  assert.match(source,/simulation-v3-overview/);
+  assert.match(source,/今回の比較で見えること/);
+  assert.match(source,/data-simulation-condition-count/);
+  assert.match(source,/data-simulation-region-count/);
+  assert.match(source,/data-simulation-adjust="distanceKm:-0\.5"/);
+  assert.match(source,/data-simulation-adjust="durationMinutes:5"/);
+  assert.match(source,/この比較から確かめること/);
+  assert.match(source,/元の結果整理へ戻る/);
 });
 
 await test('INTERPRETATION-ACTIONS-CARRY-ROOM-ORIGIN-WITHOUT-VERSION-STATE',()=>{
