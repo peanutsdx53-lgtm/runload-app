@@ -7,7 +7,7 @@ import {
   previousDeltaDirection,
   referenceDirection,
 } from "./interpretationBase.js";
-import { officialRofJDescriptor } from "./secondPillarRofJ.js";
+import { officialRofJDescriptor } from "./rofJCore.js";
 
 export const INTERPRETATION_CORE_VERSION = "runload-interpretation-core-v4.0";
 export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V4";
