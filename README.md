@@ -11,7 +11,6 @@ The repository root is the deployable application.
 - `ui/`: shared presentation, navigation, interactions, and browser UI services
 - `styles/`: theme tokens, shared layout/components, screen styles, responsive/mobile/desktop layers
 - `tests/`: executable regression, boundary, navigation, presentation, and integration tests
-- `RUNTIME_SHA256SUMS.txt`: integrity manifest for deployable runtime files
 
 See `docs/CODEBASE_ARCHITECTURE.md` for ownership and maintenance rules.
 
@@ -32,4 +31,4 @@ Application data is stored locally in the browser. GPX analysis is local-only. T
 
 ## Verification
 
-Changes should keep all JavaScript/MJS syntax checks, runtime reachability checks, PWA precache checks, and all test suites passing. Runtime changes must be followed by regeneration of `RUNTIME_SHA256SUMS.txt`.
+Changes should keep all JavaScript/MJS syntax checks, runtime reachability checks, PWA precache-path checks, and all test suites passing.
