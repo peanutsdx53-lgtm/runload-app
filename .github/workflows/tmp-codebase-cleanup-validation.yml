@@ -1,0 +1,33 @@
+name: Temporary codebase cleanup validation
+
+on:
+  push:
+    branches:
+      - refactor/codebase-cleanup-20260925
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate JavaScript and tests
+        shell: bash
+        run: |
+          set -uo pipefail
+          failures=0
+          while IFS= read -r file; do
+            if ! node --check "$file"; then failures=$((failures + 1)); fi
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          for file in tests/*.test.mjs; do
+            echo "==> $file"
+            if ! node "$file"; then failures=$((failures + 1)); fi
+          done
+          test ! -e RUNTIME_SHA256SUMS.txt
+          test ! -e ui/hierarchicalExplanation.js
+          ! grep -R -n -E 'RunLoad Journal|Runload Journal' --include='*.js' --include='*.html' --include='*.css' .
+          echo "Validation failures: $failures"
+          test "$failures" -eq 0
