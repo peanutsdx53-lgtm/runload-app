@@ -10564,3 +10564,41 @@
     transform:none !important;
   }
 }
+
+
+/* ===== PC Condition Compare V3 reversible controls 2026-09-24 ===== */
+@media (min-width:80rem){
+  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button{
+    min-height:2.15rem;
+    padding:.35rem .45rem .35rem .65rem;
+    gap:.45rem;
+    font-size:.76rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button>b{
+    width:1.35rem;
+    height:1.35rem;
+    font-size:.78rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary{
+    min-height:6rem;
+    padding:.85rem;
+    grid-template-columns:2.4rem minmax(0,1fr) auto;
+    gap:.65rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>span{
+    width:2.4rem;
+    height:2.4rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary strong{
+    font-size:.88rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary small{
+    font-size:.75rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b{
+    font-size:.72rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+    font-size:.72rem;
+  }
+}
