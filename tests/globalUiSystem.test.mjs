@@ -454,6 +454,38 @@ await test('UI-HISTORY-IS-RECORD-BROWSING-ONLY',()=>{
   assert.match(audit,/\.history-view[\s\S]*margin-top:\s*0\s*!important/);
 });
 
+
+await test('UI-SETTINGS-USES-TWO-QUALITY-THEMES-AND-SHARE-PROFILE',()=>{
+  const appSettings=read('ui/appSettings.js');
+  const settings=read('screens/settingsScreen.js');
+  const consultation=read('screens/consultationScreen.js');
+  const tokens=read('styles/tokens.css');
+
+  const themeBlock=appSettings.match(/export const COLOR_THEME_OPTIONS = Object\.freeze\(\[[\s\S]*?\]\);/)?.[0]||'';
+  assert.match(themeBlock,/value: "standard", label: "シンプル"/);
+  assert.match(themeBlock,/value: "natural", label: "ナチュラル"/);
+  assert.doesNotMatch(themeBlock,/value: "(?:green|blue|orange)"/);
+  assert.doesNotMatch(appSettings,/green: "#e7f4df"|blue: "#edf3f7"|orange: "#f7f0e5"/);
+  assert.doesNotMatch(tokens,/rl-color-(?:green|blue|orange)/);
+
+  assert.match(settings,/共有用プロフィール/);
+  assert.match(settings,/共有用の任意情報です。/);
+  assert.match(settings,/共有プロフィールの基本情報/);
+  assert.match(settings,/性別（任意）/);
+  assert.doesNotMatch(settings,/安全判断の係数|数値の補正には使いません/);
+
+  assert.match(consultation,/function consultationProfileSummary\(profile = \{\}\)/);
+  assert.match(consultation,/PROFILE_AGE_BAND_OPTIONS/);
+  assert.match(consultation,/key: "profile", label: "共有用プロフィール"/);
+  assert.match(consultation,/checked: false, available: profile\.available/);
+  assert.match(consultation,/services\.storage\.profile\.load\(\)/);
+  assert.match(consultation,/身長 /);
+  assert.match(consultation,/体重 /);
+  assert.match(consultation,/年齢帯 /);
+  assert.match(consultation,/性別 男性/);
+  assert.match(consultation,/性別 女性/);
+});
+
 const failed=results.filter((item)=>item.status==='FAIL');
 console.log(JSON.stringify({suite:'Global UI System',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
