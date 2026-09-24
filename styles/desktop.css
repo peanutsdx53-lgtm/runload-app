@@ -10482,13 +10482,14 @@
     padding:.75rem .8rem;
   }
   .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy strong{
-    font-size:.86rem;
+    font-size:.92rem;
   }
   .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy small{
-    font-size:.72rem;
+    font-size:.78rem;
+    line-height:1.45;
   }
   .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row>b{
-    font-size:.78rem;
+    font-size:.82rem;
   }
   .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout{
     padding:.85rem .9rem;
