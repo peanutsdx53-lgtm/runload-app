@@ -1,4 +1,4 @@
-import { normalizePlanFactSession } from "../core/runloadCore.js";
+import { normalizePlanFactSession } from "../core/appCore.js";
 import { formatNumber } from "./recordPresentation.js";
 
 const CONDITION_DEFINITIONS = Object.freeze([
