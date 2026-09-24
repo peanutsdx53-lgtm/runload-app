@@ -1,4 +1,4 @@
-import { SURFACE_FIELDS } from "../core/runloadCore.js";
+import { SURFACE_FIELDS } from "../core/appCore.js";
 
 
 export const SUBJECTIVE_STATUS_LABELS = Object.freeze({
