@@ -47,18 +47,19 @@ function engineInput(data){
 }
 function sourceValues(services,recordId=""){const x=recordId?services.workflows.records.loadExperience(recordId):services.workflows.records.loadLatestExperience();const rows=x?.regionalV2ResultRecord?.result?.regions||x?.regionalV2Result?.regions||[];return new Map(rows.map((r)=>[r.regionId,r.value]));}
 function sameNumber(a,b,tolerance=.001){return finite(a)&&finite(b)&&Math.abs(Number(a)-Number(b))<=tolerance;}
-function changedConditionLabels(data){
+function changedConditionItems(data){
   const source=sourceConditionFrom(data);
   const currentCourse=courseFrom(data);
-  const labels=[];
+  const items=[];
   const distance=Number(data.get("distanceKm")),duration=Number(data.get("durationMinutes"));
   const format=String(data.get("runningFormat")||"CONTINUOUS_RUN");
-  if(!sameNumber(distance,source.distanceKm))labels.push(`距離 ${Number(source.distanceKm||0).toFixed(1)} → ${distance.toFixed(1)} km`);
-  if(!sameNumber(duration,source.durationMinutes))labels.push(`時間 ${Math.round(Number(source.durationMinutes||0))} → ${Math.round(duration)}分`);
-  if(format!==String(source.runningFormat||"CONTINUOUS_RUN"))labels.push("走り方を変更");
-  if(JSON.stringify(currentCourse)!==JSON.stringify(source.course||{}))labels.push("コース条件を変更");
-  return labels;
+  if(!sameNumber(distance,source.distanceKm))items.push({id:"distanceKm",label:`距離 ${Number(source.distanceKm||0).toFixed(1)} → ${distance.toFixed(1)} km`});
+  if(!sameNumber(duration,source.durationMinutes))items.push({id:"durationMinutes",label:`時間 ${Math.round(Number(source.durationMinutes||0))} → ${Math.round(duration)}分`});
+  if(format!==String(source.runningFormat||"CONTINUOUS_RUN"))items.push({id:"runningFormat",label:"走り方を変更"});
+  if(JSON.stringify(currentCourse)!==JSON.stringify(source.course||{}))items.push({id:"courseJson",label:"コース条件を変更"});
+  return items;
 }
+function changedConditionLabels(data){return changedConditionItems(data).map((item)=>item.label);}
 
 function referenceState(value){if(!finite(value))return"unavailable";const d=Number(value)-100;return Math.abs(d)<1?"reference":d>0?"above":"below";}
 function compareState(value,previous){if(!finite(value)||!finite(previous))return"unavailable";const d=Number(value)-Number(previous);return Math.abs(d)<1?"reference":d>0?"above":"below";}
@@ -119,12 +120,15 @@ function groupCopy(state,compare){
   return{title:"表示できない部位",note:"今回の条件では数値を表示できません",icon:"reference"};
 }
 function renderChangeGroups(items,compare){
-  const order=["above","reference","below","unavailable"];
+  const order=["above","below","reference","unavailable"];
   return order.map((state)=>{
     const group=items.filter((item)=>item.state===state);
     if(!group.length)return"";
     const copy=groupCopy(state,compare);
-    return `<article class="simulation-change-group" data-state="${state}"><header><span>${simulationResultIcon(copy.icon)}</span><div><strong>${copy.title}</strong><small>${copy.note}</small></div><b>${group.length}部位</b></header><div class="simulation-change-list">${group.map((item)=>`<div class="simulation-change-row"><span class="simulation-change-row__icon">${simulationResultIcon("reference")}</span><span class="simulation-change-row__copy"><strong>${item.def.name}</strong><small>${compare?(finite(item.prev)?`元 ${Number(item.prev).toFixed(1)} → 今回 ${finite(item.value)?Number(item.value).toFixed(1):"—"}`:"元の記録との比較なし"):`今回 ${finite(item.value)?Number(item.value).toFixed(1):"—"} / 基準100`}</small></span><b>${compare?(finite(item.delta)?signed(item.delta):"—"):(finite(item.value)?signed(Number(item.value)-100):"—")}</b></div>`).join("")}</div></article>`;
+    const rows=`<div class="simulation-change-list">${group.map((item)=>`<div class="simulation-change-row"><span class="simulation-change-row__icon">${simulationResultIcon("reference")}</span><span class="simulation-change-row__copy"><strong>${item.def.name}</strong><small>${compare?(finite(item.prev)?`元 ${Number(item.prev).toFixed(1)} → 今回 ${finite(item.value)?Number(item.value).toFixed(1):"—"}`:"元の記録との比較なし"):`今回 ${finite(item.value)?Number(item.value).toFixed(1):"—"} / 基準100`}</small></span><b>${compare?(finite(item.delta)?signed(item.delta):"—"):(finite(item.value)?signed(Number(item.value)-100):"—")}</b></div>`).join("")}</div>`;
+    const heading=`<span>${simulationResultIcon(copy.icon)}</span><div><strong>${copy.title}</strong><small>${copy.note}</small></div><b>${group.length}部位</b>`;
+    if(state==="reference")return `<details class="simulation-change-group simulation-change-group--collapsed" data-state="${state}"><summary>${heading}</summary>${rows}</details>`;
+    return `<article class="simulation-change-group" data-state="${state}"><header>${heading}</header>${rows}</article>`;
   }).join("");
 }
 function render(result,previous,compare,data,course){
@@ -145,8 +149,28 @@ function render(result,previous,compare,data,course){
 }
 export function bindSimulation({services}){
   const form=document.getElementById("simulation-form"),target=document.getElementById("simulation-result");if(!form||!target)return;let compare=true;const sourceRecordId=String(form.querySelector('[name="sourceRecordId"]')?.value||"");const previous=sourceValues(services,sourceRecordId);
-  function update(){const data=new FormData(form);const runWalk=String(data.get("runningFormat"))==="RUN_WALK";form.querySelector('[data-simulation-run-walk]').hidden=!runWalk;const labels=changedConditionLabels(data);const chips=form.querySelector('[data-simulation-assumption-chips]');if(chips){chips.innerHTML=labels.length?labels.map((label)=>`<span>${label}</span>`).join(""):'<span>変更なし</span>';}const built=engineInput(data);const warning=form.querySelector('[data-simulation-input-warning]');if(built.error){target.innerHTML="";if(warning){warning.hidden=false;warning.textContent=built.error;}return;}if(warning)warning.hidden=true;const result=services.model.primaryRegionalV2.calculatePrimaryRegionalV2(built.input);const d=Number(data.get("distanceKm")),t=Number(data.get("durationMinutes"));const p=pace(d,t);const stats=comparisonStats(result,previous);const set=(sel,text)=>{const el=form.querySelector(sel)||document.querySelector(sel);if(el)el.textContent=text;};set('[data-simulation-derived-pace]',p);set('[data-simulation-current-summary]',`${d.toFixed(1)} km・${Math.round(t)}分`);set('[data-simulation-current-pace]',`${p}・${built.course.name||"コース未選択"}`);set('[data-simulation-condition-count]',`${labels.length}項目`);set('[data-simulation-region-count]',`${stats.changed}部位`);set('[data-simulation-change-label]',comparisonLabel(stats,labels.length));const calc=form.querySelector('.calc-state');if(calc)calc.textContent=result?.state==="OK"?"計算済み":"確認が必要";target.innerHTML=render(result,previous,compare,data,built.course);bindToggle();}
+  function update(){const data=new FormData(form);const runWalk=String(data.get("runningFormat"))==="RUN_WALK";form.querySelector('[data-simulation-run-walk]').hidden=!runWalk;const changedItems=changedConditionItems(data);const labels=changedItems.map((item)=>item.label);const chips=form.querySelector('[data-simulation-assumption-chips]');if(chips){chips.innerHTML=changedItems.length?changedItems.map((item)=>`<button type="button" data-simulation-revert="${item.id}" aria-label="${item.label}を元に戻す"><span>${item.label}</span><b aria-hidden="true">×</b></button>`).join(""):'<span>変更なし</span>';}const built=engineInput(data);const warning=form.querySelector('[data-simulation-input-warning]');if(built.error){target.innerHTML="";if(warning){warning.hidden=false;warning.textContent=built.error;}return;}if(warning)warning.hidden=true;const result=services.model.primaryRegionalV2.calculatePrimaryRegionalV2(built.input);const d=Number(data.get("distanceKm")),t=Number(data.get("durationMinutes"));const p=pace(d,t);const stats=comparisonStats(result,previous);const set=(sel,text)=>{const el=form.querySelector(sel)||document.querySelector(sel);if(el)el.textContent=text;};set('[data-simulation-derived-pace]',p);set('[data-simulation-current-summary]',`${d.toFixed(1)} km・${Math.round(t)}分`);set('[data-simulation-current-pace]',`${p}・${built.course.name||"コース未選択"}`);set('[data-simulation-condition-count]',`${labels.length}項目`);set('[data-simulation-region-count]',`${stats.changed}部位`);set('[data-simulation-change-label]',comparisonLabel(stats,labels.length));const calc=form.querySelector('.calc-state');if(calc)calc.textContent=result?.state==="OK"?"計算済み":"確認が必要";target.innerHTML=render(result,previous,compare,data,built.course);bindToggle();}
   function bindToggle(){target.querySelector('[data-action="simulation-toggle-compare"]')?.addEventListener("click",()=>{compare=!compare;update();});}
+  form.querySelector("[data-simulation-assumption-chips]")?.addEventListener("click",(event)=>{
+    const button=event.target.closest?.("[data-simulation-revert]");
+    if(!button)return;
+    const data=new FormData(form);
+    const source=sourceConditionFrom(data);
+    const id=String(button.dataset.simulationRevert||"");
+    const setValue=(name,value)=>{const control=form.elements.namedItem(name);if(control)control.value=String(value??"");};
+    if(id==="distanceKm")setValue("distanceKm",source.distanceKm);
+    if(id==="durationMinutes")setValue("durationMinutes",source.durationMinutes);
+    if(id==="runningFormat")setValue("runningFormat",source.runningFormat||"CONTINUOUS_RUN");
+    if(id==="courseJson"){
+      const course=source.course&&typeof source.course==="object"?source.course:{};
+      setValue("courseJson",JSON.stringify(course));
+      const courseName=form.querySelector("[data-simulation-course-name]");
+      if(courseName)courseName.textContent=course.name||"未選択";
+      const courseLink=form.querySelector(".selected-course span");
+      if(courseLink)courseLink.textContent=course.name?`${slopeSummary(course)}・${primarySurfaceSummary(course)}`:"坂・路面は未設定";
+    }
+    update();
+  });
   form.querySelectorAll("[data-simulation-adjust]").forEach((button)=>button.addEventListener("click",()=>{
     const [name,deltaText]=String(button.dataset.simulationAdjust||"").split(":");
     const control=form.elements.namedItem(name);
