@@ -117,18 +117,22 @@ await test('UI-RESULT-REMOVES-PERSISTENT-EXPLANATION-CLUTTER',()=>{
   assert.ok(!screen.includes('色で12部位を確認'));
 });
 
-await test('UI-INTERPRETATION-HAS-MEANING-FIRST-WORKSPACE',()=>{
+await test('UI-INTERPRETATION-HAS-SYNTHESIS-FIRST-WORKSPACE',()=>{
   const css=read('styles/interpretation-room.css');
+  const desktop=read('styles/desktop.css');
+  const mobile=read('styles/mobile.css');
   const presentation=read('ui/interpretationRoomPresentation.js');
-  assert.ok(css.includes('Interpretation Room V3 experience'));
-  assert.ok(css.includes('width:min(100%,84rem)'));
-  assert.ok(css.includes('.interpretation-room-summary__metrics'));
-  assert.ok(css.includes('.interpretation-room-entry-grid'));
-  assert.ok(css.includes('.interpretation-room-reason-groups'));
-  assert.ok(presentation.includes('今回のRunLoad解釈'));
-  assert.ok(presentation.includes('今回の結果を読む順序'));
-  assert.ok(presentation.includes('注目する理由で見る'));
-  assert.ok(presentation.includes('今回の読み方を整理'));
+  assert.ok(css.includes('Interpretation Room V4 synthesis dashboard'));
+  assert.ok(css.includes('.interpretation-room-insight'));
+  assert.ok(css.includes('.interpretation-room-region-chips'));
+  assert.ok(css.includes('.interpretation-room-context'));
+  assert.ok(css.includes('.interpretation-room-next-rail'));
+  assert.ok(desktop.includes('PC Interpretation V4 wide dashboard'));
+  assert.ok(mobile.includes('Mobile Interpretation V4 touch layout'));
+  assert.ok(presentation.includes('overviewHeadline'));
+  assert.ok(presentation.includes('comparisonHint'));
+  assert.ok(presentation.includes('どの部位で、どのような傾向が続いているか'));
+  assert.ok(presentation.includes('部位の変化と分けて残しておく情報'));
   assert.ok(!presentation.includes('12部位から選ぶ'));
 });
 
