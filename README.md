@@ -1,6 +1,6 @@
-# RunLoad
+# 走行記録アプリ
 
-RunLoad is a browser-based application that helps beginner runners review their own running records, body-region Reference-100 values, subjective fatigue (ROF-J), history, plans, courses, and local GPX information.
+This browser-based application helps beginner runners review their own running records, body-region Reference-100 values, subjective fatigue (ROF-J), history, plans, courses, and local GPX information.
 
 ## Current application structure
 
