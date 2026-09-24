@@ -111,7 +111,6 @@ Before merging runtime changes:
 - every CSS file is intentionally loaded;
 - PWA precache paths all exist;
 - all test suites pass;
-- `RUNTIME_SHA256SUMS.txt` is regenerated from the final runtime tree;
 - protected scientific cores are compared against the intended scientific baseline when they are not part of the change.
 
 Temporary audit workflows must be removed before merge.
