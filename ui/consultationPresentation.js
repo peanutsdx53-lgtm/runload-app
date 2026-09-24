@@ -1,4 +1,4 @@
-import { PRIMARY_REGIONAL_V2_REGION_DEFS, createPlanFactPreview, bodyRegionFormalName } from "../core/runloadCore.js";
+import { PRIMARY_REGIONAL_V2_REGION_DEFS, createPlanFactPreview, bodyRegionFormalName } from "../core/appCore.js";
 
 import { escapeHtml, renderStatusLabel } from "./commonComponents.js";
 import { buildPlanConditionSnapshot, normalizePlanSession } from "./planPresentation.js";
