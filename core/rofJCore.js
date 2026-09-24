@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from "./runloadCore.js";
+import { STORAGE_KEYS } from "./appCore.js";
 
 export const ROF_J_INSTRUMENT_ID = "ROF_J";
 export const ROF_J_SEMANTIC_VERSION = "ROF_J_SUZUKI_ARAI_2026_RUNLOAD_V1";
