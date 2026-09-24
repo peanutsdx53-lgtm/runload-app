@@ -127,9 +127,13 @@ await test('REGIONS-ARE-GROUPED-BY-REASON-NOT-RANKED',()=>{
 await test('OVERVIEW-HAS-INTERPRETATION-ENTRY-AND-PICTOGRAMS',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/今回の結果を読む順序/);
-  assert.match(html,/今回わかること/);
-  assert.match(html,/注目する理由を確認/);
-  assert.match(html,/本人の記録と分けて見る/);
+  assert.match(html,/data-count="4"/);
+  assert.match(html,/注目する理由を見る/);
+  assert.match(html,/条件の違いを確認/);
+  assert.match(html,/本人の記録と並べる/);
+  assert.match(html,/次に確かめる/);
+  for(const step of ['1','2','3','4'])assert.match(html,new RegExp(`<b>${step}<\\/b>`));
+  for(const target of ['interpretation-attention-title','interpretation-conditions-title','interpretation-subjective-title','interpretation-next-title'])assert.match(html,new RegExp(`href="#${target}"`));
   assert.ok((html.match(/class="interpretation-room-icon/g)||[]).length>=8);
 });
 
@@ -142,7 +146,9 @@ await test('OVERVIEW-ENTRY-FALLS-BACK-TO-EXISTING-SECTIONS',()=>{
   const html=renderInterpretationRoom({output:out});
   assert.doesNotMatch(html,/href="#interpretation-attention-title"/);
   assert.doesNotMatch(html,/href="#interpretation-conditions-title"/);
+  assert.match(html,/data-count="1"/);
   assert.match(html,/href="#interpretation-next-title"/);
+  assert.equal((html.match(/interpretation-room-entry-step/g)||[]).length,1);
 });
 
 await test('ADVANCED-COPY-HIDES-INTERNAL-REFERENCE-LABEL',()=>{
@@ -161,6 +167,9 @@ await test('REGION-LINK-CARRIES-RECORD-AND-REGION',()=>{
 await test('SELECTED-REGION-SHOWS-CURRENT-PREVIOUS-AND-HISTORY-CHART',()=>{
   const html=renderInterpretationRoom({output:baseOutput({selected:true})});
   assert.match(html,/股関節部をRunLoadで整理/);
+  assert.doesNotMatch(html,/今回のRunLoad解釈/);
+  assert.doesNotMatch(html,/今回の結果を読む順序/);
+  assert.match(html,/この部位の読み方を整理/);
   assert.match(html,/112\.9/);
   assert.match(html,/93\.9/);
   assert.match(html,/\+19/);
@@ -266,6 +275,9 @@ await test('CSS-HAS-READABLE-PC-SIZES-AND-RESPONSIVE-LAYOUT',()=>{
   assert.match(css,/font-size:clamp\(2\.45rem,4\.4vw,3\.65rem\)/);
   assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
   assert.match(css,/\.interpretation-room-entry-grid/);
+  assert.match(css,/data-count="4"/);
+  assert.match(css,/interpretation-room-entry-step>b/);
+  assert.match(css,/scroll-margin-top:6\.5rem/);
   assert.match(css,/\.interpretation-room-condition-cards/);
   assert.match(css,/\.interpretation-room-action-grid/);
   assert.match(css,/@media \(max-width:60rem\)/);
