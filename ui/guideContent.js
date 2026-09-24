@@ -1,5 +1,5 @@
 import { escapeHtml } from "./commonComponents.js";
-import { BODY_REGION_TERMINOLOGY } from "../core/runloadCore.js";
+import { BODY_REGION_TERMINOLOGY } from "../core/appCore.js";
 
 export const APP_GUIDE_VERSION = "guide-context-help-20260923-v2";
 export const DEFAULT_GUIDE_SECTION = "first-use";
