@@ -657,14 +657,16 @@ export function renderInterpretationRoom({ output } = {}) {
   }
   return `<div class="interpretation-room interpretation-room--selected interpretation-room--selected-v4" data-interpretation-room-state="selected">
     <header class="interpretation-room-selected-head"><div><p>${escapeHtml(date)}</p><h1>${escapeHtml(output.selectedRegion.label)}</h1><span>基準100・前回差・最近の推移から、この部位だけを整理します。</span></div><a href="${escapeHtml(regionHref(output, ""))}">12部位の整理へ戻る</a></header>
-    <div class="interpretation-room-selected-dashboard">
-      ${renderSelectedRegion(output)}
-      ${renderNextRail(output)}
+    <div class="interpretation-room-selected-workspace">
+      <div class="interpretation-room-selected-main">
+        ${renderSelectedRegion(output)}
+        ${renderConditions(output)}
+        <div class="interpretation-room-selected-advanced-stack">${renderAdvanced(output, output?.selectedRegion)}</div>
+      </div>
+      <div class="interpretation-room-selected-side">
+        ${renderNextRail(output)}
+        ${renderSubjective(output)}
+      </div>
     </div>
-    <div class="interpretation-room-selected-context">
-      ${renderConditions(output)}
-      ${renderSubjective(output)}
-    </div>
-    ${renderAdvanced(output, output?.selectedRegion)}
   </div>`;
 }
