@@ -128,7 +128,7 @@ await test('UI-INTERPRETATION-HAS-MEANING-FIRST-WORKSPACE',()=>{
   assert.ok(presentation.includes('今回のRunLoad解釈'));
   assert.ok(presentation.includes('今回の結果を読む順序'));
   assert.ok(presentation.includes('注目する理由で見る'));
-  assert.ok(presentation.includes('確認できること / 今回だけでは決めないこと'));
+  assert.ok(presentation.includes('今回の読み方を整理'));
   assert.ok(!presentation.includes('12部位から選ぶ'));
 });
 
