@@ -63,11 +63,11 @@ export function renderSettingsScreen({ services, context }) {
           </div>
           <div class="sub-section-head profile-goal-head"><small>GOAL</small><strong>記録を続ける主な目的（任意）</strong></div>
           <div class="goal-grid">${goals.map((goal) => `<label><input type="checkbox" name="runningGoalTags" value="${escapeHtml(goal)}"${goalValues.has(goal) ? " checked" : ""}><span>${escapeHtml(goal)}</span></label>`).join("")}</div>
-          <details class="subdetails"><summary><span><strong>身体に関する任意情報</strong><small>必要な場合だけ入力</small></span><span>⌄</span></summary><div class="subdetails-body"><div class="fields two-fields">
+          <details class="subdetails"><summary><span><strong>共有プロフィールの基本情報</strong><small>必要な場合だけ入力</small></span><span>⌄</span></summary><div class="subdetails-body"><div class="fields two-fields">
             <label class="field"><span>身長（cm）</span><input name="profileHeightCm" type="number" inputmode="decimal" min="100" max="230" step="0.1" value="${escapeHtml(profile.heightCm ?? "")}"></label>
             <label class="field"><span>体重（kg）</span><input name="profileWeightKg" type="number" inputmode="decimal" min="25" max="180" step="0.1" value="${escapeHtml(profile.weightKg ?? "")}"></label>
             <label class="field"><span>年齢帯</span><select name="profileAgeBand"><option value="">未設定・回答しない</option>${PROFILE_AGE_BAND_OPTIONS.map((item) => `<option value="${escapeHtml(item.key)}"${item.key === profile.ageBand ? " selected" : ""}>${escapeHtml(item.label)}</option>`).join("")}</select></label>
-            <label class="field"><span>性別関連入力</span><select name="profileSex"><option value="">未設定・回答しない</option><option value="male"${profile.sex === "male" ? " selected" : ""}>男性区分</option><option value="female"${profile.sex === "female" ? " selected" : ""}>女性区分</option></select></label>
+            <label class="field"><span>性別（任意）</span><select name="profileSex"><option value="">未設定・回答しない</option><option value="male"${profile.sex === "male" ? " selected" : ""}>男性</option><option value="female"${profile.sex === "female" ? " selected" : ""}>女性</option></select></label>
           </div><p class="note">すべて任意です。「共有用にまとめる」で、共有内容に含めるか本人が選べます。</p></div></details>
           <details class="subdetails"><summary><span><strong>保存シューズ</strong><small>Recordで次回も選べる名称</small></span><span>⌄</span></summary><div class="subdetails-body">${renderSavedShoes(settings)}<p class="visually-hidden">保存候補から削除しても、過去記録に保存されたシューズ情報は変わりません。</p></div></details>
           <div class="action-row"><button type="submit" class="primary">プロフィールを保存</button><button type="button" data-action="reset-journal-settings">標準設定に戻す</button></div>
