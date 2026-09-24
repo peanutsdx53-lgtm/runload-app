@@ -471,12 +471,12 @@ function renderRecordSelectedBodyList(form) {
       const control = recordBodyScore(form, areaId);
       if (control) control.value = String(event.currentTarget.value);
       refreshRecordBodyUi(form);
-      saveDraftFromForm(form, form.__runloadServices, false);
+      saveDraftFromForm(form, form.__appServices, false);
     });
     row.querySelector("[data-record-selected-side]")?.addEventListener("change", (event) => {
       const control = recordBodySide(form, areaId);
       if (control) control.value = String(event.currentTarget.value);
-      saveDraftFromForm(form, form.__runloadServices, false);
+      saveDraftFromForm(form, form.__appServices, false);
     });
     row.querySelector('[data-action="remove-record-body"]')?.addEventListener("click", () => {
       const score = recordBodyScore(form, areaId);
@@ -486,7 +486,7 @@ function renderRecordSelectedBodyList(form) {
       refreshRecordBodyUi(form);
       updateSubjectiveSummary(form);
       updateOptionalInputStatus(form);
-      saveDraftFromForm(form, form.__runloadServices, false);
+      saveDraftFromForm(form, form.__appServices, false);
     });
   });
 }
@@ -573,7 +573,7 @@ function saveEmbeddedShoePreset(form, services) {
 }
 
 function bindEmbeddedRecordSubflows(form, services) {
-  form.__runloadServices = services;
+  form.__appServices = services;
   form.querySelectorAll('[data-action="open-record-subflow"]').forEach((button) => {
     button.addEventListener("click", () => openRecordSubflow(form, String(button.dataset.subflow || "")));
   });
