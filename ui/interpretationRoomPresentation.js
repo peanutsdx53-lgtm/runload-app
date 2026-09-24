@@ -455,7 +455,7 @@ function renderAdvanced(output, region) {
 }
 export function renderInterpretationRoom({ output } = {}) {
   if (!output?.state?.targetAvailable) {
-    return '<div class="interpretation-room interpretation-room--empty" data-interpretation-room-state="empty"><header class="interpretation-room-hero"><p>結果を整理する</p><h1>対象の保存記録がありません</h1><p>保存した走行記録から、今回確認できることを整理します。</p></header><a class="interpretation-room-action interpretation-room-action--primary" href="#/record-input"><span><strong>記録を始める</strong><small>新しい走行記録を入力します。</small></span><i aria-hidden="true">›</i></a></div>';
+    return `<div class="interpretation-room interpretation-room--empty" data-interpretation-room-state="empty"><header class="interpretation-room-hero"><p>結果を整理する</p><h1>対象の保存記録がありません</h1><p>保存した走行記録から、今回確認できることを整理します。</p></header><a class="interpretation-room-action interpretation-room-action--primary" href="#/record-input"><span class="interpretation-room-action__icon">${interpretationIcon("record")}</span><span class="interpretation-room-action__copy"><strong>記録を始める</strong><small>新しい走行記録を入力します。</small></span><i aria-hidden="true">›</i></a></div>`;
   }
   if (output?.state?.support && output.state.support !== "NORMAL") return renderSupportPriority(output);
   if (output?.state?.regional === "REST") return renderRest(output);
