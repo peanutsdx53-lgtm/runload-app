@@ -424,8 +424,8 @@ function overviewHeadline(output) {
   const available = Number(counts.available || 0);
   const repeated = Number(counts.repeated || 0);
   const changed = Number(counts.previousChanged || 0);
-  if (available > 0 && repeated === available) return `${available}部位すべてで、同じ方向の繰り返しを確認`;
-  if (available > 0 && repeated >= Math.max(2, Math.ceil(available / 2))) return `${repeated}/${available}部位で、同じ方向の繰り返しを確認`;
+  if (available > 0 && repeated === available) return `${available}部位すべてで、同じ方向が複数回確認されています`;
+  if (available > 0 && repeated >= Math.max(2, Math.ceil(available / 2))) return `${available}部位中${repeated}部位で、同じ方向が複数回確認されています`;
   if (changed > 0) return `${changed}部位で、前回からの変化を確認できます`;
   return "今回の記録を、次回比較の基準点として使えます";
 }
@@ -440,16 +440,16 @@ function overviewExplanation(output) {
   const post = pair && finite(subjective?.post?.value) ? number(subjective.post.value, 0) : "";
   const difference = pair ? signed(subjective.difference.value, 0) : "";
   const parts = [];
-  if (changed) parts.push(`前回と比べられる部位のうち${changed}部位で差があります。`);
+  if (changed) parts.push(`前回から${changed}部位に差があります。`);
   if (conditionCount && pair) {
-    parts.push(`同時に走行条件が${conditionCount}項目変わり、本人の疲労感も${pre}→${post}（${difference}）に変化しています。`);
-    parts.push("今回は一つの要因に絞るより、「部位」「走行条件」「本人の感覚」を分けて見ると、自分の傾向を捉えやすい記録です。");
+    parts.push(`同時に走行条件が${conditionCount}項目変わり、疲労感も${pre}→${post}（${difference}）に変化しています。`);
+    parts.push("「部位」「条件」「本人の感覚」を分けて残すと、次回の比較で自分の傾向を読み分けやすくなります。");
   } else if (conditionCount) {
-    parts.push(`前回から走行条件が${conditionCount}項目変わっています。部位の変化と条件差を別々に残すと、次回の比較で違いを読み分けやすくなります。`);
+    parts.push(`走行条件も${conditionCount}項目変わっています。部位の変化と条件差を分けて残すと、次回の比較で違いを読み分けやすくなります。`);
   } else if (pair) {
-    parts.push(`本人の疲労感は${pre}→${post}（${difference}）です。部位数値と本人の感覚を別々に記録して、次回も同じ組み合わせで確認できます。`);
+    parts.push(`疲労感は${pre}→${post}（${difference}）です。部位数値とは別に残すと、次回も同じ尺度で比較できます。`);
   } else {
-    parts.push("今回の部位パターンを保存し、次回も同じ方法で記録すると、今回だけの差か続く傾向かを見分けやすくなります。");
+    parts.push("今回を比較点として保存し、次回も同じ方法で記録すると、続く傾向か一度だけの変化かを見分けやすくなります。");
   }
   return parts.join("");
 }
@@ -495,7 +495,7 @@ function renderPatternBoard(output) {
   const groups = output?.overview?.attention?.groups || [];
   if (!groups.length) return "";
   return `<section class="interpretation-room-patterns" aria-labelledby="interpretation-attention-title">
-    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>部位のパターン</small><h2 id="interpretation-attention-title">続いている部位パターン</h2></div><p>順位ではなく確認理由でまとめます。部位を選ぶと、その部位の基準100・前回差・推移を確認できます。</p></div>
+    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>部位のパターン</small><h2 id="interpretation-attention-title">継続して確認された部位</h2></div><p>順位ではなく確認理由でまとめます。部位を選ぶと、その部位の基準100・前回差・推移を確認できます。</p></div>
     <div class="interpretation-room-pattern-groups">${groups.map((group) => {
       const copy = REASON_COPY[group.code] || { title: group.code, note: "", icon: "interpretation", tone: "neutral" };
       return `<article class="interpretation-room-pattern-group" data-tone="${escapeHtml(copy.tone)}">
@@ -518,7 +518,6 @@ function renderContextBoard(output) {
       ${rows.length ? `<article class="interpretation-room-context-card interpretation-room-context-card--conditions"><header><span>${interpretationIcon("conditions")}</span><div><strong>前回から変わった条件</strong><small>${rows.length}項目</small></div></header><div class="interpretation-room-context-rows">${rows.map((item) => `<div><span><small>${escapeHtml(conditionLabel(item.id))}</small><strong>${escapeHtml(conditionDeltaText(item))}</strong></span><span class="context-values">${escapeHtml(conditionValue(item.id, item.previous))}<i>→</i>${escapeHtml(conditionValue(item.id, item.current))}</span></div>`).join("")}</div></article>` : ""}
       ${context.state !== "NONE" ? `<article class="interpretation-room-context-card interpretation-room-context-card--subjective"><header><span>${interpretationIcon("person")}</span><div><strong>本人の感覚</strong><small>疲労感</small></div></header><div class="interpretation-room-context-fatigue"><span><small>走る前</small><strong>${escapeHtml(pre.available ? number(pre.value,0) : "—")}<em>/10</em></strong></span><i>→</i><span><small>走った後</small><strong>${escapeHtml(post.available ? number(post.value,0) : "—")}<em>/10</em></strong></span><b>${escapeHtml(pair ? signed(context.difference.value,0) : "—")}</b></div><p>${escapeHtml(pair ? "同じ日の本人記録です。部位数値とは別の推移として次回も比較します。" : "記録できている側だけを、本人の感覚として残します。")}</p></article>` : ""}
     </div>
-    <div class="interpretation-room-context__takeaway"><span>${interpretationIcon("interpretation")}</span><div><small>RunLoadでの使い方</small><strong>${escapeHtml(comparisonHint(output))}</strong></div></div>
   </section>`;
 }
 
@@ -602,9 +601,10 @@ function renderNextRail(output) {
   const checkCopy = NEXT_CHECK_COPY[check.code] || NEXT_CHECK_COPY.CONTINUE_COMPARABLE_RECORDS;
   const primary = actions[0] || null;
   const secondary = actions.slice(1);
+  const selected = Boolean(output?.selectedRegion);
   return `<aside class="interpretation-room-next-rail" aria-labelledby="interpretation-next-title">
     <div class="interpretation-room-next-rail__head"><span>${interpretationIcon("flag")}</span><div><small>次の比較</small><h2 id="interpretation-next-title">次に確かめる</h2></div></div>
-    <p class="interpretation-room-next-rail__check">${escapeHtml(checkCopy)}</p>
+    ${selected ? `<p class="interpretation-room-next-rail__check">${escapeHtml(checkCopy)}</p>` : ""}
     ${check.userRecorded ? `<div class="interpretation-room-next-rail__memo"><small>自分で残した次回確認</small><strong>${escapeHtml(check.userRecorded)}</strong></div>` : ""}
     ${primary ? renderAction(primary, output, { primary: true }) : ""}
     ${secondary.length ? `<div class="interpretation-room-next-rail__secondary">${secondary.map((action) => renderAction(action, output)).join("")}</div>` : ""}
