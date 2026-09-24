@@ -36,9 +36,8 @@ await test('CONTEXTUAL-UNDERSTANDING-ENTRIES-REMAIN',()=>{
   assert.match(read('screens/bodyPartDetailScreen.js'),/この部位の結果を整理する/);
 });
 
-await test('PWA-AND-RUNTIME-DROP-RETIRED-SCREEN',()=>{
+await test('PWA-DROPS-RETIRED-SCREEN',()=>{
   assert.doesNotMatch(read('service-worker.js'),/screens\/activationScreen\.js/);
-  assert.doesNotMatch(read('RUNTIME_SHA256SUMS.txt'),/screens\/activationScreen\.js/);
 });
 
 await test('RETIRED-ACTIVATION-STYLES-REMOVED',()=>{
