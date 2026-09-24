@@ -4980,6 +4980,17 @@
     min-width: 0;
   }
 
+  .screen--settings.screen-layout--settings .subdetails-body > .fields.two-fields :is(
+    select[name="profileAgeBand"],
+    select[name="profileSex"]
+  ) {
+    width: min(13rem, 100%) !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    justify-self: start;
+  }
+
+
   /* Four compact counters belong on one desktop row; descriptive ABOUT cards remain 2 x 2. */
   .screen--settings.screen-layout--settings .data-overview {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;

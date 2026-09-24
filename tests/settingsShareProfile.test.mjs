@@ -55,6 +55,7 @@ await test('SETTINGS-SHARE-PROFILE-BASIC-FIELDS-STAY-WITHIN-DISCLOSURE',()=>{
   assert.match(css,/@media \(min-width: 80rem\) and \(max-width: 86rem\) \{[\s\S]*?grid-template-columns:\s*10rem 10rem repeat\(2, minmax\(0, 1fr\)\)\s*!important;/);
   assert.doesNotMatch(css,/grid-template-columns:\s*11rem 11rem 16rem 16rem\s*!important/);
   assert.doesNotMatch(css,/grid-template-columns:\s*10rem 10rem 14rem 14rem\s*!important/);
+  assert.match(css,/select\[name="profileAgeBand"\],[\s\S]*?select\[name="profileSex"\][\s\S]*?width:\s*min\(13rem, 100%\)\s*!important;[\s\S]*?min-width:\s*0\s*!important;/);
 });
 
 const failed=results.filter((item)=>item.status==='FAIL');
