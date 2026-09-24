@@ -1,4 +1,4 @@
-import { SURFACE_FIELDS } from "../core/runloadCore.js";
+import { SURFACE_FIELDS } from "../core/appCore.js";
 import { escapeHtml } from "./commonComponents.js";
 
 export function primarySurfaceSummary(course = {}) {
