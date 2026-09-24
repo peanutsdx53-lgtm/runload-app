@@ -142,21 +142,24 @@ function render(result,previous,compare,data,course){
   const items=comparisonItems(result,previous,compare);
   const stats=comparisonStats(result,previous);
   const labels=changedConditionLabels(data);
-  const message=labels.length
-    ? `変更した条件は「${labels.join("、")}」です。元の記録との差を部位ごとに確認し、条件差と部位差を分けて読みます。`
-    : "元の記録と同じ条件です。再計算結果を元の保存記録と照合します。";
+  if(!labels.length&&stats.changed===0){
+    return `<div class="simulation-v3-result simulation-v3-result--idle">
+      <section class="simulation-idle-state"><span>${simulationResultIcon("conditions")}</span><div><small>比較を始める</small><h3>まだ条件を変更していません</h3><p>右側で距離・時間・コースなどを変更すると、元の保存記録との差がここに表示されます。</p><strong>まず1項目だけ変えると、違いを読みやすくなります。</strong></div></section>
+    </div>`;
+  }
+  const message=`変更した条件は「${labels.join("、")}」です。元の記録との差を部位ごとに確認し、条件差と部位差を分けて読みます。`;
   return `<div class="simulation-v3-result">
     <section class="simulation-change-overview"><div class="simulation-change-overview__head"><div><small>RUNLOAD COMPARISON</small><h3>変化の見立て</h3><p>${message}</p></div><button type="button" data-action="simulation-toggle-compare" aria-pressed="${compare}">${compare?"基準100との位置を見る":"元の記録との差に戻る"}</button></div>
       <div class="simulation-change-metrics"><article><span>${simulationResultIcon("compare")}</span><div><small>比較できる部位</small><strong>${stats.comparable}<em>/ 12</em></strong></div></article><article><span>${simulationResultIcon("above")}</span><div><small>1ポイント以上の差</small><strong>${stats.changed}<em>部位</em></strong></div></article><article><span>${simulationResultIcon("stable")}</span><div><small>ほぼ同じ</small><strong>${stats.stable}<em>部位</em></strong></div></article></div>
     </section>
     <section class="simulation-change-groups" aria-label="${compare?"元の記録からの変化":"基準100との位置"}">${renderChangeGroups(items,compare)}</section>
-    <section class="simulation-condition-readout"><span>${simulationResultIcon("conditions")}</span><div><strong>変更した条件</strong><p>${labels.length?labels.join(" / "):"変更なし"}</p><small>コース：${course?.name||"未選択"}。条件差と部位差を同一画面で確認できます。</small></div></section>
+    <section class="simulation-condition-readout"><span>${simulationResultIcon("conditions")}</span><div><strong>変更した条件</strong><p>${labels.join(" / ")}</p><small>コース：${course?.name||"未選択"}。条件差と部位差を同一画面で確認できます。</small></div></section>
     <p class="compact-boundary">部位ごとの数値は独立した基準で計算しています。ここでは部位間の順位ではなく、元の記録との差の方向を確認します。計算状態：${result?.state||"—"}</p>
   </div>`;
 }
 export function bindSimulation({services}){
   const form=document.getElementById("simulation-form"),target=document.getElementById("simulation-result");if(!form||!target)return;let compare=true;const sourceRecordId=String(form.querySelector('[name="sourceRecordId"]')?.value||"");const previous=sourceValues(services,sourceRecordId);
-  function update(){const data=new FormData(form);const runWalk=String(data.get("runningFormat"))==="RUN_WALK";form.querySelector('[data-simulation-run-walk]').hidden=!runWalk;const changedItems=changedConditionItems(data);const labels=changedItems.map((item)=>item.label);const chips=form.querySelector('[data-simulation-assumption-chips]');if(chips){chips.innerHTML=changedItems.length?changedItems.map((item)=>`<button type="button" data-simulation-revert="${item.id}" aria-label="${item.label}を元に戻す"><span>${item.label}</span><b aria-hidden="true">×</b></button>`).join(""):'<span>変更なし</span>';}const built=engineInput(data);const warning=form.querySelector('[data-simulation-input-warning]');if(built.error){target.innerHTML="";if(warning){warning.hidden=false;warning.textContent=built.error;}return;}if(warning)warning.hidden=true;const result=services.model.primaryRegionalV2.calculatePrimaryRegionalV2(built.input);const d=Number(data.get("distanceKm")),t=Number(data.get("durationMinutes"));const p=pace(d,t);const stats=comparisonStats(result,previous);const set=(sel,text)=>{const el=form.querySelector(sel)||document.querySelector(sel);if(el)el.textContent=text;};set('[data-simulation-derived-pace]',p);set('[data-simulation-current-summary]',`${d.toFixed(1)} km・${Math.round(t)}分`);set('[data-simulation-current-pace]',`${p}・${built.course.name||"コース未選択"}`);set('[data-simulation-condition-count]',`${labels.length}項目`);set('[data-simulation-region-count]',`${stats.changed}部位`);set('[data-simulation-change-label]',comparisonLabel(stats,labels.length));const calc=form.querySelector('.calc-state');if(calc)calc.textContent=result?.state==="OK"?"計算済み":"確認が必要";target.innerHTML=render(result,previous,compare,data,built.course);bindToggle();}
+  function update(){const data=new FormData(form);const runWalk=String(data.get("runningFormat"))==="RUN_WALK";form.querySelector('[data-simulation-run-walk]').hidden=!runWalk;const changedItems=changedConditionItems(data);const labels=changedItems.map((item)=>item.label);const chips=form.querySelector('[data-simulation-assumption-chips]');if(chips){chips.innerHTML=changedItems.length?changedItems.map((item)=>`<button type="button" data-simulation-revert="${item.id}" aria-label="${item.label}を元に戻す"><span>${item.label}</span><b aria-hidden="true">×</b></button>`).join(""):'<span>変更なし</span>';}const built=engineInput(data);const warning=form.querySelector('[data-simulation-input-warning]');if(built.error){target.innerHTML="";if(warning){warning.hidden=false;warning.textContent=built.error;}return;}if(warning)warning.hidden=true;const result=services.model.primaryRegionalV2.calculatePrimaryRegionalV2(built.input);const d=Number(data.get("distanceKm")),t=Number(data.get("durationMinutes"));const p=pace(d,t);const stats=comparisonStats(result,previous);const set=(sel,text)=>{const el=form.querySelector(sel)||document.querySelector(sel);if(el)el.textContent=text;};set('[data-simulation-derived-pace]',p);set('[data-simulation-current-summary]',`${d.toFixed(1)} km・${Math.round(t)}分`);set('[data-simulation-current-pace]',`${p}・${built.course.name||"コース未選択"}`);set('[data-simulation-condition-count]',String(labels.length));set('[data-simulation-region-count]',String(stats.changed));set('[data-simulation-change-label]',comparisonLabel(stats,labels.length));const calc=form.querySelector('.calc-state');if(calc)calc.textContent=result?.state==="OK"?"計算済み":"確認が必要";target.innerHTML=render(result,previous,compare,data,built.course);bindToggle();}
   function bindToggle(){target.querySelector('[data-action="simulation-toggle-compare"]')?.addEventListener("click",()=>{compare=!compare;update();});}
   form.querySelector("[data-simulation-assumption-chips]")?.addEventListener("click",(event)=>{
     const button=event.target.closest?.("[data-simulation-revert]");
@@ -196,6 +199,7 @@ export function bindSimulation({services}){
   form.addEventListener("change",update);
   form.addEventListener("reset",(event)=>{
     event.preventDefault();
+    compare=true;
     const current=new FormData(form);
     const source=sourceConditionFrom(current);
     const engine=sourceEngineInputFrom(current);
