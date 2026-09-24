@@ -1,7 +1,7 @@
 import {
   V27_COMMON_REGIONAL_GRADE_INPUT_MAX_PERCENT,
   V27_TOTAL_GRADE_DOMAIN_MAX_PERCENT,
-} from "../../core/runloadCore.js";
+} from "../../core/appCore.js";
 
 function activeRepresentativeGrades(course = {}) {
   if (String(course.gradeKnowledge || "UNKNOWN") !== "KNOWN_PROFILE") return [];
