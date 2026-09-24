@@ -37,7 +37,7 @@ const PRIMARY_HEADER_TITLES = Object.freeze({
 
 export function resolveHeaderTitle(currentScreen, currentLocation = null) {
   const context = resolveScreenContextNavigation(currentScreen, currentLocation);
-  return context?.title || PRIMARY_HEADER_TITLES[currentScreen] || "RunLoad";
+  return context?.title || PRIMARY_HEADER_TITLES[currentScreen] || "走行記録";
 }
 
 function renderContextHelpButton(currentScreen, className = "") {
