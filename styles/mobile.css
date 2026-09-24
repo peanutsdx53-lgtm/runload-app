@@ -4909,3 +4909,30 @@ html.consult-viewer-open{overflow:hidden}
 .screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed[open]>summary::after{
   content:"閉じる";
 }
+
+
+/* ===== Condition Compare V3 mobile readability final 2026-09-24 ===== */
+.screen-layout--simulation.simulation-v3 .panel-head small,
+.screen-layout--simulation.simulation-v3 .preview-head small,
+.screen-layout--simulation.simulation-v3 .panel-head>span,
+.screen-layout--simulation.simulation-v3 .calc-state,
+.screen-layout--simulation.simulation-v3 .simulation-change-overview__head small,
+.screen-layout--simulation.simulation-v3 .simulation-change-metrics small,
+.screen-layout--simulation.simulation-v3 .simulation-change-metrics em,
+.screen-layout--simulation.simulation-v3 .simulation-change-group>header>b,
+.screen-layout--simulation.simulation-v3 .simulation-change-row__copy small,
+.screen-layout--simulation.simulation-v3 .simulation-condition-readout small,
+.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note>span,
+.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b,
+.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+  font-size:11px;
+}
+.screen-layout--simulation.simulation-v3 .simulation-v3-adjust button,
+.screen-layout--simulation.simulation-v3 .assumption-chips button,
+.screen-layout--simulation.simulation-v3 .simulation-change-overview__head button{
+  font-size:12px;
+}
+.screen-layout--simulation.simulation-v3 .simulation-change-row__copy small,
+.screen-layout--simulation.simulation-v3 .simulation-condition-readout small{
+  line-height:1.5;
+}
