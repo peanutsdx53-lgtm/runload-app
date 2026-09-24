@@ -119,17 +119,17 @@ await test('OVERVIEW-USES-COMPACT-SIGNALS-AND-ACTIONABLE-NEXT-COMPARISON',()=>{
 
 await test('REGION-PATTERNS-ARE-COMPACT-AND-NOT-RANKED',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/どの部位で、どのような傾向が続いているか/);
+  assert.match(html,/続いている部位パターン/);
   assert.match(html,/同じ方向が続いている/);
   assert.match(html,/前回から変化している/);
   assert.ok((html.match(/region-chip__copy/g)||[]).length>=2);
-  assert.match(html,/部位どうしを順位付けせず/);
+  assert.match(html,/順位ではなく確認理由でまとめます/);
   assert.doesNotMatch(html,/変化が大きい部位.*上位/);
 });
 
 await test('OVERVIEW-CONTEXT-COMBINES-CONDITIONS-AND-SUBJECTIVE-WITHOUT-MAKING-THEM-THE-MAIN-RESULT',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/部位の変化と分けて残しておく情報/);
+  assert.match(html,/比較の背景/);
   assert.match(html,/前回から変わった条件/);
   assert.match(html,/距離/);
   assert.match(html,/\+1 km/);
@@ -246,7 +246,10 @@ await test('CSS-HAS-V4-COMPACT-RESPONSIVE-DASHBOARD',()=>{
   assert.match(shared,/\.interpretation-room-dashboard/);
   assert.match(shared,/\.interpretation-room-region-chips/);
   assert.match(shared,/\.interpretation-room-next-rail/);
+  assert.match(shared,/Interpretation Room V4 detail stabilization/);
+  assert.match(shared,/\.interpretation-room-selected-dashboard>\.interpretation-room-region-detail--v3[\s\S]*width:100%/);
   assert.match(desktop,/PC Interpretation V4 wide dashboard/);
+  assert.match(desktop,/PC Interpretation V4 detail fit audit/);
   assert.match(desktop,/grid-template-areas:[\s\S]*"insight next"[\s\S]*"patterns next"[\s\S]*"context next"/);
   assert.match(desktop,/\.interpretation-room-region-chips[\s\S]*repeat\(4,minmax\(0,1fr\)\)/);
   assert.match(desktop,/position:sticky/);
