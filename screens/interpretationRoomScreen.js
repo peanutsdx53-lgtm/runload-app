@@ -1,4 +1,4 @@
-import { buildRunLoadInterpretation } from "../core/interpretationCore.js";
+import { buildInterpretation } from "../core/interpretationCore.js";
 import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
 
 const ALLOWED_ORIGINS = new Set(["result", "history", "body-part-detail", "simulation", "home"]);
@@ -34,7 +34,7 @@ export function renderInterpretationRoomScreen({ services, context }) {
     : services.workflows.records.loadLatestExperience();
   const recordId = targetExperience?.record?.id || requestedRecordId;
   const rof = rofContext(services, recordId);
-  const output = buildRunLoadInterpretation({
+  const output = buildInterpretation({
     targetExperience,
     allExperiences: services.workflows.records.loadAllExperiences(),
     rofSummary: rof.summary,
