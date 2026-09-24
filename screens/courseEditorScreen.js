@@ -1,4 +1,4 @@
-import { SURFACE_FIELDS } from "../core/runloadCore.js";
+import { SURFACE_FIELDS } from "../core/appCore.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { peekGpxCandidate } from "../ui/flowSessionState.js";
 import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js";
