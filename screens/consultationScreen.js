@@ -127,8 +127,8 @@ function consultationProfileSummary(profile = {}) {
   if (Number(profile.weightKg) > 0) parts.push(`体重 ${formatNumber(profile.weightKg, 1)} kg`);
   const age = PROFILE_AGE_BAND_OPTIONS.find((item) => item.key === profile.ageBand)?.label || "";
   if (age) parts.push(`年齢帯 ${age}`);
-  if (profile.sex === "male") parts.push("性別 男性区分");
-  if (profile.sex === "female") parts.push("性別 女性区分");
+  if (profile.sex === "male") parts.push("性別 男性");
+  if (profile.sex === "female") parts.push("性別 女性");
   if (profile.runningStartDateOrBand) parts.push(`開始時期 ${profile.runningStartDateOrBand}`);
   if (profile.experienceSelfAssessment) parts.push(`走ることへの慣れ ${profile.experienceSelfAssessment}`);
   const goals = Array.isArray(profile.runningGoalTags) ? profile.runningGoalTags.filter(Boolean) : [];
