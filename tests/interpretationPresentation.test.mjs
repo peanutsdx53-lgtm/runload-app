@@ -100,7 +100,7 @@ await test('OVERVIEW-LEADS-WITH-SYNTHESIS-NOT-INPUT-RECAP',()=>{
   assert.match(html,/今回の解釈/);
   assert.match(html,/前回と比べられる部位のうち4部位で差があります/);
   assert.match(html,/走行条件が2項目変わり/);
-  assert.match(html,/本人の疲労感も4→8（\+4）/);
+  assert.match(html,/疲労感も4→8（\+4）/);
   assert.match(html,/「部位」「走行条件」「本人の感覚」を分けて見る/);
   assert.doesNotMatch(html,/今回のRunLoad解釈/);
   assert.doesNotMatch(html,/今回の結果を読む順序/);
@@ -119,7 +119,7 @@ await test('OVERVIEW-USES-COMPACT-SIGNALS-AND-ACTIONABLE-NEXT-COMPARISON',()=>{
 
 await test('REGION-PATTERNS-ARE-COMPACT-AND-NOT-RANKED',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/続いている部位パターン/);
+  assert.match(html,/継続して確認された部位/);
   assert.match(html,/同じ方向が続いている/);
   assert.match(html,/前回から変化している/);
   assert.ok((html.match(/region-chip__copy/g)||[]).length>=2);
@@ -137,6 +137,7 @@ await test('OVERVIEW-CONTEXT-COMBINES-CONDITIONS-AND-SUBJECTIVE-WITHOUT-MAKING-T
   assert.match(html,/4<em>\/10/);
   assert.match(html,/8<em>\/10/);
   assert.match(html,/同じ日の本人記録です/);
+  assert.doesNotMatch(html,/RunLoadでの使い方/);
 });
 
 await test('OVERVIEW-NEXT-ACTIONS-ARE-COMPACT-RAIL',()=>{
