@@ -250,8 +250,11 @@ await test('CSS-HAS-V4-COMPACT-RESPONSIVE-DASHBOARD',()=>{
   assert.match(shared,/\.interpretation-room-selected-dashboard>\.interpretation-room-region-detail--v3[\s\S]*width:100%/);
   assert.match(desktop,/PC Interpretation V4 wide dashboard/);
   assert.match(desktop,/PC Interpretation V4 detail fit audit/);
+  assert.match(desktop,/PC Interpretation V4 screenshot final pass/);
   assert.match(desktop,/grid-template-areas:[\s\S]*"insight next"[\s\S]*"patterns next"[\s\S]*"context next"/);
-  assert.match(desktop,/\.interpretation-room-region-chips[\s\S]*repeat\(4,minmax\(0,1fr\)\)/);
+  assert.match(desktop,/\.interpretation-room-region-chips[\s\S]*repeat\(3,minmax\(0,1fr\)\)/);
+  assert.match(desktop,/\.interpretation-room-selected-dashboard[\s\S]*grid-template-columns:minmax\(0,1fr\)\s*!important/);
+  assert.match(desktop,/@media \(min-width:80rem\)[\s\S]*minmax\(19rem,21rem\)/);
   assert.match(desktop,/position:sticky/);
   assert.match(mobile,/Mobile Interpretation V4 touch layout/);
   assert.match(mobile,/\.interpretation-room-next-rail>\.interpretation-room-action[\s\S]*min-height:56px/);
