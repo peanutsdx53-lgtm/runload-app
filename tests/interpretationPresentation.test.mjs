@@ -104,19 +104,33 @@ await test('OVERVIEW-STARTS-WITH-RUNLOAD-INTERPRETATION-NOT-BODY-MAP',()=>{
 
 await test('SUMMARY-INTEGRATES-REGION-HISTORY-FATIGUE-AND-CONDITIONS',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/12<\/strong><span>\/ 12/);
-  assert.match(html,/4<\/strong><span>部位<\/span><small>前回から変化/);
+  assert.match(html,/interpretation-room-summary--v3/);
+  assert.match(html,/前回から変化/);
+  assert.match(html,/4<em>部位<\/em>/);
+  assert.match(html,/同じ方向の継続/);
+  assert.match(html,/本人記録の前後差/);
   assert.match(html,/\+4/);
-  assert.match(html,/2<\/strong><span>項目<\/span><small>前回から条件変更/);
+  assert.match(html,/前回からの条件差/);
+  assert.match(html,/2<em>項目<\/em>/);
   assert.match(html,/原因と結果としては結び付けません/);
 });
 
 await test('REGIONS-ARE-GROUPED-BY-REASON-NOT-RANKED',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/注目する理由から見る/);
-  assert.match(html,/過去にも同じ方向が確認された/);
-  assert.match(html,/前回から変化がある/);
-  assert.match(html,/部位どうしの数値の大小を、身体負荷や重要度の順位として扱いません/);
+  assert.match(html,/注目する理由で見る/);
+  assert.match(html,/同じ方向が続いている/);
+  assert.match(html,/前回から変化している/);
+  assert.match(html,/部位間の順位ではなく、確認する理由を示します/);
+  assert.doesNotMatch(html,/変化が大きい部位.*上位/);
+});
+
+await test('OVERVIEW-HAS-INTERPRETATION-ENTRY-AND-PICTOGRAMS',()=>{
+  const html=renderInterpretationRoom({output:baseOutput()});
+  assert.match(html,/今回の結果を読む順序/);
+  assert.match(html,/今回わかること/);
+  assert.match(html,/注目する理由を確認/);
+  assert.match(html,/本人の記録と分けて見る/);
+  assert.ok((html.match(/class="interpretation-room-icon/g)||[]).length>=8);
 });
 
 await test('REGION-LINK-CARRIES-RECORD-AND-REGION',()=>{
@@ -134,43 +148,45 @@ await test('SELECTED-REGION-SHOWS-CURRENT-PREVIOUS-AND-HISTORY-CHART',()=>{
   assert.match(html,/基準100/);
 });
 
-await test('CONDITION-TABLE-SEPARATES-DESCRIPTION-FROM-CAUSAL-CLAIM',()=>{
+await test('CONDITION-CARDS-SEPARATE-DESCRIPTION-FROM-CAUSAL-CLAIM',()=>{
   const html=renderInterpretationRoom({output:baseOutput({selected:true})});
-  assert.match(html,/条件の違いを並べる/);
+  assert.match(html,/条件の違いを整理/);
+  assert.match(html,/interpretation-room-condition-cards/);
   assert.match(html,/距離/);
   assert.match(html,/5 km/);
   assert.match(html,/6 km/);
   assert.match(html,/この部位の計算に使用/);
-  assert.match(html,/原因だったとは判断しません/);
+  assert.match(html,/今回だけでは原因として確定しません/);
 });
 
-await test('OVERVIEW-CONDITION-TABLE-ASKS-FOR-REGION-BEFORE-ROUTE-RELATION',()=>{
+await test('OVERVIEW-CONDITION-CARDS-ASK-FOR-REGION-BEFORE-ROUTE-RELATION',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/部位を選ぶと関係を確認/);
+  assert.match(html,/部位を選択すると、その条件が選択部位の計算でどのように扱われたかも確認できます/);
 });
 
 await test('SUBJECTIVE-FATIGUE-REMAINS-SEPARATE-LAYER',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/本人の記録/);
-  assert.match(html,/走る前後の疲労感/);
+  assert.match(html,/本人の記録との関係/);
+  assert.match(html,/RunLoadでの見方/);
   assert.match(html,/4<em>\/10/);
   assert.match(html,/8<em>\/10/);
-  assert.match(html,/疲労感と部位別の数値を足し合わせたり/);
+  assert.match(html,/12部位の数値とは別に、同じ日の主観記録として確認します/);
 });
 
 await test('UNDERSTANDING-IS-COMPACT-AND-BOUNDARY-AWARE',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/分かること \/ 決めないこと/);
+  assert.match(html,/確認できること \/ 今回だけでは決めないこと/);
   assert.match(html,/今回確認できること/);
-  assert.match(html,/ここからは決めないこと/);
-  assert.match(html,/けがの可能性/);
+  assert.match(html,/今回だけでは決めないこと/);
+  assert.match(html,/原因として確定しません/);
 });
 
 await test('NEXT-CHECK-IS-A-SELF-UNDERSTANDING-SUGGESTION',()=>{
   const html=renderInterpretationRoom({output:baseOutput({selected:true})});
   assert.match(html,/次に確かめる/);
   assert.match(html,/次回も距離・時間・コース条件を残すと/);
-  assert.match(html,/条件を変えて確かめる/);
+  assert.match(html,/条件を変えて比較する/);
+  assert.match(html,/interpretation-room-action-grid/);
 });
 
 await test('CALCULATION-AND-EVIDENCE-ARE-PROGRESSIVELY-DISCLOSED',()=>{
@@ -179,7 +195,7 @@ await test('CALCULATION-AND-EVIDENCE-ARE-PROGRESSIVELY-DISCLOSED',()=>{
   assert.match(html,/この部位の数値に使われた情報を確認/);
   assert.match(html,/数値計算に使用/);
   assert.match(html,/<details class="interpretation-room-advanced">/);
-  assert.match(html,/計算方法と研究上の背景を詳しく見る/);
+  assert.match(html,/計算の考え方と根拠を詳しく見る/);
 });
 
 await test('DERIVED-ACTIONS-PRESERVE-INTERPRETATION-CONTEXT',()=>{
@@ -225,11 +241,15 @@ await test('EMPTY-STATE-HAS-DIRECT-RECORD-ACTION',()=>{
 
 await test('CSS-HAS-READABLE-PC-SIZES-AND-RESPONSIVE-LAYOUT',()=>{
   const css=fs.readFileSync(path.join(root,'styles/interpretation-room.css'),'utf8');
-  assert.match(css,/width: min\(100%, 76rem\)/);
-  assert.match(css,/font-size: 1\.06rem/);
-  assert.match(css,/grid-template-columns: repeat\(4, minmax\(0, 1fr\)\)/);
-  assert.match(css,/@media \(max-width: 60rem\)/);
-  assert.match(css,/@media \(max-width: 420px\)/);
+  assert.match(css,/Interpretation Room V3 experience/);
+  assert.match(css,/width:min\(100%,84rem\)/);
+  assert.match(css,/font-size:clamp\(2\.45rem,4\.4vw,3\.65rem\)/);
+  assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+  assert.match(css,/\.interpretation-room-entry-grid/);
+  assert.match(css,/\.interpretation-room-condition-cards/);
+  assert.match(css,/\.interpretation-room-action-grid/);
+  assert.match(css,/@media \(max-width:60rem\)/);
+  assert.match(css,/@media \(max-width:34rem\)/);
   assert.doesNotMatch(css,/#[0-9a-fA-F]{3,8}\b/);
 });
 
