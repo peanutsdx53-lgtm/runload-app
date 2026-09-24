@@ -133,6 +133,26 @@ await test('OVERVIEW-HAS-INTERPRETATION-ENTRY-AND-PICTOGRAMS',()=>{
   assert.ok((html.match(/class="interpretation-room-icon/g)||[]).length>=8);
 });
 
+await test('OVERVIEW-ENTRY-FALLS-BACK-TO-EXISTING-SECTIONS',()=>{
+  const out=baseOutput();
+  out.overview.attention.groups=[];
+  out.overview.attention.counts.conditionDifferences=0;
+  out.conditions.differences=[];
+  out.subjectiveContext={state:'NONE',pre:{available:false},post:{available:false},difference:{eligible:false},recentReferences:{},boundaryTokens:[]};
+  const html=renderInterpretationRoom({output:out});
+  assert.doesNotMatch(html,/href="#interpretation-attention-title"/);
+  assert.doesNotMatch(html,/href="#interpretation-conditions-title"/);
+  assert.match(html,/href="#interpretation-next-title"/);
+});
+
+await test('ADVANCED-COPY-HIDES-INTERNAL-REFERENCE-LABEL',()=>{
+  const out=baseOutput({selected:true});
+  out.advanced.evidence.regions['BA-DISP-014'].construct='股関節の機械的仕事に基づく部位内Reference-100';
+  const html=renderInterpretationRoom({output:out});
+  assert.match(html,/股関節の機械的仕事に基づく部位内基準100/);
+  assert.doesNotMatch(html,/Reference-100/);
+});
+
 await test('REGION-LINK-CARRIES-RECORD-AND-REGION',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/#\/interpretation-room\?recordId=r1&amp;origin=result&amp;regionId=BA-DISP-014/);
