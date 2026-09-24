@@ -1,4 +1,4 @@
-import { normalizeBodyProfile, STORAGE_KEYS } from "../../core/runloadCore.js";
+import { normalizeBodyProfile, STORAGE_KEYS } from "../../core/appCore.js";
 
 import { DEFAULT_APP_SETTINGS, applyAppSettings, mergeAppSettings } from "../appSettings.js";
 import { downloadJsonText } from "./browserUtilities.js";
