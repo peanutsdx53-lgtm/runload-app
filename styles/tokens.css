@@ -148,80 +148,8 @@ html.rl-color-natural {
   --shadow-dialog: 0 24px 70px rgba(20, 28, 24, 0.28);
 }
 
-html.rl-color-green {
-  /* Yasashii green: eye-friendly, health-oriented, calm. */
-  --color-paper: #dcebd6;
-  --color-surface: #fbfff4;
-  --color-ink: #1b2d21;
-  --color-muted: #546a59;
-  --color-line: #accdab;
-  --color-accent: #2f7650;
-  --color-accent-strong: #1e563a;
-  --color-accent-soft: #d7efda;
-  --color-neutral-soft: #e1efdc;
-  --color-surface-warm: #f5ffec;
-  --color-surface-warm-strong: #e2f3d7;
-  --color-map-silhouette: #d8e8d2;
-  --color-map-line: #a4bfa1;
-  --color-map-low: #d5efda;
-  --color-map-middle: #83c297;
-  --color-map-high: #2f7650;
-  --color-meter-track: #d4e7d2;
-  --color-rest: #6b986d;
-  --color-focus: #216c92;
-  --shadow-card: 0 12px 30px rgba(27, 61, 35, 0.09);
-  --shadow-dialog: 0 24px 70px rgba(20, 44, 27, 0.28);
-}
 
-html.rl-color-blue {
-  /* Sukkiri blue: cool, organized, easy to scan. */
-  --color-paper: #e3ebf1;
-  --color-surface: #fbfdff;
-  --color-ink: #1e2630;
-  --color-muted: #596a77;
-  --color-line: #afc4d2;
-  --color-accent: #2f6385;
-  --color-accent-strong: #214964;
-  --color-accent-soft: #e1eef6;
-  --color-neutral-soft: #e7edf2;
-  --color-surface-warm: #f7fbff;
-  --color-surface-warm-strong: #e7f1f8;
-  --color-map-silhouette: #dce5eb;
-  --color-map-line: #a9bac5;
-  --color-map-low: #dbeaf2;
-  --color-map-middle: #8fb0c4;
-  --color-map-high: #356d8f;
-  --color-meter-track: #dce6ec;
-  --color-rest: #638b87;
-  --color-focus: #1e66b2;
-  --shadow-card: 0 12px 30px rgba(25, 43, 60, 0.08);
-  --shadow-dialog: 0 24px 70px rgba(20, 34, 48, 0.28);
-}
 
-html.rl-color-orange {
-  /* Atatakai orange: warm, approachable, positive. */
-  --color-paper: #efe5d8;
-  --color-surface: #fffaf2;
-  --color-ink: #2b241c;
-  --color-muted: #745f4d;
-  --color-line: #d0bba4;
-  --color-accent: #986137;
-  --color-accent-strong: #704522;
-  --color-accent-soft: #f6eadc;
-  --color-neutral-soft: #efe5d8;
-  --color-surface-warm: #fff4e6;
-  --color-surface-warm-strong: #f4e2cf;
-  --color-map-silhouette: #e8dccd;
-  --color-map-line: #bea98f;
-  --color-map-low: #eadbc6;
-  --color-map-middle: #c69b70;
-  --color-map-high: #9b6538;
-  --color-meter-track: #e7d8c7;
-  --color-rest: #837341;
-  --color-focus: #1f66a6;
-  --shadow-card: 0 12px 30px rgba(56, 37, 20, 0.08);
-  --shadow-dialog: 0 24px 70px rgba(47, 30, 17, 0.28);
-}
 
 html.rl-appearance-dark {
   color-scheme: dark;
@@ -269,65 +197,8 @@ html.rl-appearance-dark {
   --overlay-dialog: rgba(0, 0, 0, 0.68);
 }
 
-html.rl-appearance-dark.rl-color-green {
-  --color-paper: #07130b;
-  --color-surface: #16281c;
-  --color-ink: #f0f8ef;
-  --color-muted: #c2d6c0;
-  --color-line: #45634b;
-  --color-accent: #9fe3a8;
-  --color-accent-strong: #d1f6d4;
-  --color-accent-soft: #173f24;
-  --color-on-accent: #0b1c10;
-  --color-neutral-soft: #1c2e20;
-  --color-surface-warm: #172417;
-  --color-surface-warm-strong: #20351f;
-  --color-map-silhouette: #1f3325;
-  --color-map-line: #4a634d;
-  --color-map-low: #1a3d29;
-  --color-map-middle: #63a875;
-  --color-map-high: #b6ecbd;
-  --color-rest: #b3d9a8;
-  --color-focus: #9acbff;
-}
 
-html.rl-appearance-dark.rl-color-blue {
-  --color-paper: #0a1118;
-  --color-surface: #192630;
-  --color-ink: #eef6fc;
-  --color-muted: #bdcddd;
-  --color-line: #42596b;
-  --color-accent: #91c7ea;
-  --color-accent-strong: #c9e7fb;
-  --color-accent-soft: #1d3748;
-  --color-on-accent: #0d1a24;
-  --color-neutral-soft: #202b33;
-  --color-surface-warm: #1b2025;
-  --color-surface-warm-strong: #242e38;
-  --color-map-middle: #5f96b8;
-  --color-map-high: #a9d9f3;
-  --color-rest: #9dc8c2;
-  --color-focus: #a8d9ff;
-}
 
-html.rl-appearance-dark.rl-color-orange {
-  --color-paper: #100b08;
-  --color-surface: #281d15;
-  --color-ink: #f9f2ea;
-  --color-muted: #d3c3b3;
-  --color-line: #674f3f;
-  --color-accent: #e2a36d;
-  --color-accent-strong: #ffd7ad;
-  --color-accent-soft: #442d1e;
-  --color-on-accent: #241104;
-  --color-neutral-soft: #2d251d;
-  --color-surface-warm: #2a1e13;
-  --color-surface-warm-strong: #372516;
-  --color-map-middle: #aa7a4e;
-  --color-map-high: #efbf8c;
-  --color-rest: #d1ba79;
-  --color-focus: #9fcfff;
-}
 
 @media (prefers-color-scheme: dark) {
   html.rl-appearance-system {
@@ -375,60 +246,9 @@ html.rl-appearance-dark.rl-color-orange {
     --shadow-dialog: 0 24px 70px rgba(0, 0, 0, 0.56);
     --overlay-dialog: rgba(0, 0, 0, 0.68);
   }
-  html.rl-appearance-system.rl-color-green {
-    --color-paper: #07130b;
-    --color-surface: #16281c;
-    --color-ink: #f0f7f1;
-    --color-muted: #bdd1c1;
-    --color-line: #45634b;
-    --color-accent: #91d0a7;
-    --color-accent-strong: #c7f1d1;
-    --color-accent-soft: #1d3d29;
-    --color-on-accent: #0c1d12;
-    --color-neutral-soft: #202a22;
-    --color-surface-warm: #1d2117;
-    --color-surface-warm-strong: #26301f;
-    --color-map-middle: #57986e;
-    --color-map-high: #a5dfb8;
-    --color-rest: #aad0a5;
-    --color-focus: #9acbff;
-  }
-  html.rl-appearance-system.rl-color-blue {
-    --color-paper: #0a1118;
-    --color-surface: #192630;
-    --color-ink: #eef6fc;
-    --color-muted: #bdcddd;
-    --color-line: #42596b;
-    --color-accent: #91c7ea;
-    --color-accent-strong: #c9e7fb;
-    --color-accent-soft: #1d3748;
-    --color-on-accent: #0d1a24;
-    --color-neutral-soft: #202b33;
-    --color-surface-warm: #1b2025;
-    --color-surface-warm-strong: #242e38;
-    --color-map-middle: #5f96b8;
-    --color-map-high: #a9d9f3;
-    --color-rest: #9dc8c2;
-    --color-focus: #a8d9ff;
-  }
-  html.rl-appearance-system.rl-color-orange {
-    --color-paper: #100b08;
-    --color-surface: #281d15;
-    --color-ink: #f9f2ea;
-    --color-muted: #d3c3b3;
-    --color-line: #674f3f;
-    --color-accent: #e2a36d;
-    --color-accent-strong: #ffd7ad;
-    --color-accent-soft: #442d1e;
-    --color-on-accent: #241104;
-    --color-neutral-soft: #2d251d;
-    --color-surface-warm: #2a1e13;
-    --color-surface-warm-strong: #372516;
-    --color-map-middle: #aa7a4e;
-    --color-map-high: #efbf8c;
-    --color-rest: #d1ba79;
-    --color-focus: #9fcfff;
-  }
+  
+  
+  
 }
 
 html.rl-text-large { font-size: 17.5px; }
