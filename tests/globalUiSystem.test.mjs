@@ -131,8 +131,8 @@ await test('UI-INTERPRETATION-HAS-SYNTHESIS-FIRST-WORKSPACE',()=>{
   assert.ok(mobile.includes('Mobile Interpretation V4 touch layout'));
   assert.ok(presentation.includes('overviewHeadline'));
   assert.ok(presentation.includes('comparisonHint'));
-  assert.ok(presentation.includes('どの部位で、どのような傾向が続いているか'));
-  assert.ok(presentation.includes('部位の変化と分けて残しておく情報'));
+  assert.ok(presentation.includes('継続して確認された部位'));
+  assert.ok(presentation.includes('比較の背景'));
   assert.ok(!presentation.includes('12部位から選ぶ'));
 });
 

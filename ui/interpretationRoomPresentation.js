@@ -512,8 +512,13 @@ function renderContextBoard(output) {
   const pre = context.pre || {}, post = context.post || {};
   const pair = Boolean(context?.difference?.eligible);
   if (!rows.length && context.state === "NONE") return "";
+  const contextLead = rows.length && context.state !== "NONE"
+    ? "次回の比較で部位の変化と読み分けるため、変わった条件と本人の感覚を分けて残します。"
+    : rows.length
+      ? "次回の比較で部位の変化と読み分けるため、前回から変わった条件を残します。"
+      : "次回の比較で部位数値と読み分けるため、本人が記録した感覚を別に残します。";
   return `<section class="interpretation-room-context" aria-labelledby="interpretation-context-title">
-    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>今回の背景</small><h2 id="interpretation-context-title">比較の背景</h2></div><p>次回の比較で部位の変化と読み分けるため、変わった条件と本人の感覚だけを残します。</p></div>
+    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>今回の背景</small><h2 id="interpretation-context-title">比較の背景</h2></div><p>${escapeHtml(contextLead)}</p></div>
     <div class="interpretation-room-context-grid">
       ${rows.length ? `<article class="interpretation-room-context-card interpretation-room-context-card--conditions"><header><span>${interpretationIcon("conditions")}</span><div><strong>前回から変わった条件</strong><small>${rows.length}項目</small></div></header><div class="interpretation-room-context-rows">${rows.map((item) => `<div><span><small>${escapeHtml(conditionLabel(item.id))}</small><strong>${escapeHtml(conditionDeltaText(item))}</strong></span><span class="context-values">${escapeHtml(conditionValue(item.id, item.previous))}<i>→</i>${escapeHtml(conditionValue(item.id, item.current))}</span></div>`).join("")}</div></article>` : ""}
       ${context.state !== "NONE" ? `<article class="interpretation-room-context-card interpretation-room-context-card--subjective"><header><span>${interpretationIcon("person")}</span><div><strong>本人の感覚</strong><small>疲労感</small></div></header><div class="interpretation-room-context-fatigue"><span><small>走る前</small><strong>${escapeHtml(pre.available ? number(pre.value,0) : "—")}<em>/10</em></strong></span><i>→</i><span><small>走った後</small><strong>${escapeHtml(post.available ? number(post.value,0) : "—")}<em>/10</em></strong></span><b>${escapeHtml(pair ? signed(context.difference.value,0) : "—")}</b></div><p>${escapeHtml(pair ? "同じ日の本人記録です。部位数値とは別の推移として次回も比較します。" : "記録できている側だけを、本人の感覚として残します。")}</p></article>` : ""}

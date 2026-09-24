@@ -98,10 +98,10 @@ await test('OVERVIEW-LEADS-WITH-SYNTHESIS-NOT-INPUT-RECAP',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/interpretation-room--dashboard/);
   assert.match(html,/今回の解釈/);
-  assert.match(html,/前回と比べられる部位のうち4部位で差があります/);
+  assert.match(html,/前回から4部位に差があります/);
   assert.match(html,/走行条件が2項目変わり/);
   assert.match(html,/疲労感も4→8（\+4）/);
-  assert.match(html,/「部位」「走行条件」「本人の感覚」を分けて見る/);
+  assert.match(html,/「部位」「条件」「本人の感覚」を分けて残す/);
   assert.doesNotMatch(html,/今回のRunLoad解釈/);
   assert.doesNotMatch(html,/今回の結果を読む順序/);
   assert.doesNotMatch(html,/interpretation-room-map/);
@@ -252,6 +252,13 @@ await test('CSS-HAS-V4-COMPACT-RESPONSIVE-DASHBOARD',()=>{
   assert.match(desktop,/PC Interpretation V4 wide dashboard/);
   assert.match(desktop,/PC Interpretation V4 detail fit audit/);
   assert.match(desktop,/PC Interpretation V4 screenshot final pass/);
+  assert.match(desktop,/PC Interpretation selected detail layout repair/);
+  assert.match(desktop,/PC Interpretation immersive full desktop canvas/);
+  assert.match(desktop,/#app>\.app-shell\.app-shell--immersive[\s\S]*width:100%\s*!important[\s\S]*border:0\s*!important/);
+  assert.match(desktop,/@media \(min-width:64rem\)[\s\S]*\.interpretation-room-selected-dashboard[\s\S]*minmax\(18rem,20rem\)/);
+  assert.match(desktop,/\.interpretation-room-selected-context \.interpretation-room-section-title[\s\S]*grid-template-columns:minmax\(0,1fr\)/);
+  assert.match(desktop,/\.interpretation-room-selected-context \.interpretation-room-subjective-layout[\s\S]*grid-template-columns:minmax\(0,1fr\)/);
+  assert.match(desktop,/\.interpretation-room-selected-context \.interpretation-room-fatigue-flow>aside[\s\S]*grid-column:1\/-1/);
   assert.match(desktop,/grid-template-areas:[\s\S]*"insight next"[\s\S]*"patterns next"[\s\S]*"context next"/);
   assert.match(desktop,/\.interpretation-room-region-chips[\s\S]*repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(desktop,/\.interpretation-room-selected-dashboard[\s\S]*grid-template-columns:minmax\(0,1fr\)\s*!important/);

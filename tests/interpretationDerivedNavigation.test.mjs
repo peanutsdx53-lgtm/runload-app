@@ -39,7 +39,7 @@ await test('READING-DERIVED-BACK-RETURNS-TO-SAME-REGION',()=>{
 
 await test('DIRECT-ENTRY-BACK-BEHAVIOR-IS-PRESERVED',()=>{
   assert.deepEqual(resolveScreenContextNavigation('plan',location('')),{
-    title:'次の予定',backHref:'#/home',backLabel:'Home',
+    title:'次の予定',backHref:'#/home',backLabel:'ホーム',
   });
   assert.deepEqual(resolveScreenContextNavigation('consultation',location('recordId=r1')),{
     title:'共有用にまとめる',backHref:'#/result?recordId=r1',backLabel:'結果',
