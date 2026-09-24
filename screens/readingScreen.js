@@ -365,14 +365,64 @@ function readingArticleCopy(article = {}) {
   });
 }
 
-function renderReadingArticle(article, filter) {
-  const copy = readingArticleCopy(article);
-  return `<article class="article-card" data-reading-card data-cat="${escapeHtml(filter)}"><div class="article-card__copy"><small>${escapeHtml(copy.category)}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(copy.lead)}</p></div><button class="article-card__open" type="button" data-reading-open="${escapeHtml(publicArticleId(article.id))}"><span>読む</span><b aria-hidden="true">→</b></button></article>`;
+function readingMinutes(copy = {}) {
+  const text = [
+    copy.lead || "",
+    ...(copy.body || []),
+    ...(copy.practicePoints || []),
+  ].join("");
+  return Math.max(1, Math.ceil(text.length / 240));
 }
 
-function renderReadingDetail(article) {
+function readingSearchText(article = {}, copy = {}) {
+  return [
+    copy.category,
+    copy.title,
+    copy.lead,
+    ...(copy.body || []),
+    ...(copy.practicePoints || []),
+    ...(article.tags || []),
+  ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+}
+
+function relatedReadingItems(article, items = []) {
+  const current = items.find((item) => item.article?.id === article?.id);
+  const category = readingArticleCopy(article).category;
+  const sameTheme = items.filter((item) => item.article?.id !== article?.id && (
+    current ? item.filter === current.filter : readingArticleCopy(item.article).category === category
+  ));
+  const fallback = items.filter((item) => item.article?.id !== article?.id && !sameTheme.includes(item));
+  return [...sameTheme, ...fallback].slice(0, 2);
+}
+
+function renderReadingArticle(article, filter, isFeatured = false) {
   const copy = readingArticleCopy(article);
-  return `<article class="reading-detail" data-reading-detail="${escapeHtml(publicArticleId(article.id))}" hidden><div class="sheet-head"><div><small>${escapeHtml(copy.category)}</small><strong id="articleTitle-${escapeHtml(publicArticleId(article.id))}">${escapeHtml(copy.title)}</strong></div><button class="close" type="button" data-reading-close aria-label="閉じる">×</button></div><p class="lead">${escapeHtml(copy.lead)}</p><div class="body-copy">${copy.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>${copy.practicePoints.length ? `<div class="points"><strong>見返すときは</strong><ul>${copy.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></div>` : ""}</article>`;
+  const minutes = readingMinutes(copy);
+  return `<article class="article-card" data-reading-card data-cat="${escapeHtml(filter)}" data-reading-search="${escapeHtml(readingSearchText(article, copy))}">
+    <div class="article-card__copy"><small>${escapeHtml(copy.category)}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(copy.lead)}</p></div>
+    <div class="article-card__meta"><span>約${minutes}分</span>${isFeatured ? '<span class="article-card__recommended">おすすめ</span>' : ""}</div>
+    <button class="article-card__open" type="button" data-reading-open="${escapeHtml(publicArticleId(article.id))}"><span>読む</span><b aria-hidden="true">→</b></button>
+  </article>`;
+}
+
+function renderReadingDetail(article, items) {
+  const copy = readingArticleCopy(article);
+  const minutes = readingMinutes(copy);
+  const related = relatedReadingItems(article, items);
+  return `<article class="reading-detail" data-reading-detail="${escapeHtml(publicArticleId(article.id))}" hidden>
+    <div class="sheet-head">
+      <div><small>${escapeHtml(copy.category)}</small><strong id="articleTitle-${escapeHtml(publicArticleId(article.id))}">${escapeHtml(copy.title)}</strong><div class="reading-detail__meta"><span>約${minutes}分</span></div></div>
+      <button class="close" type="button" data-reading-close aria-label="閉じる">×</button>
+    </div>
+    <p class="lead">${escapeHtml(copy.lead)}</p>
+    ${copy.practicePoints.length ? `<section class="reading-keypoints"><strong>まずここだけ</strong><ul>${copy.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></section>` : ""}
+    <div class="body-copy">${copy.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>
+    ${related.length ? `<section class="reading-related"><div class="reading-related__head"><strong>続けて読む</strong><small>関連する記事</small></div><div class="reading-related__grid">${related.map((item) => {
+      const relatedCopy = readingArticleCopy(item.article);
+      return `<button class="reading-related-card" type="button" data-reading-open="${escapeHtml(publicArticleId(item.article.id))}"><span><small>${escapeHtml(relatedCopy.category)}</small><strong>${escapeHtml(relatedCopy.title)}</strong></span><b aria-hidden="true">→</b></button>`;
+    }).join("")}</div></section>` : ""}
+    <div class="reading-detail__footer"><button type="button" class="reading-detail__back" data-reading-close>記事一覧へ戻る</button></div>
+  </article>`;
 }
 
 function renderReadingContent({ services, context }) {
@@ -402,15 +452,24 @@ function renderReadingContent({ services, context }) {
   }
   const detailArticles = new Map(items.map((item) => [item.article.id, item.article]));
   if (featured) detailArticles.set(featured.id, featured);
+  const filterCounts = items.reduce((counts, item) => {
+    counts[item.filter] = (counts[item.filter] || 0) + 1;
+    return counts;
+  }, { all: items.length });
+  const filterButton = (id, label) => `<button${id === "all" ? ' class="active"' : ""} type="button" aria-pressed="${id === "all" ? "true" : "false"}" data-reading-filter="${id}"><span>${label}</span><b class="filter-count">${filterCounts[id] || 0}</b></button>`;
   return `<div class="screen screen--reading screen-layout screen-layout--reading secondary-derived-screen" data-reading-screen${initialArticleId ? ` data-reading-initial-article="${escapeHtml(initialArticleId)}"` : ""}>
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>読みもの</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
-    <section class="head reading-intro"><p class="eyebrow">READING</p><h1>記録を見返すヒント</h1><p>結果・履歴・走る前後の記録を、どう見ればよいかを短くまとめています。</p></section>
-    ${featured ? (() => { const copy = readingArticleCopy(featured); return `<section class="recommend"><div class="recommend__copy"><small>${target.experience ? "この記録から" : "まず読むなら"}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(recommendation.reason || copy.lead)}</p></div><button type="button" data-reading-open="${escapeHtml(publicArticleId(featured.id))}"><span>読む</span><b aria-hidden="true">→</b></button></section>`; })() : ""}
-    <div class="filter-strip"><div class="filter-strip-head"><span>テーマで絞る</span><small>横にスライド <b aria-hidden="true">→</b></small></div><div class="filters" role="group" aria-label="読みものをテーマで絞り込み"><button class="active" type="button" aria-pressed="true" data-reading-filter="all">すべて</button><button type="button" aria-pressed="false" data-reading-filter="result">結果</button><button type="button" aria-pressed="false" data-reading-filter="record">記録・履歴</button><button type="button" aria-pressed="false" data-reading-filter="running">走り方</button><button type="button" aria-pressed="false" data-reading-filter="after">走った後</button><button type="button" aria-pressed="false" data-reading-filter="before">走る前</button><button type="button" aria-pressed="false" data-reading-filter="share">共有</button></div></div>
-    <div class="reading-list-head"><strong>記事</strong><span data-reading-count>${items.length}件</span></div>
-    <div class="grid">${items.map((item) => renderReadingArticle(item.article, item.filter)).join("")}</div>
-    <div class="drawer" data-reading-drawer hidden><section class="sheet" role="dialog" aria-modal="true" aria-label="読みもの本文">${[...detailArticles.values()].map(renderReadingDetail).join("")}</section></div>
+    <section class="head reading-intro"><p class="eyebrow">READING</p><h1>記録を見返すヒント</h1><p>結果・履歴・走る前後の記録を、自分で読み解くための短いガイドです。</p></section>
+    ${featured ? (() => { const copy = readingArticleCopy(featured); return `<section class="recommend"><div class="recommend__copy"><small>${target.experience ? "この記録から" : "まず読むなら"}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(recommendation.reason || copy.lead)}</p><div class="recommend__meta"><span>${escapeHtml(copy.category)}</span><span>約${readingMinutes(copy)}分</span></div></div><button type="button" data-reading-open="${escapeHtml(publicArticleId(featured.id))}"><span>読む</span><b aria-hidden="true">→</b></button></section>`; })() : ""}
+    <section class="reading-tools" aria-label="読みものを探す">
+      <div class="reading-search" role="search"><span class="reading-search__icon" aria-hidden="true">⌕</span><input type="search" inputmode="search" autocomplete="off" placeholder="キーワードで探す　例：暑さ、睡眠、履歴" aria-label="読みものをキーワードで検索" data-reading-search><button type="button" data-reading-search-clear hidden>クリア</button></div>
+      <div class="filter-strip"><div class="filter-strip-head"><span>テーマで絞る</span><small>横にスライド <b aria-hidden="true">→</b></small></div><div class="filters" role="group" aria-label="読みものをテーマで絞り込み">${filterButton("all","すべて")}${filterButton("result","結果")}${filterButton("record","記録・履歴")}${filterButton("running","走り方")}${filterButton("after","走った後")}${filterButton("before","走る前")}${filterButton("share","共有")}</div></div>
+    </section>
+    <div class="reading-list-head"><strong>記事</strong><span data-reading-count aria-live="polite">${items.length}件</span></div>
+    <div class="grid">${items.map((item) => renderReadingArticle(item.article, item.filter, featured?.id === item.article.id)).join("")}</div>
+    <div class="reading-empty" data-reading-empty hidden><strong>該当する記事がありません</strong><p>別のキーワードやテーマで探してみてください。</p><button type="button" data-reading-reset>すべての記事を表示</button></div>
+    <div class="drawer" data-reading-drawer hidden><section class="sheet" role="dialog" aria-modal="true" aria-label="読みもの本文">${[...detailArticles.values()].map((article) => renderReadingDetail(article, items)).join("")}</section></div>
     </div>
   </div>`;
 }
