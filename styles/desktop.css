@@ -10602,3 +10602,73 @@
     font-size:.72rem;
   }
 }
+
+
+/* ===== PC Condition Compare V3 typography refinement 2026-09-24 ===== */
+@media (min-width:80rem){
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head>p{
+    font-size:.92rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid small{
+    font-size:.82rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid p{
+    font-size:.86rem;
+    line-height:1.58;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-condition__lead{
+    font-size:.88rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course small,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course span,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .course-link b{
+    font-size:.8rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-details summary small{
+    font-size:.8rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot span{
+    font-size:.86rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips span{
+    font-size:.8rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note span{
+    font-size:.84rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head p{
+    font-size:.86rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header small{
+    font-size:.8rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy small{
+    font-size:.82rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout p{
+    font-size:.86rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout small{
+    font-size:.8rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-boundary{
+    font-size:.82rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note p{
+    font-size:.82rem !important;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid small{
+    font-size:.82rem;
+    line-height:1.5;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button{
+    font-size:.82rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary small{
+    font-size:.8rem;
+  }
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b,
+  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+    font-size:.76rem;
+  }
+}
