@@ -194,3 +194,11 @@ export function clearRecordInputWorkspace() {
   storage().removeItem(WORKSPACE_KEY);
   clearRecordInputJourney();
 }
+
+export function recordInputWorkspaceKey() {
+  return WORKSPACE_KEY;
+}
+
+export function recordInputJourneyKey() {
+  return JOURNEY_KEY;
+}
