@@ -1,9 +1,9 @@
 import "./application.js";
-import { coreModules as __mods } from "./moduleRegistry.js";
+import { coreModules } from "./moduleRegistry.js";
 
 // ===== data/evidenceGovernanceData.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 const EVIDENCE_GOVERNANCE_VERSION = "runload-evidence-governed-columns-v5";
 const EVIDENCE_GOVERNANCE_REVIEW_DATE = "2026-08-06";
 
@@ -537,20 +537,20 @@ function buildArticleEvidenceGovernance(articleId, sources = []) {
     }),
   });
 }
-__exp["EVIDENCE_GOVERNANCE_VERSION"] = EVIDENCE_GOVERNANCE_VERSION;
-__exp["EVIDENCE_GOVERNANCE_REVIEW_DATE"] = EVIDENCE_GOVERNANCE_REVIEW_DATE;
-__exp["SOURCE_EVIDENCE_REGISTRY"] = SOURCE_EVIDENCE_REGISTRY;
-__exp["ARTICLE_EVIDENCE_REGISTRY"] = ARTICLE_EVIDENCE_REGISTRY;
-__exp["getSourceEvidenceGovernance"] = getSourceEvidenceGovernance;
-__exp["getArticleEvidenceGovernance"] = getArticleEvidenceGovernance;
-__exp["buildArticleEvidenceGovernance"] = buildArticleEvidenceGovernance;
-__mods[51] = __exp;
+moduleExports["EVIDENCE_GOVERNANCE_VERSION"] = EVIDENCE_GOVERNANCE_VERSION;
+moduleExports["EVIDENCE_GOVERNANCE_REVIEW_DATE"] = EVIDENCE_GOVERNANCE_REVIEW_DATE;
+moduleExports["SOURCE_EVIDENCE_REGISTRY"] = SOURCE_EVIDENCE_REGISTRY;
+moduleExports["ARTICLE_EVIDENCE_REGISTRY"] = ARTICLE_EVIDENCE_REGISTRY;
+moduleExports["getSourceEvidenceGovernance"] = getSourceEvidenceGovernance;
+moduleExports["getArticleEvidenceGovernance"] = getArticleEvidenceGovernance;
+moduleExports["buildArticleEvidenceGovernance"] = buildArticleEvidenceGovernance;
+coreModules[51] = moduleExports;
 }
 
 // ===== data/columnData.js =====
 {
-const __exp = Object.create(null);
-const { buildArticleEvidenceGovernance } = __mods[51];
+const moduleExports = Object.create(null);
+const { buildArticleEvidenceGovernance } = coreModules[51];
 
 // RunLoadの利用者向け読みもの。
 // 計算の詳しい説明は保存資料側で管理し、ここでは初心者が表示を
@@ -1254,16 +1254,16 @@ const COLUMN_ARTICLES = Object.freeze([
     sources: [PROJECT_V27, LINTON_2025, VAN_HOOREN_2024],
   }),
 ]);
-__exp["COLUMN_CATEGORIES"] = COLUMN_CATEGORIES;
-__exp["COLUMN_ARTICLES"] = COLUMN_ARTICLES;
-__mods[52] = __exp;
+moduleExports["COLUMN_CATEGORIES"] = COLUMN_CATEGORIES;
+moduleExports["COLUMN_ARTICLES"] = COLUMN_ARTICLES;
+coreModules[52] = moduleExports;
 }
 
 // ===== core/column/columnService.js =====
 {
-const __exp = Object.create(null);
-const { COLUMN_ARTICLES, COLUMN_CATEGORIES } = __mods[52];
-const { EVIDENCE_GOVERNANCE_VERSION, getArticleEvidenceGovernance, getSourceEvidenceGovernance } = __mods[51];
+const moduleExports = Object.create(null);
+const { COLUMN_ARTICLES, COLUMN_CATEGORIES } = coreModules[52];
+const { EVIDENCE_GOVERNANCE_VERSION, getArticleEvidenceGovernance, getSourceEvidenceGovernance } = coreModules[51];
 
 function normalizeQuery(value) {
   return String(value || "").trim().toLocaleLowerCase("ja-JP");
@@ -1318,15 +1318,15 @@ function createColumnService() {
     evidenceForSource,
   });
 }
-__exp["createColumnService"] = createColumnService;
-__mods[53] = __exp;
+moduleExports["createColumnService"] = createColumnService;
+coreModules[53] = moduleExports;
 }
 
 
 // ===== core/dataManagement/dataManagementService.js =====
 {
-const __exp = Object.create(null);
-const { CURRENT_APP_REMOVABLE_STORAGE_KEYS } = __mods[1];
+const moduleExports = Object.create(null);
+const { CURRENT_APP_REMOVABLE_STORAGE_KEYS } = coreModules[1];
 
 function createDataManagementService(gateway) {
   function clearAllUserData() {
@@ -1334,18 +1334,18 @@ function createDataManagementService(gateway) {
   }
   return Object.freeze({ clearAllUserData });
 }
-__exp["createDataManagementService"] = createDataManagementService;
-__mods[55] = __exp;
+moduleExports["createDataManagementService"] = createDataManagementService;
+coreModules[55] = moduleExports;
 }
 
 // ===== core/consultation/consultationReport.js =====
 {
-const __exp = Object.create(null);
-const { PRIMARY_REGIONAL_V2_REGION_DEFS } = __mods[25];
-const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = __mods[26];
-const { bodyAreaLateralityLabel } = __mods[28];
-const { summarizePersonalContext } = __mods[7];
-const { reportedRpeValue } = __mods[8];
+const moduleExports = Object.create(null);
+const { PRIMARY_REGIONAL_V2_REGION_DEFS } = coreModules[25];
+const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = coreModules[26];
+const { bodyAreaLateralityLabel } = coreModules[28];
+const { summarizePersonalContext } = coreModules[7];
+const { reportedRpeValue } = coreModules[8];
 
 
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
@@ -1669,16 +1669,16 @@ function createDetailedConsultationText(report) {
   });
   return `${standard}\n\n最近の保存記録：\n${recent.join("\n")}\n\n部位の目安の差は、同じ部位・同じ計算方法・同じ基準で比べられる記録だけで扱います。`;
 }
-__exp["buildConsultationReport"] = buildConsultationReport;
-__exp["createShortConsultationMemo"] = createShortConsultationMemo;
-__exp["createStandardConsultationText"] = createStandardConsultationText;
-__exp["createDetailedConsultationText"] = createDetailedConsultationText;
-__mods[56] = __exp;
+moduleExports["buildConsultationReport"] = buildConsultationReport;
+moduleExports["createShortConsultationMemo"] = createShortConsultationMemo;
+moduleExports["createStandardConsultationText"] = createStandardConsultationText;
+moduleExports["createDetailedConsultationText"] = createDetailedConsultationText;
+coreModules[56] = moduleExports;
 }
 
 // ===== ui/bodyRegionTerminology.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 const BODY_REGION_TERMINOLOGY_VERSION = "runload-body-region-terminology-v1";
 
 const ENTRIES = Object.freeze([
@@ -1722,23 +1722,23 @@ function bodyRegionDisplayName(regionId, fallback = "", { includeFamiliar = fals
     ? `${item.formalJa}（${item.familiarJa}）`
     : item.formalJa;
 }
-__exp["BODY_REGION_TERMINOLOGY_VERSION"] = BODY_REGION_TERMINOLOGY_VERSION;
-__exp["BODY_REGION_TERMINOLOGY"] = BODY_REGION_TERMINOLOGY;
-__exp["bodyRegionTerminology"] = bodyRegionTerminology;
-__exp["bodyRegionFormalName"] = bodyRegionFormalName;
-__exp["bodyRegionFamiliarName"] = bodyRegionFamiliarName;
-__exp["bodyRegionPlainMeaning"] = bodyRegionPlainMeaning;
-__exp["bodyRegionDisplayName"] = bodyRegionDisplayName;
-__mods[57] = __exp;
+moduleExports["BODY_REGION_TERMINOLOGY_VERSION"] = BODY_REGION_TERMINOLOGY_VERSION;
+moduleExports["BODY_REGION_TERMINOLOGY"] = BODY_REGION_TERMINOLOGY;
+moduleExports["bodyRegionTerminology"] = bodyRegionTerminology;
+moduleExports["bodyRegionFormalName"] = bodyRegionFormalName;
+moduleExports["bodyRegionFamiliarName"] = bodyRegionFamiliarName;
+moduleExports["bodyRegionPlainMeaning"] = bodyRegionPlainMeaning;
+moduleExports["bodyRegionDisplayName"] = bodyRegionDisplayName;
+coreModules[57] = moduleExports;
 }
 
 // ===== core/consultation/deterministicConsultation.js =====
 {
-const __exp = Object.create(null);
-const { PRIMARY_REGIONAL_V2_REGION_DEFS } = __mods[25];
-const { bodyRegionFormalName } = __mods[57];
-const { summarizePersonalContext } = __mods[7];
-const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = __mods[26];
+const moduleExports = Object.create(null);
+const { PRIMARY_REGIONAL_V2_REGION_DEFS } = coreModules[25];
+const { bodyRegionFormalName } = coreModules[57];
+const { summarizePersonalContext } = coreModules[7];
+const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = coreModules[26];
 
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
@@ -2212,40 +2212,40 @@ function buildDeterministicConsultation({
     }),
   });
 }
-__exp["DETERMINISTIC_CONSULTATION_VERSION"] = DETERMINISTIC_CONSULTATION_VERSION;
-__exp["CONSULTATION_PURPOSES"] = CONSULTATION_PURPOSES;
-__exp["buildDeterministicConsultation"] = buildDeterministicConsultation;
-__mods[58] = __exp;
+moduleExports["DETERMINISTIC_CONSULTATION_VERSION"] = DETERMINISTIC_CONSULTATION_VERSION;
+moduleExports["CONSULTATION_PURPOSES"] = CONSULTATION_PURPOSES;
+moduleExports["buildDeterministicConsultation"] = buildDeterministicConsultation;
+coreModules[58] = moduleExports;
 }
 
 // ===== core/applicationServices.js =====
 {
-const __exp = Object.create(null);
-const { createStorageGateway } = __mods[2];
-const { createRecordRepository } = __mods[11];
-const { createModelResultV27Repository } = __mods[13];
-const { createModelResultRegionalV2Repository } = __mods[27];
-const { createSubjectiveFeedbackRepository } = __mods[31];
-const { createPlanRepository } = __mods[32];
-const { createProfileRepository, createSettingsRepository, createDraftRepository } = __mods[37];
-const { createBackupService } = __mods[42];
-const { createCourseRepository } = __mods[40];
-const { evaluateSupportDecision, shouldBlockNormalPlanSuggestions, shouldPrioritizeOfficialHelp } = __mods[29];
-const { buildPublicHelpGuidance } = __mods[43];
-const { normalizeSubjectiveFeedback } = __mods[30];
-const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = __mods[9];
-const { createRecordWorkflow } = __mods[47];
-const { createHistoryWorkflow } = __mods[48];
-const { createPlanWorkflow } = __mods[50];
-const { createColumnService } = __mods[53];
-const { createDataManagementService } = __mods[55];
-const { buildConsultationReport, createShortConsultationMemo, createStandardConsultationText, createDetailedConsultationText } = __mods[56];
-const { buildDeterministicConsultation, CONSULTATION_PURPOSES, DETERMINISTIC_CONSULTATION_VERSION } = __mods[58];
-const { adaptRecordToV27Session } = __mods[45];
-const { assertV27ResultSemantics, calculateV27Session } = __mods[39];
-const { createV27ResultRecord } = __mods[46];
-const { createPrimaryRegionalV2ResultRecord } = __mods[26];
-const { calculateRun: calculatePrimaryRegionalV2 } = __mods[14];
+const moduleExports = Object.create(null);
+const { createStorageGateway } = coreModules[2];
+const { createRecordRepository } = coreModules[11];
+const { createModelResultV27Repository } = coreModules[13];
+const { createModelResultRegionalV2Repository } = coreModules[27];
+const { createSubjectiveFeedbackRepository } = coreModules[31];
+const { createPlanRepository } = coreModules[32];
+const { createProfileRepository, createSettingsRepository, createDraftRepository } = coreModules[37];
+const { createBackupService } = coreModules[42];
+const { createCourseRepository } = coreModules[40];
+const { evaluateSupportDecision, shouldBlockNormalPlanSuggestions, shouldPrioritizeOfficialHelp } = coreModules[29];
+const { buildPublicHelpGuidance } = coreModules[43];
+const { normalizeSubjectiveFeedback } = coreModules[30];
+const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = coreModules[9];
+const { createRecordWorkflow } = coreModules[47];
+const { createHistoryWorkflow } = coreModules[48];
+const { createPlanWorkflow } = coreModules[50];
+const { createColumnService } = coreModules[53];
+const { createDataManagementService } = coreModules[55];
+const { buildConsultationReport, createShortConsultationMemo, createStandardConsultationText, createDetailedConsultationText } = coreModules[56];
+const { buildDeterministicConsultation, CONSULTATION_PURPOSES, DETERMINISTIC_CONSULTATION_VERSION } = coreModules[58];
+const { adaptRecordToV27Session } = coreModules[45];
+const { assertV27ResultSemantics, calculateV27Session } = coreModules[39];
+const { createV27ResultRecord } = coreModules[46];
+const { createPrimaryRegionalV2ResultRecord } = coreModules[26];
+const { calculateRun: calculatePrimaryRegionalV2 } = coreModules[14];
 
 function createApplicationServices(options = {}) {
   const gateway = options.gateway || createStorageGateway(options.storage);
@@ -2323,15 +2323,15 @@ function createApplicationServices(options = {}) {
   services.workflows = Object.freeze(services.workflows);
   return Object.freeze(services);
 }
-__exp["createApplicationServices"] = createApplicationServices;
-__mods[59] = __exp;
+moduleExports["createApplicationServices"] = createApplicationServices;
+coreModules[59] = moduleExports;
 }
 
 
 // ===== core/privacy/privacyInventory.js =====
 {
-const __exp = Object.create(null);
-const { CURRENT_APP_REMOVABLE_STORAGE_KEYS, INTERNAL_RECOVERY_STORAGE_KEYS, STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = __mods[1];
+const moduleExports = Object.create(null);
+const { CURRENT_APP_REMOVABLE_STORAGE_KEYS, INTERNAL_RECOVERY_STORAGE_KEYS, STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = coreModules[1];
 
 const PRIVACY_OVERVIEW_VERSION = "runload-privacy-overview-v2";
 
@@ -2448,8 +2448,8 @@ function privacyStorageCoverage() {
     removableKeys: CURRENT_APP_REMOVABLE_STORAGE_KEYS,
   });
 }
-__exp["PRIVACY_OVERVIEW_VERSION"] = PRIVACY_OVERVIEW_VERSION;
-__exp["buildPrivacyOverview"] = buildPrivacyOverview;
-__exp["privacyStorageCoverage"] = privacyStorageCoverage;
-__mods[61] = __exp;
+moduleExports["PRIVACY_OVERVIEW_VERSION"] = PRIVACY_OVERVIEW_VERSION;
+moduleExports["buildPrivacyOverview"] = buildPrivacyOverview;
+moduleExports["privacyStorageCoverage"] = privacyStorageCoverage;
+coreModules[61] = moduleExports;
 }
