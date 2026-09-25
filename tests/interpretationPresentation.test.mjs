@@ -55,7 +55,7 @@ function baseOutput({selected=false}={}){
     calculationPath:exactPath(),
   }:null;
   return {
-    schemaVersion:'RUNLOAD_INTERPRETATION_OUTPUT_V4',
+    schemaVersion:'INTERPRETATION_OUTPUT_V4',
     target:{recordId:'r1',resultRecordId:'res1',date:'2026-09-23',activityType:'run',origin:'result',selectedRegionId:selected?'BA-DISP-014':''},
     state:{targetAvailable:true,regional:'AVAILABLE',history:'AVAILABLE',subjective:'PAIR',support:'NORMAL',legacy:false},
     overview:{
