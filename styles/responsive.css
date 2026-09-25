@@ -242,12 +242,6 @@ input, select, textarea {
 
 /* --- Record fidelity --- */
 .screen--record-input { max-width: var(--app-form-width); margin-inline: auto; gap: 12px; }
-.screen--record-input .record-fatigue-inline {
-  min-height: 62px;
-  margin: 4px 0 0;
-  padding: 11px 12px;
-  border-radius: 17px;
-}
 .screen--record-input .form-section {
   gap: 14px;
   padding: 15px;
@@ -256,7 +250,6 @@ input, select, textarea {
 .screen--record-input .form-section--required { border-radius: 24px; }
 .screen--record-input .section-heading h2 { font-size: 20px; }
 .screen--record-input .field > span { font-size: 12px; }
-.screen--record-input .record-linked-card { min-height: 64px; border-radius: 15px; }
 .screen--record-input .record-mobile-save-bar {
   border-radius: 14px;
   box-shadow: 0 7px 20px color-mix(in srgb, var(--color-ink) 10%, transparent);
