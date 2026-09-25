@@ -6,7 +6,8 @@ export function escapeHtml(value = "") {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
-) {
+
+export function renderPageHeading({ eyebrow, title, description }) {
   return `
     <header class="page-heading">
       <p class="page-heading__eyebrow">${escapeHtml(eyebrow)}</p>
@@ -18,7 +19,8 @@ export function escapeHtml(value = "") {
 export function renderStatusLabel(text, tone = "neutral") {
   return `<span class="status-label status-label--${escapeHtml(tone)}">${escapeHtml(text)}</span>`;
 }
-) {
+
+export function renderEmptyState({ title, description, actionLabel = "", actionScreen = "" }) {
   const action = actionLabel && actionScreen
     ? `<a class="button button--primary" href="#/${escapeHtml(actionScreen)}">${escapeHtml(actionLabel)}</a>`
     : "";
@@ -31,7 +33,17 @@ export function renderStatusLabel(text, tone = "neutral") {
     </section>`;
 }
 
-) {
+export function renderFeatureLinks(items) {
+  return `<div class="feature-link-grid">${items.map((item) => `
+    <a class="feature-link-card" href="${escapeHtml(item.href || `#/${item.screen}`)}">
+      <span class="feature-link-card__number" aria-hidden="true">${escapeHtml(item.number)}</span>
+      <strong>${escapeHtml(item.title)}</strong>
+      <span>${escapeHtml(item.description)}</span>
+    </a>`).join("")}</div>`;
+}
+
+
+export function renderScreenGuide({ id, summary, sections = [], tutorialId = "" }) {
   const guideId = id || "screen-guide";
   const safeGuideId = escapeHtml(guideId);
   const safeTutorialId = escapeHtml(tutorialId);
