@@ -235,39 +235,6 @@ export function captureRofJMeasurement(entry, {
   return Object.freeze(next);
 }
 
-= {}) {
-  if (![ROF_J_PHASES.PRE, ROF_J_PHASES.POST].includes(phase)) throw new RangeError("ROF-J phase is invalid");
-  if (![ROF_J_REVISION_TYPES.correction, ROF_J_REVISION_TYPES.laterReflection].includes(revisionType)) {
-    throw new RangeError("revisionType must be CORRECTION or LATER_REFLECTION");
-  }
-  if (!isValidRofJValue(value)) throw new RangeError("ROF-J value must be an integer from 0 to 10");
-  if (!isIsoDateTime(recordedAt)) throw new RangeError("recordedAt must be an ISO date-time");
-  const measurement = entry?.measurements?.[phase];
-  if (!measurement) throw new Error(`No initial ${phase} measurement exists`);
-  const previous = effectiveRevision(measurement);
-  const revision = Object.freeze({
-    revisionId: revisionId || idFactory("rofj-rev"),
-    revisionType,
-    value,
-    recordedAt,
-    previousValue: previous?.value ?? null,
-    note: String(note || "").slice(0, 240),
-  });
-  const revisions = [...measurement.revisions, revision];
-  const nextMeasurement = decorateMeasurement({
-    ...clone(measurement),
-    revisions,
-    effectiveRevisionId: revisionType === ROF_J_REVISION_TYPES.correction
-      ? revision.revisionId
-      : measurement.effectiveRevisionId,
-  });
-  return Object.freeze({
-    ...clone(entry),
-    measurements: { ...clone(entry.measurements), [phase]: nextMeasurement },
-    updatedAt: recordedAt,
-  });
-}
-
 export function updateRofJRunTiming(entry, { runStartAt = undefined, runEndAt = undefined, updatedAt = new Date().toISOString() } = {}) {
   const nextMeasurements = {};
   for (const phase of [ROF_J_PHASES.PRE, ROF_J_PHASES.POST]) {
