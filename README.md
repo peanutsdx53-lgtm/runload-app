@@ -25,6 +25,10 @@ See `docs/CODEBASE_ARCHITECTURE.md` for ownership and maintenance rules.
 - The app does not diagnose, prescribe training, estimate injury risk, or make automatic safety decisions.
 - Legacy records are not silently reinterpreted as current Reference-100 values.
 
+## Runtime technology
+
+Runtime implementation is vanilla JavaScript, CSS, and HTML. The Web Manifest and PNG icons are deployment assets, and `.mjs` files are JavaScript regression tests. No framework or build step is required.
+
 ## Data and deployment
 
 Application data is stored locally in the browser. GPX analysis is local-only. The repository root is the PWA/web deployment payload.
