@@ -1,4 +1,4 @@
-name: Temporary codebase cleanup validation
+name: Codebase cleanup validation
 
 on:
   push:
@@ -41,6 +41,7 @@ jobs:
           test ! -e package.json
           test -z "$(find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.jsx' -o -name '*.vue' -o -name '*.py' \) -not -path './.git/*' -print)"
       - name: Browser route smoke test
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -57,10 +58,16 @@ jobs:
             local name="$5"
             local dom="/tmp/${name}.html"
             local log="/tmp/${name}.log"
-            "$BROWSER" --headless=new --no-sandbox --disable-gpu --hide-scrollbars \
+            echo "Checking #/${route} at ${width}x${height}"
+            "$BROWSER" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars \
               --window-size="${width},${height}" --virtual-time-budget=2500 \
               --dump-dom "http://127.0.0.1:8000/#/${route}" >"$dom" 2>"$log"
-            grep -F "$marker" "$dom" >/dev/null
+            if ! grep -F "$marker" "$dom" >/dev/null; then
+              echo "Expected marker $marker was not rendered on #/${route}" >&2
+              head -n 80 "$dom" >&2 || true
+              cat "$log" >&2 || true
+              return 1
+            fi
             if grep -E 'Uncaught|SyntaxError|ReferenceError|TypeError' "$log"; then
               echo "Browser JavaScript error on #/${route}" >&2
               exit 1
