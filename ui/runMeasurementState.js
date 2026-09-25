@@ -120,24 +120,4 @@ export function commitPendingRunMeasurement(recordId = "") {
   return { ok: true, saved: true, item: clone(item) };
 }
 
-export function removeSavedRunMeasurement(recordId = "") {
-  const id = String(recordId || "");
-  const current = listSavedRunMeasurements();
-  const next = current.filter((item) => item.recordId !== id);
-  if (next.length === current.length) return { ok: true, removed: false };
-  const result = writeJson(storage("local"), RUN_MEASUREMENT_STORAGE_KEY, next);
-  return { ...result, removed: result.ok };
-}
 
-export function clearSavedRunMeasurements() {
-  try {
-    storage("local").removeItem(RUN_MEASUREMENT_STORAGE_KEY);
-    return { ok: true };
-  } catch (error) {
-    return { ok: false, code: "RUN_MEASUREMENT_STORAGE_CLEAR_FAILED", message: String(error?.message || error || "storage_error") };
-  }
-}
-
-export function runMeasurementSessionKey() {
-  return PENDING_KEY;
-}
