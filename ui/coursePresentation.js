@@ -22,8 +22,7 @@ export function slopeSummary(course = {}) {
     : "下りなし";
   return `${uphill} ／ ${downhill}`;
 }
-
-export function surfaceModelSummary(course = {}) {
+) {
   const labels = {
     REF_HARD_EVEN_STABLE: "硬く平らで安定（結果に使用）",
     DRY_STABLE_GRASS_TURF: "乾いた安定した天然芝・人工芝（確認できる範囲で使用）",
@@ -47,8 +46,7 @@ export function courseSummaryText(course = {}) {
   const name = String(course.name || "コース名なし");
   return `${name}。${primarySurfaceSummary(course)}。${slopeSummary(course)}。${surfaceInputSummary(course)}。`;
 }
-
-export function renderCourseSummary(course = {}, { headingLevel = 3, compact = false, headingId = "" } = {}) {
+, { headingLevel = 3, compact = false, headingId = "" } = {}) {
   const Heading = `h${Math.min(6, Math.max(2, Number(headingLevel) || 3))}`;
   return `<div class="course-summary${compact ? " course-summary--compact" : ""}">
     <${Heading}${headingId ? ` id="${escapeHtml(headingId)}"` : ""}>${escapeHtml(course.name || "コース名なし")}</${Heading}>
