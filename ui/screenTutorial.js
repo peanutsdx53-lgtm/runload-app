@@ -1,4 +1,5 @@
-const SCREEN_TUTORIAL_STORAGE_KEY = "runload.screenTutorial.seen.v1";
+const SCREEN_TUTORIAL_STORAGE_KEY = "running-record.screenTutorial.seen.v1";
+const LEGACY_TUTORIAL_STORAGE_KEY = "runload.screenTutorial.seen.v1";
 
 const SCREEN_TUTORIALS = Object.freeze({
   start: Object.freeze({
@@ -190,7 +191,13 @@ const SCREEN_TUTORIALS = Object.freeze({
 
 function readSeenMap() {
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(SCREEN_TUTORIAL_STORAGE_KEY) || "{}");
+    const current = window.localStorage.getItem(SCREEN_TUTORIAL_STORAGE_KEY);
+    const legacy = current == null ? window.localStorage.getItem(LEGACY_TUTORIAL_STORAGE_KEY) : null;
+    const parsed = JSON.parse(current ?? legacy ?? "{}");
+    if (current == null && legacy != null && parsed && typeof parsed === "object") {
+      window.localStorage.setItem(SCREEN_TUTORIAL_STORAGE_KEY, JSON.stringify(parsed));
+      window.localStorage.removeItem(LEGACY_TUTORIAL_STORAGE_KEY);
+    }
     return parsed && typeof parsed === "object" ? parsed : {};
   } catch (error) {
     return {};
