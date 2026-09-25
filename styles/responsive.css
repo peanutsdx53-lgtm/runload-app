@@ -141,42 +141,11 @@ body {
 .primary-navigation__link.is-current::after { display: none; }
 .primary-navigation__link.is-disabled { opacity: .52; }
 
-/* --- Screen page hierarchy --- */
-.page-heading {
-  max-width: 680px;
-  padding: 0;
-  border: 0;
-}
-.page-heading__eyebrow {
-  margin: 0;
-  color: var(--color-accent);
-  font-size: 11px;
-  line-height: 1.2;
-  font-weight: 900;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-}
-.page-heading h1 {
-  margin: 5px 0 0;
-  font-family: var(--font-sans);
-  font-size: clamp(28px, 4vw, 38px);
-  line-height: 1.12;
-  letter-spacing: -.04em;
-}
-.page-heading__description {
-  max-width: 620px;
-  margin: 8px 0 0;
-  color: var(--color-muted);
-  font-size: 14px;
-  line-height: 1.55;
-}
-
 .section-heading {
   padding: 0;
   border: 0;
 }
-.section-heading p,
-.empty-state__label {
+.section-heading p{
   margin: 0;
   color: var(--color-muted);
   font-size: 11px;
@@ -280,10 +249,6 @@ input, select, textarea {
   box-shadow: none;
 }
 .screen-guide > summary { min-height: 52px; padding: 10px 12px; }
-.screen-guide__label { font-size: 10px; }
-.screen-guide__heading { font-size: 13px; }
-.screen-guide__summary { font-size: 11px; }
-.screen-guide__body { padding: 0 12px 12px; }
 
 .workspace-navigation {
   gap: 6px;
@@ -321,12 +286,10 @@ input, select, textarea {
 .screen--home .home-two-column { gap: 10px; }
 .screen--home :is(.home-summary-card, .home-next-plan-card) { gap: 12px; padding: 14px; }
 .screen--home .home-summary-card__lead { font-size: 18px; }
-.screen--home .home-support-links .feature-link-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .screen--home .home-start-steps { border: 0; box-shadow: none; background: transparent; }
 
 /* --- Record fidelity --- */
 .screen--record-input { max-width: var(--app-form-width); margin-inline: auto; gap: 12px; }
-.screen--record-input .page-heading { margin-bottom: 2px; }
 .screen--record-input .record-fatigue-inline {
   min-height: 62px;
   margin: 4px 0 0;
@@ -466,7 +429,6 @@ input, select, textarea {
 
 /* --- More --- */
 .screen--more { max-width: 760px; margin-inline: auto; gap: 18px; }
-.screen--more .feature-link-grid { display: grid; gap: 8px; }
 .screen--more .feature-link-card {
   min-height: 68px;
   display: grid;
@@ -478,15 +440,6 @@ input, select, textarea {
   border-radius: 15px;
   background: var(--color-surface);
   box-shadow: var(--app-card-shadow);
-}
-.screen--more .feature-link-card__number {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: var(--color-accent-soft);
-  color: var(--color-accent-strong);
 }
 
 /* --- Settings --- */
@@ -548,8 +501,6 @@ input, select, textarea {
   .app-menu-button { min-height: 36px; padding-inline: 10px; }
   .app-main { width: 100%; padding: 20px 12px 34px; }
   .screen { gap: 18px; }
-  .page-heading h1 { font-size: 29px; }
-  .page-heading__description { font-size: 13px; }
   .section-heading h2 { font-size: 18px; }
   .button { min-height: 42px; font-size: 12px; }
 
@@ -570,8 +521,6 @@ input, select, textarea {
 
 @media (max-width: 360px) {
   .app-main { padding-inline: 11px; }
-  .page-heading h1 { font-size: 27px; }
-  .page-heading__description { font-size: 12px; }
   .primary-navigation { padding-inline: 5px; }
   .primary-navigation__link { font-size: 10px; }
 }
