@@ -1,5 +1,9 @@
 import { STORAGE_KEYS } from "./appCore.js";
 import {
+  hasLegacyRofJSourceMetadata,
+  removeLegacyRofJSourceMetadata,
+} from "./legacyCompatibility.js";
+import {
   ROF_J_INSTRUMENT_ID,
   ROF_J_SEMANTIC_VERSION,
   ROF_J_SOURCE_VERSION,
@@ -45,10 +49,10 @@ function normalizeRofJEntry(entry) {
   if (isSupportedRofJSemanticVersion(normalized.instrumentSemanticVersion)) {
     normalized.instrumentSemanticVersion = ROF_J_SEMANTIC_VERSION;
   }
-  if (normalized.sourceVersion == null && typeof normalized.japaneseSourceSha256 === "string" && normalized.japaneseSourceSha256.trim()) {
+  if (normalized.sourceVersion == null && hasLegacyRofJSourceMetadata(normalized)) {
     normalized.sourceVersion = ROF_J_SOURCE_VERSION;
   }
-  delete normalized.japaneseSourceSha256;
+  removeLegacyRofJSourceMetadata(normalized);
   return normalized;
 }
 
@@ -275,7 +279,7 @@ function validateRofJRunEntry(entry) {
   if (!String(entry.runId || "").trim()) issues.push("RUN_ID_REQUIRED");
   if (entry.instrumentId !== ROF_J_INSTRUMENT_ID) issues.push("INSTRUMENT_ID_MISMATCH");
   if (!isSupportedRofJSemanticVersion(entry.instrumentSemanticVersion)) issues.push("SEMANTIC_VERSION_MISMATCH");
-  const legacySourceMetadata = typeof entry.japaneseSourceSha256 === "string" && entry.japaneseSourceSha256.trim().length > 0;
+  const legacySourceMetadata = hasLegacyRofJSourceMetadata(entry);
   if (entry.sourceVersion != null && entry.sourceVersion !== ROF_J_SOURCE_VERSION) issues.push("SOURCE_VERSION_MISMATCH");
   if (entry.sourceVersion == null && !legacySourceMetadata) issues.push("SOURCE_VERSION_MISSING");
   if (entry.visualSourceId !== ROF_J_VISUAL_SOURCE_ID) issues.push("VISUAL_SOURCE_MISMATCH");
@@ -345,7 +349,7 @@ function createRofJRepository(gateway) {
   }
   function saveEntry(entry) {
     const normalizedEntry = clone(entry);
-    delete normalizedEntry.japaneseSourceSha256;
+    removeLegacyRofJSourceMetadata(normalizedEntry);
     normalizedEntry.sourceVersion = ROF_J_SOURCE_VERSION;
     const validation = validateRofJRunEntry(normalizedEntry);
     if (!validation.ok) return { ok: false, code: "ROF_J_ENTRY_INVALID", validation };
