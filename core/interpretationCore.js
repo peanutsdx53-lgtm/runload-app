@@ -9,8 +9,8 @@ import {
 } from "./interpretationBase.js";
 import { officialRofJDescriptor } from "./rofJCore.js";
 
-export const INTERPRETATION_CORE_VERSION = "runload-interpretation-core-v4.0";
-export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V4";
+export const INTERPRETATION_CORE_VERSION = "interpretation-core-v4.0";
+export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "INTERPRETATION_OUTPUT_V4";
 export const INTERPRETATION_ROUTE_RESOLVER_VERSION = "primary-reference100-v3-explanation-route-v1";
 
 const CURRENT_PRIMARY_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
