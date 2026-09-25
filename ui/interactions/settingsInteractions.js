@@ -40,7 +40,7 @@ function saveSettings(services, settingsUpdate) {
   return { ok: true, settings: next };
 }
 
-export function saveSettingsAndProfile(services, settingsUpdate, profileUpdate) {
+function saveSettingsAndProfile(services, settingsUpdate, profileUpdate) {
   const current = services.storage.settings.load();
   const nextSettings = mergeAppSettings(current, settingsUpdate);
   const nextProfile = normalizeBodyProfile(profileUpdate);
