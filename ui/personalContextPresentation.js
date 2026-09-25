@@ -58,7 +58,7 @@ export function personalContextFieldsFromRecord(record = {}) {
   return Object.freeze(fields);
 }
 
-, fallbackRecord = {}) {
+export function mergePersonalContextFields(workspaceFields = {}, fallbackRecord = {}) {
   return Object.freeze({
     ...personalContextFieldsFromRecord(fallbackRecord),
     ...Object.fromEntries(Object.entries(workspaceFields || {})
@@ -88,7 +88,7 @@ export function personalContextSummary(record = {}) {
   return summarizePersonalContext(record.personalContext || {});
 }
 
-) {
+export function personalContextDisplayItems(context = {}) {
   const normalized = normalizePersonalContext(context);
   if (!normalized) return [];
   const items = [];
