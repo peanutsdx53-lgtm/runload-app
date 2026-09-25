@@ -41,10 +41,6 @@ export const REGIONAL_RESULT_INITIAL_VIEW_OPTIONS = Object.freeze([
   Object.freeze({ value: "remember", label: "前回の切替を引き継ぐ", description: "結果画面で最後に選んだ表示方法を次回も使います。" }),
 ]);
 
-export const REGIONAL_PREVIOUS_COMPARISON_OPTIONS = Object.freeze([
-  Object.freeze({ value: "show", label: "表示する", description: "同じ部位・同じ計算方法・同じ基準で比べられる前回記録がある場合だけ、部位カードに前回との差を表示します。" }),
-  Object.freeze({ value: "hide", label: "表示しない", description: "各部位の目安を表示し、今回と同じ距離にそろえたその部位自身の基準との関係を示します。保存結果や履歴は変更しません。" }),
-]);
 
 function optionValues(options) {
   return new Set(options.map((option) => option.value));
