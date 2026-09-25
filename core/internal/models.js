@@ -1276,7 +1276,7 @@ const FORMAL_INPUT_CATALOG = Object.freeze([
     "disposition": "TRACE_EXPLANATION_COMPARISON_ONLY",
     "numericPermission": "TRACE_ONLY",
     "missingnessBehavior": "Missing follows the canonical RL-IN-041 surface component record.",
-    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived audit alias and cannot add a second effect."
+    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived reference field and cannot add a second effect."
   },
   {
     "id": "RL-IN-043",
@@ -1286,7 +1286,7 @@ const FORMAL_INPUT_CATALOG = Object.freeze([
     "disposition": "TRACE_EXPLANATION_COMPARISON_ONLY",
     "numericPermission": "TRACE_ONLY",
     "missingnessBehavior": "Missing follows the canonical RL-IN-041 surface component record.",
-    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived audit alias and cannot add a second effect."
+    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived reference field and cannot add a second effect."
   },
   {
     "id": "RL-IN-044",
@@ -1296,7 +1296,7 @@ const FORMAL_INPUT_CATALOG = Object.freeze([
     "disposition": "TRACE_EXPLANATION_COMPARISON_ONLY",
     "numericPermission": "TRACE_ONLY",
     "missingnessBehavior": "Missing follows the canonical RL-IN-041 surface component record.",
-    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived audit alias and cannot add a second effect."
+    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived reference field and cannot add a second effect."
   },
   {
     "id": "RL-IN-045",
@@ -1306,7 +1306,7 @@ const FORMAL_INPUT_CATALOG = Object.freeze([
     "disposition": "TRACE_EXPLANATION_COMPARISON_ONLY",
     "numericPermission": "TRACE_ONLY",
     "missingnessBehavior": "Missing follows the canonical RL-IN-041 surface component record.",
-    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived audit alias and cannot add a second effect."
+    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived reference field and cannot add a second effect."
   },
   {
     "id": "RL-IN-046",
@@ -1316,7 +1316,7 @@ const FORMAL_INPUT_CATALOG = Object.freeze([
     "disposition": "TRACE_EXPLANATION_COMPARISON_ONLY",
     "numericPermission": "TRACE_ONLY",
     "missingnessBehavior": "Missing follows the canonical RL-IN-041 surface component record.",
-    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived audit alias and cannot add a second effect."
+    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived reference field and cannot add a second effect."
   },
   {
     "id": "RL-IN-047",
@@ -1326,7 +1326,7 @@ const FORMAL_INPUT_CATALOG = Object.freeze([
     "disposition": "TRACE_EXPLANATION_COMPARISON_ONLY",
     "numericPermission": "TRACE_ONLY",
     "missingnessBehavior": "Missing follows the canonical RL-IN-041 surface component record.",
-    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived audit alias and cannot add a second effect."
+    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived reference field and cannot add a second effect."
   },
   {
     "id": "RL-IN-048",
@@ -1336,7 +1336,7 @@ const FORMAL_INPUT_CATALOG = Object.freeze([
     "disposition": "TRACE_EXPLANATION_COMPARISON_ONLY",
     "numericPermission": "TRACE_ONLY",
     "missingnessBehavior": "Missing follows the canonical RL-IN-041 surface component record.",
-    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived audit alias and cannot add a second effect."
+    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived reference field and cannot add a second effect."
   },
   {
     "id": "RL-IN-049",
@@ -1346,7 +1346,7 @@ const FORMAL_INPUT_CATALOG = Object.freeze([
     "disposition": "TRACE_EXPLANATION_COMPARISON_ONLY",
     "numericPermission": "TRACE_ONLY",
     "missingnessBehavior": "Missing follows the canonical RL-IN-041 surface component record.",
-    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived audit alias and cannot add a second effect."
+    "doubleCountingGuard": "Canonical numeric/routing data are carried only inside RL-IN-041 surfaceComponents; this field is a preset-derived reference field and cannot add a second effect."
   },
   {
     "id": "RL-IN-050",
@@ -3235,7 +3235,7 @@ moduleExports["failure"] = failure;
 internalModules.formalInputUtilities = moduleExports;
 }
 
-// ===== core/model/currentPrimaryInput/canonicalHash.js =====
+// ===== core/model/currentPrimaryInput/canonicalInputSignature.js =====
 {
 const moduleExports = Object.create(null);
 const { stableStringify } = internalModules.formalInputUtilities;
@@ -3290,9 +3290,9 @@ function digestText(text) {
   return h.map(v => v.toString(16).padStart(8,"0")).join("");
 }
 
-function canonicalFingerprint(value) { return digestText(stableStringify(value)); }
-moduleExports["canonicalFingerprint"] = canonicalFingerprint;
-internalModules.canonicalInputDigest = moduleExports;
+function canonicalInputSignature(value) { return digestText(stableStringify(value)); }
+moduleExports["canonicalInputSignature"] = canonicalInputSignature;
+internalModules.canonicalInputSignature = moduleExports;
 }
 
 // ===== core/model/currentPrimaryInput/surfacePresets.js =====
@@ -3364,7 +3364,7 @@ internalModules.surfacePresets = moduleExports;
 {
 const moduleExports = Object.create(null);
 const { FORMAL_INPUT_CATALOG, REGIONS } = internalModules.formalInputCatalog;
-const { canonicalFingerprint } = internalModules.canonicalInputDigest;
+const { canonicalInputSignature } = internalModules.canonicalInputSignature;
 
 const REGION_IDS = REGIONS.map((region) => region.id);
 const REGION_ID_SET = new Set(REGION_IDS);
@@ -3641,7 +3641,7 @@ function validateFormalBundleSemantics(bundle) {
       });
     }
   }
-  if (bundle.recordSnapshot?.inputSnapshotHash && bundle.recordSnapshot.inputSnapshotHash !== canonicalFingerprint(bundle.formalInputs)) {
+  if (bundle.recordSnapshot?.inputSnapshotHash && bundle.recordSnapshot.inputSnapshotHash !== canonicalInputSignature(bundle.formalInputs)) {
     issues.push(issue("INPUT_SNAPSHOT_HASH_MISMATCH", "recordSnapshot.inputSnapshotHash"));
   }
   return issues;
@@ -3651,7 +3651,7 @@ function validateRegionalEngineInputSemantics(input) {
   const issues = validateFormalBundleSemantics(input);
   if (!isObject(input)) return issues;
   const formalSections = input.formalInputs?.["RL-IN-039"]?.value;
-  if (Array.isArray(formalSections) && canonicalFingerprint(formalSections) !== canonicalFingerprint(input.courseSections ?? [])) {
+  if (Array.isArray(formalSections) && canonicalInputSignature(formalSections) !== canonicalInputSignature(input.courseSections ?? [])) {
     issues.push(issue("ENGINE_SECTION_SNAPSHOT_MISMATCH", "courseSections"));
   }
   const routeIds = new Set();
@@ -3783,7 +3783,7 @@ function validateRegionalEngineOutput(output) {
   }
   if (output.resultHash) {
     const { resultHash, ...base } = output;
-    if (resultHash !== canonicalFingerprint(base)) issues.push(issue("RESULT_HASH_MISMATCH", "resultHash"));
+    if (resultHash !== canonicalInputSignature(base)) issues.push(issue("RESULT_HASH_MISMATCH", "resultHash"));
   } else {
     issues.push(issue("RESULT_HASH_MISSING", "resultHash"));
   }
@@ -3800,7 +3800,7 @@ internalModules.formalInputValidation = moduleExports;
 {
 const moduleExports = Object.create(null);
 const { ADAPTER_VERSION, AUTHORITY_VERSION, FORMAL_INPUT_CATALOG } = internalModules.formalInputCatalog;
-const { canonicalFingerprint } = internalModules.canonicalInputDigest;
+const { canonicalInputSignature } = internalModules.canonicalInputSignature;
 const { resolveSurfaceSelections } = internalModules.surfacePresets;
 const { failure, success } = internalModules.formalInputUtilities;
 const { validateFormalBundleSemantics, validatePrototypeRecordInput } = internalModules.formalInputValidation;
@@ -3956,7 +3956,7 @@ function adaptPrototypeRecord(uiInput, context={}) {
     const profile=context.profile??{}; for(const [id,key,unit] of [["RL-IN-113","heightCm","cm"],["RL-IN-114","weightKg","kg"],["RL-IN-115","ageBand",null],["RL-IN-116","sexOrReferenceCategory",null]]) if(profile[key]!=null)setEntry(map,id,profile[key],{unit,provenance:"SNAPSHOT",sourceField:`context.profile.${key}`});
     const plan=uiInput.plan??{}; if(plan.scheduledDate)setEntry(map,"RL-IN-130",plan.scheduledDate,{sourceField:"plan.scheduledDate"});if(plan.planType)setEntry(map,"RL-IN-131",plan.planType,{sourceField:"plan.planType"});if(plan.distanceKm!=null){setEntry(map,"RL-IN-132","VALUE",{provenance:"DERIVED"});setEntry(map,"RL-IN-133",plan.distanceKm,{unit:"km",sourceField:"plan.distanceKm"});}if(plan.durationMinutes!=null){setEntry(map,"RL-IN-134","VALUE",{provenance:"DERIVED"});setEntry(map,"RL-IN-135",plan.durationMinutes,{unit:"min",sourceField:"plan.durationMinutes"});}if(plan.course)setEntry(map,"RL-IN-136",plan.course,{sourceField:"plan.course"});if(plan.note)setEntry(map,"RL-IN-137",plan.note,{sourceField:"plan.note"});if(plan.outcomeStatus)setEntry(map,"RL-IN-138",plan.outcomeStatus,{sourceField:"plan.outcomeStatus"});if(plan.changeReason)setEntry(map,"RL-IN-139",plan.changeReason,{sourceField:"plan.changeReason"});if(plan.actualSessionId)setEntry(map,"RL-IN-140",plan.actualSessionId,{sourceField:"plan.actualSessionId"});
 
-    const inputSnapshotHash=canonicalFingerprint(map);
+    const inputSnapshotHash=canonicalInputSignature(map);
     return success({schemaVersion:"runload-formal-input-bundle-1.0",authorityVersion:AUTHORITY_VERSION,adapterVersion:ADAPTER_VERSION,
       recordSnapshot:{sessionId,recordRevision:revision,sessionDate:uiInput.date,activityType:uiInput.activityType.toUpperCase(),presetSnapshotVersion:ADAPTER_VERSION,inputSnapshotHash},formalInputs:map},surfaceResult.warnings??[]);
   } catch(error){return failure(error.code??"SCHEMA_INVALID","adapter.failed",error.path??"",{message:error.message});}
