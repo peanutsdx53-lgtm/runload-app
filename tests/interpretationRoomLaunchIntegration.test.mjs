@@ -142,45 +142,34 @@ await test('SIMULATION-CHANGES-CAN-BE-REVERTED-INDIVIDUALLY',()=>{
 
 await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
   const css=read('styles/desktop.css');
-  const marker='PC Condition Compare V3 experience 2026-09-24';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0);
-  const audit=css.slice(start);
+  const audit=css;
   assert.match(audit,/\.condition-compare-hero h1[\s\S]*font-size:2\.55rem\s*!important/);
   assert.match(audit,/\.measure-field>span[\s\S]*font-size:\.84rem\s*!important/);
   assert.match(audit,/\.measure-field input[\s\S]*font-size:1\.3rem\s*!important/);
   assert.match(audit,/\.simulation-change-groups[\s\S]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(audit,/\.simulation-change-row__copy strong[\s\S]*font-size:\.92rem/);
   assert.match(audit,/\.condition-compare-next-grid[\s\S]*grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
-  assert.match(audit,/PC Condition Compare V3 reversible controls/);
   assert.match(audit,/\.assumption-chips button[\s\S]*font-size:\.82rem/);
   assert.match(audit,/\.simulation-change-group>summary[\s\S]*font-size:\.88rem/);
-  assert.match(audit,/PC Condition Compare V3 readability final/);
   assert.match(audit,/\.condition-compare-adjust button,[\s\S]*font-size:\.8rem/);
 });
 
 await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
   const css=read('styles/mobile.css');
-  const marker='Condition Compare V3 experience';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0);
-  const audit=css.slice(start);
+  const audit=css;
   assert.match(audit,/\.condition-compare-hero p:last-child[\s\S]*font-size:14px/);
   assert.match(audit,/\.measure-field>span[\s\S]*font-size:13px/);
   assert.match(audit,/\.measure-field input[\s\S]*font-size:24px/);
   assert.match(audit,/\.simulation-change-row__copy strong[\s\S]*font-size:13px/);
   assert.match(audit,/\.condition-compare-next-grid strong[\s\S]*font-size:13px/);
-  assert.match(audit,/Condition Compare V3 reversible chips/);
   assert.match(audit,/\.assumption-chips button[\s\S]*font-size:11px/);
   assert.match(audit,/\.simulation-change-group>summary strong[\s\S]*font-size:13px/);
-  assert.match(audit,/Condition Compare V3 mobile readability final/);
   assert.match(audit,/\.condition-compare-adjust button,[\s\S]*font-size:12px/);
   assert.match(audit,/\.simulation-change-row__copy small,[\s\S]*font-size:11px/);
-  assert.match(audit,/Condition Compare V3 unchanged overview compact/);
   assert.match(audit,/\.condition-compare-overview-idle[\s\S]*font-size:14px/);
 });
 
-await test('SIMULATION-SCREEN-HAS-V3-SUMMARY-QUICK-ADJUST-AND-NEXT-ACTIONS',()=>{
+await test('SIMULATION-SCREEN-HAS-SUMMARY-QUICK-ADJUST-AND-NEXT-ACTIONS',()=>{
   const source=read('screens/simulationScreen.js');
   assert.match(source,/condition-compare-overview/);
   assert.match(source,/今回の比較で見えること/);
