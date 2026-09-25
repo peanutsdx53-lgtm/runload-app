@@ -330,7 +330,7 @@ export function validateRofJLifecycleEnvelope(value) {
 export function createRofJRepository(gateway) {
   const empty = () => ({ schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION, entries: {} });
   function loadEnvelopeResult() {
-    const result = gateway.readJsonResult(STORAGE_KEYS.secondPillarRofJ, null);
+    const result = gateway.readJsonResult(STORAGE_KEYS.rofJ, null);
     if (!result.ok) return { ...result, envelope: empty() };
     if (result.value == null) return { ok: true, exists: false, envelope: empty() };
     const validation = validateRofJStorageEnvelope(result.value);
@@ -355,7 +355,7 @@ export function createRofJRepository(gateway) {
       schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION,
       entries: { ...current.envelope.entries, [entry.runId]: clone(entry) },
     };
-    const result = gateway.writeJson(STORAGE_KEYS.secondPillarRofJ, envelope);
+    const result = gateway.writeJson(STORAGE_KEYS.rofJ, envelope);
     return { ...result, entry: result.ok ? clone(entry) : null };
   }
   function removeByRunId(runId) {
@@ -365,7 +365,7 @@ export function createRofJRepository(gateway) {
     const existed = Object.prototype.hasOwnProperty.call(entries, String(runId));
     delete entries[String(runId)];
     const envelope = { schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION, entries };
-    const result = gateway.writeJson(STORAGE_KEYS.secondPillarRofJ, envelope);
+    const result = gateway.writeJson(STORAGE_KEYS.rofJ, envelope);
     return { ...result, removed: result.ok && existed };
   }
   return Object.freeze({ loadEnvelopeResult, loadByRunId, loadAll, saveEntry, removeByRunId });
@@ -374,7 +374,7 @@ export function createRofJRepository(gateway) {
 export function createRofJLifecycleRepository(gateway) {
   const empty = () => ({ schemaVersion: ROF_J_LIFECYCLE_SCHEMA_VERSION, pendingByRunId: {} });
   function loadEnvelopeResult() {
-    const result = gateway.readJsonResult(STORAGE_KEYS.secondPillarRofJLifecycle, null);
+    const result = gateway.readJsonResult(STORAGE_KEYS.rofJLifecycle, null);
     if (!result.ok) return { ...result, envelope: empty() };
     if (result.value == null) return { ok: true, exists: false, envelope: empty() };
     const validation = validateRofJLifecycleEnvelope(result.value);
@@ -389,7 +389,7 @@ export function createRofJLifecycleRepository(gateway) {
       schemaVersion: ROF_J_LIFECYCLE_SCHEMA_VERSION,
       pendingByRunId: { ...current.envelope.pendingByRunId, [state.runId]: clone(state) },
     };
-    return gateway.writeJson(STORAGE_KEYS.secondPillarRofJLifecycle, envelope);
+    return gateway.writeJson(STORAGE_KEYS.rofJLifecycle, envelope);
   }
   function loadState(runId) {
     const current = loadEnvelopeResult();
@@ -405,7 +405,7 @@ export function createRofJLifecycleRepository(gateway) {
     const pendingByRunId = { ...current.envelope.pendingByRunId };
     const existed = Object.prototype.hasOwnProperty.call(pendingByRunId, String(runId));
     delete pendingByRunId[String(runId)];
-    const result = gateway.writeJson(STORAGE_KEYS.secondPillarRofJLifecycle, {
+    const result = gateway.writeJson(STORAGE_KEYS.rofJLifecycle, {
       schemaVersion: ROF_J_LIFECYCLE_SCHEMA_VERSION,
       pendingByRunId,
     });
