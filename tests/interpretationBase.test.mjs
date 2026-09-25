@@ -60,7 +60,7 @@ function fakeExperience({id,date='2026-09-20',createdAt=`${date}T08:00:00Z`,valu
 }
 
 await test('CORE-VERSION-AND-SCHEMA',()=>{
-  assert.equal(INTERPRETATION_BASE_VERSION,'runload-interpretation-core-v1.1');
+  assert.equal(INTERPRETATION_BASE_VERSION,'interpretation-base-v1.1');
   const out=buildBaseInterpretation();
   assert.equal(out.schemaVersion,INTERPRETATION_BASE_SCHEMA_VERSION);
   assert.equal(out.interpretation.summaryCodes[0],'NO_TARGET_RECORD');
