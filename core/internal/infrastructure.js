@@ -1,3 +1,4 @@
+import { LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES } from "../legacyCompatibility.js";
 import { coreModules } from "./moduleRegistry.js";
 
 // ===== core/pwaRegistration.js =====
@@ -54,12 +55,10 @@ async function clearLocalPwaDeliveryState() {
 
   if ("caches" in window) {
     const keys = await caches.keys();
-    const runLoadKeys = keys.filter((key) => (
-      key.startsWith("runload-journal-")
-      || key.startsWith("running-journal-")
-      || key.startsWith("runload-new-model-")
+    const legacyKeys = keys.filter((key) => (
+      LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES.some((prefix) => key.startsWith(prefix))
     ));
-    await Promise.all(runLoadKeys.map((key) => caches.delete(key)));
+    await Promise.all(legacyKeys.map((key) => caches.delete(key)));
   }
 }
 
