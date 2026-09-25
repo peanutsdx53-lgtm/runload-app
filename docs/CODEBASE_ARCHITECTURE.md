@@ -25,7 +25,10 @@ Domain and deterministic interpretation logic only.
 - `internal/primaryModelResults.js`: primary region definitions, result construction, validation, and result repository.
 - `internal/applicationDomain.js`: body-region taxonomy, subjective/safety rules, profile adjustment, and small domain repositories.
 - `internal/v27ApplicationModel.js`: V2.7 application-level math and model calculation.
-- `internal/applicationStorage.js`: course storage, restore inspection, backup, and public-help data boundaries.
+- `internal/courseRepository.js`: course preset normalization and persistence.
+- `internal/restoreInspection.js`: restore-file inspection and compatibility checks.
+- `internal/backupService.js`: backup creation and restore application.
+- `internal/publicHelpGuidance.js`: deterministic public-help guidance data.
 - `internal/v27ApplicationServices.js`: V2.7 personal/input adaptation and stored-result services.
 - `internal/recordWorkflow.js`: record-save workflow and model-result persistence.
 - `internal/historyWorkflow.js`: history loading, deletion, undo, and compatibility handling.
