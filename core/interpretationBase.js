@@ -671,18 +671,6 @@ export function buildInterpretationContext({ targetExperience = null, allExperie
   return Object.freeze({ currentRegions, regionalById, conditionSummary, rof, safety, availability, selectedRegionIds, evidence, meaning, actions });
 }
 
-export function buildCurrentRunInterpretation(context = {}) {
-  const currentRegions = context.currentRegions || [];
-  return Object.freeze({
-    regions: currentRegions,
-    selectedRegionIds: context.selectedRegionIds || Object.freeze([]),
-  });
-}
-
-export function buildRegionalHistoryInterpretation(context = {}) {
-  return Object.freeze({ regionalById: context.regionalById || Object.freeze({}) });
-}
-
 export function buildBaseInterpretation({ targetExperience = null, allExperiences = [], rofSummary = null, rofRecentReferences = {}, origin = "", selectedRegionId = "", supportDecision = null } = {}) {
   if (!targetExperience?.record) {
     const safety = resolveInterpretationSafetyMode(supportDecision || {});
