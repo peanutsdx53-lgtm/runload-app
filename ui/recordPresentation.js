@@ -1,6 +1,3 @@
-import { SURFACE_FIELDS } from "../core/appCore.js";
-
-
 export const SUBJECTIVE_STATUS_LABELS = Object.freeze({
   not_asked: "まだ確認していない",
   deferred: "未確認",
@@ -8,7 +5,6 @@ export const SUBJECTIVE_STATUS_LABELS = Object.freeze({
   discomfort_reported: "気になる部位を記録",
   strong_reported: "相談したい内容を記録",
 });
-
 
 export const SAFETY_FLAG_LABELS = Object.freeze({
   severePain: "強い痛み",
@@ -55,19 +51,3 @@ export function formatActivitySummary(record = {}) {
   if (Number(record.steps) > 0) items.push(`${formatNumber(record.steps, 0)}歩`);
   return items.length ? items.join("・") : "走行を記録";
 }
-
-) {
-  return SURFACE_FIELDS
-    .map(({ recordKey, label }) => ({ label, value: Number(record.course?.[recordKey] || 0) }))
-    .filter((item) => item.value > 0)
-    .map((item) => `${item.label} ${formatNumber(item.value, 0)}%`);
-}
-
-
-) {
-  return Array.isArray(feedback?.bodyAreaObservations)
-    ? feedback.bodyAreaObservations.filter((item) => item && item.areaId)
-    : [];
-}
-
-export { SURFACE_FIELDS };
