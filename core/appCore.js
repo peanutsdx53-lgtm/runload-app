@@ -1,5 +1,5 @@
 import "./internal/content.js";
-import { internalModules } from "./internal/moduleRegistry.js";
+import { internalModules } from "./internal/internalModules.js";
 
 // Public core API used by the current application modules.
 export const BODY_AREA_BY_ID = internalModules.bodyAreaTaxonomy["BODY_AREA_BY_ID"];
