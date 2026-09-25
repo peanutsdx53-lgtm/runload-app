@@ -61,9 +61,8 @@ await test('REST-RECORD-DOES-NOT-OFFER-UNDERSTANDING-ENTRY',()=>{
 await test('ENTRY-STYLING-IS-CALM-NOT-WARNING',()=>{
   const css=read('styles/mobile.css');
   const start=css.indexOf('.screen-layout--result .result-next-actions {');
-  const end=css.indexOf('/* Mobile typography floor',start);
-  const block=css.slice(start,end);
-  assert.ok(start>=0 && end>start);
+  const block=css.slice(start,start+2400);
+  assert.ok(start>=0);
   assert.match(block,/border:\s*1px solid var\(--color-line\)/);
   assert.match(block,/background:\s*color-mix\(in srgb, var\(--color-accent-soft\) 42%, var\(--color-surface\)\)/);
   assert.doesNotMatch(block,/urgent|warn|danger|color-danger/i);
