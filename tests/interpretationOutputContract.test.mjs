@@ -73,7 +73,7 @@ function build(opts={}){
 
 await test('OUTPUT-SCHEMA-AND-READONLY-PROVENANCE',()=>{
   const out=buildInterpretation();
-  assert.equal(INTERPRETATION_CORE_VERSION,'runload-interpretation-core-v4.0');
+  assert.equal(INTERPRETATION_CORE_VERSION,'interpretation-core-v4.0');
   assert.equal(out.schemaVersion,INTERPRETATION_OUTPUT_SCHEMA_VERSION);
   assert.equal(out.state.targetAvailable,false);
   assert.equal(out.provenance.primaryRecalculated,false);
