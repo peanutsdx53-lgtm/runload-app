@@ -122,8 +122,8 @@ const STORAGE_KEYS = Object.freeze({
   backups: `${STORAGE_NAMESPACE}-backup-v1`,
   corruptStorageBackup: `${STORAGE_NAMESPACE}-corrupt-storage-backup-v1`,
   historyUndo: `${STORAGE_NAMESPACE}-history-undo-v1`,
-  secondPillarRofJ: `${STORAGE_NAMESPACE}-second-pillar-rof-j-v1`,
-  secondPillarRofJLifecycle: `${STORAGE_NAMESPACE}-second-pillar-rof-j-lifecycle-v1`,
+  rofJ: `${STORAGE_NAMESPACE}-second-pillar-rof-j-v1`,
+  rofJLifecycle: `${STORAGE_NAMESPACE}-second-pillar-rof-j-lifecycle-v1`,
 });
 
 const USER_DATA_STORAGE_KEYS = Object.freeze([
@@ -137,8 +137,8 @@ const USER_DATA_STORAGE_KEYS = Object.freeze([
   STORAGE_KEYS.draft,
   STORAGE_KEYS.courses,
   STORAGE_KEYS.runMeasurements,
-  STORAGE_KEYS.secondPillarRofJ,
-  STORAGE_KEYS.secondPillarRofJLifecycle,
+  STORAGE_KEYS.rofJ,
+  STORAGE_KEYS.rofJLifecycle,
 ]);
 
 const INTERNAL_RECOVERY_STORAGE_KEYS = Object.freeze([
