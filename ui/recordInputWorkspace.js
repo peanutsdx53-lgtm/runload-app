@@ -50,7 +50,7 @@ function defaultNotice(source = "", outcome = "cancelled") {
   return "入力途中を保ったまま戻りました。";
 }
 
-export function serializeRecordInputForm(form) {
+function serializeRecordInputForm(form) {
   const fields = {};
   form?.querySelectorAll?.("input, select, textarea").forEach((control) => {
     if (!control.name || control.disabled) return;
@@ -73,7 +73,7 @@ export function saveRecordInputWorkspace(fieldsOrForm) {
   return payload;
 }
 
-export function loadRecordInputWorkspace() {
+function loadRecordInputWorkspace() {
   try {
     const parsed = JSON.parse(storage().getItem(WORKSPACE_KEY) || "null");
     if (!parsed || parsed.version !== 1 || typeof parsed.fields !== "object") return null;
@@ -118,7 +118,7 @@ export function beginRecordInputJourney({ returnTo = "#/record-input", source = 
   return payload;
 }
 
-export function loadRecordInputJourney() {
+function loadRecordInputJourney() {
   try {
     const parsed = JSON.parse(storage().getItem(JOURNEY_KEY) || "null");
     if (!parsed || parsed.version !== 1 || !parsed.returnTo) return null;
@@ -170,7 +170,7 @@ export function resolveRecordInputReturnState(context = {}) {
   });
 }
 
-export function isRecordInputWorkspaceActive() {
+function isRecordInputWorkspaceActive() {
   return loadRecordInputJourney()?.phase === "record";
 }
 
@@ -186,7 +186,7 @@ export function handleRecordInputRouteChange(previousScreen = "", nextScreen = "
   if (leavingJourney) clearRecordInputWorkspace();
 }
 
-export function clearRecordInputJourney() {
+function clearRecordInputJourney() {
   storage().removeItem(JOURNEY_KEY);
 }
 
