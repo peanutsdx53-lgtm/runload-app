@@ -670,14 +670,16 @@ export function buildInterpretationContext({ targetExperience = null, allExperie
   const actions = resolveInterpretationActions({ targetExperience, availability, safety, origin, selectedRegionId });
   return Object.freeze({ currentRegions, regionalById, conditionSummary, rof, safety, availability, selectedRegionIds, evidence, meaning, actions });
 }
-) {
+
+export function buildCurrentRunInterpretation(context = {}) {
   const currentRegions = context.currentRegions || [];
   return Object.freeze({
     regions: currentRegions,
     selectedRegionIds: context.selectedRegionIds || Object.freeze([]),
   });
 }
-) {
+
+export function buildRegionalHistoryInterpretation(context = {}) {
   return Object.freeze({ regionalById: context.regionalById || Object.freeze({}) });
 }
 
