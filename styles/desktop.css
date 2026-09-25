@@ -10768,23 +10768,6 @@
   .interpretation-room-selected-head h1{
     font-size:2.25rem;
   }
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1fr) minmax(18rem,.3fr);
-    align-items:start;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:sticky;
-    top:5.6rem;
-  }
-  .interpretation-room-selected-v4 .interpretation-room-region-detail--selected{
-    padding:1.2rem 1.25rem;
-  }
-  .interpretation-room-selected-v4 .interpretation-room-region-stats{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
-  .interpretation-room-selected-v4 .interpretation-room-history-panel{
-    margin-top:.9rem;
-  }
   .interpretation-room-region-chips>a:hover{
     transform:translateY(-1px);
     border-color:color-mix(in srgb,var(--color-accent) 38%,var(--color-line));
@@ -10826,34 +10809,8 @@
     width:min(100%,96rem) !important;
     max-width:96rem !important;
   }
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1.85fr) minmax(17rem,.72fr) !important;
-    gap:1rem !important;
-    align-items:start !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--selected{
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-    position:sticky;
-    top:5.6rem;
-  }
 }
 @media (min-width:64rem){
-  .interpretation-room-selected-context{
-    grid-template-columns:minmax(0,1.25fr) minmax(20rem,.75fr);
-    align-items:start;
-  }
-  .interpretation-room-selected-context>.interpretation-room-conditions,
-  .interpretation-room-selected-context>.interpretation-room-subjective{
-    width:100%;
-    min-width:0;
-  }
 }
 
 
@@ -10906,46 +10863,15 @@
   .region-chip__copy small{
     font-size:.76rem !important;
   }
-
-  /* Medium-size PC: detail content must use the available width first. */
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1fr) !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:static !important;
-    top:auto !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--selected{
-    width:100% !important;
-    min-width:0 !important;
-  }
-  .interpretation-room-selected-context{
-    grid-template-columns:minmax(0,1fr) !important;
-  }
 }
 @media (min-width:80rem){
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1fr) minmax(19rem,21rem) !important;
-    gap:1rem !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:sticky !important;
-    top:5.6rem !important;
-  }
-  .interpretation-room-selected-context{
-    grid-template-columns:minmax(0,1.3fr) minmax(21rem,.7fr) !important;
-    gap:1rem !important;
-    align-items:start !important;
-  }
 }
 
 
 @media (min-width:55rem){
   .app-shell--immersive .app-main,
   .screen--interpretation-room,
-  .interpretation-room--selected-detail,
-  .interpretation-room-selected-dashboard,
-  .interpretation-room-selected-context{
+  .interpretation-room--selected-detail{
     min-width:0 !important;
   }
 
@@ -10953,90 +10879,9 @@
     width:min(100%,96rem) !important;
     max-width:96rem !important;
   }
-
-  .interpretation-room-selected-dashboard{
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) !important;
-    gap:1rem !important;
-    align-items:start !important;
-  }
-
-  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--selected,
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-    justify-self:stretch !important;
-  }
-
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:static !important;
-    top:auto !important;
-  }
-
-  .interpretation-room-selected-context{
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) !important;
-    gap:1rem !important;
-    align-items:start !important;
-  }
-
-  .interpretation-room-selected-context>.interpretation-room-conditions,
-  .interpretation-room-selected-context>.interpretation-room-subjective{
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-  }
 }
 
 @media (min-width:64rem){
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1fr) minmax(18rem,20rem) !important;
-  }
-
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:sticky !important;
-    top:5.6rem !important;
-  }
-
-  .interpretation-room-selected-v4 .interpretation-room-region-reading-order{
-    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) !important;
-  }
-
-  .interpretation-room-selected-v4 .interpretation-room-region-stats{
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  }
-
-  .interpretation-room-selected-context{
-    grid-template-columns:minmax(0,1.35fr) minmax(22rem,.65fr) !important;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-section-title{
-    grid-template-columns:minmax(0,1fr) !important;
-    gap:.45rem !important;
-    align-items:start !important;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-section-title>p{
-    max-width:42rem;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-subjective-layout{
-    grid-template-columns:minmax(0,1fr) !important;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-fatigue-flow{
-    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-fatigue-flow>aside{
-    grid-column:1/-1;
-    min-height:4.4rem;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-subjective-note{
-    grid-template-columns:2.6rem minmax(0,1fr) !important;
-  }
 }
 
 
