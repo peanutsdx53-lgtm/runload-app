@@ -3242,7 +3242,7 @@ const { stableStringify } = coreModules[18];
 
 function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
 
-function sha256(text) {
+function digestText(text) {
   const bytes = new TextEncoder().encode(text);
   const bitLength = bytes.length * 8;
   const withOne = bytes.length + 1;
@@ -3290,9 +3290,8 @@ function sha256(text) {
   return h.map(v => v.toString(16).padStart(8,"0")).join("");
 }
 
-function hashCanonical(value) { return sha256(stableStringify(value)); }
-moduleExports["sha256"] = sha256;
-moduleExports["hashCanonical"] = hashCanonical;
+function canonicalFingerprint(value) { return digestText(stableStringify(value)); }
+moduleExports["canonicalFingerprint"] = canonicalFingerprint;
 coreModules[19] = moduleExports;
 }
 
@@ -3365,7 +3364,7 @@ coreModules[20] = moduleExports;
 {
 const moduleExports = Object.create(null);
 const { FORMAL_INPUT_CATALOG, REGIONS } = coreModules[17];
-const { hashCanonical } = coreModules[19];
+const { canonicalFingerprint } = coreModules[19];
 
 const REGION_IDS = REGIONS.map((region) => region.id);
 const REGION_ID_SET = new Set(REGION_IDS);
@@ -3642,7 +3641,7 @@ function validateFormalBundleSemantics(bundle) {
       });
     }
   }
-  if (bundle.recordSnapshot?.inputSnapshotHash && bundle.recordSnapshot.inputSnapshotHash !== hashCanonical(bundle.formalInputs)) {
+  if (bundle.recordSnapshot?.inputSnapshotHash && bundle.recordSnapshot.inputSnapshotHash !== canonicalFingerprint(bundle.formalInputs)) {
     issues.push(issue("INPUT_SNAPSHOT_HASH_MISMATCH", "recordSnapshot.inputSnapshotHash"));
   }
   return issues;
@@ -3652,7 +3651,7 @@ function validateRegionalEngineInputSemantics(input) {
   const issues = validateFormalBundleSemantics(input);
   if (!isObject(input)) return issues;
   const formalSections = input.formalInputs?.["RL-IN-039"]?.value;
-  if (Array.isArray(formalSections) && hashCanonical(formalSections) !== hashCanonical(input.courseSections ?? [])) {
+  if (Array.isArray(formalSections) && canonicalFingerprint(formalSections) !== canonicalFingerprint(input.courseSections ?? [])) {
     issues.push(issue("ENGINE_SECTION_SNAPSHOT_MISMATCH", "courseSections"));
   }
   const routeIds = new Set();
@@ -3784,7 +3783,7 @@ function validateRegionalEngineOutput(output) {
   }
   if (output.resultHash) {
     const { resultHash, ...base } = output;
-    if (resultHash !== hashCanonical(base)) issues.push(issue("RESULT_HASH_MISMATCH", "resultHash"));
+    if (resultHash !== canonicalFingerprint(base)) issues.push(issue("RESULT_HASH_MISMATCH", "resultHash"));
   } else {
     issues.push(issue("RESULT_HASH_MISSING", "resultHash"));
   }
@@ -3801,7 +3800,7 @@ coreModules[21] = moduleExports;
 {
 const moduleExports = Object.create(null);
 const { ADAPTER_VERSION, AUTHORITY_VERSION, FORMAL_INPUT_CATALOG } = coreModules[17];
-const { hashCanonical } = coreModules[19];
+const { canonicalFingerprint } = coreModules[19];
 const { resolveSurfaceSelections } = coreModules[20];
 const { failure, success } = coreModules[18];
 const { validateFormalBundleSemantics, validatePrototypeRecordInput } = coreModules[21];
@@ -3957,7 +3956,7 @@ function adaptPrototypeRecord(uiInput, context={}) {
     const profile=context.profile??{}; for(const [id,key,unit] of [["RL-IN-113","heightCm","cm"],["RL-IN-114","weightKg","kg"],["RL-IN-115","ageBand",null],["RL-IN-116","sexOrReferenceCategory",null]]) if(profile[key]!=null)setEntry(map,id,profile[key],{unit,provenance:"SNAPSHOT",sourceField:`context.profile.${key}`});
     const plan=uiInput.plan??{}; if(plan.scheduledDate)setEntry(map,"RL-IN-130",plan.scheduledDate,{sourceField:"plan.scheduledDate"});if(plan.planType)setEntry(map,"RL-IN-131",plan.planType,{sourceField:"plan.planType"});if(plan.distanceKm!=null){setEntry(map,"RL-IN-132","VALUE",{provenance:"DERIVED"});setEntry(map,"RL-IN-133",plan.distanceKm,{unit:"km",sourceField:"plan.distanceKm"});}if(plan.durationMinutes!=null){setEntry(map,"RL-IN-134","VALUE",{provenance:"DERIVED"});setEntry(map,"RL-IN-135",plan.durationMinutes,{unit:"min",sourceField:"plan.durationMinutes"});}if(plan.course)setEntry(map,"RL-IN-136",plan.course,{sourceField:"plan.course"});if(plan.note)setEntry(map,"RL-IN-137",plan.note,{sourceField:"plan.note"});if(plan.outcomeStatus)setEntry(map,"RL-IN-138",plan.outcomeStatus,{sourceField:"plan.outcomeStatus"});if(plan.changeReason)setEntry(map,"RL-IN-139",plan.changeReason,{sourceField:"plan.changeReason"});if(plan.actualSessionId)setEntry(map,"RL-IN-140",plan.actualSessionId,{sourceField:"plan.actualSessionId"});
 
-    const inputSnapshotHash=hashCanonical(map);
+    const inputSnapshotHash=canonicalFingerprint(map);
     return success({schemaVersion:"runload-formal-input-bundle-1.0",authorityVersion:AUTHORITY_VERSION,adapterVersion:ADAPTER_VERSION,
       recordSnapshot:{sessionId,recordRevision:revision,sessionDate:uiInput.date,activityType:uiInput.activityType.toUpperCase(),presetSnapshotVersion:ADAPTER_VERSION,inputSnapshotHash},formalInputs:map},surfaceResult.warnings??[]);
   } catch(error){return failure(error.code??"SCHEMA_INVALID","adapter.failed",error.path??"",{message:error.message});}
