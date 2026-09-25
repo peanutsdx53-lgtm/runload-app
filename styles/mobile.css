@@ -1,4 +1,4 @@
-/* RunLoad mobile screen layouts and responsive rules. */
+/* Mobile screen layouts and responsive rules. */
 /*
  * RunLoad mobile screen layout layer.
  * Maintains the approved mobile UI geometry.
@@ -3421,7 +3421,7 @@ html.consult-viewer-open{overflow:hidden}
 }
 
 
-/* Mobile typography floor: supersedes legacy prototype pixel sizes. */
+/* Mobile typography minimums for readable controls. */
 @media (max-width: 54.99rem) {
   .screen-layout small {
     font-size: var(--type-label) !important;
@@ -3629,18 +3629,18 @@ html.consult-viewer-open{overflow:hidden}
 }
 
 .screen-layout--record [data-record-rof-slider].is-untouched::-webkit-slider-thumb {
-  animation: runload-rof-thumb-hint 1.25s ease-in-out infinite alternate;
+  animation: rof-thumb-hint 1.25s ease-in-out infinite alternate;
 }
 
 .screen-layout--record [data-record-rof-slider].is-untouched::-moz-range-thumb {
-  animation: runload-rof-thumb-hint 1.25s ease-in-out infinite alternate;
+  animation: rof-thumb-hint 1.25s ease-in-out infinite alternate;
 }
 
 .screen-layout--record .rof-slider-wrap.is-untouched {
   background: color-mix(in srgb, var(--accent-soft) 38%, transparent);
 }
 
-@keyframes runload-rof-thumb-hint {
+@keyframes rof-thumb-hint {
   from { box-shadow: 0 0 0 2px var(--accent2), 0 4px 10px color-mix(in srgb, var(--ink) 14%, transparent); }
   to { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 24%, transparent), 0 5px 14px color-mix(in srgb, var(--ink) 20%, transparent); }
 }
@@ -4189,7 +4189,7 @@ html.consult-viewer-open{overflow:hidden}
 }
 
 
-/* ===== Condition Compare V3 experience ===== */
+/* ===== Condition comparison ===== */
 .screen-layout--simulation.condition-compare{
   display:grid;
   gap:14px;
@@ -4815,7 +4815,7 @@ html.consult-viewer-open{overflow:hidden}
 }
 
 
-/* ===== Condition Compare V3 reversible chips + compact stable group ===== */
+/* ===== Condition comparison reversible controls ===== */
 .screen-layout--simulation.condition-compare .assumption-chips button{
   flex:0 0 auto;
   min-height:34px;
