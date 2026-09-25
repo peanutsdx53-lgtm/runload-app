@@ -22,7 +22,6 @@ const PRECACHE_URLS = [
   "./core/internal/v27ApplicationServices.js",
   "./core/internal/workflows.js",
   "./core/internal/readingContent.js",
-  "./core/internal/dataManagement.js",
   "./core/internal/consultation.js",
   "./core/internal/applicationServices.js",
   "./icons/icon-192.png",
