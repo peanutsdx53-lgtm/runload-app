@@ -20,7 +20,11 @@ Domain and deterministic interpretation logic only.
 - `internal/primaryInputCatalog.js`: formal primary-input catalog and metadata.
 - `internal/primaryInputProcessing.js`: formal-input utilities, validation, normalization, and app/trace adapters.
 - `internal/primaryModelResults.js`: primary region definitions, result construction, validation, and result repository.
-- `internal/application.js`: application workflows that combine repositories and domain operations.
+- `internal/applicationDomain.js`: body-region taxonomy, subjective/safety rules, profile adjustment, and small domain repositories.
+- `internal/v27ApplicationModel.js`: V2.7 application-level math and model calculation.
+- `internal/applicationStorage.js`: course storage, restore inspection, backup, and public-help data boundaries.
+- `internal/v27ApplicationServices.js`: V2.7 personal/input adaptation and stored-result services.
+- `internal/workflows.js`: record, history, and planning workflows.
 - `internal/content.js`: evidence-backed reading content, consultation content, terminology, and privacy content.
 - `internal/modules.js`: private registry used only to connect the split core modules.
 

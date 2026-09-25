@@ -1,4 +1,4 @@
-import "./application.js";
+import "./workflows.js";
 import { internalModules } from "./modules.js";
 
 // ===== data/evidenceGovernanceData.js =====
