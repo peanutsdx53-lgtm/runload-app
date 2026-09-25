@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { access, readFile } from 'node:fs/promises';
+import path from 'node:path';
 
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
@@ -52,20 +53,37 @@ await test('PWA-PRECACHE-EXCLUDES-UNUSED-EXPLANATION-MODULE',async()=>{
   assert.ok(!precache(sw).includes('./ui/hierarchicalExplanation.js'));
 });
 
-const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Room PWA Integration',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
-if(failed.length)process.exitCode=1;
-
-
 await test('PWA-PRECACHE-COVERS-RUNTIME-MODULE-GRAPH',async()=>{
   const sw=await source('service-worker.js');
   const cached=new Set(precache(sw).map((item)=>item.replace(/^\.\//,'')));
-  const modulePaths=[
-    'core/legacyCompatibility.js',
-    'core/rofJConstants.js',
-    'core/rofJCore.js',
+  const visited=new Set();
+  const importPatterns=[
+    /\bfrom\s+["']([^"']+)["']/g,
+    /\bimport\s*["']([^"']+)["']/g,
+    /\bimport\s*\(\s*["']([^"']+)["']\s*\)/g,
   ];
-  for(const path of modulePaths){
-    assert.ok(cached.has(path),path);
+  async function visit(file){
+    if(visited.has(file)) return;
+    visited.add(file);
+    const text=await source(file);
+    const specs=new Set();
+    for(const pattern of importPatterns){
+      for(const match of text.matchAll(pattern)) specs.add(match[1]);
+    }
+    for(const spec of specs){
+      if(!spec.startsWith('.')) continue;
+      let resolved=path.posix.normalize(path.posix.join(path.posix.dirname(file),spec));
+      if(!path.posix.extname(resolved)) resolved+='.js';
+      await visit(resolved);
+    }
+  }
+  await visit('app.js');
+  await visit('ui/pwaUpdateBootstrap.js');
+  for(const file of visited){
+    assert.ok(cached.has(file),`runtime module missing from precache: ${file}`);
   }
 });
+
+const failed=results.filter(x=>x.status==='FAIL');
+console.log(JSON.stringify({suite:'Interpretation Room PWA Integration',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+if(failed.length)process.exitCode=1;
