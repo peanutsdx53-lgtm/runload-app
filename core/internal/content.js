@@ -465,7 +465,7 @@ const ARTICLE_EVIDENCE_REGISTRY = Object.freeze([
     articleId: "goals-and-recording-differ", claimId: "COL-CLM-014", sourceIds: ["APP-COL-KARAHANOGLU", "APP-COL-JANSSEN", "APP-COL-KRUKOWSKI"],
     relatedInputs: ["記録目的", "履歴", "本人メモ", "フィードバック表示"], relatedRoutes: ["general-knowledge column route", "running-goal reading route"], relatedRegions: ["なし（記録・目標の利用文脈）"],
     allowedClaim: "ランナーの目標・関心・技術利用が一様でなく、記録とフィードバックは本人の目的や時機に合わせて選べることを説明する。",
-    prohibitedClaim: "記録継続、特定目標、利用者分類、RunLoadによる行動変容の効果を保証しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
+    prohibitedClaim: "記録継続、特定目標、利用者分類、このアプリによる行動変容の効果を保証しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
     articleId: "context-not-single-cause", claimId: "COL-CLM-015", sourceIds: ["APP-COL-LINTON", "APP-COL-WINTER", "APP-COL-BESOMI"],
