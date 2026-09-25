@@ -175,7 +175,6 @@ body {
 .related-article,
 .danger-zone,
 .consult-entry-card,
-.gpx-local-card,
 .quick-share-card { padding: 14px; }
 
 input, select, textarea {
@@ -272,9 +271,7 @@ input, select, textarea {
 .screen--course-library,
 .screen--course-editor,
 .screen--gpx-analysis { max-width: 980px; margin-inline: auto; gap: 16px; }
-.screen--course-editor .form-section,
-.screen--gpx-analysis .gpx-local-card { border-radius: 18px; }
-.screen--gpx-analysis .gpx-summary dl { gap: 7px; }
+.screen--course-editor .form-section{ border-radius: 18px; }
 
 /* --- Consultation --- */
 .screen--consultation { max-width: 980px; margin-inline: auto; gap: 18px; }
@@ -282,16 +279,6 @@ input, select, textarea {
 
 /* --- Public support --- */
 .screen--support-guidance { max-width: 900px; margin-inline: auto; gap: 16px; }
-
-/* --- Reading --- */
-.screen--column { max-width: 980px; margin-inline: auto; gap: 18px; }
-.screen--column .article-card {
-  padding: 14px;
-  border: 1px solid var(--color-line);
-  border-top-width: 1px;
-  border-radius: 17px;
-  box-shadow: var(--app-card-shadow);
-}
 
 /* --- Privacy --- */
 .screen--privacy { max-width: 960px; margin-inline: auto; gap: 16px; }

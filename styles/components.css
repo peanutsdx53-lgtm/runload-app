@@ -99,9 +99,9 @@
 .result-card__heading p, .home-compact-card > div > p:first-child, .daily-suggestion > p:first-child, .home-reading-card > div > p:first-child, .body-part-focus > div > p:first-child, .editorial-summary > p:first-child { margin-bottom: var(--space-1); color: var(--color-accent); font-size: 0.75rem; font-weight: 850; letter-spacing: 0.12em; }
 .result-card__heading h2, .home-summary-card h2, .home-compact-card h2, .daily-suggestion h2, .home-reading-card h2, .body-part-focus h2, .editorial-summary h2, .next-action h2 { margin-bottom: 0; font-family: var(--font-editorial); font-size: clamp(1.35rem, 4vw, 2rem); }
 .source-boundary { margin-bottom: 0; padding-top: var(--space-3); border-top: 1px solid var(--color-line); color: var(--color-muted); font-size: 0.9rem; }
-.model-total, .part-share { display: flex; align-items: baseline; gap: var(--space-3); }
-.model-total strong, .part-share strong { font-family: var(--font-numeric); font-size: clamp(2.7rem, 10vw, 5rem); font-weight: 800; line-height: 1; letter-spacing: -0.025em; }
-.model-total span, .part-share span { color: var(--color-muted); font-weight: 800; }
+.model-total{ display: flex; align-items: baseline; gap: var(--space-3); }
+.model-total strong{ font-family: var(--font-numeric); font-size: clamp(2.7rem, 10vw, 5rem); font-weight: 800; line-height: 1; letter-spacing: -0.025em; }
+.model-total span{ color: var(--color-muted); font-weight: 800; }
 .safety-flag-summary, .notice-text { padding: var(--space-4); border-left: 4px solid var(--color-attention-border); background: var(--color-attention-soft); }
 .body-map { display: grid; gap: var(--space-3); grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .body-map__view { margin: 0; min-width: 0; text-align: center; }
@@ -129,7 +129,6 @@
 .two-column-layout{ display: grid; gap: var(--space-4); }
 .screen-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .daily-suggestion { border-left: 6px solid var(--color-accent); }
-.rest-distribution { padding: var(--space-5); border: 1px dashed var(--color-line); border-radius: var(--radius-medium); color: var(--color-muted); }
 
 /* 履歴・プラン・相談・コラム・データ管理 */
 .filter-panel, .data-management, .share-report, .related-article, .danger-zone {
@@ -142,7 +141,6 @@
   box-shadow: var(--shadow-card);
 }
 .history-item, .saved-plan { display: grid; gap: var(--space-4); padding: var(--space-5); border: 1px solid var(--color-line); border-radius: var(--radius-large); background: var(--color-surface); } .saved-plan h3 { margin-bottom: var(--space-2); font-family: var(--font-editorial); }
-.undo-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-4); border: 1px solid var(--color-accent); border-radius: var(--radius-medium); background: var(--color-accent-soft); }
 .button--danger { border-color: var(--color-danger-border); color: var(--color-danger); background: var(--color-danger-soft); }
 .button--danger:hover { background: color-mix(in srgb, var(--color-danger-soft) 78%, var(--color-danger)); }
 .plan-candidate { display: grid; gap: var(--space-4); padding: var(--space-5); border: 1px solid var(--color-line); border-radius: var(--radius-large); background: var(--color-surface); }
