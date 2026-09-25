@@ -1,4 +1,4 @@
-name: Codebase cleanup validation
+name: Application validation
 
 on:
   push:
@@ -41,7 +41,6 @@ jobs:
           test ! -e package.json
           test -z "$(find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.jsx' -o -name '*.vue' -o -name '*.py' \) -not -path './.git/*' -print)"
       - name: Browser route smoke test
-        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -80,7 +79,7 @@ jobs:
           check_route 1365 900 privacy 'screen--privacy' desktop-privacy
           check_route 1365 900 reading 'screen--reading' desktop-reading
           check_route 390 844 start 'screen--start' mobile-start
-      - name: Generate cleanup audit report
+      - name: Generate terminology report
         shell: bash
         run: |
           {
@@ -101,7 +100,7 @@ jobs:
             echo
             echo "=== GENERATION TOKENS ==="
             grep -R -n -E '(--v[0-9]+|[-_]v[0-9]+|\bV[0-9]+\b)' app.js service-worker.js index.html manifest.webmanifest core screens ui styles docs README.md tests 2>/dev/null || true
-          } > cleanup-audit.txt
+          } > terminology-report.txt
       - name: Generate module reachability report
         shell: bash
         run: |
@@ -364,9 +363,9 @@ jobs:
           NODE
       - uses: actions/upload-artifact@v4
         with:
-          name: codebase-cleanup-audit
+          name: application-validation-report
           path: |
-            cleanup-audit.txt
+            terminology-report.txt
             module-reachability.txt
             public-api-usage.txt
             exported-symbol-usage.txt
