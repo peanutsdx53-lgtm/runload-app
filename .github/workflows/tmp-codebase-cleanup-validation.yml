@@ -71,12 +71,19 @@ jobs:
           }
           const files=new Set(all);
           const imports=new Map();
-          const pattern=/\bimport\s+(?:[\s\S]*?\s+from\s+)?["']([^"']+)["']|\bimport\s*\(\s*["']([^"']+)["']\s*\)/g;
+          const importPatterns=[
+            /\bfrom\s+["']([^"']+)["']/g,
+            /\bimport\s*["']([^"']+)["']/g,
+            /\bimport\s*\(\s*["']([^"']+)["']\s*\)/g,
+          ];
           for(const file of files){
             const source=fs.readFileSync(file,'utf8');
+            const specs=new Set();
+            for(const pattern of importPatterns){
+              for(const match of source.matchAll(pattern)) specs.add(match[1]);
+            }
             const deps=[];
-            for(const match of source.matchAll(pattern)){
-              const spec=match[1]||match[2];
+            for(const spec of specs){
               if(!spec?.startsWith('.')) continue;
               let resolved=path.normalize(path.join(path.dirname(file),spec)).replaceAll('\\','/');
               if(!path.extname(resolved)) resolved+='.js';
@@ -84,17 +91,23 @@ jobs:
             }
             imports.set(file,deps);
           }
+          const entrypoints=new Set(['app.js']);
+          const html=fs.readFileSync('index.html','utf8');
+          for(const match of html.matchAll(/<script\b[^>]*\bsrc=["']\.\/([^"']+\.js)["'][^>]*>/g)){
+            entrypoints.add(match[1]);
+          }
           const seen=new Set();
           const visit=(file)=>{
             if(seen.has(file)||!files.has(file)) return;
             seen.add(file);
             for(const dep of imports.get(file)||[]) visit(dep);
           };
-          visit('app.js');
+          for(const entry of entrypoints) visit(entry);
           const unreachable=[...files].filter(file=>file!=='app.js'&&!seen.has(file)).sort();
           const report=[
             '=== MODULE REACHABILITY FROM app.js ===',
             `runtime modules: ${files.size-1}`,
+            `entrypoints: ${[...entrypoints].sort().join(', ')}`,
             `reachable modules: ${seen.size-1}`,
             `unreachable modules: ${unreachable.length}`,
             '',
