@@ -1915,15 +1915,15 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   const draft = collection(snapshot, STORAGE_KEYS.draft, null);
   const courses = collection(snapshot, STORAGE_KEYS.courses, []);
   const runMeasurements = collection(snapshot, STORAGE_KEYS.runMeasurements, []);
-  const secondPillarRofJ = collection(snapshot, STORAGE_KEYS.secondPillarRofJ, null);
-  const secondPillarRofJLifecycle = collection(snapshot, STORAGE_KEYS.secondPillarRofJLifecycle, null);
+  const secondPillarRofJ = collection(snapshot, STORAGE_KEYS.rofJ, null);
+  const secondPillarRofJLifecycle = collection(snapshot, STORAGE_KEYS.rofJLifecycle, null);
 
   if (secondPillarRofJ != null) {
     const validEnvelope = isObject(secondPillarRofJ)
       && secondPillarRofJ.schemaVersion === "RUNLOAD_SECOND_PILLAR_ROFJ_STORAGE_V1"
       && isObject(secondPillarRofJ.entries);
     if (!validEnvelope) {
-      issues.push(issue("BLOCKING", "ROF_J_STORAGE_INVALID", "secondPillarRofJ", "第二柱ROF-J保存領域の形式が正しくありません。"));
+      issues.push(issue("BLOCKING", "ROF_J_STORAGE_INVALID", "secondPillarRofJ", "ROF-J保存領域の形式が正しくありません。"));
     } else {
       const allowedRevisionTypes = new Set(["INITIAL_MEASUREMENT", "CORRECTION", "LATER_REFLECTION"]);
       const validRofValue = (value) => Number.isInteger(value) && value >= 0 && value <= 10;
@@ -1931,37 +1931,37 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
       Object.entries(secondPillarRofJ.entries).forEach(([runId, entry]) => {
         const itemId = String(runId || "");
         if (!isObject(entry) || entry.runId !== runId) {
-          issues.push(issue("BLOCKING", "ROF_J_RUN_ENTRY_INVALID", "secondPillarRofJ", "第二柱ROF-J記録の走行識別子が一致しません。", itemId));
+          issues.push(issue("BLOCKING", "ROF_J_RUN_ENTRY_INVALID", "secondPillarRofJ", "ROF-J記録の走行識別子が一致しません。", itemId));
           return;
         }
         if (entry.instrumentId !== "ROF_J"
           || entry.instrumentSemanticVersion !== "ROF_J_SUZUKI_ARAI_2026_RUNLOAD_V1"
           || entry.japaneseSourceSha256 !== "f25d0d4cf09f603cb66984606cfdb8e716781ba106f0da44dfa276515838acf8"
           || entry.visualSourceId !== "ROF_ORIGINAL_2017") {
-          issues.push(issue("BLOCKING", "ROF_J_SEMANTIC_PROVENANCE_INVALID", "secondPillarRofJ", "第二柱ROF-J記録の尺度・出典情報が現在の仕様と一致しません。", itemId));
+          issues.push(issue("BLOCKING", "ROF_J_SEMANTIC_PROVENANCE_INVALID", "secondPillarRofJ", "ROF-J記録の尺度・出典情報が現在の仕様と一致しません。", itemId));
         }
         if (!isObject(entry.measurements)) {
-          issues.push(issue("BLOCKING", "ROF_J_MEASUREMENTS_INVALID", "secondPillarRofJ", "第二柱ROF-J測定記録の形式が正しくありません。", itemId));
+          issues.push(issue("BLOCKING", "ROF_J_MEASUREMENTS_INVALID", "secondPillarRofJ", "ROF-J測定記録の形式が正しくありません。", itemId));
           return;
         }
         ["PRE_RUN", "POST_RUN"].forEach((phase) => {
           const measurement = entry.measurements[phase];
           if (measurement == null) return;
           if (!isObject(measurement) || measurement.phase !== phase || !Array.isArray(measurement.revisions) || measurement.revisions.length === 0) {
-            issues.push(issue("BLOCKING", "ROF_J_MEASUREMENT_INVALID", "secondPillarRofJ", "第二柱ROF-J測定記録の形式が正しくありません。", `${itemId}:${phase}`));
+            issues.push(issue("BLOCKING", "ROF_J_MEASUREMENT_INVALID", "secondPillarRofJ", "ROF-J測定記録の形式が正しくありません。", `${itemId}:${phase}`));
             return;
           }
           const initialCount = measurement.revisions.filter((revision) => revision?.revisionType === "INITIAL_MEASUREMENT").length;
           if (initialCount !== 1) {
-            issues.push(issue("BLOCKING", "ROF_J_INITIAL_REVISION_INVALID", "secondPillarRofJ", "第二柱ROF-J初回測定の履歴を確認できません。", `${itemId}:${phase}`));
+            issues.push(issue("BLOCKING", "ROF_J_INITIAL_REVISION_INVALID", "secondPillarRofJ", "ROF-J初回測定の履歴を確認できません。", `${itemId}:${phase}`));
           }
           measurement.revisions.forEach((revision) => {
             if (!isObject(revision) || !validRofValue(revision.value) || !validTime(revision.recordedAt) || !allowedRevisionTypes.has(revision.revisionType)) {
-              issues.push(issue("BLOCKING", "ROF_J_REVISION_INVALID", "secondPillarRofJ", "第二柱ROF-J修正履歴の値・日時・種別を確認できません。", `${itemId}:${phase}`));
+              issues.push(issue("BLOCKING", "ROF_J_REVISION_INVALID", "secondPillarRofJ", "ROF-J修正履歴の値・日時・種別を確認できません。", `${itemId}:${phase}`));
             }
           });
           if (!measurement.revisions.some((revision) => revision?.revisionId === measurement.effectiveRevisionId)) {
-            issues.push(issue("BLOCKING", "ROF_J_EFFECTIVE_REVISION_INVALID", "secondPillarRofJ", "第二柱ROF-Jの有効測定を特定できません。", `${itemId}:${phase}`));
+            issues.push(issue("BLOCKING", "ROF_J_EFFECTIVE_REVISION_INVALID", "secondPillarRofJ", "ROF-Jの有効測定を特定できません。", `${itemId}:${phase}`));
           }
         });
       });
@@ -1971,7 +1971,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
     const validLifecycle = isObject(secondPillarRofJLifecycle)
       && secondPillarRofJLifecycle.schemaVersion === "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1"
       && isObject(secondPillarRofJLifecycle.pendingByRunId);
-    if (!validLifecycle) issues.push(issue("BLOCKING", "ROF_J_LIFECYCLE_STORAGE_INVALID", "secondPillarRofJLifecycle", "第二柱ROF-J入力途中領域の形式が正しくありません。"));
+    if (!validLifecycle) issues.push(issue("BLOCKING", "ROF_J_LIFECYCLE_STORAGE_INVALID", "secondPillarRofJLifecycle", "ROF-J入力途中領域の形式が正しくありません。"));
   }
 
   const expectedArrays = [
@@ -3350,8 +3350,8 @@ function createHistoryWorkflow({
   modelResultRegionalV2Repository,
   subjectiveFeedbackRepository,
   planRepository,
-  secondPillarRofJRepository = null,
-  secondPillarLifecycleRepository = null,
+  rofJRepository = null,
+  rofJLifecycleRepository = null,
 }) {
   function readCollectionForMutation(repository, sourceName) {
     const result = repository?.loadAllResult?.();
@@ -3432,21 +3432,21 @@ function createHistoryWorkflow({
     const regionalV2Items = regionalRead.items;
     const removedRegionalV2Results = regionalV2Items.filter((item) => item.record_id === recordId);
     const rofJRead = readOptionalEnvelopeForMutation(
-      secondPillarRofJRepository,
+      rofJRepository,
       "secondPillarRofJ",
       () => ({ schemaVersion: "RUNLOAD_SECOND_PILLAR_ROFJ_STORAGE_V1", entries: {} }),
     );
     if (!rofJRead.ok) return rofJRead;
-    const removedSecondPillarRofJ = cloneValue(rofJRead.envelope.entries?.[recordId] || null);
+    const removedRofJ = cloneValue(rofJRead.envelope.entries?.[recordId] || null);
     const nextRofJEntries = { ...(rofJRead.envelope.entries || {}) };
     delete nextRofJEntries[recordId];
     const lifecycleRead = readOptionalEnvelopeForMutation(
-      secondPillarLifecycleRepository,
+      rofJLifecycleRepository,
       "secondPillarRofJLifecycle",
       () => ({ schemaVersion: "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1", pendingByRunId: {} }),
     );
     if (!lifecycleRead.ok) return lifecycleRead;
-    const removedSecondPillarLifecycle = cloneValue(lifecycleRead.envelope.pendingByRunId?.[recordId] || null);
+    const removedRofJLifecycle = cloneValue(lifecycleRead.envelope.pendingByRunId?.[recordId] || null);
     const nextLifecycleEntries = { ...(lifecycleRead.envelope.pendingByRunId || {}) };
     delete nextLifecycleEntries[recordId];
     const plansRead = readCollectionForMutation(planRepository, "plans");
@@ -3467,8 +3467,8 @@ function createHistoryWorkflow({
       feedback: removedFeedback,
       modelResultsV27: removedModelResults,
       modelResultsRegionalV2: removedRegionalV2Results,
-      secondPillarRofJ: removedSecondPillarRofJ,
-      secondPillarLifecycle: removedSecondPillarLifecycle,
+      secondPillarRofJ: removedRofJ,
+      secondPillarLifecycle: removedRofJLifecycle,
       runMeasurement: removedRunMeasurement,
       affectedPlans,
     };
@@ -3481,12 +3481,12 @@ function createHistoryWorkflow({
       { key: STORAGE_KEYS.runMeasurements, value: runMeasurements.filter((item) => item?.recordId !== recordId) },
       { key: STORAGE_KEYS.historyUndo, value: undoEntry },
     ];
-    if (secondPillarRofJRepository) operations.push({
-      key: STORAGE_KEYS.secondPillarRofJ,
+    if (rofJRepository) operations.push({
+      key: STORAGE_KEYS.rofJ,
       value: { schemaVersion: rofJRead.envelope.schemaVersion, entries: nextRofJEntries },
     });
-    if (secondPillarLifecycleRepository) operations.push({
-      key: STORAGE_KEYS.secondPillarRofJLifecycle,
+    if (rofJLifecycleRepository) operations.push({
+      key: STORAGE_KEYS.rofJLifecycle,
       value: { schemaVersion: lifecycleRead.envelope.schemaVersion, pendingByRunId: nextLifecycleEntries },
     });
     const result = gateway.transact(operations);
@@ -3535,7 +3535,7 @@ function createHistoryWorkflow({
     regionalV2Items.push(...(entry.modelResultsRegionalV2 || []));
 
     const rofJRead = readOptionalEnvelopeForMutation(
-      secondPillarRofJRepository,
+      rofJRepository,
       "secondPillarRofJ",
       () => ({ schemaVersion: "RUNLOAD_SECOND_PILLAR_ROFJ_STORAGE_V1", entries: {} }),
     );
@@ -3546,7 +3546,7 @@ function createHistoryWorkflow({
       if (entry.secondPillarRofJ) nextRofJEntries[recordId] = cloneValue(entry.secondPillarRofJ);
     }
     const lifecycleRead = readOptionalEnvelopeForMutation(
-      secondPillarLifecycleRepository,
+      rofJLifecycleRepository,
       "secondPillarRofJLifecycle",
       () => ({ schemaVersion: "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1", pendingByRunId: {} }),
     );
@@ -3583,12 +3583,12 @@ function createHistoryWorkflow({
       { key: STORAGE_KEYS.runMeasurements, value: nextRunMeasurements },
       { key: STORAGE_KEYS.historyUndo, remove: true },
     ];
-    if (secondPillarRofJRepository && Object.prototype.hasOwnProperty.call(entry, "secondPillarRofJ")) operations.push({
-      key: STORAGE_KEYS.secondPillarRofJ,
+    if (rofJRepository && Object.prototype.hasOwnProperty.call(entry, "secondPillarRofJ")) operations.push({
+      key: STORAGE_KEYS.rofJ,
       value: { schemaVersion: rofJRead.envelope.schemaVersion, entries: nextRofJEntries },
     });
-    if (secondPillarLifecycleRepository && Object.prototype.hasOwnProperty.call(entry, "secondPillarLifecycle")) operations.push({
-      key: STORAGE_KEYS.secondPillarRofJLifecycle,
+    if (rofJLifecycleRepository && Object.prototype.hasOwnProperty.call(entry, "secondPillarLifecycle")) operations.push({
+      key: STORAGE_KEYS.rofJLifecycle,
       value: { schemaVersion: lifecycleRead.envelope.schemaVersion, pendingByRunId: nextLifecycleEntries },
     });
     const result = gateway.transact(operations);
