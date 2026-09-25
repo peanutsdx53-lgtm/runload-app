@@ -91,7 +91,6 @@
 }
 
 
-
 /* Desktop header is mounted directly under body and pinned to the browser viewport. */
 @media (min-width: 55rem) {
   body > .app-header--desktop.app-header--viewport-fixed {
@@ -1757,7 +1756,6 @@
 }
 
 
-/* Home audit: keep the primary focus and record/plan column equal in height. */
 @media (min-width: 80rem) {
   .screen--home.screen-layout--home { align-items: stretch; }
   .screen--home.screen-layout--home > .focus,
