@@ -1686,10 +1686,6 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .screen--settings.screen-layout--settings .about-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .screen--more.screen-layout--more {
     width: min(100%, 42rem);
     margin-inline: auto;

@@ -258,7 +258,7 @@
 }
 
 /* 全画面で共通にする操作・面・読みやすさ */
-:is(.button, .text-link, .feature-menu__link, .primary-navigation__link, .guide-tab, .report-tab, .history-period-tab, .history-view-tab, .body-part-navigation__link) {
+:is(.button, .text-link, .feature-menu__link, .primary-navigation__link, .guide-tab, .report-tab, .history-period-tab, .history-view-tab) {
   touch-action: manipulation;
 }
 :is(.result-card, .home-summary-card, .home-compact-card, .home-start-steps, .home-record-overview, .form-section, .filter-panel, .data-management, .share-report, .history-item, .saved-plan, .plan-candidate, .numbered-detail-card, .finish-state-sheet, .finish-closed-card, .finish-data-tools) {

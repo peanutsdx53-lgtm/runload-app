@@ -3516,8 +3516,7 @@
   .screen--settings.screen-layout--settings .sub-section-head small,
   .screen--settings.screen-layout--settings .subdetails summary small,
   .screen--settings.screen-layout--settings .shoe small,
-  .screen--settings.screen-layout--settings .data-overview small,
-  .screen--settings.screen-layout--settings .about-grid small {
+  .screen--settings.screen-layout--settings .data-overview small {
     font-size: 0.74rem !important;
   }
 
@@ -3564,8 +3563,7 @@
     font-size: 0.82rem !important;
   }
 
-  .screen--settings.screen-layout--settings .data-overview,
-  .screen--settings.screen-layout--settings .about-grid {
+  .screen--settings.screen-layout--settings .data-overview {
     width: 100% !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
@@ -3574,7 +3572,6 @@
     font-size: 0.98rem !important;
   }
 
-  .screen--settings.screen-layout--settings .about-grid strong,
   .screen--settings.screen-layout--settings .shoe strong,
   .screen--settings.screen-layout--settings .subdetails summary strong,
   .screen--settings.screen-layout--settings .danger-box strong {
@@ -4992,10 +4989,6 @@
     gap: 0.75rem !important;
   }
 
-  .screen--settings.screen-layout--settings .about-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.75rem !important;
-  }
 }
 
 @media (min-width: 80rem) and (max-width: 86rem) {
@@ -5223,7 +5216,6 @@
     .subdetails summary small,
     .shoe small,
     .data-overview small,
-    .about-grid small,
     .group-title,
     .row small,
     .theme-preview small

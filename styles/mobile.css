@@ -2333,11 +2333,6 @@
 .screen-layout--settings .danger-box strong{font-size:10px}
 .screen-layout--settings .danger-box p{margin:5px 0 0;color:var(--muted);font-size:8px;line-height:1.5}
 .screen-layout--settings .danger-box .field{margin-top:9px}
-.screen-layout--settings .about-grid{display:grid;gap:7px}
-.screen-layout--settings .about-grid div{padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface2)}
-.screen-layout--settings .about-grid small,.screen-layout--settings .about-grid strong{display:block}
-.screen-layout--settings .about-grid small{font-size:7px;color:var(--muted)}
-.screen-layout--settings .about-grid strong{margin-top:2px;font-size:9px;line-height:1.45}
 .screen-layout--settings .toast.show{opacity:1;transform:translate(-50%,0)}
 .screen-layout--settings .large-text main{font-size:1.08em}
 .screen-layout--settings .large-text .row strong,.screen-layout--settings .large-text .disclosure summary strong{font-size:12px}
@@ -5154,3 +5149,4 @@ html.consult-viewer-open{overflow:hidden}
   font-size:12px;
   line-height:1.5;
 }
+

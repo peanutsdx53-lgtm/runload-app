@@ -193,7 +193,7 @@ body {
 :is(.result-card, .home-summary-card, .home-compact-card, .daily-suggestion,
 .home-reading-card, .body-part-focus, .editorial-summary, .next-action,
 .form-section, .filter-panel, .data-management, .share-report, .related-article,
-.danger-zone, .history-item, .saved-plan, .activation-card, .privacy-explanation-card,
+.danger-zone, .history-item, .saved-plan, .privacy-explanation-card,
 .privacy-storage-card, .consult-entry-card, .course-manager-card, .gpx-local-card,
 .settings-privacy-entry, .settings-secondary-area, .public-help-boundary,
 .public-help-priority, .public-help-selected, .quick-share-card) {
@@ -213,7 +213,6 @@ body {
 .share-report,
 .related-article,
 .danger-zone,
-.activation-card,
 .privacy-explanation-card,
 .privacy-storage-card,
 .consult-entry-card,
@@ -329,11 +328,6 @@ input, select, textarea {
 
 /* --- Region detail --- */
 .screen--body-part-detail { gap: 18px; }
-.screen--body-part-detail :is(.body-part-detail-card, .body-part-analysis-action, .body-part-relationship, .body-part-context-grid) {
-  border-radius: 18px;
-  box-shadow: var(--app-card-shadow);
-}
-
 /* --- History fidelity --- */
 .screen--history-unified { gap: 18px; }
 .screen--history-unified .history-unified-tabs {
@@ -389,12 +383,6 @@ input, select, textarea {
 .screen--gpx-analysis .gpx-local-card { border-radius: 18px; }
 .screen--course-library .course-card-grid { gap: 10px; }
 .screen--gpx-analysis .gpx-summary dl { gap: 7px; }
-
-/* --- Result use --- */
-.screen--activation { max-width: 980px; margin-inline: auto; gap: 18px; }
-.screen--activation .activation-grid { gap: 9px; }
-.screen--activation .activation-card { padding: 14px; border-radius: 17px; }
-.screen--activation .activation-card__number { color: var(--color-accent); }
 
 /* --- Consultation --- */
 .screen--consultation { max-width: 980px; margin-inline: auto; gap: 18px; }
