@@ -47,8 +47,8 @@ function consultationFacts(experience) {
 
 function consultationFatigueLine(services, experience) {
   const record = experience?.record || {};
-  if (!record.id || record.activityType !== "run" || !services?.secondPillar) return "疲労感：未記録";
-  const summary = services.secondPillar.summarizeRun(record.id);
+  if (!record.id || record.activityType !== "run" || !services?.fatigue) return "疲労感：未記録";
+  const summary = services.fatigue.summarizeRun(record.id);
   const pre = Number.isFinite(Number(summary?.pre)) ? Number(summary.pre) : null;
   const post = Number.isFinite(Number(summary?.post)) ? Number(summary.post) : null;
   if (pre == null && post == null) return "疲労感：未記録";
