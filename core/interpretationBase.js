@@ -1,5 +1,5 @@
-// RunLoad Interpretation Base
-// Deterministic, read-only interpretation of persisted RunLoad outputs.
+// Result interpretation base
+// Deterministic, read-only interpretation of persisted calculation outputs.
 // This module does not calculate or modify Primary Regional Reference-100 or ROF-J values.
 
 export const INTERPRETATION_BASE_VERSION = "runload-interpretation-core-v1.1";
