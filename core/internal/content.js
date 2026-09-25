@@ -4,7 +4,7 @@ import { coreModules } from "./moduleRegistry.js";
 // ===== data/evidenceGovernanceData.js =====
 {
 const moduleExports = Object.create(null);
-const EVIDENCE_GOVERNANCE_VERSION = "runload-evidence-governed-columns-v5";
+const EVIDENCE_GOVERNANCE_VERSION = "evidence-governed-columns-v5";
 const EVIDENCE_GOVERNANCE_REVIEW_DATE = "2026-08-06";
 
 function freezeList(items = []) {
@@ -34,7 +34,7 @@ function articleRecord(input) {
 
 const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
   sourceRecord({
-    sourceId: "RUNLOAD-SPEC-CURRENT",
+    sourceId: "APP-SPEC-CURRENT",
     sourceRole: "CURRENT_INTERNAL_SPECIFICATION",
     title: "Application model, output, and claim-boundary specifications",
     locator: "Master V1.10: 02_INPUT_OUTPUT_UI_CURRENT/03_OUTPUT_UI_SEMANTIC_CONTRACT_CURRENT.md; 03_REGIONAL_A4_MODEL_CURRENT/00, 12, 13, 24",
@@ -384,73 +384,73 @@ const SOURCE_BY_ID = new Map(SOURCE_EVIDENCE_REGISTRY.map((source) => [source.so
 
 const ARTICLE_EVIDENCE_REGISTRY = Object.freeze([
   articleRecord({
-    articleId: "model-total-v27", claimId: "COL-CLM-001", sourceIds: ["RUNLOAD-SPEC-CURRENT", "APP-COL-MINETTI"],
+    articleId: "model-total-v27", claimId: "COL-CLM-001", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-MINETTI"],
     relatedInputs: ["距離", "代表勾配", "上り・下り割合", "路面性質"], relatedRoutes: ["V2.7 total-load route", "coverage route"], relatedRegions: ["なし（総合推定負荷）"],
     allowedClaim: "距離を土台に、対応資料がある坂と路面だけを比較用推定へ反映する設計を説明する。",
     prohibitedClaim: "実測した身体負荷、消費エネルギー、疲労、傷害リスクとして説明しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "regional-three-views", claimId: "COL-CLM-002", sourceIds: ["RUNLOAD-SPEC-CURRENT", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
+    articleId: "regional-three-views", claimId: "COL-CLM-002", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
     relatedInputs: ["速度", "勾配", "cadence", "路面", "足部接地ほかA4 route入力"], relatedRoutes: ["Regional A4 endpoint-family routes", "coverage/status route"], relatedRegions: ["12部位"],
     allowedClaim: "各部位固有Reference 100、endpoint、算出状態、反映理由の読み方を説明する。",
     prohibitedClaim: "部位間順位、共通物理単位、傷害確率、危険度として読ませない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "regional-six-eight-28", claimId: "COL-CLM-003", sourceIds: ["RUNLOAD-SPEC-CURRENT"],
+    articleId: "regional-six-eight-28", claimId: "COL-CLM-003", sourceIds: ["APP-SPEC-CURRENT"],
     relatedInputs: ["詳細身体記録", "左右", "程度", "気づいた時点"], relatedRoutes: ["self-report route", "Regional A4 separate display route"], relatedRegions: ["本人入力28領域", "Regional A4 12部位"],
     allowedClaim: "本人申告と走行条件モデルが異なる情報層であることを説明する。",
     prohibitedClaim: "一致・不一致から原因、診断、走行起因性を推定しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "rpe-separated", claimId: "COL-CLM-004", sourceIds: ["RUNLOAD-SPEC-CURRENT", "APP-COL-HADDAD"],
+    articleId: "rpe-separated", claimId: "COL-CLM-004", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-HADDAD"],
     relatedInputs: ["実走時間", "RPE"], relatedRoutes: ["session-RPE subjective route", "A4/V2.7 separation"], relatedRegions: ["なし（走行全体）"],
     allowedClaim: "RPEを本人の走行全体の感じ方として、走行事実モデルとは別に保存・表示する理由を説明する。",
     prohibitedClaim: "RPEを部位係数、健康判定、傷害予測へ変換しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "grade-and-coverage", claimId: "COL-CLM-005", sourceIds: ["RUNLOAD-SPEC-CURRENT", "APP-COL-MINETTI", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
+    articleId: "grade-and-coverage", claimId: "COL-CLM-005", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-MINETTI", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
     relatedInputs: ["上り割合", "下り割合", "代表勾配", "勾配把握状態"], relatedRoutes: ["V2.7 grade route", "Regional A4 grade routes", "supported-domain route"], relatedRegions: ["routeごとの対応部位"],
     allowedClaim: "区間割合、代表勾配、資料範囲、反映率を分けて扱う設計を説明する。",
     prohibitedClaim: "範囲外を端値へ丸めず、コース全変化や実測組織負荷として扱わない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "surface-missingness", claimId: "COL-CLM-006", sourceIds: ["RUNLOAD-SPEC-CURRENT", "APP-COL-YAMIN", "APP-COL-VOLOSHINA", "APP-COL-HORIGUCHI"],
+    articleId: "surface-missingness", claimId: "COL-CLM-006", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-YAMIN", "APP-COL-VOLOSHINA", "APP-COL-HORIGUCHI"],
     relatedInputs: ["路面性質", "路面の凹凸", "勾配", "足部接地"], relatedRoutes: ["surface and foot-strike explanatory route", "unknown route"], relatedRegions: ["足底部と下肢"],
     allowedClaim: "路面の硬さや凹凸、坂、足部接地により足底圧や身体の反応が異なるという研究知見を一般的に説明する。",
     prohibitedClaim: "路面名だけで個人の反応を決めず、障害原因や最適条件、走行可否を示さない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "personal-reference", claimId: "COL-CLM-007", sourceIds: ["RUNLOAD-SPEC-CURRENT"],
+    articleId: "personal-reference", claimId: "COL-CLM-007", sourceIds: ["APP-SPEC-CURRENT"],
     relatedInputs: ["比較signature", "過去の同一部位結果", "coverage", "model version"], relatedRoutes: ["directly comparable history route"], relatedRegions: ["本人が選択した同一部位"],
     allowedClaim: "適格な過去記録だけを用いる本人内比較の表示条件を説明する。",
     prohibitedClaim: "正常値、適応、危険な変化、因果関係として扱わない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "history-compatible", claimId: "COL-CLM-008", sourceIds: ["RUNLOAD-SPEC-CURRENT"],
+    articleId: "history-compatible", claimId: "COL-CLM-008", sourceIds: ["APP-SPEC-CURRENT"],
     relatedInputs: ["活動種別", "model version", "result state", "比較基準"], relatedRoutes: ["history compatibility route"], relatedRegions: ["選択した同一部位"],
     allowedClaim: "同一モデル版・同一比較条件だけを系列化し、空白や休養を0へ補完しないルールを説明する。",
     prohibitedClaim: "異なるモデル・部位・比較基準を同じ系列として比較しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "plan-facts-current", claimId: "COL-CLM-009", sourceIds: ["RUNLOAD-SPEC-CURRENT"],
+    articleId: "plan-facts-current", claimId: "COL-CLM-009", sourceIds: ["APP-SPEC-CURRENT"],
     relatedInputs: ["予定距離", "予定コース条件"], relatedRoutes: ["plan preview route separated from completed records"], relatedRegions: ["予定表示で選択した部位"],
     allowedClaim: "予定の入力事実が完了記録とは別に保存され、後から条件差を見返せることを説明する。",
     prohibitedClaim: "結果予測、練習処方、実施の推奨、安全保証として扱わない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "consultation-prep-v27", claimId: "COL-CLM-010", sourceIds: ["RUNLOAD-SPEC-CURRENT", "APP-COL-LINTON"],
+    articleId: "consultation-prep-v27", claimId: "COL-CLM-010", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-LINTON"],
     relatedInputs: ["本人申告", "走行事実", "選択部位", "共有範囲"], relatedRoutes: ["deterministic consultation route"], relatedRegions: ["本人が明示選択した1部位"],
     allowedClaim: "本人入力、走行事実、モデル表示を分け、共有前に整理する方法を説明する。",
     prohibitedClaim: "診断、原因特定、走行可否、治療・練習処方を行わない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "slope-endpoints", claimId: "COL-CLM-011", sourceIds: ["RUNLOAD-SPEC-CURRENT", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
+    articleId: "slope-endpoints", claimId: "COL-CLM-011", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
     relatedInputs: ["勾配", "速度", "cadence", "選択部位"], relatedRoutes: ["Regional A4 grade/speed/cadence endpoint routes"], relatedRegions: ["routeとendpointが対応する部位"],
     allowedClaim: "部位ごとに異なるendpointと資料条件を使うため、方向が一致しない場合があることを説明する。",
     prohibitedClaim: "endpoint間を共通単位で順位付けせず、直接測定された身体負荷と呼ばない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "model-limits-v27", claimId: "COL-CLM-012", sourceIds: ["RUNLOAD-SPEC-CURRENT", "APP-COL-LINTON", "APP-COL-VAN-HOOREN"],
+    articleId: "model-limits-v27", claimId: "COL-CLM-012", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-LINTON", "APP-COL-VAN-HOOREN"],
     relatedInputs: ["全入力群", "欠測", "範囲外", "本人申告"], relatedRoutes: ["claim boundary", "unsupported-domain route", "information separation"], relatedRegions: ["12部位と別指標"],
     allowedClaim: "モデルの対応範囲、算出状態、非主張、本人入力との分離を説明する。",
     prohibitedClaim: "測定・診断・傷害確率・危険スコア・走行可否・因果推定を主張しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
@@ -567,7 +567,7 @@ const COLUMN_CATEGORIES = Object.freeze([
 ]);
 
 const PROJECT_V27 = Object.freeze({
-  sourceId: "RUNLOAD-SPEC-CURRENT",
+  sourceId: "APP-SPEC-CURRENT",
   title: "表示と比較の考え方",
   organization: "アプリ内資料",
   year: "2026",
@@ -1545,7 +1545,7 @@ function buildConsultationReport(experience, allExperiences = [], options = {}) 
   const exactObservations = normalizeExactObservations(feedback);
   const recent = recentFacts(allExperiences, experience, regionId);
   return Object.freeze({
-    reportVersion: "runload-consultation-report-v1.0",
+    reportVersion: "consultation-report-v1.0",
     date: experience.record.date,
     activity: activitySummary(experience.record),
     courseName: experience.record.course?.name || "",
@@ -1679,7 +1679,7 @@ coreModules[56] = moduleExports;
 // ===== ui/bodyRegionTerminology.js =====
 {
 const moduleExports = Object.create(null);
-const BODY_REGION_TERMINOLOGY_VERSION = "runload-body-region-terminology-v1";
+const BODY_REGION_TERMINOLOGY_VERSION = "body-region-terminology-v1";
 
 const ENTRIES = Object.freeze([
   Object.freeze({ id: "BA-DISP-014", formalJa: "股関節部", familiarJa: "股関節まわり", plainMeaningJa: "股関節部の動きに関する目安", english: "Hip joint region" }),
@@ -1742,7 +1742,7 @@ const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSigna
 
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
-const DETERMINISTIC_CONSULTATION_VERSION = "runload-deterministic-consultation-v1";
+const DETERMINISTIC_CONSULTATION_VERSION = "deterministic-consultation-v1";
 
 const CONSULTATION_PURPOSES = Object.freeze([
   Object.freeze({
@@ -2333,7 +2333,7 @@ coreModules[59] = moduleExports;
 const moduleExports = Object.create(null);
 const { CURRENT_APP_REMOVABLE_STORAGE_KEYS, INTERNAL_RECOVERY_STORAGE_KEYS, STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = coreModules[1];
 
-const PRIVACY_OVERVIEW_VERSION = "runload-privacy-overview-v2";
+const PRIVACY_OVERVIEW_VERSION = "privacy-overview-v2";
 
 const STORAGE_GROUPS = Object.freeze([
   Object.freeze({
@@ -2416,7 +2416,7 @@ function buildPrivacyOverview(services) {
     version: PRIVACY_OVERVIEW_VERSION,
     storageMode: "DEVICE_LOCAL_BROWSER_STORAGE",
     automaticExternalTransfer: false,
-    automaticExternalTransferScope: "SAVED_RUNLOAD_DATA",
+    automaticExternalTransferScope: "SAVED_APPLICATION_DATA",
     externalNetworkUses: Object.freeze([
       Object.freeze({
         id: "openstreetmap-standard-tiles",
