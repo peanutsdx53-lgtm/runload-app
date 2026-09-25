@@ -1952,7 +1952,6 @@
 }
 
 
-/* ===== Interpretation Room V3 readability refinement 2026-09-24 ===== */
 .interpretation-room-summary--v3 .interpretation-room-summary__metrics p{
   font-size:.86rem;
   line-height:1.58;
@@ -2007,7 +2006,6 @@
 }
 
 
-/* ===== Interpretation Room V3 anchor refinement 2026-09-24 ===== */
 #interpretation-attention-title,
 #interpretation-conditions-title,
 #interpretation-subjective-title,
@@ -2016,7 +2014,6 @@
 }
 
 
-/* ===== Interpretation Room V4 synthesis dashboard 2026-09-24 ===== */
 .interpretation-room--dashboard{
   width:min(100%,84rem);
 }
@@ -2645,7 +2642,6 @@
 }
 
 
-/* ===== Interpretation Room V4 detail stabilization 2026-09-24 ===== */
 .interpretation-room-selected-dashboard,
 .interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3,
 .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
@@ -2690,7 +2686,6 @@
 }
 
 
-/* ===== Interpretation Room V4 selected workspace composition 2026-09-24 ===== */
 .interpretation-room-selected-workspace{
   display:grid;
   grid-template-columns:minmax(0,1fr);
