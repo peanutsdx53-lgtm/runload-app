@@ -270,6 +270,58 @@ jobs:
             ''
           ].join('\n'));
           NODE
+      - name: Generate CSS usage report
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+
+          const runtimeFiles=['index.html','app.js'];
+          const walk=(dir)=>{
+            for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+              const full=path.join(dir,entry.name);
+              if(entry.isDirectory()) walk(full);
+              else if(entry.isFile()&&full.endsWith('.js')) runtimeFiles.push(full.replaceAll('\\','/'));
+            }
+          };
+          for(const root of ['core','screens','ui']) walk(root);
+          const haystack=runtimeFiles.map(file=>fs.readFileSync(file,'utf8')).join('\n');
+
+          const cssFiles=[];
+          const walkCss=(dir)=>{
+            for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+              const full=path.join(dir,entry.name);
+              if(entry.isDirectory()) walkCss(full);
+              else if(entry.isFile()&&full.endsWith('.css')) cssFiles.push(full.replaceAll('\\','/'));
+            }
+          };
+          walkCss('styles');
+
+          const usage=new Map();
+          for(const file of cssFiles){
+            const source=fs.readFileSync(file,'utf8');
+            for(const match of source.matchAll(/\.([A-Za-z_][A-Za-z0-9_-]*)/g)){
+              const name=match[1];
+              if(!usage.has(name)) usage.set(name,new Set());
+              usage.get(name).add(file);
+            }
+          }
+          const candidates=[];
+          for(const [name,files] of usage){
+            if(!haystack.includes(name)){
+              candidates.push({name,files:[...files].sort()});
+            }
+          }
+          candidates.sort((a,b)=>a.name.localeCompare(b.name));
+          const report=[
+            '=== CSS CLASS CANDIDATES ABSENT FROM RUNTIME SOURCE ===',
+            'count: '+candidates.length,
+            ...candidates.map(item=>item.name+' | '+item.files.join(', ')),
+            ''
+          ].join('\n');
+          fs.writeFileSync('css-usage.txt',report);
+          NODE
       - uses: actions/upload-artifact@v4
         with:
           name: codebase-cleanup-audit
@@ -278,3 +330,4 @@ jobs:
             module-reachability.txt
             public-api-usage.txt
             exported-symbol-usage.txt
+            css-usage.txt
