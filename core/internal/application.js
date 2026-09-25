@@ -9,6 +9,7 @@ import {
   isSupportedRofJStorageSchema,
   isSupportedRofJLifecycleSchema,
 } from "../rofJConstants.js";
+import { hasLegacyRofJSourceMetadata } from "../legacyCompatibility.js";
 
 // ===== core/model/v27/bodyAreaTaxonomy.js =====
 {
@@ -1944,8 +1945,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
           return;
         }
         const currentSourceVersion = entry.sourceVersion === ROF_J_SOURCE_VERSION;
-        const legacySourceFingerprint = typeof entry.japaneseSourceSha256 === "string"
-          && /^[0-9a-f]{64}$/i.test(entry.japaneseSourceSha256);
+        const legacySourceFingerprint = hasLegacyRofJSourceMetadata(entry);
         if (entry.instrumentId !== "ROF_J"
           || !isSupportedRofJSemanticVersion(entry.instrumentSemanticVersion)
           || (!currentSourceVersion && !legacySourceFingerprint)
