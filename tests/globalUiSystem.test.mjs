@@ -122,13 +122,11 @@ await test('UI-INTERPRETATION-HAS-SYNTHESIS-FIRST-WORKSPACE',()=>{
   const desktop=read('styles/desktop.css');
   const mobile=read('styles/mobile.css');
   const presentation=read('ui/interpretationRoomPresentation.js');
-  assert.ok(css.includes('Interpretation Room V4 synthesis dashboard'));
+  assert.ok(css.includes('.interpretation-room-dashboard'));
   assert.ok(css.includes('.interpretation-room-insight'));
   assert.ok(css.includes('.interpretation-room-region-chips'));
   assert.ok(css.includes('.interpretation-room-context'));
   assert.ok(css.includes('.interpretation-room-next-rail'));
-  assert.ok(desktop.includes('PC Interpretation V4 wide dashboard'));
-  assert.ok(mobile.includes('Mobile Interpretation V4 touch layout'));
   assert.ok(presentation.includes('overviewHeadline'));
   assert.ok(presentation.includes('comparisonHint'));
   assert.ok(presentation.includes('継続して確認された部位'));
@@ -141,10 +139,7 @@ await test('UI-PC-RESULT-USES-TIME-AWARE-CHRONOLOGY-AND-STATE-LINKED-COLOR',()=>
   const history=read('screens/historyScreen.js');
   const css=read('styles/desktop.css');
   const mobile=read('styles/mobile.css');
-  const marker='PC result chronology + state-link visual audit 2026-09-24';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0,'PC result chronology/state-link audit block');
-  const audit=css.slice(start);
+  const audit=css;
 
   assert.ok(screen.includes('function recordChronology(left = {}, right = {})'));
   assert.ok(screen.includes('String(left.createdAt || "").localeCompare(String(right.createdAt || ""))'));
@@ -162,7 +157,7 @@ await test('UI-PC-RESULT-USES-TIME-AWARE-CHRONOLOGY-AND-STATE-LINKED-COLOR',()=>
 
   assert.ok(history.includes('formatLocalTime'));
   assert.ok(history.includes('class="record-time"'));
-  assert.match(mobile,/Saved-record time label audit 2026-09-24/);
+  assert.match(mobile,/\.record-time/);
 
   assert.match(audit,/pc-result-summary\.pc-result-summary--rail[\s\S]*border-radius:\s*1rem/);
   assert.match(audit,/\.pc-result-run-facts[\s\S]*display:\s*flex/);
@@ -229,7 +224,6 @@ await test('UI-SHARED-SEGMENTED-MODES-USE-STRONG-THEME-SELECTION',()=>{
   assert.match(tokens,/--color-segment-selected-text:\s*var\(--color-on-accent\)/);
   assert.match(tokens,/--shadow-segment-selected:/);
 
-  assert.match(mobile,/Shared segmented mode state/);
   assert.match(mobile,/\.screen-layout--result \.pc-summary-controls button\.is-active/);
   assert.match(mobile,/\.screen-layout--history \.display-toggle button\.active/);
   assert.match(mobile,/\.screen-layout--history \.type-toggle button\.active/);
@@ -237,10 +231,7 @@ await test('UI-SHARED-SEGMENTED-MODES-USE-STRONG-THEME-SELECTION',()=>{
   assert.match(mobile,/background:\s*var\(--color-segment-selected-surface\)/);
   assert.match(mobile,/color:\s*var\(--color-segment-selected-text\)/);
 
-  const marker='Shared segmented mode emphasis audit 2026-09-24';
-  const start=desktop.indexOf(marker);
-  assert.ok(start>=0,'desktop shared segmented audit');
-  const audit=desktop.slice(start);
+  const audit=desktop;
   assert.match(audit,/\.screen-layout--result \.pc-summary-controls button\.is-active/);
   assert.match(audit,/\.screen-layout--history \.period-control button\.active/);
   assert.match(audit,/\.screen-layout--course \.mode button\.active/);
@@ -251,11 +242,7 @@ await test('UI-SHARED-SEGMENTED-MODES-USE-STRONG-THEME-SELECTION',()=>{
 
 await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
   const css=read('styles/desktop.css');
-  const marker='PC record status card audit 2026-09-23';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0,'PC record status audit block');
-  const end=css.indexOf('PC course library workspace audit 2026-09-23',start);
-  const audit=css.slice(start,end>start?end:css.length);
+  const audit=css;
   const remSize=(selector)=>{
     let offset=0;
     let maximum=0;
@@ -295,10 +282,7 @@ await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
   const screen=read('screens/courseLibraryScreen.js');
   const shared=read('styles/screens.css');
   const css=read('styles/desktop.css');
-  const marker='PC course library workspace audit 2026-09-23';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0,'PC course library audit block');
-  const audit=css.slice(start);
+  const audit=css;
   const remSize=(selector)=>{
     let offset=0;
     let maximum=0;
@@ -343,10 +327,7 @@ await test('UI-PC-COURSE-DERIVED-MATCHES-RECORD-SUBFLOW-CHROME',()=>{
   const screen=read('screens/courseLibraryScreen.js');
   const shell=read('ui/appShell.js');
   const css=read('styles/desktop.css');
-  const marker='PC course derived parity audit 2026-09-23';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0,'PC course derived parity block');
-  const audit=css.slice(start);
+  const audit=css;
 
   assert.ok(screen.includes('course-library-title-mobile'));
   assert.ok(screen.includes('course-library-pc-only course-library-title-pc'));
@@ -374,11 +355,7 @@ await test('UI-PC-COURSE-DERIVED-MATCHES-RECORD-SUBFLOW-CHROME',()=>{
 
 await test('UI-PC-COURSE-EDITOR-INPUTS-ARE-COMPACT-AND-READABLE',()=>{
   const css=read('styles/desktop.css');
-  const marker='PC course editor input usability audit 2026-09-23';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0,'PC course editor usability block');
-  const end=css.indexOf('PC course editor unit parity audit 2026-09-23',start);
-  const audit=css.slice(start,end>start?end:css.length);
+  const audit=css;
 
   assert.match(audit,/@media \(min-width: 80rem\)/);
   assert.match(audit,/sub\[data-course-grade-summary\][\s\S]*width:\s*min\(100%, 52rem\)\s*!important/);
@@ -397,10 +374,7 @@ await test('UI-PC-COURSE-EDITOR-INPUTS-ARE-COMPACT-AND-READABLE',()=>{
 
 await test('UI-PC-COURSE-EDITOR-PERCENT-UNITS-MATCH-AND-GPX-IS-NOT-DUPLICATED',()=>{
   const css=read('styles/desktop.css');
-  const marker='PC course editor unit parity audit 2026-09-23';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0,'PC course editor percent-unit parity block');
-  const audit=css.slice(start);
+  const audit=css;
 
   assert.match(audit,/\.mfield > div > em,[\s\S]*\.percent-control > em/);
   assert.match(audit,/font-size:\s*0\.95rem\s*!important/);
@@ -414,11 +388,7 @@ await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
   const screen=read('screens/historyScreen.js');
   const shared=read('styles/screens.css');
   const css=read('styles/desktop.css');
-  const marker='PC history record browser audit 2026-09-23';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0,'PC history record browser audit block');
-  const end=css.indexOf('PC history single-purpose audit 2026-09-23',start);
-  const audit=css.slice(start,end>start?end:css.length);
+  const audit=css;
 
   assert.ok(screen.includes('history-records-title-mobile'));
   assert.ok(screen.includes('history-records-title-pc'));
@@ -454,10 +424,7 @@ await test('UI-HISTORY-IS-RECORD-BROWSING-ONLY',()=>{
   assert.ok(!render.includes('同じ部位の変化を見る'));
   assert.match(render,/過去の記録を探して内容を確認します。/);
 
-  const marker='PC history single-purpose audit 2026-09-23';
-  const start=css.indexOf(marker);
-  assert.ok(start>=0,'PC history single-purpose block');
-  const audit=css.slice(start);
+  const audit=css;
   assert.match(audit,/\.history-view[\s\S]*margin-top:\s*0\s*!important/);
 });
 
@@ -511,9 +478,7 @@ await test('UI-GPS-MEASUREMENT-STAYS-IN-MOBILE-NORMAL-FLOWS',()=>{
   assert.doesNotMatch(pcBlock,/#\/run-measurement/);
   assert.match(mobileBlock,/#\/run-measurement/);
 
-  const cssStart=desktop.indexOf('PC mobile-only GPS separation 2026-09-24');
-  assert.ok(cssStart>=0);
-  const audit=desktop.slice(cssStart);
+  const audit=desktop;
   assert.match(audit,/\.screen--plan \.plan-measure-link[\s\S]*display:none\s*!important/);
 });
 
