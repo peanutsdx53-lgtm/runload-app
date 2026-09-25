@@ -125,9 +125,56 @@ jobs:
           ].join('\n');
           fs.writeFileSync('module-reachability.txt',report);
           NODE
+      - name: Generate public API usage report
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+
+          const appCore=fs.readFileSync('core/appCore.js','utf8');
+          const exported=[...appCore.matchAll(/^export const ([A-Za-z_$][\w$]*)/gm)].map((m)=>m[1]);
+          const files=[];
+          const walk=(dir)=>{
+            for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+              const full=path.join(dir,entry.name);
+              if(entry.isDirectory()) walk(full);
+              else if(entry.isFile()&&/\.(?:js|mjs)$/.test(full)&&full!=='core/appCore.js') files.push(full);
+            }
+          };
+          for(const root of ['.', 'core', 'screens', 'ui', 'tests']){
+            if(root==='.') continue;
+            if(fs.existsSync(root)) walk(root);
+          }
+          if(fs.existsSync('app.js')) files.push('app.js');
+          const imported=new Set();
+          for(const file of new Set(files)){
+            const source=fs.readFileSync(file,'utf8');
+            const pattern=/import\s*\{([\s\S]*?)\}\s*from\s*["'][^"']*core\/appCore\.js["']/g;
+            for(const match of source.matchAll(pattern)){
+              for(const part of match[1].split(',')){
+                const raw=part.trim();
+                if(!raw) continue;
+                imported.add(raw.split(/\s+as\s+/)[0].trim());
+              }
+            }
+          }
+          const unused=exported.filter((name)=>!imported.has(name)).sort();
+          const report=[
+            '=== APP CORE PUBLIC API USAGE ===',
+            `exports: ${exported.length}`,
+            `imported exports: ${imported.size}`,
+            `unused public exports: ${unused.length}`,
+            '',
+            ...unused,
+            ''
+          ].join('\n');
+          fs.writeFileSync('public-api-usage.txt',report);
+          NODE
       - uses: actions/upload-artifact@v4
         with:
           name: codebase-cleanup-audit
           path: |
             cleanup-audit.txt
             module-reachability.txt
+            public-api-usage.txt
