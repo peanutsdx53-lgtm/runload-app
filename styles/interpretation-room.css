@@ -2603,15 +2603,6 @@
   font-weight:850;
   text-decoration:none;
 }
-.interpretation-room-selected-dashboard{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:1rem;
-}
-.interpretation-room-selected-context{
-  display:grid;
-  gap:1rem;
-}
 
 @media (max-width:34rem){
   .interpretation-room-region-chips{
@@ -2638,17 +2629,6 @@
   .interpretation-room-region-chips>a:active{
     transform:none !important;
   }
-}
-
-
-.interpretation-room-selected-dashboard,
-.interpretation-room-selected-dashboard>.interpretation-room-region-detail--selected,
-.interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-  width:100%;
-  max-width:none;
-  min-width:0;
-  box-sizing:border-box;
-  justify-self:stretch;
 }
 .interpretation-room-region-detail__summary{
   display:grid;
