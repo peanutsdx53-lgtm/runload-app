@@ -391,8 +391,8 @@ await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
   assert.match(shared,/\.history-records-title-pc\s*\{\s*display:\s*none;/);
 
   assert.match(audit,/> \.page-head[\s\S]*clip-path:\s*inset\(50%\)\s*!important/);
-  assert.match(audit,/\.history-mode[\s\S]*width:\s*min\(100%, 44rem\)\s*!important/);
-  assert.match(audit,/\.history-mode button small[\s\S]*font-size:\s*0\.84rem\s*!important/);
+  assert.match(audit,/\.screen--history\.screen-layout--history \.history-view--records[\s\S]*width:\s*min\(100%, 72rem\)\s*!important/);
+  assert.match(audit,/\.screen--history\.screen-layout--history \.history-records-title-pc[\s\S]*display:\s*inline\s*!important/);
   assert.match(audit,/\.history-view--records[\s\S]*max-width:\s*72rem\s*!important/);
   assert.match(audit,/\.record-filters[\s\S]*width:\s*min\(100%, 60rem\)\s*!important/);
   assert.match(audit,/\.record-filters input[\s\S]*font-size:\s*1rem\s*!important/);
