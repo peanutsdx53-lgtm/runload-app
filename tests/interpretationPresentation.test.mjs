@@ -166,7 +166,7 @@ await test('REGION-LINK-CARRIES-RECORD-AND-REGION',()=>{
 
 await test('SELECTED-REGION-IS-A-DEDICATED-DETAIL-WORKSPACE',()=>{
   const html=renderInterpretationRoom({output:baseOutput({selected:true})});
-  assert.match(html,/interpretation-room--selected-v4/);
+  assert.match(html,/interpretation-room--selected-detail/);
   assert.match(html,/interpretation-room-selected-workspace/);
   assert.match(html,/interpretation-room-selected-main/);
   assert.match(html,/interpretation-room-selected-side/);
@@ -254,7 +254,7 @@ await test('CSS-HAS-V4-COMPACT-RESPONSIVE-DASHBOARD',()=>{
   assert.match(shared,/Interpretation Room V4 detail stabilization/);
   assert.match(shared,/Interpretation Room V4 selected workspace composition/);
   assert.match(shared,/grid-template-areas:[\s\S]*"detail"[\s\S]*"next"[\s\S]*"conditions"[\s\S]*"subjective"[\s\S]*"advanced"/);
-  assert.match(shared,/\.interpretation-room-selected-dashboard>\.interpretation-room-region-detail--v3[\s\S]*width:100%/);
+  assert.match(shared,/\.interpretation-room-selected-dashboard>\.interpretation-room-region-detail--selected[\s\S]*width:100%/);
   assert.match(desktop,/PC Interpretation V4 wide dashboard/);
   assert.match(desktop,/PC Interpretation V4 detail fit audit/);
   assert.match(desktop,/PC Interpretation V4 screenshot final pass/);
