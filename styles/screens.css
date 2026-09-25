@@ -77,7 +77,6 @@
 }
 
 
-
 @media print {
   @page { size: A4 portrait; margin: 14mm; }  body { background: white; }
   
@@ -3071,17 +3070,11 @@ and minimal personal note */
 }.body-part-other-regions[open] > summary { border-bottom: 1px solid var(--color-line); }.body-part-navigation--collapsed { padding: var(--space-4); }
 
 
-
-
-
-
-
 @media (max-width: 48rem) {  .regional-history-chart svg { min-height: 12rem; }  .regional-history-chart__axis { grid-template-columns: 1fr 1fr; }  .regional-history-chart__axis strong { grid-column: 1 / -1; grid-row: 1; text-align: center; }
 }.history-role-boundary {
   border-inline-start-color: var(--color-accent);
   background: var(--color-accent-soft);
 }/* 読み始めの負担を抑えるため、主要説明文の行幅を一定にする。 */
-
 
 
 .plan-candidate-details,
@@ -3763,8 +3756,6 @@ and minimal personal note */
 .primary-regional-compact-list span > small { display: block; }.primary-regional-compact-list span > small { margin-top: 0.15rem; color: var(--color-muted); }.primary-regional-compact-list__value { text-align: right; white-space: nowrap; }.primary-regional-compact-list__value > strong { font-size: clamp(1.05rem, 2.3vw, 1.35rem); font-variant-numeric: tabular-nums; }.primary-regional-ood-map { max-width: 42rem; margin-inline: auto; }
 
 
-/* Settings hierarchy and alignment refinement. */
-/* Settings hierarchy and alignment refinement. */
 .screen--settings .settings-fieldset {
   margin-block: 0;
 }.settings-option-grid {
@@ -3843,7 +3834,7 @@ and minimal personal note */
   border-top: 0;
 }.settings-data-overview {
   border-radius: var(--radius-medium);
-}/* C8I3 text-density refinement: compact explanatory disclosures */
+}
 .privacy-disclosure,
 .history-reading-disclosure,
 .result-card--disclosure {
