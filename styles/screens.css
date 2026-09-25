@@ -1199,7 +1199,7 @@
   transition: fill 120ms ease, stroke 120ms ease, stroke-width 120ms ease;
 }.subjective-body-map__region.is-selected { fill: var(--color-map-middle); stroke: var(--color-focus); stroke-width: 7; }.subjective-body-map__region.is-active,
 .subjective-body-map__region-link:hover .subjective-body-map__region,
-.subjective-body-map__region-link:focus-visible .subjective-body-map__region { fill: var(--color-map-middle); stroke: var(--color-focus); stroke-width: 9; }.subjective-body-map__region-link .body-map__touch-band { fill: transparent; pointer-events: none; }.subjective-body-part-chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: var(--space-2); }.subjective-body-part-chip {
+.subjective-body-map__region-link:focus-visible .subjective-body-map__region { fill: var(--color-map-middle); stroke: var(--color-focus); stroke-width: 9; }.subjective-body-map__region-link .body-map__touch-band { fill: transparent; pointer-events: none; }.subjective-body-part-chip {
   min-height: var(--touch-target);
   padding: .7rem .8rem;
   border: 1px solid var(--color-line);

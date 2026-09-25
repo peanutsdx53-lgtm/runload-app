@@ -456,12 +456,6 @@
     font-size: 0.78rem;
   }
 
-  .screen--record-input.screen-layout--record .micro-note {
-    margin-top: 0.42rem;
-    font-size: 0.76rem;
-    line-height: 1.42;
-  }
-
   .screen--record-input.screen-layout--record .fatigue-inline {
     grid-column: 3;
     grid-row: 2 / 4;
@@ -562,9 +556,6 @@
   .screen--record-input.screen-layout--record .stage-body {
     padding: 0.95rem 1rem 1rem;
   }
-
-  .screen--record-input.screen-layout--record .stage-intro,
-  .screen--record-input.screen-layout--record .snapshot-note,
   .screen--record-input.screen-layout--record .record-return-status {
     font-size: 0.79rem;
     line-height: 1.5;
@@ -1199,10 +1190,6 @@
   .screen--history.screen-layout--history {
     width: min(100%, 80rem);
     margin-inline: auto;
-  }
-
-  .screen--history.screen-layout--history .history-mode {
-    width: min(100%, 42rem);
   }
 
   .screen--history.screen-layout--history .history-view--records {

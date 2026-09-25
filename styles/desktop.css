@@ -364,12 +364,6 @@
     font-size: 0.8rem !important;
   }
 
-  .screen--record-input.screen-layout--record .micro-note {
-    margin-top: 0.45rem !important;
-    font-size: 0.79rem !important;
-    line-height: 1.45;
-  }
-
   .screen--record-input.screen-layout--record .fatigue-inline {
     grid-column: 2 !important;
     grid-row: auto !important;
@@ -470,9 +464,6 @@
     width: 100%;
     padding: 1rem 1.05rem 1.05rem !important;
   }
-
-  .screen--record-input.screen-layout--record .stage-intro,
-  .screen--record-input.screen-layout--record .snapshot-note,
   .screen--record-input.screen-layout--record .record-return-status {
     font-size: 0.82rem !important;
     line-height: 1.5;
@@ -2950,29 +2941,6 @@
     width: 100%;
   }
 
-  .screen--history.screen-layout--history .history-mode {
-    width: min(100%, 38rem) !important;
-    margin-top: 1.25rem !important;
-    padding: 0.3rem !important;
-    gap: 0.3rem !important;
-    border-radius: 0.9rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button {
-    min-height: 3.5rem !important;
-    padding: 0.65rem 0.85rem !important;
-    border-radius: 0.7rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button span {
-    font-size: 0.95rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button small {
-    margin-top: 0.18rem !important;
-    font-size: 0.76rem !important;
-  }
-
   .screen--history.screen-layout--history .history-view {
     width: 100% !important;
     max-width: none !important;
@@ -3863,15 +3831,10 @@
   .secondary-derived-screen :is(button,a) {
     font-family: inherit !important;
   }
-
-  /* ===== History: explicit removal of remaining mobile-size labels ===== */
-  .screen--history.screen-layout--history .sample-badge,
   .screen--history.screen-layout--history .region-picker-trigger i,
   .screen--history.screen-layout--history .chart-card-head small,
   .screen--history.screen-layout--history .records-disclosure > summary small,
   .screen--history.screen-layout--history .region-picker-trigger .region-picker-copy em,
-  .screen--history.screen-layout--history .chart-region-heading small,
-  .screen--history.screen-layout--history .chart-region-heading span,
   .screen--history.screen-layout--history .region-option-copy small,
   .screen--history.screen-layout--history .selected-focus-heading small,
   .screen--history.screen-layout--history .selected-focus-value span,
@@ -3879,25 +3842,16 @@
     font-size: 0.76rem !important;
     line-height: 1.35 !important;
   }
-
-  .screen--history.screen-layout--history .chart-meaning span,
   .screen--history.screen-layout--history .condition-details > div,
   .screen--history.screen-layout--history .excluded-details > p,
   .screen--history.screen-layout--history .empty-records {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
-
-  .screen--history.screen-layout--history .chart-meaning strong,
   .screen--history.screen-layout--history .selected-weekday,
   .screen--history.screen-layout--history .selected-facts-compact dd {
     font-size: 0.86rem !important;
     line-height: 1.4 !important;
-  }
-
-  .screen--history.screen-layout--history .chart-meaning {
-    padding: 0.75rem 0.85rem !important;
-    border-radius: 0.75rem !important;
   }
 
   .screen--history.screen-layout--history .selected-card-head > span {
@@ -3928,8 +3882,7 @@
   .screen--plan.screen-layout--plan .metric-field em,
   .screen--plan.screen-layout--plan .details summary span,
   .screen--plan.screen-layout--plan .saved summary span,
-  .screen--plan.screen-layout--plan .saved-card span,
-  .screen--plan.screen-layout--plan .compare-row {
+  .screen--plan.screen-layout--plan .saved-card span{
     font-size: 0.8rem !important;
     line-height: 1.45 !important;
   }
@@ -4198,11 +4151,6 @@
   .screen--consultation.screen-layout--consultation .share-viewer-shell > footer {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
-  }
-
-  /* Bottom navigation is mobile-only. */
-  .screen--history.screen-layout--history .bottom-nav {
-    display: none !important;
   }
 }
 
@@ -4669,7 +4617,6 @@
   }
 
   .screen--history.screen-layout--history .chart-value,
-  .screen--history.screen-layout--history .chart-region-heading h2,
   .screen--history.screen-layout--history .region-option-copy strong {
     font-size: 0.86rem !important;
     line-height: 1.35 !important;
@@ -4710,9 +4657,6 @@
     min-height: 4.4rem !important;
     padding: 0.65rem 0.7rem !important;
   }
-
-  /* Selected segmented controls should not turn into light halos in dark mode. */
-  .screen--history.screen-layout--history .history-mode button.active,
   .screen--history.screen-layout--history .display-toggle button.active,
   .screen--plan.screen-layout--plan .seg button.active {
     box-shadow: none !important;
@@ -4816,8 +4760,6 @@
     border-radius: 1.25rem !important;
     box-shadow: var(--shadow-dialog) !important;
   }
-
-  .screen--history.screen-layout--history .history-mode button,
   .screen--history.screen-layout--history .display-toggle button,
   .screen--plan.screen-layout--plan .seg button,
   .screen--reading.screen-layout--reading .filters button {
@@ -5183,19 +5125,6 @@
   .app-shell:not(.app-shell--immersive) .primary-navigation__link {
     font-size: 0.75rem !important;
   }
-
-  .screen--history.screen-layout--history :is(
-    .sample-badge,
-    .region-picker-trigger small,
-    .chart-card-head small,
-    .records-disclosure > summary small,
-    .chart-region-heading small,
-    .region-option-copy small,
-    .selected-focus-heading small,
-    .selected-main-value small,
-    .selected-facts dt,
-    .result-link small
-  ),
   .screen--more.screen-layout--more .copy small,
   .screen--plan.screen-layout--plan :is(
     .panel-head small,
@@ -5329,17 +5258,6 @@
   .screen-layout .section-introduction {
     font-size: var(--type-body) !important;
     line-height: var(--line-body);
-  }
-
-  .screen-layout :is(
-    .view-toggle button.active,
-    .type-toggle button.active,
-    .seg button.active,
-    .mode button.active,
-    .display-toggle button.active,
-    .history-mode button.active
-  ) {
-    box-shadow: none !important;
   }
 }
 
@@ -6242,31 +6160,6 @@
     clip-path: inset(50%) !important;
     white-space: nowrap !important;
     border: 0 !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode {
-    width: min(100%, 44rem) !important;
-    margin-top: 0 !important;
-    padding: 0.32rem !important;
-    gap: 0.32rem !important;
-    border-radius: 0.9rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button {
-    min-height: 4rem !important;
-    padding: 0.7rem 1rem !important;
-    border-radius: 0.68rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button span {
-    font-size: 1rem !important;
-    line-height: 1.25;
-  }
-
-  .screen--history.screen-layout--history .history-mode button small {
-    margin-top: 0.2rem !important;
-    font-size: 0.84rem !important;
-    line-height: 1.35 !important;
   }
 
   .screen--history.screen-layout--history .history-view {
@@ -8404,24 +8297,14 @@
     font-size: 0.9rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation .region-row small,
-  .screen--simulation.screen-layout--simulation .region-value span {
+  .screen--simulation.screen-layout--simulation .region-row small{
     font-size: 0.78rem !important;
-  }
-
-  .screen--simulation.screen-layout--simulation .region-value b {
-    font-size: 1rem !important;
   }
 
   .screen--simulation.screen-layout--simulation .compact-boundary,
   .screen--simulation.screen-layout--simulation .rof-boundary {
     font-size: 0.84rem !important;
     line-height: 1.55 !important;
-  }
-
-  .screen--simulation.screen-layout--simulation .preview-actions :is(a, button) {
-    min-height: 3.15rem !important;
-    font-size: 0.9rem !important;
   }
 }
 
@@ -8753,36 +8636,6 @@
 
 
 @media (min-width: 55rem) {
-  .screen-layout :is(
-    .view-toggle,
-    .sheet-tabs,
-    .history-mode,
-    .period-control > div,
-    .display-toggle,
-    .type-toggle,
-    .seg,
-    .mode,
-    .filters,
-    .segment,
-    .pc-summary-controls > div
-  ) button:not(.active):not(.is-active):hover {
-    background: color-mix(in srgb, var(--color-accent-soft) 64%, var(--color-surface)) !important;
-    color: var(--color-accent-strong) !important;
-  }
-
-  .screen-layout :is(
-    .view-toggle,
-    .sheet-tabs,
-    .history-mode,
-    .period-control > div,
-    .display-toggle,
-    .type-toggle,
-    .seg,
-    .mode,
-    .filters,
-    .segment,
-    .pc-summary-controls > div
-  ) button:focus-visible,
   .screen-layout--record .activity-toggle input:focus-visible + span {
     outline: 3px solid color-mix(in srgb, var(--color-focus) 40%, transparent) !important;
     outline-offset: 2px !important;
@@ -8797,7 +8650,6 @@
   .screen-layout--result .view-toggle button.active,
   .screen-layout--result .sheet-tabs button.active,
   .screen-layout--result .pc-summary-controls button.is-active,
-  .screen-layout--history .history-mode button.active,
   .screen-layout--history .period-control button.active,
   .screen-layout--history .display-toggle button.active,
   .screen-layout--history .type-toggle button.active,
@@ -8811,20 +8663,7 @@
     box-shadow: var(--shadow-segment-selected) !important;
   }
 
-  .screen-layout--record .activity-toggle input:checked + span:hover,
-  .screen-layout :is(
-    .view-toggle,
-    .sheet-tabs,
-    .history-mode,
-    .period-control > div,
-    .display-toggle,
-    .type-toggle,
-    .seg,
-    .mode,
-    .filters,
-    .segment,
-    .pc-summary-controls > div
-  ) button:is(.active, .is-active):hover {
+  .screen-layout--record .activity-toggle input:checked + span:hover{
     background: var(--color-segment-selected-surface) !important;
     color: var(--color-segment-selected-text) !important;
   }
