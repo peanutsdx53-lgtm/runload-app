@@ -55,3 +55,17 @@ await test('PWA-PRECACHE-EXCLUDES-UNUSED-EXPLANATION-MODULE',async()=>{
 const failed=results.filter(x=>x.status==='FAIL');
 console.log(JSON.stringify({suite:'Interpretation Room PWA Integration',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
+
+
+await test('PWA-PRECACHE-COVERS-RUNTIME-MODULE-GRAPH',async()=>{
+  const sw=await source('service-worker.js');
+  const cached=new Set(precache(sw).map((item)=>item.replace(/^\.\//,'')));
+  const modulePaths=[
+    'core/legacyCompatibility.js',
+    'core/rofJConstants.js',
+    'core/rofJCore.js',
+  ];
+  for(const path of modulePaths){
+    assert.ok(cached.has(path),path);
+  }
+});
