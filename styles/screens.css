@@ -48,8 +48,7 @@
   .screen--consultation .next-action,
   .screen--consultation .safety-notice { break-inside: avoid; }
 }
-@media print {  .consult-selector,
-  .consult-mode-navigation,
+@media print {
   .plan-outcome-editor,
   .plan-edit-preview { display: none !important; }
 }.check-option {
@@ -188,18 +187,14 @@
 }
 
 /* レスポンシブ表示と印刷表示の統合 */
-@media (min-width: 42rem) {  .plan-flow-steps,
-  .consult-flow-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }  .share-format-picker,
-  .plan-next-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }  .consult-report-bridge { grid-template-columns: minmax(0, 1fr) auto; }
+@media (min-width: 42rem) {  .plan-flow-steps{ grid-template-columns: repeat(3, minmax(0, 1fr)); }  .share-format-picker,
+  .plan-next-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 35rem) {  .page-heading-actions { justify-content: flex-start; margin-top: calc(var(--space-3) * -1); }  .plan-candidate__heading { grid-template-columns: auto minmax(0, 1fr); }  .plan-candidate__status-slot { grid-column: 1 / -1; justify-content: flex-start; }
 }
-@media print {  .consult-flow-steps,
-  .consult-selector,
-  .consult-report-bridge,
+@media print {
   .page-heading-actions,
   .share-format-picker,
-  .consult-draft-toolbar,
   .column-source-index,
   .plan-flow-steps { display: none !important; }  .screen--share-report .share-report-document { border: 0; box-shadow: none; padding: 0; }  .screen--share-report .report-document { font-size: 10pt; line-height: 1.45; }
 }
@@ -787,13 +782,6 @@
     break-inside: avoid;
     box-shadow: none;
   }
-}
-
-/* 相談メモ、印刷、PDF向け表示 */
-/* 相談メモ、印刷、PDF向け表示 */
-.consult-entry-grid {
-  display: grid;
-  gap: var(--space-4);
 }.consult-entry-card {
   min-width: 0;
   min-height: 16rem;
@@ -807,7 +795,7 @@
   box-shadow: var(--shadow-card);
   color: inherit;
   text-decoration: none;
-}.consult-entry-card--quick { border-top: 7px solid var(--color-accent); }.consult-entry-card--report { border-top: 7px solid var(--color-ink); }.consult-entry-card > span {
+}.consult-entry-card > span {
   color: var(--color-accent);
   font-family: var(--font-editorial);
   font-size: 1.2rem;
@@ -826,26 +814,8 @@
 }.consult-entry-card.is-disabled { opacity: 0.68; box-shadow: none; }.consult-entry-card[href]:hover { transform: translateY(-2px); }.consult-entry-card[href]:focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 4px;
-}.consult-priority-report {
-  display: grid;
-  gap: var(--space-4);
-  align-items: center;
-  padding: clamp(1rem, 4vw, 1.75rem);
-  border: 3px solid var(--color-attention);
-  border-radius: var(--radius-large);
-  background: var(--color-attention-soft);
-}.consult-priority-report h2 { margin-block: var(--space-1); }.consult-priority-report p { margin: 0; }
-@media (min-width: 48rem) {  .consult-priority-report { grid-template-columns: minmax(0, 1fr) auto; }
-}.consult-draft-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-3);
-}.consult-draft-toolbar > div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+}
+@media (min-width: 48rem) {
 }.report-screen-tools {
   display: grid;
   gap: var(--space-6);
@@ -1030,7 +1000,7 @@
   border-top: 3px solid var(--color-ink);
   background: var(--color-paper);
 }.report-sheet__boundary p { margin: var(--space-2) 0 0; color: var(--color-muted); }
-@media (min-width: 48rem) {  .consult-entry-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }  .report-print-actions { grid-template-columns: minmax(0, 1fr) auto; }
+@media (min-width: 48rem) {  .report-print-actions { grid-template-columns: minmax(0, 1fr) auto; }
 }
 @media (max-width: 35rem) {  .report-fact-list,
   .report-notes-list,
@@ -1440,62 +1410,7 @@ and minimal personal note */
 }.result-reading-summary__item small {
   color: var(--color-muted);
   line-height: 1.6;
-}.result-reading-summary > p { margin: 0; color: var(--color-muted); }
-.consult-reading-summary {
-  display: grid;
-  gap: var(--space-4);
-  padding: clamp(1rem, 3vw, 1.6rem);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 20%, var(--color-line));
-  border-radius: var(--radius-large);
-  background: color-mix(in srgb, var(--color-accent) 6%, var(--color-surface));
-  box-shadow: var(--shadow-card);
-}
-.consult-reading-summary__grid {
-  display: grid;
-  gap: var(--space-3);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
-}
-.consult-reading-summary__item {
-  min-width: 0;
-  display: grid;
-  gap: var(--space-1);
-  align-content: start;
-  min-height: 7rem;
-  padding: var(--space-4);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-medium);
-  background: var(--color-surface);
-  color: inherit;
-  text-decoration: none;
-}
-.consult-reading-summary__item:hover {
-  border-color: var(--color-accent);
-  box-shadow: var(--shadow-soft);
-}
-.consult-reading-summary__item:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
-  outline-offset: 3px;
-}
-.consult-reading-summary__item span {
-  color: var(--color-accent);
-  font-size: 0.78rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.consult-reading-summary__item strong {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.05rem, 3vw, 1.35rem);
-  line-height: 1.25;
-}
-.consult-reading-summary__item small {
-  color: var(--color-muted);
-  line-height: 1.6;
-}
-.consult-reading-summary > p {
-  margin: 0;
-  color: var(--color-muted);
-}/* 入力画面の主操作と次回予定カードを見つけやすくする。 */
+}.result-reading-summary > p { margin: 0; color: var(--color-muted); }/* 入力画面の主操作と次回予定カードを見つけやすくする。 */
 .screen--record-input .record-action-button.button--secondary,
 .screen--record-input .record-course-entry__actions .button--secondary,
 .screen--record-input .record-personal-entry .button--secondary {
@@ -2507,10 +2422,7 @@ and minimal personal note */
   font: inherit;
   text-align: left;
   cursor: pointer;
-}button.result-reading-summary__item:active { transform: translateY(1px); }.consultation-compose-grid {
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-4);
-}.consultation-compose-grid textarea { min-height: 8rem; }.consultation-sharing-fieldset { margin-top: var(--space-1); }.screen--settings .checkbox-grid,
+}button.result-reading-summary__item:active { transform: translateY(1px); }.screen--settings .checkbox-grid,
 .screen--record-input .checkbox-grid { align-items: stretch; }.screen--settings .checkbox-grid > label,
 .screen--record-input .checkbox-grid > label { height: 100%; }.settings-option span,
 .choice-card > span { min-width: 0; }.settings-option strong,

@@ -176,7 +176,7 @@
 .danger-zone { border-color: var(--color-danger-border); background: var(--color-danger-soft); }
 .danger-zone summary { min-height: 3rem; display: flex; align-items: center; cursor: pointer; font-weight: 850; color: var(--color-danger); }
 .danger-zone > div { display: grid; gap: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-danger-line); }
-.plan-edit-preview, .plan-outcome-editor, .consult-selector, .editorial-boundary {
+.plan-edit-preview, .plan-outcome-editor, .editorial-boundary {
   display: grid;
   gap: var(--space-4);
   padding: var(--space-4);
@@ -187,12 +187,6 @@
 .plan-edit-preview { border-left: 5px solid var(--color-accent); background: var(--color-accent-soft); }
 .plan-outcome-editor summary { min-height: 2.75rem; display: flex; align-items: center; cursor: pointer; font-weight: 850; }
 .plan-outcome-editor form { display: grid; gap: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-line); }
-.consult-mode-navigation { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
-.consult-mode-link { min-height: 6rem; display: grid; align-content: center; gap: var(--space-1); padding: var(--space-4); border: 1px solid var(--color-line); border-radius: var(--radius-medium); text-decoration: none; }
-.consult-mode-link small { color: var(--color-muted); }
-.consult-mode-link.is-current { border-color: var(--color-accent); background: var(--color-accent-soft); color: var(--color-accent-strong); }
-.consult-mode-link.is-disabled { opacity: 0.65; }
-.consult-source-panel { display: grid; gap: var(--space-5); }
 .editorial-boundary { border-left: 4px solid var(--color-line); color: var(--color-muted); }
 .editorial-boundary p { margin: 0; }
 
@@ -202,8 +196,7 @@
 .text-link,
 .feature-menu__link,
 .primary-navigation__link,
-.feature-link-card,
-.consult-mode-link {
+.feature-link-card{
   min-width: 0;
   max-width: 100%;
   white-space: normal;
@@ -513,16 +506,14 @@
 }
 
 /* プラン・相談共有・コラム導線 */
-.plan-flow-steps,
-.consult-flow-steps {
+.plan-flow-steps{
   display: grid;
   gap: var(--space-3);
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.plan-flow-steps li,
-.consult-flow-steps li {
+.plan-flow-steps li{
   min-width: 0;
   display: grid;
   grid-template-columns: 2.25rem minmax(0, 1fr);
@@ -531,8 +522,7 @@
   padding: var(--space-3) var(--space-4);
   border-top: 1px solid var(--color-line);
 }
-.plan-flow-steps li > span,
-.consult-flow-steps li > span {
+.plan-flow-steps li > span{
   grid-row: 1 / span 2;
   display: grid;
   place-items: center;
@@ -544,7 +534,6 @@
   font-family: var(--font-numeric);
   font-weight: 800;
 }
-.consult-flow-steps small { color: var(--color-muted); }
 .plan-candidate__heading { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(4.75rem, auto); gap: var(--space-3); align-items: start; }
 .plan-candidate__heading > span:first-child { color: var(--color-accent); font-family: var(--font-numeric); font-size: 1.35rem; font-weight: 800; }
 .plan-candidate__copy { min-width: 0; }
@@ -555,9 +544,6 @@
 .plan-complete-card h2 { margin: 0; font-family: var(--font-editorial); font-size: clamp(2rem, 7vw, 4rem); }
 .plan-next-actions { display: grid; gap: var(--space-3); margin-bottom: var(--space-3); }
 .page-heading-actions { display: flex; justify-content: flex-end; margin-top: calc(var(--space-4) * -1); }
-.consult-report-bridge { display: grid; gap: var(--space-4); align-items: center; padding: var(--space-5); border-left: 5px solid var(--color-accent); background: var(--color-accent-soft); }
-.consult-report-bridge h2 { margin-bottom: var(--space-2); font-family: var(--font-editorial); }
-.consult-draft-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); align-items: center; color: var(--color-muted); font-size: 0.85rem; }
 .share-format-picker { display: grid; gap: var(--space-3); }
 .share-format-card { min-height: 8rem; display: grid; align-content: center; gap: var(--space-2); padding: var(--space-4); border: 1px solid var(--color-line); border-radius: var(--radius-medium); background: var(--color-surface); text-decoration: none; }
 .share-format-card small { color: var(--color-muted); }
@@ -1224,11 +1210,7 @@ details.ui-motion-details.is-ui-motion-closing > :not(summary) {
 }
 
 .input-role-tag{display:inline-flex;align-items:center;margin-inline-start:.35rem;padding:.12rem .4rem;border-radius:999px;background:var(--surface-muted,#eef3f8);color:var(--text-muted,#536273);font-size:.72rem;font-weight:700;vertical-align:middle;}
-
-
-.consult-purpose-selector,
-.consult-region-selector,
-.consult-rule-summary {
+.consult-region-selector{
   display: grid;
   gap: var(--space-4);
   padding: var(--space-4);
@@ -1236,64 +1218,6 @@ details.ui-motion-details.is-ui-motion-closing > :not(summary) {
   border-radius: var(--radius-medium);
   background: var(--color-surface);
 }
-.consult-purpose-grid {
-  display: grid;
-  gap: var(--space-3);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-}
-.consult-purpose-link {
-  display: grid;
-  align-content: start;
-  gap: var(--space-2);
-  min-height: 7rem;
-  padding: var(--space-4);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-medium);
-  color: inherit;
-  text-decoration: none;
-}
-.consult-purpose-link small { color: var(--color-muted); }
-.consult-purpose-link.is-current {
-  border-color: var(--color-accent);
-  background: var(--color-accent-soft);
-  color: var(--color-accent-strong);
-}
-.consult-purpose-link:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 3px;
-}
-.consult-rule-summary ul {
-  display: grid;
-  gap: var(--space-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.consult-rule-summary li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-1) var(--space-3);
-  padding: var(--space-3);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-small);
-}
-.consult-rule-summary li span {
-  align-self: start;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-.consult-rule-summary li small {
-  grid-column: 1 / -1;
-  color: var(--color-muted);
-}
-.consult-rule-summary li.is-used span {
-  background: var(--color-accent-soft);
-  color: var(--color-accent-strong);
-}
-.consult-rule-summary li.is-unused { opacity: 0.72; }
-.consult-rule-summary li.is-unused span { background: var(--color-neutral-soft); }
 
 
 .primary-navigation__link {
