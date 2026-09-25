@@ -2,7 +2,7 @@ import { STORAGE_KEYS } from "./appCore.js";
 
 export const ROF_J_INSTRUMENT_ID = "ROF_J";
 export const ROF_J_SEMANTIC_VERSION = "ROF_J_SUZUKI_ARAI_2026_RUNLOAD_V1";
-export const ROF_J_JAPANESE_SOURCE_SHA256 = "f25d0d4cf09f603cb66984606cfdb8e716781ba106f0da44dfa276515838acf8";
+export const ROF_J_SOURCE_VERSION = "ROF_J_JAPANESE_SOURCE_V1";
 export const ROF_J_VISUAL_SOURCE_ID = "ROF_ORIGINAL_2017";
 export const ROF_J_STORAGE_SCHEMA_VERSION = "RUNLOAD_SECOND_PILLAR_ROFJ_STORAGE_V1";
 export const ROF_J_LIFECYCLE_SCHEMA_VERSION = "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1";
@@ -143,7 +143,7 @@ export function createRofJRunEntry(runId) {
     runId: normalizedRunId,
     instrumentId: ROF_J_INSTRUMENT_ID,
     instrumentSemanticVersion: ROF_J_SEMANTIC_VERSION,
-    japaneseSourceSha256: ROF_J_JAPANESE_SOURCE_SHA256,
+    sourceVersion: ROF_J_SOURCE_VERSION,
     visualSourceId: ROF_J_VISUAL_SOURCE_ID,
     measurements: Object.freeze({ PRE_RUN: null, POST_RUN: null }),
     createdAt: null,
@@ -280,7 +280,9 @@ export function validateRofJRunEntry(entry) {
   if (!String(entry.runId || "").trim()) issues.push("RUN_ID_REQUIRED");
   if (entry.instrumentId !== ROF_J_INSTRUMENT_ID) issues.push("INSTRUMENT_ID_MISMATCH");
   if (entry.instrumentSemanticVersion !== ROF_J_SEMANTIC_VERSION) issues.push("SEMANTIC_VERSION_MISMATCH");
-  if (entry.japaneseSourceSha256 !== ROF_J_JAPANESE_SOURCE_SHA256) issues.push("SOURCE_SHA_MISMATCH");
+  const legacySourceMetadata = typeof entry.japaneseSourceSha256 === "string" && entry.japaneseSourceSha256.trim().length > 0;
+  if (entry.sourceVersion != null && entry.sourceVersion !== ROF_J_SOURCE_VERSION) issues.push("SOURCE_VERSION_MISMATCH");
+  if (entry.sourceVersion == null && !legacySourceMetadata) issues.push("SOURCE_VERSION_MISSING");
   if (entry.visualSourceId !== ROF_J_VISUAL_SOURCE_ID) issues.push("VISUAL_SOURCE_MISMATCH");
   for (const phase of [ROF_J_PHASES.PRE, ROF_J_PHASES.POST]) {
     const m = entry.measurements?.[phase];
@@ -347,16 +349,19 @@ export function createRofJRepository(gateway) {
     return result.ok ? Object.values(result.envelope.entries).map(clone) : [];
   }
   function saveEntry(entry) {
-    const validation = validateRofJRunEntry(entry);
+    const normalizedEntry = clone(entry);
+    delete normalizedEntry.japaneseSourceSha256;
+    normalizedEntry.sourceVersion = ROF_J_SOURCE_VERSION;
+    const validation = validateRofJRunEntry(normalizedEntry);
     if (!validation.ok) return { ok: false, code: "ROF_J_ENTRY_INVALID", validation };
     const current = loadEnvelopeResult();
     if (!current.ok) return current;
     const envelope = {
       schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION,
-      entries: { ...current.envelope.entries, [entry.runId]: clone(entry) },
+      entries: { ...current.envelope.entries, [normalizedEntry.runId]: clone(normalizedEntry) },
     };
     const result = gateway.writeJson(STORAGE_KEYS.rofJ, envelope);
-    return { ...result, entry: result.ok ? clone(entry) : null };
+    return { ...result, entry: result.ok ? clone(normalizedEntry) : null };
   }
   function removeByRunId(runId) {
     const current = loadEnvelopeResult();
@@ -571,7 +576,7 @@ export function createRofJServices({ gateway, recordsRepository } = {}) {
     constants: Object.freeze({
       instrumentId: ROF_J_INSTRUMENT_ID,
       instrumentSemanticVersion: ROF_J_SEMANTIC_VERSION,
-      japaneseSourceSha256: ROF_J_JAPANESE_SOURCE_SHA256,
+      sourceVersion: ROF_J_SOURCE_VERSION,
       visualSourceId: ROF_J_VISUAL_SOURCE_ID,
     }),
     createRunId: (options = {}) => createRofJRunId(options),
