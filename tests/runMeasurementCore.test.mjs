@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createApplicationServices, createMemoryStorage, STORAGE_KEYS } from '../core/runloadCore.js';
+import { createApplicationServices, createMemoryStorage, STORAGE_KEYS } from '../core/appCore.js';
 import {
   haversineDistanceMeters,
   evaluateTrackPoint,
