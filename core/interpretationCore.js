@@ -1,4 +1,4 @@
-// RunLoad Interpretation Core.
+// Result interpretation core.
 // Deterministic, read-only projection for beginner-facing result understanding.
 // This module consumes persisted results and never recalculates Primary Reference-100 or ROF-J values.
 
