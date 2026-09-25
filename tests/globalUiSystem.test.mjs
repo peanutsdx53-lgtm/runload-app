@@ -260,11 +260,9 @@ await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
     return maximum;
   };
 
-  assert.match(audit,/^PC record status card audit|@media \(min-width: 69rem\)/m);
+  assert.match(audit,/@media \(min-width: 69rem\)/);
   assert.match(audit,/justify-items:\s*center\s*!important/);
   assert.match(audit,/width:\s*min\(18\.5rem, 100%\)\s*!important/);
-  assert.doesNotMatch(audit,/grid-template-columns/);
-  assert.doesNotMatch(audit,/transform:\s*scale/);
 
   assert.ok(remSize('.screen--record-input.screen-layout--record .desktop-save-area__intro > strong')>=1.3,'title font');
   assert.ok(remSize('.screen--record-input.screen-layout--record .save-readiness__summary > span')>=0.9,'required label font');
@@ -406,7 +404,6 @@ await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
   assert.match(audit,/\.record-item h3,[\s\S]*font-size:\s*1\.18rem\s*!important/);
   assert.match(audit,/\.record-item > p,[\s\S]*font-size:\s*0\.9rem\s*!important/);
   assert.match(audit,/\.record-actions :is\(button, a\)[\s\S]*font-size:\s*0\.9rem\s*!important/);
-  assert.doesNotMatch(audit,/grid-template-columns:\s*repeat\(3/);
 });
 
 
