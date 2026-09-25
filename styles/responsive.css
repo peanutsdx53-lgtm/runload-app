@@ -257,7 +257,6 @@ input, select, textarea {
 .screen--result .body-map { gap: 6px; }
 .screen--result .distribution-list { gap: 7px; }
 .screen--result .distribution-list__item a { min-height: 60px; padding: 9px 10px; border-radius: 13px; }
-.screen--result .result-activation-hub__item { min-height: 64px; border-radius: 14px; }
 
 /* --- Region detail --- */
 .screen--body-part-detail { gap: 18px; }
