@@ -1,4 +1,4 @@
-import "./internal/content.js";
+import "./internal/applicationServices.js";
 import { internalModules } from "./internal/modules.js";
 
 // Public core API used by the current application modules.

@@ -25,7 +25,10 @@ Domain and deterministic interpretation logic only.
 - `internal/applicationStorage.js`: course storage, restore inspection, backup, and public-help data boundaries.
 - `internal/v27ApplicationServices.js`: V2.7 personal/input adaptation and stored-result services.
 - `internal/workflows.js`: record, history, and planning workflows.
-- `internal/content.js`: evidence-backed reading content, consultation content, terminology, and privacy content.
+- `internal/readingContent.js`: evidence metadata, reading content, and reading-service composition.
+- `internal/dataManagement.js`: application data-management service.
+- `internal/consultation.js`: consultation report, body-region terminology, and deterministic consultation logic.
+- `internal/applicationServices.js`: composition root for storage, workflows, reading, consultation, and data-management services.
 - `internal/modules.js`: private registry used only to connect the split core modules.
 
 The former monolithic core bundle has been removed. New runtime code should import only from `appCore.js`, `rofJCore.js`, or the interpretation modules; screen/UI modules must not import `core/internal/*` directly.
