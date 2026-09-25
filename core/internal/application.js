@@ -1694,7 +1694,7 @@ const { validateRunningRecordInput, normalizeRunningRecord, validateRunningRecor
 const { validateCoursePresetInput } = coreModules[40];
 const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = coreModules[1];
 
-const RESTORE_INSPECTION_VERSION = "runload-restore-inspection-v1";
+const RESTORE_INSPECTION_VERSION = "restore-inspection-v1";
 const RESTORE_STATUS = Object.freeze({
   supported: "SUPPORTED",
   review: "REVIEW_REQUIRED",
@@ -2221,7 +2221,7 @@ function createBackupService(gateway) {
   }
 
   function restoreInspectedBackup(inspection, options = {}) {
-    if (!inspection || inspection.inspectionVersion !== "runload-restore-inspection-v1" || !inspection.snapshot) {
+    if (!inspection || inspection.inspectionVersion !== "restore-inspection-v1" || !inspection.snapshot) {
       return { ok: false, code: "RESTORE_INSPECTION_REQUIRED", message: "復元前の検査をやり直してください。" };
     }
     const freshInspection = inspectBackupSnapshot(inspection.snapshot, BACKUP_FORMAT_VERSION);
@@ -2291,7 +2291,7 @@ coreModules[42] = moduleExports;
 const moduleExports = Object.create(null);
 const { SUPPORT_NEXT_ACTIONS, URGENT_SAFETY_FLAGS } = coreModules[29];
 
-const PUBLIC_HELP_GUIDANCE_VERSION = "runload-public-help-guidance-v1";
+const PUBLIC_HELP_GUIDANCE_VERSION = "public-help-guidance-v1";
 const PUBLIC_HELP_GUIDANCE_REVIEW_DATE = "2026-08-01";
 
 const PUBLIC_FLAG_LABELS = Object.freeze({
@@ -3620,7 +3620,7 @@ const SURFACE_CLASSES = new Set([
   "UNKNOWN",
 ]);
 const RUNNING_FORMATS = new Set(Object.values(V27_ACTIVITY_TYPES));
-const PLAN_FACT_PREVIEW_VERSION = "runload-plan-facts-v1";
+const PLAN_FACT_PREVIEW_VERSION = "plan-facts-v1";
 
 function finiteNumber(value, fallback = 0) {
   const number = Number(value);
