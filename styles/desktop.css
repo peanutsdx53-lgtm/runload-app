@@ -4314,11 +4314,6 @@
   }
 }
 
-/* ===== State-aware desktop readability ===== */
-/*
- * State-aware layout and light/dark readability rules.
- * Record-input and Result families are defined in their dedicated sections.
- */
 
 @media (min-width: 80rem) {
   /* Strengthen secondary text without hard-coding a light or dark color. */
@@ -5050,7 +5045,6 @@
 }
 
 
-/* ===== unavailable-state readability ===== */
 @media (min-width: 80rem) {
   .screen--consultation.screen-layout--consultation .share-source.is-unavailable {
     opacity: 1 !important;
@@ -5429,7 +5423,6 @@
 }
 
 
-/* Record audit: compact save rail and surface optional-entry state instead of explanatory copy. */
 @media (min-width: 69rem) {
   .screen--record-input.screen-layout--record .desktop-save-area {
     gap: 0.75rem !important;
@@ -5488,7 +5481,6 @@
 }
 
 
-/* PC audit 2026-09-23: make the record status rail use its full card width. */
 @media (min-width: 69rem) {
   .screen--record-input.screen-layout--record .desktop-save-area {
     justify-items: stretch !important;
@@ -5524,7 +5516,7 @@
     margin-inline: auto !important;
   }
 }
-/* PC record status card audit 2026-09-23: center and enlarge content without widening the rail. */
+
 @media (min-width: 69rem) {
   .screen--record-input.screen-layout--record .desktop-save-area {
     justify-items: center !important;
@@ -5611,7 +5603,6 @@
 }
 
 
-/* PC course library workspace audit 2026-09-23: prioritize selection, saved courses, then GPX assistance. */
 @media (min-width: 80rem) {
   .screen--course-library.course-derived-screen {
     background: color-mix(in srgb, var(--color-ink) 3%, var(--color-paper)) !important;
@@ -5853,7 +5844,6 @@
 }
 
 
-/* PC course derived parity audit 2026-09-23: match body/shoe derived-screen chrome. */
 @media (min-width: 80rem) {
   .screen--course-library.course-derived-screen {
     position: fixed !important;
@@ -5987,7 +5977,6 @@
 }
 
 
-/* PC course editor input usability audit 2026-09-23: compact work areas, larger controls, smaller final action. */
 @media (min-width: 80rem) {
   .screen--course-editor.screen-layout--course #course-editor-form {
     gap: 1rem !important;
@@ -6230,7 +6219,6 @@
 }
 
 
-/* PC course editor unit parity audit 2026-09-23: readable percent units and single GPX entry point. */
 @media (min-width: 80rem) {
   .screen--course-editor.screen-layout--course .mfield > div > em,
   .screen--course-editor.screen-layout--course .percent-control > em {
@@ -6250,7 +6238,6 @@
 }
 
 
-/* PC history record browser audit 2026-09-23: compact hierarchy, readable controls, full-width record rows. */
 @media (min-width: 80rem) {
   .screen--history.screen-layout--history > .page-head {
     position: absolute !important;
@@ -6492,7 +6479,6 @@
 }
 
 
-/* PC history single-purpose audit 2026-09-23: history is record browsing only. */
 @media (min-width: 80rem) {
   .screen--history.screen-layout--history .history-view {
     margin-top: 0 !important;
@@ -6503,9 +6489,7 @@
   }
 }
 
-/* ========================================================================== 
-   Result / PC layout candidate — shell, theme and typography remain unchanged.
-   ========================================================================== */
+
 .pc-result-console { display: none; }
 
 @media (min-width: 80rem) {
@@ -7186,10 +7170,7 @@
   }
 }
 
-/* ========================================================================== 
-   Result / PC layout candidate V0.2 — presentation refinement only.
-   Shared shell, theme tokens and typography remain unchanged.
-   ========================================================================== */
+
 @media (min-width: 80rem) {
   .screen--result.screen-layout--result > .pc-result-console {
     gap: 0.78rem;
@@ -7768,7 +7749,7 @@
   }
 }
 
-/* V0.2 density pass: 3-view numerical matrix, one row per body view. */
+
 @media (min-width: 80rem) {
   .pc-result-main {
     min-height: 29rem;
@@ -7887,10 +7868,7 @@
   }
 }
 
-/* ========================================================================== 
-   Result / PC layout candidate V0.3 — balance and legibility pass.
-   Shared shell, theme tokens and typography remain unchanged.
-   ========================================================================== */
+
 @media (min-width: 80rem) {
   .screen--result.screen-layout--result > .pc-result-console {
     gap: 0.72rem;
@@ -8172,10 +8150,7 @@
   }
 }
 
-/* ========================================================================== 
-   Result / PC layout candidate V0.4 — interactive result console.
-   Keeps the shared shell/theme/font unchanged. PC only.
-   ========================================================================== */
+
 @media (min-width: 80rem) {
   /* Turn the 12 regions into one instrument board rather than 12 floating cards. */
   .pc-result-region-groups {
@@ -8544,10 +8519,6 @@
 }
 
 
-/* ==========================================================================
-   Result / PC final 2026-09-23 — independent regions + temporal change.
-   Shared shell, theme tokens and typography remain unchanged.
-   ========================================================================== */
 @media (min-width: 80rem) {
   .pc-result-numbers > header { align-items: center; }
 
@@ -9046,7 +9017,6 @@
 }
 
 
-/* PC interpretation-derived condition comparison V2 2026-09-23 */
 @media (min-width: 80rem) {
   .screen--simulation.screen-layout--simulation {
     width: min(100%, 76rem) !important;
@@ -9269,7 +9239,6 @@
 }
 
 
-/* PC result chronology + state-link visual audit 2026-09-24 */
 @media (min-width: 80rem) {
   .screen--result.screen-layout--result > .pc-result-console {
     gap: 0.82rem;
@@ -9596,7 +9565,6 @@
 }
 
 
-/* Shared segmented mode emphasis audit 2026-09-24 */
 @media (min-width: 55rem) {
   .screen-layout :is(
     .view-toggle,
@@ -9676,7 +9644,6 @@
 }
 
 
-/* ===== Reading experience refresh 2026-09-24 ===== */
 @media (min-width:80rem){
   .screen--reading.screen-layout--reading .reading-intro{
     max-width:42rem;
@@ -9867,7 +9834,6 @@
 }
 
 
-/* ===== Reading experience refinement 2026-09-24 v2 ===== */
 @media (min-width:80rem){
   .screen--reading.screen-layout--reading [data-reading-card][hidden],
   .screen--reading.screen-layout--reading .reading-empty[hidden],
@@ -10199,7 +10165,6 @@
 }
 
 
-/* ===== PC Condition Compare V3 experience 2026-09-24 ===== */
 @media (min-width:80rem){
   .screen--simulation.screen-layout--simulation.simulation-v3{
     width:min(100%,84rem) !important;
@@ -10566,7 +10531,6 @@
 }
 
 
-/* ===== PC Condition Compare V3 reversible controls 2026-09-24 ===== */
 @media (min-width:80rem){
   .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button{
     min-height:2.15rem;
@@ -10604,7 +10568,6 @@
 }
 
 
-/* ===== PC Condition Compare V3 typography refinement 2026-09-24 ===== */
 @media (min-width:80rem){
   .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head>p{
     font-size:.92rem;
@@ -10674,7 +10637,6 @@
 }
 
 
-/* ===== PC Condition Compare V3 readability final 2026-09-24 ===== */
 @media (min-width:80rem){
   .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-adjust button,
   .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head small,
@@ -10689,7 +10651,6 @@
 }
 
 
-/* ===== PC Interpretation V4 wide dashboard 2026-09-24 ===== */
 @media (min-width:64rem){
   .interpretation-room--dashboard,
   .interpretation-room--selected-v4{
@@ -10846,7 +10807,6 @@
 }
 
 
-/* ===== PC mobile-only GPS separation 2026-09-24 ===== */
 @media (min-width:55rem){
   .screen--plan .plan-measure-link{
     display:none !important;
@@ -10861,7 +10821,6 @@
 }
 
 
-/* ===== PC Interpretation V4 detail fit audit 2026-09-24 ===== */
 @media (min-width:55rem){
   .interpretation-room--selected-v4{
     width:min(100%,96rem) !important;
@@ -10898,7 +10857,6 @@
 }
 
 
-/* ===== PC Condition Compare idle state 2026-09-24 ===== */
 @media (min-width:80rem){
   .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-result--idle{
     padding:1rem;
@@ -10924,7 +10882,6 @@
 }
 
 
-/* ===== PC Interpretation V4 screenshot final pass 2026-09-24 ===== */
 @media (min-width:55rem){
   .interpretation-room-section-title--dense{
     grid-template-columns:minmax(18rem,.9fr) minmax(0,1.1fr) !important;
@@ -10983,7 +10940,6 @@
 }
 
 
-/* ===== PC Interpretation selected detail layout repair 2026-09-24 ===== */
 @media (min-width:55rem){
   .app-shell--immersive .app-main,
   .screen--interpretation-room,
@@ -11084,7 +11040,6 @@
 }
 
 
-/* ===== PC Interpretation immersive full desktop canvas 2026-09-24 ===== */
 @media (min-width:80rem){
   #app>.app-shell.app-shell--immersive{
     width:100% !important;
@@ -11109,7 +11064,6 @@
 }
 
 
-/* ===== PC Interpretation independent selected columns 2026-09-24 ===== */
 @media (min-width:55rem){
   .interpretation-room--selected-v4{
     width:min(100%,90rem) !important;
