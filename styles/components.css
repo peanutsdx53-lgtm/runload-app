@@ -95,8 +95,8 @@
 .fact-grid dd { margin: var(--space-1) 0 0; font-weight: 750; overflow-wrap: anywhere; }
 .fact-grid__wide { grid-column: 1 / -1; }
 .result-card, .home-summary-card, .home-compact-card, .daily-suggestion, .home-reading-card, .body-part-focus, .editorial-summary, .next-action { display: grid; gap: var(--space-5); padding: clamp(1.1rem, 3vw, 2rem); border: 1px solid var(--color-line); border-radius: var(--radius-large); background: var(--color-surface); box-shadow: var(--shadow-card); }
-.result-card__heading, .home-summary-card__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
-.result-card__heading p, .home-summary-card__header p, .home-compact-card > div > p:first-child, .daily-suggestion > p:first-child, .home-reading-card > div > p:first-child, .body-part-focus > div > p:first-child, .editorial-summary > p:first-child { margin-bottom: var(--space-1); color: var(--color-accent); font-size: 0.75rem; font-weight: 850; letter-spacing: 0.12em; }
+.result-card__heading{ display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+.result-card__heading p, .home-compact-card > div > p:first-child, .daily-suggestion > p:first-child, .home-reading-card > div > p:first-child, .body-part-focus > div > p:first-child, .editorial-summary > p:first-child { margin-bottom: var(--space-1); color: var(--color-accent); font-size: 0.75rem; font-weight: 850; letter-spacing: 0.12em; }
 .result-card__heading h2, .home-summary-card h2, .home-compact-card h2, .daily-suggestion h2, .home-reading-card h2, .body-part-focus h2, .editorial-summary h2, .next-action h2 { margin-bottom: 0; font-family: var(--font-editorial); font-size: clamp(1.35rem, 4vw, 2rem); }
 .source-boundary { margin-bottom: 0; padding-top: var(--space-3); border-top: 1px solid var(--color-line); color: var(--color-muted); font-size: 0.9rem; }
 .model-total, .part-share { display: flex; align-items: baseline; gap: var(--space-3); }
@@ -130,10 +130,8 @@
 .next-action--consult, .next-action--urgent, .lead-action-card--attention { border-color: var(--color-attention-border); background: var(--color-attention-soft); }
 .context-navigation { min-height: 2.75rem; display: flex; align-items: center; }
 .context-navigation a { color: var(--color-accent-strong); font-weight: 800; }
-.two-column-layout, .home-two-column { display: grid; gap: var(--space-4); }
+.two-column-layout{ display: grid; gap: var(--space-4); }
 .screen-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-.home-summary-card__lead { font-family: var(--font-editorial); font-size: 1.5rem; font-weight: 800; }
-.home-summary-card__meta { color: var(--color-muted); }
 .daily-suggestion { border-left: 6px solid var(--color-accent); }
 .rest-distribution { padding: var(--space-5); border: 1px dashed var(--color-line); border-radius: var(--radius-medium); color: var(--color-muted); }
 
@@ -222,10 +220,6 @@
 .plan-candidate,
 .share-report {
   min-width: 0;
-}
-:is(.result-card, .home-summary-card, .home-compact-card, .home-start-steps, .home-record-overview, .form-section, .filter-panel, .data-management, .share-report, .history-item, .saved-plan, .plan-candidate, .numbered-detail-card, .finish-state-sheet, .finish-closed-card, .finish-data-tools) {
-  border-color: var(--color-line);
-  background: var(--color-surface);
 }
 .screen-actions,
 .lead-action-card__actions,
@@ -545,8 +539,7 @@
 
 /* 文字拡大・高コントラスト・狭幅の横断調整 */
 @media (max-width: 35rem) {
-  .result-card__heading,
-  .home-summary-card__header { display: grid; }
+  .result-card__heading{ display: grid; }
   .status-label { justify-self: start; }
 }
 @media (prefers-contrast: more) {
@@ -565,8 +558,7 @@
 
 /* 局所的な画面移動リンクにも共通タッチ寸法を確保する */
 .context-navigation a,
-.history-calendar__day a,
-.weekly-day-card a {
+.history-calendar__day a{
   min-width: var(--touch-target);
   min-height: var(--touch-target);
   display: inline-flex;

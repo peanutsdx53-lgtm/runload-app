@@ -5,17 +5,15 @@
 @media (forced-colors: active) {  .primary-navigation__link.is-current,
   .button--primary { border: 2px solid ButtonText; }
 }.record-form { display: grid; gap: var(--space-5); }.subjective-details,
-.safety-details { display: grid; gap: var(--space-5); }.home-summary-card__body { max-width: 48rem; }
+.safety-details { display: grid; gap: var(--space-5); }
 @media (min-width: 42rem) {  .field-grid--two,
-  .two-column-layout,
-  .home-two-column { grid-template-columns: repeat(2, minmax(0, 1fr)); }  .field-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }  .field-grid--four { grid-template-columns: repeat(2, minmax(0, 1fr)); }  .next-action,
+  .two-column-layout{ grid-template-columns: repeat(2, minmax(0, 1fr)); }  .field-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }  .field-grid--four { grid-template-columns: repeat(2, minmax(0, 1fr)); }  .next-action,
   .home-reading-card,
   .body-part-focus { grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.7fr); align-items: center; }  .next-action { grid-template-columns: minmax(0, 1fr) auto; }
 }
 @media (min-width: 64rem) {  .field-grid--four { grid-template-columns: repeat(4, minmax(0, 1fr)); }  .distribution-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-@media (max-width: 35rem) {  .body-map { grid-template-columns: 1fr 1fr; }  .body-map__view:last-child { grid-column: 1 / -1; width: 50%; justify-self: center; }  .fact-grid { grid-template-columns: 1fr; }  .fact-grid__wide { grid-column: auto; }  .result-card__heading,
-  .home-summary-card__header { display: grid; }
+@media (max-width: 35rem) {  .body-map { grid-template-columns: 1fr 1fr; }  .body-map__view:last-child { grid-column: 1 / -1; width: 50%; justify-self: center; }  .fact-grid { grid-template-columns: 1fr; }  .fact-grid__wide { grid-column: auto; }  .result-card__heading{ display: grid; }
 }
 @media print {  .form-submit-area,
   .screen-actions,
@@ -84,64 +82,24 @@
 }/* ホーム・入力・結果の情報階層 */
 .lead-action-card__actions,
 .form-submit-actions,
-.record-management-links > div:last-child,
-.home-start-steps__links,
-.home-record-overview__links {
+.record-management-links > div:last-child{
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
   align-items: center;
-}.home-start-steps {
-  display: grid;
-  gap: var(--space-5);
-  padding: clamp(1.1rem, 3vw, 2rem);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-large);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-}.home-start-steps ol {
-  display: grid;
-  gap: var(--space-3);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}.home-start-steps li {
-  display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  gap: var(--space-3);
-  align-items: start;
-  padding-block: var(--space-3);
-  border-top: 1px solid var(--color-line);
-}.home-start-steps li > span {
-  display: grid;
-  width: 2.5rem;
-  min-height: 2.5rem;
-  place-items: center;
-  border-radius: 999px;
-  background: var(--color-accent-soft);
-  color: var(--color-accent-strong);
-  font-weight: 850;
-}.home-start-steps li strong { display: block; margin-bottom: var(--space-1); }.home-start-steps li p { color: var(--color-muted); }.home-record-overview {
-  display: grid;
-  gap: var(--space-4);
-  padding: clamp(1.1rem, 3vw, 2rem);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-large);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-}.home-record-overview > div:first-child > p:first-child,
+}
 .record-management-links > div:first-child > p:first-child {
   margin-bottom: var(--space-1);
   color: var(--color-accent);
   font-size: 0.75rem;
   font-weight: 850;
   letter-spacing: 0.12em;
-}.home-record-overview h2,
+}
 .record-management-links h2 {
   margin-bottom: var(--space-2);
   font-family: var(--font-editorial);
   font-size: clamp(1.25rem, 4vw, 1.8rem);
-}.home-record-overview__links { align-items: flex-start; flex-direction: column; }.home-reading-card--compact { border-left: 5px solid var(--color-accent); }.form-disclosure--profile { border-style: solid; }.form-disclosure--optional { scroll-margin-top: 5rem; }.form-disclosure summary .disclosure-status {
+}.form-disclosure--profile { border-style: solid; }.form-disclosure--optional { scroll-margin-top: 5rem; }.form-disclosure summary .disclosure-status {
   flex: 0 0 auto;
   padding: 0.25rem 0.55rem;
   border-radius: 999px;
@@ -174,14 +132,14 @@
   background: var(--color-surface);
 }
 
-@media (min-width: 48rem) {  .home-start-steps ol { grid-template-columns: repeat(3, minmax(0, 1fr)); }  .home-start-steps li { grid-template-columns: 2.75rem minmax(0, 1fr); border-top: 0; border-left: 1px solid var(--color-line); padding: var(--space-2) var(--space-4); }  .home-start-steps li:first-child { border-left: 0; padding-left: 0; }  .record-management-links { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+@media (min-width: 48rem) {  .record-management-links { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
 }
 
 @media (max-width: 47.99rem) {  .choice-grid--primary,
   .choice-grid--detail { grid-template-columns: 1fr; }  .form-submit-area { grid-template-columns: 1fr; }  .form-submit-actions { width: 100%; }  .form-submit-actions .button { flex: 1 1 12rem; }
 }
 
-@media print {  .home-start-steps__links,
+@media print {
   .record-management-links,
   .result-followup { display: none !important; }
 }
@@ -253,7 +211,6 @@
   cursor: pointer;
   font-weight: 850;
 }.body-part-navigation > div { margin-top: var(--space-3); }
-.weekly-next-action,
 .finish-action-sheet {
   display: grid;
   gap: var(--space-4);
@@ -262,54 +219,37 @@
   border-left: 5px solid var(--color-accent);
   background: var(--color-accent-soft);
 }
-.weekly-next-action > div > p:first-child,
 .finish-action-sheet > div > p:first-child {
   margin: 0;
   color: var(--color-accent);
   font-size: 0.75rem;
   font-weight: 850;
   letter-spacing: 0.12em;
-}
-.weekly-navigation {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}.history-calendar,
-.weekly-day-grid {
+}.history-calendar{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 7.5rem), 1fr));
   gap: var(--space-2);
   margin: 0;
   padding: 0;
   list-style: none;
-}.history-calendar__day,
-.weekly-day-card {
+}.history-calendar__day{
   min-width: 0;
   display: grid;
   gap: var(--space-2);
   padding: var(--space-3);
   border-top: 4px solid var(--color-line);
   background: var(--color-surface);
-}
-.weekly-day-card--run { border-top-color: var(--color-accent); }
-.weekly-day-card--rest { border-top-color: var(--color-rest); }.history-calendar__day a,
-.weekly-day-card a { font-weight: 800; }.subjective-coverage,
-.weekly-load-comparison {
+}.history-calendar__day a{ font-weight: 800; }.subjective-coverage{
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
   background: var(--color-line);
-}.subjective-coverage > div,
-.weekly-load-comparison > div {
+}.subjective-coverage > div{
   display: grid;
   gap: var(--space-1);
   padding: var(--space-4);
   background: var(--color-surface);
-}.subjective-coverage strong,
-.weekly-load-comparison strong { font-family: var(--font-editorial); font-size: 1.8rem; }.compact-link-list { display: grid; gap: var(--space-2); padding-left: 1.25rem; }.course-group-list,
-.weekly-plan-list { display: grid; gap: var(--space-3); }.course-group-list article,
-.weekly-plan-list article { padding: var(--space-4); border: 1px solid var(--color-line); background: var(--color-surface); }.course-group-list dl { display: grid; gap: var(--space-2); margin: 0; }.course-group-list dl > div { display: flex; justify-content: space-between; gap: var(--space-3); }.course-group-list dd { margin: 0; font-weight: 800; }.history-record-browser { display: grid; gap: var(--space-4); }.weekly-period-heading { padding-block: var(--space-4); border-block: 5px double var(--color-ink); }.weekly-period-heading h2 { margin-bottom: var(--space-2); font-family: var(--font-editorial); font-size: clamp(1.8rem, 6vw, 3.4rem); }.weekly-day-card > div:first-child { display: flex; justify-content: space-between; gap: var(--space-2); color: var(--color-muted); font-weight: 800; }.weekly-day-card p,
-.weekly-day-card small { margin: 0; color: var(--color-muted); }.weekly-plan-list article > div:first-child { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }.finish-state-sheet,
+}.subjective-coverage strong{ font-family: var(--font-editorial); font-size: 1.8rem; }.compact-link-list { display: grid; gap: var(--space-2); padding-left: 1.25rem; }.course-group-list{ display: grid; gap: var(--space-3); }.course-group-list article{ padding: var(--space-4); border: 1px solid var(--color-line); background: var(--color-surface); }.course-group-list dl { display: grid; gap: var(--space-2); margin: 0; }.course-group-list dl > div { display: flex; justify-content: space-between; gap: var(--space-3); }.course-group-list dd { margin: 0; font-weight: 800; }.history-record-browser { display: grid; gap: var(--space-4); }.finish-state-sheet,
 .finish-closed-card,
 .finish-data-tools {
   display: grid;
@@ -321,9 +261,7 @@
 }.finish-action-stack { display: grid; gap: var(--space-2); }.finish-closed-card { justify-items: start; border-block: 6px solid var(--color-ink); }.finish-closed-card__mark { display: grid; place-items: center; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--color-accent); color: var(--color-on-accent); font-size: 2rem; font-weight: 900; }.finish-closed-card > h2 { font-family: var(--font-editorial); font-size: clamp(1.8rem, 6vw, 3.5rem); }.finish-data-tools > summary { min-height: 3rem; display: flex; align-items: center; cursor: pointer; font-weight: 850; }.finish-data-tools__body { display: grid; gap: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--color-line); }
 
 @media (min-width: 42rem) {
-  .weekly-next-action,
-  .finish-action-sheet { grid-template-columns: minmax(0, 1fr) auto; }  .course-group-list,
-  .weekly-plan-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .finish-action-sheet { grid-template-columns: minmax(0, 1fr) auto; }  .course-group-list{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 35rem) {  .numbered-detail-card { grid-template-columns: 1fr; }  .numbered-detail-card__number { border-bottom: 1px solid var(--color-line); }
 }
@@ -333,28 +271,21 @@
   .finish-closed-card { border: 2px solid ButtonText; }
 }
 @media print {
-  .weekly-navigation,
   .finish-data-tools,
   .body-part-navigation { display: none !important; }  .numbered-detail-card,
-  .weekly-next-action,
   .finish-state-sheet,
   .finish-closed-card,
   .result-card { break-inside: avoid; box-shadow: none; }
 }/* 画面間でカード境界と狭幅表示を統一 */
 .related-body-parts,
 .body-part-navigation,
-.weekly-next-action,
 .finish-action-sheet,
 .course-group-list article,
-.weekly-plan-list article,
-.history-calendar__day,
-.weekly-day-card {
+.history-calendar__day{
   border-radius: var(--radius-medium);
-}.history-calendar__day,
-.weekly-day-card { border: 1px solid var(--color-line); border-top-width: 4px; }
+}.history-calendar__day{ border: 1px solid var(--color-line); border-top-width: 4px; }
 @media (max-width: 35rem) {
-  .subjective-coverage,
-  .weekly-load-comparison { grid-template-columns: 1fr; }  .weekly-navigation > .button { flex: 1 1 8rem; }
+  .subjective-coverage{ grid-template-columns: 1fr; }
 }
 
 /* 画面横断の操作性と利用者向け用語 */
@@ -368,15 +299,6 @@
   border-color: var(--color-accent);
   background: var(--color-accent-soft);
   box-shadow: var(--shadow-card);
-}.screen--home :is(.button--secondary, .home-start-steps__links .text-link, .home-record-overview__links .text-link) {
-  border: 1px solid color-mix(in srgb, var(--color-accent) 52%, var(--color-line));
-  background: var(--color-accent-soft);
-  color: var(--color-accent-strong);
-}.screen--home :is(.home-start-steps__links .text-link, .home-record-overview__links .text-link) {
-  min-height: var(--touch-target);
-  padding: var(--space-2) var(--space-4);
-  border-radius: 999px;
-  text-decoration: none;
 }.screen--home :is(.feature-link-card, .button, .text-link):focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 4px;
@@ -1353,9 +1275,7 @@ and minimal personal note */
   .model-total-trend__point,
   .model-total-trend__average { stroke: CanvasText; }  .model-total-trend__point.is-current { fill: CanvasText; }
 }
-@media (min-width: 50rem) {  .weekly-load-comparison {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+@media (min-width: 50rem) {
 }/* 入力とホームの操作ボタンはカードと同化しない形にそろえる。 */
 .record-course-entry__actions,
 .record-subjective-entry__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }.record-course-entry__actions .button,
@@ -1423,35 +1343,6 @@ and minimal personal note */
 .screen--record-input .record-personal-entry .button--secondary:hover {
   background: color-mix(in srgb, var(--color-accent-soft) 70%, var(--color-surface));
   box-shadow: 0 8px 18px color-mix(in srgb, var(--color-accent) 16%, transparent);
-}.home-next-plan-card {
-  align-content: start;
-  gap: var(--space-4);
-}.home-next-plan-card .button {
-  align-self: start;
-  justify-self: start;
-  margin-top: 0;
-}.home-next-plan-card__content {
-  display: grid;
-  gap: var(--space-3);
-}.home-next-plan-card__content > p { margin-bottom: 0; }.home-next-plan-card__notes {
-  display: grid;
-  gap: var(--space-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}.home-next-plan-card__notes li {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--color-muted);
-  font-size: 0.95rem;
-}.home-next-plan-card__notes li::before {
-  content: "";
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 999px;
-  background: var(--color-accent-soft);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 45%, var(--color-line));
 }/* 履歴分析の折りたたみは開閉操作を明確にする。 */
 .history-detail-disclosure,
 .history-record-browser--collapsed {
@@ -1540,20 +1431,7 @@ and minimal personal note */
 }
 @media (forced-colors: active) {
 }
-
-/* 週の振り返りは週まとめと詳細グラフを分ける。 */
-/* 週の振り返りは週まとめと詳細グラフを分ける。 */
-.weekly-keypoints-layout {
-  display: grid;
-  gap: var(--space-5);
-  align-items: start;
-}.weekly-keypoints-layout h3 {
-  margin-bottom: var(--space-3);
-  font-size: 1rem;
-}.weekly-load-comparison--compact {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
-}.weekly-detail-disclosure > .result-card { box-shadow: none; }
-@media (min-width: 48rem) {  .weekly-keypoints-layout { grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.85fr); }
+@media (min-width: 48rem) {
 }
 @media (forced-colors: active) {
 }
@@ -1793,12 +1671,6 @@ and minimal personal note */
     min-width: 46rem;
     grid-template-columns: repeat(7, minmax(5.75rem, 1fr));
   }
-}.home-next-plan-card__policy {
-  color: var(--color-ink);
-  font-family: var(--font-editorial);
-  font-size: clamp(1.15rem, 2.8vw, 1.55rem);
-  font-weight: 900;
-  line-height: 1.28;
 }.record-course-library-save {
   margin-block: var(--space-4);
 }.record-course-library-save__choice {
@@ -2127,7 +1999,7 @@ and minimal personal note */
   margin: 0;
   padding: var(--space-4);
   border-top: 1px solid var(--color-line);
-}.settings-advanced > summary span { display: grid; gap: var(--space-1); }.settings-advanced > summary small { color: var(--color-muted); font-weight: 600; }.settings-advanced__body > .settings-fieldset { margin: 0; }.home-current-state { display: grid; gap: var(--space-4); }
+}.settings-advanced > summary span { display: grid; gap: var(--space-1); }.settings-advanced > summary small { color: var(--color-muted); font-weight: 600; }.settings-advanced__body > .settings-fieldset { margin: 0; }
 @media (min-width: 42rem) {  .plan-flow-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }.settings-data-management {
   margin-top: var(--space-5);

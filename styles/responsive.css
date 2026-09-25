@@ -255,11 +255,6 @@ input, select, textarea {
 .screen--home .lead-action-card h2 { margin: 7px 0 0; font-size: 21px; line-height: 1.35; }
 .screen--home .lead-action-card p { margin-top: 5px; font-size: 13px; }
 .screen--home .lead-action-card__actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.screen--home .home-current-state { gap: 11px; }
-.screen--home .home-two-column { gap: 10px; }
-.screen--home :is(.home-summary-card, .home-next-plan-card) { gap: 12px; padding: 14px; }
-.screen--home .home-summary-card__lead { font-size: 18px; }
-.screen--home .home-start-steps { border: 0; box-shadow: none; background: transparent; }
 
 /* --- Record fidelity --- */
 .screen--record-input { max-width: var(--app-form-width); margin-inline: auto; gap: 12px; }
@@ -418,7 +413,6 @@ input, select, textarea {
   .screen--home .lead-action-card { grid-template-columns: 1fr; padding: 14px 13px; }
   .screen--home .lead-action-card__actions { width: 100%; }
   .screen--home .lead-action-card__actions .button { flex: 1 1 10rem; }
-  .screen--home .home-two-column { grid-template-columns: 1fr; }
   .screen--result .body-map { gap: 4px; }
 
   .screen--more .feature-link-card { grid-template-columns: 34px minmax(0, 1fr); }
@@ -463,7 +457,6 @@ input, select, textarea {
     box-shadow: none;
   }
   .primary-navigation__link--desktop-only { display: grid; }
-  .screen--home .home-two-column { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media print {
