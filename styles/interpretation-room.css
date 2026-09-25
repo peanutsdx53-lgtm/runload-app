@@ -1,6 +1,5 @@
-/* RunLoad Interpretation Engine V2 presentation.
-   The interpretation room is a result-derived workspace: current facts first,
-   reason-based region navigation second, detail/evidence progressively disclosed. */
+/* Result interpretation presentation.
+   Current facts come first, followed by region navigation and progressively disclosed detail. */
 
 .app-shell--immersive {
   padding-bottom: 0;
@@ -1003,7 +1002,7 @@
 }
 
 
-/* ===== Interpretation Room V3 experience ===== */
+/* ===== Interpretation workspace ===== */
 .interpretation-room{
   width:min(100%,84rem);
   gap:1.4rem;
