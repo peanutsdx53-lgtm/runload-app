@@ -27,7 +27,10 @@ Domain and deterministic interpretation logic only.
 - `internal/v27ApplicationModel.js`: V2.7 application-level math and model calculation.
 - `internal/applicationStorage.js`: course storage, restore inspection, backup, and public-help data boundaries.
 - `internal/v27ApplicationServices.js`: V2.7 personal/input adaptation and stored-result services.
-- `internal/workflows.js`: record, history, and planning workflows.
+- `internal/recordWorkflow.js`: record-save workflow and model-result persistence.
+- `internal/historyWorkflow.js`: history loading, deletion, undo, and compatibility handling.
+- `internal/planPreview.js`: deterministic plan-preview construction.
+- `internal/planWorkflow.js`: plan creation and persistence workflow.
 - `internal/evidenceData.js`: evidence metadata used by the reading layer.
 - `internal/readingCatalog.js`: current reading article catalog and source associations.
 - `internal/readingService.js`: reading lookup, recommendation, and related-content service.

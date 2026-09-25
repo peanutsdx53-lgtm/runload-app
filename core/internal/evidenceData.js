@@ -1,4 +1,4 @@
-import "./workflows.js";
+import "./planWorkflow.js";
 import { internalModules } from "./modules.js";
 
 // ===== data/evidenceGovernanceData.js =====
