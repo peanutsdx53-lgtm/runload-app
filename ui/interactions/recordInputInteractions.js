@@ -117,7 +117,7 @@ function deriveModelSurfaceRepresentation(shares = {}) {
   };
 }
 
-export function readCourse(formData, distanceKm = 0) {
+function readCourse(formData, distanceKm = 0) {
   const gradeInputMode = String(formData.get("gradeInputMode") || "UNKNOWN");
   const sections = gradeInputMode === "SECTIONS" ? readCourseSections(formData, distanceKm) : [];
   const shares = Object.fromEntries(SURFACE_FIELDS.map(({ recordKey }) => [recordKey, numberValue(formData, recordKey)]));
@@ -147,7 +147,7 @@ export function readCourse(formData, distanceKm = 0) {
   };
 }
 
-export const COURSE_FORM_FIELDS = Object.freeze([
+const COURSE_FORM_FIELDS = Object.freeze([
   ["id", "courseId"],
   ["name", "courseName"],
   ["routePattern", "routePattern"],
@@ -187,7 +187,7 @@ export function courseFormValues(course = {}) {
   }));
 }
 
-export function applyCoursePresetToForm(form, course = {}) {
+function applyCoursePresetToForm(form, course = {}) {
   const values = courseFormValues(course);
   COURSE_FORM_FIELDS.forEach(([, formName]) => {
     const control = form?.elements?.namedItem?.(formName) || form?.querySelector?.(`[name="${formName}"]`);
@@ -726,7 +726,7 @@ function confirmFcrInputDomain(record = {}, confirmAction = window.confirm) {
   return true;
 }
 
-export function readRecordInput(formData, services) {
+function readRecordInput(formData, services) {
   const planId = String(formData.get("planId") || "");
   const plan = planId ? services.storage.plans.findById(planId) : null;
   const activityType = String(formData.get("activityType") || "run");
