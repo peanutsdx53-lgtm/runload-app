@@ -50,7 +50,62 @@ jobs:
             echo "=== GENERATION TOKENS ==="
             grep -R -n -E '(--v[0-9]+|[-_]v[0-9]+|\bV[0-9]+\b)' app.js service-worker.js index.html manifest.webmanifest core screens ui styles docs README.md tests 2>/dev/null || true
           } > cleanup-audit.txt
+      - name: Generate module reachability report
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+
+          const roots=['core','screens','ui'];
+          const all=['app.js'];
+          for(const root of roots){
+            const walk=(dir)=>{
+              for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+                const full=path.join(dir,entry.name);
+                if(entry.isDirectory()) walk(full);
+                else if(entry.isFile()&&full.endsWith('.js')) all.push(full.replaceAll('\\','/'));
+              }
+            };
+            walk(root);
+          }
+          const files=new Set(all);
+          const imports=new Map();
+          const pattern=/\bimport\s+(?:[\s\S]*?\s+from\s+)?["']([^"']+)["']|\bimport\s*\(\s*["']([^"']+)["']\s*\)/g;
+          for(const file of files){
+            const source=fs.readFileSync(file,'utf8');
+            const deps=[];
+            for(const match of source.matchAll(pattern)){
+              const spec=match[1]||match[2];
+              if(!spec?.startsWith('.')) continue;
+              let resolved=path.normalize(path.join(path.dirname(file),spec)).replaceAll('\\','/');
+              if(!path.extname(resolved)) resolved+='.js';
+              deps.push(resolved);
+            }
+            imports.set(file,deps);
+          }
+          const seen=new Set();
+          const visit=(file)=>{
+            if(seen.has(file)||!files.has(file)) return;
+            seen.add(file);
+            for(const dep of imports.get(file)||[]) visit(dep);
+          };
+          visit('app.js');
+          const unreachable=[...files].filter(file=>file!=='app.js'&&!seen.has(file)).sort();
+          const report=[
+            '=== MODULE REACHABILITY FROM app.js ===',
+            `runtime modules: ${files.size-1}`,
+            `reachable modules: ${seen.size-1}`,
+            `unreachable modules: ${unreachable.length}`,
+            '',
+            ...unreachable,
+            ''
+          ].join('\n');
+          fs.writeFileSync('module-reachability.txt',report);
+          NODE
       - uses: actions/upload-artifact@v4
         with:
           name: codebase-cleanup-audit
-          path: cleanup-audit.txt
+          path: |
+            cleanup-audit.txt
+            module-reachability.txt
