@@ -36,13 +36,13 @@ jobs:
         run: |
           {
             echo "=== BRAND TERMS ==="
-            grep -R -n -E 'RunLoad|Runload|runload' app.js service-worker.js index.html manifest.webmanifest core screens ui styles docs README.md tests 2>/dev/null || true
+            grep -R -n -E 'RUNLOAD|RunLoad|Runload|runload' app.js service-worker.js index.html manifest.webmanifest core screens ui styles docs README.md tests 2>/dev/null || true
             echo
             echo "=== JOURNAL TERMS ==="
-            grep -R -n -E 'Journal|journal' app.js service-worker.js index.html manifest.webmanifest core screens ui styles docs README.md tests 2>/dev/null || true
+            grep -R -n -E 'JOURNAL|Journal|journal' app.js service-worker.js index.html manifest.webmanifest core screens ui styles docs README.md tests 2>/dev/null || true
             echo
             echo "=== DEVELOPMENT TERMS ==="
-            grep -R -n -E 'prototype|candidate|audit|handoff|temporary|tmp' app.js service-worker.js index.html manifest.webmanifest core screens ui styles docs README.md tests 2>/dev/null || true
+            grep -R -n -E 'SECOND_PILLAR|secondPillar|prototype|candidate|audit|handoff|temporary|tmp' app.js service-worker.js index.html manifest.webmanifest core screens ui styles docs README.md tests 2>/dev/null || true
             echo
             echo "=== HASH TERMS ==="
             grep -R -n -E 'SHA-256|SHA256|sha256' app.js service-worker.js index.html manifest.webmanifest core screens ui styles docs README.md tests 2>/dev/null || true
