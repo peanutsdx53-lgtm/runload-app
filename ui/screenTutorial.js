@@ -1,5 +1,6 @@
+import { LEGACY_TUTORIAL_STORAGE_KEY } from "../core/legacyCompatibility.js";
+
 const SCREEN_TUTORIAL_STORAGE_KEY = "running-record.screenTutorial.seen.v1";
-const LEGACY_TUTORIAL_STORAGE_KEY = "runload.screenTutorial.seen.v1";
 
 const SCREEN_TUTORIALS = Object.freeze({
   start: Object.freeze({
