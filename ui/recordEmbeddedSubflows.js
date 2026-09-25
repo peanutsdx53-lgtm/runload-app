@@ -98,5 +98,3 @@ export function renderEmbeddedPersonalSubflow(record = {}, settings = {}) {
   </section></main></div>`;
 }
 
-export const RECORD_CONSULTATION_FLAG_KEYS = CONSULTATION_FLAG_KEYS;
-export const RECORD_REGIONAL_AREA_IDS = Object.freeze([...REGIONAL_AREA_IDS]);
