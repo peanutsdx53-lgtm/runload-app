@@ -22,7 +22,7 @@ export function slopeSummary(course = {}) {
   return `${uphill} ／ ${downhill}`;
 }
 
-export function surfaceInputSummary(course = {}) {
+function surfaceInputSummary(course = {}) {
   const mode = String(course.surfaceInputMode || "").toUpperCase();
   if (mode === "MIXED") return "複数路面の割合";
   if (mode === "SINGLE") return "主な路面1種類";
