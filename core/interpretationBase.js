@@ -2,8 +2,8 @@
 // Deterministic, read-only interpretation of persisted calculation outputs.
 // This module does not calculate or modify Primary Regional Reference-100 or ROF-J values.
 
-export const INTERPRETATION_BASE_VERSION = "runload-interpretation-core-v1.1";
-export const INTERPRETATION_BASE_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V2";
+export const INTERPRETATION_BASE_VERSION = "interpretation-base-v1.1";
+export const INTERPRETATION_BASE_SCHEMA_VERSION = "INTERPRETATION_BASE_OUTPUT_V2";
 export const INTERPRETATION_BASE_EVIDENCE_CONTRACT = "PERSISTED_RESULT_PROVENANCE_V1";
 
 const NORMAL_PLAN_BLOCK = "normal_plan_suggestions";
