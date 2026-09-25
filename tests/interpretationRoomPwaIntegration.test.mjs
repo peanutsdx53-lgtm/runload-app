@@ -19,7 +19,7 @@ await test('PWA-PRECACHE-EXCLUDES-RETIRED-ACTIVATION-SCREEN',async()=>{
 
 await test('PWA-STABLE-CACHE-NAME-RETAINED',async()=>{
   const sw=await source('service-worker.js');
-  assert.match(sw,/const CACHE_NAME = "runload-app-runtime-v1";/);
+  assert.match(sw,/const CACHE_NAME = "running-record-app-runtime-v1";/);
 });
 
 await test('PWA-ACTIVATE-PRUNES-STALE-SAME-CACHE-RESOURCES',async()=>{
