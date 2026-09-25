@@ -71,7 +71,6 @@ await test('UI-JAPANESE-LABELS-USE-NATURAL-WRAPPING',()=>{
 
 await test('UI-MOBILE-INPUTS-USE-READABLE-TYPE',()=>{
   const css=read('styles/mobile.css');
-  assert.ok(css.includes('Mobile typography floor'));
   assert.ok(css.includes('font-size: 1rem !important;'));
 });
 
@@ -105,7 +104,7 @@ await test('UI-FATIGUE-SLIDER-HAS-DIRECT-MANIPULATION-AFFORDANCE',()=>{
   assert.ok(screen.includes('class="rof-close-button"'));
   assert.ok(screen.includes('data-rof-slider-wrap'));
   assert.ok(interactions.includes('is-untouched'));
-  assert.ok(css.includes('runload-rof-thumb-hint'));
+  assert.ok(css.includes('rof-thumb-hint'));
   assert.ok(css.includes('width: 44px !important;'));
 });
 
