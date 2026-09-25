@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createApplicationServices, createMemoryStorage } from '../core/runloadCore.js';
+import { createApplicationServices, createMemoryStorage } from '../core/appCore.js';
 import {
   INTERPRETATION_BASE_VERSION,
   INTERPRETATION_BASE_SCHEMA_VERSION,
