@@ -9,12 +9,6 @@ export const SUBJECTIVE_STATUS_LABELS = Object.freeze({
   strong_reported: "相談したい内容を記録",
 });
 
-export const SUPPORT_ROUTE_LABELS = Object.freeze({
-  normal: "通常の振り返り",
-  review: "身体の記録を確認",
-  consult: "相談準備を優先",
-  urgent: "公的な相談先を確認",
-});
 
 export const SAFETY_FLAG_LABELS = Object.freeze({
   severePain: "強い痛み",
@@ -62,7 +56,7 @@ export function formatActivitySummary(record = {}) {
   return items.length ? items.join("・") : "走行を記録";
 }
 
-export function getActiveSurfaceLabels(record = {}) {
+) {
   return SURFACE_FIELDS
     .map(({ recordKey, label }) => ({ label, value: Number(record.course?.[recordKey] || 0) }))
     .filter((item) => item.value > 0)
@@ -70,7 +64,7 @@ export function getActiveSurfaceLabels(record = {}) {
 }
 
 
-export function getEnteredBodyAreaObservations(feedback = {}) {
+) {
   return Array.isArray(feedback?.bodyAreaObservations)
     ? feedback.bodyAreaObservations.filter((item) => item && item.areaId)
     : [];
