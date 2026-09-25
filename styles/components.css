@@ -102,10 +102,6 @@
 .model-total, .part-share { display: flex; align-items: baseline; gap: var(--space-3); }
 .model-total strong, .part-share strong { font-family: var(--font-numeric); font-size: clamp(2.7rem, 10vw, 5rem); font-weight: 800; line-height: 1; letter-spacing: -0.025em; }
 .model-total span, .part-share span { color: var(--color-muted); font-weight: 800; }
-.subjective-entry-list { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
-.subjective-entry-list article { padding: var(--space-4); border: 1px solid var(--color-line); border-radius: var(--radius-medium); }
-.subjective-entry-list h3 { margin-bottom: var(--space-1); }
-.subjective-entry-list p { margin-bottom: 0; color: var(--color-muted); }
 .safety-flag-summary, .notice-text { padding: var(--space-4); border-left: 4px solid var(--color-attention-border); background: var(--color-attention-soft); }
 .body-map { display: grid; gap: var(--space-3); grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .body-map__view { margin: 0; min-width: 0; text-align: center; }
