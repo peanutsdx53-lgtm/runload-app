@@ -4,7 +4,6 @@ const PRECACHE_URLS = [
   "./app.js",
   "./core/interpretationBase.js",
   "./core/interpretationCore.js",
-  "./core/runloadCore.js",
   "./core/appCore.js",
   "./core/internal/moduleRegistry.js",
   "./core/internal/infrastructure.js",
