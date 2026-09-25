@@ -232,12 +232,7 @@
   font-family: var(--font-numeric);
   font-size: 1.4rem;
   font-weight: 850;
-}.numbered-detail-card__content { min-width: 0; }.body-part-position-layout {
-  display: grid;
-  gap: var(--space-5);
-  align-items: center;
-  margin-top: var(--space-4);
-}.body-part-name { display: grid; gap: var(--space-1); }.body-part-name strong { font-family: var(--font-editorial); font-size: clamp(1.6rem, 5vw, 2.8rem); }.body-part-name small { color: var(--color-muted); }.related-body-parts,
+}.numbered-detail-card__content { min-width: 0; }.related-body-parts,
 .body-part-navigation {
   padding: var(--space-5);
   border: 1px solid var(--color-line);
@@ -248,8 +243,7 @@
   display: grid;
   gap: 1px;
   background: var(--color-line);
-}.related-body-parts__links a,
-.body-part-navigation__link {
+}.related-body-parts__links a {
   min-height: 3.25rem;
   display: flex;
   align-items: center;
@@ -264,7 +258,7 @@
   align-items: center;
   cursor: pointer;
   font-weight: 850;
-}.body-part-navigation > div { margin-top: var(--space-3); }.body-part-navigation__link small { color: var(--color-muted); }.history-period-tabs,
+}.body-part-navigation > div { margin-top: var(--space-3); }.history-period-tabs,
 .history-view-tabs {
   display: grid;
   gap: var(--space-2);
@@ -398,8 +392,7 @@
   box-shadow: var(--shadow-card);
 }.finish-action-stack { display: grid; gap: var(--space-2); }.finish-closed-card { justify-items: start; border-block: 6px solid var(--color-ink); }.finish-closed-card__mark { display: grid; place-items: center; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--color-accent); color: var(--color-on-accent); font-size: 2rem; font-weight: 900; }.finish-closed-card > h2 { font-family: var(--font-editorial); font-size: clamp(1.8rem, 6vw, 3.5rem); }.finish-data-tools > summary { min-height: 3rem; display: flex; align-items: center; cursor: pointer; font-weight: 850; }.finish-data-tools__body { display: grid; gap: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--color-line); }
 
-@media (min-width: 42rem) {  .body-part-position-layout,
-  .history-distribution-layout { grid-template-columns: minmax(0, 1.25fr) minmax(14rem, 0.75fr); }  .history-view-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }  .history-anchor-navigation,
+@media (min-width: 42rem) {  .history-distribution-layout { grid-template-columns: minmax(0, 1.25fr) minmax(14rem, 0.75fr); }  .history-view-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }  .history-anchor-navigation,
   .history-week-bridge,
   .weekly-next-action,
   .finish-action-sheet { grid-template-columns: minmax(0, 1fr) auto; }  .history-lead-card { grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr); }  .history-body-part-selector { grid-template-columns: minmax(12rem, 1fr) auto; }  .history-count-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }  .course-group-list,
@@ -1725,8 +1718,7 @@ and minimal personal note */
   min-height: 3rem;
   padding: var(--space-3) var(--space-5);
 }.column-finder .article-count { margin-top: var(--space-2); }/* 結果と部位詳細の読み始めをそろえる。 */
-.result-reading-summary,
-.body-part-quick-summary {
+.result-reading-summary {
   display: grid;
   gap: var(--space-4);
   padding: clamp(1rem, 3vw, 1.6rem);
@@ -1734,13 +1726,11 @@ and minimal personal note */
   border-radius: var(--radius-large);
   background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
   box-shadow: var(--shadow-card);
-}.section-heading--compact { gap: var(--space-1); }.section-heading--compact h2 { font-size: clamp(1.35rem, 4vw, 2rem); }.result-reading-summary__grid,
-.body-part-quick-summary__grid {
+}.section-heading--compact { gap: var(--space-1); }.section-heading--compact h2 { font-size: clamp(1.35rem, 4vw, 2rem); }.result-reading-summary__grid {
   display: grid;
   gap: var(--space-3);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
-}.result-reading-summary__item,
-.body-part-quick-summary__item {
+}.result-reading-summary__item {
   min-width: 0;
   display: grid;
   gap: var(--space-1);
@@ -1752,23 +1742,19 @@ and minimal personal note */
   background: var(--color-surface);
   text-decoration: none;
   color: inherit;
-}.result-reading-summary__item:hover,
-.body-part-quick-summary__item:hover {
+}.result-reading-summary__item:hover {
   border-color: var(--color-accent);
   box-shadow: var(--shadow-soft);
-}.result-reading-summary__item:focus-visible,
-.body-part-quick-summary__item:focus-visible {
+}.result-reading-summary__item:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
   outline-offset: 3px;
-}.result-reading-summary__item span,
-.body-part-quick-summary__item span {
+}.result-reading-summary__item span {
   color: var(--color-accent);
   font-size: 0.78rem;
   font-weight: 850;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}.result-reading-summary__item strong,
-.body-part-quick-summary__item strong {
+}.result-reading-summary__item strong {
   font-family: var(--font-editorial);
   font-size: clamp(1.05rem, 3vw, 1.35rem);
   line-height: 1.25;
@@ -2841,18 +2827,7 @@ and minimal personal note */
   gap: var(--space-3);
   color: var(--color-muted);
   font-size: 0.78rem;
-}.regional-history-chart__axis span:last-child { text-align: right; }.regional-trend-table { overflow-x: auto; }.regional-trend-table table { min-width: 34rem; }.body-part-other-regions {
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-medium);
-  background: var(--color-surface);
-}.body-part-other-regions > summary {
-  min-height: var(--touch-target);
-  display: flex;
-  align-items: center;
-  padding: var(--space-4);
-  cursor: pointer;
-  font-weight: 850;
-}.body-part-other-regions[open] > summary { border-bottom: 1px solid var(--color-line); }.body-part-navigation--collapsed { padding: var(--space-4); }
+}.regional-history-chart__axis span:last-child { text-align: right; }.regional-trend-table { overflow-x: auto; }.regional-trend-table table { min-width: 34rem; }
 
 
 @media (max-width: 48rem) {  .regional-history-chart svg { min-height: 12rem; }  .regional-history-chart__axis { grid-template-columns: 1fr 1fr; }  .regional-history-chart__axis strong { grid-column: 1 / -1; grid-row: 1; text-align: center; }
