@@ -4,7 +4,7 @@ import { BODY_REGION_TERMINOLOGY } from "../core/appCore.js";
 export const APP_GUIDE_VERSION = "guide-context-help-20260923-v2";
 export const DEFAULT_GUIDE_SECTION = "first-use";
 
-export const GUIDE_SECTIONS = Object.freeze([
+const GUIDE_SECTIONS = Object.freeze([
   Object.freeze({ id: "first-use", label: "使い方ガイド" }),
   Object.freeze({ id: "record", label: "今日の記録" }),
   Object.freeze({ id: "result", label: "結果の読み方" }),
@@ -95,7 +95,7 @@ function renderParts() {
   return `<div class="guide-lead"><p>身体図は結果と身体の記録で同じ12部位を使います。表示にない場所は「その他」から身体の記録として追加できます。</p></div><div class="guide-parts-grid">${RESULT_REGION_GUIDE.map(([title, body]) => `<article><h3>${escapeHtml(title)}</h3><p>${escapeHtml(body)}</p></article>`).join("")}</div><div class="guide-note"><h3>各部位自身の目安</h3><p>記録条件に対応した値を、その部位自身の基準に対して表示します。距離は別の走行事実です。100は安全・正常・平均・推奨ではなく、ほかの部位との大小比較にも使いません。扱えない条件や不足情報は0や100へ補いません。</p></div><div class="guide-note"><h3>身体の記録</h3><p>気になる場所は12部位の身体図から選び、必要な場合だけ「その他」を追加します。身体の記録は数値結果と分けて表示します。</p></div>`;
 }
 
-export function renderGuideSection(section, currentScreen) {
+function renderGuideSection(section, currentScreen) {
   const normalized = normalizeGuideSection(section);
   if (normalized === "record") return renderRecordGuide();
   if (normalized === "result") return renderResultGuide();
