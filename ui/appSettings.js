@@ -26,7 +26,7 @@ export const TEXT_SIZE_OPTIONS = Object.freeze([
 ]);
 
 
-export const RESULT_DISPLAY_MODE_OPTIONS = Object.freeze([
+const RESULT_DISPLAY_MODE_OPTIONS = Object.freeze([
   Object.freeze({ value: "standard", label: "標準（記録から見る）", description: "結果画面は、今日の入力内容を先に表示し、その後で12部位の目安を表示します。" }),
   Object.freeze({ value: "result-first", label: "結果を先に見る", description: "結果画面は、12部位の身体図を先に表示し、その後で今日の入力内容を表示します。" }),
   Object.freeze({ value: "body-focus", label: "部位を詳しく見る", description: "結果画面は、12部位の身体図と身体の記録を先に表示し、部位詳細へ進むボタンを見つけやすくします。" }),
@@ -35,7 +35,7 @@ export const RESULT_DISPLAY_MODE_OPTIONS = Object.freeze([
 ]);
 
 
-export const REGIONAL_RESULT_INITIAL_VIEW_OPTIONS = Object.freeze([
+const REGIONAL_RESULT_INITIAL_VIEW_OPTIONS = Object.freeze([
   Object.freeze({ value: "focus", label: "基準または前回より数値が上の部位を絞り込む", description: "同じ距離の基準または比べられる前回記録より数値が1%以上上の部位だけを表示します。安全・危険を示すものではありません。" }),
   Object.freeze({ value: "all", label: "全12部位を表示", description: "身体図とともに、12部位の目安を正式名称の固定順ですべて表示します。数値順には並べ替えません。" }),
   Object.freeze({ value: "remember", label: "前回の切替を引き継ぐ", description: "結果画面で最後に選んだ表示方法を次回も使います。" }),
