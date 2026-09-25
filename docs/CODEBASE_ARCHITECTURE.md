@@ -15,7 +15,11 @@ Domain and deterministic interpretation logic only.
 - `interpretationBase.js`: reusable persisted-result interpretation primitives.
 - `interpretationCore.js`: current beginner-facing interpretation projection. It consumes persisted outputs and does not recalculate Primary Reference-100 or ROF-J.
 - `internal/infrastructure.js`: browser storage, repository, migration, and common infrastructure modules.
-- `internal/models.js`: deterministic scientific/model calculations and their internal validation.
+- `internal/modelV27.js`: V2.7 model constants and its stored-result repository.
+- `internal/primaryModelEngine.js`: primary regional calculation engine, trace builder, and input adapter.
+- `internal/primaryInputCatalog.js`: formal primary-input catalog and metadata.
+- `internal/primaryInputProcessing.js`: formal-input utilities, validation, normalization, and app/trace adapters.
+- `internal/primaryModelResults.js`: primary region definitions, result construction, validation, and result repository.
 - `internal/application.js`: application workflows that combine repositories and domain operations.
 - `internal/content.js`: evidence-backed reading content, consultation content, terminology, and privacy content.
 - `internal/modules.js`: private registry used only to connect the split core modules.

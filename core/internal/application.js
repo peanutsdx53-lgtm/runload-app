@@ -1,4 +1,4 @@
-import "./models.js";
+import "./primaryModelResults.js";
 import { internalModules } from "./modules.js";
 import {
   ROF_J_SEMANTIC_VERSION,
