@@ -1,8 +1,8 @@
-import { coreModules as __mods } from "./moduleRegistry.js";
+import { coreModules } from "./moduleRegistry.js";
 
 // ===== core/pwaRegistration.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 const NOTICE_ID = "pwa-update-notice";
 const LOCAL_DEVELOPMENT_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 
@@ -100,13 +100,13 @@ function registerPwaServiceWorker() {
     }
   });
 }
-__exp["registerPwaServiceWorker"] = registerPwaServiceWorker;
-__mods[0] = __exp;
+moduleExports["registerPwaServiceWorker"] = registerPwaServiceWorker;
+coreModules[0] = moduleExports;
 }
 
 // ===== core/storage/storageKeys.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 const STORAGE_NAMESPACE = "runner-load-app-new-v1";
 const STORAGE_KEYS = Object.freeze({
   records: `${STORAGE_NAMESPACE}-records-v1`,
@@ -151,18 +151,18 @@ const CURRENT_APP_REMOVABLE_STORAGE_KEYS = Object.freeze([
   ...USER_DATA_STORAGE_KEYS,
   ...INTERNAL_RECOVERY_STORAGE_KEYS,
 ]);
-__exp["STORAGE_NAMESPACE"] = STORAGE_NAMESPACE;
-__exp["STORAGE_KEYS"] = STORAGE_KEYS;
-__exp["USER_DATA_STORAGE_KEYS"] = USER_DATA_STORAGE_KEYS;
-__exp["INTERNAL_RECOVERY_STORAGE_KEYS"] = INTERNAL_RECOVERY_STORAGE_KEYS;
-__exp["CURRENT_APP_REMOVABLE_STORAGE_KEYS"] = CURRENT_APP_REMOVABLE_STORAGE_KEYS;
-__mods[1] = __exp;
+moduleExports["STORAGE_NAMESPACE"] = STORAGE_NAMESPACE;
+moduleExports["STORAGE_KEYS"] = STORAGE_KEYS;
+moduleExports["USER_DATA_STORAGE_KEYS"] = USER_DATA_STORAGE_KEYS;
+moduleExports["INTERNAL_RECOVERY_STORAGE_KEYS"] = INTERNAL_RECOVERY_STORAGE_KEYS;
+moduleExports["CURRENT_APP_REMOVABLE_STORAGE_KEYS"] = CURRENT_APP_REMOVABLE_STORAGE_KEYS;
+coreModules[1] = moduleExports;
 }
 
 // ===== core/storage/storageGateway.js =====
 {
-const __exp = Object.create(null);
-const { STORAGE_KEYS } = __mods[1];
+const moduleExports = Object.create(null);
+const { STORAGE_KEYS } = coreModules[1];
 
 function cloneValue(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -411,14 +411,14 @@ function createStorageGateway(storage) {
     getLastFailure: () => cloneValue(lastFailure),
   });
 }
-__exp["createMemoryStorage"] = createMemoryStorage;
-__exp["createStorageGateway"] = createStorageGateway;
-__mods[2] = __exp;
+moduleExports["createMemoryStorage"] = createMemoryStorage;
+moduleExports["createStorageGateway"] = createStorageGateway;
+coreModules[2] = moduleExports;
 }
 
 // ===== core/model/modelConstants.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 /**
  * 利用者向け負荷モデルの固定定数。
  * 採用仕様はSourcebook / Validationで根拠・方向妥当性を管理する。
@@ -673,29 +673,29 @@ const LOAD_MODEL_VERSION = "rule-observation-sequential-body-profile-surface-cur
 function cloneDefaultModelConfiguration() {
   return structuredClone(DEFAULT_MODEL_CONFIGURATION);
 }
-__exp["BODY_PARTS"] = BODY_PARTS;
-__exp["CONTRACTILE_BODY_PARTS"] = CONTRACTILE_BODY_PARTS;
-__exp["BODY_PART_KEYS"] = BODY_PART_KEYS;
-__exp["SURFACE_FIELDS"] = SURFACE_FIELDS;
-__exp["FULL_RESPONSE_MAX_ABS_GRADE_PERCENT"] = FULL_RESPONSE_MAX_ABS_GRADE_PERCENT;
-__exp["hasTreadmillOutdoorSurfaceMixFromComponents"] = hasTreadmillOutdoorSurfaceMixFromComponents;
-__exp["hasTreadmillOutdoorSurfaceMixFromCourse"] = hasTreadmillOutdoorSurfaceMixFromCourse;
-__exp["gradeIsWithinFullResponseDomain"] = gradeIsWithinFullResponseDomain;
-__exp["SURFACE_TRAITS"] = SURFACE_TRAITS;
-__exp["SURFACE_TRAIT_LABELS"] = SURFACE_TRAIT_LABELS;
-__exp["SURFACE_INTERPRETATION_GUIDE"] = SURFACE_INTERPRETATION_GUIDE;
-__exp["DEFAULT_MODEL_CONFIGURATION"] = DEFAULT_MODEL_CONFIGURATION;
-__exp["MODEL_WARNING_THRESHOLD"] = MODEL_WARNING_THRESHOLD;
-__exp["MODEL_TOTAL_LOAD_VERSION"] = MODEL_TOTAL_LOAD_VERSION;
-__exp["MODEL_TOTAL_LOAD_UNIT"] = MODEL_TOTAL_LOAD_UNIT;
-__exp["LOAD_MODEL_VERSION"] = LOAD_MODEL_VERSION;
-__exp["cloneDefaultModelConfiguration"] = cloneDefaultModelConfiguration;
-__mods[3] = __exp;
+moduleExports["BODY_PARTS"] = BODY_PARTS;
+moduleExports["CONTRACTILE_BODY_PARTS"] = CONTRACTILE_BODY_PARTS;
+moduleExports["BODY_PART_KEYS"] = BODY_PART_KEYS;
+moduleExports["SURFACE_FIELDS"] = SURFACE_FIELDS;
+moduleExports["FULL_RESPONSE_MAX_ABS_GRADE_PERCENT"] = FULL_RESPONSE_MAX_ABS_GRADE_PERCENT;
+moduleExports["hasTreadmillOutdoorSurfaceMixFromComponents"] = hasTreadmillOutdoorSurfaceMixFromComponents;
+moduleExports["hasTreadmillOutdoorSurfaceMixFromCourse"] = hasTreadmillOutdoorSurfaceMixFromCourse;
+moduleExports["gradeIsWithinFullResponseDomain"] = gradeIsWithinFullResponseDomain;
+moduleExports["SURFACE_TRAITS"] = SURFACE_TRAITS;
+moduleExports["SURFACE_TRAIT_LABELS"] = SURFACE_TRAIT_LABELS;
+moduleExports["SURFACE_INTERPRETATION_GUIDE"] = SURFACE_INTERPRETATION_GUIDE;
+moduleExports["DEFAULT_MODEL_CONFIGURATION"] = DEFAULT_MODEL_CONFIGURATION;
+moduleExports["MODEL_WARNING_THRESHOLD"] = MODEL_WARNING_THRESHOLD;
+moduleExports["MODEL_TOTAL_LOAD_VERSION"] = MODEL_TOTAL_LOAD_VERSION;
+moduleExports["MODEL_TOTAL_LOAD_UNIT"] = MODEL_TOTAL_LOAD_UNIT;
+moduleExports["LOAD_MODEL_VERSION"] = LOAD_MODEL_VERSION;
+moduleExports["cloneDefaultModelConfiguration"] = cloneDefaultModelConfiguration;
+coreModules[3] = moduleExports;
 }
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2Snapshot.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 const REGIONAL_MODEL_SNAPSHOT_ID = "PRIMARY_REGIONAL_REFERENCE100_V3";
 const LEGACY_REGIONAL_MODEL_SNAPSHOT_ID = "PRIMARY_REGIONAL_V2";
 const LEGACY_PRIMARY_REGIONAL_V2_SNAPSHOT = Object.freeze({
@@ -732,23 +732,23 @@ function isCurrentRegionalModelRecord(record = {}) {
 }
 const isPrimaryRegionalV2Record = isCurrentRegionalModelRecord;
 function regionalModelGenerationForRecord() { return REGIONAL_MODEL_SNAPSHOT_ID; }
-__exp["REGIONAL_MODEL_SNAPSHOT_ID"] = REGIONAL_MODEL_SNAPSHOT_ID;
-__exp["LEGACY_REGIONAL_MODEL_SNAPSHOT_ID"] = LEGACY_REGIONAL_MODEL_SNAPSHOT_ID;
-__exp["LEGACY_PRIMARY_REGIONAL_V2_SNAPSHOT"] = LEGACY_PRIMARY_REGIONAL_V2_SNAPSHOT;
-__exp["PRIMARY_REGIONAL_V2_SNAPSHOT"] = PRIMARY_REGIONAL_V2_SNAPSHOT;
-__exp["CURRENT_REGIONAL_MODEL_SNAPSHOT"] = CURRENT_REGIONAL_MODEL_SNAPSHOT;
-__exp["normalizeRegionalModelSnapshot"] = normalizeRegionalModelSnapshot;
-__exp["regionalModelSnapshotForRecord"] = regionalModelSnapshotForRecord;
-__exp["stampCurrentRegionalModel"] = stampCurrentRegionalModel;
-__exp["isCurrentRegionalModelRecord"] = isCurrentRegionalModelRecord;
-__exp["isPrimaryRegionalV2Record"] = isPrimaryRegionalV2Record;
-__exp["regionalModelGenerationForRecord"] = regionalModelGenerationForRecord;
-__mods[4] = __exp;
+moduleExports["REGIONAL_MODEL_SNAPSHOT_ID"] = REGIONAL_MODEL_SNAPSHOT_ID;
+moduleExports["LEGACY_REGIONAL_MODEL_SNAPSHOT_ID"] = LEGACY_REGIONAL_MODEL_SNAPSHOT_ID;
+moduleExports["LEGACY_PRIMARY_REGIONAL_V2_SNAPSHOT"] = LEGACY_PRIMARY_REGIONAL_V2_SNAPSHOT;
+moduleExports["PRIMARY_REGIONAL_V2_SNAPSHOT"] = PRIMARY_REGIONAL_V2_SNAPSHOT;
+moduleExports["CURRENT_REGIONAL_MODEL_SNAPSHOT"] = CURRENT_REGIONAL_MODEL_SNAPSHOT;
+moduleExports["normalizeRegionalModelSnapshot"] = normalizeRegionalModelSnapshot;
+moduleExports["regionalModelSnapshotForRecord"] = regionalModelSnapshotForRecord;
+moduleExports["stampCurrentRegionalModel"] = stampCurrentRegionalModel;
+moduleExports["isCurrentRegionalModelRecord"] = isCurrentRegionalModelRecord;
+moduleExports["isPrimaryRegionalV2Record"] = isPrimaryRegionalV2Record;
+moduleExports["regionalModelGenerationForRecord"] = regionalModelGenerationForRecord;
+coreModules[4] = moduleExports;
 }
 
 // ===== core/model/numberUtilities.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 function toFiniteNumber(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
@@ -772,17 +772,17 @@ function roundNumber(value, digits = 2) {
   const factor = 10 ** Math.max(0, Number(digits) || 0);
   return Math.round((number + Number.EPSILON) * factor) / factor;
 }
-__exp["toFiniteNumber"] = toFiniteNumber;
-__exp["clampNumber"] = clampNumber;
-__exp["sumNumbers"] = sumNumbers;
-__exp["alphaFromTimeConstant"] = alphaFromTimeConstant;
-__exp["roundNumber"] = roundNumber;
-__mods[5] = __exp;
+moduleExports["toFiniteNumber"] = toFiniteNumber;
+moduleExports["clampNumber"] = clampNumber;
+moduleExports["sumNumbers"] = sumNumbers;
+moduleExports["alphaFromTimeConstant"] = alphaFromTimeConstant;
+moduleExports["roundNumber"] = roundNumber;
+coreModules[5] = moduleExports;
 }
 
 // ===== core/safety/inputSafety.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 const INPUT_LIMITS = Object.freeze({
   csvBytes: 4 * 1024 * 1024,
   csvRows: 20000,
@@ -949,24 +949,24 @@ function parseJsonText(value, options = {}) {
   if (!inspection.ok) return { ok: false, code: inspection.code, message: inspection.message, details: inspection };
   return { ok: true, value: parsed, details: { bytes, nodes: inspection.nodes } };
 }
-__exp["INPUT_LIMITS"] = INPUT_LIMITS;
-__exp["byteLength"] = byteLength;
-__exp["normalizeUserText"] = normalizeUserText;
-__exp["normalizePlainText"] = normalizePlainText;
-__exp["normalizeSingleLineText"] = normalizeSingleLineText;
-__exp["protectSpreadsheetFormula"] = protectSpreadsheetFormula;
-__exp["decodeProtectedSpreadsheetText"] = decodeProtectedSpreadsheetText;
-__exp["escapeCsvValue"] = escapeCsvValue;
-__exp["assertCsvText"] = assertCsvText;
-__exp["inspectJsonValue"] = inspectJsonValue;
-__exp["parseJsonText"] = parseJsonText;
-__mods[6] = __exp;
+moduleExports["INPUT_LIMITS"] = INPUT_LIMITS;
+moduleExports["byteLength"] = byteLength;
+moduleExports["normalizeUserText"] = normalizeUserText;
+moduleExports["normalizePlainText"] = normalizePlainText;
+moduleExports["normalizeSingleLineText"] = normalizeSingleLineText;
+moduleExports["protectSpreadsheetFormula"] = protectSpreadsheetFormula;
+moduleExports["decodeProtectedSpreadsheetText"] = decodeProtectedSpreadsheetText;
+moduleExports["escapeCsvValue"] = escapeCsvValue;
+moduleExports["assertCsvText"] = assertCsvText;
+moduleExports["inspectJsonValue"] = inspectJsonValue;
+moduleExports["parseJsonText"] = parseJsonText;
+coreModules[6] = moduleExports;
 }
 
 // ===== core/personal/personalContext.js =====
 {
-const __exp = Object.create(null);
-const { normalizePlainText, normalizeSingleLineText } = __mods[6];
+const moduleExports = Object.create(null);
+const { normalizePlainText, normalizeSingleLineText } = coreModules[6];
 
 const PERSONAL_CONTEXT_SCHEMA_VERSION = 1;
 
@@ -1109,23 +1109,23 @@ function summarizePersonalContext(context = {}) {
     items,
   });
 }
-__exp["PERSONAL_CONTEXT_SCHEMA_VERSION"] = PERSONAL_CONTEXT_SCHEMA_VERSION;
-__exp["SHOE_TYPE_OPTIONS"] = SHOE_TYPE_OPTIONS;
-__exp["SHOE_SOFTNESS_OPTIONS"] = SHOE_SOFTNESS_OPTIONS;
-__exp["FOOT_PLACEMENT_OPTIONS"] = FOOT_PLACEMENT_OPTIONS;
-__exp["RHYTHM_STRIDE_OPTIONS"] = RHYTHM_STRIDE_OPTIONS;
-__exp["EQUIPMENT_TAG_OPTIONS"] = EQUIPMENT_TAG_OPTIONS;
-__exp["FOCUS_TAG_OPTIONS"] = FOCUS_TAG_OPTIONS;
-__exp["hasPersonalContextInput"] = hasPersonalContextInput;
-__exp["normalizePersonalContext"] = normalizePersonalContext;
-__exp["labelForOption"] = labelForOption;
-__exp["summarizePersonalContext"] = summarizePersonalContext;
-__mods[7] = __exp;
+moduleExports["PERSONAL_CONTEXT_SCHEMA_VERSION"] = PERSONAL_CONTEXT_SCHEMA_VERSION;
+moduleExports["SHOE_TYPE_OPTIONS"] = SHOE_TYPE_OPTIONS;
+moduleExports["SHOE_SOFTNESS_OPTIONS"] = SHOE_SOFTNESS_OPTIONS;
+moduleExports["FOOT_PLACEMENT_OPTIONS"] = FOOT_PLACEMENT_OPTIONS;
+moduleExports["RHYTHM_STRIDE_OPTIONS"] = RHYTHM_STRIDE_OPTIONS;
+moduleExports["EQUIPMENT_TAG_OPTIONS"] = EQUIPMENT_TAG_OPTIONS;
+moduleExports["FOCUS_TAG_OPTIONS"] = FOCUS_TAG_OPTIONS;
+moduleExports["hasPersonalContextInput"] = hasPersonalContextInput;
+moduleExports["normalizePersonalContext"] = normalizePersonalContext;
+moduleExports["labelForOption"] = labelForOption;
+moduleExports["summarizePersonalContext"] = summarizePersonalContext;
+coreModules[7] = moduleExports;
 }
 
 // ===== core/safety/rpeProvenance.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 const RPE_PROVENANCE = Object.freeze({
   userReported: "USER_REPORTED",
   notReported: "NOT_REPORTED",
@@ -1151,22 +1151,22 @@ function reportedRpeValue(record = {}) {
   const value = Number(record.perceivedExertion);
   return Number.isFinite(value) && value >= 0 && value <= 10 ? value : null;
 }
-__exp["RPE_PROVENANCE"] = RPE_PROVENANCE;
-__exp["normalizeRpeProvenance"] = normalizeRpeProvenance;
-__exp["isReportedRpeProvenance"] = isReportedRpeProvenance;
-__exp["reportedRpeValue"] = reportedRpeValue;
-__mods[8] = __exp;
+moduleExports["RPE_PROVENANCE"] = RPE_PROVENANCE;
+moduleExports["normalizeRpeProvenance"] = normalizeRpeProvenance;
+moduleExports["isReportedRpeProvenance"] = isReportedRpeProvenance;
+moduleExports["reportedRpeValue"] = reportedRpeValue;
+coreModules[8] = moduleExports;
 }
 
 // ===== core/safety/inputValidation.js =====
 {
-const __exp = Object.create(null);
-const { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents } = __mods[3];
-const { normalizeRegionalModelSnapshot } = __mods[4];
-const { roundNumber, toFiniteNumber } = __mods[5];
-const { normalizePlainText, normalizeSingleLineText, INPUT_LIMITS } = __mods[6];
-const { normalizePersonalContext } = __mods[7];
-const { normalizeRpeProvenance, RPE_PROVENANCE } = __mods[8];
+const moduleExports = Object.create(null);
+const { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents } = coreModules[3];
+const { normalizeRegionalModelSnapshot } = coreModules[4];
+const { roundNumber, toFiniteNumber } = coreModules[5];
+const { normalizePlainText, normalizeSingleLineText, INPUT_LIMITS } = coreModules[6];
+const { normalizePersonalContext } = coreModules[7];
+const { normalizeRpeProvenance, RPE_PROVENANCE } = coreModules[8];
 
 function isValidLocalDate(value = "") {
   const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -1654,17 +1654,17 @@ function validateRunningRecord(record = {}) {
   }
   return Object.freeze({ ok: errors.length === 0, errors: Object.freeze(errors) });
 }
-__exp["isValidLocalDate"] = isValidLocalDate;
-__exp["createReadableRecordId"] = createReadableRecordId;
-__exp["validateRunningRecordInput"] = validateRunningRecordInput;
-__exp["normalizeRunningRecord"] = normalizeRunningRecord;
-__exp["validateRunningRecord"] = validateRunningRecord;
-__mods[9] = __exp;
+moduleExports["isValidLocalDate"] = isValidLocalDate;
+moduleExports["createReadableRecordId"] = createReadableRecordId;
+moduleExports["validateRunningRecordInput"] = validateRunningRecordInput;
+moduleExports["normalizeRunningRecord"] = normalizeRunningRecord;
+moduleExports["validateRunningRecord"] = validateRunningRecord;
+coreModules[9] = moduleExports;
 }
 
 // ===== core/storage/collectionRepository.js =====
 {
-const __exp = Object.create(null);
+const moduleExports = Object.create(null);
 function cloneValue(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
 }
@@ -1765,17 +1765,17 @@ function createCollectionRepository({
 
   return Object.freeze({ loadAll, loadAllResult, findById, saveAll, upsert, removeById });
 }
-__exp["createCollectionRepository"] = createCollectionRepository;
-__mods[10] = __exp;
+moduleExports["createCollectionRepository"] = createCollectionRepository;
+coreModules[10] = moduleExports;
 }
 
 // ===== core/storage/recordRepository.js =====
 {
-const __exp = Object.create(null);
-const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = __mods[9];
-const { createCollectionRepository } = __mods[10];
-const { STORAGE_KEYS } = __mods[1];
-const { stampCurrentRegionalModel } = __mods[4];
+const moduleExports = Object.create(null);
+const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = coreModules[9];
+const { createCollectionRepository } = coreModules[10];
+const { STORAGE_KEYS } = coreModules[1];
+const { stampCurrentRegionalModel } = coreModules[4];
 
 function createRecordRepository(gateway) {
   const repository = createCollectionRepository({
@@ -1833,6 +1833,6 @@ function createRecordRepository(gateway) {
     removeById: repository.removeById,
   });
 }
-__exp["createRecordRepository"] = createRecordRepository;
-__mods[11] = __exp;
+moduleExports["createRecordRepository"] = createRecordRepository;
+coreModules[11] = moduleExports;
 }
