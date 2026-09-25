@@ -28,7 +28,9 @@ jobs:
           done
           test ! -e RUNTIME_SHA256SUMS.txt
           test ! -e ui/hierarchicalExplanation.js
-          ! grep -R -n -E 'RunLoad Journal|Runload Journal' --include='*.js' --include='*.html' --include='*.css' .
+          ! grep -R -n -E 'RunLoad Journal|Runload Journal' --include='*.js' --include='*.html' --include='*.css' --include='*.webmanifest' .
+          ! grep -R -n -E 'RUNLOAD|RunLoad|Runload|runload' index.html manifest.webmanifest screens ui styles
+          ! grep -R -n -E '\\b(ChatGPT|GPT|LLM)\\b' index.html manifest.webmanifest screens ui styles
           echo "Validation failures: $failures"
           test "$failures" -eq 0
       - name: Validate runtime technology boundary
