@@ -1,6 +1,6 @@
 /* Mobile screen layouts and responsive rules. */
 /*
- * RunLoad mobile screen layout layer.
+ * Mobile screen layout layer.
  * Maintains the approved mobile UI geometry.
  * Screen DOM follows the current screen hierarchy.
  * Color aliases remain theme-driven; geometry follows the approved layout.
