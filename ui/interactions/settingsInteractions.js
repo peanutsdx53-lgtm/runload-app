@@ -104,7 +104,7 @@ function bindDataManagement({ services, router, rerender }) {
       return;
     }
     const date = new Date().toISOString().slice(0, 10);
-    downloadJsonText(`running-journal-backup-${date}.json`, exported.text);
+    downloadJsonText(`running-record-backup-${date}.json`, exported.text);
     showDataMessage("バックアップファイルを作成しました。");
   });
   fileInput?.addEventListener("change", async (event) => {
@@ -181,7 +181,7 @@ function bindImmediateDisplaySettings({ services, form }) {
 }
 
 export function bindSettings({ services, router, rerender }) {
-  const form = document.getElementById("journal-settings-form");
+  const form = document.getElementById("app-settings-form");
   form?.addEventListener("submit", (event) => {
     event.preventDefault();
     const result = saveSettingsAndProfile(services, readSettingsForm(form), readProfileForm(form));
@@ -192,7 +192,7 @@ export function bindSettings({ services, router, rerender }) {
     router.navigateToScreen("settings", { status: "saved" });
   });
   bindImmediateDisplaySettings({ services, form });
-  form?.querySelector('[data-action="reset-journal-settings"]')?.addEventListener("click", () => {
+  form?.querySelector('[data-action="reset-app-settings"]')?.addEventListener("click", () => {
     const result = saveSettings(services, DEFAULT_APP_SETTINGS);
     if (!result.ok) {
       showFormMessages(form, ["標準設定を保存できませんでした。端末の保存状態を確認してください。"]);
