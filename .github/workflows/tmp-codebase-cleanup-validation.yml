@@ -187,6 +187,86 @@ jobs:
           ].join('\n');
           fs.writeFileSync('public-api-usage.txt',report);
           NODE
+      - name: Generate exported symbol usage report
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+
+          const runtime=[];
+          const walk=(dir)=>{
+            for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+              const full=path.join(dir,entry.name);
+              if(entry.isDirectory()) walk(full);
+              else if(entry.isFile()&&full.endsWith('.js')) runtime.push(full.replaceAll('\\','/'));
+            }
+          };
+          for(const root of ['core','screens','ui']) walk(root);
+          runtime.push('app.js');
+
+          const consumers=[...runtime];
+          const walkTests=(dir)=>{
+            for(const entry of fs.readdirSync(dir,{withFileTypes:true})){
+              const full=path.join(dir,entry.name);
+              if(entry.isDirectory()) walkTests(full);
+              else if(entry.isFile()&&/\.(?:js|mjs)$/.test(full)) consumers.push(full.replaceAll('\\','/'));
+            }
+          };
+          if(fs.existsSync('tests')) walkTests('tests');
+
+          const importedBySource=new Map();
+          for(const file of consumers){
+            const source=fs.readFileSync(file,'utf8');
+            const pattern=/import\s*\{([^;]+?)\}\s*from\s*["']([^"']+)["']\s*;/g;
+            for(const match of source.matchAll(pattern)){
+              const spec=match[2];
+              if(!spec.startsWith('.')) continue;
+              let resolved=path.normalize(path.join(path.dirname(file),spec)).replaceAll('\\','/');
+              if(!path.extname(resolved)) resolved+='.js';
+              if(!importedBySource.has(resolved)) importedBySource.set(resolved,new Set());
+              for(const part of match[1].split(',')){
+                const raw=part.trim();
+                if(!raw) continue;
+                importedBySource.get(resolved).add(raw.split(/\s+as\s+/)[0].trim());
+              }
+            }
+          }
+
+          const dead=[];
+          const internalOnly=[];
+          for(const file of runtime){
+            const source=fs.readFileSync(file,'utf8');
+            const exports=[];
+            for(const m of source.matchAll(/^export\s+(?:async\s+)?function\s+([A-Za-z_$][\w$]*)/gm)) exports.push(m[1]);
+            for(const m of source.matchAll(/^export\s+const\s+([A-Za-z_$][\w$]*)/gm)) exports.push(m[1]);
+            for(const m of source.matchAll(/^export\s*\{([^}]+)\}\s*;?/gm)){
+              for(const part of m[1].split(',')){
+                const raw=part.trim();
+                if(raw) exports.push(raw.split(/\s+as\s+/)[0].trim());
+              }
+            }
+            const imported=importedBySource.get(file)||new Set();
+            for(const name of new Set(exports)){
+              if(imported.has(name)) continue;
+              const count=source.split(name).length-1;
+              const item=file+': '+name+' (local occurrences: '+count+')';
+              if(count<=1) dead.push(item);
+              else internalOnly.push(item);
+            }
+          }
+
+          fs.writeFileSync('exported-symbol-usage.txt',[
+            '=== DEAD EXPORTED SYMBOL CANDIDATES ===',
+            'count: '+dead.length,
+            ...dead.sort(),
+            '',
+            '=== INTERNAL-ONLY EXPORT CANDIDATES ===',
+            'count: '+internalOnly.length,
+            ...internalOnly.sort(),
+            ''
+          ].join('\n'));
+          NODE
       - uses: actions/upload-artifact@v4
         with:
           name: codebase-cleanup-audit
@@ -194,3 +274,4 @@ jobs:
             cleanup-audit.txt
             module-reachability.txt
             public-api-usage.txt
+            exported-symbol-usage.txt
