@@ -70,33 +70,6 @@ function planPreview(plan = {}) {
   });
 }
 
-export function createPlanShareMemo(_services, plan) {
-  if (!plan) return "";
-  const preview = planPreview(plan);
-  const session = normalizePlanSession(plan.plannedSession || {});
-  const snapshot = buildPlanConditionSnapshot(session);
-  const values = Object.fromEntries(snapshot.rows.map((row) => [row.key, row.value]));
-  const lines = [
-    `${formatLocalDate(plan.scheduledDate)}の予定について相談したいです。`,
-    `予定：${plan.title || (session.activityType === "rest" ? "休養予定" : "走行予定")}`,
-  ];
-  if (session.activityType === "rest") {
-    lines.push("内容：休養予定");
-  } else {
-    lines.push(
-      `距離：${values.distance}`,
-      `実走予定時間：${values.duration}`,
-      `走り方：${values.runningFormat}`,
-      `コース名：${values.courseName}`,
-      `坂道：${values.grade}`,
-      `路面：${values.surface}`,
-    );
-    lines.push(`予定条件：${preview.ok ? "入力済み" : preview.message || "入力条件を確認"}`);
-  }
-  if (plan.memo) lines.push(`予定メモ：${plan.memo}`);
-  lines.push("予定は入力した事実を整理したものです。処方、最適条件、身体状態、走行可否の判定ではありません。");
-  return lines.join("\n");
-}
 
 function conditionRows(record = {}) {
   if (record.activityType === "rest") return [["記録の種類", "休養"], ["走行条件", "なし"]];
@@ -294,7 +267,7 @@ function createPublicConsultationText({ report, experience, detailed = false }) 
   return lines.join("\n");
 }
 
-export function renderReportSheet({ presentation, format = "standard" }) {
+) {
   return `<article class="report-sheet report-sheet--${escapeHtml(format)}" data-report-sheet data-report-format="${escapeHtml(format)}">
     ${reportHeader({ presentation, format })}
     ${subjectiveSection(presentation)}
@@ -306,10 +279,7 @@ export function renderReportSheet({ presentation, format = "standard" }) {
   </article>`;
 }
 
-export function createReportCopyText({ presentation, format = "standard" }) {
+) {
   return format === "detailed" ? presentation.copy.detailed : presentation.copy.standard;
 }
 
-export function selectedReportRegionalValue(presentation) {
-  return presentation?.report?.modelReference?.regional?.value ?? null;
-}
