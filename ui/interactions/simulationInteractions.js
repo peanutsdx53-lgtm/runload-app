@@ -145,7 +145,7 @@ function render(result,previous,compare,data,course){
   if(!labels.length&&stats.changed===0)return "";
   const message=`変更した条件は「${labels.join("、")}」です。元の記録との差を部位ごとに確認し、条件差と部位差を分けて読みます。`;
   return `<div class="condition-compare-result">
-    <section class="simulation-change-overview"><div class="simulation-change-overview__head"><div><small>RUNLOAD COMPARISON</small><h3>変化の見立て</h3><p>${message}</p></div><button type="button" data-action="simulation-toggle-compare" aria-pressed="${compare}">${compare?"基準100との位置を見る":"元の記録との差に戻る"}</button></div>
+    <section class="simulation-change-overview"><div class="simulation-change-overview__head"><div><small>CONDITION COMPARISON</small><h3>変化の見立て</h3><p>${message}</p></div><button type="button" data-action="simulation-toggle-compare" aria-pressed="${compare}">${compare?"基準100との位置を見る":"元の記録との差に戻る"}</button></div>
       <div class="simulation-change-metrics"><article><span>${simulationResultIcon("compare")}</span><div><small>比較できる部位</small><strong>${stats.comparable}<em>/ 12</em></strong></div></article><article><span>${simulationResultIcon("above")}</span><div><small>1ポイント以上の差</small><strong>${stats.changed}<em>部位</em></strong></div></article><article><span>${simulationResultIcon("stable")}</span><div><small>ほぼ同じ</small><strong>${stats.stable}<em>部位</em></strong></div></article></div>
     </section>
     <section class="simulation-change-groups" aria-label="${compare?"元の記録からの変化":"基準100との位置"}">${renderChangeGroups(items,compare)}</section>
