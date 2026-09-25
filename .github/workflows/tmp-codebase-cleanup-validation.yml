@@ -150,7 +150,7 @@ jobs:
           const imported=new Set();
           for(const file of new Set(files)){
             const source=fs.readFileSync(file,'utf8');
-            const pattern=/import\s*\{([\s\S]*?)\}\s*from\s*["'][^"']*core\/appCore\.js["']/g;
+            const pattern=/import\s*\{([^;]+?)\}\s*from\s*["']([^"']*core\/appCore\.js)["']\s*;/g;
             for(const match of source.matchAll(pattern)){
               for(const part of match[1].split(',')){
                 const raw=part.trim();
