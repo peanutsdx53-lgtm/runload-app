@@ -54,7 +54,7 @@ await test('UNUSED-SCREEN-ARCHITECTURE-EXPORTS-REMOVED',()=>{
 });
 
 await test('PWA-CACHE-NAME-IS-STABLE',()=>{
-  assert.match(read('service-worker.js'),/const CACHE_NAME = "runload-app-runtime-v1";/);
+  assert.match(read('service-worker.js'),/const CACHE_NAME = "running-record-app-runtime-v1";/);
   assert.doesNotMatch(read('service-worker.js'),/desktop-final-visual-audit|20260922-37/);
 });
 
