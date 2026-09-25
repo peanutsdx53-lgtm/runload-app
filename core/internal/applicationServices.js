@@ -1,4 +1,4 @@
-import "./consultation.js";
+import "./deterministicConsultation.js";
 import { internalModules } from "./modules.js";
 
 // ===== core/dataManagement/dataManagementService.js =====

@@ -34,7 +34,9 @@ Domain and deterministic interpretation logic only.
 - `internal/evidenceData.js`: evidence metadata used by the reading layer.
 - `internal/readingCatalog.js`: current reading article catalog and source associations.
 - `internal/readingService.js`: reading lookup, recommendation, and related-content service.
-- `internal/consultation.js`: consultation report, body-region terminology, and deterministic consultation logic.
+- `internal/consultationReport.js`: consultation report data and text generation.
+- `internal/bodyRegionTerminology.js`: formal and familiar body-region terminology.
+- `internal/deterministicConsultation.js`: deterministic consultation-purpose and memo composition.
 - `internal/applicationServices.js`: data-management service and composition root for storage, workflows, reading, and consultation services.
 - `internal/modules.js`: private registry used only to connect the split core modules.
 
