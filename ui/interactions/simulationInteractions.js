@@ -1,4 +1,4 @@
-import { PRIMARY_REGIONAL_V2_REGION_DEFS, SURFACE_FIELDS } from "../../core/runloadCore.js";
+import { PRIMARY_REGIONAL_V2_REGION_DEFS, SURFACE_FIELDS } from "../../core/appCore.js";
 import { consumeCourseSelection } from "../flowSessionState.js";
 import { primarySurfaceSummary, slopeSummary } from "../coursePresentation.js";
 
