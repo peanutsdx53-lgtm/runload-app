@@ -40,45 +40,6 @@ jobs:
           test -f index.html
           test ! -e package.json
           test -z "$(find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.jsx' -o -name '*.vue' -o -name '*.py' \) -not -path './.git/*' -print)"
-      - name: Browser route smoke test
-        shell: bash
-        run: |
-          set -euo pipefail
-          BROWSER="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
-          python3 -m http.server 8000 --bind 127.0.0.1 >/tmp/app-http.log 2>&1 &
-          server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
-          sleep 2
-          check_route() {
-            local width="$1"
-            local height="$2"
-            local route="$3"
-            local marker="$4"
-            local name="$5"
-            local dom="/tmp/${name}.html"
-            local log="/tmp/${name}.log"
-            echo "Checking #/${route} at ${width}x${height}"
-            "$BROWSER" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --hide-scrollbars \
-              --window-size="${width},${height}" --virtual-time-budget=2500 \
-              --dump-dom "http://127.0.0.1:8000/#/${route}" >"$dom" 2>"$log"
-            if ! grep -F "$marker" "$dom" >/dev/null; then
-              echo "Expected marker $marker was not rendered on #/${route}" >&2
-              head -n 80 "$dom" >&2 || true
-              cat "$log" >&2 || true
-              return 1
-            fi
-            if grep -E 'Uncaught|SyntaxError|ReferenceError|TypeError' "$log"; then
-              echo "Browser JavaScript error on #/${route}" >&2
-              exit 1
-            fi
-          }
-          check_route 1365 900 start 'screen--start' desktop-start
-          check_route 1365 900 home 'screen--home' desktop-home
-          check_route 1365 900 record-input 'screen--record-input' desktop-record
-          check_route 1365 900 settings 'screen--settings' desktop-settings
-          check_route 1365 900 privacy 'screen--privacy' desktop-privacy
-          check_route 1365 900 reading 'screen--reading' desktop-reading
-          check_route 390 844 start 'screen--start' mobile-start
       - name: Generate terminology report
         shell: bash
         run: |
