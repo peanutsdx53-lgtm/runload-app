@@ -1915,63 +1915,66 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   const draft = collection(snapshot, STORAGE_KEYS.draft, null);
   const courses = collection(snapshot, STORAGE_KEYS.courses, []);
   const runMeasurements = collection(snapshot, STORAGE_KEYS.runMeasurements, []);
-  const secondPillarRofJ = collection(snapshot, STORAGE_KEYS.rofJ, null);
-  const secondPillarRofJLifecycle = collection(snapshot, STORAGE_KEYS.rofJLifecycle, null);
+  const rofJData = collection(snapshot, STORAGE_KEYS.rofJ, null);
+  const rofJLifecycleData = collection(snapshot, STORAGE_KEYS.rofJLifecycle, null);
 
-  if (secondPillarRofJ != null) {
-    const validEnvelope = isObject(secondPillarRofJ)
-      && secondPillarRofJ.schemaVersion === "RUNLOAD_SECOND_PILLAR_ROFJ_STORAGE_V1"
-      && isObject(secondPillarRofJ.entries);
+  if (rofJData != null) {
+    const validEnvelope = isObject(rofJData)
+      && rofJData.schemaVersion === "RUNLOAD_SECOND_PILLAR_ROFJ_STORAGE_V1"
+      && isObject(rofJData.entries);
     if (!validEnvelope) {
-      issues.push(issue("BLOCKING", "ROF_J_STORAGE_INVALID", "secondPillarRofJ", "ROF-J保存領域の形式が正しくありません。"));
+      issues.push(issue("BLOCKING", "ROF_J_STORAGE_INVALID", "rofJData", "ROF-J保存領域の形式が正しくありません。"));
     } else {
       const allowedRevisionTypes = new Set(["INITIAL_MEASUREMENT", "CORRECTION", "LATER_REFLECTION"]);
       const validRofValue = (value) => Number.isInteger(value) && value >= 0 && value <= 10;
       const validTime = (value) => typeof value === "string" && value.length > 0 && Number.isFinite(Date.parse(value));
-      Object.entries(secondPillarRofJ.entries).forEach(([runId, entry]) => {
+      Object.entries(rofJData.entries).forEach(([runId, entry]) => {
         const itemId = String(runId || "");
         if (!isObject(entry) || entry.runId !== runId) {
-          issues.push(issue("BLOCKING", "ROF_J_RUN_ENTRY_INVALID", "secondPillarRofJ", "ROF-J記録の走行識別子が一致しません。", itemId));
+          issues.push(issue("BLOCKING", "ROF_J_RUN_ENTRY_INVALID", "rofJData", "ROF-J記録の走行識別子が一致しません。", itemId));
           return;
         }
+        const currentSourceVersion = entry.sourceVersion === "ROF_J_JAPANESE_SOURCE_V1";
+        const legacySourceFingerprint = typeof entry.japaneseSourceSha256 === "string"
+          && /^[0-9a-f]{64}$/i.test(entry.japaneseSourceSha256);
         if (entry.instrumentId !== "ROF_J"
           || entry.instrumentSemanticVersion !== "ROF_J_SUZUKI_ARAI_2026_RUNLOAD_V1"
-          || entry.japaneseSourceSha256 !== "f25d0d4cf09f603cb66984606cfdb8e716781ba106f0da44dfa276515838acf8"
+          || (!currentSourceVersion && !legacySourceFingerprint)
           || entry.visualSourceId !== "ROF_ORIGINAL_2017") {
-          issues.push(issue("BLOCKING", "ROF_J_SEMANTIC_PROVENANCE_INVALID", "secondPillarRofJ", "ROF-J記録の尺度・出典情報が現在の仕様と一致しません。", itemId));
+          issues.push(issue("BLOCKING", "ROF_J_SEMANTIC_PROVENANCE_INVALID", "rofJData", "ROF-J記録の尺度・出典情報が現在の仕様と一致しません。", itemId));
         }
         if (!isObject(entry.measurements)) {
-          issues.push(issue("BLOCKING", "ROF_J_MEASUREMENTS_INVALID", "secondPillarRofJ", "ROF-J測定記録の形式が正しくありません。", itemId));
+          issues.push(issue("BLOCKING", "ROF_J_MEASUREMENTS_INVALID", "rofJData", "ROF-J測定記録の形式が正しくありません。", itemId));
           return;
         }
         ["PRE_RUN", "POST_RUN"].forEach((phase) => {
           const measurement = entry.measurements[phase];
           if (measurement == null) return;
           if (!isObject(measurement) || measurement.phase !== phase || !Array.isArray(measurement.revisions) || measurement.revisions.length === 0) {
-            issues.push(issue("BLOCKING", "ROF_J_MEASUREMENT_INVALID", "secondPillarRofJ", "ROF-J測定記録の形式が正しくありません。", `${itemId}:${phase}`));
+            issues.push(issue("BLOCKING", "ROF_J_MEASUREMENT_INVALID", "rofJData", "ROF-J測定記録の形式が正しくありません。", `${itemId}:${phase}`));
             return;
           }
           const initialCount = measurement.revisions.filter((revision) => revision?.revisionType === "INITIAL_MEASUREMENT").length;
           if (initialCount !== 1) {
-            issues.push(issue("BLOCKING", "ROF_J_INITIAL_REVISION_INVALID", "secondPillarRofJ", "ROF-J初回測定の履歴を確認できません。", `${itemId}:${phase}`));
+            issues.push(issue("BLOCKING", "ROF_J_INITIAL_REVISION_INVALID", "rofJData", "ROF-J初回測定の履歴を確認できません。", `${itemId}:${phase}`));
           }
           measurement.revisions.forEach((revision) => {
             if (!isObject(revision) || !validRofValue(revision.value) || !validTime(revision.recordedAt) || !allowedRevisionTypes.has(revision.revisionType)) {
-              issues.push(issue("BLOCKING", "ROF_J_REVISION_INVALID", "secondPillarRofJ", "ROF-J修正履歴の値・日時・種別を確認できません。", `${itemId}:${phase}`));
+              issues.push(issue("BLOCKING", "ROF_J_REVISION_INVALID", "rofJData", "ROF-J修正履歴の値・日時・種別を確認できません。", `${itemId}:${phase}`));
             }
           });
           if (!measurement.revisions.some((revision) => revision?.revisionId === measurement.effectiveRevisionId)) {
-            issues.push(issue("BLOCKING", "ROF_J_EFFECTIVE_REVISION_INVALID", "secondPillarRofJ", "ROF-Jの有効測定を特定できません。", `${itemId}:${phase}`));
+            issues.push(issue("BLOCKING", "ROF_J_EFFECTIVE_REVISION_INVALID", "rofJData", "ROF-Jの有効測定を特定できません。", `${itemId}:${phase}`));
           }
         });
       });
     }
   }
-  if (secondPillarRofJLifecycle != null) {
-    const validLifecycle = isObject(secondPillarRofJLifecycle)
-      && secondPillarRofJLifecycle.schemaVersion === "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1"
-      && isObject(secondPillarRofJLifecycle.pendingByRunId);
-    if (!validLifecycle) issues.push(issue("BLOCKING", "ROF_J_LIFECYCLE_STORAGE_INVALID", "secondPillarRofJLifecycle", "ROF-J入力途中領域の形式が正しくありません。"));
+  if (rofJLifecycleData != null) {
+    const validLifecycle = isObject(rofJLifecycleData)
+      && rofJLifecycleData.schemaVersion === "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1"
+      && isObject(rofJLifecycleData.pendingByRunId);
+    if (!validLifecycle) issues.push(issue("BLOCKING", "ROF_J_LIFECYCLE_STORAGE_INVALID", "rofJLifecycleData", "ROF-J入力途中領域の形式が正しくありません。"));
   }
 
   const expectedArrays = [
