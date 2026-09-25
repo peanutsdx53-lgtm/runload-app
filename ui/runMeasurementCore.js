@@ -180,5 +180,3 @@ export function simplifyTrackForStorage(points = [], maximumPoints = DEFAULT_OPT
     accuracyM: finite(point.accuracyM) ? round(point.accuracyM, 1) : null,
   })));
 }
-
-export const RUN_MEASUREMENT_OPTIONS = DEFAULT_OPTIONS;
