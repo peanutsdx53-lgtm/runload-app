@@ -16,7 +16,6 @@
 
 @media (max-width: 35rem) {
   .app-header { flex-wrap: wrap; gap: var(--space-2); }
-  .app-brand { flex: 1 1 11rem; }
   .app-header__actions { margin-left: auto; }
 }
 
@@ -26,7 +25,6 @@
     padding-left: max(var(--space-3), env(safe-area-inset-left));
     padding-right: max(var(--space-3), env(safe-area-inset-right));
   }
-  .app-brand small { display: none; }
   .app-main { width: min(100% - 1.25rem, var(--content-width)); }
   .primary-navigation {
     width: calc(100% - 0.75rem);
@@ -78,27 +76,6 @@
     padding-bottom: 0.35rem;
     padding-left: max(0.65rem, env(safe-area-inset-left));
   }
-  .app-brand {
-    min-width: 0;
-    min-height: 2.5rem;
-    flex: 1 1 auto;
-    gap: 0.5rem;
-    overflow: hidden;
-  }
-  .app-brand__mark {
-    width: 2rem;
-    height: 2rem;
-    flex: 0 0 auto;
-    font-size: 0.76rem;
-  }
-  .app-brand strong {
-    overflow: hidden;
-    font-size: 0.9rem;
-    line-height: 1.15;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .app-brand small { display: none; }
   .app-header__actions { margin-left: 0; }
   .app-main {
     padding-top: var(--space-4);

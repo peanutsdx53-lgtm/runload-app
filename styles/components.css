@@ -1,7 +1,3 @@
-.app-brand { display: inline-flex; align-items: center; gap: var(--space-3); min-height: 3rem; text-decoration: none; }
-.app-brand__mark { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--color-accent); color: var(--color-on-accent); font-family: var(--font-editorial); font-weight: 700; }
-.app-brand strong, .app-brand small { display: block; }
-.app-brand small { color: var(--color-muted); font-size: 0.75rem; }
 .feature-menu { position: relative; }
 .feature-menu summary { min-height: var(--touch-target); display: inline-flex; align-items: center; cursor: pointer; font-weight: 700; }
 .feature-menu__panel { position: absolute; right: 0; top: calc(100% + var(--space-2)); width: min(18rem, calc(100vw - 2rem)); display: grid; gap: var(--space-1); padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-medium); background: var(--color-surface); box-shadow: var(--shadow-card); }
@@ -214,8 +210,6 @@
 .editorial-boundary p { margin: 0; }
 
 /* キーボードフォーカスと狭幅・文字拡大の統合 */
-.app-brand { min-width: 0; }
-.app-brand > span:last-child { min-width: 0; }
 .feature-menu { flex: 0 0 auto; }
 .button,
 .text-link,

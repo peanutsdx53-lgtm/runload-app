@@ -3,8 +3,7 @@
 @media (min-width: 48rem) {  .lead-action-card { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
 }
 @media (forced-colors: active) {  .primary-navigation__link.is-current,
-  .button--primary,
-  .app-brand__mark { border: 2px solid ButtonText; }
+  .button--primary { border: 2px solid ButtonText; }
 }.record-form { display: grid; gap: var(--space-5); }.subjective-details,
 .safety-details { display: grid; gap: var(--space-5); }.home-summary-card__body { max-width: 48rem; }
 @media (min-width: 42rem) {  .field-grid--two,

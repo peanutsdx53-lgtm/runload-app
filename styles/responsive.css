@@ -49,32 +49,6 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-.app-brand {
-  min-width: 0;
-  min-height: 40px;
-  display: flex;
-  align-items: center;
-  gap: 0;
-  text-decoration: none;
-}
-.app-brand__mark { display: none; }
-.app-brand > span:last-child { min-width: 0; }
-.app-brand strong {
-  display: block;
-  font-size: 17px;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-.app-brand small {
-  display: block;
-  margin-top: 3px;
-  color: var(--color-muted);
-  font-size: 9px;
-  line-height: 1.2;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
 .app-header__actions { flex: 0 0 auto; margin-left: auto; }
 .app-menu-button {
   min-height: 38px;
@@ -483,9 +457,6 @@ input, select, textarea {
     padding-bottom: 7px;
     padding-left: max(11px, env(safe-area-inset-left));
   }
-  .app-brand { min-height: 38px; }
-  .app-brand strong { font-size: 16px; }
-  .app-brand small { font-size: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .app-menu-button { min-height: 36px; padding-inline: 10px; }
   .app-main { width: 100%; padding: 20px 12px 34px; }
   .screen { gap: 18px; }
