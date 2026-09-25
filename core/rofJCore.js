@@ -235,15 +235,7 @@ export function captureRofJMeasurement(entry, {
   return Object.freeze(next);
 }
 
-export function appendRofJRevision(entry, {
-  phase,
-  value,
-  recordedAt,
-  revisionType,
-  note = "",
-  revisionId = null,
-  idFactory = defaultId,
-} = {}) {
+= {}) {
   if (![ROF_J_PHASES.PRE, ROF_J_PHASES.POST].includes(phase)) throw new RangeError("ROF-J phase is invalid");
   if (![ROF_J_REVISION_TYPES.correction, ROF_J_REVISION_TYPES.laterReflection].includes(revisionType)) {
     throw new RangeError("revisionType must be CORRECTION or LATER_REFLECTION");
