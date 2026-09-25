@@ -1014,7 +1014,7 @@
   display:block;
   flex:none;
 }
-.interpretation-room-hero--v3{
+.interpretation-room-hero--overview{
   position:relative;
   min-height:11.5rem;
   padding:1.6rem 1.7rem;
@@ -1030,7 +1030,7 @@
     linear-gradient(135deg,color-mix(in srgb,var(--color-accent-soft) 42%,var(--color-surface)),var(--color-surface));
   box-shadow:var(--shadow-soft);
 }
-.interpretation-room-hero--v3::after{
+.interpretation-room-hero--overview::after{
   content:"";
   position:absolute;
   right:-4rem;
@@ -1103,24 +1103,24 @@
   font-size:.76rem;
 }
 
-.interpretation-room-summary--v3,
+.interpretation-room-summary--overview,
 .interpretation-room-entry,
-.interpretation-room-attention--v3,
-.interpretation-room-region-detail--v3,
-.interpretation-room-conditions--v3,
-.interpretation-room-subjective--v3,
-.interpretation-room-understanding--v3,
-.interpretation-room-next--v3{
+.interpretation-room-attention--overview,
+.interpretation-room-region-detail--selected,
+.interpretation-room-conditions--comparison,
+.interpretation-room-subjective--context,
+.interpretation-room-understanding--summary,
+.interpretation-room-next--actions{
   border-radius:1.35rem;
 }
-.interpretation-room-summary--v3{
+.interpretation-room-summary--overview{
   position:relative;
   padding:1.5rem 1.55rem 1.6rem;
   overflow:hidden;
   background:
     linear-gradient(135deg,color-mix(in srgb,var(--color-accent-soft) 34%,var(--color-surface)),var(--color-surface) 58%);
 }
-.interpretation-room-summary--v3::after{
+.interpretation-room-summary--overview::after{
   content:"";
   position:absolute;
   top:-3rem;
@@ -1174,19 +1174,19 @@
   width:1.05rem;
   height:1.05rem;
 }
-.interpretation-room-summary--v3 .interpretation-room-summary__lead{
+.interpretation-room-summary--overview .interpretation-room-summary__lead{
   max-width:68rem;
   margin-top:.95rem;
   font-size:1.08rem;
 }
-.interpretation-room-summary--v3 .interpretation-room-summary__metrics{
+.interpretation-room-summary--overview .interpretation-room-summary__metrics{
   position:relative;
   z-index:1;
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:.8rem;
   margin-top:1.2rem;
 }
-.interpretation-room-summary--v3 .interpretation-room-summary__metrics>article{
+.interpretation-room-summary--overview .interpretation-room-summary__metrics>article{
   min-width:0;
   min-height:9.3rem;
   padding:1rem 1.05rem;
@@ -1199,7 +1199,7 @@
   background:color-mix(in srgb,var(--color-surface) 94%,transparent);
   box-shadow:0 .45rem 1rem color-mix(in srgb,var(--color-ink) 4%,transparent);
 }
-.interpretation-room-summary--v3 .metric-icon{
+.interpretation-room-summary--overview .metric-icon{
   width:2.6rem;
   height:2.6rem;
   display:grid;
@@ -1208,29 +1208,29 @@
   color:var(--color-accent-strong);
   background:var(--color-accent-soft);
 }
-.interpretation-room-summary--v3 .metric-icon .interpretation-room-icon{
+.interpretation-room-summary--overview .metric-icon .interpretation-room-icon{
   width:1.35rem;
   height:1.35rem;
 }
-.interpretation-room-summary--v3 .interpretation-room-summary__metrics small{
+.interpretation-room-summary--overview .interpretation-room-summary__metrics small{
   display:block;
   color:var(--color-muted);
   font-size:.8rem;
   font-weight:850;
 }
-.interpretation-room-summary--v3 .interpretation-room-summary__metrics strong{
+.interpretation-room-summary--overview .interpretation-room-summary__metrics strong{
   display:block;
   margin-top:.22rem;
   font-size:1.75rem;
   line-height:1;
 }
-.interpretation-room-summary--v3 .interpretation-room-summary__metrics strong em{
+.interpretation-room-summary--overview .interpretation-room-summary__metrics strong em{
   margin-left:.2rem;
   color:var(--color-muted);
   font-size:.78rem;
   font-style:normal;
 }
-.interpretation-room-summary--v3 .interpretation-room-summary__metrics p{
+.interpretation-room-summary--overview .interpretation-room-summary__metrics p{
   margin:.55rem 0 0;
   color:var(--color-muted);
   font-size:.82rem;
@@ -1321,12 +1321,12 @@
   font-style:normal;
 }
 
-.interpretation-room-attention--v3,
-.interpretation-room-conditions--v3,
-.interpretation-room-subjective--v3,
-.interpretation-room-understanding--v3,
-.interpretation-room-next--v3,
-.interpretation-room-region-detail--v3{
+.interpretation-room-attention--overview,
+.interpretation-room-conditions--comparison,
+.interpretation-room-subjective--context,
+.interpretation-room-understanding--summary,
+.interpretation-room-next--actions,
+.interpretation-room-region-detail--selected{
   padding:1.45rem 1.5rem;
 }
 .interpretation-room-reason-groups{
@@ -1677,11 +1677,11 @@
   line-height:1.5;
 }
 
-.interpretation-room-understanding--v3 .interpretation-room-understanding-grid{
+.interpretation-room-understanding--summary .interpretation-room-understanding-grid{
   gap:.8rem;
   margin-top:1rem;
 }
-.interpretation-room-understanding--v3 .interpretation-room-understanding-grid article{
+.interpretation-room-understanding--summary .interpretation-room-understanding-grid article{
   min-height:0;
   padding:1rem;
   display:grid;
@@ -1692,7 +1692,7 @@
   border-radius:1rem;
   background:var(--color-surface-muted);
 }
-.interpretation-room-understanding--v3 .interpretation-room-understanding-grid article>span{
+.interpretation-room-understanding--summary .interpretation-room-understanding-grid article>span{
   width:2.6rem;
   height:2.6rem;
   display:grid;
@@ -1701,13 +1701,13 @@
   background:var(--color-accent-soft);
   color:var(--color-accent-strong);
 }
-.interpretation-room-understanding--v3 .interpretation-room-understanding-grid article[data-kind="pending"]>span{
+.interpretation-room-understanding--summary .interpretation-room-understanding-grid article[data-kind="pending"]>span{
   background:var(--color-surface);
 }
-.interpretation-room-understanding--v3 .interpretation-room-understanding-grid ul{
+.interpretation-room-understanding--summary .interpretation-room-understanding-grid ul{
   margin:.45rem 0 0;
 }
-.interpretation-room-understanding--v3 .interpretation-room-understanding-grid li{
+.interpretation-room-understanding--summary .interpretation-room-understanding-grid li{
   font-size:.87rem;
   line-height:1.55;
 }
@@ -1830,7 +1830,7 @@
 }
 
 @media (max-width:72rem){
-  .interpretation-room-summary--v3 .interpretation-room-summary__metrics{
+  .interpretation-room-summary--overview .interpretation-room-summary__metrics{
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
   .interpretation-room-entry-grid,
@@ -1850,7 +1850,7 @@
   }
 }
 @media (max-width:60rem){
-  .interpretation-room-hero--v3{
+  .interpretation-room-hero--overview{
     min-height:0;
     grid-template-columns:1fr;
   }
@@ -1885,7 +1885,7 @@
   }
 }
 @media (max-width:34rem){
-  .interpretation-room-hero--v3{
+  .interpretation-room-hero--overview{
     padding:1.1rem;
     border-radius:1rem;
   }
@@ -1896,24 +1896,24 @@
     min-width:0;
     width:100%;
   }
-  .interpretation-room-summary--v3,
+  .interpretation-room-summary--overview,
   .interpretation-room-entry,
-  .interpretation-room-attention--v3,
-  .interpretation-room-region-detail--v3,
-  .interpretation-room-conditions--v3,
-  .interpretation-room-subjective--v3,
-  .interpretation-room-understanding--v3,
-  .interpretation-room-next--v3{
+  .interpretation-room-attention--overview,
+  .interpretation-room-region-detail--selected,
+  .interpretation-room-conditions--comparison,
+  .interpretation-room-subjective--context,
+  .interpretation-room-understanding--summary,
+  .interpretation-room-next--actions{
     padding:1rem;
   }
   .interpretation-room-summary__top{
     align-items:flex-start;
     flex-direction:column;
   }
-  .interpretation-room-summary--v3 .interpretation-room-summary__metrics{
+  .interpretation-room-summary--overview .interpretation-room-summary__metrics{
     grid-template-columns:1fr;
   }
-  .interpretation-room-summary--v3 .interpretation-room-summary__metrics>article{
+  .interpretation-room-summary--overview .interpretation-room-summary__metrics>article{
     min-height:0;
   }
   .interpretation-room-section-title--compact{
@@ -1952,7 +1952,7 @@
 }
 
 
-.interpretation-room-summary--v3 .interpretation-room-summary__metrics p{
+.interpretation-room-summary--overview .interpretation-room-summary__metrics p{
   font-size:.86rem;
   line-height:1.58;
 }
@@ -1991,7 +1991,7 @@
   line-height:1.55;
 }
 @media (max-width:34rem){
-  .interpretation-room-summary--v3 .interpretation-room-summary__metrics p,
+  .interpretation-room-summary--overview .interpretation-room-summary__metrics p,
   .interpretation-room-condition-card>p,
   .interpretation-room-fatigue-flow p,
   .interpretation-room-action__copy small{
@@ -2643,7 +2643,7 @@
 
 
 .interpretation-room-selected-dashboard,
-.interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3,
+.interpretation-room-selected-dashboard>.interpretation-room-region-detail--selected,
 .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
   width:100%;
   max-width:none;
@@ -2702,7 +2702,7 @@
 .interpretation-room-selected-side{
   display:contents;
 }
-.interpretation-room-selected-main>.interpretation-room-region-detail--v3{
+.interpretation-room-selected-main>.interpretation-room-region-detail--selected{
   grid-area:detail;
 }
 .interpretation-room-selected-side>.interpretation-room-next-rail{
