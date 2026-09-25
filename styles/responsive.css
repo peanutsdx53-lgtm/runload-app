@@ -164,19 +164,6 @@ body {
   color: var(--color-accent-strong);
 }
 
-:is(.result-card, .home-summary-card, .home-compact-card, .daily-suggestion,
-.home-reading-card, .body-part-focus, .editorial-summary, .next-action,
-.form-section, .filter-panel, .data-management, .share-report, .related-article,
-.danger-zone, .history-item, .saved-plan, .privacy-explanation-card,
-.privacy-storage-card, .consult-entry-card, .course-manager-card, .gpx-local-card,
-.settings-privacy-entry, .settings-secondary-area, .public-help-boundary,
-.public-help-priority, .public-help-selected, .quick-share-card) {
-  border: 1px solid var(--color-line);
-  border-radius: var(--app-card-radius);
-  background: var(--color-surface);
-  box-shadow: var(--app-card-shadow);
-}
-
 .form-section,
 .result-card,
 .home-summary-card,
@@ -192,8 +179,6 @@ body {
 .consult-entry-card,
 .course-manager-card,
 .gpx-local-card,
-.settings-privacy-entry,
-.settings-secondary-area,
 .public-help-boundary,
 .public-help-priority,
 .public-help-selected,
@@ -334,7 +319,6 @@ input, select, textarea {
 .screen--privacy { max-width: 960px; margin-inline: auto; gap: 16px; }
 .screen--privacy .privacy-explanation-grid,
 .screen--privacy .privacy-storage-grid { gap: 8px; }
-.screen--privacy :is(.privacy-explanation-card, .privacy-storage-card, .privacy-disclosure) { border-radius: 17px; }
 
 /* --- More --- */
 .screen--more { max-width: 760px; margin-inline: auto; gap: 18px; }
@@ -355,9 +339,6 @@ input, select, textarea {
 .screen--settings { max-width: 960px; margin-inline: auto; gap: 18px; }
 .screen--settings .settings-form { gap: 12px; }
 .screen--settings .form-section { padding: 14px; border-radius: 18px; }
-.screen--settings .settings-option-grid { gap: 6px; }
-.screen--settings .settings-option > span { border-radius: 11px; }
-.screen--settings :is(.settings-advanced, .settings-profile-disclosure, .settings-data-management) { border-radius: 17px; }
 .screen--settings .form-submit-area {
   padding: 13px;
   border: 1px solid var(--color-line);
