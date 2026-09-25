@@ -72,9 +72,4 @@ export function subjectiveSummaryFromFields(fields = {}) {
   });
 }
 
-export function mergeSubjectiveFields(workspaceFields = {}, fallbackFeedback = {}) {
-  return Object.freeze({
-    ...subjectiveFieldsFromFeedback(fallbackFeedback),
-    ...Object.fromEntries(Object.entries(workspaceFields || {}).map(([key, value]) => [key, stringValue(value)])),
-  });
-}
+
