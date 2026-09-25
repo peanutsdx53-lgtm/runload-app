@@ -1,5 +1,5 @@
 import "./infrastructure.js";
-import { internalModules } from "./internalModules.js";
+import { internalModules } from "./modules.js";
 
 // ===== core/model/v27/v27Constants.js =====
 {

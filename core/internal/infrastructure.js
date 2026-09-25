@@ -1,5 +1,5 @@
 import { LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES } from "../legacyCompatibility.js";
-import { internalModules } from "./internalModules.js";
+import { internalModules } from "./modules.js";
 
 // ===== core/pwaRegistration.js =====
 {

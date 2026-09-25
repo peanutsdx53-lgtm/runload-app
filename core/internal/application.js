@@ -1,5 +1,5 @@
 import "./models.js";
-import { internalModules } from "./internalModules.js";
+import { internalModules } from "./modules.js";
 import {
   ROF_J_SEMANTIC_VERSION,
   ROF_J_SOURCE_VERSION,

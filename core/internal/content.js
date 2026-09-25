@@ -1,5 +1,5 @@
 import "./application.js";
-import { internalModules } from "./internalModules.js";
+import { internalModules } from "./modules.js";
 
 // ===== data/evidenceGovernanceData.js =====
 {

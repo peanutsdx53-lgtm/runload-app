@@ -9,7 +9,7 @@ const PRECACHE_URLS = [
   "./core/legacyCompatibility.js",
   "./core/rofJConstants.js",
   "./core/rofJCore.js",
-  "./core/internal/internalModules.js",
+  "./core/internal/modules.js",
   "./core/internal/infrastructure.js",
   "./core/internal/models.js",
   "./core/internal/application.js",
