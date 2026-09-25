@@ -29,7 +29,7 @@
   .next-action { box-shadow: none; break-inside: avoid; }
 }
 
-@media (min-width: 48rem) {  .history-item { grid-template-columns: minmax(9rem, 0.8fr) minmax(0, 2fr) auto; align-items: start; }  .plan-candidate-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (min-width: 48rem) {  .history-item { grid-template-columns: minmax(9rem, 0.8fr) minmax(0, 2fr) auto; align-items: start; }
 }
 
 @media print {  .app-header,
@@ -47,8 +47,7 @@
   .screen--consultation .safety-notice { break-inside: avoid; }
 }
 @media print {
-  .plan-outcome-editor,
-  .plan-edit-preview { display: none !important; }
+  .plan-outcome-editor{ display: none !important; }
 }.check-option {
   min-height: 3rem;
   display: flex;
@@ -145,16 +144,14 @@
 }
 
 /* レスポンシブ表示と印刷表示の統合 */
-@media (min-width: 42rem) {  .plan-flow-steps{ grid-template-columns: repeat(3, minmax(0, 1fr)); }  .share-format-picker,
-  .plan-next-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 42rem) {  .share-format-picker{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 35rem) {  .page-heading-actions { justify-content: flex-start; margin-top: calc(var(--space-3) * -1); }  .plan-candidate__heading { grid-template-columns: auto minmax(0, 1fr); }  .plan-candidate__status-slot { grid-column: 1 / -1; justify-content: flex-start; }
+@media (max-width: 35rem) {  .page-heading-actions { justify-content: flex-start; margin-top: calc(var(--space-3) * -1); }
 }
 @media print {
   .page-heading-actions,
   .share-format-picker,
-  .column-source-index,
-  .plan-flow-steps { display: none !important; }  .screen--share-report .share-report-document { border: 0; box-shadow: none; padding: 0; }  .screen--share-report .report-document { font-size: 10pt; line-height: 1.45; }
+  .column-source-index{ display: none !important; }  .screen--share-report .share-report-document { border: 0; box-shadow: none; padding: 0; }  .screen--share-report .report-document { font-size: 10pt; line-height: 1.45; }
 }
 
 /* プラン・相談共有・コラムの情報階層 */
@@ -423,282 +420,26 @@
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 2px;
   }
-}
-
-
-/* first-run plan empty state */
-/* first-run plan empty state */
-.plan-empty-start {
-  display: grid;
-  gap: var(--space-5);
-  padding: clamp(1.1rem, 3vw, 2rem);
-  border: 1px solid var(--color-line);
-  border-left: 5px solid var(--color-accent);
-  border-radius: var(--radius-large);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-}.plan-empty-start h2 {
-  margin: var(--space-2) 0 0;
-  font-family: var(--font-editorial);
-  font-size: clamp(1.45rem, 5vw, 2.35rem);
-}.plan-empty-start p {
-  margin: var(--space-2) 0 0;
-  color: var(--color-muted);
-}.plan-empty-actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  gap: var(--space-3);
-}.plan-empty-actions .feature-link-card {
-  min-height: 8.5rem;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-/* 5段階プラン比較とコース条件表示 */
-/* 5段階プラン比較とコース条件表示 */
-.plan-flow-steps--five small {
-  grid-column: 2;
-  color: var(--color-muted);
-  font-size: 0.78rem;
-}.plan-stage {
-  display: grid;
-  gap: var(--space-4);
-  min-width: 0;
-  scroll-margin-top: 5rem;
-}.plan-reference-card,
-.plan-model-summary,
-.plan-body-map-reference,
-.plan-stage--confirm {
-  min-width: 0;
-  padding: clamp(1rem, 3vw, 1.75rem);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-large);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
-}.plan-reference-card {
-  display: grid;
-  gap: var(--space-4);
-  border-top: 5px solid var(--color-ink);
-}.plan-load-summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-1) var(--space-3);
-  align-items: end;
-  padding: var(--space-4);
-  border: 1px solid var(--color-line);
-  border-left: 5px solid var(--color-accent);
-  background: var(--color-accent-soft);
-}.plan-load-summary > span {
-  color: var(--color-muted);
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-}.plan-load-summary > strong {
-  grid-row: 1 / span 2;
-  grid-column: 2;
-  font-family: var(--font-numeric);
-  font-size: clamp(1.65rem, 4.4vw, 2.65rem);
-  font-weight: 760;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}.plan-load-summary > small {
-  color: var(--color-muted);
-  font-weight: 700;
-  line-height: 1.45;
-}.plan-change-summary {
-  margin: 0;
-  color: var(--color-muted);
-}.plan-condition-summary {
-  display: grid;
-  gap: 1px;
-  min-width: 0;
-  margin: 0;
-  border: 1px solid var(--color-line);
-  background: var(--color-line);
-}.plan-condition-row {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: minmax(5.5rem, 0.7fr) minmax(0, 1.3fr);
-  gap: var(--space-3);
-  align-items: center;
-  padding: var(--space-3);
-  background: var(--color-surface);
-}.plan-condition-row dt {
-  color: var(--color-muted);
-  font-size: 0.78rem;
-  font-weight: 800;
-}.plan-condition-row dd {
-  min-width: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-2);
-  margin: 0;
-}.plan-condition-row dd strong {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}.plan-condition-row--same {
-  box-shadow: inset 4px 0 0 var(--color-line-strong);
-}.plan-condition-row--changed {
-  box-shadow: inset 4px 0 0 var(--color-accent);
-}.plan-condition-status {
-  flex: 0 0 auto;
-  align-self: center;
-  padding: 0.2rem 0.5rem;
-  border: 1px solid var(--color-line);
-  border-radius: 999px;
-  color: var(--color-muted);
-  background: var(--color-paper);
-  font-size: 0.72rem;
-  font-weight: 850;
-}.plan-condition-status--changed {
-  border-color: color-mix(in srgb, var(--color-accent) 48%, var(--color-line));
-  color: var(--color-accent-strong);
-  background: var(--color-accent-soft);
 }.plan-candidate {
   align-content: start;
-}.plan-candidate .plan-condition-summary {
-  align-self: stretch;
-}.plan-candidate .plan-condition-row {
-  grid-template-columns: minmax(5rem, 0.75fr) minmax(0, 1.25fr);
 }.plan-candidate > .button {
   align-self: end;
   width: 100%;
-}.plan-edit-group {
-  display: grid;
-  gap: var(--space-4);
-  min-width: 0;
-  margin: 0;
-  padding: clamp(1rem, 3vw, 1.5rem);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-medium);
-  background: var(--color-surface-warm);
-}.plan-edit-group + .plan-edit-group {
-  margin-top: var(--space-5);
-}.plan-edit-group legend {
-  padding-inline: var(--space-2);
-  font-family: var(--font-editorial);
-  font-size: 1.25rem;
-  font-weight: 850;
-}.plan-edit-group--course {
-  border-top: 5px solid var(--color-ink);
-}.plan-surface-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
-}.plan-model-layout {
-  display: grid;
-  gap: var(--space-4);
-  align-items: start;
-}.plan-model-summary,
-.plan-body-map-reference {
-  display: grid;
-  gap: var(--space-4);
-}.plan-body-map-reference {
-  background: var(--color-paper);
-}.plan-body-map-reference h3 {
-  font-family: var(--font-editorial);
-  font-size: 1.5rem;
-}.plan-body-map-reference .body-map__view svg {
-  max-height: 17rem;
-}.plan-body-map-rest {
-  padding: var(--space-4);
-  border: 1px dashed var(--color-line);
-  background: var(--color-surface);
-}.plan-final-heading {
-  display: grid;
-  gap: 1px;
-  background: var(--color-line);
-}.plan-final-heading > div {
-  display: grid;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-surface);
-}.plan-final-heading span,
-.saved-plan-conditions dt {
-  color: var(--color-muted);
-  font-size: 0.78rem;
-  font-weight: 800;
-}.saved-plan-conditions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
-  gap: 1px;
-  margin: 0;
-  border: 1px solid var(--color-line);
-  background: var(--color-line);
-}.saved-plan-conditions > div {
-  min-width: 0;
-  padding: var(--space-3);
-  background: var(--color-surface);
-}.saved-plan-conditions dd {
-  margin: var(--space-1) 0 0;
-  overflow-wrap: anywhere;
-  font-weight: 800;
-}.plan-save-complete .plan-condition-status {
-  display: none;
 }
-@media (min-width: 42rem) {  .plan-flow-steps--five {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }  .plan-condition-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }  .plan-final-heading {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }  .plan-surface-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+@media (min-width: 42rem) {
 }
-@media (min-width: 64rem) {  .plan-candidate-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }  .plan-candidate__copy h3 {
-    min-block-size: 2.8em;
-  }  .plan-candidate__copy > p:last-child {
-    min-block-size: 3.6em;
-  }  .plan-model-layout {
-    grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 0.85fr);
-  }
+@media (min-width: 64rem) {
 }
-@media (min-width: 48rem) and (max-width: 63.99rem) {  .plan-candidate-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+@media (min-width: 48rem) and (max-width: 63.99rem) {
 }
-@media (max-width: 35rem) {  .plan-condition-row,
-  .plan-candidate .plan-condition-row {
-    grid-template-columns: 1fr;
-    gap: var(--space-1);
-  }  .plan-condition-row dd {
-    align-items: center;
-  }  .plan-surface-grid {
-    grid-template-columns: 1fr;
-  }  .plan-load-summary {
-    grid-template-columns: 1fr;
-  }  .plan-load-summary > strong {
-    grid-row: auto;
-    grid-column: auto;
-  }
+@media (max-width: 35rem) {
 }
-@media (forced-colors: active) {  .plan-condition-row--same,
-  .plan-condition-row--changed,
-  .plan-load-summary,
-  .plan-stage--confirm,
-  .plan-reference-card {
-    border: 2px solid ButtonText;
-    box-shadow: none;
-  }  .plan-condition-status--changed {
-    border: 2px solid Highlight;
-  }
+@media (forced-colors: active) {
 }
-@media print {  .plan-stage--candidates .button,
-  .plan-stage--edit,
-  .plan-stage--confirm .form-submit-area,
-  .saved-plan__actions,
+@media print {
   .plan-outcome-editor {
     display: none !important;
-  }  .plan-reference-card,
-  .plan-model-summary,
-  .plan-body-map-reference,
-  .plan-stage--confirm,
+  }
   .plan-candidate,
   .saved-plan {
     break-inside: avoid;
@@ -980,23 +721,12 @@
   min-width: 0;
   grid-template-columns: minmax(0, 1fr);
 }.screen > *,
-.plan-flow-steps,
-.plan-flow-steps > li,
-.plan-stage,
-.plan-stage > *,
-.plan-condition-summary,
-.plan-condition-row,
 .field-grid,
 .field-grid > * {
   min-width: 0;
   max-width: 100%;
-}.plan-flow-steps :is(strong, small),
-.plan-condition-row :is(dt, dd, strong, small) {
-  overflow-wrap: anywhere;
 }
-@media (min-width: 42rem) {  .plan-flow-steps--five {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr));
-  }  .plan-condition-summary,
+@media (min-width: 42rem) {
   .screen--plan .field-grid--two {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   }
@@ -1434,36 +1164,10 @@ and minimal personal note */
 @media (min-width: 48rem) {
 }
 @media (forced-colors: active) {
-}
-
-/* プラン画面では予定条件と走行後入力を分ける。 */
-/* プラン画面では予定条件と走行後入力を分ける。 */
-.plan-model-assumption {
-  margin: 0;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 25%, var(--color-line));
-  border-radius: var(--radius-medium);
-  background: var(--color-surface);
-  color: var(--color-muted);
-  font-size: 0.95rem;
-  line-height: 1.7;
-}.plan-candidate-parts {
-  display: grid;
-  gap: var(--space-2);
-}.plan-candidate-parts > p {
-  margin: 0;
-  color: var(--color-muted);
-  font-size: 0.82rem;
-  font-weight: 850;
 }.plan-saved-disclosure {
   margin-top: var(--space-5);
-}.plan-saved-disclosure .saved-plan-list {
-  display: grid;
-  gap: var(--space-4);
 }
-@media (forced-colors: active) {  .plan-model-assumption {
-    border: 2px solid ButtonText;
-  }
+@media (forced-colors: active) {
 }/* コラム以外の折りたたみ面をそろえる。 */
 .finish-data-tools.history-detail-disclosure,
 .plan-outcome-editor.history-detail-disclosure {
@@ -1972,32 +1676,8 @@ and minimal personal note */
 
 
 @media (max-width: 48rem) {
-}/* 読み始めの負担を抑えるため、主要説明文の行幅を一定にする。 */
-
-
-.plan-candidate-details,
-.plan-reference-details,
-.plan-preview-details{
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-medium);
-  background: color-mix(in srgb, var(--color-surface) 92%, var(--color-paper));
-}.plan-candidate-details > summary,
-.plan-reference-details > summary,
-.plan-preview-details > summary{
-  min-height: var(--touch-target);
-  display: flex;
-  align-items: center;
-  padding: var(--space-3) var(--space-4);
-  cursor: pointer;
-  font-weight: 800;
-}.plan-candidate-details > :not(summary),
-.plan-reference-details > :not(summary),
-.plan-preview-details > :not(summary){
-  margin: 0;
-  padding: var(--space-4);
-  border-top: 1px solid var(--color-line);
 }
-@media (min-width: 42rem) {  .plan-flow-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (min-width: 42rem) {
 }.subjective-body-map-layout {
   display: grid;
   gap: var(--space-4);
@@ -2106,15 +1786,6 @@ and minimal personal note */
   font-size: 0.72rem;
 }
 
-/* The plan reference card uses a top accent so its content never intersects a vertical rule. */
-/* The plan reference card uses a top accent so its content never intersects a vertical rule. */
-.plan-load-summary {
-  border-left: 1px solid var(--color-line);
-  border-top: 5px solid var(--color-model);
-  border-radius: var(--radius-medium);
-  background: color-mix(in srgb, var(--color-model-soft) 72%, var(--color-surface));
-}
-
 /* Match the current RPE and personal-purpose markup. */
 /* Match the current RPE and personal-purpose markup. */
 .range-input-card {
@@ -2146,9 +1817,6 @@ and minimal personal note */
 .primary-navigation__link--desktop-only { display: none; }
 @media (min-width: 70rem) {  .primary-navigation__link--desktop-only { display: grid; }  .feature-menu__link--desktop-primary,
   .feature-menu__group--desktop-primary-only { display: none; }
-}.plan-stage--model[data-information-role] {
-  padding-top: var(--space-4);
-  box-shadow: inset 0 0.25rem 0 var(--color-model);
 }.course-mode-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
