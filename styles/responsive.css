@@ -266,10 +266,7 @@ input, select, textarea {
 
 /* --- Simulation --- */
 .screen--simulation { max-width: 980px; margin-inline: auto; gap: 16px; }
-.screen--simulation .simulation-course-summary,
 .screen--simulation .simulation-result { border-radius: 18px; }
-.screen--simulation .simulation-region-row { border-radius: 13px; }
-.screen--simulation .simulation-facts span { border-radius: 10px; }
 
 /* --- Course / GPX --- */
 .screen--course-library,
