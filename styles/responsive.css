@@ -294,31 +294,6 @@ input, select, textarea {
 
 /* --- Region detail --- */
 .screen--body-part-detail { gap: 18px; }
-/* --- History fidelity --- */
-.screen--history-unified { gap: 18px; }
-.screen--history-unified .history-unified-tabs {
-  max-width: 520px;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid var(--color-line);
-  border-radius: 15px;
-  background: color-mix(in srgb, var(--color-paper) 65%, var(--color-line));
-}
-.screen--history-unified .view-tab { min-height: 46px; border-radius: 11px; }
-.screen--history-unified .history-focused-grid { gap: 12px; }
-.screen--history-unified .history-focused-chart-card,
-.screen--history-unified .history-selected-record,
-.screen--history-unified .history-record-table-disclosure,
-.screen--history-unified .filter-panel {
-  border-radius: 19px;
-  box-shadow: var(--app-card-shadow);
-}
-.screen--history-unified .history-chart-display-toggle,
-.screen--history-unified .period-tabs { border-radius: 11px; }
-.screen--history-unified .history-list { gap: 8px; }
-.screen--history-unified .history-item { padding: 12px; border-radius: 16px; box-shadow: var(--app-card-shadow); }
 
 /* --- Plan --- */
 .screen--plan { max-width: 980px; margin-inline: auto; gap: 16px; }
@@ -446,9 +421,6 @@ input, select, textarea {
   .screen--home .home-two-column { grid-template-columns: 1fr; }
   .screen--result .body-map { gap: 4px; }
 
-  .screen--history-unified .history-focused-header,
-  .screen--history-unified .history-focused-toolbar { align-items: stretch; flex-direction: column; }
-
   .screen--more .feature-link-card { grid-template-columns: 34px minmax(0, 1fr); }
   .screen--more .feature-link-card::after { display: none; }
 }
@@ -492,7 +464,6 @@ input, select, textarea {
   }
   .primary-navigation__link--desktop-only { display: grid; }
   .screen--home .home-two-column { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .screen--history-unified .history-focused-grid { grid-template-columns: minmax(0, 1.8fr) minmax(260px, .72fr); }
 }
 
 @media print {
