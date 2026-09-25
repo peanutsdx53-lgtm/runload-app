@@ -76,18 +76,4 @@ export function getEnteredBodyAreaObservations(feedback = {}) {
     : [];
 }
 
-export function createNeutralResultSummary(experience = {}) {
-  const { record = {} } = experience;
-  const activity = formatActivitySummary(record);
-  if (record.activityType === "rest") {
-    return `${activity}しました。身体の記録も保存されています。休養日には走行による12部位の目安を作成しません。`;
-  }
-  const isPrimaryRegional = experience.regionalV2ResultRecord?.model_version === "runload-primary-regional.0";
-  if (isPrimaryRegional) {
-    return `${activity}しました。12部位の目安を結果画面で確認できます。距離は別の走行事実として扱い、異なる部位どうしは順位付けしません。身体の記録も別に確認できます。`;
-  }
-  return `${activity}しました。この保存記録では12部位の目安を表示できない場合があります。身体の記録は別に確認できます。`;
-}
-
-
 export { SURFACE_FIELDS };
