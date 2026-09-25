@@ -195,10 +195,3 @@ export function clearRecordInputWorkspace() {
   clearRecordInputJourney();
 }
 
-export function recordInputWorkspaceKey() {
-  return WORKSPACE_KEY;
-}
-
-export function recordInputJourneyKey() {
-  return JOURNEY_KEY;
-}
