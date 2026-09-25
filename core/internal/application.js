@@ -1,5 +1,5 @@
 import "./models.js";
-import { coreModules } from "./moduleRegistry.js";
+import { internalModules } from "./internalModules.js";
 import {
   ROF_J_SEMANTIC_VERSION,
   ROF_J_SOURCE_VERSION,
@@ -115,7 +115,7 @@ moduleExports["BODY_AREA_BY_ID"] = BODY_AREA_BY_ID;
 moduleExports["BODY_AREA_BY_KEY"] = BODY_AREA_BY_KEY;
 moduleExports["normalizeBodyAreaObservations"] = normalizeBodyAreaObservations;
 moduleExports["bodyAreaLateralityLabel"] = bodyAreaLateralityLabel;
-coreModules[28] = moduleExports;
+internalModules.bodyAreaTaxonomy = moduleExports;
 }
 
 // ===== core/safety/supportDecision.js =====
@@ -288,15 +288,15 @@ moduleExports["SUPPORT_NEXT_ACTIONS"] = SUPPORT_NEXT_ACTIONS;
 moduleExports["evaluateSupportDecision"] = evaluateSupportDecision;
 moduleExports["shouldBlockNormalPlanSuggestions"] = shouldBlockNormalPlanSuggestions;
 moduleExports["shouldPrioritizeOfficialHelp"] = shouldPrioritizeOfficialHelp;
-coreModules[29] = moduleExports;
+internalModules.supportDecision = moduleExports;
 }
 
 // ===== core/safety/subjectiveFeedback.js =====
 {
 const moduleExports = Object.create(null);
-const { normalizeBodyAreaObservations } = coreModules[28];
-const { normalizePlainText, normalizeSingleLineText } = coreModules[6];
-const { evaluateSupportDecision, SAFETY_FLAG_KEYS } = coreModules[29];
+const { normalizeBodyAreaObservations } = internalModules.bodyAreaTaxonomy;
+const { normalizePlainText, normalizeSingleLineText } = internalModules.inputSafety;
+const { evaluateSupportDecision, SAFETY_FLAG_KEYS } = internalModules.supportDecision;
 
 const SUBJECTIVE_CHECK_STATUSES = Object.freeze([
   "not_asked",
@@ -383,15 +383,15 @@ moduleExports["SUBJECTIVE_CHECK_STATUSES"] = SUBJECTIVE_CHECK_STATUSES;
 moduleExports["normalizeSafetyFlags"] = normalizeSafetyFlags;
 moduleExports["inferSubjectiveCheckStatus"] = inferSubjectiveCheckStatus;
 moduleExports["normalizeSubjectiveFeedback"] = normalizeSubjectiveFeedback;
-coreModules[30] = moduleExports;
+internalModules.subjectiveFeedback = moduleExports;
 }
 
 // ===== core/storage/subjectiveFeedbackRepository.js =====
 {
 const moduleExports = Object.create(null);
-const { normalizeSubjectiveFeedback } = coreModules[30];
-const { createCollectionRepository } = coreModules[10];
-const { STORAGE_KEYS } = coreModules[1];
+const { normalizeSubjectiveFeedback } = internalModules.subjectiveFeedback;
+const { createCollectionRepository } = internalModules.collectionRepository;
+const { STORAGE_KEYS } = internalModules.storageKeys;
 
 function createSubjectiveFeedbackRepository(gateway) {
   const repository = createCollectionRepository({
@@ -427,15 +427,15 @@ function createSubjectiveFeedbackRepository(gateway) {
   });
 }
 moduleExports["createSubjectiveFeedbackRepository"] = createSubjectiveFeedbackRepository;
-coreModules[31] = moduleExports;
+internalModules.subjectiveFeedbackRepository = moduleExports;
 }
 
 // ===== core/storage/planRepository.js =====
 {
 const moduleExports = Object.create(null);
-const { INPUT_LIMITS, normalizePlainText, normalizeSingleLineText } = coreModules[6];
-const { createCollectionRepository } = coreModules[10];
-const { STORAGE_KEYS } = coreModules[1];
+const { INPUT_LIMITS, normalizePlainText, normalizeSingleLineText } = internalModules.inputSafety;
+const { createCollectionRepository } = internalModules.collectionRepository;
+const { STORAGE_KEYS } = internalModules.storageKeys;
 
 function finiteNumber(value, fallback = 0) {
   const number = Number(value);
@@ -555,7 +555,7 @@ function createPlanRepository(gateway) {
   });
 }
 moduleExports["createPlanRepository"] = createPlanRepository;
-coreModules[32] = moduleExports;
+internalModules.planRepository = moduleExports;
 }
 
 
@@ -564,7 +564,7 @@ coreModules[32] = moduleExports;
 // ===== core/model/bodyProfileAdjustment.js =====
 {
 const moduleExports = Object.create(null);
-const { clampNumber, toFiniteNumber } = coreModules[5];
+const { clampNumber, toFiniteNumber } = internalModules.numberUtilities;
 
 // Current profile data is context-only. It does not create a body-size coefficient.
 const PERSONAL_PROFILE_SCHEMA_VERSION = 2;
@@ -675,15 +675,15 @@ moduleExports["normalizeBodyProfile"] = normalizeBodyProfile;
 moduleExports["calculateBodyWeightAdjustment"] = calculateBodyWeightAdjustment;
 moduleExports["createBodyProfileSnapshot"] = createBodyProfileSnapshot;
 moduleExports["getBodyWeightFactorFromRecord"] = getBodyWeightFactorFromRecord;
-coreModules[36] = moduleExports;
+internalModules.bodyProfileAdjustment = moduleExports;
 }
 
 // ===== core/storage/simpleValueRepositories.js =====
 {
 const moduleExports = Object.create(null);
-const { normalizeBodyProfile } = coreModules[36];
-const { normalizePlainText } = coreModules[6];
-const { STORAGE_KEYS } = coreModules[1];
+const { normalizeBodyProfile } = internalModules.bodyProfileAdjustment;
+const { normalizePlainText } = internalModules.inputSafety;
+const { STORAGE_KEYS } = internalModules.storageKeys;
 
 function createProfileRepository(gateway) {
   function loadResult() {
@@ -739,7 +739,7 @@ function createDraftRepository(gateway) {
 moduleExports["createProfileRepository"] = createProfileRepository;
 moduleExports["createSettingsRepository"] = createSettingsRepository;
 moduleExports["createDraftRepository"] = createDraftRepository;
-coreModules[37] = moduleExports;
+internalModules.simpleValueRepositories = moduleExports;
 }
 
 // ===== core/model/v27/v27Math.js =====
@@ -835,14 +835,14 @@ moduleExports["linearInterpolate"] = linearInterpolate;
 moduleExports["median"] = median;
 moduleExports["weightedMean"] = weightedMean;
 moduleExports["weightedRearrangementProduct"] = weightedRearrangementProduct;
-coreModules[38] = moduleExports;
+internalModules.legacyLoadMath = moduleExports;
 }
 
 // ===== core/model/v27/v27Model.js =====
 {
 const moduleExports = Object.create(null);
-const { V27_CADENCE_CURVES, V27_EMPHASIS_REGION_IDS, V27_GRADE_CURVES, V27_MODEL_VERSION, V27_REGIONS, V27_REPORTED_ANGLE_ROUNDING_TOLERANCE_DEG, V27_SPEED_CURVES, V27_SURFACE_FACTORS, V27_TOTAL_GRADE_DOMAIN_MAX_PERCENT } = coreModules[12];
-const { approximatelyEqual, isFiniteNumber, linearInterpolate, requirePositiveFinite, validateV27Shares, weightedMean, weightedRearrangementProduct } = coreModules[38];
+const { V27_CADENCE_CURVES, V27_EMPHASIS_REGION_IDS, V27_GRADE_CURVES, V27_MODEL_VERSION, V27_REGIONS, V27_REPORTED_ANGLE_ROUNDING_TOLERANCE_DEG, V27_SPEED_CURVES, V27_SURFACE_FACTORS, V27_TOTAL_GRADE_DOMAIN_MAX_PERCENT } = internalModules.legacyLoadModelConstants;
+const { approximatelyEqual, isFiniteNumber, linearInterpolate, requirePositiveFinite, validateV27Shares, weightedMean, weightedRearrangementProduct } = internalModules.legacyLoadMath;
 
 function minettiCost(gradeDecimal) {
   const grade = gradeDecimal;
@@ -1424,16 +1424,16 @@ moduleExports["calculateV27WithinRunRegionalEmphasis"] = calculateV27WithinRunRe
 moduleExports["calculateV27InternalResponse"] = calculateV27InternalResponse;
 moduleExports["calculateV27Session"] = calculateV27Session;
 moduleExports["assertV27ResultSemantics"] = assertV27ResultSemantics;
-coreModules[39] = moduleExports;
+internalModules.legacyLoadModel = moduleExports;
 }
 
 // ===== core/storage/courseRepository.js =====
 {
 const moduleExports = Object.create(null);
-const { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse } = coreModules[3];
-const { normalizeSingleLineText } = coreModules[6];
-const { createCollectionRepository } = coreModules[10];
-const { STORAGE_KEYS } = coreModules[1];
+const { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse } = internalModules.modelConstants;
+const { normalizeSingleLineText } = internalModules.inputSafety;
+const { createCollectionRepository } = internalModules.collectionRepository;
+const { STORAGE_KEYS } = internalModules.storageKeys;
 
 const COURSE_NUMERIC_FIELDS = Object.freeze([
   "upPercent", "downPercent", "upGradePercent", "downGradePercent",
@@ -1689,20 +1689,20 @@ moduleExports["COURSE_NUMERIC_FIELDS"] = COURSE_NUMERIC_FIELDS;
 moduleExports["normalizeCourseFields"] = normalizeCourseFields;
 moduleExports["validateCoursePresetInput"] = validateCoursePresetInput;
 moduleExports["createCourseRepository"] = createCourseRepository;
-coreModules[40] = moduleExports;
+internalModules.courseRepository = moduleExports;
 }
 
 // ===== core/storage/restoreInspection.js =====
 {
 const moduleExports = Object.create(null);
-const { PERSONAL_PROFILE_SCHEMA_VERSION } = coreModules[36];
-const { PRIMARY_REGIONAL_V2_MODEL_VERSION, validatePrimaryRegionalV2ResultRecord } = coreModules[26];
-const { V27_MODEL_VERSION } = coreModules[12];
-const { assertV27ResultSemantics } = coreModules[39];
-const { INPUT_LIMITS } = coreModules[6];
-const { validateRunningRecordInput, normalizeRunningRecord, validateRunningRecord } = coreModules[9];
-const { validateCoursePresetInput } = coreModules[40];
-const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = coreModules[1];
+const { PERSONAL_PROFILE_SCHEMA_VERSION } = internalModules.bodyProfileAdjustment;
+const { PRIMARY_REGIONAL_V2_MODEL_VERSION, validatePrimaryRegionalV2ResultRecord } = internalModules.primaryRegionalResultService;
+const { V27_MODEL_VERSION } = internalModules.legacyLoadModelConstants;
+const { assertV27ResultSemantics } = internalModules.legacyLoadModel;
+const { INPUT_LIMITS } = internalModules.inputSafety;
+const { validateRunningRecordInput, normalizeRunningRecord, validateRunningRecord } = internalModules.inputValidation;
+const { validateCoursePresetInput } = internalModules.courseRepository;
+const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = internalModules.storageKeys;
 
 const RESTORE_INSPECTION_VERSION = "restore-inspection-v1";
 const RESTORE_STATUS = Object.freeze({
@@ -2095,15 +2095,15 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
 moduleExports["RESTORE_INSPECTION_VERSION"] = RESTORE_INSPECTION_VERSION;
 moduleExports["RESTORE_STATUS"] = RESTORE_STATUS;
 moduleExports["inspectBackupSnapshot"] = inspectBackupSnapshot;
-coreModules[41] = moduleExports;
+internalModules.restoreInspection = moduleExports;
 }
 
 // ===== core/storage/backupService.js =====
 {
 const moduleExports = Object.create(null);
-const { INPUT_LIMITS, parseJsonText } = coreModules[6];
-const { inspectBackupSnapshot, RESTORE_STATUS } = coreModules[41];
-const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = coreModules[1];
+const { INPUT_LIMITS, parseJsonText } = internalModules.inputSafety;
+const { inspectBackupSnapshot, RESTORE_STATUS } = internalModules.restoreInspection;
+const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = internalModules.storageKeys;
 
 const BACKUP_FORMAT_VERSION = "runner-load-app-new-backup-v1";
 
@@ -2295,13 +2295,13 @@ function createBackupService(gateway) {
 }
 moduleExports["BACKUP_FORMAT_VERSION"] = BACKUP_FORMAT_VERSION;
 moduleExports["createBackupService"] = createBackupService;
-coreModules[42] = moduleExports;
+internalModules.backupService = moduleExports;
 }
 
 // ===== core/safety/publicHelpGuidance.js =====
 {
 const moduleExports = Object.create(null);
-const { SUPPORT_NEXT_ACTIONS, URGENT_SAFETY_FLAGS } = coreModules[29];
+const { SUPPORT_NEXT_ACTIONS, URGENT_SAFETY_FLAGS } = internalModules.supportDecision;
 
 const PUBLIC_HELP_GUIDANCE_VERSION = "public-help-guidance-v1";
 const PUBLIC_HELP_GUIDANCE_REVIEW_DATE = "2026-08-01";
@@ -2372,14 +2372,14 @@ moduleExports["PUBLIC_HELP_GUIDANCE_VERSION"] = PUBLIC_HELP_GUIDANCE_VERSION;
 moduleExports["PUBLIC_HELP_GUIDANCE_REVIEW_DATE"] = PUBLIC_HELP_GUIDANCE_REVIEW_DATE;
 moduleExports["OFFICIAL_HELP_REFERENCES"] = OFFICIAL_HELP_REFERENCES;
 moduleExports["buildPublicHelpGuidance"] = buildPublicHelpGuidance;
-coreModules[43] = moduleExports;
+internalModules.publicHelpGuidance = moduleExports;
 }
 
 // ===== core/model/v27/v27Personal.js =====
 {
 const moduleExports = Object.create(null);
-const { V27_CADENCE_SPEED_MATCH_TOLERANCE_MPS, V27_MODEL_VERSION } = coreModules[12];
-const { isFiniteNumber, median, requirePositiveFinite } = coreModules[38];
+const { V27_CADENCE_SPEED_MATCH_TOLERANCE_MPS, V27_MODEL_VERSION } = internalModules.legacyLoadModelConstants;
+const { isFiniteNumber, median, requirePositiveFinite } = internalModules.legacyLoadMath;
 
 function deriveV27PersonalCadenceDelta({
   targetSessionId,
@@ -2488,15 +2488,15 @@ function calculateV27PersonalRelative({
 moduleExports["deriveV27PersonalCadenceDelta"] = deriveV27PersonalCadenceDelta;
 moduleExports["deriveV27PersonalCadenceSensitivity"] = deriveV27PersonalCadenceSensitivity;
 moduleExports["calculateV27PersonalRelative"] = calculateV27PersonalRelative;
-coreModules[44] = moduleExports;
+internalModules.legacyLoadPersonalAdjustment = moduleExports;
 }
 
 // ===== core/model/v27/v27InputAdapter.js =====
 {
 const moduleExports = Object.create(null);
-const { V27_ACTIVITY_TYPES, V27_MODEL_VERSION, V27_SURFACE_FACTORS } = coreModules[12];
-const { deriveV27PersonalCadenceSensitivity } = coreModules[44];
-const { reportedRpeValue } = coreModules[8];
+const { V27_ACTIVITY_TYPES, V27_MODEL_VERSION, V27_SURFACE_FACTORS } = internalModules.legacyLoadModelConstants;
+const { deriveV27PersonalCadenceSensitivity } = internalModules.legacyLoadPersonalAdjustment;
+const { reportedRpeValue } = internalModules.rpeProvenance;
 
 const GRADE_KNOWLEDGE = new Set(["UNKNOWN", "KNOWN_FLAT", "KNOWN_PROFILE"]);
 const ACTIVITY_FORMATS = new Set(Object.values(V27_ACTIVITY_TYPES));
@@ -2745,16 +2745,16 @@ function adaptRecordToV27Session(record, { priorCadenceFacts = [] } = {}) {
   });
 }
 moduleExports["adaptRecordToV27Session"] = adaptRecordToV27Session;
-coreModules[45] = moduleExports;
+internalModules.legacyLoadInputAdapter = moduleExports;
 }
 
 // ===== core/model/v27/v27ResultService.js =====
 {
 const moduleExports = Object.create(null);
-const { V27_EMPHASIS_REGION_IDS, V27_MODEL_VERSION, V27_REGIONAL_VIEW_IDS } = coreModules[12];
-const { adaptRecordToV27Session } = coreModules[45];
-const { assertV27ResultSemantics, calculateV27Session } = coreModules[39];
-const { calculateV27PersonalRelative } = coreModules[44];
+const { V27_EMPHASIS_REGION_IDS, V27_MODEL_VERSION, V27_REGIONAL_VIEW_IDS } = internalModules.legacyLoadModelConstants;
+const { adaptRecordToV27Session } = internalModules.legacyLoadInputAdapter;
+const { assertV27ResultSemantics, calculateV27Session } = internalModules.legacyLoadModel;
+const { calculateV27PersonalRelative } = internalModules.legacyLoadPersonalAdjustment;
 
 function cloneValue(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -2958,20 +2958,20 @@ function upsertV27ResultRecord(items, resultRecord) {
 }
 moduleExports["createV27ResultRecord"] = createV27ResultRecord;
 moduleExports["upsertV27ResultRecord"] = upsertV27ResultRecord;
-coreModules[46] = moduleExports;
+internalModules.legacyLoadResultService = moduleExports;
 }
 
 // ===== core/workflows/recordWorkflow.js =====
 {
 const moduleExports = Object.create(null);
-const { createBodyProfileSnapshot, normalizeBodyProfile } = coreModules[36];
-const { createV27ResultRecord, upsertV27ResultRecord } = coreModules[46];
-const { isPrimaryRegionalV2Record, stampCurrentRegionalModel } = coreModules[4];
-const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = coreModules[9];
-const { normalizeSubjectiveFeedback } = coreModules[30];
-const { evaluateSupportDecision } = coreModules[29];
-const { STORAGE_KEYS } = coreModules[1];
-const { createPrimaryRegionalV2ResultRecord, upsertPrimaryRegionalV2ResultRecord, validatePrimaryRegionalV2ResultRecord, PRIMARY_REGIONAL_V2_MODEL_VERSION, LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION } = coreModules[26];
+const { createBodyProfileSnapshot, normalizeBodyProfile } = internalModules.bodyProfileAdjustment;
+const { createV27ResultRecord, upsertV27ResultRecord } = internalModules.legacyLoadResultService;
+const { isPrimaryRegionalV2Record, stampCurrentRegionalModel } = internalModules.primaryRegionalSnapshot;
+const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = internalModules.inputValidation;
+const { normalizeSubjectiveFeedback } = internalModules.subjectiveFeedback;
+const { evaluateSupportDecision } = internalModules.supportDecision;
+const { STORAGE_KEYS } = internalModules.storageKeys;
+const { createPrimaryRegionalV2ResultRecord, upsertPrimaryRegionalV2ResultRecord, validatePrimaryRegionalV2ResultRecord, PRIMARY_REGIONAL_V2_MODEL_VERSION, LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION } = internalModules.primaryRegionalResultService;
 
 function cloneValue(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -3294,13 +3294,13 @@ function createRecordWorkflow({
   });
 }
 moduleExports["createRecordWorkflow"] = createRecordWorkflow;
-coreModules[47] = moduleExports;
+internalModules.recordWorkflow = moduleExports;
 }
 
 // ===== core/history/historyWorkflow.js =====
 {
 const moduleExports = Object.create(null);
-const { STORAGE_KEYS } = coreModules[1];
+const { STORAGE_KEYS } = internalModules.storageKeys;
 
 function cloneValue(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -3616,17 +3616,17 @@ function createHistoryWorkflow({
   return Object.freeze({ search, deleteRecord, loadUndoEntry, loadUndoEntryResult, undoDelete });
 }
 moduleExports["createHistoryWorkflow"] = createHistoryWorkflow;
-coreModules[48] = moduleExports;
+internalModules.historyWorkflow = moduleExports;
 }
 
 // ===== core/planning/planPreviewV27.js =====
 {
 const moduleExports = Object.create(null);
-const { SURFACE_FIELDS } = coreModules[3];
-const { V27_ACTIVITY_TYPES, V27_EMPHASIS_REGION_IDS, V27_MODEL_VERSION, V27_REGIONAL_VIEW_IDS } = coreModules[12];
-const { adaptRecordToV27Session } = coreModules[45];
-const { assertV27ResultSemantics, calculateV27Session } = coreModules[39];
-const { validateRunningRecordInput } = coreModules[9];
+const { SURFACE_FIELDS } = internalModules.modelConstants;
+const { V27_ACTIVITY_TYPES, V27_EMPHASIS_REGION_IDS, V27_MODEL_VERSION, V27_REGIONAL_VIEW_IDS } = internalModules.legacyLoadModelConstants;
+const { adaptRecordToV27Session } = internalModules.legacyLoadInputAdapter;
+const { assertV27ResultSemantics, calculateV27Session } = internalModules.legacyLoadModel;
+const { validateRunningRecordInput } = internalModules.inputValidation;
 
 const GRADE_KNOWLEDGE = new Set(["UNKNOWN", "KNOWN_FLAT", "KNOWN_PROFILE"]);
 const SURFACE_CLASSES = new Set([
@@ -3923,15 +3923,15 @@ moduleExports["normalizePlanFactSession"] = normalizePlanFactSession;
 moduleExports["createPlanFactPreview"] = createPlanFactPreview;
 moduleExports["clonePlanFactPreview"] = clonePlanFactPreview;
 moduleExports["PLAN_FACT_PREVIEW_VERSION"] = PLAN_FACT_PREVIEW_VERSION;
-coreModules[49] = moduleExports;
+internalModules.planPreview = moduleExports;
 }
 
 // ===== core/planning/planWorkflow.js =====
 {
 const moduleExports = Object.create(null);
-const { clonePlanFactPreview, createPlanFactPreview, normalizePlanFactSession } = coreModules[49];
-const { normalizePlainText, normalizeSingleLineText } = coreModules[6];
-const { isValidLocalDate } = coreModules[9];
+const { clonePlanFactPreview, createPlanFactPreview, normalizePlanFactSession } = internalModules.planPreview;
+const { normalizePlainText, normalizeSingleLineText } = internalModules.inputSafety;
+const { isValidLocalDate } = internalModules.inputValidation;
 
 function cloneValue(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -4144,5 +4144,5 @@ function createPlanWorkflow({ services, planRepository }) {
   });
 }
 moduleExports["createPlanWorkflow"] = createPlanWorkflow;
-coreModules[50] = moduleExports;
+internalModules.planWorkflow = moduleExports;
 }

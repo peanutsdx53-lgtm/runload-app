@@ -1,5 +1,5 @@
 import "./infrastructure.js";
-import { coreModules } from "./moduleRegistry.js";
+import { internalModules } from "./internalModules.js";
 
 // ===== core/model/v27/v27Constants.js =====
 {
@@ -181,15 +181,15 @@ moduleExports["V27_TOTAL_GRADE_DOMAIN_MAX_PERCENT"] = V27_TOTAL_GRADE_DOMAIN_MAX
 moduleExports["V27_COMMON_REGIONAL_GRADE_DOMAIN_MAX_PERCENT"] = V27_COMMON_REGIONAL_GRADE_DOMAIN_MAX_PERCENT;
 moduleExports["V27_COMMON_REGIONAL_GRADE_INPUT_MAX_PERCENT"] = V27_COMMON_REGIONAL_GRADE_INPUT_MAX_PERCENT;
 moduleExports["V27_REGIONAL_VIEW_IDS"] = V27_REGIONAL_VIEW_IDS;
-coreModules[12] = moduleExports;
+internalModules.legacyLoadModelConstants = moduleExports;
 }
 
 // ===== core/storage/modelResultV27Repository.js =====
 {
 const moduleExports = Object.create(null);
-const { V27_MODEL_VERSION } = coreModules[12];
-const { createCollectionRepository } = coreModules[10];
-const { STORAGE_KEYS } = coreModules[1];
+const { V27_MODEL_VERSION } = internalModules.legacyLoadModelConstants;
+const { createCollectionRepository } = internalModules.collectionRepository;
+const { STORAGE_KEYS } = internalModules.storageKeys;
 
 function normalizeResultRecord(item = {}) {
   if (
@@ -271,7 +271,7 @@ function createModelResultV27Repository(gateway) {
   });
 }
 moduleExports["createModelResultV27Repository"] = createModelResultV27Repository;
-coreModules[13] = moduleExports;
+internalModules.legacyLoadResultRepository = moduleExports;
 }
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2Engine.js =====
@@ -562,7 +562,7 @@ moduleExports["baselineResponse"] = baselineResponse;
 moduleExports["evaluateRegionSegment"] = evaluateRegionSegment;
 moduleExports["calculateRun"] = calculateRun;
 moduleExports["regionDefinition"] = regionDefinition;
-coreModules[14] = moduleExports;
+internalModules.primaryRegionalEngine = moduleExports;
 }
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2InputTrace.js =====
@@ -681,14 +681,14 @@ moduleExports["RETAINED_INPUTS"] = RETAINED_INPUTS;
 moduleExports["buildRetainedInputTrace"] = buildRetainedInputTrace;
 moduleExports["currentAppContextTraceNames"] = currentAppContextTraceNames;
 moduleExports["assertDaySemantics"] = assertDaySemantics;
-coreModules[15] = moduleExports;
+internalModules.primaryRegionalInputTrace = moduleExports;
 }
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2InputAdapter.js =====
 {
 const moduleExports = Object.create(null);
-const { SURFACE_FIELDS } = coreModules[3];
-const { reportedRpeValue } = coreModules[8];
+const { SURFACE_FIELDS } = internalModules.modelConstants;
+const { reportedRpeValue } = internalModules.rpeProvenance;
 
 const SURFACE_KEY_BY_RECORD_KEY = Object.freeze(Object.fromEntries(
   SURFACE_FIELDS.map(({ recordKey, modelKey }) => [recordKey, modelKey]),
@@ -861,7 +861,7 @@ function primaryRegionalV2ProfileContext(record = {}) {
 moduleExports["BODY_AREA_TO_PRIMARY_REGIONAL_V2"] = BODY_AREA_TO_PRIMARY_REGIONAL_V2;
 moduleExports["adaptStoredRecordToPrimaryRegionalV2Input"] = adaptStoredRecordToPrimaryRegionalV2Input;
 moduleExports["primaryRegionalV2ProfileContext"] = primaryRegionalV2ProfileContext;
-coreModules[16] = moduleExports;
+internalModules.primaryRegionalInputAdapter = moduleExports;
 }
 
 // ===== core/model/currentPrimaryInput/formalInputCatalog.js =====
@@ -3141,7 +3141,7 @@ moduleExports["UNEVENNESS_UPPER_BOUND_CURVES"] = UNEVENNESS_UPPER_BOUND_CURVES;
 moduleExports["SURFACE_PRESETS"] = SURFACE_PRESETS;
 moduleExports["ORACLE_EXPECTED"] = ORACLE_EXPECTED;
 moduleExports["ORACLE_STATUS"] = ORACLE_STATUS;
-coreModules[17] = moduleExports;
+internalModules.formalInputCatalog = moduleExports;
 }
 
 // ===== core/model/currentPrimaryInput/utilities.js =====
@@ -3232,13 +3232,13 @@ moduleExports["worstCalculationState"] = worstCalculationState;
 moduleExports["mergeState"] = mergeState;
 moduleExports["success"] = success;
 moduleExports["failure"] = failure;
-coreModules[18] = moduleExports;
+internalModules.formalInputUtilities = moduleExports;
 }
 
 // ===== core/model/currentPrimaryInput/canonicalHash.js =====
 {
 const moduleExports = Object.create(null);
-const { stableStringify } = coreModules[18];
+const { stableStringify } = internalModules.formalInputUtilities;
 
 function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
 
@@ -3292,14 +3292,14 @@ function digestText(text) {
 
 function canonicalFingerprint(value) { return digestText(stableStringify(value)); }
 moduleExports["canonicalFingerprint"] = canonicalFingerprint;
-coreModules[19] = moduleExports;
+internalModules.canonicalInputDigest = moduleExports;
 }
 
 // ===== core/model/currentPrimaryInput/surfacePresets.js =====
 {
 const moduleExports = Object.create(null);
-const { SURFACE_PRESETS } = coreModules[17];
-const { failure, success } = coreModules[18];
+const { SURFACE_PRESETS } = internalModules.formalInputCatalog;
+const { failure, success } = internalModules.formalInputUtilities;
 
 function normalizeExactCategory(preset, subtype) {
   if (preset.key === "paved" && subtype === "asphalt") return "Asphalt";
@@ -3357,14 +3357,14 @@ function isStandardShoeCandidate(shoeType, softness) {
 }
 moduleExports["resolveSurfaceSelections"] = resolveSurfaceSelections;
 moduleExports["isStandardShoeCandidate"] = isStandardShoeCandidate;
-coreModules[20] = moduleExports;
+internalModules.surfacePresets = moduleExports;
 }
 
 // ===== core/model/currentPrimaryInput/formalInputValidation.js =====
 {
 const moduleExports = Object.create(null);
-const { FORMAL_INPUT_CATALOG, REGIONS } = coreModules[17];
-const { canonicalFingerprint } = coreModules[19];
+const { FORMAL_INPUT_CATALOG, REGIONS } = internalModules.formalInputCatalog;
+const { canonicalFingerprint } = internalModules.canonicalInputDigest;
 
 const REGION_IDS = REGIONS.map((region) => region.id);
 const REGION_ID_SET = new Set(REGION_IDS);
@@ -3793,17 +3793,17 @@ moduleExports["validatePrototypeRecordInput"] = validatePrototypeRecordInput;
 moduleExports["validateFormalBundleSemantics"] = validateFormalBundleSemantics;
 moduleExports["validateRegionalEngineInputSemantics"] = validateRegionalEngineInputSemantics;
 moduleExports["validateRegionalEngineOutput"] = validateRegionalEngineOutput;
-coreModules[21] = moduleExports;
+internalModules.formalInputValidation = moduleExports;
 }
 
 // ===== core/model/currentPrimaryInput/formalInputAdapter.js =====
 {
 const moduleExports = Object.create(null);
-const { ADAPTER_VERSION, AUTHORITY_VERSION, FORMAL_INPUT_CATALOG } = coreModules[17];
-const { canonicalFingerprint } = coreModules[19];
-const { resolveSurfaceSelections } = coreModules[20];
-const { failure, success } = coreModules[18];
-const { validateFormalBundleSemantics, validatePrototypeRecordInput } = coreModules[21];
+const { ADAPTER_VERSION, AUTHORITY_VERSION, FORMAL_INPUT_CATALOG } = internalModules.formalInputCatalog;
+const { canonicalFingerprint } = internalModules.canonicalInputDigest;
+const { resolveSurfaceSelections } = internalModules.surfacePresets;
+const { failure, success } = internalModules.formalInputUtilities;
+const { validateFormalBundleSemantics, validatePrototypeRecordInput } = internalModules.formalInputValidation;
 
 const catalogById = new Map(FORMAL_INPUT_CATALOG.map(item => [item.id, item]));
 const PLAN_IDS = new Set(FORMAL_INPUT_CATALOG.filter(x => x.disposition === "PLAN_ONLY_NO_COMPLETED_SESSION_EFFECT").map(x => x.id));
@@ -3974,14 +3974,14 @@ function validateFormalInputBundle(bundle){
 }
 moduleExports["adaptPrototypeRecord"] = adaptPrototypeRecord;
 moduleExports["validateFormalInputBundle"] = validateFormalInputBundle;
-coreModules[22] = moduleExports;
+internalModules.formalInputAdapter = moduleExports;
 }
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2TraceAdapter.js =====
 {
 const moduleExports = Object.create(null);
-const { adaptStoredRecordToPrimaryRegionalV2Input, primaryRegionalV2ProfileContext } = coreModules[16];
-const { adaptPrototypeRecord } = coreModules[22];
+const { adaptStoredRecordToPrimaryRegionalV2Input, primaryRegionalV2ProfileContext } = internalModules.primaryRegionalInputAdapter;
+const { adaptPrototypeRecord } = internalModules.formalInputAdapter;
 
 function clone(value){return value==null?value:JSON.parse(JSON.stringify(value));}
 
@@ -3998,14 +3998,14 @@ function buildPrimaryRegionalV2FormalInputTrace({record,feedback={},sessionSeque
   return {ok:true,value:bundle,uiInput};
 }
 moduleExports["buildPrimaryRegionalV2FormalInputTrace"] = buildPrimaryRegionalV2FormalInputTrace;
-coreModules[23] = moduleExports;
+internalModules.primaryRegionalTraceAdapter = moduleExports;
 }
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2AppAdapter.js =====
 {
 const moduleExports = Object.create(null);
-const { RETAINED_INPUTS } = coreModules[15];
-const { buildPrimaryRegionalV2FormalInputTrace } = coreModules[23];
+const { RETAINED_INPUTS } = internalModules.primaryRegionalInputTrace;
+const { buildPrimaryRegionalV2FormalInputTrace } = internalModules.primaryRegionalTraceAdapter;
 
 function clone(v){return v==null?v:JSON.parse(JSON.stringify(v));}
 function finite(v){return typeof v==='number'&&Number.isFinite(v);}
@@ -4104,7 +4104,7 @@ function adaptCurrentRecordToPrimaryRegionalV2({record,allRecords=[]}={}){
 moduleExports["personalHabitualCadenceReference"] = personalHabitualCadenceReference;
 moduleExports["buildAppRetainedInputTrace"] = buildAppRetainedInputTrace;
 moduleExports["adaptCurrentRecordToPrimaryRegionalV2"] = adaptCurrentRecordToPrimaryRegionalV2;
-coreModules[24] = moduleExports;
+internalModules.primaryRegionalAppAdapter = moduleExports;
 }
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2RegionDefs.js =====
@@ -4125,15 +4125,15 @@ const PRIMARY_REGIONAL_V2_REGION_DEFS = Object.freeze([
   { id:"R12", displayId:"BA-DISP-029", name:"前足部" },
 ]);
 moduleExports["PRIMARY_REGIONAL_V2_REGION_DEFS"] = PRIMARY_REGIONAL_V2_REGION_DEFS;
-coreModules[25] = moduleExports;
+internalModules.primaryRegionalRegionDefinitions = moduleExports;
 }
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2ResultService.js =====
 {
 const moduleExports = Object.create(null);
-const { BUILD_ID, REGION_DEFS, calculateRun } = coreModules[14];
-const { adaptCurrentRecordToPrimaryRegionalV2, buildAppRetainedInputTrace } = coreModules[24];
-const { PRIMARY_REGIONAL_V2_REGION_DEFS } = coreModules[25];
+const { BUILD_ID, REGION_DEFS, calculateRun } = internalModules.primaryRegionalEngine;
+const { adaptCurrentRecordToPrimaryRegionalV2, buildAppRetainedInputTrace } = internalModules.primaryRegionalAppAdapter;
+const { PRIMARY_REGIONAL_V2_REGION_DEFS } = internalModules.primaryRegionalRegionDefinitions;
 
 const PRIMARY_REGIONAL_V2_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
 const PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION = "runload-primary-regional-reference100-output-v3.0";
@@ -4252,15 +4252,15 @@ moduleExports["comparePrimaryRegionalV2Signatures"] = comparePrimaryRegionalV2Si
 moduleExports["createPrimaryRegionalV2ResultRecord"] = createPrimaryRegionalV2ResultRecord;
 moduleExports["validatePrimaryRegionalV2ResultRecord"] = validatePrimaryRegionalV2ResultRecord;
 moduleExports["upsertPrimaryRegionalV2ResultRecord"] = upsertPrimaryRegionalV2ResultRecord;
-coreModules[26] = moduleExports;
+internalModules.primaryRegionalResultService = moduleExports;
 }
 
 // ===== core/storage/modelResultRegionalV2Repository.js =====
 {
 const moduleExports = Object.create(null);
-const { PRIMARY_REGIONAL_V2_MODEL_VERSION, LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION } = coreModules[26];
-const { createCollectionRepository } = coreModules[10];
-const { STORAGE_KEYS } = coreModules[1];
+const { PRIMARY_REGIONAL_V2_MODEL_VERSION, LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION } = internalModules.primaryRegionalResultService;
+const { createCollectionRepository } = internalModules.collectionRepository;
+const { STORAGE_KEYS } = internalModules.storageKeys;
 
 function normalize(item = {}) {
   if (!item || typeof item !== "object" || ![PRIMARY_REGIONAL_V2_MODEL_VERSION, LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION].includes(item.model_version) || !item.id || !item.record_id) return null;
@@ -4275,5 +4275,5 @@ function createModelResultRegionalV2Repository(gateway) {
   return Object.freeze({...repo,loadForRecord,findLatestForRecord,latestByRecord});
 }
 moduleExports["createModelResultRegionalV2Repository"] = createModelResultRegionalV2Repository;
-coreModules[27] = moduleExports;
+internalModules.primaryRegionalResultRepository = moduleExports;
 }

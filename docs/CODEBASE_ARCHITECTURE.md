@@ -18,7 +18,7 @@ Domain and deterministic interpretation logic only.
 - `internal/models.js`: deterministic scientific/model calculations and their internal validation.
 - `internal/application.js`: application workflows that combine repositories and domain operations.
 - `internal/content.js`: evidence-backed reading content, consultation content, terminology, and privacy content.
-- `internal/moduleRegistry.js`: private registry used only to connect the split core modules.
+- `internal/internalModules.js`: private registry used only to connect the split core modules.
 
 The former monolithic core bundle has been removed. New runtime code should import only from `appCore.js`, `rofJCore.js`, or the interpretation modules; screen/UI modules must not import `core/internal/*` directly.
 

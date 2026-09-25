@@ -1,5 +1,5 @@
 import { LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES } from "../legacyCompatibility.js";
-import { coreModules } from "./moduleRegistry.js";
+import { internalModules } from "./internalModules.js";
 
 // ===== core/pwaRegistration.js =====
 {
@@ -100,7 +100,7 @@ function registerPwaServiceWorker() {
   });
 }
 moduleExports["registerPwaServiceWorker"] = registerPwaServiceWorker;
-coreModules[0] = moduleExports;
+internalModules.pwaRegistration = moduleExports;
 }
 
 // ===== core/storage/storageKeys.js =====
@@ -155,13 +155,13 @@ moduleExports["STORAGE_KEYS"] = STORAGE_KEYS;
 moduleExports["USER_DATA_STORAGE_KEYS"] = USER_DATA_STORAGE_KEYS;
 moduleExports["INTERNAL_RECOVERY_STORAGE_KEYS"] = INTERNAL_RECOVERY_STORAGE_KEYS;
 moduleExports["CURRENT_APP_REMOVABLE_STORAGE_KEYS"] = CURRENT_APP_REMOVABLE_STORAGE_KEYS;
-coreModules[1] = moduleExports;
+internalModules.storageKeys = moduleExports;
 }
 
 // ===== core/storage/storageGateway.js =====
 {
 const moduleExports = Object.create(null);
-const { STORAGE_KEYS } = coreModules[1];
+const { STORAGE_KEYS } = internalModules.storageKeys;
 
 function cloneValue(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -412,7 +412,7 @@ function createStorageGateway(storage) {
 }
 moduleExports["createMemoryStorage"] = createMemoryStorage;
 moduleExports["createStorageGateway"] = createStorageGateway;
-coreModules[2] = moduleExports;
+internalModules.storageGateway = moduleExports;
 }
 
 // ===== core/model/modelConstants.js =====
@@ -689,7 +689,7 @@ moduleExports["MODEL_TOTAL_LOAD_VERSION"] = MODEL_TOTAL_LOAD_VERSION;
 moduleExports["MODEL_TOTAL_LOAD_UNIT"] = MODEL_TOTAL_LOAD_UNIT;
 moduleExports["LOAD_MODEL_VERSION"] = LOAD_MODEL_VERSION;
 moduleExports["cloneDefaultModelConfiguration"] = cloneDefaultModelConfiguration;
-coreModules[3] = moduleExports;
+internalModules.modelConstants = moduleExports;
 }
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2Snapshot.js =====
@@ -742,7 +742,7 @@ moduleExports["stampCurrentRegionalModel"] = stampCurrentRegionalModel;
 moduleExports["isCurrentRegionalModelRecord"] = isCurrentRegionalModelRecord;
 moduleExports["isPrimaryRegionalV2Record"] = isPrimaryRegionalV2Record;
 moduleExports["regionalModelGenerationForRecord"] = regionalModelGenerationForRecord;
-coreModules[4] = moduleExports;
+internalModules.primaryRegionalSnapshot = moduleExports;
 }
 
 // ===== core/model/numberUtilities.js =====
@@ -776,7 +776,7 @@ moduleExports["clampNumber"] = clampNumber;
 moduleExports["sumNumbers"] = sumNumbers;
 moduleExports["alphaFromTimeConstant"] = alphaFromTimeConstant;
 moduleExports["roundNumber"] = roundNumber;
-coreModules[5] = moduleExports;
+internalModules.numberUtilities = moduleExports;
 }
 
 // ===== core/safety/inputSafety.js =====
@@ -959,13 +959,13 @@ moduleExports["escapeCsvValue"] = escapeCsvValue;
 moduleExports["assertCsvText"] = assertCsvText;
 moduleExports["inspectJsonValue"] = inspectJsonValue;
 moduleExports["parseJsonText"] = parseJsonText;
-coreModules[6] = moduleExports;
+internalModules.inputSafety = moduleExports;
 }
 
 // ===== core/personal/personalContext.js =====
 {
 const moduleExports = Object.create(null);
-const { normalizePlainText, normalizeSingleLineText } = coreModules[6];
+const { normalizePlainText, normalizeSingleLineText } = internalModules.inputSafety;
 
 const PERSONAL_CONTEXT_SCHEMA_VERSION = 1;
 
@@ -1119,7 +1119,7 @@ moduleExports["hasPersonalContextInput"] = hasPersonalContextInput;
 moduleExports["normalizePersonalContext"] = normalizePersonalContext;
 moduleExports["labelForOption"] = labelForOption;
 moduleExports["summarizePersonalContext"] = summarizePersonalContext;
-coreModules[7] = moduleExports;
+internalModules.personalContext = moduleExports;
 }
 
 // ===== core/safety/rpeProvenance.js =====
@@ -1154,18 +1154,18 @@ moduleExports["RPE_PROVENANCE"] = RPE_PROVENANCE;
 moduleExports["normalizeRpeProvenance"] = normalizeRpeProvenance;
 moduleExports["isReportedRpeProvenance"] = isReportedRpeProvenance;
 moduleExports["reportedRpeValue"] = reportedRpeValue;
-coreModules[8] = moduleExports;
+internalModules.rpeProvenance = moduleExports;
 }
 
 // ===== core/safety/inputValidation.js =====
 {
 const moduleExports = Object.create(null);
-const { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents } = coreModules[3];
-const { normalizeRegionalModelSnapshot } = coreModules[4];
-const { roundNumber, toFiniteNumber } = coreModules[5];
-const { normalizePlainText, normalizeSingleLineText, INPUT_LIMITS } = coreModules[6];
-const { normalizePersonalContext } = coreModules[7];
-const { normalizeRpeProvenance, RPE_PROVENANCE } = coreModules[8];
+const { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents } = internalModules.modelConstants;
+const { normalizeRegionalModelSnapshot } = internalModules.primaryRegionalSnapshot;
+const { roundNumber, toFiniteNumber } = internalModules.numberUtilities;
+const { normalizePlainText, normalizeSingleLineText, INPUT_LIMITS } = internalModules.inputSafety;
+const { normalizePersonalContext } = internalModules.personalContext;
+const { normalizeRpeProvenance, RPE_PROVENANCE } = internalModules.rpeProvenance;
 
 function isValidLocalDate(value = "") {
   const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -1658,7 +1658,7 @@ moduleExports["createReadableRecordId"] = createReadableRecordId;
 moduleExports["validateRunningRecordInput"] = validateRunningRecordInput;
 moduleExports["normalizeRunningRecord"] = normalizeRunningRecord;
 moduleExports["validateRunningRecord"] = validateRunningRecord;
-coreModules[9] = moduleExports;
+internalModules.inputValidation = moduleExports;
 }
 
 // ===== core/storage/collectionRepository.js =====
@@ -1765,16 +1765,16 @@ function createCollectionRepository({
   return Object.freeze({ loadAll, loadAllResult, findById, saveAll, upsert, removeById });
 }
 moduleExports["createCollectionRepository"] = createCollectionRepository;
-coreModules[10] = moduleExports;
+internalModules.collectionRepository = moduleExports;
 }
 
 // ===== core/storage/recordRepository.js =====
 {
 const moduleExports = Object.create(null);
-const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = coreModules[9];
-const { createCollectionRepository } = coreModules[10];
-const { STORAGE_KEYS } = coreModules[1];
-const { stampCurrentRegionalModel } = coreModules[4];
+const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = internalModules.inputValidation;
+const { createCollectionRepository } = internalModules.collectionRepository;
+const { STORAGE_KEYS } = internalModules.storageKeys;
+const { stampCurrentRegionalModel } = internalModules.primaryRegionalSnapshot;
 
 function createRecordRepository(gateway) {
   const repository = createCollectionRepository({
@@ -1833,5 +1833,5 @@ function createRecordRepository(gateway) {
   });
 }
 moduleExports["createRecordRepository"] = createRecordRepository;
-coreModules[11] = moduleExports;
+internalModules.recordRepository = moduleExports;
 }

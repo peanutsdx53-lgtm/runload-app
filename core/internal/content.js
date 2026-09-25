@@ -1,5 +1,5 @@
 import "./application.js";
-import { coreModules } from "./moduleRegistry.js";
+import { internalModules } from "./internalModules.js";
 
 // ===== data/evidenceGovernanceData.js =====
 {
@@ -544,13 +544,13 @@ moduleExports["ARTICLE_EVIDENCE_REGISTRY"] = ARTICLE_EVIDENCE_REGISTRY;
 moduleExports["getSourceEvidenceGovernance"] = getSourceEvidenceGovernance;
 moduleExports["getArticleEvidenceGovernance"] = getArticleEvidenceGovernance;
 moduleExports["buildArticleEvidenceGovernance"] = buildArticleEvidenceGovernance;
-coreModules[51] = moduleExports;
+internalModules.evidenceGovernanceData = moduleExports;
 }
 
 // ===== data/columnData.js =====
 {
 const moduleExports = Object.create(null);
-const { buildArticleEvidenceGovernance } = coreModules[51];
+const { buildArticleEvidenceGovernance } = internalModules.evidenceGovernanceData;
 
 // 利用者向け読みもの。
 // 計算の詳しい説明は保存資料側で管理し、ここでは初心者が表示を
@@ -1256,14 +1256,14 @@ const COLUMN_ARTICLES = Object.freeze([
 ]);
 moduleExports["COLUMN_CATEGORIES"] = COLUMN_CATEGORIES;
 moduleExports["COLUMN_ARTICLES"] = COLUMN_ARTICLES;
-coreModules[52] = moduleExports;
+internalModules.columnData = moduleExports;
 }
 
 // ===== core/column/columnService.js =====
 {
 const moduleExports = Object.create(null);
-const { COLUMN_ARTICLES, COLUMN_CATEGORIES } = coreModules[52];
-const { EVIDENCE_GOVERNANCE_VERSION, getArticleEvidenceGovernance, getSourceEvidenceGovernance } = coreModules[51];
+const { COLUMN_ARTICLES, COLUMN_CATEGORIES } = internalModules.columnData;
+const { EVIDENCE_GOVERNANCE_VERSION, getArticleEvidenceGovernance, getSourceEvidenceGovernance } = internalModules.evidenceGovernanceData;
 
 function normalizeQuery(value) {
   return String(value || "").trim().toLocaleLowerCase("ja-JP");
@@ -1319,14 +1319,14 @@ function createColumnService() {
   });
 }
 moduleExports["createColumnService"] = createColumnService;
-coreModules[53] = moduleExports;
+internalModules.columnService = moduleExports;
 }
 
 
 // ===== core/dataManagement/dataManagementService.js =====
 {
 const moduleExports = Object.create(null);
-const { CURRENT_APP_REMOVABLE_STORAGE_KEYS } = coreModules[1];
+const { CURRENT_APP_REMOVABLE_STORAGE_KEYS } = internalModules.storageKeys;
 
 function createDataManagementService(gateway) {
   function clearAllUserData() {
@@ -1335,17 +1335,17 @@ function createDataManagementService(gateway) {
   return Object.freeze({ clearAllUserData });
 }
 moduleExports["createDataManagementService"] = createDataManagementService;
-coreModules[55] = moduleExports;
+internalModules.dataManagementService = moduleExports;
 }
 
 // ===== core/consultation/consultationReport.js =====
 {
 const moduleExports = Object.create(null);
-const { PRIMARY_REGIONAL_V2_REGION_DEFS } = coreModules[25];
-const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = coreModules[26];
-const { bodyAreaLateralityLabel } = coreModules[28];
-const { summarizePersonalContext } = coreModules[7];
-const { reportedRpeValue } = coreModules[8];
+const { PRIMARY_REGIONAL_V2_REGION_DEFS } = internalModules.primaryRegionalRegionDefinitions;
+const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = internalModules.primaryRegionalResultService;
+const { bodyAreaLateralityLabel } = internalModules.bodyAreaTaxonomy;
+const { summarizePersonalContext } = internalModules.personalContext;
+const { reportedRpeValue } = internalModules.rpeProvenance;
 
 
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
@@ -1673,7 +1673,7 @@ moduleExports["buildConsultationReport"] = buildConsultationReport;
 moduleExports["createShortConsultationMemo"] = createShortConsultationMemo;
 moduleExports["createStandardConsultationText"] = createStandardConsultationText;
 moduleExports["createDetailedConsultationText"] = createDetailedConsultationText;
-coreModules[56] = moduleExports;
+internalModules.consultationReport = moduleExports;
 }
 
 // ===== ui/bodyRegionTerminology.js =====
@@ -1729,16 +1729,16 @@ moduleExports["bodyRegionFormalName"] = bodyRegionFormalName;
 moduleExports["bodyRegionFamiliarName"] = bodyRegionFamiliarName;
 moduleExports["bodyRegionPlainMeaning"] = bodyRegionPlainMeaning;
 moduleExports["bodyRegionDisplayName"] = bodyRegionDisplayName;
-coreModules[57] = moduleExports;
+internalModules.bodyRegionTerminology = moduleExports;
 }
 
 // ===== core/consultation/deterministicConsultation.js =====
 {
 const moduleExports = Object.create(null);
-const { PRIMARY_REGIONAL_V2_REGION_DEFS } = coreModules[25];
-const { bodyRegionFormalName } = coreModules[57];
-const { summarizePersonalContext } = coreModules[7];
-const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = coreModules[26];
+const { PRIMARY_REGIONAL_V2_REGION_DEFS } = internalModules.primaryRegionalRegionDefinitions;
+const { bodyRegionFormalName } = internalModules.bodyRegionTerminology;
+const { summarizePersonalContext } = internalModules.personalContext;
+const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = internalModules.primaryRegionalResultService;
 
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
@@ -2215,37 +2215,37 @@ function buildDeterministicConsultation({
 moduleExports["DETERMINISTIC_CONSULTATION_VERSION"] = DETERMINISTIC_CONSULTATION_VERSION;
 moduleExports["CONSULTATION_PURPOSES"] = CONSULTATION_PURPOSES;
 moduleExports["buildDeterministicConsultation"] = buildDeterministicConsultation;
-coreModules[58] = moduleExports;
+internalModules.deterministicConsultation = moduleExports;
 }
 
 // ===== core/applicationServices.js =====
 {
 const moduleExports = Object.create(null);
-const { createStorageGateway } = coreModules[2];
-const { createRecordRepository } = coreModules[11];
-const { createModelResultV27Repository } = coreModules[13];
-const { createModelResultRegionalV2Repository } = coreModules[27];
-const { createSubjectiveFeedbackRepository } = coreModules[31];
-const { createPlanRepository } = coreModules[32];
-const { createProfileRepository, createSettingsRepository, createDraftRepository } = coreModules[37];
-const { createBackupService } = coreModules[42];
-const { createCourseRepository } = coreModules[40];
-const { evaluateSupportDecision, shouldBlockNormalPlanSuggestions, shouldPrioritizeOfficialHelp } = coreModules[29];
-const { buildPublicHelpGuidance } = coreModules[43];
-const { normalizeSubjectiveFeedback } = coreModules[30];
-const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = coreModules[9];
-const { createRecordWorkflow } = coreModules[47];
-const { createHistoryWorkflow } = coreModules[48];
-const { createPlanWorkflow } = coreModules[50];
-const { createColumnService } = coreModules[53];
-const { createDataManagementService } = coreModules[55];
-const { buildConsultationReport, createShortConsultationMemo, createStandardConsultationText, createDetailedConsultationText } = coreModules[56];
-const { buildDeterministicConsultation, CONSULTATION_PURPOSES, DETERMINISTIC_CONSULTATION_VERSION } = coreModules[58];
-const { adaptRecordToV27Session } = coreModules[45];
-const { assertV27ResultSemantics, calculateV27Session } = coreModules[39];
-const { createV27ResultRecord } = coreModules[46];
-const { createPrimaryRegionalV2ResultRecord } = coreModules[26];
-const { calculateRun: calculatePrimaryRegionalV2 } = coreModules[14];
+const { createStorageGateway } = internalModules.storageGateway;
+const { createRecordRepository } = internalModules.recordRepository;
+const { createModelResultV27Repository } = internalModules.legacyLoadResultRepository;
+const { createModelResultRegionalV2Repository } = internalModules.primaryRegionalResultRepository;
+const { createSubjectiveFeedbackRepository } = internalModules.subjectiveFeedbackRepository;
+const { createPlanRepository } = internalModules.planRepository;
+const { createProfileRepository, createSettingsRepository, createDraftRepository } = internalModules.simpleValueRepositories;
+const { createBackupService } = internalModules.backupService;
+const { createCourseRepository } = internalModules.courseRepository;
+const { evaluateSupportDecision, shouldBlockNormalPlanSuggestions, shouldPrioritizeOfficialHelp } = internalModules.supportDecision;
+const { buildPublicHelpGuidance } = internalModules.publicHelpGuidance;
+const { normalizeSubjectiveFeedback } = internalModules.subjectiveFeedback;
+const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = internalModules.inputValidation;
+const { createRecordWorkflow } = internalModules.recordWorkflow;
+const { createHistoryWorkflow } = internalModules.historyWorkflow;
+const { createPlanWorkflow } = internalModules.planWorkflow;
+const { createColumnService } = internalModules.columnService;
+const { createDataManagementService } = internalModules.dataManagementService;
+const { buildConsultationReport, createShortConsultationMemo, createStandardConsultationText, createDetailedConsultationText } = internalModules.consultationReport;
+const { buildDeterministicConsultation, CONSULTATION_PURPOSES, DETERMINISTIC_CONSULTATION_VERSION } = internalModules.deterministicConsultation;
+const { adaptRecordToV27Session } = internalModules.legacyLoadInputAdapter;
+const { assertV27ResultSemantics, calculateV27Session } = internalModules.legacyLoadModel;
+const { createV27ResultRecord } = internalModules.legacyLoadResultService;
+const { createPrimaryRegionalV2ResultRecord } = internalModules.primaryRegionalResultService;
+const { calculateRun: calculatePrimaryRegionalV2 } = internalModules.primaryRegionalEngine;
 
 function createApplicationServices(options = {}) {
   const gateway = options.gateway || createStorageGateway(options.storage);
@@ -2324,5 +2324,5 @@ function createApplicationServices(options = {}) {
   return Object.freeze(services);
 }
 moduleExports["createApplicationServices"] = createApplicationServices;
-coreModules[59] = moduleExports;
+internalModules.applicationServices = moduleExports;
 }
