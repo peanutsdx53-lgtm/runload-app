@@ -1,4 +1,4 @@
-import "./infrastructure.js";
+import "./recordRepositories.js";
 import { internalModules } from "./modules.js";
 
 // ===== core/model/v27/v27Constants.js =====

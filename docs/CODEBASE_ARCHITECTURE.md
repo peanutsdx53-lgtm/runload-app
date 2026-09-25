@@ -14,7 +14,10 @@ Domain and deterministic interpretation logic only.
 - `legacyCompatibility.js`: old storage/cache/schema identifiers required only to read or clean up data created by earlier releases.
 - `interpretationBase.js`: reusable persisted-result interpretation primitives.
 - `interpretationCore.js`: current beginner-facing interpretation projection. It consumes persisted outputs and does not recalculate Primary Reference-100 or ROF-J.
-- `internal/infrastructure.js`: browser storage, repository, migration, and common infrastructure modules.
+- `internal/platformInfrastructure.js`: PWA registration, storage keys, and storage gateway.
+- `internal/modelSupport.js`: shared model constants, persisted-model snapshot metadata, and numeric utilities.
+- `internal/inputSupport.js`: input safety, personal context, RPE provenance, and record validation.
+- `internal/recordRepositories.js`: collection and running-record repositories.
 - `internal/modelV27.js`: V2.7 model constants and its stored-result repository.
 - `internal/primaryModelEngine.js`: primary regional calculation engine, trace builder, and input adapter.
 - `internal/primaryInputCatalog.js`: formal primary-input catalog and metadata.
