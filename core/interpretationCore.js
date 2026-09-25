@@ -11,7 +11,7 @@ import { officialRofJDescriptor } from "./rofJCore.js";
 
 export const INTERPRETATION_CORE_VERSION = "interpretation-core-v4.0";
 export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "INTERPRETATION_OUTPUT_V4";
-export const INTERPRETATION_ROUTE_RESOLVER_VERSION = "primary-reference100-v3-explanation-route-v1";
+const INTERPRETATION_ROUTE_RESOLVER_VERSION = "primary-reference100-v3-explanation-route-v1";
 
 const CURRENT_PRIMARY_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
 const SPEED_ONLY_PRIMARY_REGIONS = new Set(["R01", "R02", "R03", "R04", "R07", "R08", "R11", "R12"]);
@@ -191,7 +191,7 @@ function inputItem(id, value, role, source = "engine_input_snapshot") {
   return Object.freeze({ id, value, role, source });
 }
 
-export function resolveCalculationPath(targetExperience = null, region = null) {
+function resolveCalculationPath(targetExperience = null, region = null) {
   const resultRecord = targetExperience?.regionalV2ResultRecord || {};
   const row = region ? regionRow(resultRecord, region.regionId) : null;
   const engineInput = resultRecord?.engine_input_snapshot || null;
