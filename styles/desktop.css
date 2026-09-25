@@ -10166,13 +10166,13 @@
 
 
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3{
+  .screen--simulation.screen-layout--simulation.condition-compare{
     width:min(100%,84rem) !important;
     max-width:84rem !important;
     margin-inline:auto !important;
     gap:1.2rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-hero{
     min-height:11rem;
     padding:1.55rem 1.7rem !important;
     grid-template-columns:minmax(0,1fr) auto;
@@ -10180,98 +10180,98 @@
     align-items:center;
     border-radius:1.35rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero h1{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-hero h1{
     font-size:2.55rem !important;
     line-height:1.12 !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero p:last-child{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-hero p:last-child{
     max-width:58rem;
     font-size:1rem !important;
     line-height:1.7 !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero__mark{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-hero__mark{
     width:16rem;
     padding:.9rem 1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-carry{
     width:100% !important;
     max-width:none !important;
     padding:.9rem 1rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-carry small{
     font-size:.78rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-carry strong{
     font-size:.95rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-carry p{
     font-size:.88rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next{
     padding:1.35rem 1.45rem;
     border-radius:1.25rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head{
     grid-template-columns:minmax(0,1fr) minmax(18rem,30rem);
     gap:1rem;
     align-items:end;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head small{
     font-size:.78rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head h2{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head h2{
     font-size:1.55rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head>p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head>p{
     font-size:.88rem;
     line-height:1.6;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid{
     grid-template-columns:repeat(4,minmax(0,1fr));
     gap:.8rem;
     margin-top:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid article{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid article{
     min-height:8.8rem;
     padding:1rem;
     grid-template-columns:2.6rem minmax(0,1fr);
     gap:.75rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid article>span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid article>span{
     width:2.6rem;
     height:2.6rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid small{
     font-size:.78rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid strong{
     font-size:1.65rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid strong em{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid strong em{
     font-size:.76rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid strong.is-text{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid strong.is-text{
     font-size:1.05rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid p{
     font-size:.8rem;
     line-height:1.55;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-workspace{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-workspace{
     grid-template-columns:minmax(0,1fr) minmax(21rem,.36fr) !important;
     gap:1rem !important;
     align-items:start !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-preview{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-preview{
     order:1 !important;
     grid-column:1;
     grid-row:1;
     border-radius:1.2rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-condition{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-condition{
     order:2 !important;
     grid-column:2;
     grid-row:1;
@@ -10279,213 +10279,213 @@
     top:5.8rem !important;
     border-radius:1.2rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .preview-head{
+  .screen--simulation.screen-layout--simulation.condition-compare .panel-head,
+  .screen--simulation.screen-layout--simulation.condition-compare .preview-head{
     padding:1.1rem 1.15rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .preview-head small{
+  .screen--simulation.screen-layout--simulation.condition-compare .panel-head small,
+  .screen--simulation.screen-layout--simulation.condition-compare .preview-head small{
     font-size:.76rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head h2,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .preview-head h2{
+  .screen--simulation.screen-layout--simulation.condition-compare .panel-head h2,
+  .screen--simulation.screen-layout--simulation.condition-compare .preview-head h2{
     font-size:1.35rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head>span,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .calc-state{
+  .screen--simulation.screen-layout--simulation.condition-compare .panel-head>span,
+  .screen--simulation.screen-layout--simulation.condition-compare .calc-state{
     font-size:.76rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-body{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-body{
     padding:1rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-condition__lead{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-condition__lead{
     margin-bottom:.9rem;
     font-size:.84rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-grid{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-grid{
     grid-template-columns:repeat(2,minmax(0,1fr)) !important;
     gap:.7rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field>span{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-field>span{
     font-size:.84rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field>div{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-field>div{
     height:3.5rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field input{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-field input{
     font-size:1.3rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field b{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-field b{
     font-size:.82rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-adjust button{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-adjust button{
     min-height:2rem;
     font-size:.74rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .derived-pace{
+  .screen--simulation.screen-layout--simulation.condition-compare .derived-pace{
     min-height:3rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .derived-pace span{
+  .screen--simulation.screen-layout--simulation.condition-compare .derived-pace span{
     font-size:.78rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .derived-pace strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .derived-pace strong{
     font-size:.94rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course{
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course{
     padding:.85rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course span,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .course-link b{
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course small,
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course span,
+  .screen--simulation.screen-layout--simulation.condition-compare .course-link b{
     font-size:.76rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course strong{
     font-size:.96rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-details summary strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-details summary strong{
     font-size:.88rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-details summary small{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-details summary small{
     font-size:.75rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-reset{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-reset{
     min-height:2.55rem !important;
     font-size:.8rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-compare{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare{
     padding:1rem 1.05rem 0 !important;
     gap:.75rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot{
     min-height:7rem;
     padding:1rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot small{
     font-size:.78rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot strong{
     font-size:1.05rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot span{
     font-size:.82rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips{
     padding:.75rem 1.05rem 0;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips span{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips span{
     font-size:.76rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-compare-note{
     margin:.75rem 1.05rem 0 !important;
     padding:.8rem .9rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-compare-note strong{
     font-size:.84rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-compare-note span{
     font-size:.8rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-result{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-result{
     padding:1rem 1.05rem;
     gap:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview{
     padding:1rem 1.05rem;
     border-radius:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head{
     grid-template-columns:minmax(0,1fr) auto;
     align-items:start;
     gap:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head small{
     font-size:.74rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head h3{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head h3{
     font-size:1.25rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head p{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head p{
     max-width:42rem;
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head button{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head button{
     min-height:2.45rem;
     font-size:.78rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics{
     grid-template-columns:repeat(3,minmax(0,1fr));
     gap:.7rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics article{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics article{
     min-height:4.9rem;
     padding:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics small{
     font-size:.74rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics strong{
     font-size:1.35rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-groups{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-groups{
     grid-template-columns:repeat(3,minmax(0,1fr));
     gap:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>header{
     min-height:6rem;
     padding:.85rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>header strong{
     font-size:.88rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>header small{
     font-size:.75rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row{
     min-height:4.5rem;
     padding:.75rem .8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row__copy strong{
     font-size:.92rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row__copy small{
     font-size:.78rem;
     line-height:1.45;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row>b{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row>b{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout{
     padding:.85rem .9rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout strong{
     font-size:.84rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout p{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout p{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout small{
     font-size:.74rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-boundary{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-boundary{
     font-size:.78rem !important;
     line-height:1.55 !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-subjective-note{
     margin:0 1.05rem 1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-subjective-note p{
     font-size:.78rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid{
     grid-template-columns:repeat(4,minmax(0,1fr));
     gap:.8rem;
     margin-top:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button{
     min-height:8rem;
     padding:1rem;
     grid-template-columns:2.7rem minmax(0,1fr) auto;
@@ -10493,159 +10493,159 @@
     border-radius:1rem;
     transition:transform 150ms ease,border-color 150ms ease,background 150ms ease;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a:hover,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button:hover{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a:hover,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button:hover{
     transform:translateY(-2px);
     border-color:color-mix(in srgb,var(--color-accent) 42%,var(--color-line));
     background:color-mix(in srgb,var(--color-accent-soft) 26%,var(--color-surface));
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a>span,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button>span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a>span,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button>span{
     width:2.7rem;
     height:2.7rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid strong{
     font-size:.9rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid small{
     font-size:.77rem;
   }
 }
 @media (min-width:80rem) and (max-width:92rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-workspace{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-workspace{
     grid-template-columns:minmax(0,1fr) 20rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-groups{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-groups{
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
 }
 @media (prefers-reduced-motion:reduce){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button{
     transition:none !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a:hover,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button:hover{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a:hover,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button:hover{
     transform:none !important;
   }
 }
 
 
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips button{
     min-height:2.15rem;
     padding:.35rem .45rem .35rem .65rem;
     gap:.45rem;
     font-size:.76rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button>b{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips button>b{
     width:1.35rem;
     height:1.35rem;
     font-size:.78rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary{
     min-height:6rem;
     padding:.85rem;
     grid-template-columns:2.4rem minmax(0,1fr) auto;
     gap:.65rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>span{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary>span{
     width:2.4rem;
     height:2.4rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary strong{
     font-size:.88rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary small{
     font-size:.75rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary>b{
     font-size:.72rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group--collapsed>summary::after{
     font-size:.72rem;
   }
 }
 
 
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head>p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head>p{
     font-size:.92rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid small{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid p{
     font-size:.86rem;
     line-height:1.58;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-condition__lead{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-condition__lead{
     font-size:.88rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course span,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .course-link b{
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course small,
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course span,
+  .screen--simulation.screen-layout--simulation.condition-compare .course-link b{
     font-size:.8rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-details summary small{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-details summary small{
     font-size:.8rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot span{
     font-size:.86rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips span{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips span{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-compare-note span{
     font-size:.84rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head p{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head p{
     font-size:.86rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>header small{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row__copy small{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout p{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout p{
     font-size:.86rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout small{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-boundary{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-boundary{
     font-size:.82rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-subjective-note p{
     font-size:.82rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid small{
     font-size:.82rem;
     line-height:1.5;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips button{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary small{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary>b,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group--collapsed>summary::after{
     font-size:.76rem;
   }
 }
 
 
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-adjust button,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-adjust button,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head small,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics small,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary>b,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group--collapsed>summary::after{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head button{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head button{
     font-size:.84rem;
   }
 }
@@ -10653,7 +10653,7 @@
 
 @media (min-width:64rem){
   .interpretation-room--dashboard,
-  .interpretation-room--selected-v4{
+  .interpretation-room--selected-detail{
     width:min(100%,96rem) !important;
     max-width:96rem !important;
   }
@@ -10776,7 +10776,7 @@
     position:sticky;
     top:5.6rem;
   }
-  .interpretation-room-selected-v4 .interpretation-room-region-detail--v3{
+  .interpretation-room-selected-v4 .interpretation-room-region-detail--selected{
     padding:1.2rem 1.25rem;
   }
   .interpretation-room-selected-v4 .interpretation-room-region-stats{
@@ -10822,7 +10822,7 @@
 
 
 @media (min-width:55rem){
-  .interpretation-room--selected-v4{
+  .interpretation-room--selected-detail{
     width:min(100%,96rem) !important;
     max-width:96rem !important;
   }
@@ -10831,7 +10831,7 @@
     gap:1rem !important;
     align-items:start !important;
   }
-  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3{
+  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--selected{
     width:100% !important;
     max-width:none !important;
     min-width:0 !important;
@@ -10858,25 +10858,25 @@
 
 
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-result--idle{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-result--idle{
     padding:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state{
     min-height:10rem;
     padding:1.1rem 1.15rem;
     grid-template-columns:3rem minmax(0,1fr);
     gap:.9rem;
     align-items:start;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state>span{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state>span{
     width:3rem;
     height:3rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state h3{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state h3{
     font-size:1.22rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state p,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state p,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state strong{
     font-size:.88rem;
   }
 }
@@ -10915,7 +10915,7 @@
     position:static !important;
     top:auto !important;
   }
-  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3{
+  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--selected{
     width:100% !important;
     min-width:0 !important;
   }
@@ -10943,13 +10943,13 @@
 @media (min-width:55rem){
   .app-shell--immersive .app-main,
   .screen--interpretation-room,
-  .interpretation-room--selected-v4,
+  .interpretation-room--selected-detail,
   .interpretation-room-selected-dashboard,
   .interpretation-room-selected-context{
     min-width:0 !important;
   }
 
-  .interpretation-room--selected-v4{
+  .interpretation-room--selected-detail{
     width:min(100%,96rem) !important;
     max-width:96rem !important;
   }
@@ -10961,7 +10961,7 @@
     align-items:start !important;
   }
 
-  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3,
+  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--selected,
   .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
     width:100% !important;
     max-width:none !important;
@@ -11065,7 +11065,7 @@
 
 
 @media (min-width:55rem){
-  .interpretation-room--selected-v4{
+  .interpretation-room--selected-detail{
     width:min(100%,90rem) !important;
     max-width:90rem !important;
     gap:1rem !important;
@@ -11076,7 +11076,7 @@
   }
 
   .interpretation-room-selected-workspace :is(
-    .interpretation-room-region-detail--v3,
+    .interpretation-room-region-detail--selected,
     .interpretation-room-next-rail,
     .interpretation-room-conditions,
     .interpretation-room-subjective,
