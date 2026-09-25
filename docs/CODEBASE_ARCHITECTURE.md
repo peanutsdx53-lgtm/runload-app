@@ -8,10 +8,17 @@ This document describes the current application structure. Historical audits, te
 
 Domain and deterministic interpretation logic only.
 
-- `appCore.js`: protected Primary Reference-100 calculation core.
+- `appCore.js`: public domain API used by screens and shared UI modules.
 - `rofJCore.js`: protected ROF-J logic.
 - `interpretationBase.js`: reusable persisted-result interpretation primitives.
 - `interpretationCore.js`: current beginner-facing interpretation projection. It consumes persisted outputs and does not recalculate Primary Reference-100 or ROF-J.
+- `internal/infrastructure.js`: browser storage, repository, migration, and common infrastructure modules.
+- `internal/models.js`: deterministic scientific/model calculations and their internal validation.
+- `internal/application.js`: application workflows that combine repositories and domain operations.
+- `internal/content.js`: evidence-backed reading content, consultation content, terminology, and privacy content.
+- `internal/moduleRegistry.js`: private registry used only to connect the split core modules.
+
+The former monolithic core bundle has been removed. New runtime code should import only from `appCore.js`, `rofJCore.js`, or the interpretation modules; screen/UI modules must not import `core/internal/*` directly.
 
 Do not move presentation text, DOM logic, routing, or storage mutation into `core/`.
 
@@ -49,6 +56,7 @@ Styles are loaded in this order:
 8. `desktop-foundation.css` — desktop-wide foundation and workspace geometry.
 9. `interpretation-room.css` — Interpretation-specific presentation.
 10. `desktop.css` — final desktop screen refinements.
+11. `run-measurement.css` — GPS measurement-specific presentation.
 
 Do not create numbered CSS generations such as `*-v2.css` or temporary `prototype-*.css`. Modify the owning layer instead.
 
@@ -106,6 +114,7 @@ Do not keep old implementations hidden behind query flags or alternate route ali
 
 Before merging runtime changes:
 
+- runtime implementation remains vanilla JavaScript, CSS, and HTML; Web Manifest and image files are deployment assets rather than implementation code;
 - all JavaScript and MJS files pass syntax checking;
 - runtime dependency reachability reports no unreachable runtime JS;
 - every CSS file is intentionally loaded;
