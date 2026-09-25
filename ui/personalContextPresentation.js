@@ -8,7 +8,7 @@ function checkedValue(value) {
   return value === true || value === "1" || value === "on" || value === "true";
 }
 
-export const ACTIVE_FOCUS_TAG_VALUES = Object.freeze([
+const ACTIVE_FOCUS_TAG_VALUES = Object.freeze([
   "relax",
   "small_step",
   "rhythm",
