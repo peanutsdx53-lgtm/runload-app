@@ -174,13 +174,8 @@ body {
 .share-report,
 .related-article,
 .danger-zone,
-.privacy-explanation-card,
-.privacy-storage-card,
 .consult-entry-card,
 .gpx-local-card,
-.public-help-boundary,
-.public-help-priority,
-.public-help-selected,
 .quick-share-card { padding: 14px; }
 
 input, select, textarea {
@@ -291,9 +286,6 @@ input, select, textarea {
 
 /* --- Public support --- */
 .screen--support-guidance { max-width: 900px; margin-inline: auto; gap: 16px; }
-.screen--support-guidance :is(.public-help-boundary, .public-help-priority, .public-help-selected) { border-radius: 17px; }
-.screen--support-guidance .public-help-options__grid { gap: 8px; }
-.screen--support-guidance .public-help-phone-action { border-radius: 12px; }
 
 /* --- Reading --- */
 .screen--column { max-width: 980px; margin-inline: auto; gap: 18px; }
@@ -307,8 +299,6 @@ input, select, textarea {
 
 /* --- Privacy --- */
 .screen--privacy { max-width: 960px; margin-inline: auto; gap: 16px; }
-.screen--privacy .privacy-explanation-grid,
-.screen--privacy .privacy-storage-grid { gap: 8px; }
 
 /* --- More --- */
 .screen--more { max-width: 760px; margin-inline: auto; gap: 18px; }
