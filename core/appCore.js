@@ -257,7 +257,6 @@ export const reportedRpeValue = coreModules[8]["reportedRpeValue"];
 export const requirePositiveFinite = coreModules[38]["requirePositiveFinite"];
 export const resolveSurfaceSelections = coreModules[20]["resolveSurfaceSelections"];
 export const roundNumber = coreModules[5]["roundNumber"];
-export const sha256 = coreModules[19]["sha256"];
 export const shouldBlockNormalPlanSuggestions = coreModules[29]["shouldBlockNormalPlanSuggestions"];
 export const shouldPrioritizeOfficialHelp = coreModules[29]["shouldPrioritizeOfficialHelp"];
 export const stableStringify = coreModules[18]["stableStringify"];
