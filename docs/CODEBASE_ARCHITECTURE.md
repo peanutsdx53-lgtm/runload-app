@@ -25,7 +25,9 @@ Domain and deterministic interpretation logic only.
 - `internal/applicationStorage.js`: course storage, restore inspection, backup, and public-help data boundaries.
 - `internal/v27ApplicationServices.js`: V2.7 personal/input adaptation and stored-result services.
 - `internal/workflows.js`: record, history, and planning workflows.
-- `internal/readingContent.js`: evidence metadata, reading content, and reading-service composition.
+- `internal/evidenceData.js`: evidence metadata used by the reading layer.
+- `internal/readingCatalog.js`: current reading article catalog and source associations.
+- `internal/readingService.js`: reading lookup, recommendation, and related-content service.
 - `internal/consultation.js`: consultation report, body-region terminology, and deterministic consultation logic.
 - `internal/applicationServices.js`: data-management service and composition root for storage, workflows, reading, and consultation services.
 - `internal/modules.js`: private registry used only to connect the split core modules.

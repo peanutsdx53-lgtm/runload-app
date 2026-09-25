@@ -1,4 +1,4 @@
-import "./readingContent.js";
+import "./readingService.js";
 import { internalModules } from "./modules.js";
 
 // ===== core/consultation/consultationReport.js =====
