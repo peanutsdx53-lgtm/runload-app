@@ -277,7 +277,7 @@ coreModules[13] = moduleExports;
 // ===== core/model/primaryRegionalV2/primaryRegionalV2Engine.js =====
 {
 const moduleExports = Object.create(null);
-// RunLoad Primary Regional V2 calculation engine.
+// Primary regional calculation engine.
 // Current public baseline for records created from this release onward.
 
 const MODEL_VERSION = 'runload-primary-regional-reference100-v3.0';
@@ -568,7 +568,7 @@ coreModules[14] = moduleExports;
 // ===== core/model/primaryRegionalV2/primaryRegionalV2InputTrace.js =====
 {
 const moduleExports = Object.create(null);
-// Current 93-input trace definition for Primary Regional V2.
+// Current 93-input trace definition for the primary regional model.
 // Values are preserved as supplied; no truthy/falsy coercion.
 const RETAINED_INPUTS = Object.freeze([
   {inputId:'RL-IN-001',technicalName:'dayStatus',roles:'EXPLANATION_TRACE;HISTORY_FILTER_REFERENCE_BUILDING',traceAction:'CURRENT_BASE_TRACE'},
