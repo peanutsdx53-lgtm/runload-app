@@ -97,6 +97,3 @@ export function renderEmbeddedPersonalSubflow(record = {}, settings = {}) {
     <section class="sub-card"><div class="sub-section-head"><small>FOCUS</small><strong>今日意識したこと</strong><span>複数選択できます。</span></div><div class="focus-tag-grid">${ACTIVE_FOCUS_TAG_OPTIONS.map((option) => `<label><input type="checkbox" name="personalFocus_${escapeHtml(option.value)}" value="1"${checked(fields[`personalFocus_${option.value}`])}><span>${escapeHtml(option.label)}</span></label>`).join("")}</div><p class="sub-note">ここで選んだ内容は数値結果の係数には使いません。自由記述は「気づきと次回」にまとめます。</p></section><p class="sub-note" data-record-personal-subflow-summary>${escapeHtml(summary.description)}</p><button type="button" class="sub-flow-save" data-action="apply-personal-subflow">この内容で今日の記録へ戻る</button>
   </section></main></div>`;
 }
-
-export const RECORD_CONSULTATION_FLAG_KEYS = CONSULTATION_FLAG_KEYS;
-export const RECORD_REGIONAL_AREA_IDS = Object.freeze([...REGIONAL_AREA_IDS]);
