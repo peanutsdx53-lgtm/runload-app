@@ -373,7 +373,6 @@ input, select, textarea {
 
 /* --- Reading --- */
 .screen--column { max-width: 980px; margin-inline: auto; gap: 18px; }
-.screen--column .article-grid { gap: 10px; }
 .screen--column .article-card {
   padding: 14px;
   border: 1px solid var(--color-line);
@@ -381,7 +380,6 @@ input, select, textarea {
   border-radius: 17px;
   box-shadow: var(--app-card-shadow);
 }
-.screen--column .column-article { max-width: 760px; }
 
 /* --- Privacy --- */
 .screen--privacy { max-width: 960px; margin-inline: auto; gap: 16px; }
