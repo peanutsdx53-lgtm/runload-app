@@ -69,8 +69,8 @@ const linkedHistoryWorkflow = createHistoryWorkflow({
   modelResultRegionalV2Repository: baseApplicationServices.storage.modelResultsRegionalV2,
   subjectiveFeedbackRepository: baseApplicationServices.storage.subjectiveFeedback,
   planRepository: baseApplicationServices.storage.plans,
-  secondPillarRofJRepository: fatigue.repository,
-  secondPillarLifecycleRepository: fatigue.lifecycle,
+  rofJRepository: fatigue.repository,
+  rofJLifecycleRepository: fatigue.lifecycle,
 });
 const applicationServices = Object.freeze({
   ...baseApplicationServices,
