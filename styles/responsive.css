@@ -183,14 +183,11 @@ input, select, textarea {
   border-radius: 11px;
   background: var(--color-surface);
 }
-.choice-card,
-.checkbox-grid > label,
-.segmented-control span {
+.choice-card{
   border-radius: 11px;
   box-shadow: none;
 }
 .status-label { min-height: 24px; padding-inline: 8px; font-size: 11px; }
-.source-boundary { font-size: 12px; line-height: 1.55; }
 
 /* --- Global disclosure / guide density --- */
 .screen-guide {
@@ -218,21 +215,6 @@ input, select, textarea {
 
 /* --- Home fidelity --- */
 .screen--home { width: min(100%, 1030px); margin-inline: auto; gap: 30px; }
-.screen--home .lead-action-card {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding: 17px;
-  border: 1px solid color-mix(in srgb, var(--color-model) 24%, var(--color-line));
-  border-radius: 24px;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-model-soft) 78%, var(--color-surface)), var(--color-surface) 62%);
-  box-shadow: 0 14px 36px color-mix(in srgb, var(--color-ink) 9%, transparent);
-}
-.screen--home .lead-action-card h2 { margin: 7px 0 0; font-size: 21px; line-height: 1.35; }
-.screen--home .lead-action-card p { margin-top: 5px; font-size: 13px; }
-.screen--home .lead-action-card__actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* --- Record fidelity --- */
 .screen--record-input { max-width: var(--app-form-width); margin-inline: auto; gap: 12px; }
@@ -241,7 +223,6 @@ input, select, textarea {
   padding: 15px;
   border-radius: 20px;
 }
-.screen--record-input .form-section--required { border-radius: 24px; }
 .screen--record-input .section-heading h2 { font-size: 20px; }
 .screen--record-input .field > span { font-size: 12px; }
 .screen--record-input .record-mobile-save-bar {
@@ -302,12 +283,6 @@ input, select, textarea {
 .screen--settings { max-width: 960px; margin-inline: auto; gap: 18px; }
 .screen--settings .settings-form { gap: 12px; }
 .screen--settings .form-section { padding: 14px; border-radius: 18px; }
-.screen--settings .form-submit-area {
-  padding: 13px;
-  border: 1px solid var(--color-line);
-  border-radius: 17px;
-  background: var(--color-surface);
-}
 
 
 /* --- PWA update notice must remain operable above the fixed mobile nav --- */
@@ -353,10 +328,6 @@ input, select, textarea {
   .screen { gap: 18px; }
   .section-heading h2 { font-size: 18px; }
   .button { min-height: 42px; font-size: 12px; }
-
-  .screen--home .lead-action-card { grid-template-columns: 1fr; padding: 14px 13px; }
-  .screen--home .lead-action-card__actions { width: 100%; }
-  .screen--home .lead-action-card__actions .button { flex: 1 1 10rem; }
   .screen--result .body-map { gap: 4px; }
 
   .screen--more .feature-link-card { grid-template-columns: 34px minmax(0, 1fr); }
@@ -400,7 +371,6 @@ input, select, textarea {
     border-top: 1px solid var(--color-line);
     box-shadow: none;
   }
-  .primary-navigation__link--desktop-only { display: grid; }
 }
 
 @media print {

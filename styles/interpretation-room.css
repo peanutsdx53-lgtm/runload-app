@@ -488,14 +488,6 @@
   background: var(--color-selection-surface);
 }
 
-.interpretation-room-fatigue.is-partial {
-  grid-template-columns: minmax(0, 1fr) minmax(9rem, auto);
-}
-
-.interpretation-room-fatigue.is-partial > aside {
-  grid-column: auto;
-}
-
 .interpretation-room-understanding-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -745,14 +737,6 @@
   .interpretation-room-fatigue > aside {
     grid-column: 1 / -1;
     min-height: 4.5rem;
-  }
-
-  .interpretation-room-fatigue.is-partial {
-    grid-template-columns: 1fr;
-  }
-
-  .interpretation-room-fatigue.is-partial > aside {
-    grid-column: auto;
   }
 
   .interpretation-room-understanding-grid,
