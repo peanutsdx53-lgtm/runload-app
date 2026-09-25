@@ -177,7 +177,6 @@ body {
 .privacy-explanation-card,
 .privacy-storage-card,
 .consult-entry-card,
-.course-manager-card,
 .gpx-local-card,
 .public-help-boundary,
 .public-help-priority,
@@ -289,10 +288,8 @@ input, select, textarea {
 .screen--course-library,
 .screen--course-editor,
 .screen--gpx-analysis { max-width: 980px; margin-inline: auto; gap: 16px; }
-.screen--course-library .course-manager-card,
 .screen--course-editor .form-section,
 .screen--gpx-analysis .gpx-local-card { border-radius: 18px; }
-.screen--course-library .course-card-grid { gap: 10px; }
 .screen--gpx-analysis .gpx-summary dl { gap: 7px; }
 
 /* --- Consultation --- */
