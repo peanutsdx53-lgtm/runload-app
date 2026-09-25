@@ -831,19 +831,6 @@
     color: var(--color-accent-strong);
   }
 
-  .screen--record-input.screen-layout--record .save-readiness__note,
-  .screen--record-input.screen-layout--record .save-readiness__draft {
-    margin: 0;
-    color: var(--color-muted);
-    font-size: 0.72rem;
-    line-height: 1.45;
-  }
-
-  .screen--record-input.screen-layout--record .save-readiness__draft {
-    padding-top: 0.55rem;
-    border-top: 1px solid color-mix(in srgb, var(--color-line) 80%, transparent);
-  }
-
   .screen--record-input.screen-layout--record .draft-status:empty {
     display: none;
   }
@@ -3136,17 +3123,9 @@
     padding: 1rem !important;
     border-radius: 1rem !important;
   }
-
-  .screen--history.screen-layout--history .selected-card-head small,
-  .screen--history.screen-layout--history .selected-main-value small,
-  .screen--history.screen-layout--history .selected-main-value span,
   .screen--history.screen-layout--history .selected-facts dt,
   .screen--history.screen-layout--history .result-link small {
     font-size: 0.74rem !important;
-  }
-
-  .screen--history.screen-layout--history .selected-card-head h2 {
-    font-size: 1.2rem !important;
   }
 
   .screen--history.screen-layout--history .selected-facts dd,
@@ -3726,11 +3705,6 @@
     font-size: 1.15rem !important;
   }
 
-  .screen--reading.screen-layout--reading .sheet :is(.lead, .body-copy p, .points, .caution, .source-note) {
-    font-size: 0.84rem !important;
-    line-height: 1.6 !important;
-  }
-
   /* Consultation derived from More / Result. */
   .screen--consultation.screen-layout--consultation .source {
     margin-top: 1rem !important;
@@ -3835,7 +3809,6 @@
   .screen--history.screen-layout--history .chart-card-head small,
   .screen--history.screen-layout--history .records-disclosure > summary small,
   .screen--history.screen-layout--history .region-picker-trigger .region-picker-copy em,
-  .screen--history.screen-layout--history .region-option-copy small,
   .screen--history.screen-layout--history .selected-focus-heading small,
   .screen--history.screen-layout--history .selected-focus-value span,
   .screen--history.screen-layout--history .selected-facts-compact dt {
@@ -3852,12 +3825,6 @@
   .screen--history.screen-layout--history .selected-facts-compact dd {
     font-size: 0.86rem !important;
     line-height: 1.4 !important;
-  }
-
-  .screen--history.screen-layout--history .selected-card-head > span {
-    min-width: 2rem !important;
-    height: 2rem !important;
-    font-size: 0.8rem !important;
   }
 
   .screen--history.screen-layout--history .region-picker-copy {
@@ -3979,8 +3946,7 @@
   .screen--reading.screen-layout--reading .points ul,
   .screen--reading.screen-layout--reading .lead,
   .screen--reading.screen-layout--reading .body-copy p,
-  .screen--reading.screen-layout--reading .caution,
-  .screen--reading.screen-layout--reading .source-note {
+  .screen--reading.screen-layout--reading .caution{
     font-size: 0.84rem !important;
     line-height: 1.65 !important;
   }
@@ -4022,15 +3988,11 @@
     font-size: 0.74rem !important;
     line-height: 1.4 !important;
   }
-
-  .screen--consultation.screen-layout--consultation .select-list strong,
   .screen--consultation.screen-layout--consultation .share-card strong,
   .screen--consultation.screen-layout--consultation .share-region-detail b {
     font-size: 0.9rem !important;
     line-height: 1.4 !important;
   }
-
-  .screen--consultation.screen-layout--consultation .select-list span,
   .screen--consultation.screen-layout--consultation .share-source em,
   .screen--consultation.screen-layout--consultation .report header span,
   .screen--consultation.screen-layout--consultation .report section p,
@@ -4083,10 +4045,6 @@
     line-height: 1.4 !important;
   }
 
-  .screen--history.screen-layout--history .selected-card-head > span {
-    font-size: 0.8rem !important;
-  }
-
   .screen--history.screen-layout--history .condition-details > div,
   .screen--history.screen-layout--history .excluded-details > p {
     font-size: 0.8rem !important;
@@ -4137,10 +4095,6 @@
   .screen--settings.screen-layout--settings .action-row label,
   .screen--settings.screen-layout--settings .action-row a {
     font-size: 0.82rem !important;
-  }
-
-  .screen--settings.screen-layout--settings .large-text .field > span {
-    font-size: 0.88rem !important;
   }
 
   .screen--consultation.screen-layout--consultation .share-preview > header small {
@@ -4357,7 +4311,6 @@
   .screen--plan.screen-layout--plan :is(.note, .saved-card span),
   .screen--settings.screen-layout--settings :is(.note, .muted-text),
   .screen--privacy.screen-layout--privacy :is(.body, .warning),
-  .screen--reading.screen-layout--reading :is(.article-card p, .source-note),
   .screen--consultation.screen-layout--consultation :is(.boundary, .memo),
   .screen--support-guidance.screen-layout--support :is(.notice, .card p) {
     color: var(--muted) !important;
@@ -4616,14 +4569,8 @@
     font-size: 0.75rem !important;
   }
 
-  .screen--history.screen-layout--history .chart-value,
-  .screen--history.screen-layout--history .region-option-copy strong {
+  .screen--history.screen-layout--history .chart-value{
     font-size: 0.86rem !important;
-    line-height: 1.35 !important;
-  }
-
-  .screen--history.screen-layout--history .region-option-copy small {
-    font-size: 0.74rem !important;
     line-height: 1.35 !important;
   }
 
@@ -5254,8 +5201,7 @@
     line-height: 1.4;
   }
 
-  .screen-layout :is(.page-head, .intro) > div > p:last-child,
-  .screen-layout .section-introduction {
+  .screen-layout :is(.page-head, .intro) > div > p:last-child{
     font-size: var(--type-body) !important;
     line-height: var(--line-body);
   }
@@ -8249,13 +8195,6 @@
     line-height: 1.55 !important;
   }
 
-  .screen--simulation.screen-layout--simulation .result-layout {
-    padding: 1rem !important;
-    grid-template-columns: minmax(18rem, 0.9fr) minmax(22rem, 1.1fr) !important;
-    gap: 1rem !important;
-    align-items: start !important;
-  }
-
   .screen--simulation.screen-layout--simulation .direction-legend {
     font-size: 0.82rem !important;
     gap: 0.55rem 0.85rem !important;
@@ -8272,20 +8211,6 @@
   .screen--simulation.screen-layout--simulation .map-note {
     font-size: 0.82rem !important;
     line-height: 1.5 !important;
-  }
-
-  .screen--simulation.screen-layout--simulation .region-panel-head small {
-    font-size: 0.78rem !important;
-  }
-
-  .screen--simulation.screen-layout--simulation .region-panel-head strong {
-    font-size: 1rem !important;
-  }
-
-  .screen--simulation.screen-layout--simulation .region-panel-head button {
-    min-height: 2.7rem !important;
-    padding-inline: 0.8rem !important;
-    font-size: 0.82rem !important;
   }
 
   .screen--simulation.screen-layout--simulation .region-row {
@@ -9841,27 +9766,6 @@
 
 
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-result--idle{
-    padding:1rem;
-  }
-  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state{
-    min-height:10rem;
-    padding:1.1rem 1.15rem;
-    grid-template-columns:3rem minmax(0,1fr);
-    gap:.9rem;
-    align-items:start;
-  }
-  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state>span{
-    width:3rem;
-    height:3rem;
-  }
-  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state h3{
-    font-size:1.22rem;
-  }
-  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state p,
-  .screen--simulation.screen-layout--simulation.condition-compare .simulation-idle-state strong{
-    font-size:.88rem;
-  }
 }
 
 

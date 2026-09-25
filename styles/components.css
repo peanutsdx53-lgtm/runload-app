@@ -24,7 +24,7 @@
 .field { display: grid; gap: var(--space-2); min-width: 0; }
 .field > span, .fieldset-field legend, .field-group legend { font-weight: 800; }
 .field > span strong { color: var(--color-accent-strong); font-size: 0.78rem; }
-.field-help, .section-introduction, .muted-text { color: var(--color-muted); }
+.field-help, .muted-text { color: var(--color-muted); }
 .field--compact input { min-height: 2.75rem; }
 .field--range input { padding-inline: 0; }
 .field-grid { display: grid; gap: var(--space-4); align-items: start; }

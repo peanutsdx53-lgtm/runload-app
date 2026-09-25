@@ -2442,40 +2442,6 @@
   font-size:.8rem;
   line-height:1.5;
 }
-.interpretation-room-context__takeaway{
-  margin-top:.7rem;
-  padding:.8rem .9rem;
-  display:grid;
-  grid-template-columns:2.35rem minmax(0,1fr);
-  gap:.65rem;
-  align-items:start;
-  border:1px solid var(--color-selection-border);
-  border-radius:.9rem;
-  background:var(--color-selection-surface);
-}
-.interpretation-room-context__takeaway>span{
-  width:2.35rem;
-  height:2.35rem;
-  display:grid;
-  place-items:center;
-  border-radius:.7rem;
-  background:var(--color-surface);
-  color:var(--color-accent-strong);
-}
-.interpretation-room-context__takeaway small,
-.interpretation-room-context__takeaway strong{
-  display:block;
-}
-.interpretation-room-context__takeaway small{
-  color:var(--color-accent-strong);
-  font-size:.74rem;
-  font-weight:850;
-}
-.interpretation-room-context__takeaway strong{
-  margin-top:.2rem;
-  font-size:.86rem;
-  line-height:1.52;
-}
 
 .interpretation-room-next-rail{
   padding:1rem;
