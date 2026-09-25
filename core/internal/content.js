@@ -36,7 +36,7 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
   sourceRecord({
     sourceId: "RUNLOAD-SPEC-CURRENT",
     sourceRole: "CURRENT_INTERNAL_SPECIFICATION",
-    title: "RunLoad Current model, output, and claim-boundary specifications",
+    title: "Application model, output, and claim-boundary specifications",
     locator: "Master V1.10: 02_INPUT_OUTPUT_UI_CURRENT/03_OUTPUT_UI_SEMANTIC_CONTRACT_CURRENT.md; 03_REGIONAL_A4_MODEL_CURRENT/00, 12, 13, 24",
     evidenceStatus: "CURRENT_INTERNAL_SPEC",
     reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
@@ -166,7 +166,7 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
     relatedRoutes: ["deterministic consultation information-organization route"],
     relatedRegions: ["本人が選択した部位のみ"],
     allowedClaim: "ランナー支援で記録・教育・専門家への共有が検討される背景を一般的に説明できる。",
-    prohibitedClaim: "RunLoadの傷害予防効果、診断精度、相談結果の有効性を主張しない。",
+    prohibitedClaim: "このアプリの傷害予防効果、診断精度、相談結果の有効性を主張しない。",
   }),
   sourceRecord({
     sourceId: "APP-COL-BUIST",
@@ -196,7 +196,7 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
     relatedRoutes: ["general-knowledge column route", "non-evaluative feedback boundary"],
     relatedRegions: ["なし（行動・記録文脈）"],
     allowedClaim: "身体活動介入ではフィードバックに小さな優位がみられた一方、最適な生成・提示方法の証拠は一定しなかったことを説明できる。",
-    prohibitedClaim: "RunLoadの行動変容効果、継続効果、初心者ランナーへの個別効果を主張しない。",
+    prohibitedClaim: "このアプリによる行動変容の効果、継続効果、初心者ランナーへの個別効果を主張しない。",
   }),
   sourceRecord({
     sourceId: "APP-COL-KARAHANOGLU",
@@ -226,7 +226,7 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
     relatedRoutes: ["general-knowledge column route", "running-goal reading route"],
     relatedRegions: ["なし（ランナーの多様性）"],
     allowedClaim: "レクリエーショナルランナーの態度・関心・技術利用が一様でなかったことを説明できる。",
-    prohibitedClaim: "4類型をRunLoad利用者の分類や自動判定へ使わず、初心者固有の結果としない。",
+    prohibitedClaim: "4類型をアプリ利用者の分類や自動判定へ使わず、初心者固有の結果としない。",
   }),
   sourceRecord({
     sourceId: "APP-COL-WINTER",
@@ -241,7 +241,7 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
     relatedRoutes: ["general-knowledge column route", "context-only information route"],
     relatedRegions: ["なし（複数背景要因の説明）"],
     allowedClaim: "複数の練習・身体・既往・バイオメカニクス要因が検討され、研究自体も頑健な個人予測を支持しなかったことを説明できる。",
-    prohibitedClaim: "観察された関連を個人の因果関係、傷害予測、RunLoad係数へ変換しない。",
+    prohibitedClaim: "観察された関連を個人の因果関係、傷害予測、アプリ独自の係数へ変換しない。",
   }),
   sourceRecord({
     sourceId: "APP-COL-BESOMI",
@@ -256,7 +256,7 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
     relatedRoutes: ["general-knowledge column route", "consultation information-organization route"],
     relatedRegions: ["なし（本人と専門家の見方）"],
     allowedClaim: "経験や文脈が認識・行動に関係し、経験の少ないランナーが情報の信頼性判断に迷う場合があったことを説明できる。",
-    prohibitedClaim: "限定された傷害関連の質的研究から、全初心者の問題、因果関係、RunLoadの有効性を証明しない。",
+    prohibitedClaim: "限定された傷害関連の質的研究から、全初心者の問題、因果関係、このアプリの有効性を証明しない。",
   }),
   sourceRecord({
     sourceId: "APP-COL-COOLDOWN-VAN-HOOREN",
@@ -552,7 +552,7 @@ coreModules[51] = moduleExports;
 const moduleExports = Object.create(null);
 const { buildArticleEvidenceGovernance } = coreModules[51];
 
-// RunLoadの利用者向け読みもの。
+// 利用者向け読みもの。
 // 計算の詳しい説明は保存資料側で管理し、ここでは初心者が表示を
 // 誤解しないために必要な範囲だけを説明する。
 
@@ -568,8 +568,8 @@ const COLUMN_CATEGORIES = Object.freeze([
 
 const PROJECT_V27 = Object.freeze({
   sourceId: "RUNLOAD-SPEC-CURRENT",
-  title: "RunLoadの表示と比較の考え方",
-  organization: "RunLoad",
+  title: "表示と比較の考え方",
+  organization: "アプリ内資料",
   year: "2026",
   url: "",
   sourceType: "designSpecification",
@@ -1103,7 +1103,7 @@ const COLUMN_ARTICLES = Object.freeze([
     body: [
       "汗のかき方や走る時間、気温などは人や日によって違います。そのため、全員に共通する一つの量だけで、水分補給の良し悪しを決めることはできません。",
       "長時間の運動などを扱ったレビューでは、のどの渇きを超えて飲み続けることが、運動に伴う低ナトリウム血症（血液中のナトリウム濃度が低くなる状態）の主な背景として整理されています。また、飲み過ぎを避ける考え方として、のどの渇きに応じて飲む方法が示されています。これは、全員に同じ量を示すものではありません。",
-      "RunLoadには天候や食事・水分の自己記録を残せますが、必要な水分量や身体の水分状態を計算していません。何をどのくらい飲んだかは事実として残し、量の多さだけを安心や不足の判定に変えないことが大切です。",
+      "このアプリには天候や食事・水分の自己記録を残せますが、必要な水分量や身体の水分状態を計算していません。何をどのくらい飲んだかは事実として残し、量の多さだけを安心や不足の判定に変えないことが大切です。",
     ],
     practicePoints: [
       "走った時間、天候、飲んだものを分けて記録する。",
@@ -1123,7 +1123,7 @@ const COLUMN_ARTICLES = Object.freeze([
     body: [
       "栄養を取る時機についてまとめたレビューでは、運動前・運動中・運動後の食事は互いにつながっており、運動後の一つの短い時間だけで考えるものではないと整理されています。",
       "食事の時機がどれほど重要かは、運動の種類、強さ、長さ、回数や、次の運動までの間隔などによって変わります。同じ日に複数回運動する場合のように、短い時間での回復が必要な場面と、そうでない場面を同じに扱うことはできません。",
-      "このレビューでは、一日の食事全体や運動内容が土台にあり、その上で食事の時機を考えるという見方が示されています。RunLoadの食事・水分メモは自分の記録であり、栄養状態や回復を評価するものではありません。",
+      "このレビューでは、一日の食事全体や運動内容が土台にあり、その上で食事の時機を考えるという見方が示されています。このアプリの食事・水分メモは自分の記録であり、栄養状態や回復を評価するものではありません。",
     ],
     practicePoints: [
       "食べた内容と時刻を、良し悪しを付けずに記録する。",
@@ -1143,7 +1143,7 @@ const COLUMN_ARTICLES = Object.freeze([
     body: [
       "必要な睡眠時間には個人差があります。睡眠時間だけでなく、眠れた感じや眠る時間帯も一緒に振り返ります。",
       "睡眠の記録は思い出し方によるずれもあります。一晩の記録だけで、身体の回復や次に走ってよいかを決めることはできません。",
-      "RunLoadの睡眠メモは、自分が覚えている事実や感じ方を残す欄です。睡眠の質や回復を計算するものではありません。『短かった』『途中で目が覚めた』『いつもと違った』のように分けて残すと、後から普段との違いを見返しやすくなります。",
+      "このアプリの睡眠メモは、自分が覚えている事実や感じ方を残す欄です。睡眠の質や回復を計算するものではありません。『短かった』『途中で目が覚めた』『いつもと違った』のように分けて残すと、後から普段との違いを見返しやすくなります。",
     ],
     practicePoints: [
       "眠った時間と、眠れた感じを別々に記録する。",
@@ -1163,7 +1163,7 @@ const COLUMN_ARTICLES = Object.freeze([
     body: [
       "暑さは気温だけでは決まりません。湿度や日差しなどを含む暑さ指数（WBGT）も確認し、一つの数値だけで安全・危険を決めないようにします。",
       "日本スポーツ協会の案内でも、スポーツ時の暑さを考える指標としてWBGTが使われています。公式情報は更新されるため、走る前には、アプリ内の過去記録だけでなく、走る場所と時間の最新のWBGTや公的な案内を確認します。",
-      "RunLoadには気温や天候のメモを残せますが、WBGTや暑さによる体調不良の可能性を計算していません。気温、天候、時間帯、日差しなどを分けて残すと、その日の環境を後から思い出しやすくなります。",
+      "このアプリには気温や天候のメモを残せますが、WBGTや暑さによる体調不良の可能性を計算していません。気温、天候、時間帯、日差しなどを分けて残すと、その日の環境を後から思い出しやすくなります。",
     ],
     practicePoints: [
       "走る場所と時間の最新のWBGTや公的な案内を、アプリとは別に確認する。",
@@ -1241,7 +1241,7 @@ const COLUMN_ARTICLES = Object.freeze([
     lead: "入力条件の違いを見返す道具であり、身体や障害を判定する道具ではありません。",
     summary: "数値を身体の測定値と思わず、走行記録を振り返るための目安として使うことが大切です。",
     body: [
-      "RunLoadは、距離、時間、坂、路面、歩数など、自分が入力した走行記録を振り返るための表示です。似た意味の記録どうしを比べる手掛かりになります。",
+      "このアプリは、距離、時間、坂、路面、歩数など、自分が入力した走行記録を振り返るための表示です。似た意味の記録どうしを比べる手掛かりになります。",
       "実際に筋肉・腱・関節へ加わった力を測っているわけではありません。診断、障害の有無や確率、原因、走ってよいかどうかも示しません。",
       "ランニング中の身体の状態には、トレーニングだけでなく、休養、体調、環境など多くのことが関わります。数値と自分の感覚が並んでいても、一方がもう一方の原因だとは限りません。",
     ],
@@ -2422,7 +2422,7 @@ function buildPrivacyOverview(services) {
         id: "openstreetmap-standard-tiles",
         trigger: "MAP_DISPLAYED",
         purpose: "MAP_TILE_DISPLAY",
-        savedRunloadDataUploaded: false,
+        savedApplicationDataUploaded: false,
         displayedAreaMayBeDisclosedByTileRequests: true,
       }),
     ]),
