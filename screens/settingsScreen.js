@@ -44,7 +44,7 @@ export function renderSettingsScreen({ services, context }) {
     <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">SETTINGS</p><h1>設定</h1><p>表示、使い回す情報、端末内データをまとめます。</p></section>
     ${saved ? '<p class="parity-save-message" role="status">設定を保存しました。</p>' : ""}
-    <form id="journal-settings-form" novalidate>
+    <form id="app-settings-form" novalidate>
       <section class="group"><p class="group-title">DISPLAY</p>
         <div class="display-setting-list">
           ${renderDisplaySetting({ eyebrow: "TEXT SIZE", title: "文字サイズ", name: "textSize", current: settings.textSize, options: TEXT_SIZE_OPTIONS })}
@@ -70,7 +70,7 @@ export function renderSettingsScreen({ services, context }) {
             <label class="field"><span>性別（任意）</span><select name="profileSex"><option value="">未設定・回答しない</option><option value="male"${profile.sex === "male" ? " selected" : ""}>男性</option><option value="female"${profile.sex === "female" ? " selected" : ""}>女性</option></select></label>
           </div><p class="note">すべて任意です。「共有用にまとめる」で、共有内容に含めるか本人が選べます。</p></div></details>
           <details class="subdetails"><summary><span><strong>保存シューズ</strong><small>Recordで次回も選べる名称</small></span><span>⌄</span></summary><div class="subdetails-body">${renderSavedShoes(settings)}<p class="visually-hidden">保存候補から削除しても、過去記録に保存されたシューズ情報は変わりません。</p></div></details>
-          <div class="action-row"><button type="submit" class="primary">プロフィールを保存</button><button type="button" data-action="reset-journal-settings">標準設定に戻す</button></div>
+          <div class="action-row"><button type="submit" class="primary">プロフィールを保存</button><button type="button" data-action="reset-app-settings">標準設定に戻す</button></div>
           <p class="visually-hidden">ルートファイル（GPX）は端末内で読み取り、外部サービスへ自動送信しません。</p>
           <input type="hidden" name="regionalResultInitialView" value="${escapeHtml(settings.regionalResultInitialView)}">
           <input type="hidden" name="showRegionalPreviousComparison" value="${settings.showRegionalPreviousComparison ? "show" : "hide"}">
