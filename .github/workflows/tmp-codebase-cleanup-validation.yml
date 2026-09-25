@@ -31,6 +31,15 @@ jobs:
           ! grep -R -n -E 'RunLoad Journal|Runload Journal' --include='*.js' --include='*.html' --include='*.css' .
           echo "Validation failures: $failures"
           test "$failures" -eq 0
+      - name: Validate runtime technology boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(find core screens ui -type f ! -name '*.js' -print)"
+          test -z "$(find styles -type f ! -name '*.css' -print)"
+          test -f index.html
+          test ! -e package.json
+          test -z "$(find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.jsx' -o -name '*.vue' -o -name '*.py' \) -not -path './.git/*' -print)"
       - name: Generate cleanup audit report
         shell: bash
         run: |
