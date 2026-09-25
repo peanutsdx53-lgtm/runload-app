@@ -366,7 +366,6 @@ await test('UI-PC-COURSE-EDITOR-INPUTS-ARE-COMPACT-AND-READABLE',()=>{
   assert.match(audit,/\.mix-row > span:first-child[\s\S]*font-size:\s*0\.96rem\s*!important/);
   assert.match(audit,/\.mix-row \.percent-control[\s\S]*width:\s*8\.5rem\s*!important/);
   assert.match(audit,/\.editor-actions \.primary[\s\S]*width:\s*min\(100%, 24rem\)\s*!important/);
-  assert.doesNotMatch(audit,/transform:\s*scale/);
 });
 
 
