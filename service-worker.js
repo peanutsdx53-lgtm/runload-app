@@ -1,5 +1,6 @@
-const CACHE_NAME = "runload-app-runtime-v1";
-const RUNLOAD_CACHE_PREFIX = "runload-app-";
+const CACHE_NAME = "running-record-app-runtime-v1";
+const CACHE_PREFIX = "running-record-app-";
+const LEGACY_CACHE_PREFIXES = Object.freeze(["runload-app-"]);
 const PRECACHE_URLS = [
   "./app.js",
   "./core/interpretationBase.js",
@@ -105,7 +106,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(keys
-        .filter((key) => key.startsWith(RUNLOAD_CACHE_PREFIX) && key !== CACHE_NAME)
+        .filter((key) => (key.startsWith(CACHE_PREFIX) || LEGACY_CACHE_PREFIXES.some((prefix) => key.startsWith(prefix))) && key !== CACHE_NAME)
         .map((key) => caches.delete(key))))
       .then(() => caches.open(CACHE_NAME))
       .then((cache) => cache.keys().then((requests) => Promise.all(requests
