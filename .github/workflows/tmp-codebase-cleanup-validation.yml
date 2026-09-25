@@ -160,12 +160,28 @@ jobs:
             }
           }
           const unused=exported.filter((name)=>!imported.has(name)).sort();
+          const unsupportedImports=[];
+          for(const file of new Set(files)){
+            const source=fs.readFileSync(file,'utf8');
+            for(const line of source.split(/\r?\n/)){
+              if(line.includes('appCore.js') && !line.includes('import {') && !line.trim().startsWith('} from ')){
+                unsupportedImports.push(`${file}: ${line.trim()}`);
+              }
+            }
+          }
           const report=[
             '=== APP CORE PUBLIC API USAGE ===',
             `exports: ${exported.length}`,
             `imported exports: ${imported.size}`,
             `unused public exports: ${unused.length}`,
             '',
+            '=== IMPORTED EXPORTS ===',
+            ...[...imported].sort(),
+            '',
+            '=== NON-NAMED / REVIEW IMPORT LINES ===',
+            ...(unsupportedImports.length?unsupportedImports:['none']),
+            '',
+            '=== UNUSED PUBLIC EXPORTS ===',
             ...unused,
             ''
           ].join('\n');
