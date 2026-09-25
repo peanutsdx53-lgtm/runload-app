@@ -21,4 +21,3 @@ export const LEGACY_ROF_J_LIFECYCLE_SCHEMA_VERSIONS = Object.freeze([
   "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1",
 ]);
 
-export const LEGACY_ROF_J_SOURCE_FIELD = "japaneseSourceSha256";
