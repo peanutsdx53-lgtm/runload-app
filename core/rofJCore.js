@@ -1,11 +1,24 @@
 import { STORAGE_KEYS } from "./appCore.js";
+import {
+  ROF_J_INSTRUMENT_ID,
+  ROF_J_SEMANTIC_VERSION,
+  ROF_J_SOURCE_VERSION,
+  ROF_J_VISUAL_SOURCE_ID,
+  ROF_J_STORAGE_SCHEMA_VERSION,
+  ROF_J_LIFECYCLE_SCHEMA_VERSION,
+  isSupportedRofJSemanticVersion,
+  isSupportedRofJStorageSchema,
+  isSupportedRofJLifecycleSchema,
+} from "./rofJConstants.js";
 
-export const ROF_J_INSTRUMENT_ID = "ROF_J";
-export const ROF_J_SEMANTIC_VERSION = "ROF_J_SUZUKI_ARAI_2026_RUNLOAD_V1";
-export const ROF_J_SOURCE_VERSION = "ROF_J_JAPANESE_SOURCE_V1";
-export const ROF_J_VISUAL_SOURCE_ID = "ROF_ORIGINAL_2017";
-export const ROF_J_STORAGE_SCHEMA_VERSION = "RUNLOAD_SECOND_PILLAR_ROFJ_STORAGE_V1";
-export const ROF_J_LIFECYCLE_SCHEMA_VERSION = "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1";
+export {
+  ROF_J_INSTRUMENT_ID,
+  ROF_J_SEMANTIC_VERSION,
+  ROF_J_SOURCE_VERSION,
+  ROF_J_VISUAL_SOURCE_ID,
+  ROF_J_STORAGE_SCHEMA_VERSION,
+  ROF_J_LIFECYCLE_SCHEMA_VERSION,
+} from "./rofJConstants.js";
 export const ROF_J_PHASES = Object.freeze({ PRE: "PRE_RUN", POST: "POST_RUN" });
 export const ROF_J_REVISION_TYPES = Object.freeze({
   initial: "INITIAL_MEASUREMENT",
@@ -32,6 +45,37 @@ function clone(value) {
 }
 function isObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function normalizeRofJEntry(entry) {
+  if (!isObject(entry)) return entry;
+  const normalized = clone(entry);
+  if (isSupportedRofJSemanticVersion(normalized.instrumentSemanticVersion)) {
+    normalized.instrumentSemanticVersion = ROF_J_SEMANTIC_VERSION;
+  }
+  if (normalized.sourceVersion == null && typeof normalized.japaneseSourceSha256 === "string" && normalized.japaneseSourceSha256.trim()) {
+    normalized.sourceVersion = ROF_J_SOURCE_VERSION;
+  }
+  delete normalized.japaneseSourceSha256;
+  return normalized;
+}
+
+function normalizeRofJStorageEnvelope(value) {
+  if (!isObject(value) || !isObject(value.entries)) return value;
+  return {
+    schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION,
+    entries: Object.fromEntries(
+      Object.entries(value.entries).map(([runId, entry]) => [runId, normalizeRofJEntry(entry)]),
+    ),
+  };
+}
+
+function normalizeRofJLifecycleEnvelope(value) {
+  if (!isObject(value) || !isObject(value.pendingByRunId)) return value;
+  return {
+    ...clone(value),
+    schemaVersion: ROF_J_LIFECYCLE_SCHEMA_VERSION,
+  };
 }
 function isIsoDateTime(value) {
   if (typeof value !== "string" || !value.trim()) return false;
@@ -279,7 +323,7 @@ export function validateRofJRunEntry(entry) {
   if (!isObject(entry)) return Object.freeze({ ok: false, issues: Object.freeze(["ENTRY_OBJECT_REQUIRED"]) });
   if (!String(entry.runId || "").trim()) issues.push("RUN_ID_REQUIRED");
   if (entry.instrumentId !== ROF_J_INSTRUMENT_ID) issues.push("INSTRUMENT_ID_MISMATCH");
-  if (entry.instrumentSemanticVersion !== ROF_J_SEMANTIC_VERSION) issues.push("SEMANTIC_VERSION_MISMATCH");
+  if (!isSupportedRofJSemanticVersion(entry.instrumentSemanticVersion)) issues.push("SEMANTIC_VERSION_MISMATCH");
   const legacySourceMetadata = typeof entry.japaneseSourceSha256 === "string" && entry.japaneseSourceSha256.trim().length > 0;
   if (entry.sourceVersion != null && entry.sourceVersion !== ROF_J_SOURCE_VERSION) issues.push("SOURCE_VERSION_MISMATCH");
   if (entry.sourceVersion == null && !legacySourceMetadata) issues.push("SOURCE_VERSION_MISSING");
@@ -306,7 +350,7 @@ export function validateRofJRunEntry(entry) {
 export function validateRofJStorageEnvelope(value) {
   if (value == null) return Object.freeze({ ok: true, issues: Object.freeze([]) });
   const issues = [];
-  if (!isObject(value) || value.schemaVersion !== ROF_J_STORAGE_SCHEMA_VERSION || !isObject(value.entries)) {
+  if (!isObject(value) || !isSupportedRofJStorageSchema(value.schemaVersion) || !isObject(value.entries)) {
     return Object.freeze({ ok: false, issues: Object.freeze(["STORAGE_ENVELOPE_INVALID"]) });
   }
   Object.entries(value.entries).forEach(([runId, entry]) => {
@@ -320,7 +364,7 @@ export function validateRofJStorageEnvelope(value) {
 export function validateRofJLifecycleEnvelope(value) {
   if (value == null) return Object.freeze({ ok: true, issues: Object.freeze([]) });
   const issues = [];
-  if (!isObject(value) || value.schemaVersion !== ROF_J_LIFECYCLE_SCHEMA_VERSION || !isObject(value.pendingByRunId)) {
+  if (!isObject(value) || !isSupportedRofJLifecycleSchema(value.schemaVersion) || !isObject(value.pendingByRunId)) {
     return Object.freeze({ ok: false, issues: Object.freeze(["LIFECYCLE_ENVELOPE_INVALID"]) });
   }
   Object.entries(value.pendingByRunId).forEach(([runId, state]) => {
@@ -337,7 +381,7 @@ export function createRofJRepository(gateway) {
     if (result.value == null) return { ok: true, exists: false, envelope: empty() };
     const validation = validateRofJStorageEnvelope(result.value);
     if (!validation.ok) return { ok: false, code: "ROF_J_STORAGE_INVALID", validation, envelope: empty() };
-    return { ok: true, exists: true, envelope: clone(result.value) };
+    return { ok: true, exists: true, envelope: normalizeRofJStorageEnvelope(result.value) };
   }
   function loadByRunId(runId) {
     const result = loadEnvelopeResult();
@@ -384,7 +428,7 @@ export function createRofJLifecycleRepository(gateway) {
     if (result.value == null) return { ok: true, exists: false, envelope: empty() };
     const validation = validateRofJLifecycleEnvelope(result.value);
     if (!validation.ok) return { ok: false, code: "ROF_J_LIFECYCLE_STORAGE_INVALID", validation, envelope: empty() };
-    return { ok: true, exists: true, envelope: clone(result.value) };
+    return { ok: true, exists: true, envelope: normalizeRofJLifecycleEnvelope(result.value) };
   }
   function saveState(state) {
     if (!state?.runId) return { ok: false, code: "RUN_ID_REQUIRED" };
@@ -563,7 +607,7 @@ export function createRofJServices({ gateway, recordsRepository } = {}) {
       .filter((record) => `${record.date}|${record.createdAt || ""}|${record.id}` < currentSort)
       .sort((a, b) => `${a.date}|${a.createdAt || ""}|${a.id}`.localeCompare(`${b.date}|${b.createdAt || ""}|${b.id}`))
       .map((record) => ({ record, entry: repository.loadByRunId(record.id) }))
-      .filter(({ entry }) => entry?.instrumentSemanticVersion === ROF_J_SEMANTIC_VERSION)
+      .filter(({ entry }) => isSupportedRofJSemanticVersion(entry?.instrumentSemanticVersion))
       .map(({ entry }) => summarizeRofJRun(entry))
       .map((summary) => metric === "PRE" ? summary.pre : metric === "POST" ? summary.post : summary.delta)
       .filter((value) => Number.isFinite(value));
