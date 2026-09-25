@@ -47,10 +47,10 @@ await test('RETIRED-ACTIVATION-STYLES-REMOVED',()=>{
   assert.doesNotMatch(mobile,/screen-layout--activation|\.activation-link(?:-wrap)?/);
 });
 
-await test('UNUSED-SCREEN-ARCHITECTURE-EXPORTS-REMOVED',()=>{
+await test('UNUSED-SCREEN-ARCHITECTURE-HELPERS-REMOVED',()=>{
   const architecture=read('ui/screenArchitecture.js');
   assert.doesNotMatch(architecture,/renderResultWorkspaceNavigation|resolveScreenWorkspace|renderManagementBoundary/);
-  assert.match(architecture,/renderRecordsWorkspaceNavigation/);
+  assert.doesNotMatch(architecture,/renderRecordsWorkspaceNavigation/);
 });
 
 await test('PWA-CACHE-NAME-IS-STABLE',()=>{
