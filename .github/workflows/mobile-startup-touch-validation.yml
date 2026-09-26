@@ -42,7 +42,7 @@ jobs:
       - name: Verify startup strategy
         run: |
           set -euo pipefail
-          grep -q 'running-record-app-runtime-v2' service-worker.js
+          grep -q 'running-record-app-runtime-v1' service-worker.js
           grep -q 'const cached = await cache.match' service-worker.js
           grep -q 'if (cached)' service-worker.js
           grep -q 'event.waitUntil(refresh)' service-worker.js
