@@ -1,0 +1,578 @@
+/* Smartphone-only presentation unification for screens outside Home and Record. */
+@media (max-width: 54.99rem) {
+  /* ----- Shared smartphone shell ----- */
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) {
+    padding-bottom: calc(82px + env(safe-area-inset-bottom));
+    background: var(--color-paper);
+  }
+
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) > .mobile-topbar {
+    min-height: 58px;
+    padding: max(8px, env(safe-area-inset-top)) 14px 8px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-line) 70%, transparent);
+    background: color-mix(in srgb, var(--color-paper) 90%, transparent);
+    backdrop-filter: blur(20px) saturate(1.08);
+    -webkit-backdrop-filter: blur(20px) saturate(1.08);
+  }
+
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) .mobile-topbar__brand strong {
+    font-size: 15px;
+    letter-spacing: -.015em;
+  }
+
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) .mobile-topbar__back {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-accent-strong);
+    font-size: 12px;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .app-shell:has(.screen-layout:not(.screen-layout--home)) .mobile-topbar .feature-menu {
+    display: none;
+  }
+
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) > .primary-navigation {
+    left: 12px;
+    right: 12px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    width: auto;
+    height: 58px;
+    transform: none;
+    grid-template-columns: 1fr;
+    padding: 7px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 78%, transparent);
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    box-shadow: 0 14px 34px rgba(20, 37, 52, .14);
+    backdrop-filter: blur(22px) saturate(1.12);
+    -webkit-backdrop-filter: blur(22px) saturate(1.12);
+  }
+
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) > .primary-navigation .primary-navigation__link:not([data-navigation-screen="home"]) {
+    display: none;
+  }
+
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) > .primary-navigation .primary-navigation__link[data-navigation-screen="home"] {
+    min-height: 42px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--color-accent-soft) 72%, var(--color-surface));
+    color: var(--color-accent-strong);
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) > .primary-navigation .primary-navigation__icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) .app-main {
+    padding: 0;
+  }
+
+  .screen-layout--result,
+  .screen-layout--history,
+  .screen-layout--plan,
+  .screen-layout--simulation,
+  .screen-layout--course,
+  .screen-layout--gpx,
+  .screen-layout--consultation,
+  .screen-layout--support,
+  .screen-layout--reading,
+  .screen-layout--privacy,
+  .screen-layout--settings,
+  .screen-layout--more {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 16px 14px 34px;
+    background:
+      radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--color-accent-soft) 52%, transparent) 0, transparent 28%),
+      var(--color-paper);
+  }
+
+  .screen-layout--result > *,
+  .screen-layout--history > *,
+  .screen-layout--plan > *,
+  .screen-layout--simulation > *,
+  .screen-layout--course > *,
+  .screen-layout--gpx > *,
+  .screen-layout--consultation > *,
+  .screen-layout--support > *,
+  .screen-layout--reading > *,
+  .screen-layout--privacy > *,
+  .screen-layout--settings > *,
+  .screen-layout--more > * {
+    min-width: 0;
+  }
+
+  /* ----- Common page heads ----- */
+  .screen-layout--result .intro,
+  .screen-layout--history .page-head,
+  .screen-layout--plan .page-head,
+  .screen-layout--simulation .intro,
+  .screen-layout--consultation .head,
+  .screen-layout--support .head,
+  .screen-layout--reading .head,
+  .screen-layout--privacy .head,
+  .screen-layout--settings .head,
+  .screen-layout--more .head {
+    margin: 0 0 14px;
+    padding: 18px 16px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 78%, transparent);
+    border-radius: 24px;
+    background: color-mix(in srgb, var(--color-surface) 91%, transparent);
+    box-shadow: 0 10px 28px rgba(25, 43, 60, .06);
+  }
+
+  .screen-layout--result h1,
+  .screen-layout--history h1,
+  .screen-layout--plan h1,
+  .screen-layout--simulation h1,
+  .screen-layout--consultation h1,
+  .screen-layout--support h1,
+  .screen-layout--reading h1,
+  .screen-layout--privacy h1,
+  .screen-layout--settings h1,
+  .screen-layout--more h1 {
+    font-size: 28px;
+    line-height: 1.12;
+    letter-spacing: -.04em;
+  }
+
+  .screen-layout--result .eyebrow,
+  .screen-layout--history .eyebrow,
+  .screen-layout--plan .eyebrow,
+  .screen-layout--simulation .eyebrow,
+  .screen-layout--consultation .eyebrow,
+  .screen-layout--support .eyebrow,
+  .screen-layout--reading .eyebrow,
+  .screen-layout--privacy .eyebrow,
+  .screen-layout--settings .eyebrow,
+  .screen-layout--more .eyebrow {
+    color: var(--color-accent-strong);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .14em;
+  }
+
+  /* ----- Derived-screen internal bars ----- */
+  .secondary-derived-head,
+  .course-derived-head {
+    position: sticky;
+    top: 58px;
+    z-index: 28;
+    min-height: 46px;
+    margin: -16px -14px 14px;
+    padding: 5px 14px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-line) 70%, transparent);
+    background: color-mix(in srgb, var(--color-paper) 94%, transparent);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .secondary-derived-back,
+  .course-derived-back {
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-accent-strong);
+    font-size: 11px;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .secondary-derived-head > strong,
+  .course-derived-head > strong {
+    font-size: 12px;
+  }
+
+  .secondary-derived-body,
+  .course-derived-body {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+  }
+
+  /* ----- Result ----- */
+  .screen-layout--result .result-mobile-layout {
+    display: grid;
+    gap: 12px;
+  }
+
+  .screen-layout--result .result-card,
+  .screen-layout--result .regional-card,
+  .screen-layout--result .fatigue-card,
+  .screen-layout--result .run-route-link-wrap,
+  .screen-layout--result .result-next-actions {
+    border-radius: 22px;
+  }
+
+  .screen-layout--result .result-card,
+  .screen-layout--result .regional-card,
+  .screen-layout--result .fatigue-card {
+    border-color: color-mix(in srgb, var(--color-line) 80%, transparent);
+    box-shadow: 0 9px 26px rgba(25, 43, 60, .055);
+  }
+
+  .screen-layout--result .result-next-actions {
+    display: grid;
+    gap: 9px;
+  }
+
+  .screen-layout--result .result-next-actions a,
+  .screen-layout--result .run-route-link {
+    min-height: 64px;
+    border-radius: 18px;
+  }
+
+  /* ----- History ----- */
+  .screen-layout--history .history-view {
+    border-radius: 24px;
+  }
+
+  .screen-layout--history .records-head {
+    padding-inline: 2px;
+  }
+
+  .screen-layout--history .record-filters {
+    padding: 12px;
+    border: 1px solid var(--color-line);
+    border-radius: 18px;
+    background: var(--color-surface);
+  }
+
+  .screen-layout--history .record-filters input[type="search"] {
+    min-height: 46px;
+    border-radius: 14px;
+  }
+
+  .screen-layout--history .type-toggle {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    padding: 4px;
+    border-radius: 14px;
+    background: var(--color-surface-muted);
+  }
+
+  .screen-layout--history .type-toggle button {
+    min-height: 40px;
+    border-radius: 10px;
+  }
+
+  .screen-layout--history .record-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .screen-layout--history .record-item {
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(25, 43, 60, .05);
+  }
+
+  .screen-layout--history .record-actions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 7px;
+  }
+
+  .screen-layout--history .record-actions a,
+  .screen-layout--history .record-actions button {
+    min-height: 42px;
+    border-radius: 12px;
+  }
+
+  /* ----- Course / GPX ----- */
+  .screen-layout--course .current,
+  .screen-layout--course .card,
+  .screen-layout--course .import-helper,
+  .screen-layout--gpx .panel,
+  .screen-layout--gpx .card {
+    border-radius: 21px;
+    box-shadow: 0 8px 24px rgba(25, 43, 60, .05);
+  }
+
+  .screen-layout--course .list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .screen-layout--course .card .actions {
+    gap: 8px;
+  }
+
+  .screen-layout--course .card .use,
+  .screen-layout--course .new,
+  .screen-layout--course .import-helper a {
+    min-height: 44px;
+    border-radius: 13px;
+  }
+
+  .screen-layout--course .secondary-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  /* ----- Plan ----- */
+  .screen-layout--plan .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .screen-layout--plan .panel,
+  .screen-layout--plan .carry,
+  .screen-layout--plan .saved {
+    border-radius: 22px;
+    box-shadow: 0 9px 26px rgba(25, 43, 60, .055);
+  }
+
+  .screen-layout--plan .panel-body {
+    padding: 14px;
+  }
+
+  .screen-layout--plan .seg {
+    padding: 4px;
+    border-radius: 14px;
+  }
+
+  .screen-layout--plan .seg button {
+    min-height: 42px;
+    border-radius: 10px;
+  }
+
+  .screen-layout--plan .two,
+  .screen-layout--plan .summary-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .screen-layout--plan .metric-field > div {
+    min-height: 54px;
+    border-radius: 14px;
+  }
+
+  .screen-layout--plan .metric-field input {
+    font-size: 22px;
+  }
+
+  .screen-layout--plan .save {
+    min-height: 50px;
+    border-radius: 15px;
+  }
+
+  /* ----- Condition compare ----- */
+  .screen-layout--simulation .back-link[data-context-back-duplicate] {
+    display: none;
+  }
+
+  .screen-layout--simulation .condition-compare-hero,
+  .screen-layout--simulation .condition-compare-overview,
+  .screen-layout--simulation .condition-panel,
+  .screen-layout--simulation .preview-panel,
+  .screen-layout--simulation .carry-card {
+    border-radius: 22px;
+    box-shadow: 0 9px 26px rgba(25, 43, 60, .055);
+  }
+
+  .screen-layout--simulation .condition-compare-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .screen-layout--simulation .workspace {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .screen-layout--simulation .measure-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .screen-layout--simulation .measure-field > div {
+    min-height: 54px;
+    border-radius: 14px;
+  }
+
+  .screen-layout--simulation .measure-field input {
+    font-size: 21px;
+  }
+
+  /* ----- Reading ----- */
+  .screen-layout--reading .recommend,
+  .screen-layout--reading .reading-tools,
+  .screen-layout--reading .reading-card,
+  .screen-layout--reading .article-card,
+  .screen-layout--reading .sheet {
+    border-radius: 22px;
+  }
+
+  .screen-layout--reading .recommend {
+    padding: 16px;
+    box-shadow: 0 10px 28px rgba(25, 43, 60, .06);
+  }
+
+  .screen-layout--reading .reading-tools {
+    padding: 12px;
+  }
+
+  .screen-layout--reading [data-reading-filter] {
+    min-height: 40px;
+    border-radius: 12px;
+  }
+
+  /* ----- Consultation ----- */
+  .screen-layout--consultation .panel,
+  .screen-layout--consultation .share-source,
+  .screen-layout--consultation .share-card,
+  .screen-layout--consultation .quick-share-card,
+  .screen-layout--consultation .share-report {
+    border-radius: 21px;
+  }
+
+  .screen-layout--consultation .share-source {
+    min-height: 58px;
+    padding: 12px;
+  }
+
+  .screen-layout--consultation .actions,
+  .screen-layout--consultation .action-row {
+    display: grid;
+    gap: 8px;
+  }
+
+  .screen-layout--consultation button,
+  .screen-layout--consultation .button {
+    min-height: 44px;
+    border-radius: 13px;
+  }
+
+  /* ----- Settings / Privacy / Support / More ----- */
+  .screen-layout--settings .group,
+  .screen-layout--settings .display-setting,
+  .screen-layout--settings .disclosure,
+  .screen-layout--settings .subdetails,
+  .screen-layout--privacy .panel,
+  .screen-layout--privacy .card,
+  .screen-layout--support .panel,
+  .screen-layout--support .card,
+  .screen-layout--more .feature-link-card {
+    border-radius: 20px;
+  }
+
+  .screen-layout--settings .group {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 80%, transparent);
+    background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+    box-shadow: 0 8px 24px rgba(25, 43, 60, .045);
+  }
+
+  .screen-layout--settings .display-setting > summary,
+  .screen-layout--settings .disclosure > summary,
+  .screen-layout--settings .subdetails > summary {
+    min-height: 58px;
+    padding: 11px 12px;
+  }
+
+  .screen-layout--settings .display-choice-list,
+  .screen-layout--settings .goal-grid,
+  .screen-layout--settings .data-overview {
+    gap: 7px;
+  }
+
+  .screen-layout--settings .action-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .screen-layout--settings .action-row button,
+  .screen-layout--settings .action-row a,
+  .screen-layout--settings .action-row label {
+    min-height: 44px;
+    border-radius: 13px;
+  }
+
+  /* ----- Touch and text density ----- */
+  .screen-layout--result button,
+  .screen-layout--result a,
+  .screen-layout--history button,
+  .screen-layout--history a,
+  .screen-layout--plan button,
+  .screen-layout--plan a,
+  .screen-layout--simulation button,
+  .screen-layout--simulation a,
+  .screen-layout--course button,
+  .screen-layout--course a,
+  .screen-layout--gpx button,
+  .screen-layout--gpx a,
+  .screen-layout--consultation button,
+  .screen-layout--consultation a,
+  .screen-layout--reading button,
+  .screen-layout--reading a,
+  .screen-layout--settings button,
+  .screen-layout--settings a,
+  .screen-layout--privacy button,
+  .screen-layout--privacy a,
+  .screen-layout--support button,
+  .screen-layout--support a {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .screen-layout--result input,
+  .screen-layout--history input,
+  .screen-layout--plan input,
+  .screen-layout--plan select,
+  .screen-layout--plan textarea,
+  .screen-layout--simulation input,
+  .screen-layout--simulation select,
+  .screen-layout--consultation input,
+  .screen-layout--consultation select,
+  .screen-layout--consultation textarea,
+  .screen-layout--settings input,
+  .screen-layout--settings select,
+  .screen-layout--settings textarea {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 24rem) {
+  .screen-layout--result,
+  .screen-layout--history,
+  .screen-layout--plan,
+  .screen-layout--simulation,
+  .screen-layout--course,
+  .screen-layout--gpx,
+  .screen-layout--consultation,
+  .screen-layout--support,
+  .screen-layout--reading,
+  .screen-layout--privacy,
+  .screen-layout--settings,
+  .screen-layout--more {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+
+  .screen-layout--plan .two,
+  .screen-layout--plan .summary-row,
+  .screen-layout--simulation .measure-grid,
+  .screen-layout--simulation .condition-compare-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
