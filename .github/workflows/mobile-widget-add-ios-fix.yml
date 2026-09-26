@@ -1,0 +1,81 @@
+name: Mobile widget add iOS fix
+
+on:
+  push:
+    branches:
+      - fix/mobile-widget-add-ios-callout-20260926
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply focused interaction fix
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          js_path = Path('ui/interactions/homeInteractions.js')
+          js = js_path.read_text()
+
+          old = '''  function handlePointerDown(event) {\n    if (event.target.closest("button")) return;\n    const widget = event.target.closest("[data-home-widget-id]");'''
+          new = '''  function handlePointerDown(event) {\n    const pickerOption = event.target.closest("[data-home-widget-add-id]");\n    if (pickerOption) {\n      event.preventDefault();\n      return;\n    }\n    if (event.target.closest("button")) return;\n    const widget = event.target.closest("[data-home-widget-id]");'''
+          if old not in js:
+              raise SystemExit('handlePointerDown target not found')
+          js = js.replace(old, new, 1)
+
+          old = '''  function handlePointerUp(event) {\n    if (event.pointerId !== pointerId) return;\n    cancelPressTimer();'''
+          new = '''  function handlePointerUp(event) {\n    const pickerOption = event.target.closest("[data-home-widget-add-id]");\n    if (pickerOption) {\n      event.preventDefault();\n      addWidget(pickerOption.dataset.homeWidgetAddId);\n      return;\n    }\n    if (event.pointerId !== pointerId) return;\n    cancelPressTimer();'''
+          if old not in js:
+              raise SystemExit('handlePointerUp target not found')
+          js = js.replace(old, new, 1)
+
+          old = '''  function addWidget(id) {\n    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);\n    if (!widget) return;\n    widget.hidden = false;'''
+          new = '''  function addWidget(id) {\n    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);\n    if (!widget) return;\n    if (!widget.hidden) {\n      closeWidgetPicker();\n      return;\n    }\n    widget.hidden = false;'''
+          if old not in js:
+              raise SystemExit('addWidget target not found')
+          js = js.replace(old, new, 1)
+
+          old = '''  function handleContextMenu(event) {\n    if (event.target.closest("[data-home-item-id], [data-home-widget-id]")) event.preventDefault();\n  }'''
+          new = '''  function handleContextMenu(event) {\n    event.preventDefault();\n  }'''
+          if old not in js:
+              raise SystemExit('handleContextMenu target not found')
+          js = js.replace(old, new, 1)
+
+          js_path.write_text(js)
+
+          css_path = Path('styles/mobile-home-editing.css')
+          css = css_path.read_text()
+          old = '''@media (max-width: 54.99rem) {\n  .mobile-home-os__status {'''
+          new = '''@media (max-width: 54.99rem) {\n  .mobile-home-os {\n    -webkit-touch-callout: none;\n    -webkit-user-select: none;\n    user-select: none;\n  }\n\n  .mobile-home-os :is(input, textarea, [contenteditable="true"]) {\n    -webkit-touch-callout: default;\n    -webkit-user-select: text;\n    user-select: text;\n  }\n\n  .mobile-home-widget-picker__option {\n    touch-action: manipulation;\n  }\n\n  .mobile-home-os__status {'''
+          if old not in css:
+              raise SystemExit('CSS insertion target not found')
+          css = css.replace(old, new, 1)
+          css_path.write_text(css)
+          PY
+      - name: Validate focused fix
+        run: |
+          set -euo pipefail
+          node --check ui/interactions/homeInteractions.js
+          for file in tests/*.test.mjs; do node "$file" >/dev/null; done
+          grep -q 'const pickerOption = event.target.closest("\[data-home-widget-add-id\]")' ui/interactions/homeInteractions.js
+          grep -q 'addWidget(pickerOption.dataset.homeWidgetAddId)' ui/interactions/homeInteractions.js
+          grep -q 'function handleContextMenu(event)' ui/interactions/homeInteractions.js
+          grep -q -- '-webkit-touch-callout: none' styles/mobile-home-editing.css
+          grep -q -- '-webkit-user-select: none' styles/mobile-home-editing.css
+          grep -q 'mobile-home-widget-picker__option' styles/mobile-home-editing.css
+          git diff --check
+      - name: Commit focused fix
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add ui/interactions/homeInteractions.js styles/mobile-home-editing.css
+          git commit -m "Fix iOS widget add and home callouts"
+          git push
