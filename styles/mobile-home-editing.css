@@ -2,6 +2,7 @@
 
   .mobile-home-page-viewport {
     width: 100%;
+    margin-bottom: 40px;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
@@ -29,12 +30,26 @@
   }
 
   .mobile-home-page-indicator {
-    min-height: 28px;
-    margin: -8px 0 18px;
+    position: fixed;
+    z-index: 52;
+    left: 50%;
+    bottom: calc(116px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100vw - 40px);
+    min-height: 36px;
+    margin: 0;
+    padding: 4px 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 7px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 70%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    box-shadow: 0 6px 18px rgba(20, 37, 52, .12);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
   }
 
   .mobile-home-page-indicator[hidden] {
@@ -212,6 +227,10 @@
     min-width: 0;
   }
 
+  .mobile-home-os.is-home-editing .mobile-home-widget-shell {
+    padding-top: 30px;
+  }
+
   .mobile-home-widget-shell--wide {
     grid-column: 1 / -1;
   }
@@ -250,8 +269,8 @@
     display: none;
     position: absolute;
     z-index: 5;
-    top: -8px;
-    left: -7px;
+    top: 0;
+    left: 4px;
     width: 29px;
     height: 29px;
     min-height: 0;
@@ -275,8 +294,8 @@
     display: none;
     position: absolute;
     z-index: 5;
-    top: -8px;
-    right: -7px;
+    top: 0;
+    right: 4px;
     min-width: 34px;
     height: 29px;
     min-height: 0;
