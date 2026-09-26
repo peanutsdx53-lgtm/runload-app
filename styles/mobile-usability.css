@@ -251,3 +251,80 @@
     transition: none;
   }
 }
+
+/* Final smartphone state contract. This block intentionally comes last. */
+@media (max-width: 54.99rem) {
+  /* Selected segmented controls use one semantic token set across screens. */
+  .screen-layout--record .activity-toggle input:checked + span,
+  .screen-layout--result .sheet-tabs button.active,
+  .screen-layout--result .pc-summary-controls button.is-active,
+  .screen-layout--history .period-control button.active,
+  .screen-layout--history .display-toggle button.active,
+  .screen-layout--history .type-toggle button.active,
+  .screen-layout--history .type-toggle button[aria-pressed="true"],
+  .screen-layout--plan .seg button.active,
+  .screen-layout--plan .seg button[aria-pressed="true"],
+  .screen-layout--course .mode button.active,
+  .screen-layout--course .mode button[aria-pressed="true"],
+  .screen-layout--reading .filters button.active,
+  .screen-layout--reading .filters button[aria-pressed="true"],
+  .screen-layout--settings .segment button.active,
+  .screen-layout--settings .segment button[aria-pressed="true"] {
+    border-color: var(--color-segment-selected-border);
+    background: var(--color-segment-selected-surface);
+    color: var(--color-segment-selected-text);
+    box-shadow: var(--shadow-segment-selected);
+    opacity: 1;
+  }
+
+  /* Unselected choices stay readable and must never inherit disabled fading. */
+  .screen-layout--record .activity-toggle input:not(:checked) + span,
+  .screen-layout--history .type-toggle button:not(.active),
+  .screen-layout--plan .seg button:not(.active),
+  .screen-layout--course .mode button:not(.active),
+  .screen-layout--reading .filters button:not(.active),
+  .screen-layout--settings .segment button:not(.active) {
+    color: var(--color-muted);
+    opacity: 1;
+  }
+
+  /* Primary history action: prevent high-specificity soft-background rules from
+     combining with white text and washing the control out. */
+  .screen-layout--history .record-item .record-actions > a:first-child {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--color-accent) 18%, transparent);
+    opacity: 1;
+  }
+
+  /* Disabled is represented by tokens instead of fading the whole control. */
+  .screen-layout:not(.screen-layout--home) button:disabled,
+  .screen-layout:not(.screen-layout--home) .button[aria-disabled="true"] {
+    border-color: var(--color-line);
+    background: var(--color-surface-muted);
+    color: var(--color-muted);
+    box-shadow: none;
+    opacity: 1;
+  }
+
+  /* The first course-library create button is PC-only. Smartphone keeps the
+     single create action beside the saved-course section heading. */
+  .screen-layout--course .course-library-pc-only {
+    display: none !important;
+  }
+}
+
+@media (forced-colors: active) and (max-width: 54.99rem) {
+  .screen-layout--record .activity-toggle input:checked + span,
+  .screen-layout--history .type-toggle button.active,
+  .screen-layout--plan .seg button.active,
+  .screen-layout--course .mode button.active,
+  .screen-layout--reading .filters button.active,
+  .screen-layout--settings .segment button.active,
+  .screen-layout--history .record-item .record-actions > a:first-child {
+    border: 2px solid ButtonText;
+    background: Highlight;
+    color: HighlightText;
+  }
+}
