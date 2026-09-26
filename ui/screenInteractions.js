@@ -2,6 +2,7 @@ import { bindReading } from "./interactions/readingInteractions.js";
 import { bindConsultation } from "./interactions/consultationInteractions.js";
 import { bindCourseEditor, bindCourseLibrary } from "./interactions/courseInteractions.js";
 import { bindHistory } from "./interactions/historyInteractions.js";
+import { bindHome } from "./interactions/homeInteractions.js";
 import { bindPlan } from "./interactions/planInteractions.js";
 import { bindRecordInput } from "./interactions/recordInputInteractions.js";
 import { bindResult } from "./interactions/resultInteractions.js";
@@ -12,6 +13,7 @@ import { bindRunMeasurement } from "./interactions/runMeasurementInteractions.js
 import { bindRunRoute } from "./interactions/runRouteInteractions.js";
 
 const SCREEN_INTERACTION_BINDERS = Object.freeze({
+  home: bindHome,
   "record-input": bindRecordInput,
   "course-library": bindCourseLibrary,
   "course-editor": bindCourseEditor,
