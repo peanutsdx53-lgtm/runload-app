@@ -1,0 +1,67 @@
+name: Mobile home unified grid polish temporary validation
+
+on:
+  push:
+    branches:
+      - fix/mobile-home-unified-grid-20260926
+
+permissions:
+  contents: write
+
+jobs:
+  polish-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Polish cross-page placement
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('ui/interactions/homeInteractions.js')
+          s = p.read_text()
+
+          old = '''  if (!widgetsContainer.querySelector('[data-home-widget-id="checkpoint"]')) {\n    makeWidgetShell(createCheckpointWidget(services), "checkpoint");\n  }'''
+          new = '''  if (!widgetsContainer.querySelector('[data-home-widget-id="checkpoint"]')) {\n    const checkpoint = makeWidgetShell(createCheckpointWidget(services), "checkpoint");\n    checkpoint.hidden = true;\n    widgetsContainer.append(checkpoint);\n  }'''
+          if old not in s:
+              raise SystemExit('checkpoint preparation target not found')
+          s = s.replace(old, new, 1)
+
+          marker = '''function swapItems(source, target) {\n  const placeholder = document.createElement("span");\n  placeholder.hidden = true;\n  source.replaceWith(placeholder);\n  target.replaceWith(source);\n  placeholder.replaceWith(target);\n}\n\n'''
+          addition = marker + '''function placeRelativeToTarget(source, target, clientX, clientY) {\n  if (!source || !target || source === target) return;\n  const rect = target.getBoundingClientRect();\n  const middleX = rect.left + rect.width / 2;\n  const middleY = rect.top + rect.height / 2;\n  const nearMiddleRow = Math.abs(clientY - middleY) <= Math.max(18, rect.height * 0.24);\n  const after = clientY > middleY || (nearMiddleRow && clientX > middleX);\n  if (after) target.after(source);\n  else target.before(source);\n}\n\n'''
+          if marker not in s:
+              raise SystemExit('swapItems marker not found')
+          s = s.replace(marker, addition, 1)
+
+          old_edge = '      setActivePage(next, { smooth: true });'
+          new_edge = '      setActivePage(next, { smooth: false });'
+          if old_edge not in s:
+              raise SystemExit('edge page transition target not found')
+          s = s.replace(old_edge, new_edge, 1)
+
+          s = s.replace('''      if (target && target !== source && target.closest(".mobile-home-grid")) {\n        target.before(source);\n        changed = true;''', '''      if (target && target !== source && target.closest(".mobile-home-grid")) {\n        placeRelativeToTarget(source, target, event?.clientX ?? startX, event?.clientY ?? startY);\n        changed = true;''', 1)
+          s = s.replace('''      } else if (target && target !== source && target.closest(".mobile-home-grid")) {\n        target.before(source);\n        changed = true;''', '''      } else if (target && target !== source && target.closest(".mobile-home-grid")) {\n        placeRelativeToTarget(source, target, event?.clientX ?? startX, event?.clientY ?? startY);\n        changed = true;''', 1)
+
+          p.write_text(s)
+          PY
+      - name: Validate polish
+        run: |
+          set -euo pipefail
+          node --check ui/interactions/homeInteractions.js
+          for file in tests/*.test.mjs; do node "$file" >/dev/null; done
+          grep -q 'checkpoint.hidden = true' ui/interactions/homeInteractions.js
+          grep -q 'widgetsContainer.append(checkpoint)' ui/interactions/homeInteractions.js
+          grep -q 'function placeRelativeToTarget' ui/interactions/homeInteractions.js
+          test "$(grep -c 'placeRelativeToTarget(source, target' ui/interactions/homeInteractions.js)" -ge 2
+          grep -q 'setActivePage(next, { smooth: false })' ui/interactions/homeInteractions.js
+          git diff --check
+      - name: Commit polish
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add ui/interactions/homeInteractions.js
+          git commit -m "Polish mixed home grid dragging"
+          git push
