@@ -1,0 +1,384 @@
+/* Smartphone-only record input presentation. PC presentation is intentionally untouched. */
+@media (max-width: 54.99rem) {
+  .app-shell:has(.screen-layout--record) {
+    padding-bottom: 0;
+    background: color-mix(in srgb, var(--color-paper) 88%, var(--color-surface-muted));
+  }
+
+  .app-shell:has(.screen-layout--record) .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 48;
+    min-height: 58px;
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-right: max(12px, env(safe-area-inset-right));
+    padding-bottom: 8px;
+    padding-left: max(12px, env(safe-area-inset-left));
+    border-bottom: 1px solid color-mix(in srgb, var(--color-line) 66%, transparent);
+    background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .app-shell:has(.screen-layout--record) .mobile-topbar__screen-title strong {
+    font-size: 18px;
+    letter-spacing: -.025em;
+  }
+
+  .app-shell:has(.screen-layout--record) .app-main {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .screen-layout--record {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 12px 14px calc(96px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--color-paper) 88%, var(--color-surface-muted));
+  }
+
+  .screen-layout--record .parity-record-banner {
+    margin: 0 0 10px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+    font-size: 11px;
+    line-height: 1.45;
+    font-weight: 800;
+  }
+
+  .screen-layout--record .record-form {
+    display: grid;
+    gap: 11px;
+  }
+
+  .screen-layout--record .core-card {
+    margin-top: 0;
+    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 76%, transparent);
+    border-radius: 24px;
+    background: var(--color-surface);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--color-ink) 7%, transparent);
+  }
+
+  .screen-layout--record .core-heading {
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 13px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-line) 76%, transparent);
+  }
+
+  .screen-layout--record .core-stage-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .screen-layout--record .core-title-copy {
+    min-width: 0;
+    margin-right: auto;
+  }
+
+  .screen-layout--record .core-heading h2 {
+    margin-top: 2px;
+    font-size: 19px;
+    letter-spacing: -.025em;
+  }
+
+  .screen-layout--record .core-heading > span:not(.core-stage-icon) {
+    padding: 6px 9px;
+    border-radius: 999px;
+    font-size: 9px;
+  }
+
+  .screen-layout--record .fatigue-inline {
+    margin-top: 13px;
+    border-radius: 16px;
+  }
+
+  .screen-layout--record .activity-field {
+    margin-top: 15px;
+  }
+
+  .screen-layout--record .activity-field__label,
+  .screen-layout--record .date-label,
+  .screen-layout--record .measure-field > span {
+    color: var(--color-muted);
+    font-size: 10px;
+    font-weight: 850;
+  }
+
+  .screen-layout--record .activity-toggle {
+    margin-top: 7px;
+    padding: 4px;
+    gap: 4px;
+    border: 0;
+    border-radius: 13px;
+    background: var(--color-surface-muted);
+  }
+
+  .screen-layout--record .activity-toggle span {
+    min-height: 42px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .screen-layout--record .activity-toggle input:checked + span {
+    background: var(--color-surface);
+    box-shadow: 0 2px 9px color-mix(in srgb, var(--color-ink) 9%, transparent);
+  }
+
+  .screen-layout--record .date-field {
+    --entry-max: 100%;
+    --entry-label: 42px;
+    width: 100%;
+    max-width: none;
+    margin-top: 13px;
+    padding: 11px 12px;
+    border-radius: 15px;
+    background: var(--color-surface-muted);
+  }
+
+  .screen-layout--record .date-control {
+    min-height: 44px;
+    border-radius: 12px;
+    background: var(--color-surface);
+  }
+
+  .screen-layout--record .measure-grid {
+    width: 100%;
+    max-width: none;
+    margin-top: 10px;
+    gap: 9px;
+  }
+
+  .screen-layout--record .measure-field {
+    gap: 6px;
+  }
+
+  .screen-layout--record .measure-field > div {
+    height: 68px;
+    padding: 7px 11px;
+    border-radius: 17px;
+    background: var(--color-surface-muted);
+  }
+
+  .screen-layout--record .measure-field input {
+    font-size: clamp(24px, 8vw, 31px);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .screen-layout--record .measure-field b {
+    font-size: 11px;
+  }
+
+  .screen-layout--record .rest-note {
+    border: 0;
+    border-radius: 16px;
+    padding: 14px;
+  }
+
+  .screen-layout--record .optional-stack {
+    gap: 10px;
+    margin-top: 0;
+  }
+
+  .screen-layout--record .stage-card {
+    border: 1px solid color-mix(in srgb, var(--color-line) 76%, transparent);
+    border-radius: 20px;
+    background: var(--color-surface);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--color-ink) 5%, transparent);
+  }
+
+  .screen-layout--record .stage-card > summary {
+    min-height: 72px;
+    padding: 11px 13px;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .screen-layout--record .stage-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--color-surface-muted);
+    font-size: 11px;
+  }
+
+  .screen-layout--record .summary-copy small {
+    font-size: 8px;
+  }
+
+  .screen-layout--record .summary-copy strong {
+    margin-top: 2px;
+    font-size: 13px;
+  }
+
+  .screen-layout--record .summary-copy em {
+    margin-top: 4px;
+    font-size: 9px;
+  }
+
+  .screen-layout--record .stage-card[open] > summary {
+    background: color-mix(in srgb, var(--color-surface-muted) 52%, var(--color-surface));
+  }
+
+  .screen-layout--record .stage-body {
+    padding: 14px;
+  }
+
+  .screen-layout--record .route-button,
+  .screen-layout--record .linked-card {
+    min-height: 62px;
+    border-radius: 15px;
+  }
+
+  .screen-layout--record .field input,
+  .screen-layout--record .field select,
+  .screen-layout--record .field textarea {
+    min-height: 46px;
+    border-radius: 13px;
+    background: var(--color-surface-muted);
+  }
+
+  .screen-layout--record .field textarea {
+    min-height: 78px;
+  }
+
+  .screen-layout--record .mobile-save-bar {
+    left: 82px;
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 56;
+    width: auto;
+    min-height: 62px;
+    transform: none;
+    grid-template-columns: minmax(62px, .34fr) minmax(0, 1fr);
+    gap: 7px;
+    padding: 7px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 78%, transparent);
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    box-shadow: 0 12px 30px color-mix(in srgb, var(--color-ink) 15%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .screen-layout--record .draft-button,
+  .screen-layout--record .mobile-save-bar .primary-save {
+    min-height: 46px;
+    border-radius: 14px;
+    font-size: 11px;
+  }
+
+  .app-shell:has(.screen-layout--record) .primary-navigation {
+    left: max(10px, env(safe-area-inset-left));
+    right: auto;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 57;
+    width: 62px;
+    height: 62px;
+    min-height: 62px;
+    transform: none;
+    display: block;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--color-line) 78%, transparent);
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    box-shadow: 0 12px 30px color-mix(in srgb, var(--color-ink) 15%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .app-shell:has(.screen-layout--record) .primary-navigation__link:not([data-navigation-screen="home"]) {
+    display: none;
+  }
+
+  .app-shell:has(.screen-layout--record) .primary-navigation__link[data-navigation-screen="home"] {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 22px auto;
+    place-items: center;
+    align-content: center;
+    gap: 2px;
+    padding: 5px 2px;
+    border-radius: 19px;
+    color: var(--color-accent-strong);
+    background: var(--color-surface);
+  }
+
+  .app-shell:has(.screen-layout--record) .primary-navigation__link[data-navigation-screen="home"] .primary-navigation__label {
+    font-size: 9px;
+    font-weight: 850;
+  }
+
+  body:has(.screen-layout--record) .pwa-update-notice {
+    bottom: calc(82px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 360px) {
+  .screen-layout--record {
+    padding-right: 11px;
+    padding-left: 11px;
+  }
+
+  .screen-layout--record .core-card {
+    padding: 14px 12px;
+  }
+
+  .screen-layout--record .measure-grid {
+    gap: 7px;
+  }
+
+  .screen-layout--record .measure-field > div {
+    height: 62px;
+    padding-inline: 8px;
+  }
+
+  .screen-layout--record .mobile-save-bar {
+    left: 76px;
+    right: 7px;
+  }
+
+  .app-shell:has(.screen-layout--record) .primary-navigation {
+    left: 7px;
+    width: 58px;
+    height: 58px;
+    min-height: 58px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) and (max-width: 54.99rem) {
+  .screen-layout--record {
+    padding-bottom: 78px;
+  }
+
+  .screen-layout--record .optional-stack {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .screen-layout--record .mobile-save-bar {
+    bottom: 6px;
+    min-height: 54px;
+  }
+
+  .app-shell:has(.screen-layout--record) .primary-navigation {
+    bottom: 6px;
+    height: 54px;
+    min-height: 54px;
+  }
+}
