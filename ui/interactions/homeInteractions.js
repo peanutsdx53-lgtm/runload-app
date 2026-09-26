@@ -1,10 +1,22 @@
+import {
+  HOME_COLUMNS,
+  HOME_MAX_ROWS,
+  HOME_MIN_ROWS,
+  findNearestFreePlacement,
+  footprintForToken,
+  normalizePlacement,
+  packTokens,
+  usedRowCount,
+} from "./homeGridModel.js";
+
 const STORAGE_KEY = "running-record-mobile-home-layout-v1";
+const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const LONG_PRESS_MS = 380;
 const MOVE_CANCEL_PX = 10;
 const MAX_HOME_PAGES = 4;
-const PAGE_EDGE_PX = 34;
-const PAGE_EDGE_DELAY_MS = 420;
+const PAGE_EDGE_PX = 16;
+const PAGE_EDGE_DELAY_MS = 850;
 
 const DEFAULT_LAYOUT = Object.freeze({
   pages: Object.freeze([Object.freeze(["simulation", "plan", "reading", "share", "settings"])]),
@@ -63,6 +75,147 @@ function gridTokenForElement(element) {
   const widgetId = element?.dataset?.homeWidgetId || "";
   if (widgetId) return widgetToken(widgetId);
   return "";
+}
+
+function currentWidgetSizes(root) {
+  return Object.fromEntries([...root.querySelectorAll("[data-home-widget-id]")].map((item) => [
+    item.dataset.homeWidgetId,
+    item.dataset.homeWidgetSize || DEFAULT_WIDGET_SIZES[item.dataset.homeWidgetId] || "small",
+  ]));
+}
+
+function visibleTokensForPage(page) {
+  const tokens = [];
+  page?.querySelectorAll("[data-home-item-id]").forEach((item) => tokens.push(appToken(item.dataset.homeItemId)));
+  page?.querySelectorAll("[data-home-widget-id]:not([hidden])").forEach((item) => tokens.push(widgetToken(item.dataset.homeWidgetId)));
+  return new Set(tokens);
+}
+
+function placementsForPage(page) {
+  const placements = [];
+  page?.querySelectorAll("[data-home-item-id], [data-home-widget-id]").forEach((item) => {
+    const token = gridTokenForElement(item);
+    if (!token) return;
+    placements.push({ token, row: Number(item.dataset.homeRow) || 1, col: Number(item.dataset.homeCol) || 1 });
+  });
+  return placements;
+}
+
+function applyPlacementStyle(element, placement, widgetSizes) {
+  if (!element || !placement) return;
+  const token = gridTokenForElement(element);
+  if (!token) return;
+  const footprint = footprintForToken(token, widgetSizes);
+  const normalized = normalizePlacement(placement, footprint);
+  element.dataset.homeRow = String(normalized.row);
+  element.dataset.homeCol = String(normalized.col);
+  element.style.gridRow = `${normalized.row} / span ${footprint.rows}`;
+  element.style.gridColumn = `${normalized.col} / span ${footprint.columns}`;
+}
+
+function buildPositionLayoutFromDom(root) {
+  const widgetSizes = currentWidgetSizes(root);
+  return {
+    version: 1,
+    pages: pageElements(root).map((page) => {
+      const tokens = [...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]")].map(gridTokenForElement).filter(Boolean);
+      return packTokens(tokens, { widgetSizes, occupiedTokens: visibleTokensForPage(page) });
+    }),
+  };
+}
+
+function readPositionLayout(root) {
+  try {
+    const parsed = JSON.parse(globalThis.localStorage?.getItem(POSITION_STORAGE_KEY) || "null");
+    if (!parsed || !Array.isArray(parsed.pages)) return buildPositionLayoutFromDom(root);
+    const seen = new Set();
+    const pages = parsed.pages.slice(0, MAX_HOME_PAGES).map((page) => {
+      if (!Array.isArray(page)) return [];
+      return page.flatMap((entry) => {
+        const token = String(entry?.token || "");
+        if (!token || seen.has(token)) return [];
+        const valid = token.startsWith(APP_TOKEN_PREFIX)
+          ? ALL_ITEM_ID_SET.has(token.slice(APP_TOKEN_PREFIX.length))
+          : token.startsWith(WIDGET_TOKEN_PREFIX) && WIDGET_ID_SET.has(token.slice(WIDGET_TOKEN_PREFIX.length));
+        if (!valid) return [];
+        seen.add(token);
+        return [{ token, row: Number(entry?.row) || 1, col: Number(entry?.col) || 1 }];
+      });
+    });
+    return { version: 1, pages: pages.length ? pages : [[]] };
+  } catch {
+    return buildPositionLayoutFromDom(root);
+  }
+}
+
+function writePositionLayout(root) {
+  const layout = { version: 1, pages: pageElements(root).map(placementsForPage) };
+  try {
+    globalThis.localStorage?.setItem(POSITION_STORAGE_KEY, JSON.stringify(layout));
+  } catch {
+    // Position persistence is optional; ordered layout remains a fallback.
+  }
+}
+
+function applyPositionLayout(root, layout) {
+  ensurePageCount(root, Math.max(1, layout?.pages?.length || 1));
+  const widgetSizes = currentWidgetSizes(root);
+  const elements = new Map([...root.querySelectorAll("[data-home-item-id], [data-home-widget-id]")].map((item) => [gridTokenForElement(item), item]));
+  const positioned = new Set();
+
+  (layout?.pages || []).forEach((entries, pageIndex) => {
+    const page = pageElements(root)[pageIndex];
+    const grid = pageContainers(page).grid;
+    if (!grid) return;
+    (entries || []).forEach((entry) => {
+      const element = elements.get(entry.token);
+      if (!element || element.closest(".mobile-home-dock")) return;
+      grid.append(element);
+      applyPlacementStyle(element, entry, widgetSizes);
+      positioned.add(entry.token);
+    });
+  });
+
+  pageElements(root).forEach((page) => {
+    const grid = pageContainers(page).grid;
+    if (!grid) return;
+    const occupied = visibleTokensForPage(page);
+    const placements = placementsForPage(page).filter((entry) => positioned.has(entry.token));
+    [...grid.querySelectorAll("[data-home-item-id], [data-home-widget-id]")].forEach((element) => {
+      const token = gridTokenForElement(element);
+      if (!token || positioned.has(token)) return;
+      const free = findNearestFreePlacement(placements, token, { row: 1, col: 1 }, { widgetSizes, occupiedTokens: occupied });
+      if (!free) return;
+      applyPlacementStyle(element, free, widgetSizes);
+      placements.push({ token, ...free });
+      positioned.add(token);
+    });
+  });
+}
+
+function refreshPageSlots(root, editing = false) {
+  const widgetSizes = currentWidgetSizes(root);
+  pageElements(root).forEach((page) => {
+    const grid = pageContainers(page).grid;
+    if (!grid) return;
+    grid.querySelectorAll(".mobile-home-grid-slot").forEach((slot) => slot.remove());
+    const placements = placementsForPage(page);
+    const occupied = visibleTokensForPage(page);
+    const rows = Math.min(HOME_MAX_ROWS, usedRowCount(placements, { widgetSizes, occupiedTokens: occupied, minRows: HOME_MIN_ROWS }) + (editing ? 1 : 0));
+    grid.style.setProperty("--home-grid-rows", String(rows));
+    const fragment = document.createDocumentFragment();
+    for (let row = 1; row <= rows; row += 1) {
+      for (let col = 1; col <= HOME_COLUMNS; col += 1) {
+        const slot = document.createElement("span");
+        slot.className = "mobile-home-grid-slot";
+        slot.setAttribute("aria-hidden", "true");
+        slot.style.gridRow = String(row);
+        slot.style.gridColumn = String(col);
+        fragment.append(slot);
+      }
+    }
+    grid.prepend(fragment);
+  });
 }
 
 function defaultGridLayout() {
@@ -561,6 +714,8 @@ export function bindHome(context = {}) {
   ensurePageCount(root, appLayout.pages.length);
   let activePage = applyLayout(root, dockContainer, appLayout);
   applyWidgetLayout(root, widgetLayout);
+  applyPositionLayout(root, readPositionLayout(root));
+  refreshPageSlots(root, false);
   ensureWidgetPicker(root);
 
   let editing = false;
@@ -573,6 +728,8 @@ export function bindHome(context = {}) {
   let dragging = false;
   let ghost = null;
   let dropItem = null;
+  let dropPlacement = null;
+  let dropPreview = null;
   let suppressClickUntil = 0;
   let edgeTimer = null;
   let edgeTargetPage = -1;
@@ -589,6 +746,7 @@ export function bindHome(context = {}) {
   function persistHomeLayout() {
     writeLayout(root, dockContainer, activePage);
     writeWidgetLayout(root);
+    writePositionLayout(root);
   }
 
   function updateViewportHeight() {
@@ -645,6 +803,7 @@ export function bindHome(context = {}) {
     activePage = Math.max(0, Math.min(pages.length - 1, Number(index) || 0));
     const left = activePage * viewport.clientWidth;
     viewport.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
+    if (dragging) clearDropPreview();
     updatePageIndicator();
     updateViewportHeight();
     if (persist) writeLayout(root, dockContainer, activePage);
@@ -704,9 +863,63 @@ export function bindHome(context = {}) {
     }, PAGE_EDGE_DELAY_MS);
   }
 
-  function clearDropTarget() {
+  function clearDropItemOnly() {
     dropItem?.classList.remove("is-home-drop-target", "is-home-widget-drop-target");
     dropItem = null;
+  }
+
+  function clearDropPreview() {
+    dropPreview?.remove();
+    dropPreview = null;
+    dropPlacement = null;
+  }
+
+  function clearDropTarget() {
+    clearDropItemOnly();
+    clearDropPreview();
+  }
+
+  function placementFromPointer(grid, clientX, clientY, token) {
+    const rect = grid?.getBoundingClientRect();
+    if (!rect || rect.width <= 0) return null;
+    const style = getComputedStyle(grid);
+    const columnGap = Number.parseFloat(style.columnGap) || 8;
+    const rowGap = Number.parseFloat(style.rowGap) || 12;
+    const rowHeight = Number.parseFloat(style.gridAutoRows) || 132;
+    const cellWidth = (rect.width - columnGap * (HOME_COLUMNS - 1)) / HOME_COLUMNS;
+    const rawCol = Math.floor(Math.max(0, clientX - rect.left) / Math.max(1, cellWidth + columnGap)) + 1;
+    const rawRow = Math.floor(Math.max(0, clientY - rect.top) / Math.max(1, rowHeight + rowGap)) + 1;
+    return normalizePlacement({ row: rawRow, col: rawCol }, footprintForToken(token, currentWidgetSizes(root)));
+  }
+
+  function renderDropPreview(grid, token, placement) {
+    clearDropPreview();
+    if (!grid || !placement) return;
+    const footprint = footprintForToken(token, currentWidgetSizes(root));
+    const preview = document.createElement("span");
+    preview.className = "mobile-home-drop-preview";
+    preview.setAttribute("aria-hidden", "true");
+    preview.style.gridRow = `${placement.row} / span ${footprint.rows}`;
+    preview.style.gridColumn = `${placement.col} / span ${footprint.columns}`;
+    grid.append(preview);
+    dropPreview = preview;
+    dropPlacement = { pageIndex: activePage, ...placement };
+  }
+
+  function updatePlacementPreview(event) {
+    if (!dragging || !pressTarget || pressTarget.closest(".mobile-home-dock")) return;
+    const page = currentPageElement();
+    const grid = pageContainers(page).grid;
+    const token = gridTokenForElement(pressTarget);
+    if (!grid || !token) return;
+    const desired = placementFromPointer(grid, event.clientX, event.clientY, token);
+    if (!desired) return;
+    const placements = placementsForPage(page).filter((entry) => entry.token !== token);
+    const free = findNearestFreePlacement(placements, token, desired, {
+      widgetSizes: currentWidgetSizes(root),
+      occupiedTokens: visibleTokensForPage(page),
+    });
+    if (free) renderDropPreview(grid, token, free);
   }
 
   function clearPressState() {
@@ -735,58 +948,54 @@ export function bindHome(context = {}) {
       closeWidgetPicker();
     }
     updatePageIndicator();
+    refreshPageSlots(root, editing);
+    updateViewportHeight();
   }
 
   function finishGridDrag(event, cancelled) {
     if (cancelled || !pressTarget) return;
     const source = pressTarget;
+    const sourceToken = gridTokenForElement(source);
     const sourceIsWidget = Boolean(source.dataset.homeWidgetId);
-    const sourceZone = source.dataset.homeZone || "apps";
+    const sourceDock = source.closest(".mobile-home-dock");
     const pointTarget = document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);
-    const target = pointTarget?.closest?.("[data-home-item-id], [data-home-widget-id]") || null;
-    const targetGrid = pointTarget?.closest?.(".mobile-home-grid") || null;
+    const targetApp = pointTarget?.closest?.("[data-home-item-id]") || null;
     const targetDock = pointTarget?.closest?.(".mobile-home-dock") || null;
-    const targetIsApp = Boolean(target?.dataset?.homeItemId);
-    const targetIsWidget = Boolean(target?.dataset?.homeWidgetId);
-    const targetZone = targetIsApp ? (target.dataset.homeZone || (target.closest(".mobile-home-grid") ? "apps" : "")) : "";
     let changed = false;
 
-    if (sourceIsWidget) {
-      if (target && target !== source && target.closest(".mobile-home-grid")) {
-        placeRelativeToTarget(source, target, event?.clientX ?? startX, event?.clientY ?? startY);
-        changed = true;
-      } else if (targetGrid) {
-        targetGrid.append(source);
-        changed = true;
-      }
-    } else if (sourceZone === "dock") {
-      if (targetIsApp && target !== source && targetZone === "dock") {
-        target.before(source);
-        changed = true;
-      } else if (targetIsApp && target !== source && targetZone === "apps") {
-        swapItems(source, target);
+    if (sourceDock) {
+      if (targetApp && targetApp !== source && !targetApp.closest(".mobile-home-dock")) {
+        const targetRow = Number(targetApp.dataset.homeRow) || 1;
+        const targetCol = Number(targetApp.dataset.homeCol) || 1;
+        swapItems(source, targetApp);
         setItemZone(source, "apps");
-        setItemZone(target, "dock");
+        setItemZone(targetApp, "dock");
+        applyPlacementStyle(source, { row: targetRow, col: targetCol }, currentWidgetSizes(root));
+        changed = true;
+      } else if (targetApp && targetApp !== source && targetApp.closest(".mobile-home-dock")) {
+        targetApp.before(source);
         changed = true;
       }
-    } else {
-      if (targetIsApp && target !== source && targetZone === "dock") {
-        swapItems(source, target);
-        setItemZone(source, "dock");
-        setItemZone(target, "apps");
+    } else if (!sourceIsWidget && targetDock && targetApp && targetApp !== source) {
+      const sourceRow = Number(source.dataset.homeRow) || 1;
+      const sourceCol = Number(source.dataset.homeCol) || 1;
+      swapItems(source, targetApp);
+      setItemZone(source, "dock");
+      setItemZone(targetApp, "apps");
+      applyPlacementStyle(targetApp, { row: sourceRow, col: sourceCol }, currentWidgetSizes(root));
+      changed = true;
+    } else if (dropPlacement && dropPlacement.pageIndex === activePage && sourceToken) {
+      const destinationGrid = pageContainers(currentPageElement()).grid;
+      if (destinationGrid) {
+        destinationGrid.append(source);
+        if (!sourceIsWidget) setItemZone(source, "apps");
+        applyPlacementStyle(source, dropPlacement, currentWidgetSizes(root));
         changed = true;
-      } else if (target && target !== source && target.closest(".mobile-home-grid")) {
-        placeRelativeToTarget(source, target, event?.clientX ?? startX, event?.clientY ?? startY);
-        changed = true;
-      } else if (targetGrid) {
-        targetGrid.append(source);
-        changed = true;
-      } else if (targetDock && !target) {
-        changed = false;
       }
     }
 
     if (changed) {
+      refreshPageSlots(root, editing);
       persistHomeLayout();
       updatePageIndicator();
       updateViewportHeight();
@@ -863,17 +1072,13 @@ export function bindHome(context = {}) {
     event.preventDefault();
     moveGhost(ghost, event.clientX, event.clientY);
     scheduleEdgePaging(event.clientX);
+    clearDropItemOnly();
     const hit = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("[data-home-item-id], [data-home-widget-id]") || null;
-    if (hit === pressTarget || hit === dropItem || hit?.hidden) return;
-    clearDropTarget();
-    if (hit) {
-      const sourceInDock = pressTarget?.dataset?.homeZone === "dock";
-      const invalidDockToWidget = sourceInDock && Boolean(hit.dataset.homeWidgetId);
-      const invalidWidgetToDock = pressKind === "widget" && Boolean(hit.closest(".mobile-home-dock"));
-      if (invalidDockToWidget || invalidWidgetToDock) return;
+    if (hit && hit !== pressTarget) {
       dropItem = hit;
       dropItem.classList.add(hit.dataset.homeWidgetId ? "is-home-widget-drop-target" : "is-home-drop-target");
     }
+    updatePlacementPreview(event);
   }
 
   function handlePointerUp(event) {
@@ -907,6 +1112,15 @@ export function bindHome(context = {}) {
     const index = WIDGET_SIZE_ORDER.indexOf(current);
     const next = WIDGET_SIZE_ORDER[(index + 1) % WIDGET_SIZE_ORDER.length];
     applyWidgetSize(widget, next);
+    const page = widget.closest(".mobile-home-page");
+    const token = widgetToken(id);
+    const placements = placementsForPage(page).filter((entry) => entry.token !== token);
+    const free = findNearestFreePlacement(placements, token, { row: Number(widget.dataset.homeRow) || 1, col: Number(widget.dataset.homeCol) || 1 }, {
+      widgetSizes: currentWidgetSizes(root),
+      occupiedTokens: visibleTokensForPage(page),
+    });
+    if (free) applyPlacementStyle(widget, free, currentWidgetSizes(root));
+    refreshPageSlots(root, editing);
     persistHomeLayout();
     updatePageIndicator();
     updateViewportHeight();
@@ -932,7 +1146,17 @@ export function bindHome(context = {}) {
     widget.hidden = false;
     widget.removeAttribute("hidden");
     widget.style.removeProperty("display");
-    pageContainers(currentPageElement()).grid?.append(widget);
+    const page = currentPageElement();
+    const grid = pageContainers(page).grid;
+    grid?.append(widget);
+    const token = widgetToken(id);
+    const placements = placementsForPage(page).filter((entry) => entry.token !== token);
+    const free = findNearestFreePlacement(placements, token, { row: 1, col: 1 }, {
+      widgetSizes: currentWidgetSizes(root),
+      occupiedTokens: visibleTokensForPage(page),
+    });
+    if (free) applyPlacementStyle(widget, free, currentWidgetSizes(root));
+    refreshPageSlots(root, editing);
     persistHomeLayout();
     closeWidgetPicker();
     updatePageIndicator();
