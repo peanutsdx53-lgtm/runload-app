@@ -1,0 +1,68 @@
+name: Mobile usability validation
+
+on:
+  push:
+    branches:
+      - mobile/usability-pass-20260926
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify scoped changes
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          changed="$(git diff --name-only origin/main...HEAD | sort)"
+          echo "$changed"
+          unexpected="$(echo "$changed" | grep -Ev '^(.github/workflows/mobile-usability-validation.yml|index.html|service-worker.js|styles/mobile-usability.css)$' || true)"
+          test -z "$unexpected"
+          ! echo "$changed" | grep -Eq '^styles/(desktop|desktop-foundation)\.css$'
+          ! echo "$changed" | grep -Eq '^screens/|^core/|^ui/'
+      - name: Check JavaScript syntax
+        run: |
+          set -euo pipefail
+          while IFS= read -r file; do
+            node --check "$file"
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+      - name: Run regression tests
+        run: |
+          set -euo pipefail
+          for file in tests/*.test.mjs; do
+            echo "Running $file"
+            node "$file" >/dev/null
+          done
+      - name: Verify smartphone usability rules
+        run: |
+          set -euo pipefail
+          grep -q '@media (max-width: 54.99rem)' styles/mobile-usability.css
+          grep -q 'screen-layout--history > .page-head' styles/mobile-usability.css
+          grep -q 'font-size: 16px' styles/mobile-usability.css
+          grep -q 'record-actions' styles/mobile-usability.css
+          grep -q 'result-mobile-layout' styles/mobile-usability.css
+          grep -q 'mobile-save-bar' styles/mobile-usability.css
+          grep -q ':active' styles/mobile-usability.css
+          grep -q 'prefers-reduced-motion: reduce' styles/mobile-usability.css
+          grep -q './styles/mobile-usability.css' index.html
+          grep -q './styles/mobile-usability.css' service-worker.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const css = fs.readFileSync('styles/mobile-usability.css', 'utf8');
+          let depth = 0;
+          for (const ch of css) {
+            if (ch === '{') depth += 1;
+            if (ch === '}') depth -= 1;
+            if (depth < 0) throw new Error('CSS brace underflow');
+          }
+          if (depth !== 0) throw new Error(`CSS brace mismatch: ${depth}`);
+          NODE
+      - name: Verify PWA precache paths
+        run: |
+          set -euo pipefail
+          node tests/interpretationRoomPwaIntegration.test.mjs >/dev/null
