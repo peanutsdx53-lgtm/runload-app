@@ -1,0 +1,82 @@
+name: Mobile startup and touch validation
+
+on:
+  push:
+    branches:
+      - mobile/startup-touch-refinement-20260926
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify scoped changes
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          changed="$(git diff --name-only origin/main...HEAD | sort)"
+          echo "$changed"
+          unexpected="$(echo "$changed" | grep -Ev '^(.github/workflows/mobile-startup-touch-validation.yml|index.html|service-worker.js|styles/mobile-home-editing.css|ui/interactions/homeInteractions.js)$' || true)"
+          test -z "$unexpected"
+          ! echo "$changed" | grep -Eq '^styles/(desktop|desktop-foundation)\.css$|^screens/|^core/'
+      - name: Check JavaScript syntax
+        run: |
+          set -euo pipefail
+          node --check service-worker.js
+          node --check ui/interactions/homeInteractions.js
+          while IFS= read -r file; do
+            node --check "$file"
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+      - name: Run regression tests
+        run: |
+          set -euo pipefail
+          for file in tests/*.test.mjs; do
+            echo "Running $file"
+            node "$file" >/dev/null
+          done
+      - name: Verify startup strategy
+        run: |
+          set -euo pipefail
+          grep -q 'running-record-app-runtime-v2' service-worker.js
+          grep -q 'const cached = await cache.match' service-worker.js
+          grep -q 'if (cached)' service-worker.js
+          grep -q 'event.waitUntil(refresh)' service-worker.js
+          grep -q 'class="app-boot"' index.html
+          grep -q '起動しています' index.html
+      - name: Verify iOS long press handling
+        run: |
+          set -euo pipefail
+          grep -q 'LONG_PRESS_MS = 380' ui/interactions/homeInteractions.js
+          grep -q 'contextmenu' ui/interactions/homeInteractions.js
+          grep -q 'dragstart' ui/interactions/homeInteractions.js
+          grep -q 'draggable", "false"' ui/interactions/homeInteractions.js
+          grep -q 'is-home-pressing' ui/interactions/homeInteractions.js
+          grep -q -- '-webkit-touch-callout: none' styles/mobile-home-editing.css
+          grep -q 'data-home-edit-toggle' styles/mobile-home-editing.css
+          grep -q 'mobile-home-jiggle' styles/mobile-home-editing.css
+          grep -q 'mobile-home-ghost-float' styles/mobile-home-editing.css
+      - name: Verify stylesheet structure
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('fs');
+          for (const file of ['styles/mobile-home-editing.css']) {
+            const css = fs.readFileSync(file, 'utf8');
+            let depth = 0;
+            for (const ch of css) {
+              if (ch === '{') depth += 1;
+              if (ch === '}') depth -= 1;
+              if (depth < 0) throw new Error(`${file}: CSS brace underflow`);
+            }
+            if (depth !== 0) throw new Error(`${file}: CSS brace mismatch ${depth}`);
+          }
+          NODE
+      - name: Verify PWA precache integration
+        run: |
+          set -euo pipefail
+          node tests/interpretationRoomPwaIntegration.test.mjs >/dev/null
