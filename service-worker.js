@@ -71,6 +71,7 @@ const PRECACHE_URLS = [
   "./styles/mobile-record.css",
   "./styles/mobile-app-screens.css",
   "./styles/mobile-navigation-unification.css",
+  "./styles/mobile-usability.css",
   "./styles/interpretation-room.css",
   "./styles/desktop-foundation.css",
   "./styles/desktop.css",
