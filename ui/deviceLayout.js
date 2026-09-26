@@ -15,8 +15,8 @@ export function matchesMobileLayout({ matchMediaFn, innerWidth } = {}) {
   return Number.isFinite(width) ? width <= FALLBACK_MOBILE_MAX_WIDTH_PX : true;
 }
 
-export function resolveDefaultEntryScreen({ matchesMobile = false } = {}) {
-  return matchesMobile ? "start" : "home";
+export function resolveDefaultEntryScreen() {
+  return "home";
 }
 
 export function resolveViewportDefaultEntryScreen(options = {}) {
