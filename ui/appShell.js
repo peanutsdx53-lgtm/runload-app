@@ -182,7 +182,7 @@ function renderMobileHeader(currentScreen, currentLocation, hasResult) {
   const help = renderContextHelpButton(currentScreen);
   const context = resolveScreenContextNavigation(currentScreen, currentLocation)
     || (["record-input", "result", "history"].includes(currentScreen)
-      ? { backHref: "#/home", backLabel: "Home" }
+      ? { backHref: "#/home", backLabel: "ホーム" }
       : null);
   const title = resolveHeaderTitle(currentScreen, currentLocation);
   const titleHtml = `<div class="mobile-topbar__brand mobile-topbar__screen-title"><strong>${escapeHtml(title)}</strong></div>`;
@@ -193,7 +193,7 @@ function renderMobileHeader(currentScreen, currentLocation, hasResult) {
 }
 
 function renderImmersiveHeader(currentScreen, currentLocation, hasResult) {
-  const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { backHref: "#/home", backLabel: "Home", title: "結果を整理する" };
+  const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { backHref: "#/home", backLabel: "ホーム", title: "結果を整理する" };
   const title = resolveHeaderTitle(currentScreen, currentLocation);
   return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(title)}</strong><div class="interpretation-room-header__actions" aria-label="画面操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "immersive" })}</div></header>`;
 }
