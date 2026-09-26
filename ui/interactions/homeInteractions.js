@@ -434,6 +434,11 @@ export function bindHome(context = {}) {
   }
 
   function handlePointerDown(event) {
+    const pickerOption = event.target.closest("[data-home-widget-add-id]");
+    if (pickerOption) {
+      event.preventDefault();
+      return;
+    }
     if (event.target.closest("button")) return;
     const widget = event.target.closest("[data-home-widget-id]");
     const item = event.target.closest("[data-home-item-id]");
@@ -474,6 +479,12 @@ export function bindHome(context = {}) {
   }
 
   function handlePointerUp(event) {
+    const pickerOption = event.target.closest("[data-home-widget-add-id]");
+    if (pickerOption) {
+      event.preventDefault();
+      addWidget(pickerOption.dataset.homeWidgetAddId);
+      return;
+    }
     if (event.pointerId !== pointerId) return;
     cancelPressTimer();
     if (dragging) {
@@ -508,6 +519,10 @@ export function bindHome(context = {}) {
   function addWidget(id) {
     const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
     if (!widget) return;
+    if (!widget.hidden) {
+      closeWidgetPicker();
+      return;
+    }
     widget.hidden = false;
     widgetsContainer.append(widget);
     writeWidgetLayout(widgetsContainer);
@@ -548,7 +563,7 @@ export function bindHome(context = {}) {
   }
 
   function handleContextMenu(event) {
-    if (event.target.closest("[data-home-item-id], [data-home-widget-id]")) event.preventDefault();
+    event.preventDefault();
   }
 
   function handleDragStart(event) {

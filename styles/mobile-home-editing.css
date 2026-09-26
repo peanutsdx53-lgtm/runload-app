@@ -1,4 +1,20 @@
 @media (max-width: 54.99rem) {
+  .mobile-home-os {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .mobile-home-os :is(input, textarea, [contenteditable="true"]) {
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  .mobile-home-widget-picker__option {
+    touch-action: manipulation;
+  }
+
   .mobile-home-os__status {
     appearance: none;
     font: inherit;
