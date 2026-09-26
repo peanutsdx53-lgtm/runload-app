@@ -1,0 +1,122 @@
+name: Mobile home unified grid temporary validation
+
+on:
+  push:
+    branches:
+      - fix/mobile-home-unified-grid-20260926
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply unified smartphone home grid
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('ui/interactions/homeInteractions.js')
+          s = path.read_text()
+
+          def replace_between(text, start_marker, end_marker, replacement):
+              start = text.index(start_marker)
+              end = text.index(end_marker, start)
+              return text[:start] + replacement + text[end:]
+
+          helper_marker = 'const ALL_ITEM_ID_SET = new Set(ALL_ITEM_IDS);\n\n'
+          helpers = helper_marker + '''const APP_TOKEN_PREFIX = "app:";\nconst WIDGET_TOKEN_PREFIX = "widget:";\n\nfunction appToken(id) {\n  return `${APP_TOKEN_PREFIX}${id}`;\n}\n\nfunction widgetToken(id) {\n  return `${WIDGET_TOKEN_PREFIX}${id}`;\n}\n\nfunction gridTokenForElement(element) {\n  const appId = element?.dataset?.homeItemId || "";\n  if (appId) return appToken(appId);\n  const widgetId = element?.dataset?.homeWidgetId || "";\n  if (widgetId) return widgetToken(widgetId);\n  return "";\n}\n\nfunction defaultGridLayout() {\n  return {\n    pages: [[\n      ...DEFAULT_WIDGET_ORDER.map(widgetToken),\n      ...DEFAULT_LAYOUT.pages[0].map(appToken),\n    ]],\n    dock: [...DEFAULT_LAYOUT.dock],\n    activePage: 0,\n  };\n}\n\n'''
+          if helper_marker not in s:
+              raise SystemExit('helper marker not found')
+          s = s.replace(helper_marker, helpers, 1)
+
+          read_layout = '''function readLayout() {\n  try {\n    const parsed = JSON.parse(globalThis.localStorage?.getItem(STORAGE_KEY) || "null");\n    if (!parsed || typeof parsed !== "object") return defaultGridLayout();\n\n    const dock = Array.isArray(parsed.dock) ? parsed.dock.map(String) : [];\n    if (dock.length !== DEFAULT_LAYOUT.dock.length || new Set(dock).size !== dock.length || !dock.every((id) => ALL_ITEM_ID_SET.has(id))) {\n      return defaultGridLayout();\n    }\n\n    const sourcePages = Array.isArray(parsed.pages)\n      ? parsed.pages.slice(0, MAX_HOME_PAGES).map((page) => Array.isArray(page) ? page.map(String) : [])\n      : [Array.isArray(parsed.apps) ? parsed.apps.map(String) : []];\n    if (!sourcePages.length) sourcePages.push([]);\n\n    const flattened = sourcePages.flat();\n    const hasGridTokens = flattened.some((token) => token.startsWith(APP_TOKEN_PREFIX) || token.startsWith(WIDGET_TOKEN_PREFIX));\n    let pages = sourcePages;\n\n    if (hasGridTokens) {\n      const appIds = [];\n      const widgetIds = [];\n      let validTokens = true;\n      flattened.forEach((token) => {\n        if (token.startsWith(APP_TOKEN_PREFIX)) {\n          const id = token.slice(APP_TOKEN_PREFIX.length);\n          if (!ALL_ITEM_ID_SET.has(id)) validTokens = false;\n          else appIds.push(id);\n        } else if (token.startsWith(WIDGET_TOKEN_PREFIX)) {\n          const id = token.slice(WIDGET_TOKEN_PREFIX.length);\n          if (!WIDGET_ID_SET.has(id)) validTokens = false;\n          else widgetIds.push(id);\n        } else {\n          validTokens = false;\n        }\n      });\n      const allApps = [...appIds, ...dock];\n      if (!validTokens\n        || allApps.length !== ALL_ITEM_IDS.length\n        || new Set(allApps).size !== ALL_ITEM_IDS.length\n        || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))\n        || widgetIds.length !== DEFAULT_WIDGET_ORDER.length\n        || new Set(widgetIds).size !== DEFAULT_WIDGET_ORDER.length\n        || !widgetIds.every((id) => WIDGET_ID_SET.has(id))) {\n        return defaultGridLayout();\n      }\n    } else {\n      const legacyApps = flattened;\n      const allApps = [...legacyApps, ...dock];\n      if (allApps.length !== ALL_ITEM_IDS.length\n        || new Set(allApps).size !== ALL_ITEM_IDS.length\n        || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))) {\n        return defaultGridLayout();\n      }\n      const widgetLayout = readWidgetLayout();\n      const maxWidgetPage = Math.max(0, ...Object.values(widgetLayout.pageById || {}).map((value) => Number(value) || 0));\n      const pageCount = Math.max(1, sourcePages.length, maxWidgetPage + 1);\n      pages = Array.from({ length: Math.min(MAX_HOME_PAGES, pageCount) }, () => []);\n      widgetLayout.order.forEach((id) => {\n        const pageIndex = Math.max(0, Math.min(pages.length - 1, Number(widgetLayout.pageById?.[id]) || 0));\n        pages[pageIndex].push(widgetToken(id));\n      });\n      sourcePages.forEach((ids, pageIndex) => {\n        if (!pages[pageIndex]) return;\n        ids.forEach((id) => pages[pageIndex].push(appToken(id)));\n      });\n    }\n\n    const activeCandidate = Number(parsed.activePage);\n    const activePage = Number.isInteger(activeCandidate)\n      ? Math.max(0, Math.min(pages.length - 1, activeCandidate))\n      : 0;\n    return { pages, dock, activePage };\n  } catch {\n    return defaultGridLayout();\n  }\n}\n\n'''
+          s = replace_between(s, 'function readLayout() {', 'function readWidgetLayout() {', read_layout)
+
+          write_layout = '''function writeLayout(root, dockContainer, activePage = 0) {\n  const pages = pageElements(root).map((page) => {\n    const grid = pageContainers(page).grid;\n    return grid ? [...grid.children].map(gridTokenForElement).filter(Boolean) : [];\n  });\n  const layout = {\n    version: 3,\n    pages: pages.length ? pages : [[]],\n    dock: [...dockContainer.querySelectorAll("[data-home-item-id]")].map((item) => item.dataset.homeItemId),\n    activePage: Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(activePage) || 0)),\n  };\n  try {\n    globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(layout));\n  } catch {\n    // Layout persistence is optional; navigation remains usable without storage.\n  }\n}\n\n'''
+          s = replace_between(s, 'function writeLayout(', 'function writeWidgetLayout(', write_layout)
+
+          page_scaffold = '''function createHomePage(index) {\n  const page = document.createElement("section");\n  page.className = "mobile-home-page";\n  page.dataset.homePageIndex = String(index);\n  page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);\n  const grid = document.createElement("div");\n  grid.className = "mobile-home-grid";\n  grid.setAttribute("aria-label", "ホーム配置");\n  page.append(grid);\n  return page;\n}\n\nfunction syncPageIndices(root) {\n  [...root.querySelectorAll(".mobile-home-page")].forEach((page, index) => {\n    page.dataset.homePageIndex = String(index);\n    page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);\n  });\n}\n\nfunction ensurePageScaffold(root) {\n  let viewport = root.querySelector("[data-home-page-viewport]");\n  if (viewport) return viewport;\n  const widgets = root.querySelector(".mobile-home-widgets");\n  const apps = root.querySelector(".mobile-home-apps");\n  if (!widgets || !apps) return null;\n\n  viewport = document.createElement("div");\n  viewport.className = "mobile-home-page-viewport";\n  viewport.dataset.homePageViewport = "";\n  viewport.setAttribute("aria-label", "ホームページ");\n  const track = document.createElement("div");\n  track.className = "mobile-home-pages";\n  track.dataset.homePages = "";\n  const page = createHomePage(0);\n  const grid = pageContainers(page).grid;\n\n  widgets.before(viewport);\n  [...widgets.children].forEach((child) => grid?.append(child));\n  [...apps.children].forEach((child) => grid?.append(child));\n  widgets.remove();\n  apps.remove();\n\n  track.append(page);\n  viewport.append(track);\n  const indicator = document.createElement("nav");\n  indicator.className = "mobile-home-page-indicator";\n  indicator.dataset.homePageIndicator = "";\n  indicator.setAttribute("aria-label", "ホームページ切り替え");\n  viewport.after(indicator);\n  return viewport;\n}\n\nfunction ensurePageCount(root, count) {\n  const track = root.querySelector("[data-home-pages]");\n  if (!track) return;\n  const desired = Math.max(1, Math.min(MAX_HOME_PAGES, Number(count) || 1));\n  while (track.querySelectorAll(".mobile-home-page").length < desired) {\n    track.append(createHomePage(track.querySelectorAll(".mobile-home-page").length));\n  }\n  syncPageIndices(root);\n}\n\nfunction pageElements(root) {\n  return [...root.querySelectorAll(".mobile-home-page")];\n}\n\nfunction pageContainers(page) {\n  return {\n    grid: page?.querySelector(".mobile-home-grid") || null,\n  };\n}\n\n'''
+          s = replace_between(s, 'function createHomePage(index) {', 'function createCheckpointWidget(services) {', page_scaffold)
+
+          apply_layout = '''function applyLayout(root, dockContainer, layout = readLayout()) {\n  ensurePageCount(root, layout.pages.length);\n  const apps = new Map([...root.querySelectorAll("[data-home-item-id]")].map((item) => [item.dataset.homeItemId, item]));\n  const widgets = new Map([...root.querySelectorAll("[data-home-widget-id]")].map((item) => [item.dataset.homeWidgetId, item]));\n\n  layout.pages.forEach((tokens, pageIndex) => {\n    const grid = pageContainers(pageElements(root)[pageIndex]).grid;\n    if (!grid) return;\n    tokens.forEach((token) => {\n      if (token.startsWith(APP_TOKEN_PREFIX)) {\n        const item = apps.get(token.slice(APP_TOKEN_PREFIX.length));\n        if (!item) return;\n        setItemZone(item, "apps");\n        grid.append(item);\n      } else if (token.startsWith(WIDGET_TOKEN_PREFIX)) {\n        const widget = widgets.get(token.slice(WIDGET_TOKEN_PREFIX.length));\n        if (widget) grid.append(widget);\n      }\n    });\n  });\n\n  layout.dock.forEach((id) => {\n    const item = apps.get(id);\n    if (!item) return;\n    setItemZone(item, "dock");\n    dockContainer.append(item);\n  });\n  return Math.max(0, Math.min(pageElements(root).length - 1, layout.activePage || 0));\n}\n\nfunction applyWidgetLayout(root, layout = readWidgetLayout()) {\n  const widgets = new Map([...root.querySelectorAll("[data-home-widget-id]")].map((item) => [item.dataset.homeWidgetId, item]));\n  widgets.forEach((widget, id) => {\n    widget.hidden = !layout.visible.includes(id);\n    applyWidgetSize(widget, layout.sizes?.[id]);\n  });\n}\n\n'''
+          s = replace_between(s, 'function applyLayout(', 'function ensureEditControls(', apply_layout)
+
+          bind_old = '''export function bindHome(context = {}) {\n  const root = document.querySelector(".mobile-home-os");\n  if (!root) return null;\n  const dockContainer = root.querySelector(".mobile-home-dock");\n  const viewport = ensurePageScaffold(root);\n  if (!dockContainer || !viewport) return null;\n  const initialWidgets = root.querySelector(".mobile-home-page .mobile-home-widgets");\n  if (!initialWidgets) return null;\n\n  prepareWidgets(initialWidgets, context.services);\n  prepareItems(root);\n  ensureEditControls(root);\n  const appLayout = readLayout();\n  const widgetLayout = readWidgetLayout();\n  const maxWidgetPage = Math.max(0, ...Object.values(widgetLayout.pageById || {}).map((value) => Number(value) || 0));\n  ensurePageCount(root, Math.max(appLayout.pages.length, maxWidgetPage + 1));\n  applyWidgetLayout(root, widgetLayout);\n  let activePage = applyLayout(root, dockContainer, appLayout);\n  ensureWidgetPicker(root);'''
+          bind_new = '''export function bindHome(context = {}) {\n  const root = document.querySelector(".mobile-home-os");\n  if (!root) return null;\n  const dockContainer = root.querySelector(".mobile-home-dock");\n  const sourceWidgets = root.querySelector(".mobile-home-widgets");\n  if (!dockContainer || !sourceWidgets) return null;\n\n  prepareWidgets(sourceWidgets, context.services);\n  prepareItems(root);\n  const viewport = ensurePageScaffold(root);\n  if (!viewport) return null;\n  ensureEditControls(root);\n  const appLayout = readLayout();\n  const widgetLayout = readWidgetLayout();\n  ensurePageCount(root, appLayout.pages.length);\n  let activePage = applyLayout(root, dockContainer, appLayout);\n  applyWidgetLayout(root, widgetLayout);\n  ensureWidgetPicker(root);'''
+          if bind_old not in s:
+              raise SystemExit('bind start target not found')
+          s = s.replace(bind_old, bind_new, 1)
+
+          indicator_old = '''      const page = pages[activePage];\n      const hasApps = Boolean(page?.querySelector(".mobile-home-apps [data-home-item-id]"));\n      const hasVisibleWidgets = Boolean(page?.querySelector(".mobile-home-widgets [data-home-widget-id]:not([hidden])"));\n      if (!hasApps && !hasVisibleWidgets) {'''
+          indicator_new = '''      const page = pages[activePage];\n      const grid = pageContainers(page).grid;\n      const hasApps = Boolean(grid?.querySelector("[data-home-item-id]"));\n      const hasVisibleWidgets = Boolean(grid?.querySelector("[data-home-widget-id]:not([hidden])"));\n      if (!hasApps && !hasVisibleWidgets) {'''
+          if indicator_old not in s:
+              raise SystemExit('indicator empty-page target not found')
+          s = s.replace(indicator_old, indicator_new, 1)
+
+          remove_page_old = '''    const page = pages[activePage];\n    if (page.querySelector(".mobile-home-apps [data-home-item-id]")) return;\n    if (page.querySelector(".mobile-home-widgets [data-home-widget-id]:not([hidden])")) return;\n    const fallback = pages[activePage - 1];\n    const fallbackWidgets = pageContainers(fallback).widgets;\n    page.querySelectorAll(".mobile-home-widgets [data-home-widget-id]").forEach((widget) => fallbackWidgets?.append(widget));\n    page.remove();'''
+          remove_page_new = '''    const page = pages[activePage];\n    const grid = pageContainers(page).grid;\n    if (grid?.querySelector("[data-home-item-id]")) return;\n    if (grid?.querySelector("[data-home-widget-id]:not([hidden])")) return;\n    const fallback = pages[activePage - 1];\n    const fallbackGrid = pageContainers(fallback).grid;\n    grid?.querySelectorAll("[data-home-widget-id][hidden]").forEach((widget) => fallbackGrid?.append(widget));\n    page.remove();'''
+          if remove_page_old not in s:
+              raise SystemExit('remove page target not found')
+          s = s.replace(remove_page_old, remove_page_new, 1)
+
+          drag_block = '''  function finishGridDrag(event, cancelled) {\n    if (cancelled || !pressTarget) return;\n    const source = pressTarget;\n    const sourceIsWidget = Boolean(source.dataset.homeWidgetId);\n    const sourceZone = source.dataset.homeZone || "apps";\n    const pointTarget = document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);\n    const target = pointTarget?.closest?.("[data-home-item-id], [data-home-widget-id]") || null;\n    const targetGrid = pointTarget?.closest?.(".mobile-home-grid") || null;\n    const targetDock = pointTarget?.closest?.(".mobile-home-dock") || null;\n    const targetIsApp = Boolean(target?.dataset?.homeItemId);\n    const targetIsWidget = Boolean(target?.dataset?.homeWidgetId);\n    const targetZone = targetIsApp ? (target.dataset.homeZone || (target.closest(".mobile-home-grid") ? "apps" : "")) : "";\n    let changed = false;\n\n    if (sourceIsWidget) {\n      if (target && target !== source && target.closest(".mobile-home-grid")) {\n        target.before(source);\n        changed = true;\n      } else if (targetGrid) {\n        targetGrid.append(source);\n        changed = true;\n      }\n    } else if (sourceZone === "dock") {\n      if (targetIsApp && target !== source && targetZone === "dock") {\n        target.before(source);\n        changed = true;\n      } else if (targetIsApp && target !== source && targetZone === "apps") {\n        swapItems(source, target);\n        setItemZone(source, "apps");\n        setItemZone(target, "dock");\n        changed = true;\n      }\n    } else {\n      if (targetIsApp && target !== source && targetZone === "dock") {\n        swapItems(source, target);\n        setItemZone(source, "dock");\n        setItemZone(target, "apps");\n        changed = true;\n      } else if (target && target !== source && target.closest(".mobile-home-grid")) {\n        target.before(source);\n        changed = true;\n      } else if (targetGrid) {\n        targetGrid.append(source);\n        changed = true;\n      } else if (targetDock && !target) {\n        changed = false;\n      }\n    }\n\n    if (changed) {\n      persistHomeLayout();\n      updatePageIndicator();\n      updateViewportHeight();\n    }\n  }\n\n'''
+          s = replace_between(s, '  function finishAppDrag(event, cancelled) {', '  function finishDrag(event, cancelled = false) {', drag_block)
+
+          finish_old = '''  function finishDrag(event, cancelled = false) {\n    if (!dragging || !pressTarget) return;\n    if (pressKind === "widget") finishWidgetDrag(event, cancelled);\n    else finishAppDrag(event, cancelled);'''
+          finish_new = '''  function finishDrag(event, cancelled = false) {\n    if (!dragging || !pressTarget) return;\n    finishGridDrag(event, cancelled);'''
+          if finish_old not in s:
+              raise SystemExit('finishDrag target not found')
+          s = s.replace(finish_old, finish_new, 1)
+
+          move_old = '''    const selector = pressKind === "widget" ? "[data-home-widget-id]" : "[data-home-item-id]";\n    const hit = document.elementFromPoint(event.clientX, event.clientY)?.closest?.(selector) || null;\n    if (hit === pressTarget || hit === dropItem || hit?.hidden) return;\n    clearDropTarget();\n    if (hit) {\n      dropItem = hit;\n      dropItem.classList.add(pressKind === "widget" ? "is-home-widget-drop-target" : "is-home-drop-target");\n    }'''
+          move_new = '''    const hit = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("[data-home-item-id], [data-home-widget-id]") || null;\n    if (hit === pressTarget || hit === dropItem || hit?.hidden) return;\n    clearDropTarget();\n    if (hit) {\n      const sourceInDock = pressTarget?.dataset?.homeZone === "dock";\n      const invalidDockToWidget = sourceInDock && Boolean(hit.dataset.homeWidgetId);\n      const invalidWidgetToDock = pressKind === "widget" && Boolean(hit.closest(".mobile-home-dock"));\n      if (invalidDockToWidget || invalidWidgetToDock) return;\n      dropItem = hit;\n      dropItem.classList.add(hit.dataset.homeWidgetId ? "is-home-widget-drop-target" : "is-home-drop-target");\n    }'''
+          if move_old not in s:
+              raise SystemExit('pointer move target not found')
+          s = s.replace(move_old, move_new, 1)
+
+          add_old = '''    if (!widget && id === "checkpoint") {\n      widget = makeWidgetShell(createCheckpointWidget(context.services), "checkpoint");\n      pageContainers(currentPageElement()).widgets?.append(widget);\n    }\n    if (!widget) return;\n    widget.hidden = false;\n    widget.removeAttribute("hidden");\n    widget.style.removeProperty("display");\n    pageContainers(currentPageElement()).widgets?.append(widget);'''
+          add_new = '''    if (!widget && id === "checkpoint") {\n      widget = makeWidgetShell(createCheckpointWidget(context.services), "checkpoint");\n      pageContainers(currentPageElement()).grid?.append(widget);\n    }\n    if (!widget) return;\n    widget.hidden = false;\n    widget.removeAttribute("hidden");\n    widget.style.removeProperty("display");\n    pageContainers(currentPageElement()).grid?.append(widget);'''
+          if add_old not in s:
+              raise SystemExit('add widget target not found')
+          s = s.replace(add_old, add_new, 1)
+
+          path.write_text(s)
+
+          css_path = Path('styles/mobile-home-editing.css')
+          css = css_path.read_text()
+          unified_css = '''\n\n@media (max-width: 54.99rem) {\n  .mobile-home-page {\n    min-height: calc(100dvh - 238px - env(safe-area-inset-top) - env(safe-area-inset-bottom));\n  }\n\n  .mobile-home-grid {\n    display: grid;\n    grid-template-columns: repeat(4, minmax(0, 1fr));\n    grid-auto-flow: row;\n    column-gap: 8px;\n    row-gap: 14px;\n    align-items: start;\n    align-content: start;\n    min-height: max(360px, calc(100dvh - 270px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));\n    padding: 4px 1px 66px;\n  }\n\n  .mobile-home-grid > .mobile-home-app {\n    grid-column: span 1;\n    min-height: 86px;\n  }\n\n  .mobile-home-grid > .mobile-home-widget-shell--size-small {\n    grid-column: span 2;\n  }\n\n  .mobile-home-grid > .mobile-home-widget-shell--size-medium,\n  .mobile-home-grid > .mobile-home-widget-shell--size-large {\n    grid-column: 1 / -1;\n  }\n\n  .mobile-home-grid > [data-home-widget-id][hidden] {\n    display: none;\n  }\n\n  .mobile-home-os.is-home-editing .mobile-home-grid {\n    border-radius: 24px;\n  }\n\n  .mobile-home-os .mobile-home-grid > .is-home-widget-drop-target > .mobile-home-widget {\n    outline: 2px solid var(--color-accent-strong);\n    outline-offset: 3px;\n    transform: scale(1.018);\n  }\n}\n'''
+          if '.mobile-home-grid {' not in css:
+              css += unified_css
+          else:
+              raise SystemExit('unified grid CSS already present unexpectedly')
+          css_path.write_text(css)
+          PY
+      - name: Validate unified grid
+        run: |
+          set -euo pipefail
+          node --check ui/interactions/homeInteractions.js
+          for file in tests/*.test.mjs; do node "$file" >/dev/null; done
+          grep -q 'version: 3' ui/interactions/homeInteractions.js
+          grep -q 'className = "mobile-home-grid"' ui/interactions/homeInteractions.js
+          grep -q 'finishGridDrag' ui/interactions/homeInteractions.js
+          grep -q 'target.before(source)' ui/interactions/homeInteractions.js
+          grep -q 'pageContainers(currentPageElement()).grid' ui/interactions/homeInteractions.js
+          grep -q 'grid-template-columns: repeat(4' styles/mobile-home-editing.css
+          grep -q 'mobile-home-grid > .mobile-home-widget-shell--size-small' styles/mobile-home-editing.css
+          if grep -q 'pageContainers(currentPageElement()).widgets' ui/interactions/homeInteractions.js; then exit 1; fi
+          if grep -q 'pageContainers(currentPageElement()).apps' ui/interactions/homeInteractions.js; then exit 1; fi
+          git diff --check
+      - name: Commit implementation
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add ui/interactions/homeInteractions.js styles/mobile-home-editing.css
+          git commit -m "Unify smartphone home grid placement"
+          git push
