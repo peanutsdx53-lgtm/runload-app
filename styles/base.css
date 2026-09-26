@@ -6,6 +6,7 @@ button, input, select, textarea { font: inherit; font-family: var(--font-sans); 
 button, summary, a { -webkit-tap-highlight-color: transparent; }
 summary { list-style-position: outside; }
 :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+#main-content h1[tabindex="-1"]:focus { outline: none; }
 h1, h2, h3, p { margin-top: 0; }
 h1, h2 { text-wrap: balance; font-family: var(--font-editorial); }
 img, svg { max-width: 100%; }
