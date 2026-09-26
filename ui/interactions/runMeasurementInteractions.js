@@ -242,7 +242,7 @@ export function bindRunMeasurement({ router }) {
 
   async function cancel() {
     if (!running) {
-      router.navigateToScreen("start");
+      router.navigateToScreen("home");
       return;
     }
     if (!window.confirm("測定中の内容を破棄して終了しますか？")) return;
@@ -252,7 +252,7 @@ export function bindRunMeasurement({ router }) {
     timerId = null;
     await releaseWakeLock();
     clearPendingRunMeasurement();
-    router.navigateToScreen("start");
+    router.navigateToScreen("home");
   }
 
   startButton?.addEventListener("click", start);
