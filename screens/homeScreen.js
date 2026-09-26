@@ -126,13 +126,96 @@ function renderPlanCard(services) {
   return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong></div><span class="pill">保存済み</span></div><div class="plan"><strong>${escapeHtml(main)}</strong><span>${escapeHtml(details)}</span></div><a class="card-link" href="#/plan?planId=${encodeURIComponent(plan.id)}"><span>予定を開く</span><span>›</span></a></article>`;
 }
 
+function mobileHomeIcon(name) {
+  const paths = {
+    record: '<path d="M7 17.5h3.5L18 10l-3-3-7.5 7.5V18Zm6.5-9 3 3"/>',
+    measure: '<path d="M12 3v3m0 12v3M3 12h3m12 0h3"/><circle cx="12" cy="12" r="4.5"/>',
+    history: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9M4.5 5v4h4M12 8v4l3 2"/>',
+    course: '<path d="M6 18c3-5 3-7 6-7s3 4 6-5"/><circle cx="6" cy="18" r="1.5"/><circle cx="18" cy="6" r="1.5"/>',
+    simulation: '<path d="M5 7h14M7 12h10M9 17h6"/><circle cx="9" cy="7" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="11" cy="17" r="1.6"/>',
+    plan: '<rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M8 3.5v4m8-4v4M4 10h16m-11 4h2m2 0h2"/>',
+    reading: '<path d="M5 5.5h6c1.2 0 2 .8 2 2v11c0-1.2-.8-2-2-2H5Zm14 0h-4c-1.2 0-2 .8-2 2v11c0-1.2.8-2 2-2h4Z"/>',
+    share: '<circle cx="7" cy="12" r="2"/><circle cx="17" cy="6" r="2"/><circle cx="17" cy="18" r="2"/><path d="m9 11 6-4m-6 6 6 4"/>',
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3.5v2m0 13v2M3.5 12h2m13 0h2M6 6l1.4 1.4m9.2 9.2L18 18M18 6l-1.4 1.4m-9.2 9.2L6 18"/>',
+  };
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name] || paths.settings}</svg>`;
+}
+
+function renderMobileLauncherItem({ href, label, icon, tone = "blue", dock = false }) {
+  const className = dock ? "mobile-home-dock__item" : "mobile-home-app";
+  const iconClass = dock ? "mobile-home-dock__icon" : "mobile-home-app__icon";
+  return `<a class="${className}" href="${escapeHtml(href)}"><span class="${iconClass} mobile-home-tone--${escapeHtml(tone)}">${mobileHomeIcon(icon)}</span><span class="${dock ? "mobile-home-dock__label" : "mobile-home-app__label"}">${escapeHtml(label)}</span></a>`;
+}
+
+function renderMobileTodayWidget(experience, draft) {
+  const record = experience?.record || null;
+  if (draft) {
+    return `<a class="mobile-home-widget mobile-home-widget--wide" href="#/record-input"><small>今日</small><strong>入力途中の記録があります</strong><span>続きから入力する</span></a>`;
+  }
+  if (record && String(record.date || "") === localTodayIso()) {
+    if (record.activityType === "rest") {
+      return `<a class="mobile-home-widget mobile-home-widget--wide" href="#/result?recordId=${encodeURIComponent(record.id)}"><small>今日</small><strong>休養を記録しました</strong><span>記録を見る</span></a>`;
+    }
+    const summary = [Number(record.distanceKm) > 0 ? `${formatNumber(record.distanceKm, 2)} km` : "", Number(record.durationMinutes) > 0 ? `${formatNumber(record.durationMinutes, 0)}分` : ""].filter(Boolean).join(" ・ ");
+    return `<a class="mobile-home-widget mobile-home-widget--wide" href="#/result?recordId=${encodeURIComponent(record.id)}"><small>今日の走行</small><strong>${escapeHtml(summary || "保存済み")}</strong><span>今回の結果を見る</span></a>`;
+  }
+  return `<a class="mobile-home-widget mobile-home-widget--wide" href="#/record-input"><small>今日</small><strong>まだ記録はありません</strong><span>記録を始める</span></a>`;
+}
+
+function renderMobilePlanWidget(services) {
+  const plan = nextPlan(services);
+  if (!plan) {
+    return `<a class="mobile-home-widget" href="#/plan"><small>次の予定</small><strong>未設定</strong><span>予定を作る</span></a>`;
+  }
+  const planned = plan.plannedSession || {};
+  const rest = plan.planType === "rest" || planned.activityType === "rest";
+  const summary = rest ? "休養" : (Number(planned.distanceKm) > 0 ? `${formatNumber(planned.distanceKm, 2)} km` : "走行予定");
+  return `<a class="mobile-home-widget" href="#/plan?planId=${encodeURIComponent(plan.id)}"><small>次の予定</small><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong><span>${escapeHtml(summary)}</span></a>`;
+}
+
+function renderMobileHomeOs({ services, latestExperience, draft }) {
+  const apps = [
+    { href: "#/simulation?from=home", label: "条件比較", icon: "simulation", tone: "violet" },
+    { href: "#/plan", label: "予定", icon: "plan", tone: "orange" },
+    { href: "#/reading?origin=home", label: "読みもの", icon: "reading", tone: "green" },
+    { href: "#/consultation?from=home", label: "共有", icon: "share", tone: "cyan" },
+    { href: "#/settings?from=home", label: "設定", icon: "settings", tone: "gray" },
+  ];
+  const dock = [
+    { href: "#/record-input", label: "記録", icon: "record", tone: "blue" },
+    { href: "#/run-measurement", label: "測定", icon: "measure", tone: "red" },
+    { href: "#/history", label: "履歴", icon: "history", tone: "indigo" },
+    { href: "#/course-library?returnTo=%23%2Fhome", label: "コース", icon: "course", tone: "green" },
+  ];
+  return `<section class="mobile-home-os" aria-label="スマホホーム">
+    <header class="mobile-home-os__header">
+      <div><small>RUNNING RECORD</small><h1>走行記録</h1></div>
+      <span class="mobile-home-os__status" aria-label="ホーム">Home</span>
+    </header>
+    <div class="mobile-home-widgets" aria-label="ウィジェット">
+      ${renderMobileTodayWidget(latestExperience, draft)}
+      ${renderMobilePlanWidget(services)}
+      <a class="mobile-home-widget" href="#/history"><small>最近の変化</small><strong>履歴</strong><span>記録の推移を見る</span></a>
+    </div>
+    <section class="mobile-home-apps" aria-label="機能">
+      ${apps.map((item) => renderMobileLauncherItem(item)).join("")}
+    </section>
+    <nav class="mobile-home-dock" aria-label="よく使う機能">
+      ${dock.map((item) => renderMobileLauncherItem({ ...item, dock: true })).join("")}
+    </nav>
+  </section>`;
+}
+
 export function renderHomeScreen({ services }) {
   const latestExperience = services.workflows.records.loadLatestExperience();
   const draft = services.storage.draft.load();
   const state = homeState(latestExperience, draft);
   return `<div class="screen screen--home screen-layout screen-layout--home home-state--${escapeHtml(state)}" data-home-state="${escapeHtml(state)}">
-    ${renderMobileFocus(latestExperience, draft)}
-    ${renderPcFocus(latestExperience, draft)}
-    <section class="section"><div class="section-head"><div><h2>記録と予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
+    ${renderMobileHomeOs({ services, latestExperience, draft })}
+    <div class="home-desktop-legacy">
+      ${renderMobileFocus(latestExperience, draft)}
+      ${renderPcFocus(latestExperience, draft)}
+      <section class="section"><div class="section-head"><div><h2>記録と予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
+    </div>
   </div>`;
 }

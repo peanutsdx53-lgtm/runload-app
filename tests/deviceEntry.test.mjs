@@ -13,8 +13,8 @@ await test('DEVICE-ENTRY-USES-EXISTING-MOBILE-BREAKPOINT',()=>{
   assert.equal(MOBILE_LAYOUT_QUERY,'(max-width: 54.99rem)');
 });
 
-await test('DEVICE-ENTRY-MOBILE-OPENS-RUN-LAUNCH',()=>{
-  assert.equal(resolveDefaultEntryScreen({matchesMobile:true}),'start');
+await test('DEVICE-ENTRY-MOBILE-OPENS-HOME',()=>{
+  assert.equal(resolveDefaultEntryScreen({matchesMobile:true}),'home');
 });
 
 await test('DEVICE-ENTRY-DESKTOP-OPENS-HOME',()=>{
