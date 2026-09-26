@@ -24,12 +24,13 @@ function screenHref(screen, values = {}) {
 }
 
 function safeWorkflowReturn(value = "") {
-  return ["#/record-input", "#/plan", "#/simulation"].some((prefix) => value.startsWith(prefix))
+  return ["#/home", "#/record-input", "#/plan", "#/simulation"].some((prefix) => value.startsWith(prefix))
     ? value
     : "#/record-input";
 }
 
 function workflowReturnLabel(href = "") {
+  if (href.startsWith("#/home")) return "ホーム";
   if (href.startsWith("#/plan")) return "予定";
   if (href.startsWith("#/simulation")) return "条件比較";
   return "記録";
@@ -116,6 +117,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
 
   if (screen === "simulation") {
     const from = parameter("from");
+    if (from === "home") return { title: "条件比較", backHref: "#/home", backLabel: "ホーム" };
     if (from === "plan") return { title: "条件比較", backHref: safeWorkflowReturn(parameter("returnTo") || "#/plan"), backLabel: "予定" };
     if (from === "history") return { title: "条件比較", backHref: "#/history", backLabel: "履歴" };
     if (from === "interpretation-room") {
@@ -142,6 +144,9 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "consultation") {
     const interpretationReturn = interpretationReturnContext(parameter, recordId);
     if (interpretationReturn) return { ...interpretationReturn, title: "共有用にまとめる" };
+    if (parameter("from") === "home") {
+      return { title: "共有用にまとめる", backHref: "#/home", backLabel: "ホーム" };
+    }
     if (recordId) {
       return { title: "共有用にまとめる", backHref: screenHref("result", { recordId }), backLabel: "結果" };
     }
@@ -164,6 +169,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     const regionId = parameter("regionId");
     const interpretationReturn = interpretationReturnContext(parameter, recordId);
     if (interpretationReturn) return { ...interpretationReturn, title: "読みもの" };
+    if (origin === "home") return { title: "読みもの", backHref: "#/home", backLabel: "ホーム" };
     if (origin === "result-condition" && recordId && regionId) {
       return {
         title: "読みもの",
@@ -183,6 +189,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   }
 
   if (screen === "settings") {
+    if (parameter("from") === "home") return { title: "設定", backHref: "#/home", backLabel: "ホーム" };
     return { title: "設定", backHref: "#/more", backLabel: "その他" };
   }
 
