@@ -1,0 +1,182 @@
+name: Mobile home pages temporary validation
+
+on:
+  push:
+    branches:
+      - feature/mobile-home-pages-20260926
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply mobile home pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('ui/interactions/homeInteractions.js')
+          s = path.read_text()
+
+          def replace_between(text, start_marker, end_marker, replacement):
+              start = text.index(start_marker)
+              end = text.index(end_marker, start)
+              return text[:start] + replacement + text[end:]
+
+          s = s.replace('const MOVE_CANCEL_PX = 10;\n', 'const MOVE_CANCEL_PX = 10;\nconst MAX_HOME_PAGES = 4;\nconst PAGE_EDGE_PX = 34;\nconst PAGE_EDGE_DELAY_MS = 420;\n', 1)
+
+          old = '''const DEFAULT_LAYOUT = Object.freeze({\n  apps: Object.freeze(["simulation", "plan", "reading", "share", "settings"]),\n  dock: Object.freeze(["record", "measure", "history", "course"]),\n});'''
+          new = '''const DEFAULT_LAYOUT = Object.freeze({\n  pages: Object.freeze([Object.freeze(["simulation", "plan", "reading", "share", "settings"])]),\n  dock: Object.freeze(["record", "measure", "history", "course"]),\n  activePage: 0,\n});'''
+          if old not in s:
+              raise SystemExit('DEFAULT_LAYOUT target not found')
+          s = s.replace(old, new, 1)
+          s = s.replace('const ALL_ITEM_IDS = Object.freeze([...DEFAULT_LAYOUT.apps, ...DEFAULT_LAYOUT.dock]);', 'const ALL_ITEM_IDS = Object.freeze([...DEFAULT_LAYOUT.pages.flat(), ...DEFAULT_LAYOUT.dock]);', 1)
+
+          read_layout = '''function readLayout() {\n  try {\n    const parsed = JSON.parse(globalThis.localStorage?.getItem(STORAGE_KEY) || "null");\n    const dock = Array.isArray(parsed?.dock) ? parsed.dock.map(String) : [];\n    const sourcePages = Array.isArray(parsed?.pages)\n      ? parsed.pages\n      : [Array.isArray(parsed?.apps) ? parsed.apps : []];\n    const pages = sourcePages.slice(0, MAX_HOME_PAGES).map((page) => Array.isArray(page) ? page.map(String) : []);\n    if (!pages.length) pages.push([]);\n    const combined = [...pages.flat(), ...dock];\n    if (dock.length !== DEFAULT_LAYOUT.dock.length) return DEFAULT_LAYOUT;\n    if (combined.length !== ALL_ITEM_IDS.length) return DEFAULT_LAYOUT;\n    if (new Set(combined).size !== ALL_ITEM_IDS.length) return DEFAULT_LAYOUT;\n    if (!combined.every((id) => ALL_ITEM_ID_SET.has(id))) return DEFAULT_LAYOUT;\n    const activeCandidate = Number(parsed?.activePage);\n    const activePage = Number.isInteger(activeCandidate)\n      ? Math.max(0, Math.min(pages.length - 1, activeCandidate))\n      : 0;\n    return { pages, dock, activePage };\n  } catch {\n    return DEFAULT_LAYOUT;\n  }\n}\n\n'''
+          s = replace_between(s, 'function readLayout() {', 'function readWidgetLayout() {', read_layout)
+
+          read_widgets = '''function readWidgetLayout() {\n  try {\n    const parsed = JSON.parse(globalThis.localStorage?.getItem(WIDGET_STORAGE_KEY) || "null");\n    if (!parsed || typeof parsed !== "object") {\n      return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES }, pageById: Object.fromEntries(DEFAULT_WIDGET_ORDER.map((id) => [id, 0])) };\n    }\n    const storedOrder = Array.isArray(parsed.order) ? parsed.order.map(String).filter((id) => WIDGET_ID_SET.has(id)) : [];\n    const order = [...new Set(storedOrder)];\n    DEFAULT_WIDGET_ORDER.forEach((id) => {\n      if (!order.includes(id)) order.push(id);\n    });\n    const storedVisible = Array.isArray(parsed.visible) ? parsed.visible.map(String).filter((id) => WIDGET_ID_SET.has(id)) : [...DEFAULT_WIDGET_VISIBLE];\n    const sizes = { ...DEFAULT_WIDGET_SIZES };\n    if (parsed.sizes && typeof parsed.sizes === "object") {\n      DEFAULT_WIDGET_ORDER.forEach((id) => {\n        const size = String(parsed.sizes[id] || "");\n        if (WIDGET_SIZE_SET.has(size)) sizes[id] = size;\n      });\n    }\n    const pageById = Object.fromEntries(DEFAULT_WIDGET_ORDER.map((id) => [id, 0]));\n    if (parsed.pageById && typeof parsed.pageById === "object") {\n      DEFAULT_WIDGET_ORDER.forEach((id) => {\n        const page = Number(parsed.pageById[id]);\n        if (Number.isInteger(page) && page >= 0 && page < MAX_HOME_PAGES) pageById[id] = page;\n      });\n    }\n    return { order, visible: [...new Set(storedVisible)], sizes, pageById };\n  } catch {\n    return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES }, pageById: Object.fromEntries(DEFAULT_WIDGET_ORDER.map((id) => [id, 0])) };\n  }\n}\n\n'''
+          s = replace_between(s, 'function readWidgetLayout() {', 'function writeLayout(', read_widgets)
+
+          write_functions = '''function writeLayout(root, dockContainer, activePage = 0) {\n  const pages = [...root.querySelectorAll(".mobile-home-page")].map((page) =>\n    [...page.querySelectorAll(".mobile-home-apps [data-home-item-id]")].map((item) => item.dataset.homeItemId)\n  );\n  const layout = {\n    version: 2,\n    pages: pages.length ? pages : [[]],\n    dock: [...dockContainer.querySelectorAll("[data-home-item-id]")].map((item) => item.dataset.homeItemId),\n    activePage: Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(activePage) || 0)),\n  };\n  try {\n    globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(layout));\n  } catch {\n    // Layout persistence is optional; navigation remains usable without storage.\n  }\n}\n\nfunction writeWidgetLayout(root) {\n  const widgets = [...root.querySelectorAll("[data-home-widget-id]")];\n  const layout = {\n    version: 2,\n    order: widgets.map((item) => item.dataset.homeWidgetId),\n    visible: widgets.filter((item) => !item.hidden).map((item) => item.dataset.homeWidgetId),\n    sizes: Object.fromEntries(widgets.map((item) => [item.dataset.homeWidgetId, item.dataset.homeWidgetSize || DEFAULT_WIDGET_SIZES[item.dataset.homeWidgetId] || "small"])),\n    pageById: Object.fromEntries(widgets.map((item) => [item.dataset.homeWidgetId, Number(item.closest(".mobile-home-page")?.dataset.homePageIndex || 0)])),\n  };\n  try {\n    globalThis.localStorage?.setItem(WIDGET_STORAGE_KEY, JSON.stringify(layout));\n  } catch {\n    // Widget persistence is optional; the default home remains usable.\n  }\n}\n\n'''
+          s = replace_between(s, 'function writeLayout(', 'function setItemZone(', write_functions)
+
+          scaffold_marker = 'function createCheckpointWidget(services) {'
+          scaffold = '''function createHomePage(index) {\n  const page = document.createElement("section");\n  page.className = "mobile-home-page";\n  page.dataset.homePageIndex = String(index);\n  page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);\n  const widgets = document.createElement("div");\n  widgets.className = "mobile-home-widgets";\n  widgets.setAttribute("aria-label", "ウィジェット");\n  const apps = document.createElement("section");\n  apps.className = "mobile-home-apps";\n  apps.setAttribute("aria-label", "機能");\n  page.append(widgets, apps);\n  return page;\n}\n\nfunction syncPageIndices(root) {\n  [...root.querySelectorAll(".mobile-home-page")].forEach((page, index) => {\n    page.dataset.homePageIndex = String(index);\n    page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);\n  });\n}\n\nfunction ensurePageScaffold(root) {\n  let viewport = root.querySelector("[data-home-page-viewport]");\n  if (viewport) return viewport;\n  const widgets = root.querySelector(".mobile-home-widgets");\n  const apps = root.querySelector(".mobile-home-apps");\n  if (!widgets || !apps) return null;\n  viewport = document.createElement("div");\n  viewport.className = "mobile-home-page-viewport";\n  viewport.dataset.homePageViewport = "";\n  viewport.setAttribute("aria-label", "ホームページ");\n  const track = document.createElement("div");\n  track.className = "mobile-home-pages";\n  track.dataset.homePages = "";\n  const page = document.createElement("section");\n  page.className = "mobile-home-page";\n  page.dataset.homePageIndex = "0";\n  page.setAttribute("aria-label", "ホーム 1ページ目");\n  widgets.before(viewport);\n  page.append(widgets, apps);\n  track.append(page);\n  viewport.append(track);\n  const indicator = document.createElement("nav");\n  indicator.className = "mobile-home-page-indicator";\n  indicator.dataset.homePageIndicator = "";\n  indicator.setAttribute("aria-label", "ホームページ切り替え");\n  viewport.after(indicator);\n  return viewport;\n}\n\nfunction ensurePageCount(root, count) {\n  const track = root.querySelector("[data-home-pages]");\n  if (!track) return;\n  const desired = Math.max(1, Math.min(MAX_HOME_PAGES, Number(count) || 1));\n  while (track.querySelectorAll(".mobile-home-page").length < desired) {\n    track.append(createHomePage(track.querySelectorAll(".mobile-home-page").length));\n  }\n  syncPageIndices(root);\n}\n\nfunction pageElements(root) {\n  return [...root.querySelectorAll(".mobile-home-page")];\n}\n\nfunction pageContainers(page) {\n  return {\n    widgets: page?.querySelector(".mobile-home-widgets") || null,\n    apps: page?.querySelector(".mobile-home-apps") || null,\n  };\n}\n\n'''
+          if scaffold_marker not in s:
+              raise SystemExit('scaffold marker not found')
+          s = s.replace(scaffold_marker, scaffold + scaffold_marker, 1)
+
+          apply_layout = '''function applyLayout(root, dockContainer, layout = readLayout()) {\n  ensurePageCount(root, layout.pages.length);\n  const items = new Map([...root.querySelectorAll("[data-home-item-id]")].map((item) => [item.dataset.homeItemId, item]));\n  layout.pages.forEach((ids, pageIndex) => {\n    const apps = pageContainers(pageElements(root)[pageIndex]).apps;\n    if (!apps) return;\n    ids.forEach((id) => {\n      const item = items.get(id);\n      if (!item) return;\n      setItemZone(item, "apps");\n      apps.append(item);\n    });\n  });\n  layout.dock.forEach((id) => {\n    const item = items.get(id);\n    if (!item) return;\n    setItemZone(item, "dock");\n    dockContainer.append(item);\n  });\n  return Math.max(0, Math.min(pageElements(root).length - 1, layout.activePage || 0));\n}\n\nfunction applyWidgetLayout(root, layout = readWidgetLayout()) {\n  const maxPage = Math.max(0, ...Object.values(layout.pageById || {}).map((value) => Number(value) || 0));\n  ensurePageCount(root, maxPage + 1);\n  const widgets = new Map([...root.querySelectorAll("[data-home-widget-id]")].map((item) => [item.dataset.homeWidgetId, item]));\n  layout.order.forEach((id) => {\n    const widget = widgets.get(id);\n    if (!widget) return;\n    const pageIndex = Math.max(0, Math.min(pageElements(root).length - 1, Number(layout.pageById?.[id]) || 0));\n    pageContainers(pageElements(root)[pageIndex]).widgets?.append(widget);\n  });\n  widgets.forEach((widget, id) => {\n    widget.hidden = !layout.visible.includes(id);\n    applyWidgetSize(widget, layout.sizes?.[id]);\n  });\n}\n\n'''
+          s = replace_between(s, 'function applyLayout(', 'function ensureEditControls(', apply_layout)
+
+          s = s.replace('function refreshWidgetPicker(root, widgetsContainer) {', 'function refreshWidgetPicker(root) {', 1)
+          s = s.replace('const visible = new Set([...widgetsContainer.querySelectorAll("[data-home-widget-id]:not([hidden])")].map((item) => item.dataset.homeWidgetId));', 'const visible = new Set([...root.querySelectorAll("[data-home-widget-id]:not([hidden])")].map((item) => item.dataset.homeWidgetId));', 1)
+
+          bind_start = '''export function bindHome(context = {}) {\n  const root = document.querySelector(".mobile-home-os");\n  if (!root) return null;\n  const widgetsContainer = root.querySelector(".mobile-home-widgets");\n  const appsContainer = root.querySelector(".mobile-home-apps");\n  const dockContainer = root.querySelector(".mobile-home-dock");\n  if (!widgetsContainer || !appsContainer || !dockContainer) return null;\n\n  prepareWidgets(widgetsContainer, context.services);\n  prepareItems(root);\n  ensureEditControls(root);\n  applyWidgetLayout(widgetsContainer);\n  applyLayout(root, appsContainer, dockContainer);\n  ensureWidgetPicker(root);\n\n  let editing = false;'''
+          bind_new = '''export function bindHome(context = {}) {\n  const root = document.querySelector(".mobile-home-os");\n  if (!root) return null;\n  const dockContainer = root.querySelector(".mobile-home-dock");\n  const viewport = ensurePageScaffold(root);\n  if (!dockContainer || !viewport) return null;\n  const initialWidgets = root.querySelector(".mobile-home-page .mobile-home-widgets");\n  if (!initialWidgets) return null;\n\n  prepareWidgets(initialWidgets, context.services);\n  prepareItems(root);\n  ensureEditControls(root);\n  const appLayout = readLayout();\n  const widgetLayout = readWidgetLayout();\n  const maxWidgetPage = Math.max(0, ...Object.values(widgetLayout.pageById || {}).map((value) => Number(value) || 0));\n  ensurePageCount(root, Math.max(appLayout.pages.length, maxWidgetPage + 1));\n  applyWidgetLayout(root, widgetLayout);\n  let activePage = applyLayout(root, dockContainer, appLayout);\n  ensureWidgetPicker(root);\n\n  let editing = false;'''
+          if bind_start not in s:
+              raise SystemExit('bind start target not found')
+          s = s.replace(bind_start, bind_new, 1)
+
+          s = s.replace('  let suppressClickUntil = 0;\n', '  let suppressClickUntil = 0;\n  let edgeTimer = null;\n  let edgeTargetPage = -1;\n  let scrollFrame = null;\n', 1)
+          s = s.replace('  const widgetPicker = root.querySelector("[data-home-widget-picker]");\n', '  const widgetPicker = root.querySelector("[data-home-widget-picker]");\n  const pageIndicator = root.querySelector("[data-home-page-indicator]");\n', 1)
+
+          helper_marker = '  function clearDropTarget() {'
+          helpers = '''  function currentPageElement() {\n    return pageElements(root)[activePage] || pageElements(root)[0] || null;\n  }\n\n  function persistHomeLayout() {\n    writeLayout(root, dockContainer, activePage);\n    writeWidgetLayout(root);\n  }\n\n  function updatePageIndicator() {\n    if (!pageIndicator) return;\n    const pages = pageElements(root);\n    pageIndicator.hidden = pages.length <= 1 && !editing;\n    pageIndicator.replaceChildren();\n    pages.forEach((page, index) => {\n      const dot = document.createElement("button");\n      dot.type = "button";\n      dot.className = "mobile-home-page-dot";\n      dot.dataset.homePageTarget = String(index);\n      dot.setAttribute("aria-label", `${index + 1}ページ目へ移動`);\n      dot.setAttribute("aria-current", index === activePage ? "page" : "false");\n      pageIndicator.append(dot);\n    });\n    if (editing && pages.length < MAX_HOME_PAGES) {\n      const add = document.createElement("button");\n      add.type = "button";\n      add.className = "mobile-home-page-control";\n      add.dataset.homePageAdd = "";\n      add.setAttribute("aria-label", "ホームページを追加");\n      add.textContent = "+";\n      pageIndicator.append(add);\n    }\n    if (editing && activePage > 0) {\n      const page = pages[activePage];\n      const hasApps = Boolean(page?.querySelector(".mobile-home-apps [data-home-item-id]"));\n      const hasVisibleWidgets = Boolean(page?.querySelector(".mobile-home-widgets [data-home-widget-id]:not([hidden])"));\n      if (!hasApps && !hasVisibleWidgets) {\n        const remove = document.createElement("button");\n        remove.type = "button";\n        remove.className = "mobile-home-page-control mobile-home-page-control--remove";\n        remove.dataset.homePageRemove = "";\n        remove.setAttribute("aria-label", "空のホームページを削除");\n        remove.textContent = "−";\n        pageIndicator.append(remove);\n      }\n    }\n  }\n\n  function setActivePage(index, { smooth = true, persist = false } = {}) {\n    const pages = pageElements(root);\n    if (!pages.length) return;\n    activePage = Math.max(0, Math.min(pages.length - 1, Number(index) || 0));\n    const left = activePage * viewport.clientWidth;\n    viewport.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });\n    updatePageIndicator();\n    if (persist) writeLayout(root, dockContainer, activePage);\n  }\n\n  function addPage() {\n    const pages = pageElements(root);\n    if (pages.length >= MAX_HOME_PAGES) return;\n    ensurePageCount(root, pages.length + 1);\n    syncPageIndices(root);\n    setActivePage(pageElements(root).length - 1, { smooth: true, persist: true });\n  }\n\n  function removeCurrentPage() {\n    const pages = pageElements(root);\n    if (activePage <= 0 || activePage >= pages.length) return;\n    const page = pages[activePage];\n    if (page.querySelector(".mobile-home-apps [data-home-item-id]")) return;\n    if (page.querySelector(".mobile-home-widgets [data-home-widget-id]:not([hidden])")) return;\n    const fallback = pages[activePage - 1];\n    const fallbackWidgets = pageContainers(fallback).widgets;\n    page.querySelectorAll(".mobile-home-widgets [data-home-widget-id]").forEach((widget) => fallbackWidgets?.append(widget));\n    page.remove();\n    syncPageIndices(root);\n    activePage = Math.max(0, activePage - 1);\n    setActivePage(activePage, { smooth: false });\n    persistHomeLayout();\n  }\n\n  function clearEdgePaging() {\n    if (edgeTimer) clearTimeout(edgeTimer);\n    edgeTimer = null;\n    edgeTargetPage = -1;\n  }\n\n  function scheduleEdgePaging(clientX) {\n    if (!dragging || pageElements(root).length < 2) {\n      clearEdgePaging();\n      return;\n    }\n    const rect = viewport.getBoundingClientRect();\n    let target = -1;\n    if (clientX - rect.left <= PAGE_EDGE_PX && activePage > 0) target = activePage - 1;\n    else if (rect.right - clientX <= PAGE_EDGE_PX && activePage < pageElements(root).length - 1) target = activePage + 1;\n    if (target < 0) {\n      clearEdgePaging();\n      return;\n    }\n    if (edgeTimer && edgeTargetPage === target) return;\n    clearEdgePaging();\n    edgeTargetPage = target;\n    edgeTimer = setTimeout(() => {\n      const next = edgeTargetPage;\n      clearEdgePaging();\n      setActivePage(next, { smooth: true });\n    }, PAGE_EDGE_DELAY_MS);\n  }\n\n'''
+          if helper_marker not in s:
+              raise SystemExit('helper marker not found')
+          s = s.replace(helper_marker, helpers + helper_marker, 1)
+
+          s = s.replace('    refreshWidgetPicker(root, widgetsContainer);', '    refreshWidgetPicker(root);')
+          s = s.replace('    refreshWidgetPicker(root, widgetsContainer);', '    refreshWidgetPicker(root);')
+
+          # setEditing: refresh page indicator and clear edge state
+          old = '''    if (!editing) {\n      clearDropTarget();\n      closeWidgetPicker();\n    }\n  }'''
+          new = '''    if (!editing) {\n      clearDropTarget();\n      clearEdgePaging();\n      closeWidgetPicker();\n    }\n    updatePageIndicator();\n  }'''
+          if old not in s:
+              raise SystemExit('setEditing target not found')
+          s = s.replace(old, new, 1)
+
+          # Replace finish app drag function
+          finish_app = '''  function finishAppDrag(event, cancelled) {\n    const source = pressTarget;\n    const sourceZone = source.dataset.homeZone;\n    const pointTarget = cancelled ? null : document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);\n    const target = pointTarget?.closest?.("[data-home-item-id]") || null;\n    const targetZoneElement = pointTarget?.closest?.(".mobile-home-apps, .mobile-home-dock") || null;\n    const targetZone = targetZoneElement === dockContainer ? "dock" : targetZoneElement?.classList?.contains("mobile-home-apps") ? "apps" : "";\n\n    if (!cancelled && target && target !== source) {\n      if (sourceZone === target.dataset.homeZone) {\n        target.before(source);\n      } else {\n        swapItems(source, target);\n        setItemZone(source, target.dataset.homeZone);\n        setItemZone(target, sourceZone);\n      }\n      writeLayout(root, dockContainer, activePage);\n    } else if (!cancelled && targetZone === "apps" && sourceZone === "apps") {\n      targetZoneElement.append(source);\n      writeLayout(root, dockContainer, activePage);\n    } else if (!cancelled && targetZone === sourceZone && targetZone === "dock") {\n      targetZoneElement.append(source);\n      writeLayout(root, dockContainer, activePage);\n    }\n  }\n\n'''
+          s = replace_between(s, '  function finishAppDrag(event, cancelled) {', '  function finishWidgetDrag(event, cancelled) {', finish_app)
+
+          finish_widget = '''  function finishWidgetDrag(event, cancelled) {\n    const source = pressTarget;\n    const pointTarget = cancelled ? null : document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);\n    const target = pointTarget?.closest?.("[data-home-widget-id]") || null;\n    const destination = pageContainers(currentPageElement()).widgets;\n    if (!cancelled && target && target !== source && !target.hidden) {\n      target.before(source);\n      writeWidgetLayout(root);\n    } else if (!cancelled && destination) {\n      destination.append(source);\n      writeWidgetLayout(root);\n    }\n  }\n\n'''
+          s = replace_between(s, '  function finishWidgetDrag(event, cancelled) {', '  function finishDrag(event, cancelled = false) {', finish_widget)
+
+          s = s.replace('    clearDropTarget();\n    ghost?.remove();', '    clearDropTarget();\n    clearEdgePaging();\n    ghost?.remove();', 1)
+
+          # Pointer move: schedule edge paging while dragging
+          old = '''    event.preventDefault();\n    moveGhost(ghost, event.clientX, event.clientY);\n    const selector = pressKind === "widget" ? "[data-home-widget-id]" : "[data-home-item-id]";'''
+          new = '''    event.preventDefault();\n    moveGhost(ghost, event.clientX, event.clientY);\n    scheduleEdgePaging(event.clientX);\n    const selector = pressKind === "widget" ? "[data-home-widget-id]" : "[data-home-item-id]";'''
+          if old not in s:
+              raise SystemExit('pointer move target not found')
+          s = s.replace(old, new, 1)
+
+          # Widget actions now operate across pages and persist page placement
+          s = s.replace('const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);', 'const widget = root.querySelector(`[data-home-widget-id="${id}"]`);')
+          s = s.replace('writeWidgetLayout(widgetsContainer);', 'writeWidgetLayout(root);')
+          s = s.replace('writeWidgetLayout(widgetsContainer);', 'writeWidgetLayout(root);')
+          s = s.replace('let widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);', 'let widget = root.querySelector(`[data-home-widget-id="${id}"]`);')
+          s = s.replace('      widgetsContainer.append(widget);', '      pageContainers(currentPageElement()).widgets?.append(widget);', 1)
+          s = s.replace('    widgetsContainer.append(widget);\n    writeWidgetLayout(root);', '    pageContainers(currentPageElement()).widgets?.append(widget);\n    writeWidgetLayout(root);', 1)
+
+          # Click handlers for page UI before edit toggle
+          click_marker = '''  function handleClick(event) {\n    if (event.target.closest("[data-home-edit-toggle]")) {'''
+          click_new = '''  function handleClick(event) {\n    const pageTarget = event.target.closest("[data-home-page-target]");\n    if (pageTarget) {\n      event.preventDefault();\n      setActivePage(Number(pageTarget.dataset.homePageTarget), { smooth: true, persist: true });\n      return;\n    }\n    if (event.target.closest("[data-home-page-add]")) {\n      event.preventDefault();\n      if (editing) addPage();\n      return;\n    }\n    if (event.target.closest("[data-home-page-remove]")) {\n      event.preventDefault();\n      if (editing) removeCurrentPage();\n      return;\n    }\n    if (event.target.closest("[data-home-edit-toggle]")) {'''
+          if click_marker not in s:
+              raise SystemExit('click marker not found')
+          s = s.replace(click_marker, click_new, 1)
+
+          # Page scroll tracking
+          key_marker = '  function handleKeyDown(event) {'
+          scroll_handler = '''  function handlePageScroll() {\n    if (scrollFrame) cancelAnimationFrame(scrollFrame);\n    scrollFrame = requestAnimationFrame(() => {\n      scrollFrame = null;\n      if (!viewport.clientWidth || dragging) return;\n      const index = Math.round(viewport.scrollLeft / viewport.clientWidth);\n      const bounded = Math.max(0, Math.min(pageElements(root).length - 1, index));\n      if (bounded !== activePage) {\n        activePage = bounded;\n        updatePageIndicator();\n        writeLayout(root, dockContainer, activePage);\n      }\n    });\n  }\n\n'''
+          if key_marker not in s:
+              raise SystemExit('keydown marker not found')
+          s = s.replace(key_marker, scroll_handler + key_marker, 1)
+
+          # listeners and initial page
+          listener_marker = '  widgetPicker?.addEventListener("pointerup", handleWidgetPickerPointerUp);\n'
+          listener_new = '  viewport.addEventListener("scroll", handlePageScroll, { passive: true });\n  widgetPicker?.addEventListener("pointerup", handleWidgetPickerPointerUp);\n'
+          if listener_marker not in s:
+              raise SystemExit('listener marker not found')
+          s = s.replace(listener_marker, listener_new, 1)
+
+          return_marker = '''  document.addEventListener("keydown", handleKeyDown);\n\n  return () => {'''
+          return_new = '''  document.addEventListener("keydown", handleKeyDown);\n  setActivePage(activePage, { smooth: false });\n  updatePageIndicator();\n\n  return () => {'''
+          if return_marker not in s:
+              raise SystemExit('return marker not found')
+          s = s.replace(return_marker, return_new, 1)
+
+          cleanup_marker = '''    widgetPicker?.removeEventListener("pointerup", handleWidgetPickerPointerUp);\n    root.removeEventListener("pointerdown", handlePointerDown);'''
+          cleanup_new = '''    clearEdgePaging();\n    if (scrollFrame) cancelAnimationFrame(scrollFrame);\n    viewport.removeEventListener("scroll", handlePageScroll);\n    widgetPicker?.removeEventListener("pointerup", handleWidgetPickerPointerUp);\n    root.removeEventListener("pointerdown", handlePointerDown);'''
+          if cleanup_marker not in s:
+              raise SystemExit('cleanup marker not found')
+          s = s.replace(cleanup_marker, cleanup_new, 1)
+
+          # Ensure no stale flat-container identifiers remain in bind-time logic.
+          if 'widgetsContainer' in s[s.index('export function bindHome'):]:
+              raise SystemExit('stale widgetsContainer reference remains in bindHome')
+          if 'appsContainer' in s[s.index('export function bindHome'):]:
+              raise SystemExit('stale appsContainer reference remains in bindHome')
+
+          path.write_text(s)
+
+          css_path = Path('styles/mobile-home-editing.css')
+          css = css_path.read_text()
+          insertion = '''\n  .mobile-home-page-viewport {\n    width: 100%;\n    overflow-x: auto;\n    overflow-y: visible;\n    scroll-snap-type: x mandatory;\n    scroll-behavior: smooth;\n    overscroll-behavior-x: contain;\n    scrollbar-width: none;\n    -webkit-overflow-scrolling: touch;\n  }\n\n  .mobile-home-page-viewport::-webkit-scrollbar {\n    display: none;\n  }\n\n  .mobile-home-pages {\n    display: flex;\n    align-items: flex-start;\n    width: 100%;\n  }\n\n  .mobile-home-page {\n    flex: 0 0 100%;\n    min-width: 0;\n    scroll-snap-align: start;\n    scroll-snap-stop: always;\n  }\n\n  .mobile-home-page-indicator {\n    min-height: 28px;\n    margin: -8px 0 18px;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    gap: 7px;\n  }\n\n  .mobile-home-page-indicator[hidden] {\n    display: none;\n  }\n\n  .mobile-home-page-dot {\n    width: 8px;\n    height: 8px;\n    min-height: 0;\n    padding: 0;\n    border: 0;\n    border-radius: 999px;\n    background: color-mix(in srgb, var(--color-muted) 42%, transparent);\n    transition: width 150ms ease, background 150ms ease, transform 150ms ease;\n  }\n\n  .mobile-home-page-dot[aria-current="page"] {\n    width: 20px;\n    background: var(--color-accent-strong);\n  }\n\n  .mobile-home-page-control {\n    display: none;\n    width: 28px;\n    height: 28px;\n    min-height: 0;\n    padding: 0;\n    border: 1px solid color-mix(in srgb, var(--color-accent-strong) 35%, var(--color-line));\n    border-radius: 50%;\n    background: var(--color-surface);\n    color: var(--color-accent-strong);\n    font-size: 18px;\n    line-height: 1;\n    box-shadow: 0 4px 10px rgba(31, 47, 60, .1);\n  }\n\n  .mobile-home-os.is-home-editing .mobile-home-page-control {\n    display: grid;\n    place-items: center;\n  }\n\n  .mobile-home-page-control--remove {\n    color: var(--color-attention);\n    border-color: color-mix(in srgb, var(--color-attention) 42%, var(--color-line));\n  }\n'''
+          marker = '@media (max-width: 54.99rem) {\n'
+          if marker not in css:
+              raise SystemExit('css media marker not found')
+          css = css.replace(marker, marker + insertion, 1)
+          css_path.write_text(css)
+          PY
+      - name: Validate implementation
+        run: |
+          set -euo pipefail
+          node --check ui/interactions/homeInteractions.js
+          for file in tests/*.test.mjs; do node "$file" >/dev/null; done
+          grep -q 'MAX_HOME_PAGES = 4' ui/interactions/homeInteractions.js
+          grep -q 'function ensurePageScaffold' ui/interactions/homeInteractions.js
+          grep -q 'data-home-page-indicator' ui/interactions/homeInteractions.js
+          grep -q 'scheduleEdgePaging' ui/interactions/homeInteractions.js
+          grep -q 'pageById' ui/interactions/homeInteractions.js
+          grep -q 'mobile-home-page-viewport' styles/mobile-home-editing.css
+          grep -q 'scroll-snap-type: x mandatory' styles/mobile-home-editing.css
+          grep -q 'mobile-home-page-dot' styles/mobile-home-editing.css
+          git diff --check
+      - name: Commit implementation
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add ui/interactions/homeInteractions.js styles/mobile-home-editing.css
+          git commit -m "Add smartphone home multi-page navigation"
+          git push
