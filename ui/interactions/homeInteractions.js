@@ -46,6 +46,36 @@ const ITEM_ID_BY_HREF = Object.freeze([
 const ALL_ITEM_IDS = Object.freeze([...DEFAULT_LAYOUT.pages.flat(), ...DEFAULT_LAYOUT.dock]);
 const ALL_ITEM_ID_SET = new Set(ALL_ITEM_IDS);
 
+const APP_TOKEN_PREFIX = "app:";
+const WIDGET_TOKEN_PREFIX = "widget:";
+
+function appToken(id) {
+  return `${APP_TOKEN_PREFIX}${id}`;
+}
+
+function widgetToken(id) {
+  return `${WIDGET_TOKEN_PREFIX}${id}`;
+}
+
+function gridTokenForElement(element) {
+  const appId = element?.dataset?.homeItemId || "";
+  if (appId) return appToken(appId);
+  const widgetId = element?.dataset?.homeWidgetId || "";
+  if (widgetId) return widgetToken(widgetId);
+  return "";
+}
+
+function defaultGridLayout() {
+  return {
+    pages: [[
+      ...DEFAULT_WIDGET_ORDER.map(widgetToken),
+      ...DEFAULT_LAYOUT.pages[0].map(appToken),
+    ]],
+    dock: [...DEFAULT_LAYOUT.dock],
+    activePage: 0,
+  };
+}
+
 function itemIdFromHref(href = "") {
   return ITEM_ID_BY_HREF.find(([prefix]) => String(href).startsWith(prefix))?.[1] || "";
 }
@@ -61,24 +91,78 @@ function widgetIdFromAnchor(anchor, index) {
 function readLayout() {
   try {
     const parsed = JSON.parse(globalThis.localStorage?.getItem(STORAGE_KEY) || "null");
-    const dock = Array.isArray(parsed?.dock) ? parsed.dock.map(String) : [];
-    const sourcePages = Array.isArray(parsed?.pages)
-      ? parsed.pages
-      : [Array.isArray(parsed?.apps) ? parsed.apps : []];
-    const pages = sourcePages.slice(0, MAX_HOME_PAGES).map((page) => Array.isArray(page) ? page.map(String) : []);
-    if (!pages.length) pages.push([]);
-    const combined = [...pages.flat(), ...dock];
-    if (dock.length !== DEFAULT_LAYOUT.dock.length) return DEFAULT_LAYOUT;
-    if (combined.length !== ALL_ITEM_IDS.length) return DEFAULT_LAYOUT;
-    if (new Set(combined).size !== ALL_ITEM_IDS.length) return DEFAULT_LAYOUT;
-    if (!combined.every((id) => ALL_ITEM_ID_SET.has(id))) return DEFAULT_LAYOUT;
-    const activeCandidate = Number(parsed?.activePage);
+    if (!parsed || typeof parsed !== "object") return defaultGridLayout();
+
+    const dock = Array.isArray(parsed.dock) ? parsed.dock.map(String) : [];
+    if (dock.length !== DEFAULT_LAYOUT.dock.length || new Set(dock).size !== dock.length || !dock.every((id) => ALL_ITEM_ID_SET.has(id))) {
+      return defaultGridLayout();
+    }
+
+    const sourcePages = Array.isArray(parsed.pages)
+      ? parsed.pages.slice(0, MAX_HOME_PAGES).map((page) => Array.isArray(page) ? page.map(String) : [])
+      : [Array.isArray(parsed.apps) ? parsed.apps.map(String) : []];
+    if (!sourcePages.length) sourcePages.push([]);
+
+    const flattened = sourcePages.flat();
+    const hasGridTokens = flattened.some((token) => token.startsWith(APP_TOKEN_PREFIX) || token.startsWith(WIDGET_TOKEN_PREFIX));
+    let pages = sourcePages;
+
+    if (hasGridTokens) {
+      const appIds = [];
+      const widgetIds = [];
+      let validTokens = true;
+      flattened.forEach((token) => {
+        if (token.startsWith(APP_TOKEN_PREFIX)) {
+          const id = token.slice(APP_TOKEN_PREFIX.length);
+          if (!ALL_ITEM_ID_SET.has(id)) validTokens = false;
+          else appIds.push(id);
+        } else if (token.startsWith(WIDGET_TOKEN_PREFIX)) {
+          const id = token.slice(WIDGET_TOKEN_PREFIX.length);
+          if (!WIDGET_ID_SET.has(id)) validTokens = false;
+          else widgetIds.push(id);
+        } else {
+          validTokens = false;
+        }
+      });
+      const allApps = [...appIds, ...dock];
+      if (!validTokens
+        || allApps.length !== ALL_ITEM_IDS.length
+        || new Set(allApps).size !== ALL_ITEM_IDS.length
+        || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))
+        || widgetIds.length !== DEFAULT_WIDGET_ORDER.length
+        || new Set(widgetIds).size !== DEFAULT_WIDGET_ORDER.length
+        || !widgetIds.every((id) => WIDGET_ID_SET.has(id))) {
+        return defaultGridLayout();
+      }
+    } else {
+      const legacyApps = flattened;
+      const allApps = [...legacyApps, ...dock];
+      if (allApps.length !== ALL_ITEM_IDS.length
+        || new Set(allApps).size !== ALL_ITEM_IDS.length
+        || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))) {
+        return defaultGridLayout();
+      }
+      const widgetLayout = readWidgetLayout();
+      const maxWidgetPage = Math.max(0, ...Object.values(widgetLayout.pageById || {}).map((value) => Number(value) || 0));
+      const pageCount = Math.max(1, sourcePages.length, maxWidgetPage + 1);
+      pages = Array.from({ length: Math.min(MAX_HOME_PAGES, pageCount) }, () => []);
+      widgetLayout.order.forEach((id) => {
+        const pageIndex = Math.max(0, Math.min(pages.length - 1, Number(widgetLayout.pageById?.[id]) || 0));
+        pages[pageIndex].push(widgetToken(id));
+      });
+      sourcePages.forEach((ids, pageIndex) => {
+        if (!pages[pageIndex]) return;
+        ids.forEach((id) => pages[pageIndex].push(appToken(id)));
+      });
+    }
+
+    const activeCandidate = Number(parsed.activePage);
     const activePage = Number.isInteger(activeCandidate)
       ? Math.max(0, Math.min(pages.length - 1, activeCandidate))
       : 0;
     return { pages, dock, activePage };
   } catch {
-    return DEFAULT_LAYOUT;
+    return defaultGridLayout();
   }
 }
 
@@ -115,11 +199,12 @@ function readWidgetLayout() {
 }
 
 function writeLayout(root, dockContainer, activePage = 0) {
-  const pages = [...root.querySelectorAll(".mobile-home-page")].map((page) =>
-    [...page.querySelectorAll(".mobile-home-apps [data-home-item-id]")].map((item) => item.dataset.homeItemId)
-  );
+  const pages = pageElements(root).map((page) => {
+    const grid = pageContainers(page).grid;
+    return grid ? [...grid.children].map(gridTokenForElement).filter(Boolean) : [];
+  });
   const layout = {
-    version: 2,
+    version: 3,
     pages: pages.length ? pages : [[]],
     dock: [...dockContainer.querySelectorAll("[data-home-item-id]")].map((item) => item.dataset.homeItemId),
     activePage: Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(activePage) || 0)),
@@ -175,13 +260,10 @@ function createHomePage(index) {
   page.className = "mobile-home-page";
   page.dataset.homePageIndex = String(index);
   page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);
-  const widgets = document.createElement("div");
-  widgets.className = "mobile-home-widgets";
-  widgets.setAttribute("aria-label", "ウィジェット");
-  const apps = document.createElement("section");
-  apps.className = "mobile-home-apps";
-  apps.setAttribute("aria-label", "機能");
-  page.append(widgets, apps);
+  const grid = document.createElement("div");
+  grid.className = "mobile-home-grid";
+  grid.setAttribute("aria-label", "ホーム配置");
+  page.append(grid);
   return page;
 }
 
@@ -198,6 +280,7 @@ function ensurePageScaffold(root) {
   const widgets = root.querySelector(".mobile-home-widgets");
   const apps = root.querySelector(".mobile-home-apps");
   if (!widgets || !apps) return null;
+
   viewport = document.createElement("div");
   viewport.className = "mobile-home-page-viewport";
   viewport.dataset.homePageViewport = "";
@@ -205,12 +288,15 @@ function ensurePageScaffold(root) {
   const track = document.createElement("div");
   track.className = "mobile-home-pages";
   track.dataset.homePages = "";
-  const page = document.createElement("section");
-  page.className = "mobile-home-page";
-  page.dataset.homePageIndex = "0";
-  page.setAttribute("aria-label", "ホーム 1ページ目");
+  const page = createHomePage(0);
+  const grid = pageContainers(page).grid;
+
   widgets.before(viewport);
-  page.append(widgets, apps);
+  [...widgets.children].forEach((child) => grid?.append(child));
+  [...apps.children].forEach((child) => grid?.append(child));
+  widgets.remove();
+  apps.remove();
+
   track.append(page);
   viewport.append(track);
   const indicator = document.createElement("nav");
@@ -237,8 +323,7 @@ function pageElements(root) {
 
 function pageContainers(page) {
   return {
-    widgets: page?.querySelector(".mobile-home-widgets") || null,
-    apps: page?.querySelector(".mobile-home-apps") || null,
+    grid: page?.querySelector(".mobile-home-grid") || null,
   };
 }
 
@@ -312,25 +397,35 @@ function prepareWidgets(widgetsContainer, services) {
     if (id) makeWidgetShell(anchor, id);
   });
   if (!widgetsContainer.querySelector('[data-home-widget-id="checkpoint"]')) {
-    makeWidgetShell(createCheckpointWidget(services), "checkpoint");
+    const checkpoint = makeWidgetShell(createCheckpointWidget(services), "checkpoint");
+    checkpoint.hidden = true;
+    widgetsContainer.append(checkpoint);
   }
 }
 
 function applyLayout(root, dockContainer, layout = readLayout()) {
   ensurePageCount(root, layout.pages.length);
-  const items = new Map([...root.querySelectorAll("[data-home-item-id]")].map((item) => [item.dataset.homeItemId, item]));
-  layout.pages.forEach((ids, pageIndex) => {
-    const apps = pageContainers(pageElements(root)[pageIndex]).apps;
-    if (!apps) return;
-    ids.forEach((id) => {
-      const item = items.get(id);
-      if (!item) return;
-      setItemZone(item, "apps");
-      apps.append(item);
+  const apps = new Map([...root.querySelectorAll("[data-home-item-id]")].map((item) => [item.dataset.homeItemId, item]));
+  const widgets = new Map([...root.querySelectorAll("[data-home-widget-id]")].map((item) => [item.dataset.homeWidgetId, item]));
+
+  layout.pages.forEach((tokens, pageIndex) => {
+    const grid = pageContainers(pageElements(root)[pageIndex]).grid;
+    if (!grid) return;
+    tokens.forEach((token) => {
+      if (token.startsWith(APP_TOKEN_PREFIX)) {
+        const item = apps.get(token.slice(APP_TOKEN_PREFIX.length));
+        if (!item) return;
+        setItemZone(item, "apps");
+        grid.append(item);
+      } else if (token.startsWith(WIDGET_TOKEN_PREFIX)) {
+        const widget = widgets.get(token.slice(WIDGET_TOKEN_PREFIX.length));
+        if (widget) grid.append(widget);
+      }
     });
   });
+
   layout.dock.forEach((id) => {
-    const item = items.get(id);
+    const item = apps.get(id);
     if (!item) return;
     setItemZone(item, "dock");
     dockContainer.append(item);
@@ -339,15 +434,7 @@ function applyLayout(root, dockContainer, layout = readLayout()) {
 }
 
 function applyWidgetLayout(root, layout = readWidgetLayout()) {
-  const maxPage = Math.max(0, ...Object.values(layout.pageById || {}).map((value) => Number(value) || 0));
-  ensurePageCount(root, maxPage + 1);
   const widgets = new Map([...root.querySelectorAll("[data-home-widget-id]")].map((item) => [item.dataset.homeWidgetId, item]));
-  layout.order.forEach((id) => {
-    const widget = widgets.get(id);
-    if (!widget) return;
-    const pageIndex = Math.max(0, Math.min(pageElements(root).length - 1, Number(layout.pageById?.[id]) || 0));
-    pageContainers(pageElements(root)[pageIndex]).widgets?.append(widget);
-  });
   widgets.forEach((widget, id) => {
     widget.hidden = !layout.visible.includes(id);
     applyWidgetSize(widget, layout.sizes?.[id]);
@@ -428,6 +515,17 @@ function swapItems(source, target) {
   placeholder.replaceWith(target);
 }
 
+function placeRelativeToTarget(source, target, clientX, clientY) {
+  if (!source || !target || source === target) return;
+  const rect = target.getBoundingClientRect();
+  const middleX = rect.left + rect.width / 2;
+  const middleY = rect.top + rect.height / 2;
+  const nearMiddleRow = Math.abs(clientY - middleY) <= Math.max(18, rect.height * 0.24);
+  const after = clientY > middleY || (nearMiddleRow && clientX > middleX);
+  if (after) target.after(source);
+  else target.before(source);
+}
+
 function createDragGhost(item, kind) {
   const ghost = item.cloneNode(true);
   ghost.querySelectorAll("button").forEach((button) => button.remove());
@@ -450,20 +548,19 @@ export function bindHome(context = {}) {
   const root = document.querySelector(".mobile-home-os");
   if (!root) return null;
   const dockContainer = root.querySelector(".mobile-home-dock");
-  const viewport = ensurePageScaffold(root);
-  if (!dockContainer || !viewport) return null;
-  const initialWidgets = root.querySelector(".mobile-home-page .mobile-home-widgets");
-  if (!initialWidgets) return null;
+  const sourceWidgets = root.querySelector(".mobile-home-widgets");
+  if (!dockContainer || !sourceWidgets) return null;
 
-  prepareWidgets(initialWidgets, context.services);
+  prepareWidgets(sourceWidgets, context.services);
   prepareItems(root);
+  const viewport = ensurePageScaffold(root);
+  if (!viewport) return null;
   ensureEditControls(root);
   const appLayout = readLayout();
   const widgetLayout = readWidgetLayout();
-  const maxWidgetPage = Math.max(0, ...Object.values(widgetLayout.pageById || {}).map((value) => Number(value) || 0));
-  ensurePageCount(root, Math.max(appLayout.pages.length, maxWidgetPage + 1));
-  applyWidgetLayout(root, widgetLayout);
+  ensurePageCount(root, appLayout.pages.length);
   let activePage = applyLayout(root, dockContainer, appLayout);
+  applyWidgetLayout(root, widgetLayout);
   ensureWidgetPicker(root);
 
   let editing = false;
@@ -527,8 +624,9 @@ export function bindHome(context = {}) {
     }
     if (editing && activePage > 0) {
       const page = pages[activePage];
-      const hasApps = Boolean(page?.querySelector(".mobile-home-apps [data-home-item-id]"));
-      const hasVisibleWidgets = Boolean(page?.querySelector(".mobile-home-widgets [data-home-widget-id]:not([hidden])"));
+      const grid = pageContainers(page).grid;
+      const hasApps = Boolean(grid?.querySelector("[data-home-item-id]"));
+      const hasVisibleWidgets = Boolean(grid?.querySelector("[data-home-widget-id]:not([hidden])"));
       if (!hasApps && !hasVisibleWidgets) {
         const remove = document.createElement("button");
         remove.type = "button";
@@ -564,11 +662,12 @@ export function bindHome(context = {}) {
     const pages = pageElements(root);
     if (activePage <= 0 || activePage >= pages.length) return;
     const page = pages[activePage];
-    if (page.querySelector(".mobile-home-apps [data-home-item-id]")) return;
-    if (page.querySelector(".mobile-home-widgets [data-home-widget-id]:not([hidden])")) return;
+    const grid = pageContainers(page).grid;
+    if (grid?.querySelector("[data-home-item-id]")) return;
+    if (grid?.querySelector("[data-home-widget-id]:not([hidden])")) return;
     const fallback = pages[activePage - 1];
-    const fallbackWidgets = pageContainers(fallback).widgets;
-    page.querySelectorAll(".mobile-home-widgets [data-home-widget-id]").forEach((widget) => fallbackWidgets?.append(widget));
+    const fallbackGrid = pageContainers(fallback).grid;
+    grid?.querySelectorAll("[data-home-widget-id][hidden]").forEach((widget) => fallbackGrid?.append(widget));
     page.remove();
     syncPageIndices(root);
     activePage = Math.max(0, activePage - 1);
@@ -601,7 +700,7 @@ export function bindHome(context = {}) {
     edgeTimer = setTimeout(() => {
       const next = edgeTargetPage;
       clearEdgePaging();
-      setActivePage(next, { smooth: true });
+      setActivePage(next, { smooth: false });
     }, PAGE_EDGE_DELAY_MS);
   }
 
@@ -638,50 +737,56 @@ export function bindHome(context = {}) {
     updatePageIndicator();
   }
 
-  function finishAppDrag(event, cancelled) {
+  function finishGridDrag(event, cancelled) {
+    if (cancelled || !pressTarget) return;
     const source = pressTarget;
-    const sourceZone = source.dataset.homeZone;
-    const pointTarget = cancelled ? null : document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);
-    const target = pointTarget?.closest?.("[data-home-item-id]") || null;
-    const targetZoneElement = pointTarget?.closest?.(".mobile-home-apps, .mobile-home-dock") || null;
-    const targetZone = targetZoneElement === dockContainer ? "dock" : targetZoneElement?.classList?.contains("mobile-home-apps") ? "apps" : "";
+    const sourceIsWidget = Boolean(source.dataset.homeWidgetId);
+    const sourceZone = source.dataset.homeZone || "apps";
+    const pointTarget = document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);
+    const target = pointTarget?.closest?.("[data-home-item-id], [data-home-widget-id]") || null;
+    const targetGrid = pointTarget?.closest?.(".mobile-home-grid") || null;
+    const targetDock = pointTarget?.closest?.(".mobile-home-dock") || null;
+    const targetIsApp = Boolean(target?.dataset?.homeItemId);
+    const targetIsWidget = Boolean(target?.dataset?.homeWidgetId);
+    const targetZone = targetIsApp ? (target.dataset.homeZone || (target.closest(".mobile-home-grid") ? "apps" : "")) : "";
+    let changed = false;
 
-    if (!cancelled && target && target !== source) {
-      if (sourceZone === target.dataset.homeZone) {
-        target.before(source);
-      } else {
-        swapItems(source, target);
-        setItemZone(source, target.dataset.homeZone);
-        setItemZone(target, sourceZone);
+    if (sourceIsWidget) {
+      if (target && target !== source && target.closest(".mobile-home-grid")) {
+        placeRelativeToTarget(source, target, event?.clientX ?? startX, event?.clientY ?? startY);
+        changed = true;
+      } else if (targetGrid) {
+        targetGrid.append(source);
+        changed = true;
       }
-      writeLayout(root, dockContainer, activePage);
-      updatePageIndicator();
-      updateViewportHeight();
-    } else if (!cancelled && targetZone === "apps" && sourceZone === "apps") {
-      targetZoneElement.append(source);
-      writeLayout(root, dockContainer, activePage);
-      updatePageIndicator();
-      updateViewportHeight();
-    } else if (!cancelled && targetZone === sourceZone && targetZone === "dock") {
-      targetZoneElement.append(source);
-      writeLayout(root, dockContainer, activePage);
-      updatePageIndicator();
-      updateViewportHeight();
+    } else if (sourceZone === "dock") {
+      if (targetIsApp && target !== source && targetZone === "dock") {
+        target.before(source);
+        changed = true;
+      } else if (targetIsApp && target !== source && targetZone === "apps") {
+        swapItems(source, target);
+        setItemZone(source, "apps");
+        setItemZone(target, "dock");
+        changed = true;
+      }
+    } else {
+      if (targetIsApp && target !== source && targetZone === "dock") {
+        swapItems(source, target);
+        setItemZone(source, "dock");
+        setItemZone(target, "apps");
+        changed = true;
+      } else if (target && target !== source && target.closest(".mobile-home-grid")) {
+        placeRelativeToTarget(source, target, event?.clientX ?? startX, event?.clientY ?? startY);
+        changed = true;
+      } else if (targetGrid) {
+        targetGrid.append(source);
+        changed = true;
+      } else if (targetDock && !target) {
+        changed = false;
+      }
     }
-  }
 
-  function finishWidgetDrag(event, cancelled) {
-    const source = pressTarget;
-    const pointTarget = cancelled ? null : document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);
-    const target = pointTarget?.closest?.("[data-home-widget-id]") || null;
-    const destination = pageContainers(currentPageElement()).widgets;
-    if (!cancelled && target && target !== source && !target.hidden) {
-      target.before(source);
-      persistHomeLayout();
-      updatePageIndicator();
-      updateViewportHeight();
-    } else if (!cancelled && destination) {
-      destination.append(source);
+    if (changed) {
       persistHomeLayout();
       updatePageIndicator();
       updateViewportHeight();
@@ -690,8 +795,7 @@ export function bindHome(context = {}) {
 
   function finishDrag(event, cancelled = false) {
     if (!dragging || !pressTarget) return;
-    if (pressKind === "widget") finishWidgetDrag(event, cancelled);
-    else finishAppDrag(event, cancelled);
+    finishGridDrag(event, cancelled);
 
     pressTarget.classList.remove("is-home-dragging", "is-home-widget-dragging", "is-home-pressing");
     clearDropTarget();
@@ -759,13 +863,16 @@ export function bindHome(context = {}) {
     event.preventDefault();
     moveGhost(ghost, event.clientX, event.clientY);
     scheduleEdgePaging(event.clientX);
-    const selector = pressKind === "widget" ? "[data-home-widget-id]" : "[data-home-item-id]";
-    const hit = document.elementFromPoint(event.clientX, event.clientY)?.closest?.(selector) || null;
+    const hit = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("[data-home-item-id], [data-home-widget-id]") || null;
     if (hit === pressTarget || hit === dropItem || hit?.hidden) return;
     clearDropTarget();
     if (hit) {
+      const sourceInDock = pressTarget?.dataset?.homeZone === "dock";
+      const invalidDockToWidget = sourceInDock && Boolean(hit.dataset.homeWidgetId);
+      const invalidWidgetToDock = pressKind === "widget" && Boolean(hit.closest(".mobile-home-dock"));
+      if (invalidDockToWidget || invalidWidgetToDock) return;
       dropItem = hit;
-      dropItem.classList.add(pressKind === "widget" ? "is-home-widget-drop-target" : "is-home-drop-target");
+      dropItem.classList.add(hit.dataset.homeWidgetId ? "is-home-widget-drop-target" : "is-home-drop-target");
     }
   }
 
@@ -819,13 +926,13 @@ export function bindHome(context = {}) {
     let widget = root.querySelector(`[data-home-widget-id="${id}"]`);
     if (!widget && id === "checkpoint") {
       widget = makeWidgetShell(createCheckpointWidget(context.services), "checkpoint");
-      pageContainers(currentPageElement()).widgets?.append(widget);
+      pageContainers(currentPageElement()).grid?.append(widget);
     }
     if (!widget) return;
     widget.hidden = false;
     widget.removeAttribute("hidden");
     widget.style.removeProperty("display");
-    pageContainers(currentPageElement()).widgets?.append(widget);
+    pageContainers(currentPageElement()).grid?.append(widget);
     persistHomeLayout();
     closeWidgetPicker();
     updatePageIndicator();
