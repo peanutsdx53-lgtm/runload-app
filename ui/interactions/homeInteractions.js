@@ -1,5 +1,5 @@
 const STORAGE_KEY = "running-record-mobile-home-layout-v1";
-const LONG_PRESS_MS = 450;
+const LONG_PRESS_MS = 380;
 const MOVE_CANCEL_PX = 10;
 
 const DEFAULT_LAYOUT = Object.freeze({
@@ -74,6 +74,7 @@ function prepareItems(root) {
     if (!id) return;
     item.dataset.homeItemId = id;
     item.dataset.homeZone = item.closest(".mobile-home-dock") ? "dock" : "apps";
+    item.setAttribute("draggable", "false");
   });
 }
 
@@ -165,6 +166,10 @@ export function bindHome() {
     dropItem = null;
   }
 
+  function clearPressState() {
+    pressItem?.classList.remove("is-home-pressing");
+  }
+
   function setEditing(next) {
     editing = Boolean(next);
     root.classList.toggle("is-home-editing", editing);
@@ -198,7 +203,7 @@ export function bindHome() {
       writeLayout(appsContainer, dockContainer);
     }
 
-    source.classList.remove("is-home-dragging");
+    source.classList.remove("is-home-dragging", "is-home-pressing");
     clearDropTarget();
     ghost?.remove();
     ghost = null;
@@ -209,6 +214,7 @@ export function bindHome() {
 
   function beginDrag(item, event) {
     if (!item || dragging) return;
+    item.classList.remove("is-home-pressing");
     setEditing(true);
     dragging = true;
     pressItem = item;
@@ -225,14 +231,20 @@ export function bindHome() {
     pressTimer = null;
   }
 
+  function cancelPendingPress() {
+    cancelPressTimer();
+    clearPressState();
+  }
+
   function handlePointerDown(event) {
     const item = event.target.closest("[data-home-item-id]");
     if (!item || (event.pointerType === "mouse" && event.button !== 0)) return;
-    cancelPressTimer();
+    cancelPendingPress();
     pressItem = item;
     pointerId = event.pointerId;
     startX = event.clientX;
     startY = event.clientY;
+    item.classList.add("is-home-pressing");
     if (editing) {
       event.preventDefault();
       beginDrag(item, event);
@@ -244,7 +256,7 @@ export function bindHome() {
   function handlePointerMove(event) {
     if (event.pointerId !== pointerId) return;
     if (!dragging) {
-      if (Math.hypot(event.clientX - startX, event.clientY - startY) > MOVE_CANCEL_PX) cancelPressTimer();
+      if (Math.hypot(event.clientX - startX, event.clientY - startY) > MOVE_CANCEL_PX) cancelPendingPress();
       return;
     }
     event.preventDefault();
@@ -264,6 +276,8 @@ export function bindHome() {
     if (dragging) {
       event.preventDefault();
       finishDrag(event);
+    } else {
+      clearPressState();
     }
     pointerId = null;
     pressItem = null;
@@ -272,7 +286,8 @@ export function bindHome() {
   function handlePointerCancel(event) {
     if (event.pointerId !== pointerId) return;
     cancelPressTimer();
-    finishDrag(event, true);
+    if (dragging) finishDrag(event, true);
+    clearPressState();
     pointerId = null;
     pressItem = null;
   }
@@ -288,6 +303,14 @@ export function bindHome() {
     }
   }
 
+  function handleContextMenu(event) {
+    if (event.target.closest("[data-home-item-id]")) event.preventDefault();
+  }
+
+  function handleDragStart(event) {
+    if (event.target.closest("[data-home-item-id]")) event.preventDefault();
+  }
+
   function handleKeyDown(event) {
     if (event.key === "Escape" && editing) setEditing(false);
   }
@@ -297,16 +320,20 @@ export function bindHome() {
   root.addEventListener("pointerup", handlePointerUp);
   root.addEventListener("pointercancel", handlePointerCancel);
   root.addEventListener("click", handleClick, true);
+  root.addEventListener("contextmenu", handleContextMenu);
+  root.addEventListener("dragstart", handleDragStart);
   document.addEventListener("keydown", handleKeyDown);
 
   return () => {
-    cancelPressTimer();
+    cancelPendingPress();
     ghost?.remove();
     root.removeEventListener("pointerdown", handlePointerDown);
     root.removeEventListener("pointermove", handlePointerMove);
     root.removeEventListener("pointerup", handlePointerUp);
     root.removeEventListener("pointercancel", handlePointerCancel);
     root.removeEventListener("click", handleClick, true);
+    root.removeEventListener("contextmenu", handleContextMenu);
+    root.removeEventListener("dragstart", handleDragStart);
     document.removeEventListener("keydown", handleKeyDown);
   };
 }
