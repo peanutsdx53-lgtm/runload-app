@@ -14,10 +14,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Locate retired core references
+      - name: Inspect cleanup references
         shell: bash
         run: |
+          echo "=== RETIRED CORE REFERENCES ==="
           grep -R -n 'runloadCore' app.js core screens ui tests service-worker.js || true
+          echo "=== CONSULTATION PRESENTATION API ==="
+          grep -R -n -E 'buildReportPresentation|renderReportSheet|createReportCopyText|selectedReportRegionalValue|createPlanShareMemo|selectedA7ReportRegionId' app.js core screens ui tests service-worker.js || true
+          echo "=== PRESENTATION COPY CONSUMERS ==="
+          grep -R -n -E 'presentation\.copy|\.copy\.(standard|detailed)' app.js core screens ui tests service-worker.js || true
       - name: Check JavaScript syntax
         shell: bash
         run: |
