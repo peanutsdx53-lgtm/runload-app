@@ -39,7 +39,8 @@ jobs:
       - name: Verify mobile home contract
         run: |
           set -euo pipefail
-          grep -q 'return matchesMobile ? "home" : "home"' ui/deviceLayout.js
+          grep -q 'export function resolveDefaultEntryScreen()' ui/deviceLayout.js
+          grep -q 'return "home";' ui/deviceLayout.js
           grep -q 'class="mobile-home-os"' screens/homeScreen.js
           grep -q 'class="mobile-home-dock"' screens/homeScreen.js
           grep -q '条件比較' screens/homeScreen.js
