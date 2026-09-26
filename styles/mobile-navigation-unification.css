@@ -1,0 +1,85 @@
+/* Smartphone navigation policy: Home is reached from the header, not a floating bottom navigation. */
+@media (max-width: 54.99rem) {
+  /* Keep the three primary workflow screens on the same header geometry as contextual screens. */
+  .app-shell:has(.screen-layout--record) > .mobile-topbar,
+  .app-shell:has(.screen-layout--result) > .mobile-topbar,
+  .app-shell:has(.screen-layout--history) > .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 48;
+    min-height: 58px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    padding: max(8px, env(safe-area-inset-top)) 14px 8px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-line) 70%, transparent);
+    background: color-mix(in srgb, var(--color-paper) 90%, transparent);
+    backdrop-filter: blur(20px) saturate(1.08);
+    -webkit-backdrop-filter: blur(20px) saturate(1.08);
+  }
+
+  .app-shell:has(.screen-layout--record) > .mobile-topbar .mobile-topbar__back,
+  .app-shell:has(.screen-layout--result) > .mobile-topbar .mobile-topbar__back,
+  .app-shell:has(.screen-layout--history) > .mobile-topbar .mobile-topbar__back {
+    min-width: 0;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    color: var(--color-accent-strong);
+    font-size: 12px;
+    font-weight: 850;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .app-shell:has(.screen-layout--record) > .mobile-topbar .mobile-topbar__brand,
+  .app-shell:has(.screen-layout--result) > .mobile-topbar .mobile-topbar__brand,
+  .app-shell:has(.screen-layout--history) > .mobile-topbar .mobile-topbar__brand {
+    justify-self: center;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .app-shell:has(.screen-layout--record) > .mobile-topbar .mobile-topbar__brand strong,
+  .app-shell:has(.screen-layout--result) > .mobile-topbar .mobile-topbar__brand strong,
+  .app-shell:has(.screen-layout--history) > .mobile-topbar .mobile-topbar__brand strong {
+    font-size: 15px;
+    line-height: 1.2;
+    letter-spacing: -.015em;
+  }
+
+  .app-shell:has(.screen-layout--record) > .mobile-topbar .mobile-topbar__actions,
+  .app-shell:has(.screen-layout--result) > .mobile-topbar .mobile-topbar__actions,
+  .app-shell:has(.screen-layout--history) > .mobile-topbar .mobile-topbar__actions {
+    justify-self: end;
+  }
+
+  /* Home is the app-level hub. Non-home screens return there from their header only. */
+  .app-shell:has(.screen-layout:not(.screen-layout--home)) > .primary-navigation {
+    display: none !important;
+  }
+
+  /* Screens no longer need clearance for the removed floating Home bar. */
+  .app-shell:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) {
+    padding-bottom: 0;
+  }
+
+  /* Record keeps only its save controls at the bottom. */
+  .screen-layout--record .mobile-save-bar {
+    left: max(10px, env(safe-area-inset-left));
+    right: max(10px, env(safe-area-inset-right));
+  }
+
+  body:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) .pwa-update-notice {
+    bottom: max(10px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 360px) {
+  .screen-layout--record .mobile-save-bar {
+    left: 7px;
+    right: 7px;
+  }
+}
