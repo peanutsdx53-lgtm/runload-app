@@ -1,0 +1,76 @@
+name: Post-cleanup second-pass audit
+
+on:
+  push:
+    branches:
+      - audit/post-cleanup-second-pass-20260926
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Repository inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== TOP LEVEL ==="
+          find . -maxdepth 1 -mindepth 1 -not -name .git -printf '%f\n' | sort
+          echo "=== TRACKED FILE COUNT ==="
+          git ls-files | wc -l
+          echo "=== FILES BY TOP DIRECTORY ==="
+          git ls-files | awk -F/ '{print (NF==1 ? "[root]" : $1)}' | sort | uniq -c | sort -nr
+          echo "=== EXTENSIONS ==="
+          git ls-files | awk '
+            function ext(path, n,a,b){n=split(path,a,"/"); b=a[n]; if (b !~ /\./ || b ~ /^\.[^.]+$/) return "[none]"; sub(/^.*\./,"",b); return "." b}
+            {print ext($0)}' | sort | uniq -c | sort -nr
+          echo "=== LARGE TEXT FILES >= 40KB ==="
+          find . -type f -not -path './.git/*' -size +40k -printf '%s %p\n' | sort -nr
+      - name: Development residue scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== TODO FIXME HACK XXX ==="
+          grep -R -n -E '\b(TODO|FIXME|HACK|XXX)\b' --include='*.js' --include='*.mjs' --include='*.html' --include='*.css' --include='*.md' . || true
+          echo "=== CONSOLE DEBUGGER ==="
+          grep -R -n -E '\b(console\.(log|debug|warn|error)|debugger)\b' --include='*.js' --include='*.mjs' . || true
+          echo "=== RETIRED/DEVELOPMENT TERMS ==="
+          grep -R -n -E 'selectedA7|\bA7\b|second[-_ ]pillar|runloadCore|RunLoad|Runload|RUNLOAD|ChatGPT|\bGPT\b|\bLLM\b|Candidate|CANDIDATE|LOCKED|SHA-?256|Master V[0-9]|CURRENT_INTERNAL_SPECIFICATION' --include='*.js' --include='*.mjs' --include='*.html' --include='*.css' --include='*.md' --include='*.webmanifest' . || true
+          echo "=== VERSION-NAMED FILES ==="
+          git ls-files | grep -E '(^|/)(v[0-9]+|V[0-9]+|legacy|old|deprecated|candidate|backup|tmp|temp)([^/]*)(/|$)' || true
+      - name: Evidence governance usage
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== EVIDENCE MODULE REFERENCES ==="
+          grep -R -n -E 'evidenceGovernanceData|EVIDENCE_GOVERNANCE_VERSION|SOURCE_EVIDENCE_REGISTRY|ARTICLE_EVIDENCE_REGISTRY|getSourceEvidenceGovernance|getArticleEvidenceGovernance|buildArticleEvidenceGovernance|evidenceForArticle|evidenceForSource|evidenceGovernanceVersion' --include='*.js' --include='*.mjs' . || true
+          echo "=== MODULE REGISTRATION REFERENCES ==="
+          grep -R -n -E 'internalModules\.[A-Za-z0-9_]+' --include='*.js' core | sed -E 's/.*internalModules\.([A-Za-z0-9_]+).*/\1/' | sort | uniq -c | sort -nr
+      - name: Runtime reachability and validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { readFile, readdir } from 'node:fs/promises';
+          import path from 'node:path';
+          const roots=['app.js','ui/pwaUpdateBootstrap.js','service-worker.js'];
+          const runtimeDirs=['core','screens','ui'];
+          const all=[];
+          async function walk(dir){for(const ent of await readdir(dir,{withFileTypes:true})){const p=path.posix.join(dir,ent.name); if(ent.isDirectory()) await walk(p); else if(ent.name.endsWith('.js')) all.push(p);}}
+          for(const d of runtimeDirs) await walk(d);
+          all.push('app.js','service-worker.js');
+          const visited=new Set();
+          const pats=[/\bfrom\s+["']([^"']+)["']/g,/\bimport\s*["']([^"']+)["']/g,/\bimport\s*\(\s*["']([^"']+)["']\s*\)/g];
+          async function visit(file){if(visited.has(file)) return; visited.add(file); const text=await readFile(file,'utf8'); for(const pat of pats){for(const m of text.matchAll(pat)){const spec=m[1]; if(!spec.startsWith('.')) continue; let resolved=path.posix.normalize(path.posix.join(path.posix.dirname(file),spec)); if(!path.posix.extname(resolved)) resolved+='.js'; await visit(resolved);}}}
+          for(const r of roots) await visit(r);
+          const runtime=new Set(all);
+          const unreachable=[...runtime].filter(x=>!visited.has(x)).sort();
+          console.log(JSON.stringify({runtimeFiles:runtime.size,reachable:visited.size,unreachable},null,2));
+          NODE
+          while IFS= read -r file; do node --check "$file"; done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          for file in tests/*.test.mjs; do node "$file" >/dev/null; done
+          echo "SYNTAX_AND_REGRESSION=PASS"
