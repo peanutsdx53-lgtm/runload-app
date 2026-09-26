@@ -180,7 +180,10 @@ export function renderDesktopHeader({ currentScreen, currentLocation, hasResult 
 function renderMobileHeader(currentScreen, currentLocation, hasResult) {
   const menu = renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "mobile" });
   const help = renderContextHelpButton(currentScreen);
-  const context = resolveScreenContextNavigation(currentScreen, currentLocation);
+  const context = resolveScreenContextNavigation(currentScreen, currentLocation)
+    || (["record-input", "result", "history"].includes(currentScreen)
+      ? { backHref: "#/home", backLabel: "Home" }
+      : null);
   const title = resolveHeaderTitle(currentScreen, currentLocation);
   const titleHtml = `<div class="mobile-topbar__brand mobile-topbar__screen-title"><strong>${escapeHtml(title)}</strong></div>`;
   if (context) {
