@@ -137,14 +137,20 @@ function mobileHomeIcon(name) {
     reading: '<path d="M5 5.5h6c1.2 0 2 .8 2 2v11c0-1.2-.8-2-2-2H5Zm14 0h-4c-1.2 0-2 .8-2 2v11c0-1.2.8-2 2-2h4Z"/>',
     share: '<circle cx="7" cy="12" r="2"/><circle cx="17" cy="6" r="2"/><circle cx="17" cy="18" r="2"/><path d="m9 11 6-4m-6 6 6 4"/>',
     settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3.5v2m0 13v2M3.5 12h2m13 0h2M6 6l1.4 1.4m9.2 9.2L18 18M18 6l-1.4 1.4m-9.2 9.2L6 18"/>',
+    "location-note": '<path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z"/><circle cx="12" cy="10" r="2.2"/>',
+    "quick-note": '<path d="M5 5h14v14H5z"/><path d="M8 9h8M8 12h6M8 15h5"/>',
+    "gear-note": '<path d="M5 8.5h14v10H5z"/><path d="M9 8.5V6.8c0-1 .8-1.8 1.8-1.8h2.4c1 0 1.8.8 1.8 1.8v1.7M5 12h14M10 12v1.5h4V12"/>',
   };
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name] || paths.settings}</svg>`;
 }
 
-function renderMobileLauncherItem({ href, label, icon, tone = "blue", dock = false }) {
+function renderMobileLauncherItem({ href, label, icon, tone = "blue", dock = false, optional = false }) {
   const className = dock ? "mobile-home-dock__item" : "mobile-home-app";
   const iconClass = dock ? "mobile-home-dock__icon" : "mobile-home-app__icon";
-  return `<a class="${className}" href="${escapeHtml(href)}"><span class="${iconClass} mobile-home-tone--${escapeHtml(tone)}">${mobileHomeIcon(icon)}</span><span class="${dock ? "mobile-home-dock__label" : "mobile-home-app__label"}">${escapeHtml(label)}</span></a>`;
+  const labelClass = dock ? "mobile-home-dock__label" : "mobile-home-app__label";
+  const content = `<span class="${iconClass} mobile-home-tone--${escapeHtml(tone)}">${mobileHomeIcon(icon)}</span><span class="${labelClass}">${escapeHtml(label)}</span>`;
+  if (!optional) return `<a class="${className}" href="${escapeHtml(href)}">${content}</a>`;
+  return `<div class="${className} mobile-home-app--optional" data-home-optional-app><a class="mobile-home-app__launch" href="${escapeHtml(href)}" aria-label="${escapeHtml(label)}">${content}</a><button type="button" class="mobile-home-app-remove" data-home-app-remove aria-label="${escapeHtml(label)}をホームから外す">−</button></div>`;
 }
 
 function renderMobileTodayWidget(experience, draft) {
@@ -181,6 +187,11 @@ function renderMobileHomeOs({ services, latestExperience, draft }) {
     { href: "#/consultation?from=home", label: "共有", icon: "share", tone: "cyan" },
     { href: "#/settings?from=home", label: "設定", icon: "settings", tone: "gray" },
   ];
+  const optionalApps = [
+    { href: "#/location-note", label: "地点メモ", icon: "location-note", tone: "cyan", optional: true },
+    { href: "#/quick-note", label: "1分メモ", icon: "quick-note", tone: "violet", optional: true },
+    { href: "#/gear-note", label: "装備メモ", icon: "gear-note", tone: "orange", optional: true },
+  ];
   const dock = [
     { href: "#/record-input", label: "記録", icon: "record", tone: "blue" },
     { href: "#/run-measurement", label: "測定", icon: "measure", tone: "red" },
@@ -200,6 +211,9 @@ function renderMobileHomeOs({ services, latestExperience, draft }) {
     <section class="mobile-home-apps" aria-label="機能">
       ${apps.map((item) => renderMobileLauncherItem(item)).join("")}
     </section>
+    <div class="mobile-home-app-catalog" data-home-app-catalog hidden aria-hidden="true">
+      ${optionalApps.map((item) => renderMobileLauncherItem(item)).join("")}
+    </div>
     <nav class="mobile-home-dock" aria-label="よく使う機能">
       ${dock.map((item) => renderMobileLauncherItem({ ...item, dock: true })).join("")}
     </nav>

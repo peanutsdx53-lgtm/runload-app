@@ -11,6 +11,7 @@ import { bindSimulation } from "./interactions/simulationInteractions.js";
 import { bindGpxAnalysis } from "./interactions/gpxAnalysisInteractions.js";
 import { bindRunMeasurement } from "./interactions/runMeasurementInteractions.js";
 import { bindRunRoute } from "./interactions/runRouteInteractions.js";
+import { bindMobileQuickTool } from "./interactions/mobileQuickToolsInteractions.js";
 
 const SCREEN_INTERACTION_BINDERS = Object.freeze({
   home: bindHome,
@@ -27,6 +28,9 @@ const SCREEN_INTERACTION_BINDERS = Object.freeze({
   "gpx-analysis": bindGpxAnalysis,
   "run-measurement": bindRunMeasurement,
   "run-route": bindRunRoute,
+  "location-note": bindMobileQuickTool,
+  "quick-note": bindMobileQuickTool,
+  "gear-note": bindMobileQuickTool,
 });
 
 let activeCleanup = null;
