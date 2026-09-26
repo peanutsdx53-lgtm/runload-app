@@ -70,7 +70,8 @@ export function findNearestFreePlacement(placements, token, desired, options = {
     }
   }
   candidates.sort((a, b) => a.score - b.score || a.row - b.row || a.col - b.col);
-  return candidates.find((candidate) => placementIsFree(placements, token, candidate, options)) || null;
+  const found = candidates.find((candidate) => placementIsFree(placements, token, candidate, options));
+  return found ? { row: found.row, col: found.col } : null;
 }
 
 export function packTokens(tokens, {
