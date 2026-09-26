@@ -10,6 +10,22 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="走行記録">
+  <style>
+    .app-boot{display:none}
+    @media (max-width:54.99rem){
+      html,body{min-height:100%;background:#eaf3f8}
+      .app-boot{min-height:100dvh;display:grid;place-items:center;padding:24px;background:#eaf3f8;color:#1e2b35;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center}
+      .app-boot__inner{display:grid;justify-items:center;gap:10px}
+      .app-boot__mark{width:58px;height:58px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(145deg,#f8fcff,#d7e8f1);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 24px rgba(29,57,75,.15);font-size:24px;font-weight:900;color:#24546f}
+      .app-boot strong{font-size:18px;letter-spacing:-.02em}
+      .app-boot small{color:#667987;font-size:11px;font-weight:700}
+      .app-boot__dots{display:flex;gap:5px;margin-top:2px}
+      .app-boot__dots i{width:5px;height:5px;border-radius:50%;background:#46758e;animation:app-boot-dot .9s ease-in-out infinite alternate}
+      .app-boot__dots i:nth-child(2){animation-delay:.15s}.app-boot__dots i:nth-child(3){animation-delay:.3s}
+      @keyframes app-boot-dot{from{opacity:.3;transform:translateY(1px)}to{opacity:1;transform:translateY(-2px)}}
+      @media (prefers-reduced-motion:reduce){.app-boot__dots i{animation:none;opacity:.65}}
+    }
+  </style>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
@@ -34,7 +50,7 @@
 <body>
   <a class="skip-link" href="#main-content">本文へ移動</a>
   <div id="desktop-header-root"></div>
-  <div id="app"></div>
+  <div id="app"><div class="app-boot" aria-live="polite"><div class="app-boot__inner"><div class="app-boot__mark" aria-hidden="true">R</div><strong>走行記録</strong><small>起動しています</small><span class="app-boot__dots" aria-hidden="true"><i></i><i></i><i></i></span></div></div></div>
   <noscript>このアプリを利用するにはJavaScriptを有効にしてください。</noscript>
   <script src="./ui/pwaUpdateBootstrap.js" defer></script>
   <script type="module" src="./app.js"></script>

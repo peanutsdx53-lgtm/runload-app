@@ -161,17 +161,25 @@ self.addEventListener("fetch", (event) => {
 
   if (!PRECACHE_PATHS.has(url.pathname)) return;
   event.respondWith(
-    caches.open(CACHE_NAME).then((cache) => (
-      fetch(new Request(request, { cache: "no-store" }))
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const cached = await cache.match(request, { ignoreSearch: true });
+      const refresh = fetch(new Request(request, { cache: "no-store" }))
         .then((response) => {
           if (response.ok && response.type === "basic") {
-            const copy = response.clone();
-            event.waitUntil(cache.put(request, copy));
+            event.waitUntil(cache.put(request, response.clone()));
           }
           return response;
         })
-        .catch(() => cache.match(request, { ignoreSearch: true }))
-    ))
+        .catch(() => null);
+
+      if (cached) {
+        event.waitUntil(refresh);
+        return cached;
+      }
+
+      const response = await refresh;
+      return response || Response.error();
+    })
   );
 });
 
