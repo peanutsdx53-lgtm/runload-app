@@ -1,0 +1,95 @@
+name: Japanese home label temporary fix
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/japanese-home-label-fix-temp.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply exact Japanese home-label fixes
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          shell_path = Path('ui/appShell.js')
+          shell = shell_path.read_text(encoding='utf-8')
+          count = shell.count('backLabel: "Home"')
+          if count != 2:
+              raise SystemExit(f'Expected exactly 2 Home back labels in appShell.js, found {count}')
+          shell = shell.replace('backLabel: "Home"', 'backLabel: "ホーム"')
+          shell_path.write_text(shell, encoding='utf-8')
+
+          architecture_path = Path('ui/screenArchitecture.js')
+          architecture = architecture_path.read_text(encoding='utf-8')
+          old = 'Object.freeze({ screen: "home", label: "Home", description: "今日の入口", icon: "home" })'
+          new = 'Object.freeze({ screen: "home", label: "ホーム", description: "今日の入口", icon: "home" })'
+          if architecture.count(old) != 1:
+              raise SystemExit('Expected exactly one primary Home navigation label')
+          architecture = architecture.replace(old, new)
+          architecture_path.write_text(architecture, encoding='utf-8')
+
+          test_path = Path('tests/headerHierarchy.test.mjs')
+          test = test_path.read_text(encoding='utf-8')
+          old_test = '''  assert.ok(shell.includes('home: "ホーム"'));
+  assert.ok(!architecture.includes('backLabel: "Home"'));'''
+          new_test = '''  assert.ok(shell.includes('home: "ホーム"'));
+  assert.ok(!shell.includes('backLabel: "Home"'));
+  assert.ok(!architecture.includes('backLabel: "Home"'));
+  assert.ok(architecture.includes('screen: "home", label: "ホーム"'));'''
+          if test.count(old_test) != 1:
+              raise SystemExit('Header hierarchy test anchor not found exactly once')
+          test = test.replace(old_test, new_test)
+          test_path.write_text(test, encoding='utf-8')
+          PY
+
+          git rm .github/workflows/japanese-home-label-fix-temp.yml
+
+      - name: Validate JavaScript syntax
+        run: |
+          set -euo pipefail
+          find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+
+      - name: Run regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do
+            echo "Running $test"
+            node "$test"
+          done
+
+      - name: Validate diff and user-facing Home residue
+        run: |
+          set -euo pipefail
+          git diff --check
+          if grep -n 'backLabel: "Home"' ui/appShell.js ui/screenArchitecture.js; then
+            echo 'English Home back label still remains' >&2
+            exit 1
+          fi
+          if grep -n 'screen: "home", label: "Home"' ui/screenArchitecture.js; then
+            echo 'English Home primary navigation label still remains' >&2
+            exit 1
+          fi
+
+      - name: Commit validated fix
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ui/appShell.js ui/screenArchitecture.js tests/headerHierarchy.test.mjs .github/workflows/japanese-home-label-fix-temp.yml
+          git commit -m "Use Japanese home label consistently"
+          git push origin HEAD:main
