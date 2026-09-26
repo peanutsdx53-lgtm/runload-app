@@ -3,12 +3,12 @@
   .mobile-home-page-viewport {
     width: 100%;
     overflow-x: auto;
-    overflow-y: visible;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    transition: height 160ms ease;
   }
 
   .mobile-home-page-viewport::-webkit-scrollbar {

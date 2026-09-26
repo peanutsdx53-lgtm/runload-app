@@ -494,6 +494,14 @@ export function bindHome(context = {}) {
     writeWidgetLayout(root);
   }
 
+  function updateViewportHeight() {
+    requestAnimationFrame(() => {
+      const page = currentPageElement();
+      if (!page) return;
+      viewport.style.height = `${Math.max(1, page.scrollHeight)}px`;
+    });
+  }
+
   function updatePageIndicator() {
     if (!pageIndicator) return;
     const pages = pageElements(root);
@@ -540,6 +548,7 @@ export function bindHome(context = {}) {
     const left = activePage * viewport.clientWidth;
     viewport.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
     updatePageIndicator();
+    updateViewportHeight();
     if (persist) writeLayout(root, dockContainer, activePage);
   }
 
@@ -646,12 +655,18 @@ export function bindHome(context = {}) {
         setItemZone(target, sourceZone);
       }
       writeLayout(root, dockContainer, activePage);
+      updatePageIndicator();
+      updateViewportHeight();
     } else if (!cancelled && targetZone === "apps" && sourceZone === "apps") {
       targetZoneElement.append(source);
       writeLayout(root, dockContainer, activePage);
+      updatePageIndicator();
+      updateViewportHeight();
     } else if (!cancelled && targetZone === sourceZone && targetZone === "dock") {
       targetZoneElement.append(source);
       writeLayout(root, dockContainer, activePage);
+      updatePageIndicator();
+      updateViewportHeight();
     }
   }
 
@@ -662,10 +677,14 @@ export function bindHome(context = {}) {
     const destination = pageContainers(currentPageElement()).widgets;
     if (!cancelled && target && target !== source && !target.hidden) {
       target.before(source);
-      writeWidgetLayout(root);
+      persistHomeLayout();
+      updatePageIndicator();
+      updateViewportHeight();
     } else if (!cancelled && destination) {
       destination.append(source);
-      writeWidgetLayout(root);
+      persistHomeLayout();
+      updatePageIndicator();
+      updateViewportHeight();
     }
   }
 
@@ -781,15 +800,19 @@ export function bindHome(context = {}) {
     const index = WIDGET_SIZE_ORDER.indexOf(current);
     const next = WIDGET_SIZE_ORDER[(index + 1) % WIDGET_SIZE_ORDER.length];
     applyWidgetSize(widget, next);
-    writeWidgetLayout(root);
+    persistHomeLayout();
+    updatePageIndicator();
+    updateViewportHeight();
   }
 
   function removeWidget(id) {
     const widget = root.querySelector(`[data-home-widget-id="${id}"]`);
     if (!widget) return;
     widget.hidden = true;
-    writeWidgetLayout(root);
+    persistHomeLayout();
     refreshWidgetPicker(root);
+    updatePageIndicator();
+    updateViewportHeight();
   }
 
   function addWidget(id) {
@@ -803,8 +826,10 @@ export function bindHome(context = {}) {
     widget.removeAttribute("hidden");
     widget.style.removeProperty("display");
     pageContainers(currentPageElement()).widgets?.append(widget);
-    writeWidgetLayout(root);
+    persistHomeLayout();
     closeWidgetPicker();
+    updatePageIndicator();
+    updateViewportHeight();
   }
 
   function handleWidgetPickerPointerUp(event) {
@@ -893,6 +918,7 @@ export function bindHome(context = {}) {
       if (bounded !== activePage) {
         activePage = bounded;
         updatePageIndicator();
+        updateViewportHeight();
         writeLayout(root, dockContainer, activePage);
       }
     });
