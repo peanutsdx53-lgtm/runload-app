@@ -1,0 +1,45 @@
+name: Cleanup final validation
+
+on:
+  push:
+    branches:
+      - refactor/codebase-cleanup-20260925
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r file; do
+            echo "Checking $file"
+            node --check "$file"
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+      - name: Run regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in tests/*.test.mjs; do
+            echo "==> $file"
+            node "$file"
+          done
+      - name: Validate cleanup boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e RUNTIME_SHA256SUMS.txt
+          test ! -e ui/hierarchicalExplanation.js
+          test -z "$(find core screens ui -type f ! -name '*.js' -print)"
+          test -z "$(find styles -type f ! -name '*.css' -print)"
+          test ! -e package.json
+          test -z "$(find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.jsx' -o -name '*.vue' -o -name '*.py' \) -not -path './.git/*' -print)"
+          ! grep -R -n -E 'RunLoad Journal|Runload Journal' --include='*.js' --include='*.html' --include='*.css' --include='*.webmanifest' .
+          ! grep -R -n -E 'RUNLOAD|RunLoad|Runload|runload' index.html manifest.webmanifest screens ui styles
+          ! grep -R -n -E '\b(ChatGPT|GPT|LLM)\b' index.html manifest.webmanifest screens ui styles
