@@ -1,0 +1,72 @@
+name: Mobile all-screen validation
+
+on:
+  push:
+    branches:
+      - mobile/all-screen-unification-20260926
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify scoped changes
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          changed="$(git diff --name-only origin/main...HEAD | sort)"
+          echo "$changed"
+          unexpected="$(echo "$changed" | grep -Ev '^(.github/workflows/mobile-all-screen-validation.yml|index.html|service-worker.js|styles/mobile-app-screens.css)$' || true)"
+          test -z "$unexpected"
+          ! echo "$changed" | grep -Eq '^styles/(desktop|desktop-foundation)\.css$'
+          ! echo "$changed" | grep -Eq '^screens/|^core/|^ui/'
+      - name: Check JavaScript syntax
+        run: |
+          set -euo pipefail
+          while IFS= read -r file; do
+            node --check "$file"
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+      - name: Run regression tests
+        run: |
+          set -euo pipefail
+          for file in tests/*.test.mjs; do
+            echo "Running $file"
+            node "$file" >/dev/null
+          done
+      - name: Verify smartphone stylesheet boundaries
+        run: |
+          set -euo pipefail
+          grep -q '@media (max-width: 54.99rem)' styles/mobile-app-screens.css
+          ! grep -q '@media (min-width:' styles/mobile-app-screens.css
+          grep -q 'screen-layout--result' styles/mobile-app-screens.css
+          grep -q 'screen-layout--history' styles/mobile-app-screens.css
+          grep -q 'screen-layout--plan' styles/mobile-app-screens.css
+          grep -q 'screen-layout--simulation' styles/mobile-app-screens.css
+          grep -q 'screen-layout--course' styles/mobile-app-screens.css
+          grep -q 'screen-layout--gpx' styles/mobile-app-screens.css
+          grep -q 'screen-layout--consultation' styles/mobile-app-screens.css
+          grep -q 'screen-layout--reading' styles/mobile-app-screens.css
+          grep -q 'screen-layout--settings' styles/mobile-app-screens.css
+          grep -q 'primary-navigation__link:not(\[data-navigation-screen="home"\])' styles/mobile-app-screens.css
+          grep -q './styles/mobile-app-screens.css' index.html
+          grep -q './styles/mobile-app-screens.css' service-worker.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const css = fs.readFileSync('styles/mobile-app-screens.css', 'utf8');
+          let depth = 0;
+          for (const ch of css) {
+            if (ch === '{') depth += 1;
+            if (ch === '}') depth -= 1;
+            if (depth < 0) throw new Error('CSS brace underflow');
+          }
+          if (depth !== 0) throw new Error(`CSS brace mismatch: ${depth}`);
+          NODE
+      - name: Verify PWA precache paths
+        run: |
+          set -euo pipefail
+          node tests/interpretationRoomPwaIntegration.test.mjs >/dev/null
