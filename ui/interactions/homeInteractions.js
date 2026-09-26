@@ -17,6 +17,15 @@ const WIDGET_CATALOG = Object.freeze([
 const DEFAULT_WIDGET_ORDER = Object.freeze(WIDGET_CATALOG.map((item) => item.id));
 const DEFAULT_WIDGET_VISIBLE = Object.freeze(["today", "plan", "changes"]);
 const WIDGET_ID_SET = new Set(DEFAULT_WIDGET_ORDER);
+const WIDGET_SIZE_ORDER = Object.freeze(["small", "medium", "large"]);
+const WIDGET_SIZE_SET = new Set(WIDGET_SIZE_ORDER);
+const DEFAULT_WIDGET_SIZES = Object.freeze({
+  today: "medium",
+  plan: "small",
+  changes: "small",
+  checkpoint: "small",
+});
+const WIDGET_SIZE_LABELS = Object.freeze({ small: "小", medium: "中", large: "大" });
 
 const ITEM_ID_BY_HREF = Object.freeze([
   ["#/simulation", "simulation"],
@@ -65,7 +74,7 @@ function readWidgetLayout() {
   try {
     const parsed = JSON.parse(globalThis.localStorage?.getItem(WIDGET_STORAGE_KEY) || "null");
     if (!parsed || typeof parsed !== "object") {
-      return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE] };
+      return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES } };
     }
     const storedOrder = Array.isArray(parsed.order) ? parsed.order.map(String).filter((id) => WIDGET_ID_SET.has(id)) : [];
     const order = [...new Set(storedOrder)];
@@ -73,9 +82,16 @@ function readWidgetLayout() {
       if (!order.includes(id)) order.push(id);
     });
     const storedVisible = Array.isArray(parsed.visible) ? parsed.visible.map(String).filter((id) => WIDGET_ID_SET.has(id)) : [...DEFAULT_WIDGET_VISIBLE];
-    return { order, visible: [...new Set(storedVisible)] };
+    const sizes = { ...DEFAULT_WIDGET_SIZES };
+    if (parsed.sizes && typeof parsed.sizes === "object") {
+      DEFAULT_WIDGET_ORDER.forEach((id) => {
+        const size = String(parsed.sizes[id] || "");
+        if (WIDGET_SIZE_SET.has(size)) sizes[id] = size;
+      });
+    }
+    return { order, visible: [...new Set(storedVisible)], sizes };
   } catch {
-    return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE] };
+    return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES } };
   }
 }
 
@@ -98,6 +114,7 @@ function writeWidgetLayout(widgetsContainer) {
     version: 1,
     order: widgets.map((item) => item.dataset.homeWidgetId),
     visible: widgets.filter((item) => !item.hidden).map((item) => item.dataset.homeWidgetId),
+    sizes: Object.fromEntries(widgets.map((item) => [item.dataset.homeWidgetId, item.dataset.homeWidgetSize || DEFAULT_WIDGET_SIZES[item.dataset.homeWidgetId] || "small"])),
   };
   try {
     globalThis.localStorage?.setItem(WIDGET_STORAGE_KEY, JSON.stringify(layout));
@@ -146,6 +163,26 @@ function createCheckpointWidget(services) {
   return anchor;
 }
 
+function normalizeWidgetSize(size, id) {
+  const candidate = String(size || "");
+  if (WIDGET_SIZE_SET.has(candidate)) return candidate;
+  return DEFAULT_WIDGET_SIZES[id] || "small";
+}
+
+function applyWidgetSize(shell, size) {
+  if (!shell) return;
+  const id = shell.dataset.homeWidgetId || "";
+  const normalized = normalizeWidgetSize(size, id);
+  shell.dataset.homeWidgetSize = normalized;
+  WIDGET_SIZE_ORDER.forEach((name) => shell.classList.toggle(`mobile-home-widget-shell--size-${name}`, name === normalized));
+  const button = shell.querySelector("[data-home-widget-size]");
+  if (button) {
+    const label = WIDGET_SIZE_LABELS[normalized] || normalized;
+    button.textContent = label;
+    button.setAttribute("aria-label", `${WIDGET_CATALOG.find((item) => item.id === id)?.label || "ウィジェット"}のサイズを変更（現在: ${label}）`);
+  }
+}
+
 function makeWidgetShell(anchor, id) {
   const shell = document.createElement("div");
   shell.className = "mobile-home-widget-shell";
@@ -162,6 +199,13 @@ function makeWidgetShell(anchor, id) {
   remove.setAttribute("aria-label", `${WIDGET_CATALOG.find((item) => item.id === id)?.label || "ウィジェット"}をホームから外す`);
   remove.textContent = "−";
   shell.append(remove);
+
+  const sizeButton = document.createElement("button");
+  sizeButton.type = "button";
+  sizeButton.className = "mobile-home-widget-size";
+  sizeButton.dataset.homeWidgetSize = id;
+  shell.append(sizeButton);
+  applyWidgetSize(shell, DEFAULT_WIDGET_SIZES[id]);
   return shell;
 }
 
@@ -202,6 +246,7 @@ function applyWidgetLayout(widgetsContainer) {
   });
   widgets.forEach((widget, id) => {
     widget.hidden = !layout.visible.includes(id);
+    applyWidgetSize(widget, layout.sizes?.[id]);
   });
 }
 
@@ -497,6 +542,16 @@ export function bindHome(context = {}) {
     pressKind = "";
   }
 
+  function cycleWidgetSize(id) {
+    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
+    if (!widget) return;
+    const current = normalizeWidgetSize(widget.dataset.homeWidgetSize, id);
+    const index = WIDGET_SIZE_ORDER.indexOf(current);
+    const next = WIDGET_SIZE_ORDER[(index + 1) % WIDGET_SIZE_ORDER.length];
+    applyWidgetSize(widget, next);
+    writeWidgetLayout(widgetsContainer);
+  }
+
   function removeWidget(id) {
     const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
     if (!widget) return;
@@ -542,6 +597,12 @@ export function bindHome(context = {}) {
     if (event.target.closest("[data-home-widget-add]")) {
       event.preventDefault();
       if (editing) openWidgetPicker();
+      return;
+    }
+    const size = event.target.closest("[data-home-widget-size]");
+    if (size) {
+      event.preventDefault();
+      if (editing) cycleWidgetSize(size.dataset.homeWidgetSize);
       return;
     }
     const remove = event.target.closest("[data-home-widget-remove]");
