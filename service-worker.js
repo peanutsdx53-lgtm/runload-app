@@ -98,7 +98,6 @@ const PRECACHE_URLS = [
   "./ui/interactions/resultInteractions.js",
   "./ui/interactions/settingsInteractions.js",
   "./ui/personalContextPresentation.js",
-  "./ui/planPresentation.js",
   "./ui/recordEmbeddedSubflows.js",
   "./ui/recordInputWorkspace.js",
   "./ui/flowSessionState.js",
