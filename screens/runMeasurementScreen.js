@@ -17,7 +17,7 @@ export function renderRunMeasurementScreen({ services, context }) {
 
   return `<div class="screen screen--run-measurement run-measurement" data-run-measurement data-plan-id="${escapeHtml(validPlan?.id || "")}" data-target-pace="${escapeHtml(targetPace || "")}">
     <header class="run-measurement__header">
-      <a href="#/start" class="run-measurement__back">← 戻る</a>
+      <a href="#/home" class="run-measurement__back">← ホーム</a>
       <strong>ランニング測定</strong>
       <button type="button" class="context-help-button app-utility-button context-help-button--measurement" data-screen-tutorial-start="run-measurement" aria-label="GPS測定の使い方を開く"><span class="app-utility-button__question" aria-hidden="true">?</span></button>
     </header>
