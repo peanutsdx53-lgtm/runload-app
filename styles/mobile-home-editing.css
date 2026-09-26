@@ -1,4 +1,86 @@
 @media (max-width: 54.99rem) {
+
+  .mobile-home-page-viewport {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-home-page-viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-home-pages {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .mobile-home-page {
+    flex: 0 0 100%;
+    min-width: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .mobile-home-page-indicator {
+    min-height: 28px;
+    margin: -8px 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+
+  .mobile-home-page-indicator[hidden] {
+    display: none;
+  }
+
+  .mobile-home-page-dot {
+    width: 8px;
+    height: 8px;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-muted) 42%, transparent);
+    transition: width 150ms ease, background 150ms ease, transform 150ms ease;
+  }
+
+  .mobile-home-page-dot[aria-current="page"] {
+    width: 20px;
+    background: var(--color-accent-strong);
+  }
+
+  .mobile-home-page-control {
+    display: none;
+    width: 28px;
+    height: 28px;
+    min-height: 0;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--color-accent-strong) 35%, var(--color-line));
+    border-radius: 50%;
+    background: var(--color-surface);
+    color: var(--color-accent-strong);
+    font-size: 18px;
+    line-height: 1;
+    box-shadow: 0 4px 10px rgba(31, 47, 60, .1);
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-page-control {
+    display: grid;
+    place-items: center;
+  }
+
+  .mobile-home-page-control--remove {
+    color: var(--color-attention);
+    border-color: color-mix(in srgb, var(--color-attention) 42%, var(--color-line));
+  }
   .mobile-home-os {
     -webkit-touch-callout: none;
     -webkit-user-select: none;

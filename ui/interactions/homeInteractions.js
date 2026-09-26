@@ -2,10 +2,14 @@ const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const LONG_PRESS_MS = 380;
 const MOVE_CANCEL_PX = 10;
+const MAX_HOME_PAGES = 4;
+const PAGE_EDGE_PX = 34;
+const PAGE_EDGE_DELAY_MS = 420;
 
 const DEFAULT_LAYOUT = Object.freeze({
-  apps: Object.freeze(["simulation", "plan", "reading", "share", "settings"]),
+  pages: Object.freeze([Object.freeze(["simulation", "plan", "reading", "share", "settings"])]),
   dock: Object.freeze(["record", "measure", "history", "course"]),
+  activePage: 0,
 });
 
 const WIDGET_CATALOG = Object.freeze([
@@ -39,7 +43,7 @@ const ITEM_ID_BY_HREF = Object.freeze([
   ["#/course-library", "course"],
 ]);
 
-const ALL_ITEM_IDS = Object.freeze([...DEFAULT_LAYOUT.apps, ...DEFAULT_LAYOUT.dock]);
+const ALL_ITEM_IDS = Object.freeze([...DEFAULT_LAYOUT.pages.flat(), ...DEFAULT_LAYOUT.dock]);
 const ALL_ITEM_ID_SET = new Set(ALL_ITEM_IDS);
 
 function itemIdFromHref(href = "") {
@@ -57,14 +61,22 @@ function widgetIdFromAnchor(anchor, index) {
 function readLayout() {
   try {
     const parsed = JSON.parse(globalThis.localStorage?.getItem(STORAGE_KEY) || "null");
-    const apps = Array.isArray(parsed?.apps) ? parsed.apps.map(String) : [];
     const dock = Array.isArray(parsed?.dock) ? parsed.dock.map(String) : [];
-    const combined = [...apps, ...dock];
+    const sourcePages = Array.isArray(parsed?.pages)
+      ? parsed.pages
+      : [Array.isArray(parsed?.apps) ? parsed.apps : []];
+    const pages = sourcePages.slice(0, MAX_HOME_PAGES).map((page) => Array.isArray(page) ? page.map(String) : []);
+    if (!pages.length) pages.push([]);
+    const combined = [...pages.flat(), ...dock];
     if (dock.length !== DEFAULT_LAYOUT.dock.length) return DEFAULT_LAYOUT;
     if (combined.length !== ALL_ITEM_IDS.length) return DEFAULT_LAYOUT;
     if (new Set(combined).size !== ALL_ITEM_IDS.length) return DEFAULT_LAYOUT;
     if (!combined.every((id) => ALL_ITEM_ID_SET.has(id))) return DEFAULT_LAYOUT;
-    return Object.freeze({ apps: Object.freeze(apps), dock: Object.freeze(dock) });
+    const activeCandidate = Number(parsed?.activePage);
+    const activePage = Number.isInteger(activeCandidate)
+      ? Math.max(0, Math.min(pages.length - 1, activeCandidate))
+      : 0;
+    return { pages, dock, activePage };
   } catch {
     return DEFAULT_LAYOUT;
   }
@@ -74,7 +86,7 @@ function readWidgetLayout() {
   try {
     const parsed = JSON.parse(globalThis.localStorage?.getItem(WIDGET_STORAGE_KEY) || "null");
     if (!parsed || typeof parsed !== "object") {
-      return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES } };
+      return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES }, pageById: Object.fromEntries(DEFAULT_WIDGET_ORDER.map((id) => [id, 0])) };
     }
     const storedOrder = Array.isArray(parsed.order) ? parsed.order.map(String).filter((id) => WIDGET_ID_SET.has(id)) : [];
     const order = [...new Set(storedOrder)];
@@ -89,17 +101,28 @@ function readWidgetLayout() {
         if (WIDGET_SIZE_SET.has(size)) sizes[id] = size;
       });
     }
-    return { order, visible: [...new Set(storedVisible)], sizes };
+    const pageById = Object.fromEntries(DEFAULT_WIDGET_ORDER.map((id) => [id, 0]));
+    if (parsed.pageById && typeof parsed.pageById === "object") {
+      DEFAULT_WIDGET_ORDER.forEach((id) => {
+        const page = Number(parsed.pageById[id]);
+        if (Number.isInteger(page) && page >= 0 && page < MAX_HOME_PAGES) pageById[id] = page;
+      });
+    }
+    return { order, visible: [...new Set(storedVisible)], sizes, pageById };
   } catch {
-    return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES } };
+    return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES }, pageById: Object.fromEntries(DEFAULT_WIDGET_ORDER.map((id) => [id, 0])) };
   }
 }
 
-function writeLayout(appsContainer, dockContainer) {
+function writeLayout(root, dockContainer, activePage = 0) {
+  const pages = [...root.querySelectorAll(".mobile-home-page")].map((page) =>
+    [...page.querySelectorAll(".mobile-home-apps [data-home-item-id]")].map((item) => item.dataset.homeItemId)
+  );
   const layout = {
-    version: 1,
-    apps: [...appsContainer.querySelectorAll("[data-home-item-id]")].map((item) => item.dataset.homeItemId),
+    version: 2,
+    pages: pages.length ? pages : [[]],
     dock: [...dockContainer.querySelectorAll("[data-home-item-id]")].map((item) => item.dataset.homeItemId),
+    activePage: Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(activePage) || 0)),
   };
   try {
     globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(layout));
@@ -108,13 +131,14 @@ function writeLayout(appsContainer, dockContainer) {
   }
 }
 
-function writeWidgetLayout(widgetsContainer) {
-  const widgets = [...widgetsContainer.querySelectorAll("[data-home-widget-id]")];
+function writeWidgetLayout(root) {
+  const widgets = [...root.querySelectorAll("[data-home-widget-id]")];
   const layout = {
-    version: 1,
+    version: 2,
     order: widgets.map((item) => item.dataset.homeWidgetId),
     visible: widgets.filter((item) => !item.hidden).map((item) => item.dataset.homeWidgetId),
     sizes: Object.fromEntries(widgets.map((item) => [item.dataset.homeWidgetId, item.dataset.homeWidgetSize || DEFAULT_WIDGET_SIZES[item.dataset.homeWidgetId] || "small"])),
+    pageById: Object.fromEntries(widgets.map((item) => [item.dataset.homeWidgetId, Number(item.closest(".mobile-home-page")?.dataset.homePageIndex || 0)])),
   };
   try {
     globalThis.localStorage?.setItem(WIDGET_STORAGE_KEY, JSON.stringify(layout));
@@ -144,6 +168,78 @@ function prepareItems(root) {
     item.dataset.homeZone = item.closest(".mobile-home-dock") ? "dock" : "apps";
     item.setAttribute("draggable", "false");
   });
+}
+
+function createHomePage(index) {
+  const page = document.createElement("section");
+  page.className = "mobile-home-page";
+  page.dataset.homePageIndex = String(index);
+  page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);
+  const widgets = document.createElement("div");
+  widgets.className = "mobile-home-widgets";
+  widgets.setAttribute("aria-label", "ウィジェット");
+  const apps = document.createElement("section");
+  apps.className = "mobile-home-apps";
+  apps.setAttribute("aria-label", "機能");
+  page.append(widgets, apps);
+  return page;
+}
+
+function syncPageIndices(root) {
+  [...root.querySelectorAll(".mobile-home-page")].forEach((page, index) => {
+    page.dataset.homePageIndex = String(index);
+    page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);
+  });
+}
+
+function ensurePageScaffold(root) {
+  let viewport = root.querySelector("[data-home-page-viewport]");
+  if (viewport) return viewport;
+  const widgets = root.querySelector(".mobile-home-widgets");
+  const apps = root.querySelector(".mobile-home-apps");
+  if (!widgets || !apps) return null;
+  viewport = document.createElement("div");
+  viewport.className = "mobile-home-page-viewport";
+  viewport.dataset.homePageViewport = "";
+  viewport.setAttribute("aria-label", "ホームページ");
+  const track = document.createElement("div");
+  track.className = "mobile-home-pages";
+  track.dataset.homePages = "";
+  const page = document.createElement("section");
+  page.className = "mobile-home-page";
+  page.dataset.homePageIndex = "0";
+  page.setAttribute("aria-label", "ホーム 1ページ目");
+  widgets.before(viewport);
+  page.append(widgets, apps);
+  track.append(page);
+  viewport.append(track);
+  const indicator = document.createElement("nav");
+  indicator.className = "mobile-home-page-indicator";
+  indicator.dataset.homePageIndicator = "";
+  indicator.setAttribute("aria-label", "ホームページ切り替え");
+  viewport.after(indicator);
+  return viewport;
+}
+
+function ensurePageCount(root, count) {
+  const track = root.querySelector("[data-home-pages]");
+  if (!track) return;
+  const desired = Math.max(1, Math.min(MAX_HOME_PAGES, Number(count) || 1));
+  while (track.querySelectorAll(".mobile-home-page").length < desired) {
+    track.append(createHomePage(track.querySelectorAll(".mobile-home-page").length));
+  }
+  syncPageIndices(root);
+}
+
+function pageElements(root) {
+  return [...root.querySelectorAll(".mobile-home-page")];
+}
+
+function pageContainers(page) {
+  return {
+    widgets: page?.querySelector(".mobile-home-widgets") || null,
+    apps: page?.querySelector(".mobile-home-apps") || null,
+  };
 }
 
 function createCheckpointWidget(services) {
@@ -220,14 +316,18 @@ function prepareWidgets(widgetsContainer, services) {
   }
 }
 
-function applyLayout(root, appsContainer, dockContainer) {
+function applyLayout(root, dockContainer, layout = readLayout()) {
+  ensurePageCount(root, layout.pages.length);
   const items = new Map([...root.querySelectorAll("[data-home-item-id]")].map((item) => [item.dataset.homeItemId, item]));
-  const layout = readLayout();
-  layout.apps.forEach((id) => {
-    const item = items.get(id);
-    if (!item) return;
-    setItemZone(item, "apps");
-    appsContainer.append(item);
+  layout.pages.forEach((ids, pageIndex) => {
+    const apps = pageContainers(pageElements(root)[pageIndex]).apps;
+    if (!apps) return;
+    ids.forEach((id) => {
+      const item = items.get(id);
+      if (!item) return;
+      setItemZone(item, "apps");
+      apps.append(item);
+    });
   });
   layout.dock.forEach((id) => {
     const item = items.get(id);
@@ -235,14 +335,18 @@ function applyLayout(root, appsContainer, dockContainer) {
     setItemZone(item, "dock");
     dockContainer.append(item);
   });
+  return Math.max(0, Math.min(pageElements(root).length - 1, layout.activePage || 0));
 }
 
-function applyWidgetLayout(widgetsContainer) {
-  const layout = readWidgetLayout();
-  const widgets = new Map([...widgetsContainer.querySelectorAll("[data-home-widget-id]")].map((item) => [item.dataset.homeWidgetId, item]));
+function applyWidgetLayout(root, layout = readWidgetLayout()) {
+  const maxPage = Math.max(0, ...Object.values(layout.pageById || {}).map((value) => Number(value) || 0));
+  ensurePageCount(root, maxPage + 1);
+  const widgets = new Map([...root.querySelectorAll("[data-home-widget-id]")].map((item) => [item.dataset.homeWidgetId, item]));
   layout.order.forEach((id) => {
     const widget = widgets.get(id);
-    if (widget) widgetsContainer.append(widget);
+    if (!widget) return;
+    const pageIndex = Math.max(0, Math.min(pageElements(root).length - 1, Number(layout.pageById?.[id]) || 0));
+    pageContainers(pageElements(root)[pageIndex]).widgets?.append(widget);
   });
   widgets.forEach((widget, id) => {
     widget.hidden = !layout.visible.includes(id);
@@ -303,11 +407,11 @@ function ensureWidgetPicker(root) {
   return overlay;
 }
 
-function refreshWidgetPicker(root, widgetsContainer) {
+function refreshWidgetPicker(root) {
   const overlay = ensureWidgetPicker(root);
   const list = overlay.querySelector("[data-home-widget-picker-list]");
   if (!list) return;
-  const visible = new Set([...widgetsContainer.querySelectorAll("[data-home-widget-id]:not([hidden])")].map((item) => item.dataset.homeWidgetId));
+  const visible = new Set([...root.querySelectorAll("[data-home-widget-id]:not([hidden])")].map((item) => item.dataset.homeWidgetId));
   const available = WIDGET_CATALOG.filter((item) => !visible.has(item.id));
   if (!available.length) {
     list.innerHTML = '<p class="mobile-home-widget-picker__empty">追加できるウィジェットはありません。</p>';
@@ -345,16 +449,21 @@ function moveGhost(ghost, clientX, clientY) {
 export function bindHome(context = {}) {
   const root = document.querySelector(".mobile-home-os");
   if (!root) return null;
-  const widgetsContainer = root.querySelector(".mobile-home-widgets");
-  const appsContainer = root.querySelector(".mobile-home-apps");
   const dockContainer = root.querySelector(".mobile-home-dock");
-  if (!widgetsContainer || !appsContainer || !dockContainer) return null;
+  const viewport = ensurePageScaffold(root);
+  if (!dockContainer || !viewport) return null;
+  const initialWidgets = root.querySelector(".mobile-home-page .mobile-home-widgets");
+  if (!initialWidgets) return null;
 
-  prepareWidgets(widgetsContainer, context.services);
+  prepareWidgets(initialWidgets, context.services);
   prepareItems(root);
   ensureEditControls(root);
-  applyWidgetLayout(widgetsContainer);
-  applyLayout(root, appsContainer, dockContainer);
+  const appLayout = readLayout();
+  const widgetLayout = readWidgetLayout();
+  const maxWidgetPage = Math.max(0, ...Object.values(widgetLayout.pageById || {}).map((value) => Number(value) || 0));
+  ensurePageCount(root, Math.max(appLayout.pages.length, maxWidgetPage + 1));
+  applyWidgetLayout(root, widgetLayout);
+  let activePage = applyLayout(root, dockContainer, appLayout);
   ensureWidgetPicker(root);
 
   let editing = false;
@@ -368,9 +477,124 @@ export function bindHome(context = {}) {
   let ghost = null;
   let dropItem = null;
   let suppressClickUntil = 0;
+  let edgeTimer = null;
+  let edgeTargetPage = -1;
+  let scrollFrame = null;
 
   const editButton = root.querySelector("[data-home-edit-toggle]");
   const widgetPicker = root.querySelector("[data-home-widget-picker]");
+  const pageIndicator = root.querySelector("[data-home-page-indicator]");
+
+  function currentPageElement() {
+    return pageElements(root)[activePage] || pageElements(root)[0] || null;
+  }
+
+  function persistHomeLayout() {
+    writeLayout(root, dockContainer, activePage);
+    writeWidgetLayout(root);
+  }
+
+  function updatePageIndicator() {
+    if (!pageIndicator) return;
+    const pages = pageElements(root);
+    pageIndicator.hidden = pages.length <= 1 && !editing;
+    pageIndicator.replaceChildren();
+    pages.forEach((page, index) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "mobile-home-page-dot";
+      dot.dataset.homePageTarget = String(index);
+      dot.setAttribute("aria-label", `${index + 1}ページ目へ移動`);
+      dot.setAttribute("aria-current", index === activePage ? "page" : "false");
+      pageIndicator.append(dot);
+    });
+    if (editing && pages.length < MAX_HOME_PAGES) {
+      const add = document.createElement("button");
+      add.type = "button";
+      add.className = "mobile-home-page-control";
+      add.dataset.homePageAdd = "";
+      add.setAttribute("aria-label", "ホームページを追加");
+      add.textContent = "+";
+      pageIndicator.append(add);
+    }
+    if (editing && activePage > 0) {
+      const page = pages[activePage];
+      const hasApps = Boolean(page?.querySelector(".mobile-home-apps [data-home-item-id]"));
+      const hasVisibleWidgets = Boolean(page?.querySelector(".mobile-home-widgets [data-home-widget-id]:not([hidden])"));
+      if (!hasApps && !hasVisibleWidgets) {
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "mobile-home-page-control mobile-home-page-control--remove";
+        remove.dataset.homePageRemove = "";
+        remove.setAttribute("aria-label", "空のホームページを削除");
+        remove.textContent = "−";
+        pageIndicator.append(remove);
+      }
+    }
+  }
+
+  function setActivePage(index, { smooth = true, persist = false } = {}) {
+    const pages = pageElements(root);
+    if (!pages.length) return;
+    activePage = Math.max(0, Math.min(pages.length - 1, Number(index) || 0));
+    const left = activePage * viewport.clientWidth;
+    viewport.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
+    updatePageIndicator();
+    if (persist) writeLayout(root, dockContainer, activePage);
+  }
+
+  function addPage() {
+    const pages = pageElements(root);
+    if (pages.length >= MAX_HOME_PAGES) return;
+    ensurePageCount(root, pages.length + 1);
+    syncPageIndices(root);
+    setActivePage(pageElements(root).length - 1, { smooth: true, persist: true });
+  }
+
+  function removeCurrentPage() {
+    const pages = pageElements(root);
+    if (activePage <= 0 || activePage >= pages.length) return;
+    const page = pages[activePage];
+    if (page.querySelector(".mobile-home-apps [data-home-item-id]")) return;
+    if (page.querySelector(".mobile-home-widgets [data-home-widget-id]:not([hidden])")) return;
+    const fallback = pages[activePage - 1];
+    const fallbackWidgets = pageContainers(fallback).widgets;
+    page.querySelectorAll(".mobile-home-widgets [data-home-widget-id]").forEach((widget) => fallbackWidgets?.append(widget));
+    page.remove();
+    syncPageIndices(root);
+    activePage = Math.max(0, activePage - 1);
+    setActivePage(activePage, { smooth: false });
+    persistHomeLayout();
+  }
+
+  function clearEdgePaging() {
+    if (edgeTimer) clearTimeout(edgeTimer);
+    edgeTimer = null;
+    edgeTargetPage = -1;
+  }
+
+  function scheduleEdgePaging(clientX) {
+    if (!dragging || pageElements(root).length < 2) {
+      clearEdgePaging();
+      return;
+    }
+    const rect = viewport.getBoundingClientRect();
+    let target = -1;
+    if (clientX - rect.left <= PAGE_EDGE_PX && activePage > 0) target = activePage - 1;
+    else if (rect.right - clientX <= PAGE_EDGE_PX && activePage < pageElements(root).length - 1) target = activePage + 1;
+    if (target < 0) {
+      clearEdgePaging();
+      return;
+    }
+    if (edgeTimer && edgeTargetPage === target) return;
+    clearEdgePaging();
+    edgeTargetPage = target;
+    edgeTimer = setTimeout(() => {
+      const next = edgeTargetPage;
+      clearEdgePaging();
+      setActivePage(next, { smooth: true });
+    }, PAGE_EDGE_DELAY_MS);
+  }
 
   function clearDropTarget() {
     dropItem?.classList.remove("is-home-drop-target", "is-home-widget-drop-target");
@@ -386,7 +610,7 @@ export function bindHome(context = {}) {
   }
 
   function openWidgetPicker() {
-    refreshWidgetPicker(root, widgetsContainer);
+    refreshWidgetPicker(root);
     if (widgetPicker) widgetPicker.hidden = false;
   }
 
@@ -399,8 +623,10 @@ export function bindHome(context = {}) {
     }
     if (!editing) {
       clearDropTarget();
+      clearEdgePaging();
       closeWidgetPicker();
     }
+    updatePageIndicator();
   }
 
   function finishAppDrag(event, cancelled) {
@@ -409,7 +635,7 @@ export function bindHome(context = {}) {
     const pointTarget = cancelled ? null : document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);
     const target = pointTarget?.closest?.("[data-home-item-id]") || null;
     const targetZoneElement = pointTarget?.closest?.(".mobile-home-apps, .mobile-home-dock") || null;
-    const targetZone = targetZoneElement === dockContainer ? "dock" : targetZoneElement === appsContainer ? "apps" : "";
+    const targetZone = targetZoneElement === dockContainer ? "dock" : targetZoneElement?.classList?.contains("mobile-home-apps") ? "apps" : "";
 
     if (!cancelled && target && target !== source) {
       if (sourceZone === target.dataset.homeZone) {
@@ -419,10 +645,13 @@ export function bindHome(context = {}) {
         setItemZone(source, target.dataset.homeZone);
         setItemZone(target, sourceZone);
       }
-      writeLayout(appsContainer, dockContainer);
-    } else if (!cancelled && targetZone && targetZone === sourceZone) {
+      writeLayout(root, dockContainer, activePage);
+    } else if (!cancelled && targetZone === "apps" && sourceZone === "apps") {
       targetZoneElement.append(source);
-      writeLayout(appsContainer, dockContainer);
+      writeLayout(root, dockContainer, activePage);
+    } else if (!cancelled && targetZone === sourceZone && targetZone === "dock") {
+      targetZoneElement.append(source);
+      writeLayout(root, dockContainer, activePage);
     }
   }
 
@@ -430,12 +659,13 @@ export function bindHome(context = {}) {
     const source = pressTarget;
     const pointTarget = cancelled ? null : document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);
     const target = pointTarget?.closest?.("[data-home-widget-id]") || null;
+    const destination = pageContainers(currentPageElement()).widgets;
     if (!cancelled && target && target !== source && !target.hidden) {
       target.before(source);
-      writeWidgetLayout(widgetsContainer);
-    } else if (!cancelled && pointTarget?.closest?.(".mobile-home-widgets")) {
-      widgetsContainer.append(source);
-      writeWidgetLayout(widgetsContainer);
+      writeWidgetLayout(root);
+    } else if (!cancelled && destination) {
+      destination.append(source);
+      writeWidgetLayout(root);
     }
   }
 
@@ -446,6 +676,7 @@ export function bindHome(context = {}) {
 
     pressTarget.classList.remove("is-home-dragging", "is-home-widget-dragging", "is-home-pressing");
     clearDropTarget();
+    clearEdgePaging();
     ghost?.remove();
     ghost = null;
     dragging = false;
@@ -508,6 +739,7 @@ export function bindHome(context = {}) {
     }
     event.preventDefault();
     moveGhost(ghost, event.clientX, event.clientY);
+    scheduleEdgePaging(event.clientX);
     const selector = pressKind === "widget" ? "[data-home-widget-id]" : "[data-home-item-id]";
     const hit = document.elementFromPoint(event.clientX, event.clientY)?.closest?.(selector) || null;
     if (hit === pressTarget || hit === dropItem || hit?.hidden) return;
@@ -543,35 +775,35 @@ export function bindHome(context = {}) {
   }
 
   function cycleWidgetSize(id) {
-    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
+    const widget = root.querySelector(`[data-home-widget-id="${id}"]`);
     if (!widget) return;
     const current = normalizeWidgetSize(widget.dataset.homeWidgetSize, id);
     const index = WIDGET_SIZE_ORDER.indexOf(current);
     const next = WIDGET_SIZE_ORDER[(index + 1) % WIDGET_SIZE_ORDER.length];
     applyWidgetSize(widget, next);
-    writeWidgetLayout(widgetsContainer);
+    writeWidgetLayout(root);
   }
 
   function removeWidget(id) {
-    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
+    const widget = root.querySelector(`[data-home-widget-id="${id}"]`);
     if (!widget) return;
     widget.hidden = true;
-    writeWidgetLayout(widgetsContainer);
-    refreshWidgetPicker(root, widgetsContainer);
+    writeWidgetLayout(root);
+    refreshWidgetPicker(root);
   }
 
   function addWidget(id) {
-    let widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
+    let widget = root.querySelector(`[data-home-widget-id="${id}"]`);
     if (!widget && id === "checkpoint") {
       widget = makeWidgetShell(createCheckpointWidget(context.services), "checkpoint");
-      widgetsContainer.append(widget);
+      pageContainers(currentPageElement()).widgets?.append(widget);
     }
     if (!widget) return;
     widget.hidden = false;
     widget.removeAttribute("hidden");
     widget.style.removeProperty("display");
-    widgetsContainer.append(widget);
-    writeWidgetLayout(widgetsContainer);
+    pageContainers(currentPageElement()).widgets?.append(widget);
+    writeWidgetLayout(root);
     closeWidgetPicker();
   }
 
@@ -589,6 +821,22 @@ export function bindHome(context = {}) {
   }
 
   function handleClick(event) {
+    const pageTarget = event.target.closest("[data-home-page-target]");
+    if (pageTarget) {
+      event.preventDefault();
+      setActivePage(Number(pageTarget.dataset.homePageTarget), { smooth: true, persist: true });
+      return;
+    }
+    if (event.target.closest("[data-home-page-add]")) {
+      event.preventDefault();
+      if (editing) addPage();
+      return;
+    }
+    if (event.target.closest("[data-home-page-remove]")) {
+      event.preventDefault();
+      if (editing) removeCurrentPage();
+      return;
+    }
     if (event.target.closest("[data-home-edit-toggle]")) {
       event.preventDefault();
       setEditing(!editing);
@@ -635,6 +883,21 @@ export function bindHome(context = {}) {
     if (event.target.closest("[data-home-item-id], [data-home-widget-id]")) event.preventDefault();
   }
 
+  function handlePageScroll() {
+    if (scrollFrame) cancelAnimationFrame(scrollFrame);
+    scrollFrame = requestAnimationFrame(() => {
+      scrollFrame = null;
+      if (!viewport.clientWidth || dragging) return;
+      const index = Math.round(viewport.scrollLeft / viewport.clientWidth);
+      const bounded = Math.max(0, Math.min(pageElements(root).length - 1, index));
+      if (bounded !== activePage) {
+        activePage = bounded;
+        updatePageIndicator();
+        writeLayout(root, dockContainer, activePage);
+      }
+    });
+  }
+
   function handleKeyDown(event) {
     if (event.key === "Escape") {
       if (widgetPicker && !widgetPicker.hidden) closeWidgetPicker();
@@ -642,6 +905,7 @@ export function bindHome(context = {}) {
     }
   }
 
+  viewport.addEventListener("scroll", handlePageScroll, { passive: true });
   widgetPicker?.addEventListener("pointerup", handleWidgetPickerPointerUp);
   root.addEventListener("pointerdown", handlePointerDown);
   root.addEventListener("pointermove", handlePointerMove, { passive: false });
@@ -652,10 +916,15 @@ export function bindHome(context = {}) {
   root.addEventListener("selectstart", handleSelectStart);
   root.addEventListener("dragstart", handleDragStart);
   document.addEventListener("keydown", handleKeyDown);
+  setActivePage(activePage, { smooth: false });
+  updatePageIndicator();
 
   return () => {
     cancelPendingPress();
     ghost?.remove();
+    clearEdgePaging();
+    if (scrollFrame) cancelAnimationFrame(scrollFrame);
+    viewport.removeEventListener("scroll", handlePageScroll);
     widgetPicker?.removeEventListener("pointerup", handleWidgetPickerPointerUp);
     root.removeEventListener("pointerdown", handlePointerDown);
     root.removeEventListener("pointermove", handlePointerMove);
