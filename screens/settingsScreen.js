@@ -1,6 +1,6 @@
-import { APPEARANCE_MODE_OPTIONS, COLOR_THEME_OPTIONS, TEXT_SIZE_OPTIONS, normalizeJournalSettings } from "../ui/appSettings.js";
+import { APPEARANCE_MODE_OPTIONS, COLOR_THEME_OPTIONS, TEXT_SIZE_OPTIONS, normalizeAppSettings } from "../ui/appSettings.js";
 import { escapeHtml } from "../ui/commonComponents.js";
-import { PROFILE_AGE_BAND_OPTIONS } from "../core/runloadCore.js";
+import { PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
 
 function checked(current, value) {
   return current === value ? " checked" : "";
@@ -34,7 +34,7 @@ function renderDataOverview(services) {
 }
 
 export function renderSettingsScreen({ services, context }) {
-  const settings = normalizeJournalSettings(services.storage.settings.load());
+  const settings = normalizeAppSettings(services.storage.settings.load());
   const profile = services.storage.profile.load();
   const saved = context?.parameters?.get("status") === "saved";
   const goalValues = new Set(Array.isArray(profile.runningGoalTags) ? profile.runningGoalTags : []);
@@ -44,7 +44,7 @@ export function renderSettingsScreen({ services, context }) {
     <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">SETTINGS</p><h1>設定</h1><p>表示、使い回す情報、端末内データをまとめます。</p></section>
     ${saved ? '<p class="parity-save-message" role="status">設定を保存しました。</p>' : ""}
-    <form id="journal-settings-form" novalidate>
+    <form id="app-settings-form" novalidate>
       <section class="group"><p class="group-title">DISPLAY</p>
         <div class="display-setting-list">
           ${renderDisplaySetting({ eyebrow: "TEXT SIZE", title: "文字サイズ", name: "textSize", current: settings.textSize, options: TEXT_SIZE_OPTIONS })}
@@ -70,7 +70,7 @@ export function renderSettingsScreen({ services, context }) {
             <label class="field"><span>性別（任意）</span><select name="profileSex"><option value="">未設定・回答しない</option><option value="male"${profile.sex === "male" ? " selected" : ""}>男性</option><option value="female"${profile.sex === "female" ? " selected" : ""}>女性</option></select></label>
           </div><p class="note">すべて任意です。「共有用にまとめる」で、共有内容に含めるか本人が選べます。</p></div></details>
           <details class="subdetails"><summary><span><strong>保存シューズ</strong><small>Recordで次回も選べる名称</small></span><span>⌄</span></summary><div class="subdetails-body">${renderSavedShoes(settings)}<p class="visually-hidden">保存候補から削除しても、過去記録に保存されたシューズ情報は変わりません。</p></div></details>
-          <div class="action-row"><button type="submit" class="primary">プロフィールを保存</button><button type="button" data-action="reset-journal-settings">標準設定に戻す</button></div>
+          <div class="action-row"><button type="submit" class="primary">プロフィールを保存</button><button type="button" data-action="reset-app-settings">標準設定に戻す</button></div>
           <p class="visually-hidden">ルートファイル（GPX）は端末内で読み取り、外部サービスへ自動送信しません。</p>
           <input type="hidden" name="regionalResultInitialView" value="${escapeHtml(settings.regionalResultInitialView)}">
           <input type="hidden" name="showRegionalPreviousComparison" value="${settings.showRegionalPreviousComparison ? "show" : "hide"}">
@@ -82,10 +82,10 @@ export function renderSettingsScreen({ services, context }) {
     <section class="group"><p class="group-title">DATA</p>
       <details class="disclosure"${context?.parameters?.get("section") === "data" ? " open" : ""}><summary><span><small>LOCAL DATA</small><strong>バックアップ・復元・削除</strong><span>必要なときだけ開きます</span></span><i>⌄</i></summary><div class="disclosure-body">
         ${renderDataOverview(services)}
-        <p class="note">この端末のRunLoadデータを対象にします。自分で操作しない限り、バックアップや削除は実行しません。</p>
+        <p class="note">この端末のアプリデータを対象にします。自分で操作しない限り、バックアップや削除は実行しません。</p>
         <div class="action-row"><button type="button" class="primary" data-action="export-backup">バックアップを保存</button><label for="restore-backup-file">バックアップを選択</label><input class="hidden-file" id="restore-backup-file" data-action="restore-backup" type="file" accept="application/json,.json"></div>
         <div class="restore-preview" data-restore-preview-host aria-live="polite"><p class="muted-text">ファイルを選ぶと、内容を確認してから復元できます。</p></div>
-        <div class="danger-box"><strong>この端末内のRunLoadデータを削除</strong><p>記録、結果、予定、保存コース、プロフィール、設定、保存シューズ、下書きなどを削除します。端末へ書き出したバックアップファイルは削除しません。</p><label class="field"><span>確認のため「削除」と入力</span><input id="clear-data-confirmation" autocomplete="off"></label><div class="action-row"><button type="button" class="danger" data-action="clear-all-user-data">すべて削除</button></div></div>
+        <div class="danger-box"><strong>この端末内のアプリデータを削除</strong><p>記録、結果、予定、保存コース、プロフィール、設定、保存シューズ、下書きなどを削除します。端末へ書き出したバックアップファイルは削除しません。</p><label class="field"><span>確認のため「削除」と入力</span><input id="clear-data-confirmation" autocomplete="off"></label><div class="action-row"><button type="button" class="danger" data-action="clear-all-user-data">すべて削除</button></div></div>
         <div class="form-messages" data-data-management-messages role="status" aria-live="polite" tabindex="-1" hidden></div>
         <div class="action-row"><a href="#/privacy?returnTo=%23%2Fsettings">データの扱いを確認 <span class="action-chevron">›</span></a></div>
       </div></details>

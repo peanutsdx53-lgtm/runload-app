@@ -1,11 +1,13 @@
-const SCREEN_TUTORIAL_STORAGE_KEY = "runload.screenTutorial.seen.v1";
+import { LEGACY_TUTORIAL_STORAGE_KEY } from "../core/legacyCompatibility.js";
+
+const SCREEN_TUTORIAL_STORAGE_KEY = "running-record.screenTutorial.seen.v1";
 
 const SCREEN_TUTORIALS = Object.freeze({
   start: Object.freeze({
     title: "スタート画面の使い方",
     lead: "目的に合わせて入口を選びます。",
     steps: Object.freeze([
-      Object.freeze({ title: "RunLoadを使う", body: "記録の入力、結果、履歴、予定を確認するときに開きます。" }),
+      Object.freeze({ title: "アプリを使う", body: "記録の入力、結果、履歴、予定を確認するときに開きます。" }),
       Object.freeze({ title: "GPSで測定する", body: "スマートフォンで距離・時間・走行軌跡を測定するときに開きます。測定後は記録入力へ進みます。" }),
     ]),
   }),
@@ -13,7 +15,7 @@ const SCREEN_TUTORIALS = Object.freeze({
     title: "GPS測定の使い方",
     lead: "測定開始から記録入力までを確認します。",
     steps: Object.freeze([
-      Object.freeze({ title: "測定を開始する", body: "位置情報を許可して測定を開始します。測定中はRunLoadを前面表示したまま使用します。" }),
+      Object.freeze({ title: "測定を開始する", body: "位置情報を許可して測定を開始します。測定中はこのアプリを前面表示したまま使用します。" }),
       Object.freeze({ title: "走行中の値を見る", body: "距離・時間・現在ペース・平均ペースを確認できます。予定と連携している場合はペース通知も表示します。" }),
       Object.freeze({ title: "終了して記録へ進む", body: "測定を終了すると、距離と時間を今日の記録へ引き継げます。軌跡保存を選んだ場合は記録と関連付けます。" }),
     ]),
@@ -190,7 +192,13 @@ const SCREEN_TUTORIALS = Object.freeze({
 
 function readSeenMap() {
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(SCREEN_TUTORIAL_STORAGE_KEY) || "{}");
+    const current = window.localStorage.getItem(SCREEN_TUTORIAL_STORAGE_KEY);
+    const legacy = current == null ? window.localStorage.getItem(LEGACY_TUTORIAL_STORAGE_KEY) : null;
+    const parsed = JSON.parse(current ?? legacy ?? "{}");
+    if (current == null && legacy != null && parsed && typeof parsed === "object") {
+      window.localStorage.setItem(SCREEN_TUTORIAL_STORAGE_KEY, JSON.stringify(parsed));
+      window.localStorage.removeItem(LEGACY_TUTORIAL_STORAGE_KEY);
+    }
     return parsed && typeof parsed === "object" ? parsed : {};
   } catch (error) {
     return {};

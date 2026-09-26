@@ -11,7 +11,7 @@ import { createRunMeasurementMap } from "../runMeasurementMap.js";
 import { clearPendingRunMeasurement, savePendingRunMeasurement } from "../runMeasurementState.js";
 
 function geolocationErrorMessage(error) {
-  if (error?.code === 1) return "位置情報が許可されていません。ブラウザーの設定でRunLoadへの位置情報を許可してください。";
+  if (error?.code === 1) return "位置情報が許可されていません。ブラウザーの設定でこのアプリへの位置情報を許可してください。";
   if (error?.code === 2) return "現在地を取得できません。屋外でGPSを受信しやすい場所に移動して再度お試しください。";
   if (error?.code === 3) return "現在地の取得に時間がかかっています。GPS受信状態を確認してください。";
   return "現在地を取得できませんでした。";
@@ -195,7 +195,7 @@ export function bindRunMeasurement({ router }) {
     startButton.hidden = true;
     finishButton.hidden = false;
     cancelButton.hidden = false;
-    setStatus("GPSを取得しています。RunLoadを前面に表示したまま走ってください。");
+    setStatus("GPSを取得しています。このアプリを前面に表示したまま走ってください。");
     timerId = window.setInterval(updateMetrics, 500);
     beginWatch();
     await requestWakeLock();

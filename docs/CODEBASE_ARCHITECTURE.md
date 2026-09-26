@@ -1,4 +1,4 @@
-# RunLoad Codebase Architecture
+# Codebase Architecture
 
 This document describes the current application structure. Historical audits, temporary implementation notes, and superseded file layouts belong in Git history and pull requests rather than the live code tree.
 
@@ -8,10 +8,42 @@ This document describes the current application structure. Historical audits, te
 
 Domain and deterministic interpretation logic only.
 
-- `runloadCore.js`: protected Primary Reference-100 calculation core.
-- `secondPillarRofJ.js`: protected ROF-J logic.
+- `appCore.js`: public domain API used by screens and shared UI modules.
+- `rofJCore.js`: protected ROF-J logic.
+- `rofJConstants.js`: current ROF-J contract identifiers.
+- `legacyCompatibility.js`: old storage/cache/schema identifiers required only to read or clean up data created by earlier releases.
 - `interpretationBase.js`: reusable persisted-result interpretation primitives.
 - `interpretationCore.js`: current beginner-facing interpretation projection. It consumes persisted outputs and does not recalculate Primary Reference-100 or ROF-J.
+- `internal/platformInfrastructure.js`: PWA registration, storage keys, and storage gateway.
+- `internal/modelSupport.js`: shared model constants, persisted-model snapshot metadata, and numeric utilities.
+- `internal/inputSupport.js`: input safety, personal context, RPE provenance, and record validation.
+- `internal/recordRepositories.js`: collection and running-record repositories.
+- `internal/modelV27.js`: V2.7 model constants and its stored-result repository.
+- `internal/primaryModelEngine.js`: primary regional calculation engine, trace builder, and input adapter.
+- `internal/primaryInputCatalog.js`: formal primary-input catalog and metadata.
+- `internal/primaryInputProcessing.js`: formal-input utilities, validation, normalization, and app/trace adapters.
+- `internal/primaryModelResults.js`: primary region definitions, result construction, validation, and result repository.
+- `internal/applicationDomain.js`: body-region taxonomy, subjective/safety rules, profile adjustment, and small domain repositories.
+- `internal/v27ApplicationModel.js`: V2.7 application-level math and model calculation.
+- `internal/courseRepository.js`: course preset normalization and persistence.
+- `internal/restoreInspection.js`: restore-file inspection and compatibility checks.
+- `internal/backupService.js`: backup creation and restore application.
+- `internal/publicHelpGuidance.js`: deterministic public-help guidance data.
+- `internal/v27ApplicationServices.js`: V2.7 personal/input adaptation and stored-result services.
+- `internal/recordWorkflow.js`: record-save workflow and model-result persistence.
+- `internal/historyWorkflow.js`: history loading, deletion, undo, and compatibility handling.
+- `internal/planPreview.js`: deterministic plan-preview construction.
+- `internal/planWorkflow.js`: plan creation and persistence workflow.
+- `internal/evidenceData.js`: evidence metadata used by the reading layer.
+- `internal/readingCatalog.js`: current reading article catalog and source associations.
+- `internal/readingService.js`: reading lookup, recommendation, and related-content service.
+- `internal/consultationReport.js`: consultation report data and text generation.
+- `internal/bodyRegionTerminology.js`: formal and familiar body-region terminology.
+- `internal/deterministicConsultation.js`: deterministic consultation-purpose and memo composition.
+- `internal/applicationServices.js`: data-management service and composition root for storage, workflows, reading, and consultation services.
+- `internal/modules.js`: private registry used only to connect the split core modules.
+
+The former monolithic core bundle has been removed. New runtime code should import only from `appCore.js`, `rofJCore.js`, or the interpretation modules; screen/UI modules must not import `core/internal/*` directly.
 
 Do not move presentation text, DOM logic, routing, or storage mutation into `core/`.
 
@@ -49,6 +81,7 @@ Styles are loaded in this order:
 8. `desktop-foundation.css` — desktop-wide foundation and workspace geometry.
 9. `interpretation-room.css` — Interpretation-specific presentation.
 10. `desktop.css` — final desktop screen refinements.
+11. `run-measurement.css` — GPS measurement-specific presentation.
 
 Do not create numbered CSS generations such as `*-v2.css` or temporary `prototype-*.css`. Modify the owning layer instead.
 
@@ -91,6 +124,8 @@ Avoid:
 
 Semantic model/schema versions are exempt when the version is part of the data contract.
 
+Legacy product names or retired implementation labels must not be introduced into new runtime names, UI text, or new storage contracts. If an old literal is required to read existing data or remove an old browser cache, keep it inside `legacyCompatibility.js` where the ES-module runtime can share it. Service Worker cache cleanup may keep a local legacy prefix because the worker is intentionally loaded as a classic script. Historical scientific model identifiers may remain where exact comparison with saved results is required; presentation code must not expose those identifiers as interface labels.
+
 ## 5. Cleanup and deletion rules
 
 A file may be deleted when all of the following are true:
@@ -106,12 +141,12 @@ Do not keep old implementations hidden behind query flags or alternate route ali
 
 Before merging runtime changes:
 
+- runtime implementation remains vanilla JavaScript, CSS, and HTML; Web Manifest and image files are deployment assets rather than implementation code;
 - all JavaScript and MJS files pass syntax checking;
 - runtime dependency reachability reports no unreachable runtime JS;
 - every CSS file is intentionally loaded;
 - PWA precache paths all exist;
 - all test suites pass;
-- `RUNTIME_SHA256SUMS.txt` is regenerated from the final runtime tree;
 - protected scientific cores are compared against the intended scientific baseline when they are not part of the change.
 
 Temporary audit workflows must be removed before merge.

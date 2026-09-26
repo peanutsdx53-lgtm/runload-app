@@ -36,9 +36,8 @@ await test('CONTEXTUAL-UNDERSTANDING-ENTRIES-REMAIN',()=>{
   assert.match(read('screens/bodyPartDetailScreen.js'),/この部位の結果を整理する/);
 });
 
-await test('PWA-AND-RUNTIME-DROP-RETIRED-SCREEN',()=>{
+await test('PWA-DROPS-RETIRED-SCREEN',()=>{
   assert.doesNotMatch(read('service-worker.js'),/screens\/activationScreen\.js/);
-  assert.doesNotMatch(read('RUNTIME_SHA256SUMS.txt'),/screens\/activationScreen\.js/);
 });
 
 await test('RETIRED-ACTIVATION-STYLES-REMOVED',()=>{
@@ -48,21 +47,21 @@ await test('RETIRED-ACTIVATION-STYLES-REMOVED',()=>{
   assert.doesNotMatch(mobile,/screen-layout--activation|\.activation-link(?:-wrap)?/);
 });
 
-await test('UNUSED-SCREEN-ARCHITECTURE-EXPORTS-REMOVED',()=>{
+await test('UNUSED-SCREEN-ARCHITECTURE-HELPERS-REMOVED',()=>{
   const architecture=read('ui/screenArchitecture.js');
   assert.doesNotMatch(architecture,/renderResultWorkspaceNavigation|resolveScreenWorkspace|renderManagementBoundary/);
-  assert.match(architecture,/renderRecordsWorkspaceNavigation/);
+  assert.doesNotMatch(architecture,/renderRecordsWorkspaceNavigation/);
 });
 
 await test('PWA-CACHE-NAME-IS-STABLE',()=>{
-  assert.match(read('service-worker.js'),/const CACHE_NAME = "runload-app-runtime-v1";/);
+  assert.match(read('service-worker.js'),/const CACHE_NAME = "running-record-app-runtime-v1";/);
   assert.doesNotMatch(read('service-worker.js'),/desktop-final-visual-audit|20260922-37/);
 });
 
-await test('RUNLOAD-INTERPRETATION-NAME-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-WORKSPACE',()=>{
+await test('INTERPRETATION-LABEL-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-WORKSPACE',()=>{
   const room=read('ui/interpretationRoomPresentation.js');
-  assert.match(room,/今回のRunLoad解釈/);
-  assert.match(room,/RUNLOAD INTERPRETATION/);
+  assert.match(room,/今回の結果の解釈/);
+  assert.match(room,/RESULT INTERPRETATION/);
   const outside=[
     'ui/screenArchitecture.js',
     'ui/appShell.js',
@@ -72,7 +71,7 @@ await test('RUNLOAD-INTERPRETATION-NAME-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-W
     'screens/bodyPartDetailScreen.js',
     'screens/simulationScreen.js',
   ].map(read).join('\n');
-  assert.doesNotMatch(outside,/RunLoad解釈|RUNLOAD INTERPRETATION|解釈エンジン/);
+  assert.doesNotMatch(outside,/今回の結果の解釈|RESULT INTERPRETATION|解釈エンジン/);
 });
 
 const failed=results.filter((x)=>x.status==='FAIL');

@@ -1,4 +1,4 @@
-import { SURFACE_FIELDS } from "../core/runloadCore.js";
+import { SURFACE_FIELDS } from "../core/appCore.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { subjectiveFieldsFromFeedback, subjectiveSummaryFromFields } from "../ui/subjectivePresentation.js";
 import { personalContextSummary } from "../ui/personalContextPresentation.js";
@@ -6,13 +6,13 @@ import { personalContextSummary } from "../ui/personalContextPresentation.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
 import { peekPendingRunMeasurement } from "../ui/runMeasurementState.js";
 
-import { ROF_J_DESCRIPTOR_MAP } from "../core/secondPillarRofJ.js";
+import { ROF_J_DESCRIPTOR_MAP } from "../core/rofJCore.js";
 import { renderEmbeddedPersonalSubflow, renderEmbeddedSubjectiveSubflow } from "../ui/recordEmbeddedSubflows.js";
 
 function renderRofJInlineAndOverlay({ services, linkedRunId = "", editing = false }) {
-  if (!services?.secondPillar) return "";
-  const summary = linkedRunId ? services.secondPillar.summarizeRun?.(linkedRunId) : null;
-  const entry = linkedRunId ? services.secondPillar.repository?.loadByRunId?.(linkedRunId) : null;
+  if (!services?.fatigue) return "";
+  const summary = linkedRunId ? services.fatigue.summarizeRun?.(linkedRunId) : null;
+  const entry = linkedRunId ? services.fatigue.repository?.loadByRunId?.(linkedRunId) : null;
   const preValue = summary?.preObservedValue;
   const postValue = summary?.postObservedValue;
   const hasPre = Number.isInteger(preValue);
@@ -23,9 +23,9 @@ function renderRofJInlineAndOverlay({ services, linkedRunId = "", editing = fals
   const actionText = editing ? "保存済み" : hasPost ? "記録済み" : hasPre ? "走った後を記録" : "記録する";
   const actionDisabled = editing || hasPost ? " disabled" : "";
   const phase = hasPre ? "after" : "before";
-  const sourceFingerprint = entry?.sourceFingerprint || "";
-  return `<div class="fatigue-inline" data-second-pillar-lifecycle data-run-id="${escapeHtml(linkedRunId)}"><div class="fatigue-inline__label"><small>任意</small><strong>${hasPre ? "走る前後の疲労感" : "走る前の疲労感"}</strong></div><div class="fatigue-inline__status"><small>記録状況</small><span data-record-rof-status>${escapeHtml(status)}</span></div><button type="button" data-action="open-record-rof" data-phase="${phase}"${actionDisabled}>${escapeHtml(actionText)}</button><p class="form-messages" data-second-pillar-message hidden></p></div>
-  <div class="overlay" data-record-rof-overlay hidden aria-modal="true" role="dialog" aria-labelledby="record-rof-title"><section class="sheet rof-sheet"><div class="grip"></div><header class="sheet-head"><div><p class="eyebrow">疲労感の記録</p><h2 id="record-rof-title" data-record-rof-title>${phase === "after" ? "走った後の疲労感" : "走る前の疲労感"}</h2></div><button type="button" class="rof-close-button" data-action="close-record-rof" aria-label="閉じる">×</button></header><p class="rof-question" data-record-rof-question>今の疲労感を0〜10で選んでください。</p><div class="rof-scale-panel"><div class="rof-current"><span>選択値</span><strong data-record-rof-value>—</strong><em data-record-rof-descriptor>数値を選択</em></div><div class="rof-slider-wrap" data-rof-slider-wrap><input type="range" min="0" max="10" step="1" value="5" data-record-rof-slider aria-label="疲労感 0から10"><div class="rof-ticks" aria-hidden="true">${Array.from({ length: 11 }, (_, value) => `<span>${value}</span>`).join("")}</div></div><div class="rof-anchor-guide"><small>尺度の正式な言葉</small><div data-record-rof-anchor>2・${escapeHtml(ROF_J_DESCRIPTOR_MAP[2])} ／ 4・${escapeHtml(ROF_J_DESCRIPTOR_MAP[4])}</div></div></div><button type="button" class="primary-sheet-action" data-action="record-rof-value" disabled>この値を記録</button><button type="button" class="text-action" data-action="record-rof-post-only"${phase === "after" ? " hidden" : ""}>すでに走り終えている場合：走った後だけ記録</button><details class="rof-about"><summary>尺度について</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p>${sourceFingerprint ? `<small>使用尺度：ROF-J</small>` : ""}</div></details></section></div>`;
+  const sourceVersion = entry?.sourceVersion || "";
+  return `<div class="fatigue-inline" data-fatigue-lifecycle data-run-id="${escapeHtml(linkedRunId)}"><div class="fatigue-inline__label"><small>任意</small><strong>${hasPre ? "走る前後の疲労感" : "走る前の疲労感"}</strong></div><div class="fatigue-inline__status"><small>記録状況</small><span data-record-rof-status>${escapeHtml(status)}</span></div><button type="button" data-action="open-record-rof" data-phase="${phase}"${actionDisabled}>${escapeHtml(actionText)}</button><p class="form-messages" data-fatigue-message hidden></p></div>
+  <div class="overlay" data-record-rof-overlay hidden aria-modal="true" role="dialog" aria-labelledby="record-rof-title"><section class="sheet rof-sheet"><div class="grip"></div><header class="sheet-head"><div><p class="eyebrow">疲労感の記録</p><h2 id="record-rof-title" data-record-rof-title>${phase === "after" ? "走った後の疲労感" : "走る前の疲労感"}</h2></div><button type="button" class="rof-close-button" data-action="close-record-rof" aria-label="閉じる">×</button></header><p class="rof-question" data-record-rof-question>今の疲労感を0〜10で選んでください。</p><div class="rof-scale-panel"><div class="rof-current"><span>選択値</span><strong data-record-rof-value>—</strong><em data-record-rof-descriptor>数値を選択</em></div><div class="rof-slider-wrap" data-rof-slider-wrap><input type="range" min="0" max="10" step="1" value="5" data-record-rof-slider aria-label="疲労感 0から10"><div class="rof-ticks" aria-hidden="true">${Array.from({ length: 11 }, (_, value) => `<span>${value}</span>`).join("")}</div></div><div class="rof-anchor-guide"><small>尺度の正式な言葉</small><div data-record-rof-anchor>2・${escapeHtml(ROF_J_DESCRIPTOR_MAP[2])} ／ 4・${escapeHtml(ROF_J_DESCRIPTOR_MAP[4])}</div></div></div><button type="button" class="primary-sheet-action" data-action="record-rof-value" disabled>この値を記録</button><button type="button" class="text-action" data-action="record-rof-post-only"${phase === "after" ? " hidden" : ""}>すでに走り終えている場合：走った後だけ記録</button><details class="rof-about"><summary>尺度について</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p>${sourceVersion ? `<small>使用尺度：ROF-J</small>` : ""}</div></details></section></div>`;
 }
 
 const RUN_WALK_SURFACE_OPTIONS = Object.freeze([
@@ -238,7 +238,7 @@ export function renderRecordInputScreen({ services, context }) {
     course: draftRecord.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
     memo: draftRecord.memo || "",
   });
-  const pendingRuns = !editing ? (services.secondPillar?.listPendingRuns?.() || []) : [];
+  const pendingRuns = !editing ? (services.fatigue?.listPendingRuns?.() || []) : [];
   const requestedRunId = !editing ? String(context?.parameters?.get("runId") || "") : "";
   const draftRunId = !editing ? String(record.id || "") : "";
   const linkedRunId = requestedRunId && pendingRuns.some((item) => item.runId === requestedRunId)

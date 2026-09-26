@@ -55,7 +55,7 @@ function baseOutput({selected=false}={}){
     calculationPath:exactPath(),
   }:null;
   return {
-    schemaVersion:'RUNLOAD_INTERPRETATION_OUTPUT_V4',
+    schemaVersion:'INTERPRETATION_OUTPUT_V4',
     target:{recordId:'r1',resultRecordId:'res1',date:'2026-09-23',activityType:'run',origin:'result',selectedRegionId:selected?'BA-DISP-014':''},
     state:{targetAvailable:true,regional:'AVAILABLE',history:'AVAILABLE',subjective:'PAIR',support:'NORMAL',legacy:false},
     overview:{
@@ -166,7 +166,7 @@ await test('REGION-LINK-CARRIES-RECORD-AND-REGION',()=>{
 
 await test('SELECTED-REGION-IS-A-DEDICATED-DETAIL-WORKSPACE',()=>{
   const html=renderInterpretationRoom({output:baseOutput({selected:true})});
-  assert.match(html,/interpretation-room--selected-v4/);
+  assert.match(html,/interpretation-room--selected-detail/);
   assert.match(html,/interpretation-room-selected-workspace/);
   assert.match(html,/interpretation-room-selected-main/);
   assert.match(html,/interpretation-room-selected-side/);
@@ -243,38 +243,26 @@ await test('EMPTY-STATE-HAS-DIRECT-RECORD-ACTION',()=>{
   assert.match(html,/#\/record-input/);
 });
 
-await test('CSS-HAS-V4-COMPACT-RESPONSIVE-DASHBOARD',()=>{
+await test('CSS-HAS-COMPACT-RESPONSIVE-INTERPRETATION',()=>{
   const shared=fs.readFileSync(path.join(root,'styles/interpretation-room.css'),'utf8');
   const desktop=fs.readFileSync(path.join(root,'styles/desktop.css'),'utf8');
   const mobile=fs.readFileSync(path.join(root,'styles/mobile.css'),'utf8');
-  assert.match(shared,/Interpretation Room V4 synthesis dashboard/);
+
   assert.match(shared,/\.interpretation-room-dashboard/);
   assert.match(shared,/\.interpretation-room-region-chips/);
   assert.match(shared,/\.interpretation-room-next-rail/);
-  assert.match(shared,/Interpretation Room V4 detail stabilization/);
-  assert.match(shared,/Interpretation Room V4 selected workspace composition/);
+  assert.match(shared,/\.interpretation-room-selected-workspace/);
   assert.match(shared,/grid-template-areas:[\s\S]*"detail"[\s\S]*"next"[\s\S]*"conditions"[\s\S]*"subjective"[\s\S]*"advanced"/);
-  assert.match(shared,/\.interpretation-room-selected-dashboard>\.interpretation-room-region-detail--v3[\s\S]*width:100%/);
-  assert.match(desktop,/PC Interpretation V4 wide dashboard/);
-  assert.match(desktop,/PC Interpretation V4 detail fit audit/);
-  assert.match(desktop,/PC Interpretation V4 screenshot final pass/);
-  assert.match(desktop,/PC Interpretation selected detail layout repair/);
-  assert.match(desktop,/PC Interpretation immersive full desktop canvas/);
-  assert.match(desktop,/PC Interpretation independent selected columns/);
+  assert.match(shared,/\.interpretation-room-selected-main>\.interpretation-room-region-detail--selected[\s\S]*grid-area:detail/);
+
   assert.match(desktop,/\.interpretation-room-selected-workspace[\s\S]*grid-template-columns:minmax\(0,1fr\) 22rem/);
   assert.match(desktop,/\.interpretation-room-selected-main,[\s\S]*\.interpretation-room-selected-side[\s\S]*display:grid/);
   assert.match(desktop,/\.interpretation-room-selected-main \.interpretation-room-condition-cards[\s\S]*repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(desktop,/#app>\.app-shell\.app-shell--immersive[\s\S]*width:100%\s*!important[\s\S]*border:0\s*!important/);
-  assert.match(desktop,/@media \(min-width:64rem\)[\s\S]*\.interpretation-room-selected-dashboard[\s\S]*minmax\(18rem,20rem\)/);
-  assert.match(desktop,/\.interpretation-room-selected-context \.interpretation-room-section-title[\s\S]*grid-template-columns:minmax\(0,1fr\)/);
-  assert.match(desktop,/\.interpretation-room-selected-context \.interpretation-room-subjective-layout[\s\S]*grid-template-columns:minmax\(0,1fr\)/);
-  assert.match(desktop,/\.interpretation-room-selected-context \.interpretation-room-fatigue-flow>aside[\s\S]*grid-column:1\/-1/);
   assert.match(desktop,/grid-template-areas:[\s\S]*"insight next"[\s\S]*"patterns next"[\s\S]*"context next"/);
   assert.match(desktop,/\.interpretation-room-region-chips[\s\S]*repeat\(3,minmax\(0,1fr\)\)/);
-  assert.match(desktop,/\.interpretation-room-selected-dashboard[\s\S]*grid-template-columns:minmax\(0,1fr\)\s*!important/);
-  assert.match(desktop,/@media \(min-width:80rem\)[\s\S]*minmax\(19rem,21rem\)/);
   assert.match(desktop,/position:sticky/);
-  assert.match(mobile,/Mobile Interpretation V4 touch layout/);
+
   assert.match(mobile,/\.interpretation-room-next-rail>\.interpretation-room-action[\s\S]*min-height:56px/);
   assert.match(mobile,/\.interpretation-room-region-chips>a[\s\S]*min-height:58px/);
   assert.doesNotMatch(shared,/#[0-9a-fA-F]{3,8}\b/);

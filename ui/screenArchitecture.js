@@ -221,10 +221,3 @@ function workspaceLink({ href, label, description, current = false }) {
   return `<a class="workspace-navigation__link${current ? " is-current" : ""}" href="${escapeHtml(href)}"${current ? ' aria-current="page"' : ""}><strong>${escapeHtml(label)}</strong><small>${escapeHtml(description)}</small></a>`;
 }
 
-export function renderRecordsWorkspaceNavigation({ active = "history", date = "" } = {}) {
-  const items = [
-    { key: "history", href: route("history", { view: "records", anchorDate: date }), label: "履歴", description: "保存した走行・休養記録と結果" },
-  ];
-  return `<nav class="workspace-navigation workspace-navigation--records" aria-label="記録を見返す画面">${items.map((item) => workspaceLink({ ...item, current: item.key === active })).join("")}</nav>`;
-}
-

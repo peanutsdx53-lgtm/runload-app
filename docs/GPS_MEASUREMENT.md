@@ -1,14 +1,14 @@
-# RunLoad GPS Measurement
+# GPS Measurement
 
 ## Purpose
 
-The GPS measurement flow records observable run facts before the existing RunLoad record flow.
+The GPS measurement flow records observable run facts before the existing saved record flow.
 
 Flow on the mobile layout:
 
 `start -> run-measurement -> record-input -> result -> run-route`
 
-The root entry follows the existing responsive breakpoint rather than browser/OS identification. Mobile-width layouts open the start choice screen; desktop-width layouts open the normal RunLoad home screen. GPS actions are de-emphasized on desktop, while records, plans, results, history, settings, storage, and scientific logic remain shared.
+The root entry follows the existing responsive breakpoint rather than browser/OS identification. Mobile-width layouts open the start choice screen; desktop-width layouts open the normal home screen. GPS actions are de-emphasized on desktop, while records, plans, results, history, settings, storage, and scientific logic remain shared.
 
 GPS measurement does not replace or modify the scientific calculation model. It supplies measured distance and elapsed time to the existing record input screen. A saved route is stored separately and linked to the saved record ID.
 
@@ -17,7 +17,7 @@ GPS measurement does not replace or modify the scientific calculation model. It 
 - HTML, CSS, and JavaScript only.
 - HTTPS secure context is required for browser geolocation. GitHub Pages provides HTTPS.
 - The user must explicitly allow location access in the browser/OS.
-- RunLoad should remain in the foreground during measurement. Browser background or screen-lock GPS continuity is not guaranteed.
+- The application should remain in the foreground during measurement. Browser background or screen-lock GPS continuity is not guaranteed.
 - Screen Wake Lock is requested when supported. Failure to obtain a wake lock does not stop measurement.
 
 ## Measurement logic
@@ -41,7 +41,7 @@ These values are implementation filters and UI behavior, not medical, injury-ris
 
 ## Route map
 
-RunLoad uses a small internal Web Mercator/slippy-tile renderer. No third-party JavaScript map library is bundled.
+The application uses a small internal Web Mercator/slippy-tile renderer. No third-party JavaScript map library is bundled.
 
 Map tiles are loaded from the OpenStreetMap standard tile service:
 
@@ -56,18 +56,18 @@ The application does not bulk-download tiles or provide offline map tile storage
 
 GPS permission is requested only when the user starts measurement.
 
-During measurement, RunLoad processes location points in the browser. If the user keeps **Save route on this device** enabled, the simplified route is stored in browser local storage after the corresponding RunLoad record is successfully saved.
+During measurement, the application processes location points in the browser. If the user keeps **Save route on this device** enabled, the simplified route is stored in browser local storage after the corresponding saved record is successfully saved.
 
 Saved GPS routes:
 
-- are linked by RunLoad record ID;
-- are included in RunLoad backup/export data;
+- are linked by saved record ID;
+- are included in application backup/export data;
 - are restored with supported backups;
 - are removed when the associated record is deleted;
 - are restored if that record deletion is undone;
 - are removed by the application's full local-data deletion operation.
 
-Displaying a map requires external requests for map images. The requested tile URLs necessarily correspond to the displayed geographic area. RunLoad does not automatically upload the saved RunLoad record or stored GPS route to an external analysis service.
+Displaying a map requires external requests for map images. The requested tile URLs necessarily correspond to the displayed geographic area. The application does not automatically upload the saved saved record or stored GPS route to an external analysis service.
 
 ## Deliberate boundaries
 
@@ -83,7 +83,7 @@ Surface and other course facts that affect the existing model remain user-confir
 
 ## Verification
 
-The repository contains `tests/runMeasurementCore.test.mjs` for the deterministic GPS calculation helpers. Runtime files remain covered by `RUNTIME_SHA256SUMS.txt`.
+The repository contains `tests/runMeasurementCore.test.mjs` for the deterministic GPS calculation helpers. PWA precache references are verified directly by integration tests.
 
 Manual acceptance status (2026-09-23):
 

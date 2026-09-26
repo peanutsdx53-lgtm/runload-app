@@ -31,7 +31,6 @@ export function consumeCourseSelection(target = "") {
   if (parsed) store().removeItem(COURSE_SELECTION_KEY);
   return parsed;
 }
-export function clearCourseSelection() { store().removeItem(COURSE_SELECTION_KEY); }
 
 export function saveGpxCandidate(candidate = {}) {
   const payload = Object.freeze({ version: 1, createdAt: new Date().toISOString(), candidate: clone(candidate) });
@@ -42,13 +41,5 @@ export function peekGpxCandidate() {
   const parsed = safeJson(store().getItem(GPX_CANDIDATE_KEY));
   return parsed?.version === 1 && parsed.candidate && typeof parsed.candidate === "object" ? parsed : null;
 }
-export function consumeGpxCandidate() {
-  const parsed = peekGpxCandidate();
-  if (parsed) store().removeItem(GPX_CANDIDATE_KEY);
-  return parsed;
-}
 export function clearGpxCandidate() { store().removeItem(GPX_CANDIDATE_KEY); }
 
-export function flowSessionKeys() {
-  return Object.freeze({ courseSelection: COURSE_SELECTION_KEY, gpxCandidate: GPX_CANDIDATE_KEY });
-}

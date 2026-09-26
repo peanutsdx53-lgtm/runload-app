@@ -1,5 +1,5 @@
 
-import { PRIMARY_REGIONAL_V2_REGION_DEFS, bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } from "../core/runloadCore.js";
+import { PRIMARY_REGIONAL_V2_REGION_DEFS, bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } from "../core/appCore.js";
 
 import { escapeHtml } from "../ui/commonComponents.js";
 import { addDaysIso, localTodayIso, parseIsoDate } from "../ui/historyPresentation.js";

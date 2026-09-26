@@ -1,18 +1,27 @@
-import { STORAGE_KEYS } from "./runloadCore.js";
+import { STORAGE_KEYS } from "./appCore.js";
+import {
+  hasLegacyRofJSourceMetadata,
+  removeLegacyRofJSourceMetadata,
+} from "./legacyCompatibility.js";
+import {
+  ROF_J_INSTRUMENT_ID,
+  ROF_J_SEMANTIC_VERSION,
+  ROF_J_SOURCE_VERSION,
+  ROF_J_VISUAL_SOURCE_ID,
+  ROF_J_STORAGE_SCHEMA_VERSION,
+  ROF_J_LIFECYCLE_SCHEMA_VERSION,
+  isSupportedRofJSemanticVersion,
+  isSupportedRofJStorageSchema,
+  isSupportedRofJLifecycleSchema,
+} from "./rofJConstants.js";
 
-export const ROF_J_INSTRUMENT_ID = "ROF_J";
-export const ROF_J_SEMANTIC_VERSION = "ROF_J_SUZUKI_ARAI_2026_RUNLOAD_V1";
-export const ROF_J_JAPANESE_SOURCE_SHA256 = "f25d0d4cf09f603cb66984606cfdb8e716781ba106f0da44dfa276515838acf8";
-export const ROF_J_VISUAL_SOURCE_ID = "ROF_ORIGINAL_2017";
-export const ROF_J_STORAGE_SCHEMA_VERSION = "RUNLOAD_SECOND_PILLAR_ROFJ_STORAGE_V1";
-export const ROF_J_LIFECYCLE_SCHEMA_VERSION = "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1";
-export const ROF_J_PHASES = Object.freeze({ PRE: "PRE_RUN", POST: "POST_RUN" });
-export const ROF_J_REVISION_TYPES = Object.freeze({
+const ROF_J_PHASES = Object.freeze({ PRE: "PRE_RUN", POST: "POST_RUN" });
+const ROF_J_REVISION_TYPES = Object.freeze({
   initial: "INITIAL_MEASUREMENT",
   correction: "CORRECTION",
   laterReflection: "LATER_REFLECTION",
 });
-export const ROF_J_CAPTURE_ROUTES = Object.freeze({
+const ROF_J_CAPTURE_ROUTES = Object.freeze({
   directPreRun: "DIRECT_PRE_RUN",
   directFinishFlow: "DIRECT_FINISH_FLOW",
   retrospective: "RETROSPECTIVE_NONCANONICAL",
@@ -33,6 +42,37 @@ function clone(value) {
 function isObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
+
+function normalizeRofJEntry(entry) {
+  if (!isObject(entry)) return entry;
+  const normalized = clone(entry);
+  if (isSupportedRofJSemanticVersion(normalized.instrumentSemanticVersion)) {
+    normalized.instrumentSemanticVersion = ROF_J_SEMANTIC_VERSION;
+  }
+  if (normalized.sourceVersion == null && hasLegacyRofJSourceMetadata(normalized)) {
+    normalized.sourceVersion = ROF_J_SOURCE_VERSION;
+  }
+  removeLegacyRofJSourceMetadata(normalized);
+  return normalized;
+}
+
+function normalizeRofJStorageEnvelope(value) {
+  if (!isObject(value) || !isObject(value.entries)) return value;
+  return {
+    schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION,
+    entries: Object.fromEntries(
+      Object.entries(value.entries).map(([runId, entry]) => [runId, normalizeRofJEntry(entry)]),
+    ),
+  };
+}
+
+function normalizeRofJLifecycleEnvelope(value) {
+  if (!isObject(value) || !isObject(value.pendingByRunId)) return value;
+  return {
+    ...clone(value),
+    schemaVersion: ROF_J_LIFECYCLE_SCHEMA_VERSION,
+  };
+}
 function isIsoDateTime(value) {
   if (typeof value !== "string" || !value.trim()) return false;
   const millis = Date.parse(value);
@@ -47,7 +87,7 @@ function defaultId(prefix = "rofj") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export function createSecondPillarRunId({ idFactory = defaultId } = {}) {
+function createRofJRunId({ idFactory = defaultId } = {}) {
   return idFactory("rofj-run");
 }
 function effectiveRevision(measurement) {
@@ -59,7 +99,7 @@ function initialRevision(measurement) {
   return measurement.revisions.find((item) => item.revisionType === ROF_J_REVISION_TYPES.initial) || null;
 }
 
-export function isValidRofJValue(value) {
+function isValidRofJValue(value) {
   return Number.isInteger(value) && value >= 0 && value <= 10;
 }
 
@@ -70,7 +110,7 @@ export function officialRofJDescriptor(value) {
     : null;
 }
 
-export function calculateRofJDelta(preValue, postValue) {
+function calculateRofJDelta(preValue, postValue) {
   if (!isValidRofJValue(preValue) || !isValidRofJValue(postValue)) {
     return Object.freeze({ eligible: false, delta: null, direction: null, directionLabel: "" });
   }
@@ -79,7 +119,7 @@ export function calculateRofJDelta(preValue, postValue) {
   return Object.freeze({ eligible: true, delta, direction, directionLabel: DIRECTION_LABELS[direction] });
 }
 
-export function calculateRecentFiveReference(priorValues, currentValue) {
+function calculateRecentFiveReference(priorValues, currentValue) {
   if (!isValidRofJValue(currentValue) && !(Number.isInteger(currentValue) && currentValue >= -10 && currentValue <= 10)) return null;
   const eligible = (Array.isArray(priorValues) ? priorValues : []).filter((value) => Number.isFinite(value));
   if (eligible.length < 5) return null;
@@ -136,14 +176,14 @@ function decorateMeasurement(measurement) {
   });
 }
 
-export function createRofJRunEntry(runId) {
+function createRofJRunEntry(runId) {
   const normalizedRunId = String(runId || "").trim();
   if (!normalizedRunId) throw new TypeError("runId is required");
   return Object.freeze({
     runId: normalizedRunId,
     instrumentId: ROF_J_INSTRUMENT_ID,
     instrumentSemanticVersion: ROF_J_SEMANTIC_VERSION,
-    japaneseSourceSha256: ROF_J_JAPANESE_SOURCE_SHA256,
+    sourceVersion: ROF_J_SOURCE_VERSION,
     visualSourceId: ROF_J_VISUAL_SOURCE_ID,
     measurements: Object.freeze({ PRE_RUN: null, POST_RUN: null }),
     createdAt: null,
@@ -151,7 +191,7 @@ export function createRofJRunEntry(runId) {
   });
 }
 
-export function captureRofJMeasurement(entry, {
+function captureRofJMeasurement(entry, {
   phase,
   value,
   recordedAt,
@@ -191,48 +231,7 @@ export function captureRofJMeasurement(entry, {
   return Object.freeze(next);
 }
 
-export function appendRofJRevision(entry, {
-  phase,
-  value,
-  recordedAt,
-  revisionType,
-  note = "",
-  revisionId = null,
-  idFactory = defaultId,
-} = {}) {
-  if (![ROF_J_PHASES.PRE, ROF_J_PHASES.POST].includes(phase)) throw new RangeError("ROF-J phase is invalid");
-  if (![ROF_J_REVISION_TYPES.correction, ROF_J_REVISION_TYPES.laterReflection].includes(revisionType)) {
-    throw new RangeError("revisionType must be CORRECTION or LATER_REFLECTION");
-  }
-  if (!isValidRofJValue(value)) throw new RangeError("ROF-J value must be an integer from 0 to 10");
-  if (!isIsoDateTime(recordedAt)) throw new RangeError("recordedAt must be an ISO date-time");
-  const measurement = entry?.measurements?.[phase];
-  if (!measurement) throw new Error(`No initial ${phase} measurement exists`);
-  const previous = effectiveRevision(measurement);
-  const revision = Object.freeze({
-    revisionId: revisionId || idFactory("rofj-rev"),
-    revisionType,
-    value,
-    recordedAt,
-    previousValue: previous?.value ?? null,
-    note: String(note || "").slice(0, 240),
-  });
-  const revisions = [...measurement.revisions, revision];
-  const nextMeasurement = decorateMeasurement({
-    ...clone(measurement),
-    revisions,
-    effectiveRevisionId: revisionType === ROF_J_REVISION_TYPES.correction
-      ? revision.revisionId
-      : measurement.effectiveRevisionId,
-  });
-  return Object.freeze({
-    ...clone(entry),
-    measurements: { ...clone(entry.measurements), [phase]: nextMeasurement },
-    updatedAt: recordedAt,
-  });
-}
-
-export function updateRofJRunTiming(entry, { runStartAt = undefined, runEndAt = undefined, updatedAt = new Date().toISOString() } = {}) {
+function updateRofJRunTiming(entry, { runStartAt = undefined, runEndAt = undefined, updatedAt = new Date().toISOString() } = {}) {
   const nextMeasurements = {};
   for (const phase of [ROF_J_PHASES.PRE, ROF_J_PHASES.POST]) {
     const measurement = entry?.measurements?.[phase];
@@ -249,7 +248,7 @@ export function updateRofJRunTiming(entry, { runStartAt = undefined, runEndAt = 
   return Object.freeze({ ...clone(entry), measurements: Object.freeze(nextMeasurements), updatedAt });
 }
 
-export function summarizeRofJRun(entry) {
+function summarizeRofJRun(entry) {
   if (!entry) return Object.freeze({ available: false, pre: null, post: null, delta: null, direction: null, directionLabel: "" });
   const preM = entry.measurements?.PRE_RUN || null;
   const postM = entry.measurements?.POST_RUN || null;
@@ -274,13 +273,15 @@ export function summarizeRofJRun(entry) {
   });
 }
 
-export function validateRofJRunEntry(entry) {
+function validateRofJRunEntry(entry) {
   const issues = [];
   if (!isObject(entry)) return Object.freeze({ ok: false, issues: Object.freeze(["ENTRY_OBJECT_REQUIRED"]) });
   if (!String(entry.runId || "").trim()) issues.push("RUN_ID_REQUIRED");
   if (entry.instrumentId !== ROF_J_INSTRUMENT_ID) issues.push("INSTRUMENT_ID_MISMATCH");
-  if (entry.instrumentSemanticVersion !== ROF_J_SEMANTIC_VERSION) issues.push("SEMANTIC_VERSION_MISMATCH");
-  if (entry.japaneseSourceSha256 !== ROF_J_JAPANESE_SOURCE_SHA256) issues.push("SOURCE_SHA_MISMATCH");
+  if (!isSupportedRofJSemanticVersion(entry.instrumentSemanticVersion)) issues.push("SEMANTIC_VERSION_MISMATCH");
+  const legacySourceMetadata = hasLegacyRofJSourceMetadata(entry);
+  if (entry.sourceVersion != null && entry.sourceVersion !== ROF_J_SOURCE_VERSION) issues.push("SOURCE_VERSION_MISMATCH");
+  if (entry.sourceVersion == null && !legacySourceMetadata) issues.push("SOURCE_VERSION_MISSING");
   if (entry.visualSourceId !== ROF_J_VISUAL_SOURCE_ID) issues.push("VISUAL_SOURCE_MISMATCH");
   for (const phase of [ROF_J_PHASES.PRE, ROF_J_PHASES.POST]) {
     const m = entry.measurements?.[phase];
@@ -301,10 +302,10 @@ export function validateRofJRunEntry(entry) {
   return Object.freeze({ ok: issues.length === 0, issues: Object.freeze(issues) });
 }
 
-export function validateRofJStorageEnvelope(value) {
+function validateRofJStorageEnvelope(value) {
   if (value == null) return Object.freeze({ ok: true, issues: Object.freeze([]) });
   const issues = [];
-  if (!isObject(value) || value.schemaVersion !== ROF_J_STORAGE_SCHEMA_VERSION || !isObject(value.entries)) {
+  if (!isObject(value) || !isSupportedRofJStorageSchema(value.schemaVersion) || !isObject(value.entries)) {
     return Object.freeze({ ok: false, issues: Object.freeze(["STORAGE_ENVELOPE_INVALID"]) });
   }
   Object.entries(value.entries).forEach(([runId, entry]) => {
@@ -315,10 +316,10 @@ export function validateRofJStorageEnvelope(value) {
   return Object.freeze({ ok: issues.length === 0, issues: Object.freeze(issues) });
 }
 
-export function validateRofJLifecycleEnvelope(value) {
+function validateRofJLifecycleEnvelope(value) {
   if (value == null) return Object.freeze({ ok: true, issues: Object.freeze([]) });
   const issues = [];
-  if (!isObject(value) || value.schemaVersion !== ROF_J_LIFECYCLE_SCHEMA_VERSION || !isObject(value.pendingByRunId)) {
+  if (!isObject(value) || !isSupportedRofJLifecycleSchema(value.schemaVersion) || !isObject(value.pendingByRunId)) {
     return Object.freeze({ ok: false, issues: Object.freeze(["LIFECYCLE_ENVELOPE_INVALID"]) });
   }
   Object.entries(value.pendingByRunId).forEach(([runId, state]) => {
@@ -327,15 +328,15 @@ export function validateRofJLifecycleEnvelope(value) {
   return Object.freeze({ ok: issues.length === 0, issues: Object.freeze(issues) });
 }
 
-export function createSecondPillarRofJRepository(gateway) {
+function createRofJRepository(gateway) {
   const empty = () => ({ schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION, entries: {} });
   function loadEnvelopeResult() {
-    const result = gateway.readJsonResult(STORAGE_KEYS.secondPillarRofJ, null);
+    const result = gateway.readJsonResult(STORAGE_KEYS.rofJ, null);
     if (!result.ok) return { ...result, envelope: empty() };
     if (result.value == null) return { ok: true, exists: false, envelope: empty() };
     const validation = validateRofJStorageEnvelope(result.value);
     if (!validation.ok) return { ok: false, code: "ROF_J_STORAGE_INVALID", validation, envelope: empty() };
-    return { ok: true, exists: true, envelope: clone(result.value) };
+    return { ok: true, exists: true, envelope: normalizeRofJStorageEnvelope(result.value) };
   }
   function loadByRunId(runId) {
     const result = loadEnvelopeResult();
@@ -347,16 +348,19 @@ export function createSecondPillarRofJRepository(gateway) {
     return result.ok ? Object.values(result.envelope.entries).map(clone) : [];
   }
   function saveEntry(entry) {
-    const validation = validateRofJRunEntry(entry);
+    const normalizedEntry = clone(entry);
+    removeLegacyRofJSourceMetadata(normalizedEntry);
+    normalizedEntry.sourceVersion = ROF_J_SOURCE_VERSION;
+    const validation = validateRofJRunEntry(normalizedEntry);
     if (!validation.ok) return { ok: false, code: "ROF_J_ENTRY_INVALID", validation };
     const current = loadEnvelopeResult();
     if (!current.ok) return current;
     const envelope = {
       schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION,
-      entries: { ...current.envelope.entries, [entry.runId]: clone(entry) },
+      entries: { ...current.envelope.entries, [normalizedEntry.runId]: clone(normalizedEntry) },
     };
-    const result = gateway.writeJson(STORAGE_KEYS.secondPillarRofJ, envelope);
-    return { ...result, entry: result.ok ? clone(entry) : null };
+    const result = gateway.writeJson(STORAGE_KEYS.rofJ, envelope);
+    return { ...result, entry: result.ok ? clone(normalizedEntry) : null };
   }
   function removeByRunId(runId) {
     const current = loadEnvelopeResult();
@@ -365,21 +369,21 @@ export function createSecondPillarRofJRepository(gateway) {
     const existed = Object.prototype.hasOwnProperty.call(entries, String(runId));
     delete entries[String(runId)];
     const envelope = { schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION, entries };
-    const result = gateway.writeJson(STORAGE_KEYS.secondPillarRofJ, envelope);
+    const result = gateway.writeJson(STORAGE_KEYS.rofJ, envelope);
     return { ...result, removed: result.ok && existed };
   }
   return Object.freeze({ loadEnvelopeResult, loadByRunId, loadAll, saveEntry, removeByRunId });
 }
 
-export function createSecondPillarLifecycleRepository(gateway) {
+function createRofJLifecycleRepository(gateway) {
   const empty = () => ({ schemaVersion: ROF_J_LIFECYCLE_SCHEMA_VERSION, pendingByRunId: {} });
   function loadEnvelopeResult() {
-    const result = gateway.readJsonResult(STORAGE_KEYS.secondPillarRofJLifecycle, null);
+    const result = gateway.readJsonResult(STORAGE_KEYS.rofJLifecycle, null);
     if (!result.ok) return { ...result, envelope: empty() };
     if (result.value == null) return { ok: true, exists: false, envelope: empty() };
     const validation = validateRofJLifecycleEnvelope(result.value);
     if (!validation.ok) return { ok: false, code: "ROF_J_LIFECYCLE_STORAGE_INVALID", validation, envelope: empty() };
-    return { ok: true, exists: true, envelope: clone(result.value) };
+    return { ok: true, exists: true, envelope: normalizeRofJLifecycleEnvelope(result.value) };
   }
   function saveState(state) {
     if (!state?.runId) return { ok: false, code: "RUN_ID_REQUIRED" };
@@ -389,7 +393,7 @@ export function createSecondPillarLifecycleRepository(gateway) {
       schemaVersion: ROF_J_LIFECYCLE_SCHEMA_VERSION,
       pendingByRunId: { ...current.envelope.pendingByRunId, [state.runId]: clone(state) },
     };
-    return gateway.writeJson(STORAGE_KEYS.secondPillarRofJLifecycle, envelope);
+    return gateway.writeJson(STORAGE_KEYS.rofJLifecycle, envelope);
   }
   function loadState(runId) {
     const current = loadEnvelopeResult();
@@ -405,7 +409,7 @@ export function createSecondPillarLifecycleRepository(gateway) {
     const pendingByRunId = { ...current.envelope.pendingByRunId };
     const existed = Object.prototype.hasOwnProperty.call(pendingByRunId, String(runId));
     delete pendingByRunId[String(runId)];
-    const result = gateway.writeJson(STORAGE_KEYS.secondPillarRofJLifecycle, {
+    const result = gateway.writeJson(STORAGE_KEYS.rofJLifecycle, {
       schemaVersion: ROF_J_LIFECYCLE_SCHEMA_VERSION,
       pendingByRunId,
     });
@@ -414,10 +418,10 @@ export function createSecondPillarLifecycleRepository(gateway) {
   return Object.freeze({ loadEnvelopeResult, saveState, loadState, loadAll, removeState });
 }
 
-export function createSecondPillarRofJServices({ gateway, recordsRepository } = {}) {
+export function createRofJServices({ gateway, recordsRepository } = {}) {
   if (!gateway) throw new TypeError("gateway is required");
-  const repository = createSecondPillarRofJRepository(gateway);
-  const lifecycle = createSecondPillarLifecycleRepository(gateway);
+  const repository = createRofJRepository(gateway);
+  const lifecycle = createRofJLifecycleRepository(gateway);
 
   function pendingRuns() {
     return lifecycle.loadAll()
@@ -427,7 +431,7 @@ export function createSecondPillarRofJServices({ gateway, recordsRepository } = 
 
   function beginLifecycle({ runId = "", createdAt = new Date().toISOString(), idFactory = defaultId } = {}) {
     if (!isIsoDateTime(createdAt)) return { ok: false, code: "LIFECYCLE_CREATED_AT_INVALID" };
-    const stableRunId = String(runId || createSecondPillarRunId({ idFactory })).trim();
+    const stableRunId = String(runId || createRofJRunId({ idFactory })).trim();
     if (!stableRunId) return { ok: false, code: "RUN_ID_REQUIRED" };
     if (recordsRepository?.findById?.(stableRunId)) return { ok: false, code: "RUN_ID_ALREADY_SAVED" };
     const existing = lifecycle.loadState(stableRunId);
@@ -558,7 +562,7 @@ export function createSecondPillarRofJServices({ gateway, recordsRepository } = 
       .filter((record) => `${record.date}|${record.createdAt || ""}|${record.id}` < currentSort)
       .sort((a, b) => `${a.date}|${a.createdAt || ""}|${a.id}`.localeCompare(`${b.date}|${b.createdAt || ""}|${b.id}`))
       .map((record) => ({ record, entry: repository.loadByRunId(record.id) }))
-      .filter(({ entry }) => entry?.instrumentSemanticVersion === ROF_J_SEMANTIC_VERSION)
+      .filter(({ entry }) => isSupportedRofJSemanticVersion(entry?.instrumentSemanticVersion))
       .map(({ entry }) => summarizeRofJRun(entry))
       .map((summary) => metric === "PRE" ? summary.pre : metric === "POST" ? summary.post : summary.delta)
       .filter((value) => Number.isFinite(value));
@@ -571,10 +575,10 @@ export function createSecondPillarRofJServices({ gateway, recordsRepository } = 
     constants: Object.freeze({
       instrumentId: ROF_J_INSTRUMENT_ID,
       instrumentSemanticVersion: ROF_J_SEMANTIC_VERSION,
-      japaneseSourceSha256: ROF_J_JAPANESE_SOURCE_SHA256,
+      sourceVersion: ROF_J_SOURCE_VERSION,
       visualSourceId: ROF_J_VISUAL_SOURCE_ID,
     }),
-    createRunId: (options = {}) => createSecondPillarRunId(options),
+    createRunId: (options = {}) => createRofJRunId(options),
     listPendingRuns: pendingRuns,
     getPendingRun: (runId) => lifecycle.loadState(runId),
     beginLifecycle,

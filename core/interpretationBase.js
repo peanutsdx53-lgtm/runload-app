@@ -1,10 +1,10 @@
-// RunLoad Interpretation Base
-// Deterministic, read-only interpretation of persisted RunLoad outputs.
+// Result interpretation base
+// Deterministic, read-only interpretation of persisted calculation outputs.
 // This module does not calculate or modify Primary Regional Reference-100 or ROF-J values.
 
-export const INTERPRETATION_BASE_VERSION = "runload-interpretation-core-v1.1";
-export const INTERPRETATION_BASE_SCHEMA_VERSION = "RUNLOAD_INTERPRETATION_OUTPUT_V2";
-export const INTERPRETATION_BASE_EVIDENCE_CONTRACT = "PERSISTED_RESULT_PROVENANCE_V1";
+export const INTERPRETATION_BASE_VERSION = "interpretation-base-v1.1";
+export const INTERPRETATION_BASE_SCHEMA_VERSION = "INTERPRETATION_BASE_OUTPUT_V2";
+const INTERPRETATION_BASE_EVIDENCE_CONTRACT = "PERSISTED_RESULT_PROVENANCE_V1";
 
 const NORMAL_PLAN_BLOCK = "normal_plan_suggestions";
 const VALID_SUPPORT_ROUTES = new Set(["normal", "review", "consult", "urgent"]);
@@ -294,7 +294,7 @@ export function buildRofJInterpretation(rofSummary = null, rofRecentReferences =
   });
 }
 
-export function buildEvidenceInterpretation(targetExperience = null, currentRegions = []) {
+function buildEvidenceInterpretation(targetExperience = null, currentRegions = []) {
   const resultRecord = targetExperience?.regionalV2ResultRecord || {};
   const registry = resultRecord.source_registry && typeof resultRecord.source_registry === "object" ? resultRecord.source_registry : {};
   const regions = {};
@@ -325,7 +325,7 @@ export function buildEvidenceInterpretation(targetExperience = null, currentRegi
   });
 }
 
-export function resolveInterpretationSafetyMode(supportDecision = {}) {
+function resolveInterpretationSafetyMode(supportDecision = {}) {
   const route = VALID_SUPPORT_ROUTES.has(String(supportDecision?.route || "")) ? String(supportDecision.route) : "normal";
   return Object.freeze({
     route,
@@ -339,7 +339,7 @@ function action(actionId, labelToken, destination, parameters = {}, enabled = tr
   return Object.freeze({ actionId, labelToken, destination, parameters: Object.freeze({ ...parameters }), enabled, blockedReason });
 }
 
-export function resolveInterpretationActions({ targetExperience = null, availability = {}, safety = {}, origin = "", selectedRegionId = "" } = {}) {
+function resolveInterpretationActions({ targetExperience = null, availability = {}, safety = {}, origin = "", selectedRegionId = "" } = {}) {
   const recordId = String(targetExperience?.record?.id || "");
   const common = { recordId, origin: "interpretation-room" };
   const normalPlanBlocked = safety.blocks.includes(NORMAL_PLAN_BLOCK);
@@ -639,7 +639,7 @@ function limitationCodes(targetExperience, evidence) {
   return Object.freeze(codes);
 }
 
-export function buildInterpretationContext({ targetExperience = null, allExperiences = [], rofSummary = null, rofRecentReferences = {}, origin = "", selectedRegionId = "", supportDecision = null } = {}) {
+function buildInterpretationContext({ targetExperience = null, allExperiences = [], rofSummary = null, rofRecentReferences = {}, origin = "", selectedRegionId = "", supportDecision = null } = {}) {
   const currentRegions = projectCurrentRegions(targetExperience);
   const regionalById = buildRegionalComparisons(targetExperience, allExperiences, currentRegions);
   const conditionSummary = buildConditionDifferenceSummary(targetExperience, allExperiences);
@@ -669,18 +669,6 @@ export function buildInterpretationContext({ targetExperience = null, allExperie
   });
   const actions = resolveInterpretationActions({ targetExperience, availability, safety, origin, selectedRegionId });
   return Object.freeze({ currentRegions, regionalById, conditionSummary, rof, safety, availability, selectedRegionIds, evidence, meaning, actions });
-}
-
-export function buildCurrentRunInterpretation(context = {}) {
-  const currentRegions = context.currentRegions || [];
-  return Object.freeze({
-    regions: currentRegions,
-    selectedRegionIds: context.selectedRegionIds || Object.freeze([]),
-  });
-}
-
-export function buildRegionalHistoryInterpretation(context = {}) {
-  return Object.freeze({ regionalById: context.regionalById || Object.freeze({}) });
 }
 
 export function buildBaseInterpretation({ targetExperience = null, allExperiences = [], rofSummary = null, rofRecentReferences = {}, origin = "", selectedRegionId = "", supportDecision = null } = {}) {

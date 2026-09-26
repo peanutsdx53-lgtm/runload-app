@@ -1,4 +1,4 @@
-import { buildRunLoadInterpretation } from "../core/interpretationCore.js";
+import { buildInterpretation } from "../core/interpretationCore.js";
 import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
 
 const ALLOWED_ORIGINS = new Set(["result", "history", "body-part-detail", "simulation", "home"]);
@@ -9,12 +9,12 @@ function safeOrigin(parameters) {
 }
 
 function rofContext(services, recordId) {
-  if (!recordId || !services?.secondPillar?.summarizeRun) {
+  if (!recordId || !services?.fatigue?.summarizeRun) {
     return { summary: null, recentReferences: Object.freeze({ pre: null, post: null, delta: null }) };
   }
-  const recentReference = services.secondPillar.recentReference;
+  const recentReference = services.fatigue.recentReference;
   return {
-    summary: services.secondPillar.summarizeRun(recordId),
+    summary: services.fatigue.summarizeRun(recordId),
     recentReferences: Object.freeze({
       pre: typeof recentReference === "function" ? recentReference(recordId, "PRE") : null,
       post: typeof recentReference === "function" ? recentReference(recordId, "POST") : null,
@@ -34,7 +34,7 @@ export function renderInterpretationRoomScreen({ services, context }) {
     : services.workflows.records.loadLatestExperience();
   const recordId = targetExperience?.record?.id || requestedRecordId;
   const rof = rofContext(services, recordId);
-  const output = buildRunLoadInterpretation({
+  const output = buildInterpretation({
     targetExperience,
     allExperiences: services.workflows.records.loadAllExperiences(),
     rofSummary: rof.summary,

@@ -78,10 +78,8 @@ await test('READING-LAST-ODD-CARD-KEEPS-ACTION-ALIGNED',()=>{
 await test('READING-LAYOUT-HAS-SEARCH-LARGER-TYPE-AND-RELATED-CARDS',()=>{
   const mobile=read('styles/mobile.css');
   const desktop=read('styles/desktop.css');
-  assert.ok(mobile.includes('Reading experience refinement 2026-09-24 v2'));
   assert.ok(mobile.includes('.reading-search'));
   assert.ok(mobile.includes('.reading-related-card'));
-  assert.ok(desktop.includes('Reading experience refinement 2026-09-24 v2'));
   assert.ok(desktop.includes('font-size:1rem !important'));
   assert.ok(desktop.includes('.reading-related__grid'));
   assert.ok(desktop.includes('.reading-keypoints'));

@@ -1,0 +1,37 @@
+import "./internal/applicationServices.js";
+import { internalModules } from "./internal/modules.js";
+
+// Public core API used by the current application modules.
+export const BODY_AREA_BY_ID = internalModules.bodyAreaTaxonomy["BODY_AREA_BY_ID"];
+export const BODY_AREA_LATERALITY = internalModules.bodyAreaTaxonomy["BODY_AREA_LATERALITY"];
+export const BODY_AREA_LATERALITY_LABELS = internalModules.bodyAreaTaxonomy["BODY_AREA_LATERALITY_LABELS"];
+export const BODY_AREA_TAXONOMY = internalModules.bodyAreaTaxonomy["BODY_AREA_TAXONOMY"];
+export const BODY_REGION_TERMINOLOGY = internalModules.bodyRegionTerminology["BODY_REGION_TERMINOLOGY"];
+export const FOCUS_TAG_OPTIONS = internalModules.personalContext["FOCUS_TAG_OPTIONS"];
+export const PRIMARY_REGIONAL_V2_MODEL_VERSION = internalModules.primaryRegionalResultService["PRIMARY_REGIONAL_V2_MODEL_VERSION"];
+export const PRIMARY_REGIONAL_V2_REGION_DEFS = internalModules.primaryRegionalRegionDefinitions["PRIMARY_REGIONAL_V2_REGION_DEFS"];
+export const PROFILE_AGE_BAND_OPTIONS = internalModules.bodyProfileAdjustment["PROFILE_AGE_BAND_OPTIONS"];
+export const SAFETY_FLAG_KEYS = internalModules.supportDecision["SAFETY_FLAG_KEYS"];
+export const STORAGE_KEYS = internalModules.storageKeys["STORAGE_KEYS"];
+export const SURFACE_FIELDS = internalModules.modelConstants["SURFACE_FIELDS"];
+export const V27_COMMON_REGIONAL_GRADE_INPUT_MAX_PERCENT = internalModules.legacyLoadModelConstants["V27_COMMON_REGIONAL_GRADE_INPUT_MAX_PERCENT"];
+export const V27_EMPHASIS_REGION_IDS = internalModules.legacyLoadModelConstants["V27_EMPHASIS_REGION_IDS"];
+export const V27_REGIONS = internalModules.legacyLoadModelConstants["V27_REGIONS"];
+export const V27_TOTAL_GRADE_DOMAIN_MAX_PERCENT = internalModules.legacyLoadModelConstants["V27_TOTAL_GRADE_DOMAIN_MAX_PERCENT"];
+export const bodyRegionFamiliarName = internalModules.bodyRegionTerminology["bodyRegionFamiliarName"];
+export const bodyRegionFormalName = internalModules.bodyRegionTerminology["bodyRegionFormalName"];
+export const buildPrimaryRegionalV2ComparisonSignature = internalModules.primaryRegionalResultService["buildPrimaryRegionalV2ComparisonSignature"];
+export const comparePrimaryRegionalV2Signatures = internalModules.primaryRegionalResultService["comparePrimaryRegionalV2Signatures"];
+export const createApplicationServices = internalModules.applicationServices["createApplicationServices"];
+export const createHistoryWorkflow = internalModules.historyWorkflow["createHistoryWorkflow"];
+export const createMemoryStorage = internalModules.storageGateway["createMemoryStorage"];
+export const createPlanFactPreview = internalModules.planPreview["createPlanFactPreview"];
+export const hasTreadmillOutdoorSurfaceMixFromComponents = internalModules.modelConstants["hasTreadmillOutdoorSurfaceMixFromComponents"];
+export const hasTreadmillOutdoorSurfaceMixFromCourse = internalModules.modelConstants["hasTreadmillOutdoorSurfaceMixFromCourse"];
+export const normalizeBodyAreaObservations = internalModules.bodyAreaTaxonomy["normalizeBodyAreaObservations"];
+export const normalizeBodyProfile = internalModules.bodyProfileAdjustment["normalizeBodyProfile"];
+export const normalizePersonalContext = internalModules.personalContext["normalizePersonalContext"];
+export const normalizePlanFactSession = internalModules.planPreview["normalizePlanFactSession"];
+export const registerPwaServiceWorker = internalModules.pwaRegistration["registerPwaServiceWorker"];
+export const summarizePersonalContext = internalModules.personalContext["summarizePersonalContext"];
+export const validateCoursePresetInput = internalModules.courseRepository["validateCoursePresetInput"];

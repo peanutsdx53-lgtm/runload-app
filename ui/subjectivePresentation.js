@@ -1,8 +1,8 @@
-import { BODY_AREA_TAXONOMY, normalizeBodyAreaObservations, SAFETY_FLAG_KEYS } from "../core/runloadCore.js";
+import { BODY_AREA_TAXONOMY, normalizeBodyAreaObservations, SAFETY_FLAG_KEYS } from "../core/appCore.js";
 
 import { SUBJECTIVE_STATUS_LABELS } from "./recordPresentation.js";
 
-export const DETAILED_SUBJECTIVE_STATUSES = Object.freeze([
+const DETAILED_SUBJECTIVE_STATUSES = Object.freeze([
   "discomfort_reported",
   "strong_reported",
 ]);
@@ -39,11 +39,11 @@ export function subjectiveFieldsFromFeedback(feedback = {}) {
   return Object.freeze(fields);
 }
 
-export function resolveSubjectiveStatusFromFields(fields = {}) {
+function resolveSubjectiveStatusFromFields(fields = {}) {
   return stringValue(fields.subjectiveStatus, "deferred");
 }
 
-export function enteredBodyAreasFromFields(fields = {}) {
+function enteredBodyAreasFromFields(fields = {}) {
   return BODY_AREA_TAXONOMY
     .map((area) => Object.freeze({
       ...area,
@@ -72,9 +72,4 @@ export function subjectiveSummaryFromFields(fields = {}) {
   });
 }
 
-export function mergeSubjectiveFields(workspaceFields = {}, fallbackFeedback = {}) {
-  return Object.freeze({
-    ...subjectiveFieldsFromFeedback(fallbackFeedback),
-    ...Object.fromEntries(Object.entries(workspaceFields || {}).map(([key, value]) => [key, stringValue(value)])),
-  });
-}
+

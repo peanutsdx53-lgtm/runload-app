@@ -2,7 +2,7 @@ import { escapeHtml } from "./commonComponents.js";
 import { renderGuideDialog } from "./guideContent.js";
 import { FEATURE_DESTINATION_GROUPS, PRIMARY_DESTINATIONS, resolveScreenContextNavigation } from "./screenArchitecture.js";
 
-export const PRIMARY_NAVIGATION = PRIMARY_DESTINATIONS;
+const PRIMARY_NAVIGATION = PRIMARY_DESTINATIONS;
 
 const SCREEN_TUTORIAL_BY_SCREEN = Object.freeze({
   start: "start",
@@ -35,9 +35,9 @@ const PRIMARY_HEADER_TITLES = Object.freeze({
   more: "その他",
 });
 
-export function resolveHeaderTitle(currentScreen, currentLocation = null) {
+function resolveHeaderTitle(currentScreen, currentLocation = null) {
   const context = resolveScreenContextNavigation(currentScreen, currentLocation);
-  return context?.title || PRIMARY_HEADER_TITLES[currentScreen] || "RunLoad";
+  return context?.title || PRIMARY_HEADER_TITLES[currentScreen] || "走行記録";
 }
 
 function renderContextHelpButton(currentScreen, className = "") {
@@ -74,7 +74,7 @@ function navigationHref(item) {
   return `#/${item.screen}`;
 }
 
-export function resolveCurrentPrimaryScreen(currentScreen, currentLocation = null) {
+function resolveCurrentPrimaryScreen(currentScreen, currentLocation = null) {
   const parameter = (name) => String(currentLocation?.parameters?.get?.(name) || "");
   if (["course-library", "course-editor", "gpx-analysis"].includes(currentScreen)) {
     const returnTo = parameter("returnTo");

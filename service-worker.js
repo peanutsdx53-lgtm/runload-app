@@ -1,10 +1,42 @@
-const CACHE_NAME = "runload-app-runtime-v1";
-const RUNLOAD_CACHE_PREFIX = "runload-app-";
+const CACHE_NAME = "running-record-app-runtime-v1";
+const CACHE_PREFIX = "running-record-app-";
+const LEGACY_CACHE_PREFIXES = Object.freeze(["runload-app-"]);
 const PRECACHE_URLS = [
   "./app.js",
   "./core/interpretationBase.js",
   "./core/interpretationCore.js",
-  "./core/runloadCore.js",
+  "./core/appCore.js",
+  "./core/legacyCompatibility.js",
+  "./core/rofJConstants.js",
+  "./core/rofJCore.js",
+  "./core/internal/modules.js",
+  "./core/internal/platformInfrastructure.js",
+  "./core/internal/modelSupport.js",
+  "./core/internal/inputSupport.js",
+  "./core/internal/recordRepositories.js",
+  "./core/internal/modelV27.js",
+  "./core/internal/primaryModelEngine.js",
+  "./core/internal/primaryInputCatalog.js",
+  "./core/internal/primaryInputProcessing.js",
+  "./core/internal/primaryModelResults.js",
+  "./core/internal/applicationDomain.js",
+  "./core/internal/v27ApplicationModel.js",
+  "./core/internal/courseRepository.js",
+  "./core/internal/restoreInspection.js",
+  "./core/internal/backupService.js",
+  "./core/internal/publicHelpGuidance.js",
+  "./core/internal/v27ApplicationServices.js",
+  "./core/internal/recordWorkflow.js",
+  "./core/internal/historyWorkflow.js",
+  "./core/internal/planPreview.js",
+  "./core/internal/planWorkflow.js",
+  "./core/internal/evidenceData.js",
+  "./core/internal/readingCatalog.js",
+  "./core/internal/readingService.js",
+  "./core/internal/consultationReport.js",
+  "./core/internal/bodyRegionTerminology.js",
+  "./core/internal/deterministicConsultation.js",
+  "./core/internal/applicationServices.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./index.html",
@@ -49,7 +81,6 @@ const PRECACHE_URLS = [
   "./ui/consultationPresentation.js",
   "./ui/coursePresentation.js",
   "./ui/guideContent.js",
-  "./ui/hierarchicalExplanation.js",
   "./ui/historyPresentation.js",
   "./ui/interpretationRoomPresentation.js",
   "./ui/bodyRegionVisuals.js",
@@ -101,7 +132,7 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(keys
-        .filter((key) => key.startsWith(RUNLOAD_CACHE_PREFIX) && key !== CACHE_NAME)
+        .filter((key) => (key.startsWith(CACHE_PREFIX) || LEGACY_CACHE_PREFIXES.some((prefix) => key.startsWith(prefix))) && key !== CACHE_NAME)
         .map((key) => caches.delete(key))))
       .then(() => caches.open(CACHE_NAME))
       .then((cache) => cache.keys().then((requests) => Promise.all(requests

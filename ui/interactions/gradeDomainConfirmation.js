@@ -1,7 +1,7 @@
 import {
   V27_COMMON_REGIONAL_GRADE_INPUT_MAX_PERCENT,
   V27_TOTAL_GRADE_DOMAIN_MAX_PERCENT,
-} from "../../core/runloadCore.js";
+} from "../../core/appCore.js";
 
 function activeRepresentativeGrades(course = {}) {
   if (String(course.gradeKnowledge || "UNKNOWN") !== "KNOWN_PROFILE") return [];
@@ -15,7 +15,7 @@ function activeRepresentativeGrades(course = {}) {
   ].filter((value) => Number.isFinite(value) && value > 0);
 }
 
-export function gradeDomainNotice(course = {}, targetLabel = "内容") {
+function gradeDomainNotice(course = {}, targetLabel = "内容") {
   const maximum = Math.max(0, ...activeRepresentativeGrades(course));
   if (maximum > V27_TOTAL_GRADE_DOMAIN_MAX_PERCENT) {
     return `代表的な坂の傾きが${V27_TOTAL_GRADE_DOMAIN_MAX_PERCENT}%を超えています。この区間は確認できる資料の範囲外のため、数値結果には使わず、入力した事実と「範囲外」の状態を保存します。この${targetLabel}を保存しますか？`;

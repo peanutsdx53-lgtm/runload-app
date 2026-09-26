@@ -1,7 +1,7 @@
 {
-  "name": "RunLoad",
-  "short_name": "RunLoad",
-  "description": "走行記録を自己理解と自己判断の材料に整理するRunLoad",
+  "name": "走行記録",
+  "short_name": "走行記録",
+  "description": "走行記録を自己理解と自己判断の材料に整理するアプリ",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

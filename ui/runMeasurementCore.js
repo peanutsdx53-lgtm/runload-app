@@ -181,4 +181,3 @@ export function simplifyTrackForStorage(points = [], maximumPoints = DEFAULT_OPT
   })));
 }
 
-export const RUN_MEASUREMENT_OPTIONS = DEFAULT_OPTIONS;

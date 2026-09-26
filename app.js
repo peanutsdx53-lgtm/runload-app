@@ -1,10 +1,10 @@
-import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkflow } from "./core/runloadCore.js";
+import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkflow } from "./core/appCore.js";
 
-import { createSecondPillarRofJServices } from "./core/secondPillarRofJ.js";
+import { createRofJServices } from "./core/rofJCore.js";
 import { createAppRouter } from "./ui/appRouter.js";
 import { matchesMobileLayout, resolveViewportDefaultEntryScreen } from "./ui/deviceLayout.js";
 import { focusScreenHeading, renderAppShell, renderDesktopHeader } from "./ui/appShell.js";
-import { applyJournalSettings } from "./ui/appSettings.js";
+import { applyAppSettings } from "./ui/appSettings.js";
 import { APP_GUIDE_VERSION, DEFAULT_GUIDE_SECTION, normalizeGuideSection, shouldOpenGuide, withGuideVersionSeen } from "./ui/guideContent.js";
 import { bindAppShellInteractions } from "./ui/shellInteractions.js";
 import { bindScreenInteractions } from "./ui/screenInteractions.js";
@@ -58,7 +58,7 @@ const screenRenderers = {
 const appRoot = document.getElementById("app");
 const desktopHeaderRoot = document.getElementById("desktop-header-root");
 const baseApplicationServices = createApplicationServices();
-const secondPillar = createSecondPillarRofJServices({
+const fatigue = createRofJServices({
   gateway: baseApplicationServices.storage.gateway,
   recordsRepository: baseApplicationServices.storage.records,
 });
@@ -69,16 +69,16 @@ const linkedHistoryWorkflow = createHistoryWorkflow({
   modelResultRegionalV2Repository: baseApplicationServices.storage.modelResultsRegionalV2,
   subjectiveFeedbackRepository: baseApplicationServices.storage.subjectiveFeedback,
   planRepository: baseApplicationServices.storage.plans,
-  secondPillarRofJRepository: secondPillar.repository,
-  secondPillarLifecycleRepository: secondPillar.lifecycle,
+  rofJRepository: fatigue.repository,
+  rofJLifecycleRepository: fatigue.lifecycle,
 });
 const applicationServices = Object.freeze({
   ...baseApplicationServices,
-  secondPillar,
+  fatigue,
   workflows: Object.freeze({ ...baseApplicationServices.workflows, history: linkedHistoryWorkflow }),
 });
 const initialSettings = applicationServices.storage.settings.load();
-applyJournalSettings(initialSettings);
+applyAppSettings(initialSettings);
 const initialScreen = resolveViewportDefaultEntryScreen();
 let currentLocation = Object.freeze({ screen: initialScreen, parameters: new URLSearchParams() });
 let guideOpen = shouldOpenGuide(initialSettings);
@@ -92,7 +92,7 @@ function saveGuideVersionSeen() {
 }
 
 function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {}) {
-  applyJournalSettings(applicationServices.storage.settings.load());
+  applyAppSettings(applicationServices.storage.settings.load());
   const screenName = currentLocation.screen;
   document.body.classList.toggle("course-derived-open", ["course-library", "course-editor", "gpx-analysis"].includes(screenName));
   document.body.classList.toggle("run-standalone-open", ["start", "run-measurement"].includes(screenName));
@@ -128,7 +128,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
     }),
   });
   document.body.classList.toggle("has-open-dialog", guideOpen);
-  document.title = `${document.querySelector("#main-content h1")?.textContent ?? "RunLoad Journal"} — RunLoad Journal`;
+  document.title = `${document.querySelector("#main-content h1")?.textContent ?? "走行記録"} — 走行記録`;
   prepareUiMotion(appRoot, { screenName });
 
   const shellInteractionCallbacks = {

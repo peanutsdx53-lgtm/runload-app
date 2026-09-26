@@ -34,12 +34,12 @@ export function renderStartScreen({ services }) {
   const mobile = matchesMobileLayout();
   return `<div class="screen screen--start run-launch" data-start-device="${mobile ? "mobile" : "desktop"}">
     <main class="run-launch__panel">
-      <div class="run-launch__top"><p class="eyebrow">RUNLOAD</p><button type="button" class="context-help-button app-utility-button" data-screen-tutorial-start="start" aria-label="この画面の使い方を開く"><span class="app-utility-button__question" aria-hidden="true">?</span></button></div>
+      <div class="run-launch__top"><p class="eyebrow">START</p><button type="button" class="context-help-button app-utility-button" data-screen-tutorial-start="start" aria-label="この画面の使い方を開く"><span class="app-utility-button__question" aria-hidden="true">?</span></button></div>
       <h1>今日は何をしますか</h1>
       <p class="run-launch__lead">${mobile ? "記録を見る・入力する場合はアプリへ、走る場合はGPS測定へ進みます。" : "PCでは記録・結果・履歴・予定の確認と入力を行います。"}</p>
       <div class="run-launch__choices${mobile ? "" : " run-launch__choices--single"}">
         <a class="run-launch__choice run-launch__choice--app" href="#/home">
-          <small>APP</small><strong>RunLoadを使う</strong><span>記録・結果・履歴・予定を開く</span>
+          <small>APP</small><strong>アプリを使う</strong><span>記録・結果・履歴・予定を開く</span>
         </a>
         ${mobile ? `<a class="run-launch__choice run-launch__choice--measure" href="#/run-measurement">
           <small>MEASURE</small><strong>ランニングを測定する</strong><span>GPSで距離・時間・走行軌跡を測る</span>

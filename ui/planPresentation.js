@@ -1,4 +1,4 @@
-import { normalizePlanFactSession } from "../core/runloadCore.js";
+import { normalizePlanFactSession } from "../core/appCore.js";
 import { formatNumber } from "./recordPresentation.js";
 
 const CONDITION_DEFINITIONS = Object.freeze([
@@ -98,28 +98,18 @@ export function normalizePlanSession(session = {}) {
   return normalizePlanFactSession(session);
 }
 
-export function buildPlanModelSession(session = {}) {
+) {
   return normalizePlanFactSession(session);
 }
 
-export function describePlanModelAssumptions(session = {}) {
+) {
   const normalized = normalizePlanFactSession(session);
   if (normalized.activityType === "rest") return "休養予定は、休養という予定事実だけを保存します。";
   return "予定で入力した距離・時間・走り方・コース条件を事実として確認します。分からない内容は、分からないまま残します。";
 }
 
-export function buildPlanReference(sourceExperience = null) {
-  const record = sourceExperience?.record;
-  if (!record?.id) return Object.freeze({ hasReference: false, recordId: "", date: "", session: null });
-  return Object.freeze({
-    hasReference: true,
-    recordId: String(record.id),
-    date: String(record.date || ""),
-    session: normalizePlanFactSession(record),
-  });
-}
 
-export function describePlanComparisonForUser(preview = {}, changedCount = 0, hasReference = false) {
+, changedCount = 0, hasReference = false) {
   if (preview?.state === "REST") return "休養予定として保存します";
   if (!preview?.ok) return "入力条件を確認";
   if (!hasReference) return "入力した予定条件を確認";
@@ -147,15 +137,7 @@ export function buildPlanConditionSnapshot(session = {}, { referenceSession = nu
   });
 }
 
-export function serializePlanReference(reference = {}) {
+) {
   return JSON.stringify({ hasReference: Boolean(reference.hasReference), session: reference.session || null });
 }
 
-export function parsePlanReference(serialized = "") {
-  try {
-    const value = JSON.parse(String(serialized || "{}"));
-    return Object.freeze({ hasReference: Boolean(value?.hasReference), session: value?.session ? normalizePlanFactSession(value.session) : null });
-  } catch {
-    return Object.freeze({ hasReference: false, session: null });
-  }
-}

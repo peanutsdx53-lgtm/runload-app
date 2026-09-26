@@ -1,8 +1,8 @@
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate, formatLocalTime } from "../ui/recordPresentation.js";
 import { courseSummaryText } from "../ui/coursePresentation.js";
-import { bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/runloadCore.js";
-import { officialRofJDescriptor } from "../core/secondPillarRofJ.js";
+import { bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/appCore.js";
+import { officialRofJDescriptor } from "../core/rofJCore.js";
 import { findSavedRunMeasurement } from "../ui/runMeasurementState.js";
 
 const FRONT = '<circle cx="150" cy="36" r="20"></circle><path d="M110 78 C120 66 135 60 150 60 C165 60 180 66 190 78 L204 126 C208 138 204 150 196 160 L182 176 L188 212 C192 228 190 246 184 262 L172 308 C168 324 166 340 166 356 L166 400 C166 410 158 418 148 418 C138 418 130 410 130 400 L130 356 C130 340 128 324 124 308 L112 262 C106 246 104 228 108 212 L114 176 L100 160 C92 150 88 138 92 126 Z"></path>';
@@ -139,7 +139,7 @@ function renderFacts(record = {}) {
 }
 
 function renderFatigue(services, record = {}) {
-  const summary = record.activityType === "run" && services?.secondPillar ? services.secondPillar.summarizeRun(record.id) : null;
+  const summary = record.activityType === "run" && services?.fatigue ? services.fatigue.summarizeRun(record.id) : null;
   const pre = summary?.available && finite(summary.pre) ? Number(summary.pre) : null;
   const post = summary?.available && finite(summary.post) ? Number(summary.post) : null;
   const delta = finite(pre) && finite(post) ? post - pre : null;
@@ -159,7 +159,7 @@ function renderFatigue(services, record = {}) {
 
 
 function fatigueSnapshot(services, record = {}) {
-  const summary = record.activityType === "run" && services?.secondPillar ? services.secondPillar.summarizeRun(record.id) : null;
+  const summary = record.activityType === "run" && services?.fatigue ? services.fatigue.summarizeRun(record.id) : null;
   const pre = summary?.available && finite(summary.pre) ? Number(summary.pre) : null;
   const post = summary?.available && finite(summary.post) ? Number(summary.post) : null;
   return Object.freeze({ pre, post, delta: finite(pre) && finite(post) ? post - pre : null });

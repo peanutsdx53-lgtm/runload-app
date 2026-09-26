@@ -1,4 +1,4 @@
-/* RunLoad desktop-specific layouts. */
+/* Desktop-specific layouts. */
 
 /* ===== Desktop shell ===== */
 /*
@@ -364,12 +364,6 @@
     font-size: 0.8rem !important;
   }
 
-  .screen--record-input.screen-layout--record .micro-note {
-    margin-top: 0.45rem !important;
-    font-size: 0.79rem !important;
-    line-height: 1.45;
-  }
-
   .screen--record-input.screen-layout--record .fatigue-inline {
     grid-column: 2 !important;
     grid-row: auto !important;
@@ -470,9 +464,6 @@
     width: 100%;
     padding: 1rem 1.05rem 1.05rem !important;
   }
-
-  .screen--record-input.screen-layout--record .stage-intro,
-  .screen--record-input.screen-layout--record .snapshot-note,
   .screen--record-input.screen-layout--record .record-return-status {
     font-size: 0.82rem !important;
     line-height: 1.5;
@@ -838,19 +829,6 @@
 
   .screen--record-input.screen-layout--record .save-checklist > div.is-complete > b {
     color: var(--color-accent-strong);
-  }
-
-  .screen--record-input.screen-layout--record .save-readiness__note,
-  .screen--record-input.screen-layout--record .save-readiness__draft {
-    margin: 0;
-    color: var(--color-muted);
-    font-size: 0.72rem;
-    line-height: 1.45;
-  }
-
-  .screen--record-input.screen-layout--record .save-readiness__draft {
-    padding-top: 0.55rem;
-    border-top: 1px solid color-mix(in srgb, var(--color-line) 80%, transparent);
   }
 
   .screen--record-input.screen-layout--record .draft-status:empty {
@@ -2950,29 +2928,6 @@
     width: 100%;
   }
 
-  .screen--history.screen-layout--history .history-mode {
-    width: min(100%, 38rem) !important;
-    margin-top: 1.25rem !important;
-    padding: 0.3rem !important;
-    gap: 0.3rem !important;
-    border-radius: 0.9rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button {
-    min-height: 3.5rem !important;
-    padding: 0.65rem 0.85rem !important;
-    border-radius: 0.7rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button span {
-    font-size: 0.95rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button small {
-    margin-top: 0.18rem !important;
-    font-size: 0.76rem !important;
-  }
-
   .screen--history.screen-layout--history .history-view {
     width: 100% !important;
     max-width: none !important;
@@ -3168,17 +3123,9 @@
     padding: 1rem !important;
     border-radius: 1rem !important;
   }
-
-  .screen--history.screen-layout--history .selected-card-head small,
-  .screen--history.screen-layout--history .selected-main-value small,
-  .screen--history.screen-layout--history .selected-main-value span,
   .screen--history.screen-layout--history .selected-facts dt,
   .screen--history.screen-layout--history .result-link small {
     font-size: 0.74rem !important;
-  }
-
-  .screen--history.screen-layout--history .selected-card-head h2 {
-    font-size: 1.2rem !important;
   }
 
   .screen--history.screen-layout--history .selected-facts dd,
@@ -3516,8 +3463,7 @@
   .screen--settings.screen-layout--settings .sub-section-head small,
   .screen--settings.screen-layout--settings .subdetails summary small,
   .screen--settings.screen-layout--settings .shoe small,
-  .screen--settings.screen-layout--settings .data-overview small,
-  .screen--settings.screen-layout--settings .about-grid small {
+  .screen--settings.screen-layout--settings .data-overview small {
     font-size: 0.74rem !important;
   }
 
@@ -3564,8 +3510,7 @@
     font-size: 0.82rem !important;
   }
 
-  .screen--settings.screen-layout--settings .data-overview,
-  .screen--settings.screen-layout--settings .about-grid {
+  .screen--settings.screen-layout--settings .data-overview {
     width: 100% !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
@@ -3574,7 +3519,6 @@
     font-size: 0.98rem !important;
   }
 
-  .screen--settings.screen-layout--settings .about-grid strong,
   .screen--settings.screen-layout--settings .shoe strong,
   .screen--settings.screen-layout--settings .subdetails summary strong,
   .screen--settings.screen-layout--settings .danger-box strong {
@@ -3761,11 +3705,6 @@
     font-size: 1.15rem !important;
   }
 
-  .screen--reading.screen-layout--reading .sheet :is(.lead, .body-copy p, .points, .caution, .source-note) {
-    font-size: 0.84rem !important;
-    line-height: 1.6 !important;
-  }
-
   /* Consultation derived from More / Result. */
   .screen--consultation.screen-layout--consultation .source {
     margin-top: 1rem !important;
@@ -3866,47 +3805,26 @@
   .secondary-derived-screen :is(button,a) {
     font-family: inherit !important;
   }
-
-  /* ===== History: explicit removal of remaining mobile-size labels ===== */
-  .screen--history.screen-layout--history .sample-badge,
   .screen--history.screen-layout--history .region-picker-trigger i,
   .screen--history.screen-layout--history .chart-card-head small,
   .screen--history.screen-layout--history .records-disclosure > summary small,
   .screen--history.screen-layout--history .region-picker-trigger .region-picker-copy em,
-  .screen--history.screen-layout--history .chart-region-heading small,
-  .screen--history.screen-layout--history .chart-region-heading span,
-  .screen--history.screen-layout--history .region-option-copy small,
   .screen--history.screen-layout--history .selected-focus-heading small,
   .screen--history.screen-layout--history .selected-focus-value span,
   .screen--history.screen-layout--history .selected-facts-compact dt {
     font-size: 0.76rem !important;
     line-height: 1.35 !important;
   }
-
-  .screen--history.screen-layout--history .chart-meaning span,
   .screen--history.screen-layout--history .condition-details > div,
   .screen--history.screen-layout--history .excluded-details > p,
   .screen--history.screen-layout--history .empty-records {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
-
-  .screen--history.screen-layout--history .chart-meaning strong,
   .screen--history.screen-layout--history .selected-weekday,
   .screen--history.screen-layout--history .selected-facts-compact dd {
     font-size: 0.86rem !important;
     line-height: 1.4 !important;
-  }
-
-  .screen--history.screen-layout--history .chart-meaning {
-    padding: 0.75rem 0.85rem !important;
-    border-radius: 0.75rem !important;
-  }
-
-  .screen--history.screen-layout--history .selected-card-head > span {
-    min-width: 2rem !important;
-    height: 2rem !important;
-    font-size: 0.8rem !important;
   }
 
   .screen--history.screen-layout--history .region-picker-copy {
@@ -3931,8 +3849,7 @@
   .screen--plan.screen-layout--plan .metric-field em,
   .screen--plan.screen-layout--plan .details summary span,
   .screen--plan.screen-layout--plan .saved summary span,
-  .screen--plan.screen-layout--plan .saved-card span,
-  .screen--plan.screen-layout--plan .compare-row {
+  .screen--plan.screen-layout--plan .saved-card span{
     font-size: 0.8rem !important;
     line-height: 1.45 !important;
   }
@@ -4029,8 +3946,7 @@
   .screen--reading.screen-layout--reading .points ul,
   .screen--reading.screen-layout--reading .lead,
   .screen--reading.screen-layout--reading .body-copy p,
-  .screen--reading.screen-layout--reading .caution,
-  .screen--reading.screen-layout--reading .source-note {
+  .screen--reading.screen-layout--reading .caution{
     font-size: 0.84rem !important;
     line-height: 1.65 !important;
   }
@@ -4072,15 +3988,11 @@
     font-size: 0.74rem !important;
     line-height: 1.4 !important;
   }
-
-  .screen--consultation.screen-layout--consultation .select-list strong,
   .screen--consultation.screen-layout--consultation .share-card strong,
   .screen--consultation.screen-layout--consultation .share-region-detail b {
     font-size: 0.9rem !important;
     line-height: 1.4 !important;
   }
-
-  .screen--consultation.screen-layout--consultation .select-list span,
   .screen--consultation.screen-layout--consultation .share-source em,
   .screen--consultation.screen-layout--consultation .report header span,
   .screen--consultation.screen-layout--consultation .report section p,
@@ -4131,10 +4043,6 @@
   .screen--history.screen-layout--history .records-disclosure > summary small {
     font-size: 0.78rem !important;
     line-height: 1.4 !important;
-  }
-
-  .screen--history.screen-layout--history .selected-card-head > span {
-    font-size: 0.8rem !important;
   }
 
   .screen--history.screen-layout--history .condition-details > div,
@@ -4189,10 +4097,6 @@
     font-size: 0.82rem !important;
   }
 
-  .screen--settings.screen-layout--settings .large-text .field > span {
-    font-size: 0.88rem !important;
-  }
-
   .screen--consultation.screen-layout--consultation .share-preview > header small {
     font-size: 0.74rem !important;
   }
@@ -4201,11 +4105,6 @@
   .screen--consultation.screen-layout--consultation .share-viewer-shell > footer {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
-  }
-
-  /* Bottom navigation is mobile-only. */
-  .screen--history.screen-layout--history .bottom-nav {
-    display: none !important;
   }
 }
 
@@ -4314,11 +4213,6 @@
   }
 }
 
-/* ===== State-aware desktop readability ===== */
-/*
- * State-aware layout and light/dark readability rules.
- * Record-input and Result families are defined in their dedicated sections.
- */
 
 @media (min-width: 80rem) {
   /* Strengthen secondary text without hard-coding a light or dark color. */
@@ -4417,7 +4311,6 @@
   .screen--plan.screen-layout--plan :is(.note, .saved-card span),
   .screen--settings.screen-layout--settings :is(.note, .muted-text),
   .screen--privacy.screen-layout--privacy :is(.body, .warning),
-  .screen--reading.screen-layout--reading :is(.article-card p, .source-note),
   .screen--consultation.screen-layout--consultation :is(.boundary, .memo),
   .screen--support-guidance.screen-layout--support :is(.notice, .card p) {
     color: var(--muted) !important;
@@ -4676,15 +4569,8 @@
     font-size: 0.75rem !important;
   }
 
-  .screen--history.screen-layout--history .chart-value,
-  .screen--history.screen-layout--history .chart-region-heading h2,
-  .screen--history.screen-layout--history .region-option-copy strong {
+  .screen--history.screen-layout--history .chart-value{
     font-size: 0.86rem !important;
-    line-height: 1.35 !important;
-  }
-
-  .screen--history.screen-layout--history .region-option-copy small {
-    font-size: 0.74rem !important;
     line-height: 1.35 !important;
   }
 
@@ -4718,9 +4604,6 @@
     min-height: 4.4rem !important;
     padding: 0.65rem 0.7rem !important;
   }
-
-  /* Selected segmented controls should not turn into light halos in dark mode. */
-  .screen--history.screen-layout--history .history-mode button.active,
   .screen--history.screen-layout--history .display-toggle button.active,
   .screen--plan.screen-layout--plan .seg button.active {
     box-shadow: none !important;
@@ -4824,8 +4707,6 @@
     border-radius: 1.25rem !important;
     box-shadow: var(--shadow-dialog) !important;
   }
-
-  .screen--history.screen-layout--history .history-mode button,
   .screen--history.screen-layout--history .display-toggle button,
   .screen--plan.screen-layout--plan .seg button,
   .screen--reading.screen-layout--reading .filters button {
@@ -4997,10 +4878,6 @@
     gap: 0.75rem !important;
   }
 
-  .screen--settings.screen-layout--settings .about-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.75rem !important;
-  }
 }
 
 @media (min-width: 80rem) and (max-width: 86rem) {
@@ -5050,7 +4927,6 @@
 }
 
 
-/* ===== unavailable-state readability ===== */
 @media (min-width: 80rem) {
   .screen--consultation.screen-layout--consultation .share-source.is-unavailable {
     opacity: 1 !important;
@@ -5196,19 +5072,6 @@
   .app-shell:not(.app-shell--immersive) .primary-navigation__link {
     font-size: 0.75rem !important;
   }
-
-  .screen--history.screen-layout--history :is(
-    .sample-badge,
-    .region-picker-trigger small,
-    .chart-card-head small,
-    .records-disclosure > summary small,
-    .chart-region-heading small,
-    .region-option-copy small,
-    .selected-focus-heading small,
-    .selected-main-value small,
-    .selected-facts dt,
-    .result-link small
-  ),
   .screen--more.screen-layout--more .copy small,
   .screen--plan.screen-layout--plan :is(
     .panel-head small,
@@ -5229,7 +5092,6 @@
     .subdetails summary small,
     .shoe small,
     .data-overview small,
-    .about-grid small,
     .group-title,
     .row small,
     .theme-preview small
@@ -5339,21 +5201,9 @@
     line-height: 1.4;
   }
 
-  .screen-layout :is(.page-head, .intro) > div > p:last-child,
-  .screen-layout .section-introduction {
+  .screen-layout :is(.page-head, .intro) > div > p:last-child{
     font-size: var(--type-body) !important;
     line-height: var(--line-body);
-  }
-
-  .screen-layout :is(
-    .view-toggle button.active,
-    .type-toggle button.active,
-    .seg button.active,
-    .mode button.active,
-    .display-toggle button.active,
-    .history-mode button.active
-  ) {
-    box-shadow: none !important;
   }
 }
 
@@ -5429,7 +5279,6 @@
 }
 
 
-/* Record audit: compact save rail and surface optional-entry state instead of explanatory copy. */
 @media (min-width: 69rem) {
   .screen--record-input.screen-layout--record .desktop-save-area {
     gap: 0.75rem !important;
@@ -5488,7 +5337,6 @@
 }
 
 
-/* PC audit 2026-09-23: make the record status rail use its full card width. */
 @media (min-width: 69rem) {
   .screen--record-input.screen-layout--record .desktop-save-area {
     justify-items: stretch !important;
@@ -5524,7 +5372,7 @@
     margin-inline: auto !important;
   }
 }
-/* PC record status card audit 2026-09-23: center and enlarge content without widening the rail. */
+
 @media (min-width: 69rem) {
   .screen--record-input.screen-layout--record .desktop-save-area {
     justify-items: center !important;
@@ -5611,7 +5459,6 @@
 }
 
 
-/* PC course library workspace audit 2026-09-23: prioritize selection, saved courses, then GPX assistance. */
 @media (min-width: 80rem) {
   .screen--course-library.course-derived-screen {
     background: color-mix(in srgb, var(--color-ink) 3%, var(--color-paper)) !important;
@@ -5853,7 +5700,6 @@
 }
 
 
-/* PC course derived parity audit 2026-09-23: match body/shoe derived-screen chrome. */
 @media (min-width: 80rem) {
   .screen--course-library.course-derived-screen {
     position: fixed !important;
@@ -5987,7 +5833,6 @@
 }
 
 
-/* PC course editor input usability audit 2026-09-23: compact work areas, larger controls, smaller final action. */
 @media (min-width: 80rem) {
   .screen--course-editor.screen-layout--course #course-editor-form {
     gap: 1rem !important;
@@ -6230,7 +6075,6 @@
 }
 
 
-/* PC course editor unit parity audit 2026-09-23: readable percent units and single GPX entry point. */
 @media (min-width: 80rem) {
   .screen--course-editor.screen-layout--course .mfield > div > em,
   .screen--course-editor.screen-layout--course .percent-control > em {
@@ -6250,7 +6094,6 @@
 }
 
 
-/* PC history record browser audit 2026-09-23: compact hierarchy, readable controls, full-width record rows. */
 @media (min-width: 80rem) {
   .screen--history.screen-layout--history > .page-head {
     position: absolute !important;
@@ -6263,31 +6106,6 @@
     clip-path: inset(50%) !important;
     white-space: nowrap !important;
     border: 0 !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode {
-    width: min(100%, 44rem) !important;
-    margin-top: 0 !important;
-    padding: 0.32rem !important;
-    gap: 0.32rem !important;
-    border-radius: 0.9rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button {
-    min-height: 4rem !important;
-    padding: 0.7rem 1rem !important;
-    border-radius: 0.68rem !important;
-  }
-
-  .screen--history.screen-layout--history .history-mode button span {
-    font-size: 1rem !important;
-    line-height: 1.25;
-  }
-
-  .screen--history.screen-layout--history .history-mode button small {
-    margin-top: 0.2rem !important;
-    font-size: 0.84rem !important;
-    line-height: 1.35 !important;
   }
 
   .screen--history.screen-layout--history .history-view {
@@ -6492,7 +6310,6 @@
 }
 
 
-/* PC history single-purpose audit 2026-09-23: history is record browsing only. */
 @media (min-width: 80rem) {
   .screen--history.screen-layout--history .history-view {
     margin-top: 0 !important;
@@ -6503,9 +6320,7 @@
   }
 }
 
-/* ========================================================================== 
-   Result / PC layout candidate — shell, theme and typography remain unchanged.
-   ========================================================================== */
+
 .pc-result-console { display: none; }
 
 @media (min-width: 80rem) {
@@ -6536,8 +6351,6 @@
     padding: 0.2rem 0.15rem 0.9rem;
     border-bottom: 1px solid var(--color-line);
   }
-
-  .pc-result-summary__title > p,
   .pc-result-main header small,
   .pc-result-focus header small,
   .pc-result-fatigue header small {
@@ -6546,27 +6359,6 @@
     font-size: 0.72rem;
     font-weight: 900;
     letter-spacing: 0.13em;
-  }
-
-  .pc-result-summary__title > div {
-    margin-top: 0.2rem;
-    display: flex;
-    align-items: baseline;
-    gap: 0.95rem;
-  }
-
-  .pc-result-summary__title h1 {
-    margin: 0;
-    font-size: clamp(2rem, 2.55vw, 2.7rem);
-    line-height: 1.02;
-    letter-spacing: -0.045em;
-  }
-
-  .pc-result-summary__title span {
-    color: var(--color-muted);
-    font-size: 0.85rem;
-    font-weight: 800;
-    white-space: nowrap;
   }
 
   .pc-result-signals {
@@ -6716,84 +6508,10 @@
     max-height: none;
   }
 
-  .pc-axis-key {
-    min-width: 13.4rem;
-    display: grid;
-    grid-template-columns: auto 7.5rem auto;
-    grid-template-rows: auto auto;
-    align-items: center;
-    gap: 0.12rem 0.42rem;
-    color: var(--color-muted);
-    font-size: 0.65rem;
-    font-weight: 800;
-  }
-
-  .pc-axis-key > i {
-    position: relative;
-    height: 0.32rem;
-    border-radius: 999px;
-    background: var(--color-meter-track);
-  }
-
-  .pc-axis-key > i > b {
-    position: absolute;
-    left: 50%;
-    top: -0.17rem;
-    width: 1px;
-    height: 0.66rem;
-    background: var(--color-muted);
-  }
-
-  .pc-axis-key > em {
-    grid-column: 1 / -1;
-    color: var(--color-muted);
-    font-size: 0.61rem;
-    font-style: normal;
-    text-align: center;
-  }
-
   .pc-result-region-groups {
     margin-top: 0.3rem;
     display: grid;
     gap: 0.46rem;
-  }
-
-  .pc-region-group {
-    display: grid;
-    grid-template-columns: 4.15rem minmax(0, 1fr);
-    align-items: start;
-    gap: 0.45rem;
-  }
-
-  .pc-region-group + .pc-region-group {
-    padding-top: 0.42rem;
-    border-top: 1px solid color-mix(in srgb, var(--color-line) 68%, transparent);
-  }
-
-  .pc-region-group__label {
-    padding-top: 0.35rem;
-  }
-
-  .pc-region-group__label strong,
-  .pc-region-group__label span {
-    display: block;
-  }
-
-  .pc-region-group__label strong {
-    font-size: 0.76rem;
-  }
-
-  .pc-region-group__label span {
-    margin-top: 0.12rem;
-    color: var(--color-muted);
-    font-size: 0.61rem;
-    font-weight: 750;
-  }
-
-  .pc-region-group__grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.34rem 0.45rem;
   }
 
   .pc-region-tile {
@@ -6916,37 +6634,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .pc-marker-key {
-    margin: 0.45rem 0 0 4.6rem;
-    display: flex;
-    gap: 1rem;
-    color: var(--color-muted);
-    font-size: 0.61rem;
-    font-weight: 800;
-  }
-
-  .pc-marker-key span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .pc-marker-key i.current {
-    width: 0.52rem;
-    height: 0.52rem;
-    display: inline-block;
-    border-radius: 50%;
-    background: var(--color-accent);
-  }
-
-  .pc-marker-key i.previous {
-    width: 0.43rem;
-    height: 0.43rem;
-    display: inline-block;
-    background: var(--color-muted);
-    transform: rotate(45deg);
-  }
-
   .pc-result-lower {
     min-height: 10.7rem;
     display: grid;
@@ -6997,43 +6684,6 @@
     font-style: normal;
   }
 
-  .pc-focus-content {
-    display: grid;
-    grid-template-columns: 14.5rem minmax(0, 1fr);
-    align-items: center;
-    gap: 1.1rem;
-  }
-
-  .pc-focus-values {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    border-right: 1px solid var(--color-line);
-  }
-
-  .pc-focus-values > div {
-    text-align: center;
-  }
-
-  .pc-focus-values small,
-  .pc-focus-trend > span {
-    display: block;
-    color: var(--color-muted);
-    font-size: 0.64rem;
-    font-weight: 800;
-  }
-
-  .pc-focus-values strong {
-    display: block;
-    margin-top: 0.16rem;
-    color: var(--color-accent-strong);
-    font-size: 1.18rem;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .pc-focus-trend {
-    min-width: 0;
-  }
-
   .pc-focus-chart {
     width: 100%;
     height: 5rem;
@@ -7076,51 +6726,6 @@
   .pc-focus-empty {
     color: var(--color-muted);
     font-size: 0.78rem;
-  }
-
-  .pc-fatigue-numbers {
-    margin-top: 0.3rem;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: end;
-    gap: 0.7rem;
-  }
-
-  .pc-fatigue-numbers > div:not(.pc-fatigue-change) {
-    display: flex;
-    align-items: baseline;
-    gap: 0.42rem;
-  }
-
-  .pc-fatigue-numbers > div:last-child {
-    justify-content: flex-end;
-  }
-
-  .pc-fatigue-numbers span {
-    color: var(--color-muted);
-    font-size: 0.64rem;
-    font-weight: 800;
-  }
-
-  .pc-fatigue-numbers strong {
-    color: var(--color-accent-strong);
-    font-size: 1.5rem;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .pc-fatigue-change {
-    text-align: center;
-  }
-
-  .pc-fatigue-change span,
-  .pc-fatigue-change strong {
-    display: block;
-  }
-
-  .pc-fatigue-change strong {
-    margin-top: 0.12rem;
-    font-size: 0.95rem;
   }
 
   .pc-fatigue-scale {
@@ -7186,10 +6791,7 @@
   }
 }
 
-/* ========================================================================== 
-   Result / PC layout candidate V0.2 — presentation refinement only.
-   Shared shell, theme tokens and typography remain unchanged.
-   ========================================================================== */
+
 @media (min-width: 80rem) {
   .screen--result.screen-layout--result > .pc-result-console {
     gap: 0.78rem;
@@ -7277,53 +6879,9 @@
     transform-origin: center 48%;
   }
 
-  .pc-axis-key {
-    min-width: 12.5rem;
-    grid-template-columns: auto 7rem auto;
-  }
-
   .pc-result-region-groups {
     margin-top: 0.18rem;
     gap: 0.42rem;
-  }
-
-  .pc-region-group {
-    display: block;
-  }
-
-  .pc-region-group + .pc-region-group {
-    padding-top: 0.38rem;
-  }
-
-  .pc-region-group__heading {
-    min-height: 1.45rem;
-    margin-bottom: 0.28rem;
-    display: flex;
-    align-items: center;
-    gap: 0.42rem;
-  }
-
-  .pc-region-group__heading::after {
-    content: "";
-    height: 1px;
-    flex: 1 1 auto;
-    background: color-mix(in srgb, var(--color-line) 58%, transparent);
-  }
-
-  .pc-region-group__heading strong {
-    font-size: 0.74rem;
-    line-height: 1;
-  }
-
-  .pc-region-group__heading span {
-    order: 3;
-    color: var(--color-muted);
-    font-size: 0.58rem;
-    font-weight: 800;
-  }
-
-  .pc-region-group__grid {
-    gap: 0.34rem 0.42rem;
   }
 
   .pc-region-tile {
@@ -7460,11 +7018,6 @@
     color: var(--color-info);
   }
 
-  .pc-marker-key {
-    margin: 0.42rem 0 0;
-    justify-content: flex-end;
-  }
-
   .pc-result-lower {
     min-height: 11.7rem;
     grid-template-columns: minmax(0, 2.18fr) minmax(18rem, 0.82fr);
@@ -7473,88 +7026,6 @@
   .pc-result-focus,
   .pc-result-fatigue {
     padding: 0.9rem 1rem 0.8rem;
-  }
-
-  .pc-focus-content {
-    margin-top: 0.2rem;
-    grid-template-columns: 12rem 11.5rem minmax(0, 1fr);
-    align-items: stretch;
-    gap: 0;
-  }
-
-  .pc-focus-highlight,
-  .pc-focus-change,
-  .pc-focus-trend {
-    min-width: 0;
-    padding: 0.3rem 1rem 0.1rem;
-  }
-
-  .pc-focus-highlight {
-    padding-left: 0;
-  }
-
-  .pc-focus-change,
-  .pc-focus-trend {
-    border-left: 1px solid var(--color-line);
-  }
-
-  .pc-focus-highlight > span,
-  .pc-focus-change > span,
-  .pc-focus-trend > span {
-    display: block;
-    color: var(--color-muted);
-    font-size: 0.62rem;
-    font-weight: 850;
-  }
-
-  .pc-focus-highlight > div {
-    margin-top: 0.18rem;
-    display: flex;
-    align-items: baseline;
-    gap: 0.55rem;
-  }
-
-  .pc-focus-highlight > div strong {
-    color: var(--color-accent-strong);
-    font-size: 2.1rem;
-    line-height: 1;
-    letter-spacing: -0.035em;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .pc-focus-highlight > div em {
-    padding: 0.18rem 0.42rem;
-    border-radius: 999px;
-    background: var(--color-neutral-soft);
-    color: var(--color-muted);
-    font-size: 0.58rem;
-    font-style: normal;
-    font-weight: 850;
-  }
-
-  .pc-result-focus[data-direction="above"] .pc-focus-highlight > div em {
-    background: var(--color-model-soft);
-    color: var(--color-model);
-  }
-
-  .pc-result-focus[data-direction="below"] .pc-focus-highlight > div em {
-    background: var(--color-info-soft);
-    color: var(--color-info);
-  }
-
-  .pc-focus-highlight > p,
-  .pc-focus-change > p {
-    margin: 0.28rem 0 0;
-    color: var(--color-muted);
-    font-size: 0.61rem;
-    font-weight: 750;
-  }
-
-  .pc-focus-highlight > p b,
-  .pc-focus-change > p b {
-    color: var(--color-accent-strong);
-    font-size: 0.74rem;
-    font-variant-numeric: tabular-nums;
   }
 
   .pc-focus-baseline {
@@ -7607,52 +7078,6 @@
     color: var(--color-muted);
     font-size: 0.5rem;
     font-weight: 800;
-  }
-
-  .pc-focus-compare {
-    margin-top: 0.35rem;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .pc-focus-compare > div {
-    min-width: 0;
-    padding: 0.38rem 0.45rem;
-    border-radius: 0.62rem;
-    background: var(--color-surface-muted);
-    text-align: center;
-  }
-
-  .pc-focus-compare > div.is-current {
-    background: color-mix(in srgb, var(--color-accent-soft) 70%, var(--color-surface));
-  }
-
-  .pc-focus-compare small,
-  .pc-focus-compare strong {
-    display: block;
-  }
-
-  .pc-focus-compare small {
-    color: var(--color-muted);
-    font-size: 0.52rem;
-    font-weight: 800;
-  }
-
-  .pc-focus-compare strong {
-    margin-top: 0.06rem;
-    color: var(--color-accent-strong);
-    font-size: 1.05rem;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .pc-focus-compare > i {
-    color: var(--color-accent);
-    font-size: 1.05rem;
-    font-style: normal;
-    font-weight: 900;
   }
 
   .pc-focus-chart {
@@ -7768,7 +7193,7 @@
   }
 }
 
-/* V0.2 density pass: 3-view numerical matrix, one row per body view. */
+
 @media (min-width: 80rem) {
   .pc-result-main {
     min-height: 29rem;
@@ -7786,20 +7211,6 @@
 
   .pc-result-region-groups {
     margin-top: 0.12rem;
-    gap: 0.3rem;
-  }
-
-  .pc-region-group + .pc-region-group {
-    padding-top: 0.3rem;
-  }
-
-  .pc-region-group__heading {
-    min-height: 1.15rem;
-    margin-bottom: 0.2rem;
-  }
-
-  .pc-region-group__grid {
-    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
     gap: 0.3rem;
   }
 
@@ -7851,10 +7262,6 @@
     font-size: 0.51rem;
   }
 
-  .pc-marker-key {
-    margin-top: 0.3rem;
-  }
-
   .pc-result-lower {
     min-height: 11.25rem;
   }
@@ -7887,10 +7294,7 @@
   }
 }
 
-/* ========================================================================== 
-   Result / PC layout candidate V0.3 — balance and legibility pass.
-   Shared shell, theme tokens and typography remain unchanged.
-   ========================================================================== */
+
 @media (min-width: 80rem) {
   .screen--result.screen-layout--result > .pc-result-console {
     gap: 0.72rem;
@@ -8032,33 +7436,6 @@
     bottom: 1.65rem;
   }
 
-  /* Keep axis explanation and marker legend together instead of using a footer row. */
-  .pc-number-guides {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    gap: 0.85rem;
-  }
-
-  .pc-axis-key {
-    min-width: 11.6rem;
-    grid-template-columns: auto 6.4rem auto;
-    font-size: 0.61rem;
-  }
-
-  .pc-axis-key > em {
-    font-size: 0.56rem;
-  }
-
-  .pc-number-guides .pc-marker-key {
-    margin-top: 0.03rem;
-    padding-left: 0.72rem;
-    border-left: 1px solid var(--color-line);
-    display: grid;
-    gap: 0.18rem;
-    font-size: 0.56rem;
-  }
-
   .pc-result-region-groups {
     margin-top: 0.28rem;
   }
@@ -8070,112 +7447,12 @@
     gap: 0.48rem;
   }
 
-  .pc-region-tile.pc-region-tile--matrix {
-    min-height: 5.15rem;
-    padding: 0.5rem 0.58rem 0.44rem;
-    grid-template-rows: auto auto auto auto;
-    gap: 0.24rem;
-    border-color: color-mix(in srgb, var(--color-line) 58%, transparent);
-    border-radius: 0.76rem;
-    background: color-mix(in srgb, var(--color-surface-muted) 50%, var(--color-surface));
-  }
-
-  .pc-region-tile.pc-region-tile--matrix[data-direction="above"] {
-    box-shadow: inset 0.17rem 0 0 color-mix(in srgb, var(--color-model) 72%, var(--color-line));
-  }
-
-  .pc-region-tile.pc-region-tile--matrix[data-direction="below"] {
-    box-shadow: inset 0.17rem 0 0 color-mix(in srgb, var(--color-info) 72%, var(--color-line));
-  }
-
-  .pc-region-tile.pc-region-tile--matrix[data-direction="reference"] {
-    box-shadow: inset 0.17rem 0 0 color-mix(in srgb, var(--color-accent) 42%, var(--color-line));
-  }
-
-  .pc-region-tile.pc-region-tile--matrix.is-selected {
-    border-color: color-mix(in srgb, var(--color-accent) 72%, var(--color-line));
-    background: color-mix(in srgb, var(--color-accent-soft) 50%, var(--color-surface));
-    box-shadow: inset 0.2rem 0 0 var(--color-accent), 0 0.18rem 0.7rem color-mix(in srgb, var(--color-accent) 10%, transparent);
-  }
-
-  .pc-region-tile__heading {
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .pc-region-tile__heading small {
-    flex: 0 0 auto;
-    padding: 0.12rem 0.3rem;
-    border-radius: 999px;
-    background: var(--color-neutral-soft);
-    color: var(--color-muted);
-    font-size: 0.48rem;
-    line-height: 1;
-    font-weight: 850;
-  }
-
-  .pc-region-tile__heading strong {
-    min-width: 0;
-    overflow: hidden;
-    color: var(--color-ink);
-    font-size: 0.66rem;
-    line-height: 1.2;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .pc-region-tile__value {
-    min-width: 0;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.45rem;
-  }
-
-  .pc-region-tile__value b {
-    color: var(--color-accent-strong);
-    font-size: 1.17rem;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .pc-region-tile__value em {
-    overflow: hidden;
-    color: var(--color-muted);
-    font-size: 0.53rem;
-    font-style: normal;
-    font-weight: 850;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .pc-region-tile.pc-region-tile--matrix .pc-region-axis {
-    width: 100%;
-    max-width: none;
-    height: 0.32rem;
-  }
-
-  .pc-region-tile.pc-region-tile--matrix .pc-region-tile__meta {
-    font-size: 0.54rem;
-  }
-
-  .pc-region-tile.pc-region-tile--matrix .pc-region-tile__meta em {
-    min-width: 2.1rem;
-    padding: 0.1rem 0.25rem;
-    font-size: 0.5rem;
-  }
-
   .pc-result-lower {
     min-height: 11.05rem;
   }
 }
 
-/* ========================================================================== 
-   Result / PC layout candidate V0.4 — interactive result console.
-   Keeps the shared shell/theme/font unchanged. PC only.
-   ========================================================================== */
+
 @media (min-width: 80rem) {
   /* Turn the 12 regions into one instrument board rather than 12 floating cards. */
   .pc-result-region-groups {
@@ -8190,66 +7467,6 @@
     gap: 0;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     background: var(--color-line);
-  }
-
-  .pc-region-tile.pc-region-tile--matrix {
-    min-height: 5.05rem;
-    margin: 0;
-    padding: 0.5rem 0.62rem 0.46rem;
-    border: 0;
-    border-radius: 0;
-    appearance: none;
-    text-align: left;
-    font: inherit;
-    color: inherit;
-    background: var(--color-surface);
-    box-shadow: none;
-    transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
-  }
-
-  .pc-region-tile.pc-region-tile--matrix:hover,
-  .pc-region-tile.pc-region-tile--matrix:focus-visible,
-  .pc-region-tile.pc-region-tile--matrix.is-linked-hover {
-    z-index: 1;
-    background: color-mix(in srgb, var(--color-accent-soft) 34%, var(--color-surface));
-    outline: 0;
-  }
-
-  .pc-region-tile.pc-region-tile--matrix.is-selected {
-    z-index: 2;
-    border: 0;
-    background: color-mix(in srgb, var(--color-accent-soft) 58%, var(--color-surface));
-    box-shadow: inset 0.2rem 0 0 var(--color-accent), inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 32%, transparent);
-  }
-
-  .pc-region-tile.pc-region-tile--matrix[data-direction="above"],
-  .pc-region-tile.pc-region-tile--matrix[data-direction="below"],
-  .pc-region-tile.pc-region-tile--matrix[data-direction="reference"] {
-    box-shadow: none;
-  }
-
-  .pc-region-tile.pc-region-tile--matrix.is-selected[data-direction] {
-    box-shadow: inset 0.2rem 0 0 var(--color-accent), inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 32%, transparent);
-  }
-
-  .pc-region-tile__heading small {
-    background: transparent;
-    padding: 0;
-    min-width: 1.85rem;
-    color: var(--color-muted);
-  }
-
-  .pc-region-tile__value b {
-    font-size: 1.22rem;
-    letter-spacing: -0.025em;
-  }
-
-  .pc-region-tile__value em {
-    font-size: 0.51rem;
-  }
-
-  .pc-region-tile.pc-region-tile--matrix .pc-region-axis {
-    height: 0.28rem;
   }
 
   /* Body map and number board share hover/selection as one interaction. */
@@ -8275,45 +7492,13 @@
     overflow: hidden;
   }
 
-  .pc-insight-tabs {
-    position: absolute;
-    top: 0.66rem;
-    right: 0.8rem;
-    display: inline-grid;
-    grid-template-columns: repeat(2, minmax(4.15rem, 1fr));
-    padding: 0.16rem;
-    border: 1px solid color-mix(in srgb, var(--color-line) 78%, transparent);
-    border-radius: 999px;
-    background: var(--color-surface-muted);
-  }
-
-  .pc-insight-tabs button {
-    min-height: 1.7rem;
-    padding: 0.18rem 0.68rem;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    color: var(--color-muted);
-    font: inherit;
-    font-size: 0.62rem;
-    font-weight: 850;
-    cursor: pointer;
-  }
-
-  .pc-insight-tabs button.is-active {
-    background: var(--color-surface);
-    color: var(--color-accent-strong);
-    box-shadow: 0 0.12rem 0.4rem color-mix(in srgb, var(--color-ink) 10%, transparent);
-  }
-
   .pc-detail-stack,
   .pc-detail-panel {
     min-height: 0;
     height: 100%;
   }
 
-  .pc-detail-panel[hidden],
-  .pc-compare-panel[hidden] {
+  .pc-detail-panel[hidden]{
     display: none !important;
   }
 
@@ -8355,199 +7540,12 @@
     white-space: nowrap;
   }
 
-  .pc-detail-panel .pc-focus-content {
-    min-height: 7.25rem;
-    grid-template-columns: minmax(9.2rem, 0.82fr) minmax(9.4rem, 0.86fr) minmax(15rem, 1.32fr);
-    gap: 0.55rem;
-  }
-
-  .pc-detail-panel .pc-focus-highlight,
-  .pc-detail-panel .pc-focus-change,
-  .pc-detail-panel .pc-focus-trend {
-    padding: 0.62rem 0.72rem;
-  }
-
-  /* Integrated body comparison: two balanced columns, six rows each. */
-  .pc-compare-panel {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: 0.36rem;
-    min-height: 0;
-  }
-
-  .pc-compare-toolbar {
-    min-height: 1.78rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .pc-compare-toolbar > div:first-child {
-    min-width: 0;
-    display: flex;
-    align-items: baseline;
-    gap: 0.48rem;
-  }
-
-  .pc-compare-toolbar small {
-    color: var(--color-accent);
-    font-size: 0.52rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-  }
-
-  .pc-compare-toolbar strong {
-    font-size: 0.9rem;
-  }
-
-  .pc-compare-toolbar span {
-    overflow: hidden;
-    color: var(--color-muted);
-    font-size: 0.54rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .pc-compare-display {
-    flex: 0 0 auto;
-    display: flex;
-    gap: 0.18rem;
-    padding: 0.14rem;
-    border-radius: 999px;
-    background: var(--color-surface-muted);
-  }
-
-  .pc-compare-display button {
-    min-height: 1.48rem;
-    padding: 0.14rem 0.52rem;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    color: var(--color-muted);
-    font: inherit;
-    font-size: 0.55rem;
-    font-weight: 850;
-    cursor: pointer;
-  }
-
-  .pc-compare-display button.is-active {
-    background: var(--color-surface);
-    color: var(--color-accent-strong);
-    box-shadow: 0 0.08rem 0.28rem color-mix(in srgb, var(--color-ink) 9%, transparent);
-  }
-
-  .pc-compare-grid {
-    min-height: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(6, minmax(0, 1fr));
-    grid-auto-flow: column;
-    gap: 0.16rem 0.72rem;
-  }
-
-  .pc-compare-row {
-    min-width: 0;
-    min-height: 1.04rem;
-    display: grid;
-    grid-template-columns: minmax(5.8rem, 0.84fr) minmax(7.8rem, 1.35fr) 3.3rem;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.12rem 0.34rem;
-    border: 0;
-    border-radius: 0.35rem;
-    background: transparent;
-    color: var(--color-ink);
-    font: inherit;
-    text-align: left;
-    cursor: pointer;
-  }
-
-  .pc-compare-row:hover,
-  .pc-compare-row:focus-visible,
-  .pc-compare-row.is-linked-hover {
-    outline: 0;
-    background: color-mix(in srgb, var(--color-accent-soft) 32%, transparent);
-  }
-
-  .pc-compare-row.is-selected {
-    background: color-mix(in srgb, var(--color-accent-soft) 56%, transparent);
-  }
-
-  .pc-compare-row__name {
-    overflow: hidden;
-    font-size: 0.58rem;
-    font-weight: 800;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .pc-compare-row__axis {
-    position: relative;
-    height: 0.28rem;
-    border-radius: 999px;
-    background: var(--color-meter-track);
-  }
-
-  .pc-compare-row__axis::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: -0.2rem;
-    bottom: -0.2rem;
-    width: 1px;
-    background: color-mix(in srgb, var(--color-muted) 65%, var(--color-line));
-  }
-
-  .pc-compare-row__axis i {
-    position: absolute;
-    left: min(50%, var(--pos));
-    right: calc(100% - max(50%, var(--pos)));
-    top: 0;
-    bottom: 0;
-    border-radius: inherit;
-    background: color-mix(in srgb, var(--color-accent) 34%, var(--color-meter-track));
-  }
-
-  .pc-compare-row__axis b {
-    position: absolute;
-    left: var(--pos);
-    top: 50%;
-    width: 0.52rem;
-    height: 0.52rem;
-    border: 2px solid var(--color-surface);
-    border-radius: 50%;
-    background: var(--color-accent);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 28%, transparent);
-    transform: translate(-50%, -50%);
-  }
-
-  .pc-compare-row[data-direction="above"] .pc-compare-row__axis b { background: var(--color-model); }
-  .pc-compare-row[data-direction="below"] .pc-compare-row__axis b { background: var(--color-info); }
-
-  .pc-compare-row > strong {
-    text-align: right;
-    font-size: 0.68rem;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .pc-compare-note {
-    margin: 0;
-    color: var(--color-muted);
-    font-size: 0.49rem;
-    line-height: 1.2;
-  }
-
   .pc-result-lower {
     grid-template-columns: minmax(0, 1fr) minmax(15.5rem, 0.29fr);
   }
 }
 
 
-/* ==========================================================================
-   Result / PC final 2026-09-23 — independent regions + temporal change.
-   Shared shell, theme tokens and typography remain unchanged.
-   ========================================================================== */
 @media (min-width: 80rem) {
   .pc-result-numbers > header { align-items: center; }
 
@@ -8868,7 +7866,6 @@
     padding: .9rem 1rem .82rem;
     overflow: hidden;
   }
-  .pc-insight-tabs,.pc-compare-panel { display:none!important; }
   .pc-detail-stack,.pc-detail-panel { height:100%; }
   .pc-detail-panel[hidden] { display:none!important; }
   .pc-detail-panel > header {
@@ -9046,7 +8043,6 @@
 }
 
 
-/* PC interpretation-derived condition comparison V2 2026-09-23 */
 @media (min-width: 80rem) {
   .screen--simulation.screen-layout--simulation {
     width: min(100%, 76rem) !important;
@@ -9199,13 +8195,6 @@
     line-height: 1.55 !important;
   }
 
-  .screen--simulation.screen-layout--simulation .result-layout {
-    padding: 1rem !important;
-    grid-template-columns: minmax(18rem, 0.9fr) minmax(22rem, 1.1fr) !important;
-    gap: 1rem !important;
-    align-items: start !important;
-  }
-
   .screen--simulation.screen-layout--simulation .direction-legend {
     font-size: 0.82rem !important;
     gap: 0.55rem 0.85rem !important;
@@ -9224,20 +8213,6 @@
     line-height: 1.5 !important;
   }
 
-  .screen--simulation.screen-layout--simulation .region-panel-head small {
-    font-size: 0.78rem !important;
-  }
-
-  .screen--simulation.screen-layout--simulation .region-panel-head strong {
-    font-size: 1rem !important;
-  }
-
-  .screen--simulation.screen-layout--simulation .region-panel-head button {
-    min-height: 2.7rem !important;
-    padding-inline: 0.8rem !important;
-    font-size: 0.82rem !important;
-  }
-
   .screen--simulation.screen-layout--simulation .region-row {
     min-height: 3.65rem;
     padding: 0.7rem 0.8rem !important;
@@ -9247,13 +8222,8 @@
     font-size: 0.9rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation .region-row small,
-  .screen--simulation.screen-layout--simulation .region-value span {
+  .screen--simulation.screen-layout--simulation .region-row small{
     font-size: 0.78rem !important;
-  }
-
-  .screen--simulation.screen-layout--simulation .region-value b {
-    font-size: 1rem !important;
   }
 
   .screen--simulation.screen-layout--simulation .compact-boundary,
@@ -9261,15 +8231,9 @@
     font-size: 0.84rem !important;
     line-height: 1.55 !important;
   }
-
-  .screen--simulation.screen-layout--simulation .preview-actions :is(a, button) {
-    min-height: 3.15rem !important;
-    font-size: 0.9rem !important;
-  }
 }
 
 
-/* PC result chronology + state-link visual audit 2026-09-24 */
 @media (min-width: 80rem) {
   .screen--result.screen-layout--result > .pc-result-console {
     gap: 0.82rem;
@@ -9596,38 +8560,7 @@
 }
 
 
-/* Shared segmented mode emphasis audit 2026-09-24 */
 @media (min-width: 55rem) {
-  .screen-layout :is(
-    .view-toggle,
-    .sheet-tabs,
-    .history-mode,
-    .period-control > div,
-    .display-toggle,
-    .type-toggle,
-    .seg,
-    .mode,
-    .filters,
-    .segment,
-    .pc-summary-controls > div
-  ) button:not(.active):not(.is-active):hover {
-    background: color-mix(in srgb, var(--color-accent-soft) 64%, var(--color-surface)) !important;
-    color: var(--color-accent-strong) !important;
-  }
-
-  .screen-layout :is(
-    .view-toggle,
-    .sheet-tabs,
-    .history-mode,
-    .period-control > div,
-    .display-toggle,
-    .type-toggle,
-    .seg,
-    .mode,
-    .filters,
-    .segment,
-    .pc-summary-controls > div
-  ) button:focus-visible,
   .screen-layout--record .activity-toggle input:focus-visible + span {
     outline: 3px solid color-mix(in srgb, var(--color-focus) 40%, transparent) !important;
     outline-offset: 2px !important;
@@ -9642,7 +8575,6 @@
   .screen-layout--result .view-toggle button.active,
   .screen-layout--result .sheet-tabs button.active,
   .screen-layout--result .pc-summary-controls button.is-active,
-  .screen-layout--history .history-mode button.active,
   .screen-layout--history .period-control button.active,
   .screen-layout--history .display-toggle button.active,
   .screen-layout--history .type-toggle button.active,
@@ -9656,27 +8588,13 @@
     box-shadow: var(--shadow-segment-selected) !important;
   }
 
-  .screen-layout--record .activity-toggle input:checked + span:hover,
-  .screen-layout :is(
-    .view-toggle,
-    .sheet-tabs,
-    .history-mode,
-    .period-control > div,
-    .display-toggle,
-    .type-toggle,
-    .seg,
-    .mode,
-    .filters,
-    .segment,
-    .pc-summary-controls > div
-  ) button:is(.active, .is-active):hover {
+  .screen-layout--record .activity-toggle input:checked + span:hover{
     background: var(--color-segment-selected-surface) !important;
     color: var(--color-segment-selected-text) !important;
   }
 }
 
 
-/* ===== Reading experience refresh 2026-09-24 ===== */
 @media (min-width:80rem){
   .screen--reading.screen-layout--reading .reading-intro{
     max-width:42rem;
@@ -9867,7 +8785,6 @@
 }
 
 
-/* ===== Reading experience refinement 2026-09-24 v2 ===== */
 @media (min-width:80rem){
   .screen--reading.screen-layout--reading [data-reading-card][hidden],
   .screen--reading.screen-layout--reading .reading-empty[hidden],
@@ -10199,15 +9116,14 @@
 }
 
 
-/* ===== PC Condition Compare V3 experience 2026-09-24 ===== */
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3{
+  .screen--simulation.screen-layout--simulation.condition-compare{
     width:min(100%,84rem) !important;
     max-width:84rem !important;
     margin-inline:auto !important;
     gap:1.2rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-hero{
     min-height:11rem;
     padding:1.55rem 1.7rem !important;
     grid-template-columns:minmax(0,1fr) auto;
@@ -10215,98 +9131,98 @@
     align-items:center;
     border-radius:1.35rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero h1{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-hero h1{
     font-size:2.55rem !important;
     line-height:1.12 !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero p:last-child{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-hero p:last-child{
     max-width:58rem;
     font-size:1rem !important;
     line-height:1.7 !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-hero__mark{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-hero__mark{
     width:16rem;
     padding:.9rem 1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-carry{
     width:100% !important;
     max-width:none !important;
     padding:.9rem 1rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-carry small{
     font-size:.78rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-carry strong{
     font-size:.95rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-carry p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-carry p{
     font-size:.88rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next{
     padding:1.35rem 1.45rem;
     border-radius:1.25rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head{
     grid-template-columns:minmax(0,1fr) minmax(18rem,30rem);
     gap:1rem;
     align-items:end;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head small{
     font-size:.78rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head h2{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head h2{
     font-size:1.55rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head>p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head>p{
     font-size:.88rem;
     line-height:1.6;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid{
     grid-template-columns:repeat(4,minmax(0,1fr));
     gap:.8rem;
     margin-top:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid article{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid article{
     min-height:8.8rem;
     padding:1rem;
     grid-template-columns:2.6rem minmax(0,1fr);
     gap:.75rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid article>span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid article>span{
     width:2.6rem;
     height:2.6rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid small{
     font-size:.78rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid strong{
     font-size:1.65rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid strong em{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid strong em{
     font-size:.76rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid strong.is-text{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid strong.is-text{
     font-size:1.05rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid p{
     font-size:.8rem;
     line-height:1.55;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-workspace{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-workspace{
     grid-template-columns:minmax(0,1fr) minmax(21rem,.36fr) !important;
     gap:1rem !important;
     align-items:start !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-preview{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-preview{
     order:1 !important;
     grid-column:1;
     grid-row:1;
     border-radius:1.2rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-condition{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-condition{
     order:2 !important;
     grid-column:2;
     grid-row:1;
@@ -10314,213 +9230,213 @@
     top:5.8rem !important;
     border-radius:1.2rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .preview-head{
+  .screen--simulation.screen-layout--simulation.condition-compare .panel-head,
+  .screen--simulation.screen-layout--simulation.condition-compare .preview-head{
     padding:1.1rem 1.15rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .preview-head small{
+  .screen--simulation.screen-layout--simulation.condition-compare .panel-head small,
+  .screen--simulation.screen-layout--simulation.condition-compare .preview-head small{
     font-size:.76rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head h2,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .preview-head h2{
+  .screen--simulation.screen-layout--simulation.condition-compare .panel-head h2,
+  .screen--simulation.screen-layout--simulation.condition-compare .preview-head h2{
     font-size:1.35rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .panel-head>span,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .calc-state{
+  .screen--simulation.screen-layout--simulation.condition-compare .panel-head>span,
+  .screen--simulation.screen-layout--simulation.condition-compare .calc-state{
     font-size:.76rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-body{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-body{
     padding:1rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-condition__lead{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-condition__lead{
     margin-bottom:.9rem;
     font-size:.84rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-grid{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-grid{
     grid-template-columns:repeat(2,minmax(0,1fr)) !important;
     gap:.7rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field>span{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-field>span{
     font-size:.84rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field>div{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-field>div{
     height:3.5rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field input{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-field input{
     font-size:1.3rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .measure-field b{
+  .screen--simulation.screen-layout--simulation.condition-compare .measure-field b{
     font-size:.82rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-adjust button{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-adjust button{
     min-height:2rem;
     font-size:.74rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .derived-pace{
+  .screen--simulation.screen-layout--simulation.condition-compare .derived-pace{
     min-height:3rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .derived-pace span{
+  .screen--simulation.screen-layout--simulation.condition-compare .derived-pace span{
     font-size:.78rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .derived-pace strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .derived-pace strong{
     font-size:.94rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course{
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course{
     padding:.85rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course span,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .course-link b{
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course small,
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course span,
+  .screen--simulation.screen-layout--simulation.condition-compare .course-link b{
     font-size:.76rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course strong{
     font-size:.96rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-details summary strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-details summary strong{
     font-size:.88rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-details summary small{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-details summary small{
     font-size:.75rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-reset{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-reset{
     min-height:2.55rem !important;
     font-size:.8rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-compare{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare{
     padding:1rem 1.05rem 0 !important;
     gap:.75rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot{
     min-height:7rem;
     padding:1rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot small{
     font-size:.78rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot strong{
     font-size:1.05rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot span{
     font-size:.82rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips{
     padding:.75rem 1.05rem 0;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips span{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips span{
     font-size:.76rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-compare-note{
     margin:.75rem 1.05rem 0 !important;
     padding:.8rem .9rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-compare-note strong{
     font-size:.84rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-compare-note span{
     font-size:.8rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-result{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-result{
     padding:1rem 1.05rem;
     gap:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview{
     padding:1rem 1.05rem;
     border-radius:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head{
     grid-template-columns:minmax(0,1fr) auto;
     align-items:start;
     gap:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head small{
     font-size:.74rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head h3{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head h3{
     font-size:1.25rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head p{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head p{
     max-width:42rem;
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head button{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head button{
     min-height:2.45rem;
     font-size:.78rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics{
     grid-template-columns:repeat(3,minmax(0,1fr));
     gap:.7rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics article{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics article{
     min-height:4.9rem;
     padding:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics small{
     font-size:.74rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics strong{
     font-size:1.35rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-groups{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-groups{
     grid-template-columns:repeat(3,minmax(0,1fr));
     gap:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>header{
     min-height:6rem;
     padding:.85rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>header strong{
     font-size:.88rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>header small{
     font-size:.75rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row{
     min-height:4.5rem;
     padding:.75rem .8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row__copy strong{
     font-size:.92rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row__copy small{
     font-size:.78rem;
     line-height:1.45;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row>b{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row>b{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout{
     padding:.85rem .9rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout strong{
     font-size:.84rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout p{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout p{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout small{
     font-size:.74rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-boundary{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-boundary{
     font-size:.78rem !important;
     line-height:1.55 !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-subjective-note{
     margin:0 1.05rem 1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-subjective-note p{
     font-size:.78rem !important;
   }
 
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid{
     grid-template-columns:repeat(4,minmax(0,1fr));
     gap:.8rem;
     margin-top:1rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button{
     min-height:8rem;
     padding:1rem;
     grid-template-columns:2.7rem minmax(0,1fr) auto;
@@ -10528,171 +9444,167 @@
     border-radius:1rem;
     transition:transform 150ms ease,border-color 150ms ease,background 150ms ease;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a:hover,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button:hover{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a:hover,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button:hover{
     transform:translateY(-2px);
     border-color:color-mix(in srgb,var(--color-accent) 42%,var(--color-line));
     background:color-mix(in srgb,var(--color-accent-soft) 26%,var(--color-surface));
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a>span,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button>span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a>span,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button>span{
     width:2.7rem;
     height:2.7rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid strong{
     font-size:.9rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid small{
     font-size:.77rem;
   }
 }
 @media (min-width:80rem) and (max-width:92rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-workspace{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-workspace{
     grid-template-columns:minmax(0,1fr) 20rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-groups{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-groups{
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
 }
 @media (prefers-reduced-motion:reduce){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button{
     transition:none !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>a:hover,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid>button:hover{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>a:hover,
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid>button:hover{
     transform:none !important;
   }
 }
 
 
-/* ===== PC Condition Compare V3 reversible controls 2026-09-24 ===== */
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips button{
     min-height:2.15rem;
     padding:.35rem .45rem .35rem .65rem;
     gap:.45rem;
     font-size:.76rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button>b{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips button>b{
     width:1.35rem;
     height:1.35rem;
     font-size:.78rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary{
     min-height:6rem;
     padding:.85rem;
     grid-template-columns:2.4rem minmax(0,1fr) auto;
     gap:.65rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>span{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary>span{
     width:2.4rem;
     height:2.4rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary strong{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary strong{
     font-size:.88rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary small{
     font-size:.75rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary>b{
     font-size:.72rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group--collapsed>summary::after{
     font-size:.72rem;
   }
 }
 
 
-/* ===== PC Condition Compare V3 typography refinement 2026-09-24 ===== */
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-section-head>p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-section-head>p{
     font-size:.92rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid small{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-overview-grid p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-overview-grid p{
     font-size:.86rem;
     line-height:1.58;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-condition__lead{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-condition__lead{
     font-size:.88rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .selected-course span,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .course-link b{
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course small,
+  .screen--simulation.screen-layout--simulation.condition-compare .selected-course span,
+  .screen--simulation.screen-layout--simulation.condition-compare .course-link b{
     font-size:.8rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-details summary small{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-details summary small{
     font-size:.8rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .condition-snapshot span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-snapshot span{
     font-size:.86rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips span{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips span{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-compare-note span{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-compare-note span{
     font-size:.84rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head p{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head p{
     font-size:.86rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>header small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>header small{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-row__copy small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-row__copy small{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout p{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout p{
     font-size:.86rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-condition-readout small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-condition-readout small{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .compact-boundary{
+  .screen--simulation.screen-layout--simulation.condition-compare .compact-boundary{
     font-size:.82rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-subjective-note p{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-subjective-note p{
     font-size:.82rem !important;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-next-grid small{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-next-grid small{
     font-size:.82rem;
     line-height:1.5;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .assumption-chips button{
+  .screen--simulation.screen-layout--simulation.condition-compare .assumption-chips button{
     font-size:.82rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary small{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary small{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary>b,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group--collapsed>summary::after{
     font-size:.76rem;
   }
 }
 
 
-/* ===== PC Condition Compare V3 readability final 2026-09-24 ===== */
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-adjust button,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-metrics small,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group>summary>b,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-group--collapsed>summary::after{
+  .screen--simulation.screen-layout--simulation.condition-compare .condition-compare-adjust button,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head small,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-metrics small,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group>summary>b,
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-group--collapsed>summary::after{
     font-size:.8rem;
   }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-change-overview__head button{
+  .screen--simulation.screen-layout--simulation.condition-compare .simulation-change-overview__head button{
     font-size:.84rem;
   }
 }
 
 
-/* ===== PC Interpretation V4 wide dashboard 2026-09-24 ===== */
 @media (min-width:64rem){
   .interpretation-room--dashboard,
-  .interpretation-room--selected-v4{
+  .interpretation-room--selected-detail{
     width:min(100%,96rem) !important;
     max-width:96rem !important;
   }
@@ -10807,23 +9719,6 @@
   .interpretation-room-selected-head h1{
     font-size:2.25rem;
   }
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1fr) minmax(18rem,.3fr);
-    align-items:start;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:sticky;
-    top:5.6rem;
-  }
-  .interpretation-room-selected-v4 .interpretation-room-region-detail--v3{
-    padding:1.2rem 1.25rem;
-  }
-  .interpretation-room-selected-v4 .interpretation-room-region-stats{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
-  .interpretation-room-selected-v4 .interpretation-room-history-panel{
-    margin-top:.9rem;
-  }
   .interpretation-room-region-chips>a:hover{
     transform:translateY(-1px);
     border-color:color-mix(in srgb,var(--color-accent) 38%,var(--color-line));
@@ -10846,7 +9741,6 @@
 }
 
 
-/* ===== PC mobile-only GPS separation 2026-09-24 ===== */
 @media (min-width:55rem){
   .screen--plan .plan-measure-link{
     display:none !important;
@@ -10861,70 +9755,20 @@
 }
 
 
-/* ===== PC Interpretation V4 detail fit audit 2026-09-24 ===== */
 @media (min-width:55rem){
-  .interpretation-room--selected-v4{
+  .interpretation-room--selected-detail{
     width:min(100%,96rem) !important;
     max-width:96rem !important;
   }
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1.85fr) minmax(17rem,.72fr) !important;
-    gap:1rem !important;
-    align-items:start !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3{
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-    position:sticky;
-    top:5.6rem;
-  }
 }
 @media (min-width:64rem){
-  .interpretation-room-selected-context{
-    grid-template-columns:minmax(0,1.25fr) minmax(20rem,.75fr);
-    align-items:start;
-  }
-  .interpretation-room-selected-context>.interpretation-room-conditions,
-  .interpretation-room-selected-context>.interpretation-room-subjective{
-    width:100%;
-    min-width:0;
-  }
 }
 
 
-/* ===== PC Condition Compare idle state 2026-09-24 ===== */
 @media (min-width:80rem){
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-v3-result--idle{
-    padding:1rem;
-  }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state{
-    min-height:10rem;
-    padding:1.1rem 1.15rem;
-    grid-template-columns:3rem minmax(0,1fr);
-    gap:.9rem;
-    align-items:start;
-  }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state>span{
-    width:3rem;
-    height:3rem;
-  }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state h3{
-    font-size:1.22rem;
-  }
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state p,
-  .screen--simulation.screen-layout--simulation.simulation-v3 .simulation-idle-state strong{
-    font-size:.88rem;
-  }
 }
 
 
-/* ===== PC Interpretation V4 screenshot final pass 2026-09-24 ===== */
 @media (min-width:55rem){
   .interpretation-room-section-title--dense{
     grid-template-columns:minmax(18rem,.9fr) minmax(0,1.1fr) !important;
@@ -10949,142 +9793,28 @@
   .region-chip__copy small{
     font-size:.76rem !important;
   }
-
-  /* Medium-size PC: detail content must use the available width first. */
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1fr) !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:static !important;
-    top:auto !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3{
-    width:100% !important;
-    min-width:0 !important;
-  }
-  .interpretation-room-selected-context{
-    grid-template-columns:minmax(0,1fr) !important;
-  }
 }
 @media (min-width:80rem){
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1fr) minmax(19rem,21rem) !important;
-    gap:1rem !important;
-  }
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:sticky !important;
-    top:5.6rem !important;
-  }
-  .interpretation-room-selected-context{
-    grid-template-columns:minmax(0,1.3fr) minmax(21rem,.7fr) !important;
-    gap:1rem !important;
-    align-items:start !important;
-  }
 }
 
 
-/* ===== PC Interpretation selected detail layout repair 2026-09-24 ===== */
 @media (min-width:55rem){
   .app-shell--immersive .app-main,
   .screen--interpretation-room,
-  .interpretation-room--selected-v4,
-  .interpretation-room-selected-dashboard,
-  .interpretation-room-selected-context{
+  .interpretation-room--selected-detail{
     min-width:0 !important;
   }
 
-  .interpretation-room--selected-v4{
+  .interpretation-room--selected-detail{
     width:min(100%,96rem) !important;
     max-width:96rem !important;
-  }
-
-  .interpretation-room-selected-dashboard{
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) !important;
-    gap:1rem !important;
-    align-items:start !important;
-  }
-
-  .interpretation-room-selected-dashboard>.interpretation-room-region-detail--v3,
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
-    justify-self:stretch !important;
-  }
-
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:static !important;
-    top:auto !important;
-  }
-
-  .interpretation-room-selected-context{
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) !important;
-    gap:1rem !important;
-    align-items:start !important;
-  }
-
-  .interpretation-room-selected-context>.interpretation-room-conditions,
-  .interpretation-room-selected-context>.interpretation-room-subjective{
-    width:100% !important;
-    max-width:none !important;
-    min-width:0 !important;
   }
 }
 
 @media (min-width:64rem){
-  .interpretation-room-selected-dashboard{
-    grid-template-columns:minmax(0,1fr) minmax(18rem,20rem) !important;
-  }
-
-  .interpretation-room-selected-dashboard>.interpretation-room-next-rail{
-    position:sticky !important;
-    top:5.6rem !important;
-  }
-
-  .interpretation-room-selected-v4 .interpretation-room-region-reading-order{
-    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) !important;
-  }
-
-  .interpretation-room-selected-v4 .interpretation-room-region-stats{
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  }
-
-  .interpretation-room-selected-context{
-    grid-template-columns:minmax(0,1.35fr) minmax(22rem,.65fr) !important;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-section-title{
-    grid-template-columns:minmax(0,1fr) !important;
-    gap:.45rem !important;
-    align-items:start !important;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-section-title>p{
-    max-width:42rem;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-subjective-layout{
-    grid-template-columns:minmax(0,1fr) !important;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-fatigue-flow{
-    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-fatigue-flow>aside{
-    grid-column:1/-1;
-    min-height:4.4rem;
-  }
-
-  .interpretation-room-selected-context .interpretation-room-subjective-note{
-    grid-template-columns:2.6rem minmax(0,1fr) !important;
-  }
 }
 
 
-/* ===== PC Interpretation immersive full desktop canvas 2026-09-24 ===== */
 @media (min-width:80rem){
   #app>.app-shell.app-shell--immersive{
     width:100% !important;
@@ -11109,9 +9839,8 @@
 }
 
 
-/* ===== PC Interpretation independent selected columns 2026-09-24 ===== */
 @media (min-width:55rem){
-  .interpretation-room--selected-v4{
+  .interpretation-room--selected-detail{
     width:min(100%,90rem) !important;
     max-width:90rem !important;
     gap:1rem !important;
@@ -11122,7 +9851,7 @@
   }
 
   .interpretation-room-selected-workspace :is(
-    .interpretation-room-region-detail--v3,
+    .interpretation-room-region-detail--selected,
     .interpretation-room-next-rail,
     .interpretation-room-conditions,
     .interpretation-room-subjective,

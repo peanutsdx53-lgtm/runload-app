@@ -91,7 +91,6 @@
 }
 
 
-
 /* Desktop header is mounted directly under body and pinned to the browser viewport. */
 @media (min-width: 55rem) {
   body > .app-header--desktop.app-header--viewport-fixed {
@@ -457,12 +456,6 @@
     font-size: 0.78rem;
   }
 
-  .screen--record-input.screen-layout--record .micro-note {
-    margin-top: 0.42rem;
-    font-size: 0.76rem;
-    line-height: 1.42;
-  }
-
   .screen--record-input.screen-layout--record .fatigue-inline {
     grid-column: 3;
     grid-row: 2 / 4;
@@ -563,9 +556,6 @@
   .screen--record-input.screen-layout--record .stage-body {
     padding: 0.95rem 1rem 1rem;
   }
-
-  .screen--record-input.screen-layout--record .stage-intro,
-  .screen--record-input.screen-layout--record .snapshot-note,
   .screen--record-input.screen-layout--record .record-return-status {
     font-size: 0.79rem;
     line-height: 1.5;
@@ -1202,10 +1192,6 @@
     margin-inline: auto;
   }
 
-  .screen--history.screen-layout--history .history-mode {
-    width: min(100%, 42rem);
-  }
-
   .screen--history.screen-layout--history .history-view--records {
     width: min(100%, 68rem);
     margin-left: auto;
@@ -1687,10 +1673,6 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .screen--settings.screen-layout--settings .about-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .screen--more.screen-layout--more {
     width: min(100%, 42rem);
     margin-inline: auto;
@@ -1757,7 +1739,6 @@
 }
 
 
-/* Home audit: keep the primary focus and record/plan column equal in height. */
 @media (min-width: 80rem) {
   .screen--home.screen-layout--home { align-items: stretch; }
   .screen--home.screen-layout--home > .focus,

@@ -1,4 +1,4 @@
-export const DEFAULT_JOURNAL_SETTINGS = Object.freeze({
+export const DEFAULT_APP_SETTINGS = Object.freeze({
   appearanceMode: "system",
   colorTheme: "standard",
   textSize: "standard",
@@ -21,12 +21,12 @@ export const COLOR_THEME_OPTIONS = Object.freeze([
 ]);
 
 export const TEXT_SIZE_OPTIONS = Object.freeze([
-  Object.freeze({ value: "standard", label: "標準", description: "RunLoadの標準文字サイズで表示します。" }),
-  Object.freeze({ value: "large", label: "大きめ", description: "RunLoadが数値、部位名、説明文を少し大きく表示します。" }),
+  Object.freeze({ value: "standard", label: "標準", description: "標準の文字サイズで表示します。" }),
+  Object.freeze({ value: "large", label: "大きめ", description: "数値、部位名、説明文を少し大きく表示します。" }),
 ]);
 
 
-export const RESULT_DISPLAY_MODE_OPTIONS = Object.freeze([
+const RESULT_DISPLAY_MODE_OPTIONS = Object.freeze([
   Object.freeze({ value: "standard", label: "標準（記録から見る）", description: "結果画面は、今日の入力内容を先に表示し、その後で12部位の目安を表示します。" }),
   Object.freeze({ value: "result-first", label: "結果を先に見る", description: "結果画面は、12部位の身体図を先に表示し、その後で今日の入力内容を表示します。" }),
   Object.freeze({ value: "body-focus", label: "部位を詳しく見る", description: "結果画面は、12部位の身体図と身体の記録を先に表示し、部位詳細へ進むボタンを見つけやすくします。" }),
@@ -35,16 +35,12 @@ export const RESULT_DISPLAY_MODE_OPTIONS = Object.freeze([
 ]);
 
 
-export const REGIONAL_RESULT_INITIAL_VIEW_OPTIONS = Object.freeze([
+const REGIONAL_RESULT_INITIAL_VIEW_OPTIONS = Object.freeze([
   Object.freeze({ value: "focus", label: "基準または前回より数値が上の部位を絞り込む", description: "同じ距離の基準または比べられる前回記録より数値が1%以上上の部位だけを表示します。安全・危険を示すものではありません。" }),
   Object.freeze({ value: "all", label: "全12部位を表示", description: "身体図とともに、12部位の目安を正式名称の固定順ですべて表示します。数値順には並べ替えません。" }),
   Object.freeze({ value: "remember", label: "前回の切替を引き継ぐ", description: "結果画面で最後に選んだ表示方法を次回も使います。" }),
 ]);
 
-export const REGIONAL_PREVIOUS_COMPARISON_OPTIONS = Object.freeze([
-  Object.freeze({ value: "show", label: "表示する", description: "同じ部位・同じ計算方法・同じ基準で比べられる前回記録がある場合だけ、部位カードに前回との差を表示します。" }),
-  Object.freeze({ value: "hide", label: "表示しない", description: "各部位の目安を表示し、今回と同じ距離にそろえたその部位自身の基準との関係を示します。保存結果や履歴は変更しません。" }),
-]);
 
 function optionValues(options) {
   return new Set(options.map((option) => option.value));
@@ -67,24 +63,24 @@ function pick(value, allowedValues, fallback) {
   return allowedValues.has(normalized) ? normalized : fallback;
 }
 
-export function normalizeJournalSettings(settings = {}) {
+export function normalizeAppSettings(settings = {}) {
   const source = settings && typeof settings === "object" ? settings : {};
   return Object.freeze({
     ...source,
-    appearanceMode: pick(source.appearanceMode, APPEARANCE_VALUES, DEFAULT_JOURNAL_SETTINGS.appearanceMode),
-    colorTheme: pick(source.colorTheme, COLOR_VALUES, DEFAULT_JOURNAL_SETTINGS.colorTheme),
-    textSize: pick(source.textSize, TEXT_SIZE_VALUES, DEFAULT_JOURNAL_SETTINGS.textSize),
-    resultDisplayMode: pick(source.resultDisplayMode, RESULT_DISPLAY_VALUES, DEFAULT_JOURNAL_SETTINGS.resultDisplayMode),
-    selectedRegionalView: pick(source.selectedRegionalView, REGIONAL_VIEW_VALUES, DEFAULT_JOURNAL_SETTINGS.selectedRegionalView),
-    regionalResultInitialView: pick(source.regionalResultInitialView, REGIONAL_RESULT_INITIAL_VIEW_VALUES, DEFAULT_JOURNAL_SETTINGS.regionalResultInitialView),
-    regionalResultLastView: pick(source.regionalResultLastView, REGIONAL_RESULT_VIEW_VALUES, DEFAULT_JOURNAL_SETTINGS.regionalResultLastView),
+    appearanceMode: pick(source.appearanceMode, APPEARANCE_VALUES, DEFAULT_APP_SETTINGS.appearanceMode),
+    colorTheme: pick(source.colorTheme, COLOR_VALUES, DEFAULT_APP_SETTINGS.colorTheme),
+    textSize: pick(source.textSize, TEXT_SIZE_VALUES, DEFAULT_APP_SETTINGS.textSize),
+    resultDisplayMode: pick(source.resultDisplayMode, RESULT_DISPLAY_VALUES, DEFAULT_APP_SETTINGS.resultDisplayMode),
+    selectedRegionalView: pick(source.selectedRegionalView, REGIONAL_VIEW_VALUES, DEFAULT_APP_SETTINGS.selectedRegionalView),
+    regionalResultInitialView: pick(source.regionalResultInitialView, REGIONAL_RESULT_INITIAL_VIEW_VALUES, DEFAULT_APP_SETTINGS.regionalResultInitialView),
+    regionalResultLastView: pick(source.regionalResultLastView, REGIONAL_RESULT_VIEW_VALUES, DEFAULT_APP_SETTINGS.regionalResultLastView),
     showRegionalPreviousComparison: source.showRegionalPreviousComparison !== false && source.showRegionalPreviousComparison !== "hide",
   });
 }
 
-export function mergeJournalSettings(currentSettings = {}, settingsUpdate = {}) {
+export function mergeAppSettings(currentSettings = {}, settingsUpdate = {}) {
   const current = currentSettings && typeof currentSettings === "object" ? currentSettings : {};
-  return normalizeJournalSettings({ ...current, ...settingsUpdate });
+  return normalizeAppSettings({ ...current, ...settingsUpdate });
 }
 
 function replaceClassByPrefix(element, prefix, nextClass) {
@@ -108,9 +104,9 @@ function themeColorForSettings(settings) {
   return palette[settings.colorTheme] || palette.standard;
 }
 
-export function applyJournalSettings(settings = {}) {
+export function applyAppSettings(settings = {}) {
   if (typeof document === "undefined") return;
-  const normalized = normalizeJournalSettings(settings);
+  const normalized = normalizeAppSettings(settings);
   const root = document.documentElement;
   replaceClassByPrefix(root, "rl-appearance-", `rl-appearance-${normalized.appearanceMode}`);
   replaceClassByPrefix(root, "rl-color-", `rl-color-${normalized.colorTheme}`);

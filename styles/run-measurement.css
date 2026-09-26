@@ -128,10 +128,6 @@ body.run-standalone-open {
   border-radius: var(--radius-small);
 }
 
-.run-launch__device-note {
-  display: none;
-}
-
 .run-launch__privacy {
   margin: 1rem 0 0;
   color: var(--color-muted);
@@ -449,16 +445,6 @@ body.run-standalone-open {
 }
 
 @media (min-width: 55rem) {
-  .run-launch__device-note {
-    display: block;
-    margin: 0 0 1rem;
-    padding: 0.75rem 0.9rem;
-    color: var(--color-muted);
-    font-size: 0.82rem;
-    background: var(--color-surface-muted);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-small);
-  }
 
   .run-launch__choice--app {
     color: var(--color-on-accent);
