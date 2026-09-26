@@ -20,8 +20,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -c 'from pathlib import Path; p=Path("ui/appShell.js"); s=p.read_text(); n=s.count("backLabel: \\\"Home\\\""); assert n==2, n; p.write_text(s.replace("backLabel: \\\"Home\\\"", "backLabel: \\\"ホーム\\\""))'
-          python3 -c 'from pathlib import Path; p=Path("ui/screenArchitecture.js"); s=p.read_text(); old="screen: \\\"home\\\", label: \\\"Home\\\""; new="screen: \\\"home\\\", label: \\\"ホーム\\\""; n=s.count(old); assert n==1, n; p.write_text(s.replace(old,new))'
+          python3 -c 'from pathlib import Path; p=Path("ui/appShell.js"); s=p.read_text(); n=s.count("backLabel: \"Home\""); assert n==2, n; p.write_text(s.replace("backLabel: \"Home\"", "backLabel: \"ホーム\""))'
+          python3 -c 'from pathlib import Path; p=Path("ui/screenArchitecture.js"); s=p.read_text(); old="screen: \"home\", label: \"Home\""; new="screen: \"home\", label: \"ホーム\""; n=s.count(old); assert n==1, n; p.write_text(s.replace(old,new))'
           git rm .github/workflows/japanese-home-label-fix-temp.yml
       - name: Validate
         shell: bash
