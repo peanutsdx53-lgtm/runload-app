@@ -193,6 +193,6 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ui/interactions/homeInteractions.js styles/mobile-home-editing.css tests/mobileQuickTools.test.mjs .github/workflows/mobile-picker-icon-preview-temp.yml
+          git add -A
           git commit -m "Show app icons in mobile home add picker"
           git push
