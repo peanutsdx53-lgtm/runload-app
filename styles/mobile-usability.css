@@ -1,0 +1,253 @@
+/* Smartphone-only usability pass. PC presentation and application logic are intentionally untouched. */
+@media (max-width: 54.99rem) {
+  /* Prevent iOS form-focus zoom and keep common controls comfortably tappable. */
+  .screen-layout:not(.screen-layout--home) input,
+  .screen-layout:not(.screen-layout--home) select,
+  .screen-layout:not(.screen-layout--home) textarea {
+    font-size: 16px;
+  }
+
+  .mobile-topbar__back,
+  .app-utility-button,
+  .screen-layout--record .stage-card > summary,
+  .screen-layout--record .inner-details > summary,
+  .screen-layout--record .route-button,
+  .screen-layout--record .linked-card,
+  .screen-layout--history .type-toggle button,
+  .screen-layout--history .record-actions > *,
+  .screen-layout--result .run-route-link,
+  .screen-layout--result .result-next-actions a {
+    min-height: 44px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* History: the shell header already says 履歴, so remove the duplicate hero heading. */
+  .screen-layout--history {
+    padding-top: 10px;
+  }
+
+  .screen-layout--history > .page-head {
+    display: none;
+  }
+
+  .screen-layout--history .history-view--records {
+    display: grid;
+    gap: 12px;
+  }
+
+  .screen-layout--history .records-head {
+    margin: 2px 2px 0;
+    align-items: end;
+  }
+
+  .screen-layout--history .records-head h2 {
+    margin-top: 3px;
+    font-size: 24px;
+    line-height: 1.18;
+    letter-spacing: -.035em;
+  }
+
+  .screen-layout--history .record-total {
+    min-width: 48px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .screen-layout--history .record-filters {
+    margin: 0;
+    padding: 13px;
+    gap: 10px;
+    border-radius: 21px;
+  }
+
+  .screen-layout--history .record-filters label {
+    gap: 6px;
+  }
+
+  .screen-layout--history .record-filters label > span {
+    font-size: 10px;
+    font-weight: 850;
+  }
+
+  .screen-layout--history .record-filters input[type="search"] {
+    min-height: 50px;
+    padding: 10px 13px;
+    border-radius: 15px;
+  }
+
+  .screen-layout--history .type-toggle {
+    padding: 4px;
+    gap: 4px;
+    border-radius: 14px;
+  }
+
+  .screen-layout--history .type-toggle button {
+    min-height: 46px;
+    border-radius: 11px;
+    font-size: 12px;
+    font-weight: 850;
+  }
+
+  .screen-layout--history .record-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .screen-layout--history .record-item {
+    margin: 0;
+    padding: 15px;
+    border-radius: 21px;
+  }
+
+  .screen-layout--history .record-item h3 {
+    margin-top: 12px;
+    font-size: 18px;
+    line-height: 1.25;
+  }
+
+  .screen-layout--history .record-item > p {
+    margin-top: 6px;
+    line-height: 1.45;
+  }
+
+  .screen-layout--history .record-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    margin-top: 13px;
+  }
+
+  .screen-layout--history .record-actions a,
+  .screen-layout--history .record-actions button {
+    margin: 0;
+    border-radius: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  .screen-layout--history .record-actions a {
+    padding: 0 14px;
+    border: 1px solid var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  .screen-layout--history .record-actions button {
+    min-width: 68px;
+    padding: 0 11px;
+  }
+
+  /* Result: reduce vertical travel without removing any result information. */
+  .screen-layout--result {
+    padding-top: 12px;
+  }
+
+  .screen-layout--result .result-mobile-layout {
+    gap: 10px;
+  }
+
+  .screen-layout--result .intro {
+    margin-bottom: 0;
+    padding: 15px 14px;
+    border-radius: 22px;
+  }
+
+  .screen-layout--result .intro-heading {
+    gap: 10px;
+    align-items: center;
+  }
+
+  .screen-layout--result .intro-heading h1 {
+    font-size: 28px;
+  }
+
+  .screen-layout--result .intro-heading > span {
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+
+  .screen-layout--result .run-summary {
+    margin-top: 14px;
+  }
+
+  .screen-layout--result .run-route-link,
+  .screen-layout--result .result-next-actions a {
+    border-radius: 16px;
+  }
+
+  .screen-layout--result .result-next-actions {
+    gap: 8px;
+  }
+
+  /* Record: keep fixed save actions clear of content and comfortable to hit. */
+  .screen-layout--record {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  }
+
+  .screen-layout--record .mobile-save-bar {
+    gap: 8px;
+  }
+
+  .screen-layout--record .draft-button,
+  .screen-layout--record .mobile-save-bar .primary-save {
+    min-height: 48px;
+    font-size: 12px;
+  }
+
+  /* Small tactile response for high-frequency smartphone controls. */
+  .mobile-topbar__back,
+  .app-utility-button,
+  .screen-layout--record .stage-card > summary,
+  .screen-layout--record .inner-details > summary,
+  .screen-layout--record .route-button,
+  .screen-layout--record .linked-card,
+  .screen-layout--record .mobile-save-bar button,
+  .screen-layout--history .type-toggle button,
+  .screen-layout--history .record-actions > *,
+  .screen-layout--result .run-route-link,
+  .screen-layout--result .result-next-actions a {
+    transition: transform .1s ease, opacity .1s ease, background-color .1s ease, box-shadow .1s ease;
+  }
+
+  .mobile-topbar__back:active,
+  .app-utility-button:active,
+  .screen-layout--record .stage-card > summary:active,
+  .screen-layout--record .inner-details > summary:active,
+  .screen-layout--record .route-button:active,
+  .screen-layout--record .linked-card:active,
+  .screen-layout--record .mobile-save-bar button:active,
+  .screen-layout--history .type-toggle button:active,
+  .screen-layout--history .record-actions > *:active,
+  .screen-layout--result .run-route-link:active,
+  .screen-layout--result .result-next-actions a:active {
+    transform: scale(.985);
+    opacity: .86;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 54.99rem) {
+  .mobile-topbar__back,
+  .app-utility-button,
+  .screen-layout--record .stage-card > summary,
+  .screen-layout--record .inner-details > summary,
+  .screen-layout--record .route-button,
+  .screen-layout--record .linked-card,
+  .screen-layout--record .mobile-save-bar button,
+  .screen-layout--history .type-toggle button,
+  .screen-layout--history .record-actions > *,
+  .screen-layout--result .run-route-link,
+  .screen-layout--result .result-next-actions a {
+    transition: none;
+  }
+}
