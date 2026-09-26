@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import {
   MOBILE_LAYOUT_QUERY,
   matchesMobileLayout,
@@ -29,6 +30,17 @@ await test('DEVICE-ENTRY-MATCHMEDIA-TAKES-PRIORITY',()=>{
 await test('DEVICE-ENTRY-FALLBACK-WIDTH-MATCHES-LAYOUT-BOUNDARY',()=>{
   assert.equal(matchesMobileLayout({matchMediaFn:null,innerWidth:879}),true);
   assert.equal(matchesMobileLayout({matchMediaFn:null,innerWidth:880}),false);
+});
+
+await test('MOBILE-GPS-RETURNS-TO-HOME-NOT-LEGACY-START',async()=>{
+  const [screen, interactions] = await Promise.all([
+    readFile(new URL('../screens/runMeasurementScreen.js', import.meta.url),'utf8'),
+    readFile(new URL('../ui/interactions/runMeasurementInteractions.js', import.meta.url),'utf8'),
+  ]);
+  assert.match(screen,/href="#\/home" class="run-measurement__back"/);
+  assert.doesNotMatch(screen,/href="#\/start" class="run-measurement__back"/);
+  assert.match(interactions,/navigateToScreen\("home"\)/);
+  assert.doesNotMatch(interactions,/navigateToScreen\("start"\)/);
 });
 
 const failed=results.filter((item)=>item.status==='FAIL');
