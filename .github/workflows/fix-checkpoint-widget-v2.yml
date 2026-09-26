@@ -1,0 +1,98 @@
+name: Fix checkpoint widget add v2
+
+on:
+  push:
+    branches:
+      - fix/checkpoint-widget-add-v2-20260926
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply robust checkpoint widget fix
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          js_path = Path('ui/interactions/homeInteractions.js')
+          js = js_path.read_text()
+
+          old = '''  function handlePointerDown(event) {\n    const pickerOption = event.target.closest("[data-home-widget-add-id]");\n    if (pickerOption) {\n      event.preventDefault();\n      return;\n    }\n    if (event.target.closest("button")) return;'''
+          new = '''  function handlePointerDown(event) {\n    if (event.target.closest("button")) return;'''
+          if old not in js:
+              raise SystemExit('pointerdown picker block not found')
+          js = js.replace(old, new, 1)
+
+          old = '''  function handlePointerUp(event) {\n    const pickerOption = event.target.closest("[data-home-widget-add-id]");\n    if (pickerOption) {\n      event.preventDefault();\n      addWidget(pickerOption.dataset.homeWidgetAddId);\n      return;\n    }\n    if (event.pointerId !== pointerId) return;'''
+          new = '''  function handlePointerUp(event) {\n    if (event.pointerId !== pointerId) return;'''
+          if old not in js:
+              raise SystemExit('pointerup picker block not found')
+          js = js.replace(old, new, 1)
+
+          old = '''  function addWidget(id) {\n    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);\n    if (!widget) return;\n    if (!widget.hidden) {\n      closeWidgetPicker();\n      return;\n    }\n    widget.hidden = false;\n    widgetsContainer.append(widget);\n    writeWidgetLayout(widgetsContainer);\n    closeWidgetPicker();\n  }'''
+          new = '''  function addWidget(id) {\n    let widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);\n    if (!widget && id === "checkpoint") {\n      widget = makeWidgetShell(createCheckpointWidget(context.services), "checkpoint");\n      widgetsContainer.append(widget);\n    }\n    if (!widget) return;\n    widget.hidden = false;\n    widget.removeAttribute("hidden");\n    widget.style.removeProperty("display");\n    widgetsContainer.append(widget);\n    writeWidgetLayout(widgetsContainer);\n    closeWidgetPicker();\n  }\n\n  function handleWidgetPickerPointerUp(event) {\n    const option = event.target.closest("[data-home-widget-add-id]");\n    if (!option) return;\n    event.preventDefault();\n    event.stopPropagation();\n    addWidget(option.dataset.homeWidgetAddId);\n  }\n\n  function handleSelectStart(event) {\n    if (event.target.closest('input, textarea, [contenteditable="true"]')) return;\n    event.preventDefault();\n  }'''
+          if old not in js:
+              raise SystemExit('addWidget block not found')
+          js = js.replace(old, new, 1)
+
+          old = '''  root.addEventListener("pointerdown", handlePointerDown);\n  root.addEventListener("pointermove", handlePointerMove, { passive: false });'''
+          new = '''  widgetPicker?.addEventListener("pointerup", handleWidgetPickerPointerUp);\n  root.addEventListener("pointerdown", handlePointerDown);\n  root.addEventListener("pointermove", handlePointerMove, { passive: false });'''
+          if old not in js:
+              raise SystemExit('listener insertion point not found')
+          js = js.replace(old, new, 1)
+
+          old = '''  root.addEventListener("contextmenu", handleContextMenu);\n  root.addEventListener("dragstart", handleDragStart);'''
+          new = '''  root.addEventListener("contextmenu", handleContextMenu);\n  root.addEventListener("selectstart", handleSelectStart);\n  root.addEventListener("dragstart", handleDragStart);'''
+          if old not in js:
+              raise SystemExit('selectstart add point not found')
+          js = js.replace(old, new, 1)
+
+          old = '''    root.removeEventListener("pointerdown", handlePointerDown);'''
+          new = '''    widgetPicker?.removeEventListener("pointerup", handleWidgetPickerPointerUp);\n    root.removeEventListener("pointerdown", handlePointerDown);'''
+          if old not in js:
+              raise SystemExit('cleanup insertion point not found')
+          js = js.replace(old, new, 1)
+
+          old = '''    root.removeEventListener("contextmenu", handleContextMenu);\n    root.removeEventListener("dragstart", handleDragStart);'''
+          new = '''    root.removeEventListener("contextmenu", handleContextMenu);\n    root.removeEventListener("selectstart", handleSelectStart);\n    root.removeEventListener("dragstart", handleDragStart);'''
+          if old not in js:
+              raise SystemExit('cleanup selectstart point not found')
+          js = js.replace(old, new, 1)
+
+          js_path.write_text(js)
+
+          home_path = Path('screens/homeScreen.js')
+          home = home_path.read_text()
+          old = 'TEST v2026.09.26-01'
+          new = 'TEST v2026.09.26-02'
+          if old not in home:
+              raise SystemExit('version marker v01 not found')
+          home_path.write_text(home.replace(old, new, 1))
+          PY
+      - name: Validate
+        run: |
+          set -euo pipefail
+          node --check ui/interactions/homeInteractions.js
+          node --check screens/homeScreen.js
+          for file in tests/*.test.mjs; do node "$file" >/dev/null; done
+          grep -q 'handleWidgetPickerPointerUp' ui/interactions/homeInteractions.js
+          grep -q 'makeWidgetShell(createCheckpointWidget(context.services), "checkpoint")' ui/interactions/homeInteractions.js
+          grep -q 'widget.removeAttribute("hidden")' ui/interactions/homeInteractions.js
+          grep -q 'handleSelectStart' ui/interactions/homeInteractions.js
+          grep -q 'TEST v2026.09.26-02' screens/homeScreen.js
+          git diff --check
+      - name: Commit robust fix
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add ui/interactions/homeInteractions.js screens/homeScreen.js
+          git commit -m "Fix checkpoint widget add robustly"
+          git push
