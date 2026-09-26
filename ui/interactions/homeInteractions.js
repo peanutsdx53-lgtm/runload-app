@@ -397,7 +397,9 @@ function prepareWidgets(widgetsContainer, services) {
     if (id) makeWidgetShell(anchor, id);
   });
   if (!widgetsContainer.querySelector('[data-home-widget-id="checkpoint"]')) {
-    makeWidgetShell(createCheckpointWidget(services), "checkpoint");
+    const checkpoint = makeWidgetShell(createCheckpointWidget(services), "checkpoint");
+    checkpoint.hidden = true;
+    widgetsContainer.append(checkpoint);
   }
 }
 
@@ -511,6 +513,17 @@ function swapItems(source, target) {
   source.replaceWith(placeholder);
   target.replaceWith(source);
   placeholder.replaceWith(target);
+}
+
+function placeRelativeToTarget(source, target, clientX, clientY) {
+  if (!source || !target || source === target) return;
+  const rect = target.getBoundingClientRect();
+  const middleX = rect.left + rect.width / 2;
+  const middleY = rect.top + rect.height / 2;
+  const nearMiddleRow = Math.abs(clientY - middleY) <= Math.max(18, rect.height * 0.24);
+  const after = clientY > middleY || (nearMiddleRow && clientX > middleX);
+  if (after) target.after(source);
+  else target.before(source);
 }
 
 function createDragGhost(item, kind) {
@@ -687,7 +700,7 @@ export function bindHome(context = {}) {
     edgeTimer = setTimeout(() => {
       const next = edgeTargetPage;
       clearEdgePaging();
-      setActivePage(next, { smooth: true });
+      setActivePage(next, { smooth: false });
     }, PAGE_EDGE_DELAY_MS);
   }
 
@@ -740,7 +753,7 @@ export function bindHome(context = {}) {
 
     if (sourceIsWidget) {
       if (target && target !== source && target.closest(".mobile-home-grid")) {
-        target.before(source);
+        placeRelativeToTarget(source, target, event?.clientX ?? startX, event?.clientY ?? startY);
         changed = true;
       } else if (targetGrid) {
         targetGrid.append(source);
@@ -763,7 +776,7 @@ export function bindHome(context = {}) {
         setItemZone(target, "apps");
         changed = true;
       } else if (target && target !== source && target.closest(".mobile-home-grid")) {
-        target.before(source);
+        placeRelativeToTarget(source, target, event?.clientX ?? startX, event?.clientY ?? startY);
         changed = true;
       } else if (targetGrid) {
         targetGrid.append(source);
