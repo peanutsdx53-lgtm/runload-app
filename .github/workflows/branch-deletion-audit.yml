@@ -1,0 +1,45 @@
+name: Branch deletion audit
+
+on:
+  push:
+    branches:
+      - audit/branch-deletion-check-20260926
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Audit non-main branches against main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          main_ref='refs/remotes/origin/main'
+          merged=0
+          unique=0
+          total=0
+          echo '=== NON-MAIN BRANCH AUDIT ==='
+          while IFS= read -r ref; do
+            branch="${ref#refs/remotes/origin/}"
+            [[ "$branch" == 'main' || "$branch" == 'HEAD' || "$branch" == 'audit/branch-deletion-check-20260926' ]] && continue
+            total=$((total+1))
+            if git merge-base --is-ancestor "$ref" "$main_ref"; then
+              merged=$((merged+1))
+              printf 'MERGED\t%s\t%s\n' "$branch" "$(git rev-parse --short "$ref")"
+            else
+              unique=$((unique+1))
+              ahead=$(git rev-list --count "$main_ref..$ref")
+              behind=$(git rev-list --count "$ref..$main_ref")
+              printf 'UNIQUE\t%s\tahead=%s\tbehind=%s\t%s\n' "$branch" "$ahead" "$behind" "$(git rev-parse --short "$ref")"
+            fi
+          done < <(git for-each-ref --format='%(refname)' refs/remotes/origin/ | sort)
+          echo '=== SUMMARY ==='
+          echo "TOTAL_CHECKED=$total"
+          echo "FULLY_MERGED=$merged"
+          echo "HAS_UNIQUE_COMMITS=$unique"
