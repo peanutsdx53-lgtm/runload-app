@@ -1,4 +1,5 @@
 const STORAGE_KEY = "running-record-mobile-home-layout-v1";
+const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const LONG_PRESS_MS = 380;
 const MOVE_CANCEL_PX = 10;
 
@@ -6,6 +7,16 @@ const DEFAULT_LAYOUT = Object.freeze({
   apps: Object.freeze(["simulation", "plan", "reading", "share", "settings"]),
   dock: Object.freeze(["record", "measure", "history", "course"]),
 });
+
+const WIDGET_CATALOG = Object.freeze([
+  Object.freeze({ id: "today", label: "今日", description: "今日の記録" }),
+  Object.freeze({ id: "plan", label: "次の予定", description: "保存した予定" }),
+  Object.freeze({ id: "changes", label: "最近の変化", description: "履歴と推移" }),
+  Object.freeze({ id: "checkpoint", label: "次に確認", description: "前回からの確認事項" }),
+]);
+const DEFAULT_WIDGET_ORDER = Object.freeze(WIDGET_CATALOG.map((item) => item.id));
+const DEFAULT_WIDGET_VISIBLE = Object.freeze(["today", "plan", "changes"]);
+const WIDGET_ID_SET = new Set(DEFAULT_WIDGET_ORDER);
 
 const ITEM_ID_BY_HREF = Object.freeze([
   ["#/simulation", "simulation"],
@@ -26,6 +37,14 @@ function itemIdFromHref(href = "") {
   return ITEM_ID_BY_HREF.find(([prefix]) => String(href).startsWith(prefix))?.[1] || "";
 }
 
+function widgetIdFromAnchor(anchor, index) {
+  const href = String(anchor?.getAttribute("href") || "");
+  if (href.startsWith("#/plan")) return "plan";
+  if (href.startsWith("#/history")) return "changes";
+  if (index === 0 || anchor?.classList.contains("mobile-home-widget--wide")) return "today";
+  return "";
+}
+
 function readLayout() {
   try {
     const parsed = JSON.parse(globalThis.localStorage?.getItem(STORAGE_KEY) || "null");
@@ -42,6 +61,24 @@ function readLayout() {
   }
 }
 
+function readWidgetLayout() {
+  try {
+    const parsed = JSON.parse(globalThis.localStorage?.getItem(WIDGET_STORAGE_KEY) || "null");
+    if (!parsed || typeof parsed !== "object") {
+      return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE] };
+    }
+    const storedOrder = Array.isArray(parsed.order) ? parsed.order.map(String).filter((id) => WIDGET_ID_SET.has(id)) : [];
+    const order = [...new Set(storedOrder)];
+    DEFAULT_WIDGET_ORDER.forEach((id) => {
+      if (!order.includes(id)) order.push(id);
+    });
+    const storedVisible = Array.isArray(parsed.visible) ? parsed.visible.map(String).filter((id) => WIDGET_ID_SET.has(id)) : [...DEFAULT_WIDGET_VISIBLE];
+    return { order, visible: [...new Set(storedVisible)] };
+  } catch {
+    return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE] };
+  }
+}
+
 function writeLayout(appsContainer, dockContainer) {
   const layout = {
     version: 1,
@@ -52,6 +89,20 @@ function writeLayout(appsContainer, dockContainer) {
     globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(layout));
   } catch {
     // Layout persistence is optional; navigation remains usable without storage.
+  }
+}
+
+function writeWidgetLayout(widgetsContainer) {
+  const widgets = [...widgetsContainer.querySelectorAll("[data-home-widget-id]")];
+  const layout = {
+    version: 1,
+    order: widgets.map((item) => item.dataset.homeWidgetId),
+    visible: widgets.filter((item) => !item.hidden).map((item) => item.dataset.homeWidgetId),
+  };
+  try {
+    globalThis.localStorage?.setItem(WIDGET_STORAGE_KEY, JSON.stringify(layout));
+  } catch {
+    // Widget persistence is optional; the default home remains usable.
   }
 }
 
@@ -78,6 +129,53 @@ function prepareItems(root) {
   });
 }
 
+function createCheckpointWidget(services) {
+  const experience = services?.workflows?.records?.loadLatestExperience?.() || null;
+  const record = experience?.record || null;
+  const checkpoint = String(record?.reflectionContext?.nextCheckPoint || "").trim();
+  const anchor = document.createElement("a");
+  anchor.className = "mobile-home-widget";
+  anchor.href = record?.id ? `#/result?recordId=${encodeURIComponent(record.id)}` : "#/record-input";
+  const small = document.createElement("small");
+  small.textContent = "次に確認";
+  const strong = document.createElement("strong");
+  strong.textContent = checkpoint || "まだありません";
+  const span = document.createElement("span");
+  span.textContent = checkpoint ? "前回の記録から" : "記録で残せます";
+  anchor.append(small, strong, span);
+  return anchor;
+}
+
+function makeWidgetShell(anchor, id) {
+  const shell = document.createElement("div");
+  shell.className = "mobile-home-widget-shell";
+  if (anchor.classList.contains("mobile-home-widget--wide")) shell.classList.add("mobile-home-widget-shell--wide");
+  shell.dataset.homeWidgetId = id;
+  anchor.setAttribute("draggable", "false");
+  anchor.before(shell);
+  shell.append(anchor);
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "mobile-home-widget-remove";
+  remove.dataset.homeWidgetRemove = id;
+  remove.setAttribute("aria-label", `${WIDGET_CATALOG.find((item) => item.id === id)?.label || "ウィジェット"}をホームから外す`);
+  remove.textContent = "−";
+  shell.append(remove);
+  return shell;
+}
+
+function prepareWidgets(widgetsContainer, services) {
+  const existingAnchors = [...widgetsContainer.children].filter((node) => node.matches?.(".mobile-home-widget"));
+  existingAnchors.forEach((anchor, index) => {
+    const id = widgetIdFromAnchor(anchor, index);
+    if (id) makeWidgetShell(anchor, id);
+  });
+  if (!widgetsContainer.querySelector('[data-home-widget-id="checkpoint"]')) {
+    makeWidgetShell(createCheckpointWidget(services), "checkpoint");
+  }
+}
+
 function applyLayout(root, appsContainer, dockContainer) {
   const items = new Map([...root.querySelectorAll("[data-home-item-id]")].map((item) => [item.dataset.homeItemId, item]));
   const layout = readLayout();
@@ -95,6 +193,18 @@ function applyLayout(root, appsContainer, dockContainer) {
   });
 }
 
+function applyWidgetLayout(widgetsContainer) {
+  const layout = readWidgetLayout();
+  const widgets = new Map([...widgetsContainer.querySelectorAll("[data-home-widget-id]")].map((item) => [item.dataset.homeWidgetId, item]));
+  layout.order.forEach((id) => {
+    const widget = widgets.get(id);
+    if (widget) widgetsContainer.append(widget);
+  });
+  widgets.forEach((widget, id) => {
+    widget.hidden = !layout.visible.includes(id);
+  });
+}
+
 function ensureEditControls(root) {
   const status = root.querySelector(".mobile-home-os__status");
   if (status && !status.matches("button")) {
@@ -106,12 +216,59 @@ function ensureEditControls(root) {
     button.textContent = "編集";
     status.replaceWith(button);
   }
-  if (!root.querySelector(".mobile-home-edit-hint")) {
-    const hint = document.createElement("p");
-    hint.className = "mobile-home-edit-hint";
-    hint.textContent = "アイコンをドラッグして移動できます。Dockとの入れ替えもできます。";
-    root.querySelector(".mobile-home-os__header")?.after(hint);
+
+  const editButton = root.querySelector("[data-home-edit-toggle]");
+  if (!editButton) return;
+  let actions = root.querySelector(".mobile-home-os__edit-actions");
+  if (!actions) {
+    actions = document.createElement("div");
+    actions.className = "mobile-home-os__edit-actions";
+    editButton.before(actions);
+    actions.append(editButton);
   }
+  if (!actions.querySelector("[data-home-widget-add]")) {
+    const addButton = document.createElement("button");
+    addButton.type = "button";
+    addButton.className = "mobile-home-widget-add";
+    addButton.dataset.homeWidgetAdd = "";
+    addButton.setAttribute("aria-label", "ウィジェットを追加");
+    addButton.textContent = "+";
+    actions.prepend(addButton);
+  }
+}
+
+function ensureWidgetPicker(root) {
+  let overlay = root.querySelector("[data-home-widget-picker]");
+  if (overlay) return overlay;
+
+  overlay = document.createElement("div");
+  overlay.className = "mobile-home-widget-picker";
+  overlay.dataset.homeWidgetPicker = "";
+  overlay.hidden = true;
+  overlay.innerHTML = `
+    <button type="button" class="mobile-home-widget-picker__backdrop" data-home-widget-picker-close aria-label="ウィジェット追加を閉じる"></button>
+    <section class="mobile-home-widget-picker__sheet" role="dialog" aria-modal="true" aria-labelledby="home-widget-picker-title">
+      <header class="mobile-home-widget-picker__header">
+        <h2 id="home-widget-picker-title">ウィジェットを追加</h2>
+        <button type="button" data-home-widget-picker-close>閉じる</button>
+      </header>
+      <div class="mobile-home-widget-picker__list" data-home-widget-picker-list></div>
+    </section>`;
+  root.append(overlay);
+  return overlay;
+}
+
+function refreshWidgetPicker(root, widgetsContainer) {
+  const overlay = ensureWidgetPicker(root);
+  const list = overlay.querySelector("[data-home-widget-picker-list]");
+  if (!list) return;
+  const visible = new Set([...widgetsContainer.querySelectorAll("[data-home-widget-id]:not([hidden])")].map((item) => item.dataset.homeWidgetId));
+  const available = WIDGET_CATALOG.filter((item) => !visible.has(item.id));
+  if (!available.length) {
+    list.innerHTML = '<p class="mobile-home-widget-picker__empty">追加できるウィジェットはありません。</p>';
+    return;
+  }
+  list.innerHTML = available.map((item) => `<button type="button" class="mobile-home-widget-picker__option" data-home-widget-add-id="${item.id}"><strong>${item.label}</strong><span>${item.description}</span><b aria-hidden="true">＋</b></button>`).join("");
 }
 
 function swapItems(source, target) {
@@ -122,11 +279,14 @@ function swapItems(source, target) {
   placeholder.replaceWith(target);
 }
 
-function createDragGhost(item) {
+function createDragGhost(item, kind) {
   const ghost = item.cloneNode(true);
+  ghost.querySelectorAll("button").forEach((button) => button.remove());
+  ghost.querySelectorAll("a").forEach((anchor) => anchor.removeAttribute("href"));
   ghost.removeAttribute("href");
   ghost.removeAttribute("data-home-item-id");
-  ghost.classList.add("mobile-home-drag-ghost");
+  ghost.removeAttribute("data-home-widget-id");
+  ghost.classList.add(kind === "widget" ? "mobile-home-widget-drag-ghost" : "mobile-home-drag-ghost");
   ghost.setAttribute("aria-hidden", "true");
   document.body.append(ghost);
   return ghost;
@@ -137,20 +297,25 @@ function moveGhost(ghost, clientX, clientY) {
   ghost.style.top = `${clientY}px`;
 }
 
-export function bindHome() {
+export function bindHome(context = {}) {
   const root = document.querySelector(".mobile-home-os");
   if (!root) return null;
+  const widgetsContainer = root.querySelector(".mobile-home-widgets");
   const appsContainer = root.querySelector(".mobile-home-apps");
   const dockContainer = root.querySelector(".mobile-home-dock");
-  if (!appsContainer || !dockContainer) return null;
+  if (!widgetsContainer || !appsContainer || !dockContainer) return null;
 
+  prepareWidgets(widgetsContainer, context.services);
   prepareItems(root);
   ensureEditControls(root);
+  applyWidgetLayout(widgetsContainer);
   applyLayout(root, appsContainer, dockContainer);
+  ensureWidgetPicker(root);
 
   let editing = false;
   let pressTimer = null;
-  let pressItem = null;
+  let pressTarget = null;
+  let pressKind = "";
   let pointerId = null;
   let startX = 0;
   let startY = 0;
@@ -160,14 +325,24 @@ export function bindHome() {
   let suppressClickUntil = 0;
 
   const editButton = root.querySelector("[data-home-edit-toggle]");
+  const widgetPicker = root.querySelector("[data-home-widget-picker]");
 
   function clearDropTarget() {
-    dropItem?.classList.remove("is-home-drop-target");
+    dropItem?.classList.remove("is-home-drop-target", "is-home-widget-drop-target");
     dropItem = null;
   }
 
   function clearPressState() {
-    pressItem?.classList.remove("is-home-pressing");
+    pressTarget?.classList.remove("is-home-pressing");
+  }
+
+  function closeWidgetPicker() {
+    if (widgetPicker) widgetPicker.hidden = true;
+  }
+
+  function openWidgetPicker() {
+    refreshWidgetPicker(root, widgetsContainer);
+    if (widgetPicker) widgetPicker.hidden = false;
   }
 
   function setEditing(next) {
@@ -177,12 +352,14 @@ export function bindHome() {
       editButton.textContent = editing ? "完了" : "編集";
       editButton.setAttribute("aria-pressed", String(editing));
     }
-    if (!editing) clearDropTarget();
+    if (!editing) {
+      clearDropTarget();
+      closeWidgetPicker();
+    }
   }
 
-  function finishDrag(event, cancelled = false) {
-    if (!dragging || !pressItem) return;
-    const source = pressItem;
+  function finishAppDrag(event, cancelled) {
+    const source = pressTarget;
     const sourceZone = source.dataset.homeZone;
     const pointTarget = cancelled ? null : document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);
     const target = pointTarget?.closest?.("[data-home-item-id]") || null;
@@ -202,28 +379,48 @@ export function bindHome() {
       targetZoneElement.append(source);
       writeLayout(appsContainer, dockContainer);
     }
+  }
 
-    source.classList.remove("is-home-dragging", "is-home-pressing");
+  function finishWidgetDrag(event, cancelled) {
+    const source = pressTarget;
+    const pointTarget = cancelled ? null : document.elementFromPoint(event?.clientX ?? startX, event?.clientY ?? startY);
+    const target = pointTarget?.closest?.("[data-home-widget-id]") || null;
+    if (!cancelled && target && target !== source && !target.hidden) {
+      target.before(source);
+      writeWidgetLayout(widgetsContainer);
+    } else if (!cancelled && pointTarget?.closest?.(".mobile-home-widgets")) {
+      widgetsContainer.append(source);
+      writeWidgetLayout(widgetsContainer);
+    }
+  }
+
+  function finishDrag(event, cancelled = false) {
+    if (!dragging || !pressTarget) return;
+    if (pressKind === "widget") finishWidgetDrag(event, cancelled);
+    else finishAppDrag(event, cancelled);
+
+    pressTarget.classList.remove("is-home-dragging", "is-home-widget-dragging", "is-home-pressing");
     clearDropTarget();
     ghost?.remove();
     ghost = null;
     dragging = false;
     suppressClickUntil = Date.now() + 350;
-    try { source.releasePointerCapture(pointerId); } catch {}
+    try { pressTarget.releasePointerCapture(pointerId); } catch {}
   }
 
-  function beginDrag(item, event) {
-    if (!item || dragging) return;
-    item.classList.remove("is-home-pressing");
+  function beginDrag(target, event, kind) {
+    if (!target || dragging) return;
+    target.classList.remove("is-home-pressing");
     setEditing(true);
     dragging = true;
-    pressItem = item;
+    pressTarget = target;
+    pressKind = kind;
     pointerId = event.pointerId;
-    item.classList.add("is-home-dragging");
-    ghost = createDragGhost(item);
+    target.classList.add(kind === "widget" ? "is-home-widget-dragging" : "is-home-dragging");
+    ghost = createDragGhost(target, kind);
     moveGhost(ghost, event.clientX, event.clientY);
     suppressClickUntil = Date.now() + 800;
-    try { item.setPointerCapture(event.pointerId); } catch {}
+    try { target.setPointerCapture(event.pointerId); } catch {}
   }
 
   function cancelPressTimer() {
@@ -237,20 +434,25 @@ export function bindHome() {
   }
 
   function handlePointerDown(event) {
+    if (event.target.closest("button")) return;
+    const widget = event.target.closest("[data-home-widget-id]");
     const item = event.target.closest("[data-home-item-id]");
-    if (!item || (event.pointerType === "mouse" && event.button !== 0)) return;
+    const target = widget || item;
+    const kind = widget ? "widget" : item ? "app" : "";
+    if (!target || (event.pointerType === "mouse" && event.button !== 0)) return;
     cancelPendingPress();
-    pressItem = item;
+    pressTarget = target;
+    pressKind = kind;
     pointerId = event.pointerId;
     startX = event.clientX;
     startY = event.clientY;
-    item.classList.add("is-home-pressing");
+    target.classList.add("is-home-pressing");
     if (editing) {
       event.preventDefault();
-      beginDrag(item, event);
+      beginDrag(target, event, kind);
       return;
     }
-    pressTimer = setTimeout(() => beginDrag(item, event), LONG_PRESS_MS);
+    pressTimer = setTimeout(() => beginDrag(target, event, kind), LONG_PRESS_MS);
   }
 
   function handlePointerMove(event) {
@@ -261,12 +463,13 @@ export function bindHome() {
     }
     event.preventDefault();
     moveGhost(ghost, event.clientX, event.clientY);
-    const hit = document.elementFromPoint(event.clientX, event.clientY)?.closest?.("[data-home-item-id]") || null;
-    if (hit === pressItem || hit === dropItem) return;
+    const selector = pressKind === "widget" ? "[data-home-widget-id]" : "[data-home-item-id]";
+    const hit = document.elementFromPoint(event.clientX, event.clientY)?.closest?.(selector) || null;
+    if (hit === pressTarget || hit === dropItem || hit?.hidden) return;
     clearDropTarget();
     if (hit) {
       dropItem = hit;
-      dropItem.classList.add("is-home-drop-target");
+      dropItem.classList.add(pressKind === "widget" ? "is-home-widget-drop-target" : "is-home-drop-target");
     }
   }
 
@@ -280,7 +483,8 @@ export function bindHome() {
       clearPressState();
     }
     pointerId = null;
-    pressItem = null;
+    pressTarget = null;
+    pressKind = "";
   }
 
   function handlePointerCancel(event) {
@@ -289,7 +493,25 @@ export function bindHome() {
     if (dragging) finishDrag(event, true);
     clearPressState();
     pointerId = null;
-    pressItem = null;
+    pressTarget = null;
+    pressKind = "";
+  }
+
+  function removeWidget(id) {
+    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
+    if (!widget) return;
+    widget.hidden = true;
+    writeWidgetLayout(widgetsContainer);
+    refreshWidgetPicker(root, widgetsContainer);
+  }
+
+  function addWidget(id) {
+    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
+    if (!widget) return;
+    widget.hidden = false;
+    widgetsContainer.append(widget);
+    writeWidgetLayout(widgetsContainer);
+    closeWidgetPicker();
   }
 
   function handleClick(event) {
@@ -298,21 +520,46 @@ export function bindHome() {
       setEditing(!editing);
       return;
     }
-    if (event.target.closest("[data-home-item-id]") && (editing || Date.now() < suppressClickUntil)) {
+    if (event.target.closest("[data-home-widget-add]")) {
+      event.preventDefault();
+      if (editing) openWidgetPicker();
+      return;
+    }
+    const remove = event.target.closest("[data-home-widget-remove]");
+    if (remove) {
+      event.preventDefault();
+      if (editing) removeWidget(remove.dataset.homeWidgetRemove);
+      return;
+    }
+    const add = event.target.closest("[data-home-widget-add-id]");
+    if (add) {
+      event.preventDefault();
+      addWidget(add.dataset.homeWidgetAddId);
+      return;
+    }
+    if (event.target.closest("[data-home-widget-picker-close]")) {
+      event.preventDefault();
+      closeWidgetPicker();
+      return;
+    }
+    if ((event.target.closest("[data-home-item-id]") || event.target.closest("[data-home-widget-id]")) && (editing || Date.now() < suppressClickUntil)) {
       event.preventDefault();
     }
   }
 
   function handleContextMenu(event) {
-    if (event.target.closest("[data-home-item-id]")) event.preventDefault();
+    if (event.target.closest("[data-home-item-id], [data-home-widget-id]")) event.preventDefault();
   }
 
   function handleDragStart(event) {
-    if (event.target.closest("[data-home-item-id]")) event.preventDefault();
+    if (event.target.closest("[data-home-item-id], [data-home-widget-id]")) event.preventDefault();
   }
 
   function handleKeyDown(event) {
-    if (event.key === "Escape" && editing) setEditing(false);
+    if (event.key === "Escape") {
+      if (widgetPicker && !widgetPicker.hidden) closeWidgetPicker();
+      else if (editing) setEditing(false);
+    }
   }
 
   root.addEventListener("pointerdown", handlePointerDown);
