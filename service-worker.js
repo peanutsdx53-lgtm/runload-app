@@ -98,6 +98,7 @@ const PRECACHE_URLS = [
   "./ui/interactions/gradeDomainConfirmation.js",
   "./ui/interactions/historyInteractions.js",
   "./ui/interactions/homeInteractions.js",
+  "./ui/interactions/homeGridModel.js",
   "./ui/interactions/planInteractions.js",
   "./ui/interactions/simulationInteractions.js",
   "./ui/interactions/gpxAnalysisInteractions.js",
