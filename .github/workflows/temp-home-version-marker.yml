@@ -1,0 +1,45 @@
+name: Temporary home version marker
+
+on:
+  push:
+    branches:
+      - temp/home-version-marker-20260926
+
+permissions:
+  contents: write
+
+jobs:
+  apply-marker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Add temporary smartphone home version marker
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('screens/homeScreen.js')
+          s = p.read_text()
+          old = '<div><small>RUNNING RECORD</small><h1>走行記録</h1></div>'
+          new = '<div><small>RUNNING RECORD</small><h1>走行記録</h1><small class="mobile-home-os__version">TEST v2026.09.26-01</small></div>'
+          if old not in s:
+              raise SystemExit('target not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Validate
+        run: |
+          set -euo pipefail
+          node --check screens/homeScreen.js
+          grep -q 'TEST v2026.09.26-01' screens/homeScreen.js
+          for file in tests/*.test.mjs; do node "$file" >/dev/null; done
+          git diff --check
+      - name: Commit marker
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add screens/homeScreen.js
+          git commit -m "Add temporary smartphone home version marker"
+          git push
