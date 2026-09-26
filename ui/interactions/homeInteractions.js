@@ -659,6 +659,13 @@ function ensureWidgetPicker(root) {
   return overlay;
 }
 
+function appPickerIconMarkup(root, id) {
+  const icon = root.querySelector(`[data-home-app-catalog] [data-home-item-id="${id}"] .mobile-home-app__icon`);
+  if (!icon) return "";
+  const toneClass = [...icon.classList].find((name) => name.startsWith("mobile-home-tone--")) || "mobile-home-tone--gray";
+  return `<div class="mobile-home-widget-picker__app-icon ${toneClass}" aria-hidden="true">${icon.innerHTML}</div>`;
+}
+
 function refreshWidgetPicker(root) {
   const overlay = ensureWidgetPicker(root);
   const list = overlay.querySelector("[data-home-widget-picker-list]");
@@ -669,10 +676,10 @@ function refreshWidgetPicker(root) {
   const availableApps = OPTIONAL_APP_CATALOG.filter((item) => !installedApps.has(item.id));
   const groups = [];
   if (availableApps.length) {
-    groups.push(`<p class="mobile-home-widget-picker__group-title">アプリアイコン</p>${availableApps.map((item) => `<button type="button" class="mobile-home-widget-picker__option" data-home-app-add-id="${item.id}"><strong>${item.label}</strong><span>${item.description}</span><b aria-hidden="true">＋</b></button>`).join("")}`);
+    groups.push(`<p class="mobile-home-widget-picker__group-title">アプリアイコン</p>${availableApps.map((item) => `<button type="button" class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app" data-home-app-add-id="${item.id}">${appPickerIconMarkup(root, item.id)}<div class="mobile-home-widget-picker__copy"><strong>${item.label}</strong><span>${item.description}</span></div><b aria-hidden="true">＋</b></button>`).join("")}`);
   }
   if (availableWidgets.length) {
-    groups.push(`<p class="mobile-home-widget-picker__group-title">ウィジェット</p>${availableWidgets.map((item) => `<button type="button" class="mobile-home-widget-picker__option" data-home-widget-add-id="${item.id}"><strong>${item.label}</strong><span>${item.description}</span><b aria-hidden="true">＋</b></button>`).join("")}`);
+    groups.push(`<p class="mobile-home-widget-picker__group-title">ウィジェット</p>${availableWidgets.map((item) => `<button type="button" class="mobile-home-widget-picker__option mobile-home-widget-picker__option--widget" data-home-widget-add-id="${item.id}"><strong>${item.label}</strong><span>${item.description}</span><b aria-hidden="true">＋</b></button>`).join("")}`);
   }
   list.innerHTML = groups.join("") || '<p class="mobile-home-widget-picker__empty">追加できる項目はありません。</p>';
 }

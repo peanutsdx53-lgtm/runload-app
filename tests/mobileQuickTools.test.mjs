@@ -29,6 +29,17 @@ await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
   assert.ok(interactions.includes('removeOptionalApp'));
 });
 
+await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
+  const interactions = read('ui/interactions/homeInteractions.js');
+  const css = read('styles/mobile-home-editing.css');
+  assert.ok(interactions.includes('function appPickerIconMarkup'));
+  assert.ok(interactions.includes('.mobile-home-app__icon'));
+  assert.ok(interactions.includes('mobile-home-widget-picker__option--app'));
+  assert.ok(interactions.includes('mobile-home-widget-picker__option--widget'));
+  assert.ok(css.includes('.mobile-home-widget-picker__app-icon svg'));
+  assert.ok(css.includes('.mobile-home-widget-picker__option--app'));
+});
+
 await test('MOBILE-QUICK-TOOLS-PRESERVE-REQUIRED-HOME-LAYOUT', () => {
   const interactions = read('ui/interactions/homeInteractions.js');
   assert.ok(interactions.includes('const REQUIRED_ITEM_IDS'));
