@@ -1,0 +1,107 @@
+@media (max-width: 54.99rem) {
+  .mobile-home-os__status {
+    appearance: none;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .mobile-home-edit-hint {
+    display: none;
+    margin: -8px 2px 14px;
+    padding: 9px 12px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 76%, transparent);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    color: var(--color-muted);
+    font-size: 10px;
+    font-weight: 760;
+    line-height: 1.45;
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-edit-hint {
+    display: block;
+  }
+
+  .mobile-home-os.is-home-editing [data-home-item-id] {
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    animation: mobile-home-jiggle 180ms ease-in-out infinite alternate;
+  }
+
+  .mobile-home-os.is-home-editing [data-home-item-id]:nth-child(even) {
+    animation-direction: alternate-reverse;
+  }
+
+  .mobile-home-os.is-home-editing [data-home-item-id]::before {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border: 1px dashed color-mix(in srgb, var(--color-accent-strong) 38%, transparent);
+    border-radius: 20px;
+    pointer-events: none;
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-app,
+  .mobile-home-os.is-home-editing .mobile-home-dock__item {
+    position: relative;
+  }
+
+  .mobile-home-os .is-home-dragging {
+    opacity: .28;
+    animation: none !important;
+  }
+
+  .mobile-home-os .is-home-drop-target {
+    transform: scale(1.05);
+  }
+
+  .mobile-home-os .is-home-drop-target::before {
+    border-style: solid !important;
+    border-width: 2px !important;
+    border-color: var(--color-accent-strong) !important;
+    background: color-mix(in srgb, var(--color-accent-soft) 34%, transparent);
+  }
+
+  .mobile-home-drag-ghost {
+    position: fixed !important;
+    z-index: 120;
+    width: 78px;
+    min-height: 82px;
+    margin: 0;
+    transform: translate(-50%, -50%) scale(1.08);
+    pointer-events: none;
+    opacity: .94;
+    filter: drop-shadow(0 14px 20px rgba(20, 37, 52, .2));
+    animation: none !important;
+  }
+
+  .mobile-home-drag-ghost::before {
+    display: none !important;
+  }
+
+  .mobile-home-drag-ghost .mobile-home-app__icon,
+  .mobile-home-drag-ghost .mobile-home-dock__icon {
+    margin-inline: auto;
+  }
+
+  .mobile-home-drag-ghost .mobile-home-app__label,
+  .mobile-home-drag-ghost .mobile-home-dock__label {
+    margin-top: 6px;
+    text-align: center;
+    font-size: 10px;
+  }
+
+  @keyframes mobile-home-jiggle {
+    from { transform: rotate(-.7deg) scale(.985); }
+    to { transform: rotate(.7deg) scale(.985); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-home-os.is-home-editing [data-home-item-id] {
+    animation: none !important;
+  }
+}
