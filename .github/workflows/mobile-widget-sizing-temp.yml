@@ -1,0 +1,112 @@
+name: Mobile widget sizing temporary validation
+
+on:
+  push:
+    branches:
+      - feature/mobile-widget-sizing-20260926
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply widget sizing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('ui/interactions/homeInteractions.js')
+          s = path.read_text()
+
+          marker = 'const WIDGET_ID_SET = new Set(DEFAULT_WIDGET_ORDER);\n'
+          insert = '''const WIDGET_ID_SET = new Set(DEFAULT_WIDGET_ORDER);\nconst WIDGET_SIZE_ORDER = Object.freeze(["small", "medium", "large"]);\nconst WIDGET_SIZE_SET = new Set(WIDGET_SIZE_ORDER);\nconst DEFAULT_WIDGET_SIZES = Object.freeze({\n  today: "medium",\n  plan: "small",\n  changes: "small",\n  checkpoint: "small",\n});\nconst WIDGET_SIZE_LABELS = Object.freeze({ small: "小", medium: "中", large: "大" });\n'''
+          if marker not in s:
+              raise SystemExit('widget constant marker not found')
+          s = s.replace(marker, insert, 1)
+
+          start = s.index('function readWidgetLayout() {')
+          end = s.index('\nfunction writeLayout(', start)
+          s = s[:start] + '''function readWidgetLayout() {\n  try {\n    const parsed = JSON.parse(globalThis.localStorage?.getItem(WIDGET_STORAGE_KEY) || "null");\n    if (!parsed || typeof parsed !== "object") {\n      return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES } };\n    }\n    const storedOrder = Array.isArray(parsed.order) ? parsed.order.map(String).filter((id) => WIDGET_ID_SET.has(id)) : [];\n    const order = [...new Set(storedOrder)];\n    DEFAULT_WIDGET_ORDER.forEach((id) => {\n      if (!order.includes(id)) order.push(id);\n    });\n    const storedVisible = Array.isArray(parsed.visible) ? parsed.visible.map(String).filter((id) => WIDGET_ID_SET.has(id)) : [...DEFAULT_WIDGET_VISIBLE];\n    const sizes = { ...DEFAULT_WIDGET_SIZES };\n    if (parsed.sizes && typeof parsed.sizes === "object") {\n      DEFAULT_WIDGET_ORDER.forEach((id) => {\n        const size = String(parsed.sizes[id] || "");\n        if (WIDGET_SIZE_SET.has(size)) sizes[id] = size;\n      });\n    }\n    return { order, visible: [...new Set(storedVisible)], sizes };\n  } catch {\n    return { order: [...DEFAULT_WIDGET_ORDER], visible: [...DEFAULT_WIDGET_VISIBLE], sizes: { ...DEFAULT_WIDGET_SIZES } };\n  }\n}\n''' + s[end:]
+
+          start = s.index('function writeWidgetLayout(widgetsContainer) {')
+          end = s.index('\nfunction setItemZone(', start)
+          s = s[:start] + '''function writeWidgetLayout(widgetsContainer) {\n  const widgets = [...widgetsContainer.querySelectorAll("[data-home-widget-id]")];\n  const layout = {\n    version: 1,\n    order: widgets.map((item) => item.dataset.homeWidgetId),\n    visible: widgets.filter((item) => !item.hidden).map((item) => item.dataset.homeWidgetId),\n    sizes: Object.fromEntries(widgets.map((item) => [item.dataset.homeWidgetId, item.dataset.homeWidgetSize || DEFAULT_WIDGET_SIZES[item.dataset.homeWidgetId] || "small"])),\n  };\n  try {\n    globalThis.localStorage?.setItem(WIDGET_STORAGE_KEY, JSON.stringify(layout));\n  } catch {\n    // Widget persistence is optional; the default home remains usable.\n  }\n}\n''' + s[end:]
+
+          start = s.index('function makeWidgetShell(anchor, id) {')
+          end = s.index('\nfunction prepareWidgets(', start)
+          s = s[:start] + '''function normalizeWidgetSize(size, id) {\n  const candidate = String(size || "");\n  if (WIDGET_SIZE_SET.has(candidate)) return candidate;\n  return DEFAULT_WIDGET_SIZES[id] || "small";\n}\n\nfunction applyWidgetSize(shell, size) {\n  if (!shell) return;\n  const id = shell.dataset.homeWidgetId || "";\n  const normalized = normalizeWidgetSize(size, id);\n  shell.dataset.homeWidgetSize = normalized;\n  WIDGET_SIZE_ORDER.forEach((name) => shell.classList.toggle(`mobile-home-widget-shell--size-${name}`, name === normalized));\n  const button = shell.querySelector("[data-home-widget-size]");\n  if (button) {\n    const label = WIDGET_SIZE_LABELS[normalized] || normalized;\n    button.textContent = label;\n    button.setAttribute("aria-label", `${WIDGET_CATALOG.find((item) => item.id === id)?.label || "ウィジェット"}のサイズを変更（現在: ${label}）`);\n  }\n}\n\nfunction makeWidgetShell(anchor, id) {\n  const shell = document.createElement("div");\n  shell.className = "mobile-home-widget-shell";\n  if (anchor.classList.contains("mobile-home-widget--wide")) shell.classList.add("mobile-home-widget-shell--wide");\n  shell.dataset.homeWidgetId = id;\n  anchor.setAttribute("draggable", "false");\n  anchor.before(shell);\n  shell.append(anchor);\n\n  const remove = document.createElement("button");\n  remove.type = "button";\n  remove.className = "mobile-home-widget-remove";\n  remove.dataset.homeWidgetRemove = id;\n  remove.setAttribute("aria-label", `${WIDGET_CATALOG.find((item) => item.id === id)?.label || "ウィジェット"}をホームから外す`);\n  remove.textContent = "−";\n  shell.append(remove);\n\n  const sizeButton = document.createElement("button");\n  sizeButton.type = "button";\n  sizeButton.className = "mobile-home-widget-size";\n  sizeButton.dataset.homeWidgetSize = id;\n  shell.append(sizeButton);\n  applyWidgetSize(shell, DEFAULT_WIDGET_SIZES[id]);\n  return shell;\n}\n''' + s[end:]
+
+          start = s.index('function applyWidgetLayout(widgetsContainer) {')
+          end = s.index('\nfunction ensureEditControls(', start)
+          s = s[:start] + '''function applyWidgetLayout(widgetsContainer) {\n  const layout = readWidgetLayout();\n  const widgets = new Map([...widgetsContainer.querySelectorAll("[data-home-widget-id]")].map((item) => [item.dataset.homeWidgetId, item]));\n  layout.order.forEach((id) => {\n    const widget = widgets.get(id);\n    if (widget) widgetsContainer.append(widget);\n  });\n  widgets.forEach((widget, id) => {\n    widget.hidden = !layout.visible.includes(id);\n    applyWidgetSize(widget, layout.sizes?.[id]);\n  });\n}\n''' + s[end:]
+
+          target = '''  function removeWidget(id) {\n    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);\n'''
+          addition = '''  function cycleWidgetSize(id) {\n    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);\n    if (!widget) return;\n    const current = normalizeWidgetSize(widget.dataset.homeWidgetSize, id);\n    const index = WIDGET_SIZE_ORDER.indexOf(current);\n    const next = WIDGET_SIZE_ORDER[(index + 1) % WIDGET_SIZE_ORDER.length];\n    applyWidgetSize(widget, next);\n    writeWidgetLayout(widgetsContainer);\n  }\n\n  function removeWidget(id) {\n    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);\n'''
+          if target not in s:
+              raise SystemExit('removeWidget insertion point not found')
+          s = s.replace(target, addition, 1)
+
+          target = '''    const remove = event.target.closest("[data-home-widget-remove]");\n    if (remove) {\n'''
+          addition = '''    const size = event.target.closest("[data-home-widget-size]");\n    if (size) {\n      event.preventDefault();\n      if (editing) cycleWidgetSize(size.dataset.homeWidgetSize);\n      return;\n    }\n    const remove = event.target.closest("[data-home-widget-remove]");\n    if (remove) {\n'''
+          if target not in s:
+              raise SystemExit('handleClick size insertion point not found')
+          s = s.replace(target, addition, 1)
+
+          path.write_text(s)
+
+          css_path = Path('styles/mobile-home-editing.css')
+          css = css_path.read_text()
+          marker = '''  .mobile-home-widget-shell--wide > .mobile-home-widget {\n    min-height: 132px;\n  }\n'''
+          addition = marker + '''\n  .mobile-home-widget-shell--size-small {\n    grid-column: auto;\n  }\n\n  .mobile-home-widget-shell--size-medium,\n  .mobile-home-widget-shell--size-large {\n    grid-column: 1 / -1;\n  }\n\n  .mobile-home-widget-shell--size-small > .mobile-home-widget {\n    min-height: 112px;\n  }\n\n  .mobile-home-widget-shell--size-medium > .mobile-home-widget {\n    min-height: 132px;\n  }\n\n  .mobile-home-widget-shell--size-large > .mobile-home-widget {\n    min-height: 190px;\n  }\n'''
+          if marker not in css:
+              raise SystemExit('widget size css insertion marker not found')
+          css = css.replace(marker, addition, 1)
+
+          marker = '''  .mobile-home-os.is-home-editing .mobile-home-widget-remove {\n    display: grid;\n    place-items: center;\n  }\n'''
+          addition = marker + '''\n  .mobile-home-widget-size {\n    display: none;\n    position: absolute;\n    z-index: 5;\n    top: -8px;\n    right: -7px;\n    min-width: 34px;\n    height: 29px;\n    min-height: 0;\n    padding: 0 9px;\n    border: 2px solid var(--color-surface);\n    border-radius: 999px;\n    background: var(--color-accent-strong);\n    color: var(--color-on-accent);\n    font-size: 11px;\n    font-weight: 900;\n    line-height: 1;\n    box-shadow: 0 4px 10px rgba(31, 47, 60, .18);\n  }\n\n  .mobile-home-os.is-home-editing .mobile-home-widget-size {\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n  }\n'''
+          if marker not in css:
+              raise SystemExit('widget size button css marker not found')
+          css = css.replace(marker, addition, 1)
+
+          marker = '''  .mobile-home-widget-drag-ghost.mobile-home-widget-shell--wide {\n    width: min(calc(100vw - 40px), 420px);\n  }\n'''
+          addition = marker + '''\n  .mobile-home-widget-drag-ghost.mobile-home-widget-shell--size-medium,\n  .mobile-home-widget-drag-ghost.mobile-home-widget-shell--size-large {\n    width: min(calc(100vw - 40px), 420px);\n  }\n'''
+          if marker not in css:
+              raise SystemExit('ghost size css marker not found')
+          css = css.replace(marker, addition, 1)
+          css_path.write_text(css)
+
+          home_path = Path('screens/homeScreen.js')
+          home = home_path.read_text()
+          home = home.replace('<small class="mobile-home-os__version">TEST v2026.09.26-02</small>', '', 1)
+          if 'TEST v2026.09.26-02' in home:
+              raise SystemExit('temporary version marker still present')
+          home_path.write_text(home)
+          PY
+      - name: Validate implementation
+        run: |
+          set -euo pipefail
+          node --check ui/interactions/homeInteractions.js
+          node --check screens/homeScreen.js
+          for file in tests/*.test.mjs; do node "$file" >/dev/null; done
+          grep -q 'const WIDGET_SIZE_ORDER' ui/interactions/homeInteractions.js
+          grep -q 'sizes: Object.fromEntries' ui/interactions/homeInteractions.js
+          grep -q 'function cycleWidgetSize' ui/interactions/homeInteractions.js
+          grep -q 'data-home-widget-size' ui/interactions/homeInteractions.js
+          grep -q 'mobile-home-widget-shell--size-large' styles/mobile-home-editing.css
+          grep -q 'mobile-home-widget-size' styles/mobile-home-editing.css
+          if grep -q 'TEST v2026.09.26-02' screens/homeScreen.js; then exit 1; fi
+          git diff --check
+      - name: Commit implementation
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add ui/interactions/homeInteractions.js styles/mobile-home-editing.css screens/homeScreen.js
+          git commit -m "Add smartphone widget size controls"
+          git push
