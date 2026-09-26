@@ -14,6 +14,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Locate retired core references
+        shell: bash
+        run: |
+          grep -R -n 'runloadCore' app.js core screens ui tests service-worker.js || true
       - name: Check JavaScript syntax
         shell: bash
         run: |
