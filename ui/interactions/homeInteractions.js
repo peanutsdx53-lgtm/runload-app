@@ -434,11 +434,6 @@ export function bindHome(context = {}) {
   }
 
   function handlePointerDown(event) {
-    const pickerOption = event.target.closest("[data-home-widget-add-id]");
-    if (pickerOption) {
-      event.preventDefault();
-      return;
-    }
     if (event.target.closest("button")) return;
     const widget = event.target.closest("[data-home-widget-id]");
     const item = event.target.closest("[data-home-item-id]");
@@ -479,12 +474,6 @@ export function bindHome(context = {}) {
   }
 
   function handlePointerUp(event) {
-    const pickerOption = event.target.closest("[data-home-widget-add-id]");
-    if (pickerOption) {
-      event.preventDefault();
-      addWidget(pickerOption.dataset.homeWidgetAddId);
-      return;
-    }
     if (event.pointerId !== pointerId) return;
     cancelPressTimer();
     if (dragging) {
@@ -517,16 +506,31 @@ export function bindHome(context = {}) {
   }
 
   function addWidget(id) {
-    const widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
-    if (!widget) return;
-    if (!widget.hidden) {
-      closeWidgetPicker();
-      return;
+    let widget = widgetsContainer.querySelector(`[data-home-widget-id="${id}"]`);
+    if (!widget && id === "checkpoint") {
+      widget = makeWidgetShell(createCheckpointWidget(context.services), "checkpoint");
+      widgetsContainer.append(widget);
     }
+    if (!widget) return;
     widget.hidden = false;
+    widget.removeAttribute("hidden");
+    widget.style.removeProperty("display");
     widgetsContainer.append(widget);
     writeWidgetLayout(widgetsContainer);
     closeWidgetPicker();
+  }
+
+  function handleWidgetPickerPointerUp(event) {
+    const option = event.target.closest("[data-home-widget-add-id]");
+    if (!option) return;
+    event.preventDefault();
+    event.stopPropagation();
+    addWidget(option.dataset.homeWidgetAddId);
+  }
+
+  function handleSelectStart(event) {
+    if (event.target.closest('input, textarea, [contenteditable="true"]')) return;
+    event.preventDefault();
   }
 
   function handleClick(event) {
@@ -577,24 +581,28 @@ export function bindHome(context = {}) {
     }
   }
 
+  widgetPicker?.addEventListener("pointerup", handleWidgetPickerPointerUp);
   root.addEventListener("pointerdown", handlePointerDown);
   root.addEventListener("pointermove", handlePointerMove, { passive: false });
   root.addEventListener("pointerup", handlePointerUp);
   root.addEventListener("pointercancel", handlePointerCancel);
   root.addEventListener("click", handleClick, true);
   root.addEventListener("contextmenu", handleContextMenu);
+  root.addEventListener("selectstart", handleSelectStart);
   root.addEventListener("dragstart", handleDragStart);
   document.addEventListener("keydown", handleKeyDown);
 
   return () => {
     cancelPendingPress();
     ghost?.remove();
+    widgetPicker?.removeEventListener("pointerup", handleWidgetPickerPointerUp);
     root.removeEventListener("pointerdown", handlePointerDown);
     root.removeEventListener("pointermove", handlePointerMove);
     root.removeEventListener("pointerup", handlePointerUp);
     root.removeEventListener("pointercancel", handlePointerCancel);
     root.removeEventListener("click", handleClick, true);
     root.removeEventListener("contextmenu", handleContextMenu);
+    root.removeEventListener("selectstart", handleSelectStart);
     root.removeEventListener("dragstart", handleDragStart);
     document.removeEventListener("keydown", handleKeyDown);
   };
