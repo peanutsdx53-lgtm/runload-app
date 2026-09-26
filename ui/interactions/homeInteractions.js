@@ -43,19 +43,30 @@ const DEFAULT_WIDGET_SIZES = Object.freeze({
 });
 const WIDGET_SIZE_LABELS = Object.freeze({ small: "小", medium: "中", large: "大" });
 
+const OPTIONAL_APP_CATALOG = Object.freeze([
+  Object.freeze({ id: "location-note", label: "地点メモ", description: "現在地と短いメモを保存" }),
+  Object.freeze({ id: "quick-note", label: "1分メモ", description: "気づきを短く残す" }),
+  Object.freeze({ id: "gear-note", label: "装備メモ", description: "その日の装備を保存" }),
+]);
+const OPTIONAL_ITEM_IDS = Object.freeze(OPTIONAL_APP_CATALOG.map((item) => item.id));
+
 const ITEM_ID_BY_HREF = Object.freeze([
   ["#/simulation", "simulation"],
   ["#/plan", "plan"],
   ["#/reading", "reading"],
   ["#/consultation", "share"],
   ["#/settings", "settings"],
+  ["#/location-note", "location-note"],
+  ["#/quick-note", "quick-note"],
+  ["#/gear-note", "gear-note"],
   ["#/record-input", "record"],
   ["#/run-measurement", "measure"],
   ["#/history", "history"],
   ["#/course-library", "course"],
 ]);
 
-const ALL_ITEM_IDS = Object.freeze([...DEFAULT_LAYOUT.pages.flat(), ...DEFAULT_LAYOUT.dock]);
+const REQUIRED_ITEM_IDS = Object.freeze([...DEFAULT_LAYOUT.pages.flat(), ...DEFAULT_LAYOUT.dock]);
+const ALL_ITEM_IDS = Object.freeze([...REQUIRED_ITEM_IDS, ...OPTIONAL_ITEM_IDS]);
 const ALL_ITEM_ID_SET = new Set(ALL_ITEM_IDS);
 
 const APP_TOKEN_PREFIX = "app:";
@@ -279,9 +290,9 @@ function readLayout() {
       });
       const allApps = [...appIds, ...dock];
       if (!validTokens
-        || allApps.length !== ALL_ITEM_IDS.length
-        || new Set(allApps).size !== ALL_ITEM_IDS.length
+        || new Set(allApps).size !== allApps.length
         || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))
+        || !REQUIRED_ITEM_IDS.every((id) => allApps.includes(id))
         || widgetIds.length !== DEFAULT_WIDGET_ORDER.length
         || new Set(widgetIds).size !== DEFAULT_WIDGET_ORDER.length
         || !widgetIds.every((id) => WIDGET_ID_SET.has(id))) {
@@ -290,9 +301,9 @@ function readLayout() {
     } else {
       const legacyApps = flattened;
       const allApps = [...legacyApps, ...dock];
-      if (allApps.length !== ALL_ITEM_IDS.length
-        || new Set(allApps).size !== ALL_ITEM_IDS.length
-        || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))) {
+      if (new Set(allApps).size !== allApps.length
+        || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))
+        || !REQUIRED_ITEM_IDS.every((id) => allApps.includes(id))) {
         return defaultGridLayout();
       }
       const widgetLayout = readWidgetLayout();
@@ -399,8 +410,9 @@ function setItemZone(item, zone) {
 }
 
 function prepareItems(root) {
-  root.querySelectorAll(".mobile-home-apps .mobile-home-app, .mobile-home-dock .mobile-home-dock__item").forEach((item) => {
-    const id = itemIdFromHref(item.getAttribute("href"));
+  root.querySelectorAll(".mobile-home-apps .mobile-home-app, .mobile-home-dock .mobile-home-dock__item, [data-home-app-catalog] .mobile-home-app").forEach((item) => {
+    const href = item.getAttribute("href") || item.querySelector("a[href]")?.getAttribute("href") || "";
+    const id = itemIdFromHref(href);
     if (!id) return;
     item.dataset.homeItemId = id;
     item.dataset.homeZone = item.closest(".mobile-home-dock") ? "dock" : "apps";
@@ -620,7 +632,7 @@ function ensureEditControls(root) {
     addButton.type = "button";
     addButton.className = "mobile-home-widget-add";
     addButton.dataset.homeWidgetAdd = "";
-    addButton.setAttribute("aria-label", "ウィジェットを追加");
+    addButton.setAttribute("aria-label", "ホームに追加");
     addButton.textContent = "+";
     actions.prepend(addButton);
   }
@@ -635,10 +647,10 @@ function ensureWidgetPicker(root) {
   overlay.dataset.homeWidgetPicker = "";
   overlay.hidden = true;
   overlay.innerHTML = `
-    <button type="button" class="mobile-home-widget-picker__backdrop" data-home-widget-picker-close aria-label="ウィジェット追加を閉じる"></button>
+    <button type="button" class="mobile-home-widget-picker__backdrop" data-home-widget-picker-close aria-label="ホームへの追加を閉じる"></button>
     <section class="mobile-home-widget-picker__sheet" role="dialog" aria-modal="true" aria-labelledby="home-widget-picker-title">
       <header class="mobile-home-widget-picker__header">
-        <h2 id="home-widget-picker-title">ウィジェットを追加</h2>
+        <h2 id="home-widget-picker-title">ホームに追加</h2>
         <button type="button" data-home-widget-picker-close>閉じる</button>
       </header>
       <div class="mobile-home-widget-picker__list" data-home-widget-picker-list></div>
@@ -651,13 +663,18 @@ function refreshWidgetPicker(root) {
   const overlay = ensureWidgetPicker(root);
   const list = overlay.querySelector("[data-home-widget-picker-list]");
   if (!list) return;
-  const visible = new Set([...root.querySelectorAll("[data-home-widget-id]:not([hidden])")].map((item) => item.dataset.homeWidgetId));
-  const available = WIDGET_CATALOG.filter((item) => !visible.has(item.id));
-  if (!available.length) {
-    list.innerHTML = '<p class="mobile-home-widget-picker__empty">追加できるウィジェットはありません。</p>';
-    return;
+  const visibleWidgets = new Set([...root.querySelectorAll("[data-home-widget-id]:not([hidden])")].map((item) => item.dataset.homeWidgetId));
+  const availableWidgets = WIDGET_CATALOG.filter((item) => !visibleWidgets.has(item.id));
+  const installedApps = new Set([...root.querySelectorAll(".mobile-home-page [data-home-item-id], .mobile-home-dock [data-home-item-id]")].map((item) => item.dataset.homeItemId));
+  const availableApps = OPTIONAL_APP_CATALOG.filter((item) => !installedApps.has(item.id));
+  const groups = [];
+  if (availableApps.length) {
+    groups.push(`<p class="mobile-home-widget-picker__group-title">アプリアイコン</p>${availableApps.map((item) => `<button type="button" class="mobile-home-widget-picker__option" data-home-app-add-id="${item.id}"><strong>${item.label}</strong><span>${item.description}</span><b aria-hidden="true">＋</b></button>`).join("")}`);
   }
-  list.innerHTML = available.map((item) => `<button type="button" class="mobile-home-widget-picker__option" data-home-widget-add-id="${item.id}"><strong>${item.label}</strong><span>${item.description}</span><b aria-hidden="true">＋</b></button>`).join("");
+  if (availableWidgets.length) {
+    groups.push(`<p class="mobile-home-widget-picker__group-title">ウィジェット</p>${availableWidgets.map((item) => `<button type="button" class="mobile-home-widget-picker__option" data-home-widget-add-id="${item.id}"><strong>${item.label}</strong><span>${item.description}</span><b aria-hidden="true">＋</b></button>`).join("")}`);
+  }
+  list.innerHTML = groups.join("") || '<p class="mobile-home-widget-picker__empty">追加できる項目はありません。</p>';
 }
 
 function swapItems(source, target) {
@@ -1163,7 +1180,53 @@ export function bindHome(context = {}) {
     updateViewportHeight();
   }
 
+  function addOptionalApp(id) {
+    const item = root.querySelector(`[data-home-app-catalog] [data-home-item-id="${id}"]`);
+    if (!item || !OPTIONAL_ITEM_IDS.includes(id)) return;
+    const page = currentPageElement();
+    const grid = pageContainers(page).grid;
+    if (!grid) return;
+    grid.append(item);
+    setItemZone(item, "apps");
+    const token = appToken(id);
+    const placements = placementsForPage(page).filter((entry) => entry.token !== token);
+    const free = findNearestFreePlacement(placements, token, { row: 1, col: 1 }, {
+      widgetSizes: currentWidgetSizes(root),
+      occupiedTokens: visibleTokensForPage(page),
+    });
+    if (free) applyPlacementStyle(item, free, currentWidgetSizes(root));
+    refreshPageSlots(root, editing);
+    persistHomeLayout();
+    closeWidgetPicker();
+    updatePageIndicator();
+    updateViewportHeight();
+  }
+
+  function removeOptionalApp(id) {
+    if (!OPTIONAL_ITEM_IDS.includes(id)) return;
+    const item = root.querySelector(`[data-home-item-id="${id}"]`);
+    const catalog = root.querySelector("[data-home-app-catalog]");
+    if (!item || !catalog || item.closest(".mobile-home-dock")) return;
+    catalog.append(item);
+    item.style.removeProperty("grid-row");
+    item.style.removeProperty("grid-column");
+    delete item.dataset.homeRow;
+    delete item.dataset.homeCol;
+    refreshPageSlots(root, editing);
+    persistHomeLayout();
+    refreshWidgetPicker(root);
+    updatePageIndicator();
+    updateViewportHeight();
+  }
+
   function handleWidgetPickerPointerUp(event) {
+    const appOption = event.target.closest("[data-home-app-add-id]");
+    if (appOption) {
+      event.preventDefault();
+      event.stopPropagation();
+      addOptionalApp(appOption.dataset.homeAppAddId);
+      return;
+    }
     const option = event.target.closest("[data-home-widget-add-id]");
     if (!option) return;
     event.preventDefault();
@@ -1213,6 +1276,19 @@ export function bindHome(context = {}) {
     if (remove) {
       event.preventDefault();
       if (editing) removeWidget(remove.dataset.homeWidgetRemove);
+      return;
+    }
+    const appRemove = event.target.closest("[data-home-app-remove]");
+    if (appRemove) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (editing) removeOptionalApp(appRemove.closest("[data-home-item-id]")?.dataset.homeItemId || "");
+      return;
+    }
+    const appAdd = event.target.closest("[data-home-app-add-id]");
+    if (appAdd) {
+      event.preventDefault();
+      addOptionalApp(appAdd.dataset.homeAppAddId);
       return;
     }
     const add = event.target.closest("[data-home-widget-add-id]");

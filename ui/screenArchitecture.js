@@ -135,6 +135,10 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     };
   }
 
+  if (screen === "location-note") return { title: "地点メモ", backHref: "#/home", backLabel: "ホーム" };
+  if (screen === "quick-note") return { title: "1分メモ", backHref: "#/home", backLabel: "ホーム" };
+  if (screen === "gear-note") return { title: "装備メモ", backHref: "#/home", backLabel: "ホーム" };
+
   if (screen === "plan") {
     const interpretationReturn = interpretationReturnContext(parameter, recordId || parameter("sourceRecordId"));
     if (interpretationReturn) return { ...interpretationReturn, title: "次の予定" };
