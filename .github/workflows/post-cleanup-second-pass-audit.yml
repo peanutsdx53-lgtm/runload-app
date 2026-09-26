@@ -50,6 +50,18 @@ jobs:
           grep -R -n -E 'evidenceGovernanceData|EVIDENCE_GOVERNANCE_VERSION|SOURCE_EVIDENCE_REGISTRY|ARTICLE_EVIDENCE_REGISTRY|getSourceEvidenceGovernance|getArticleEvidenceGovernance|buildArticleEvidenceGovernance|evidenceForArticle|evidenceForSource|evidenceGovernanceVersion' --include='*.js' --include='*.mjs' . || true
           echo "=== MODULE REGISTRATION REFERENCES ==="
           grep -R -n -E 'internalModules\.[A-Za-z0-9_]+' --include='*.js' core | sed -E 's/.*internalModules\.([A-Za-z0-9_]+).*/\1/' | sort | uniq -c | sort -nr
+      - name: Verify plan presentation directly
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== PLAN PRESENTATION SHA256 ==="
+          sha256sum ui/planPresentation.js
+          echo "=== PLAN PRESENTATION LINES 85-170 ==="
+          nl -ba ui/planPresentation.js | sed -n '85,170p'
+          echo "=== PLAN PRESENTATION SYMBOL REFERENCES ==="
+          grep -R -n -E 'normalizePlanSession|buildPlanConditionSnapshot|planPresentation|planBoundary|comparisonStatus|serializePlanReference' --include='*.js' --include='*.mjs' . || true
+          node --check ui/planPresentation.js
+          echo "PLAN_PRESENTATION_SYNTAX=PASS"
       - name: Runtime reachability and validation
         shell: bash
         run: |
