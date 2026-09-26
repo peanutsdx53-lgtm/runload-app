@@ -175,7 +175,7 @@ function applyWidgetSize(shell, size) {
   const normalized = normalizeWidgetSize(size, id);
   shell.dataset.homeWidgetSize = normalized;
   WIDGET_SIZE_ORDER.forEach((name) => shell.classList.toggle(`mobile-home-widget-shell--size-${name}`, name === normalized));
-  const button = shell.querySelector("[data-home-widget-size]");
+  const button = shell.querySelector("[data-home-widget-resize]");
   if (button) {
     const label = WIDGET_SIZE_LABELS[normalized] || normalized;
     button.textContent = label;
@@ -203,7 +203,7 @@ function makeWidgetShell(anchor, id) {
   const sizeButton = document.createElement("button");
   sizeButton.type = "button";
   sizeButton.className = "mobile-home-widget-size";
-  sizeButton.dataset.homeWidgetSize = id;
+  sizeButton.dataset.homeWidgetResize = id;
   shell.append(sizeButton);
   applyWidgetSize(shell, DEFAULT_WIDGET_SIZES[id]);
   return shell;
@@ -599,10 +599,10 @@ export function bindHome(context = {}) {
       if (editing) openWidgetPicker();
       return;
     }
-    const size = event.target.closest("[data-home-widget-size]");
+    const size = event.target.closest("[data-home-widget-resize]");
     if (size) {
       event.preventDefault();
-      if (editing) cycleWidgetSize(size.dataset.homeWidgetSize);
+      if (editing) cycleWidgetSize(size.dataset.homeWidgetResize);
       return;
     }
     const remove = event.target.closest("[data-home-widget-remove]");
