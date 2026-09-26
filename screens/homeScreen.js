@@ -189,7 +189,7 @@ function renderMobileHomeOs({ services, latestExperience, draft }) {
   ];
   return `<section class="mobile-home-os" aria-label="スマホホーム">
     <header class="mobile-home-os__header">
-      <div><small>RUNNING RECORD</small><h1>走行記録</h1></div>
+      <div><small>RUNNING RECORD</small><h1>走行記録</h1><small class="mobile-home-os__version">TEST v2026.09.26-01</small></div>
       <span class="mobile-home-os__status" aria-label="ホーム">Home</span>
     </header>
     <div class="mobile-home-widgets" aria-label="ウィジェット">
