@@ -13,7 +13,8 @@ const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const LONG_PRESS_MS = 380;
-const MOVE_CANCEL_PX = 10;
+const TAP_SLOP_PX = 8;
+const VERTICAL_SCROLL_CANCEL_PX = 18;
 const MAX_HOME_PAGES = 4;
 const PAGE_EDGE_PX = 16;
 const PAGE_EDGE_DELAY_MS = 850;
@@ -777,6 +778,9 @@ export function bindHome(context = {}) {
   let pointerId = null;
   let startX = 0;
   let startY = 0;
+  let lastX = 0;
+  let lastY = 0;
+  let pressMoved = false;
   let dragging = false;
   let ghost = null;
   let dropItem = null;
@@ -1090,6 +1094,7 @@ export function bindHome(context = {}) {
     if (!target || dragging) return;
     target.classList.remove("is-home-pressing");
     setEditing(true);
+    setActivePage(activePage, { smooth: false });
     dragging = true;
     pressTarget = target;
     pressKind = kind;
@@ -1124,19 +1129,32 @@ export function bindHome(context = {}) {
     pointerId = event.pointerId;
     startX = event.clientX;
     startY = event.clientY;
+    lastX = event.clientX;
+    lastY = event.clientY;
+    pressMoved = false;
     target.classList.add("is-home-pressing");
     if (editing) {
       event.preventDefault();
       beginDrag(target, event, kind);
       return;
     }
-    pressTimer = setTimeout(() => beginDrag(target, event, kind), LONG_PRESS_MS);
+    const activePointerId = event.pointerId;
+    pressTimer = setTimeout(() => beginDrag(target, {
+      pointerId: activePointerId,
+      clientX: lastX,
+      clientY: lastY,
+    }, kind), LONG_PRESS_MS);
   }
 
   function handlePointerMove(event) {
     if (event.pointerId !== pointerId) return;
+    lastX = event.clientX;
+    lastY = event.clientY;
     if (!dragging) {
-      if (Math.hypot(event.clientX - startX, event.clientY - startY) > MOVE_CANCEL_PX) cancelPendingPress();
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+      if (Math.hypot(dx, dy) > TAP_SLOP_PX) pressMoved = true;
+      if (Math.abs(dy) > VERTICAL_SCROLL_CANCEL_PX && Math.abs(dy) > Math.abs(dx)) cancelPendingPress();
       return;
     }
     event.preventDefault();
@@ -1153,16 +1171,22 @@ export function bindHome(context = {}) {
 
   function handlePointerUp(event) {
     if (event.pointerId !== pointerId) return;
+    const moved = pressMoved;
     cancelPressTimer();
     if (dragging) {
       event.preventDefault();
       finishDrag(event);
     } else {
       clearPressState();
+      if (moved) {
+        event.preventDefault();
+        suppressClickUntil = Date.now() + 350;
+      }
     }
     pointerId = null;
     pressTarget = null;
     pressKind = "";
+    pressMoved = false;
   }
 
   function handlePointerCancel(event) {
@@ -1173,6 +1197,7 @@ export function bindHome(context = {}) {
     pointerId = null;
     pressTarget = null;
     pressKind = "";
+    pressMoved = false;
   }
 
   function cycleWidgetSize(id) {
