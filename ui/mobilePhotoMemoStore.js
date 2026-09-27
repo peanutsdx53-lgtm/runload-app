@@ -77,12 +77,13 @@ export async function savePhotoMemo({ blob, note = "", width = 0, height = 0 } =
     const current = await listPhotoMemos();
     if (current.length >= PHOTO_MEMO_MAX_COUNT) return { ok: false, reason: "limit" };
 
+    const imageBytes = await blob.arrayBuffer();
     const record = {
       id: createId(),
       createdAt: new Date().toISOString(),
       note: String(note || "").trim().slice(0, 160),
-      blob,
-      mimeType: blob.type || "image/jpeg",
+      imageBytes,
+      mimeType: "image/jpeg",
       byteSize: blob.size,
       width: Number(width) || 0,
       height: Number(height) || 0,
