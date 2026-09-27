@@ -13,7 +13,8 @@ const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const LONG_PRESS_MS = 380;
-const LAUNCH_ANIMATION_MS = 190;
+const LAUNCH_ANIMATION_MS = 360;
+const LAUNCH_NAVIGATION_MS = 170;
 const TAP_SLOP_PX = 8;
 const DRAG_START_PX = 10;
 const MAX_HOME_PAGES = 4;
@@ -1351,6 +1352,35 @@ export function bindHome(context = {}) {
     event.preventDefault();
   }
 
+  function createLaunchSurface(launcher) {
+    const icon = launcher.querySelector(".mobile-home-app__icon, .mobile-home-dock__icon");
+    if (!(icon instanceof HTMLElement)) return null;
+    const rect = icon.getBoundingClientRect();
+    if (!(rect.width > 0) || !(rect.height > 0)) return null;
+
+    const iconStyle = getComputedStyle(icon);
+    const surface = document.createElement("div");
+    surface.className = "mobile-home-launch-surface";
+    surface.setAttribute("aria-hidden", "true");
+    surface.style.setProperty("--launch-left", `${rect.left}px`);
+    surface.style.setProperty("--launch-top", `${rect.top}px`);
+    surface.style.setProperty("--launch-width", `${rect.width}px`);
+    surface.style.setProperty("--launch-height", `${rect.height}px`);
+    surface.style.setProperty("--launch-radius", iconStyle.borderRadius || "17px");
+    surface.style.setProperty("--launch-start-color", iconStyle.backgroundColor || "var(--color-surface)");
+
+    const glyph = document.createElement("span");
+    glyph.className = "mobile-home-launch-surface__glyph";
+    glyph.innerHTML = icon.innerHTML;
+    surface.append(glyph);
+    document.body.append(surface);
+
+    const removeSurface = () => surface.remove();
+    surface.addEventListener("animationend", removeSurface, { once: true });
+    globalThis.setTimeout(removeSurface, LAUNCH_ANIMATION_MS + 180);
+    return surface;
+  }
+
   function openHomeLauncher(launcher) {
     const href = String(launcher?.dataset?.homeHref || "");
     if (!href.startsWith("#/")) return;
@@ -1367,10 +1397,15 @@ export function bindHome(context = {}) {
     }
 
     const item = launcher.closest("[data-home-item-id]") || launcher;
+    const surface = createLaunchSurface(launcher);
+    if (!surface) {
+      navigate();
+      return;
+    }
     root.classList.add("is-home-launching");
     item.classList.add("is-home-launch-target");
     launcher.setAttribute("aria-busy", "true");
-    launchTimer = setTimeout(navigate, LAUNCH_ANIMATION_MS);
+    launchTimer = setTimeout(navigate, LAUNCH_NAVIGATION_MS);
   }
 
   function handleClick(event) {
