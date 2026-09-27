@@ -255,6 +255,56 @@
     outline-offset: 3px;
     border-radius: 18px;
   }
+
+  .mobile-home-os.is-home-launching {
+    pointer-events: none;
+  }
+
+  .mobile-home-os.is-home-launching [data-home-item-id]:not(.is-home-launch-target),
+  .mobile-home-os.is-home-launching [data-home-widget-id] {
+    animation: mobile-home-launch-dim 190ms ease-out both;
+  }
+
+  .mobile-home-launcher.is-home-launch-target {
+    position: relative;
+    z-index: 70;
+    animation: mobile-home-launch-lift 190ms cubic-bezier(.2, .78, .24, 1) both;
+  }
+
+  .mobile-home-launcher.is-home-launch-target :is(.mobile-home-app__icon, .mobile-home-dock__icon) {
+    animation: mobile-home-launch-icon 190ms cubic-bezier(.2, .78, .24, 1) both;
+  }
+
+  .mobile-home-launcher.is-home-launch-target :is(.mobile-home-app__label, .mobile-home-dock__label) {
+    animation: mobile-home-launch-label 190ms ease-out both;
+  }
+
+  @keyframes mobile-home-launch-lift {
+    0% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(1px) scale(.96); }
+    100% { transform: translateY(-3px) scale(1.08); }
+  }
+
+  @keyframes mobile-home-launch-icon {
+    0% { filter: brightness(1); }
+    30% { filter: brightness(.96); }
+    100% {
+      filter: brightness(1.04);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .88),
+        0 16px 28px color-mix(in srgb, currentColor 20%, transparent);
+    }
+  }
+
+  @keyframes mobile-home-launch-label {
+    from { opacity: 1; }
+    to { opacity: .86; }
+  }
+
+  @keyframes mobile-home-launch-dim {
+    from { opacity: 1; }
+    to { opacity: .72; }
+  }
 }
 
 @media (max-width: 24rem) {
