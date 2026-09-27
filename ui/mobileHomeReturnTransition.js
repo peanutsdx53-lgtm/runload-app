@@ -1,10 +1,10 @@
 const LAST_HOME_LAUNCH_KEY = "running-record-mobile-home-last-launch-v1";
 const SCREEN_RENDERED_EVENT = "running-record:screen-rendered";
-const RETURN_CLASS = "is-mobile-home-return-transition";
-const TARGET_CLASS = "is-home-return-arrival-target";
-const FALLBACK_CLASS = "mobile-home-return-surface";
 const HOME_QUERY = "#/home";
-const HOME_RETURN_TIMEOUT_MS = 900;
+const RETURN_DURATION_MS = 330;
+const RETURN_EASING = "cubic-bezier(.2, .82, .22, 1)";
+
+let returningHome = false;
 
 function motionReduced() {
   return Boolean(globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches);
@@ -14,18 +14,50 @@ function mobileLayout() {
   return globalThis.matchMedia?.("(max-width: 54.99rem)")?.matches !== false;
 }
 
-function readLastLaunchId() {
+function findTargetIcon(itemId) {
+  const items = [...document.querySelectorAll("[data-home-item-id]")];
+  const item = items.find((node) => node.dataset.homeItemId === itemId) || null;
+  if (!item) return null;
+  return item.querySelector(".mobile-home-app__icon, .mobile-home-dock__icon") || item;
+}
+
+function captureLaunchState(itemId) {
+  const id = String(itemId || "").trim();
+  if (!id) return null;
+  const target = findTargetIcon(id);
+  const rect = target?.getBoundingClientRect?.();
+  const viewportWidth = Math.max(1, globalThis.innerWidth || document.documentElement.clientWidth || 1);
+  const viewportHeight = Math.max(1, globalThis.innerHeight || document.documentElement.clientHeight || 1);
+  const valid = rect && rect.width > 0 && rect.height > 0;
+  const radius = valid ? getComputedStyle(target).borderRadius || "18px" : "18px";
+  return Object.freeze({
+    id,
+    leftRatio: valid ? rect.left / viewportWidth : .42,
+    topRatio: valid ? rect.top / viewportHeight : .78,
+    widthRatio: valid ? rect.width / viewportWidth : .16,
+    heightRatio: valid ? rect.height / viewportHeight : .08,
+    radius,
+  });
+}
+
+function readLastLaunchState() {
   try {
-    return String(globalThis.sessionStorage?.getItem(LAST_HOME_LAUNCH_KEY) || "");
+    const raw = String(globalThis.sessionStorage?.getItem(LAST_HOME_LAUNCH_KEY) || "");
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object" && parsed.id) return parsed;
+    } catch {}
+    return Object.freeze({ id: raw });
   } catch {
-    return "";
+    return null;
   }
 }
 
 export function rememberMobileHomeLaunch(itemId = "") {
-  const value = String(itemId || "").trim();
-  if (!value) return;
-  try { globalThis.sessionStorage?.setItem(LAST_HOME_LAUNCH_KEY, value); } catch {}
+  const state = captureLaunchState(itemId);
+  if (!state) return;
+  try { globalThis.sessionStorage?.setItem(LAST_HOME_LAUNCH_KEY, JSON.stringify(state)); } catch {}
 }
 
 export function notifyMobileScreenRendered(screenName = "") {
@@ -34,111 +66,164 @@ export function notifyMobileScreenRendered(screenName = "") {
   }));
 }
 
-function nextFrame() {
-  return new Promise((resolve) => globalThis.requestAnimationFrame(() => globalThis.requestAnimationFrame(resolve)));
-}
-
-function waitForHomeRender() {
-  return new Promise((resolve) => {
-    let finished = false;
-    const finish = () => {
-      if (finished) return;
-      finished = true;
-      globalThis.removeEventListener?.(SCREEN_RENDERED_EVENT, handleRendered);
-      resolve();
-    };
-    const handleRendered = (event) => {
-      if (event?.detail?.screenName === "home") finish();
-    };
-    globalThis.addEventListener?.(SCREEN_RENDERED_EVENT, handleRendered);
-    globalThis.setTimeout(finish, HOME_RETURN_TIMEOUT_MS);
+function targetMetrics(state) {
+  const viewportWidth = Math.max(1, globalThis.innerWidth || document.documentElement.clientWidth || 1);
+  const viewportHeight = Math.max(1, globalThis.innerHeight || document.documentElement.clientHeight || 1);
+  const width = Math.max(44, viewportWidth * Number(state?.widthRatio || .16));
+  const height = Math.max(44, viewportHeight * Number(state?.heightRatio || .08));
+  const left = Math.max(0, Math.min(viewportWidth - width, viewportWidth * Number(state?.leftRatio ?? .42)));
+  const top = Math.max(0, Math.min(viewportHeight - height, viewportHeight * Number(state?.topRatio ?? .78)));
+  return Object.freeze({
+    left,
+    top,
+    width,
+    height,
+    scaleX: Math.max(.02, width / viewportWidth),
+    scaleY: Math.max(.02, height / viewportHeight),
+    radius: String(state?.radius || "18px"),
   });
 }
 
-function findTargetIcon(itemId) {
-  const items = [...document.querySelectorAll("[data-home-item-id]")];
-  const item = items.find((node) => node.dataset.homeItemId === itemId) || null;
-  if (!item) return null;
-  return item.querySelector(".mobile-home-app__icon, .mobile-home-dock__icon") || item;
-}
-
-function applyTargetMetrics(itemId) {
-  const html = document.documentElement;
-  const target = findTargetIcon(itemId);
-  const viewportWidth = Math.max(1, globalThis.innerWidth || html.clientWidth || 1);
-  const viewportHeight = Math.max(1, globalThis.innerHeight || html.clientHeight || 1);
-  const rect = target?.getBoundingClientRect?.();
-  const valid = rect && rect.width > 0 && rect.height > 0;
-  const width = valid ? rect.width : Math.min(64, viewportWidth * .16);
-  const height = valid ? rect.height : width;
-  const left = valid ? rect.left : (viewportWidth - width) / 2;
-  const top = valid ? rect.top : Math.max(20, viewportHeight - height - 90);
-  const radius = valid ? getComputedStyle(target).borderRadius || "18px" : "18px";
-
-  html.style.setProperty("--home-return-x", `${left}px`);
-  html.style.setProperty("--home-return-y", `${top}px`);
-  html.style.setProperty("--home-return-scale-x", String(Math.max(.02, width / viewportWidth)));
-  html.style.setProperty("--home-return-scale-y", String(Math.max(.02, height / viewportHeight)));
-  html.style.setProperty("--home-return-target-width", `${width}px`);
-  html.style.setProperty("--home-return-target-height", `${height}px`);
-  html.style.setProperty("--home-return-target-radius", radius);
-  target?.closest?.("[data-home-item-id]")?.classList.add(TARGET_CLASS);
-  return target;
-}
-
-function clearReturnState() {
-  const html = document.documentElement;
-  html.classList.remove(RETURN_CLASS);
-  html.style.removeProperty("--home-return-x");
-  html.style.removeProperty("--home-return-y");
-  html.style.removeProperty("--home-return-scale-x");
-  html.style.removeProperty("--home-return-scale-y");
-  html.style.removeProperty("--home-return-target-width");
-  html.style.removeProperty("--home-return-target-height");
-  html.style.removeProperty("--home-return-target-radius");
-  document.querySelectorAll(`.${TARGET_CLASS}`).forEach((node) => node.classList.remove(TARGET_CLASS));
-}
-
-async function renderHomeAndMeasure(itemId) {
-  const rendered = waitForHomeRender();
-  globalThis.location.hash = HOME_QUERY.slice(1);
-  await rendered;
-  await nextFrame();
-  applyTargetMetrics(itemId);
-}
-
-function createFallbackSurface() {
-  const surface = document.createElement("div");
-  surface.className = FALLBACK_CLASS;
-  surface.setAttribute("aria-hidden", "true");
-  document.body.append(surface);
-  return surface;
-}
-
-async function runFallbackReturn(itemId) {
-  const surface = createFallbackSurface();
-  document.documentElement.classList.add(RETURN_CLASS);
-  await new Promise((resolve) => globalThis.setTimeout(resolve, 80));
-  await renderHomeAndMeasure(itemId);
-  surface.classList.add("is-closing");
-  const cleanup = () => {
-    surface.remove();
-    clearReturnState();
-  };
-  surface.addEventListener("animationend", cleanup, { once: true });
-  globalThis.setTimeout(cleanup, 520);
-}
-
-async function runViewTransitionReturn(itemId) {
-  document.documentElement.classList.add(RETURN_CLASS);
-  const transition = document.startViewTransition(async () => {
-    await renderHomeAndMeasure(itemId);
+function styleLayer(element, styles) {
+  Object.entries(styles).forEach(([property, value]) => {
+    element.style[property] = value;
   });
-  try {
-    await transition.finished;
-  } finally {
-    clearReturnState();
+}
+
+function createReturnVisual(root) {
+  if (!(root instanceof HTMLElement)) return null;
+  const viewportWidth = Math.max(1, globalThis.innerWidth || document.documentElement.clientWidth || 1);
+  const viewportHeight = Math.max(1, globalThis.innerHeight || document.documentElement.clientHeight || 1);
+  const scrollTop = Number(document.scrollingElement?.scrollTop || globalThis.scrollY || 0);
+  const bodyStyle = getComputedStyle(document.body);
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "mobile-home-return-backdrop";
+  backdrop.setAttribute("aria-hidden", "true");
+  styleLayer(backdrop, {
+    position: "fixed",
+    inset: "0",
+    zIndex: "99998",
+    pointerEvents: "none",
+    background: bodyStyle.backgroundColor || "var(--color-paper)",
+    opacity: "1",
+  });
+
+  const snapshot = document.createElement("div");
+  snapshot.className = "mobile-home-return-snapshot";
+  snapshot.setAttribute("aria-hidden", "true");
+  styleLayer(snapshot, {
+    position: "fixed",
+    left: "0",
+    top: "0",
+    width: `${viewportWidth}px`,
+    height: `${viewportHeight}px`,
+    zIndex: "99999",
+    overflow: "hidden",
+    pointerEvents: "none",
+    transformOrigin: "top left",
+    background: bodyStyle.backgroundColor || "var(--color-paper)",
+    willChange: "transform, border-radius, opacity, filter",
+  });
+
+  const clone = root.cloneNode(true);
+  clone.setAttribute("aria-hidden", "true");
+  clone.removeAttribute("id");
+  styleLayer(clone, {
+    position: "absolute",
+    left: "0",
+    top: `${-scrollTop}px`,
+    width: "100%",
+    minHeight: `${Math.max(viewportHeight, document.documentElement.scrollHeight)}px`,
+    pointerEvents: "none",
+    margin: "0",
+  });
+  snapshot.append(clone);
+  document.body.append(backdrop, snapshot);
+  return Object.freeze({ backdrop, snapshot });
+}
+
+function animateHomeArrival(state, backdrop) {
+  const home = document.querySelector(".mobile-home-os");
+  if (home?.animate) {
+    home.animate([
+      { transform: "scale(.975)", opacity: .72, filter: "blur(.9px)" },
+      { transform: "scale(1)", opacity: 1, filter: "blur(0)" },
+    ], {
+      duration: RETURN_DURATION_MS,
+      easing: RETURN_EASING,
+      fill: "both",
+    });
   }
+  const target = findTargetIcon(String(state?.id || ""));
+  if (target?.animate) {
+    target.animate([
+      { transform: "scale(.88)" },
+      { transform: "scale(1.045)", offset: .68 },
+      { transform: "scale(1)" },
+    ], {
+      duration: 280,
+      delay: 110,
+      easing: RETURN_EASING,
+    });
+  }
+  if (backdrop?.animate) {
+    backdrop.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: 180,
+      easing: "ease-out",
+      fill: "forwards",
+    });
+  }
+}
+
+function listenForHomeArrival(state, backdrop) {
+  const handler = (event) => {
+    if (event?.detail?.screenName !== "home") return;
+    globalThis.removeEventListener?.(SCREEN_RENDERED_EVENT, handler);
+    globalThis.requestAnimationFrame?.(() => animateHomeArrival(state, backdrop));
+  };
+  globalThis.addEventListener?.(SCREEN_RENDERED_EVENT, handler);
+  globalThis.setTimeout(() => globalThis.removeEventListener?.(SCREEN_RENDERED_EVENT, handler), RETURN_DURATION_MS + 250);
+}
+
+function runSnapshotReturn(root, state) {
+  const visual = createReturnVisual(root);
+  if (!visual?.snapshot?.animate) {
+    returningHome = false;
+    globalThis.location.hash = HOME_QUERY.slice(1);
+    return;
+  }
+
+  const metrics = targetMetrics(state);
+  listenForHomeArrival(state, visual.backdrop);
+  globalThis.location.hash = HOME_QUERY.slice(1);
+
+  const animation = visual.snapshot.animate([
+    {
+      transform: "translate3d(0, 0, 0) scale(1, 1)",
+      borderRadius: "0px",
+      opacity: 1,
+      filter: "blur(0)",
+    },
+    {
+      transform: `translate3d(${metrics.left}px, ${metrics.top}px, 0) scale(${metrics.scaleX}, ${metrics.scaleY})`,
+      borderRadius: metrics.radius,
+      opacity: 0,
+      filter: "blur(.45px)",
+    },
+  ], {
+    duration: RETURN_DURATION_MS,
+    easing: RETURN_EASING,
+    fill: "forwards",
+  });
+
+  const cleanup = () => {
+    visual.snapshot.remove();
+    visual.backdrop.remove();
+    returningHome = false;
+  };
+  animation.finished.then(cleanup, cleanup);
+  globalThis.setTimeout(cleanup, RETURN_DURATION_MS + 180);
 }
 
 function shouldInterceptHomeLink(event, link) {
@@ -157,18 +242,9 @@ export function bindMobileHomeReturnTransitions(root) {
     const handler = (event) => {
       if (!shouldInterceptHomeLink(event, link)) return;
       event.preventDefault();
-      const itemId = readLastLaunchId();
-      if (typeof document.startViewTransition === "function") {
-        runViewTransitionReturn(itemId).catch(() => {
-          clearReturnState();
-          globalThis.location.hash = HOME_QUERY.slice(1);
-        });
-      } else {
-        runFallbackReturn(itemId).catch(() => {
-          clearReturnState();
-          globalThis.location.hash = HOME_QUERY.slice(1);
-        });
-      }
+      if (returningHome) return;
+      returningHome = true;
+      runSnapshotReturn(root, readLastLaunchState());
     };
     link.addEventListener("click", handler);
     return [link, handler];
