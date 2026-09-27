@@ -71,6 +71,26 @@ await test('PHOTO-MEMO-COMPRESSES-AND-DOES-NOT-UPLOAD', () => {
   assert.ok(!interactions.includes('XMLHttpRequest'));
 });
 
+await test('PHOTO-MEMO-HISTORY-OPENS-VIEWER-AND-CONFIRMS-DELETE', () => {
+  const interactions = read('ui/interactions/mobilePhotoMemoInteractions.js');
+  const css = read('styles/mobile-quick-tools.css');
+  assert.ok(interactions.includes('data-mobile-photo-memo-open'));
+  assert.ok(interactions.includes('data-mobile-photo-memo-viewer'));
+  assert.ok(interactions.includes('globalThis.confirm("この写真メモを削除しますか？")'));
+  assert.ok(interactions.includes('entry.note ?'));
+  assert.ok(!interactions.includes('entry.note || "写真メモ"'));
+  assert.ok(css.includes('.mobile-photo-memo-viewer'));
+  assert.ok(css.includes('.mobile-photo-memo-history__open'));
+});
+
+await test('PHOTO-MEMO-NORMALIZES-NEW-PHOTOS-TO-JPEG', () => {
+  const interactions = read('ui/interactions/mobilePhotoMemoInteractions.js');
+  assert.ok(interactions.includes('canvas.toBlob'));
+  assert.ok(interactions.includes('"image/jpeg"'));
+  assert.ok(!interactions.includes('return { blob: file, width, height };'));
+  assert.ok(interactions.includes('displayBlobForEntry'));
+});
+
 await test('PHOTO-MEMO-PWA-ASSETS-ARE-PRECACHED', () => {
   const sw = read('service-worker.js');
   for (const asset of [
