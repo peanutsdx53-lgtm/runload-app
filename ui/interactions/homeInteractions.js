@@ -795,6 +795,13 @@ export function bindHome(context = {}) {
   let edgeTimer = null;
   let edgeTargetPage = -1;
   let scrollFrame = null;
+  let pageAnimationFrame = null;
+  let pageSwipePointerId = null;
+  let pageSwipeStartX = 0;
+  let pageSwipeStartY = 0;
+  let pageSwipeStartLeft = 0;
+  let pageSwipeStartTime = 0;
+  let pageSwipeHorizontal = false;
 
   const editButton = root.querySelector("[data-home-edit-toggle]");
   const widgetPicker = root.querySelector("[data-home-widget-picker]");
@@ -858,12 +865,49 @@ export function bindHome(context = {}) {
     }
   }
 
+  function cancelPageAnimation() {
+    if (pageAnimationFrame) cancelAnimationFrame(pageAnimationFrame);
+    pageAnimationFrame = null;
+    root.classList.remove("is-home-page-transitioning");
+  }
+
+  function animatePageViewport(left) {
+    cancelPageAnimation();
+    const from = viewport.scrollLeft;
+    const distance = left - from;
+    const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    if (reduceMotion || Math.abs(distance) < 1) {
+      viewport.scrollLeft = left;
+      return;
+    }
+    const startedAt = globalThis.performance?.now?.() ?? Date.now();
+    const duration = 280;
+    root.classList.add("is-home-page-transitioning");
+    const step = (now) => {
+      const progress = Math.min(1, Math.max(0, now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      viewport.scrollLeft = from + distance * eased;
+      if (progress < 1) {
+        pageAnimationFrame = requestAnimationFrame(step);
+        return;
+      }
+      viewport.scrollLeft = left;
+      pageAnimationFrame = null;
+      root.classList.remove("is-home-page-transitioning");
+    };
+    pageAnimationFrame = requestAnimationFrame(step);
+  }
+
   function setActivePage(index, { smooth = true, persist = false } = {}) {
     const pages = pageElements(root);
     if (!pages.length) return;
     activePage = Math.max(0, Math.min(pages.length - 1, Number(index) || 0));
     const left = activePage * viewport.clientWidth;
-    viewport.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
+    if (smooth) animatePageViewport(left);
+    else {
+      cancelPageAnimation();
+      viewport.scrollLeft = left;
+    }
     if (dragging) clearDropPreview();
     updatePageIndicator();
     updateViewportHeight();
@@ -1388,6 +1432,7 @@ export function bindHome(context = {}) {
   }
 
   function openHomeLauncher(launcher) {
+    if (editing) return;
     const href = String(launcher?.dataset?.homeHref || "");
     if (!href.startsWith("#/")) return;
     if (root.classList.contains("is-home-launching")) return;
@@ -1498,11 +1543,88 @@ export function bindHome(context = {}) {
     if (event.target.closest("[data-home-item-id], [data-home-widget-id]")) event.preventDefault();
   }
 
+  function isPageSwipeBlockedTarget(target) {
+    return Boolean(target?.closest?.("button, a, input, textarea, select, [contenteditable=\"true\"], [data-home-item-id], [data-home-widget-id], [data-home-widget-picker]"));
+  }
+
+  function resetPageSwipe() {
+    if (pageSwipePointerId != null) {
+      try { viewport.releasePointerCapture(pageSwipePointerId); } catch {}
+    }
+    pageSwipePointerId = null;
+    pageSwipeHorizontal = false;
+    root.classList.remove("is-home-page-swiping");
+  }
+
+  function handlePagePointerDown(event) {
+    if (pageSwipePointerId != null || dragging || dragArmed) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    if (isPageSwipeBlockedTarget(event.target)) return;
+    if (pageElements(root).length < 2) return;
+    cancelPageAnimation();
+    pageSwipePointerId = event.pointerId;
+    pageSwipeStartX = event.clientX;
+    pageSwipeStartY = event.clientY;
+    pageSwipeStartLeft = viewport.scrollLeft;
+    pageSwipeStartTime = globalThis.performance?.now?.() ?? Date.now();
+    pageSwipeHorizontal = false;
+    try { viewport.setPointerCapture(event.pointerId); } catch {}
+  }
+
+  function handlePagePointerMove(event) {
+    if (event.pointerId !== pageSwipePointerId) return;
+    const dx = event.clientX - pageSwipeStartX;
+    const dy = event.clientY - pageSwipeStartY;
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+    if (!pageSwipeHorizontal) {
+      if (absX < 8 && absY < 8) return;
+      if (absY > absX) {
+        resetPageSwipe();
+        return;
+      }
+      pageSwipeHorizontal = true;
+      root.classList.add("is-home-page-swiping");
+      suppressClickUntil = Date.now() + 500;
+    }
+    event.preventDefault();
+    const width = Math.max(1, viewport.clientWidth);
+    const maxLeft = Math.max(0, (pageElements(root).length - 1) * width);
+    viewport.scrollLeft = Math.max(0, Math.min(maxLeft, pageSwipeStartLeft - dx));
+  }
+
+  function finishPageSwipe(event, cancelled = false) {
+    if (event.pointerId !== pageSwipePointerId) return;
+    const dx = event.clientX - pageSwipeStartX;
+    const elapsed = Math.max(1, (globalThis.performance?.now?.() ?? Date.now()) - pageSwipeStartTime);
+    const velocity = Math.abs(dx) / elapsed;
+    const width = Math.max(1, viewport.clientWidth);
+    const crossed = Math.abs(dx) >= width * 0.16 || velocity >= 0.45;
+    let target = activePage;
+    if (!cancelled && pageSwipeHorizontal && crossed) target += dx < 0 ? 1 : -1;
+    else if (pageSwipeHorizontal) target = Math.round(viewport.scrollLeft / width);
+    target = Math.max(0, Math.min(pageElements(root).length - 1, target));
+    if (pageSwipeHorizontal) {
+      event.preventDefault();
+      suppressClickUntil = Date.now() + 450;
+    }
+    resetPageSwipe();
+    setActivePage(target, { smooth: true, persist: true });
+  }
+
+  function handlePagePointerUp(event) {
+    finishPageSwipe(event, false);
+  }
+
+  function handlePagePointerCancel(event) {
+    finishPageSwipe(event, true);
+  }
+
   function handlePageScroll() {
     if (scrollFrame) cancelAnimationFrame(scrollFrame);
     scrollFrame = requestAnimationFrame(() => {
       scrollFrame = null;
-      if (!viewport.clientWidth || dragging || dragArmed) return;
+      if (!viewport.clientWidth || dragging || dragArmed || pageSwipePointerId != null || pageAnimationFrame) return;
       const index = Math.round(viewport.scrollLeft / viewport.clientWidth);
       const bounded = Math.max(0, Math.min(pageElements(root).length - 1, index));
       if (bounded !== activePage) {
@@ -1527,6 +1649,10 @@ export function bindHome(context = {}) {
     }
   }
 
+  viewport.addEventListener("pointerdown", handlePagePointerDown);
+  viewport.addEventListener("pointermove", handlePagePointerMove, { passive: false });
+  viewport.addEventListener("pointerup", handlePagePointerUp);
+  viewport.addEventListener("pointercancel", handlePagePointerCancel);
   viewport.addEventListener("scroll", handlePageScroll, { passive: true });
   widgetPicker?.addEventListener("pointerup", handleWidgetPickerPointerUp);
   root.addEventListener("pointerdown", handlePointerDown);
@@ -1546,7 +1672,13 @@ export function bindHome(context = {}) {
     ghost?.remove();
     clearEdgePaging();
     if (scrollFrame) cancelAnimationFrame(scrollFrame);
+    cancelPageAnimation();
+    resetPageSwipe();
     if (launchTimer) clearTimeout(launchTimer);
+    viewport.removeEventListener("pointerdown", handlePagePointerDown);
+    viewport.removeEventListener("pointermove", handlePagePointerMove);
+    viewport.removeEventListener("pointerup", handlePagePointerUp);
+    viewport.removeEventListener("pointercancel", handlePagePointerCancel);
     viewport.removeEventListener("scroll", handlePageScroll);
     widgetPicker?.removeEventListener("pointerup", handleWidgetPickerPointerUp);
     root.removeEventListener("pointerdown", handlePointerDown);

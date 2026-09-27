@@ -164,16 +164,23 @@ function animateHomeArrival(state, backdrop) {
   });
 
   const dock = document.querySelector(".mobile-home-dock");
+  animateOnce(dock, [
+    { transform: "translateY(9px)", opacity: .35 },
+    { transform: "translateY(0)", opacity: 1 },
+  ], {
+    duration: 250,
+    delay: 35,
+    easing: RETURN_EASING,
+  });
+
   const indicator = document.querySelector(".mobile-home-page-indicator");
-  [dock, indicator].forEach((element) => {
-    animateOnce(element, [
-      { transform: "translateY(9px)", opacity: .35 },
-      { transform: "translateY(0)", opacity: 1 },
-    ], {
-      duration: 250,
-      delay: 35,
-      easing: RETURN_EASING,
-    });
+  animateOnce(indicator, [
+    { transform: "translateX(-50%) translateY(7px)", opacity: .35 },
+    { transform: "translateX(-50%) translateY(0)", opacity: 1 },
+  ], {
+    duration: 250,
+    delay: 35,
+    easing: RETURN_EASING,
   });
 
   const target = findTargetIcon(String(state?.id || ""));

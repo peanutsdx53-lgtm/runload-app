@@ -47,7 +47,7 @@ await test('HOME-MOVE-INTENT-CANNOT-FALL-THROUGH-TO-APP-LAUNCH', () => {
 });
 
 await test('HOME-PAGE-SCROLL-STATE-DOES-NOT-UPDATE-WHILE-ARMED-OR-DRAGGING', () => {
-  assert.ok(interactions.includes('if (!viewport.clientWidth || dragging || dragArmed) return;'));
+  assert.ok(interactions.includes('if (!viewport.clientWidth || dragging || dragArmed || pageSwipePointerId != null || pageAnimationFrame) return;'));
   assert.ok(interactions.includes('root.classList.add("is-home-drag-active")'));
   assert.ok(interactions.includes('root.classList.remove("is-home-drag-active")'));
 });
