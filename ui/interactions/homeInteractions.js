@@ -424,7 +424,7 @@ function setItemZone(item, zone) {
 
 function prepareItems(root) {
   root.querySelectorAll(".mobile-home-apps .mobile-home-app, .mobile-home-dock .mobile-home-dock__item, [data-home-app-catalog] .mobile-home-app").forEach((item) => {
-    const href = item.getAttribute("href") || item.querySelector("a[href]")?.getAttribute("href") || "";
+    const href = item.querySelector("[data-home-launch]")?.dataset.homeHref || item.getAttribute("href") || item.querySelector("a[href]")?.getAttribute("href") || "";
     const id = itemIdFromHref(href);
     if (!id) return;
     item.dataset.homeItemId = id;
@@ -1293,6 +1293,12 @@ export function bindHome(context = {}) {
     event.preventDefault();
   }
 
+  function openHomeLauncher(launcher) {
+    const href = String(launcher?.dataset?.homeHref || "");
+    if (!href.startsWith("#/")) return;
+    globalThis.location.hash = href.slice(1);
+  }
+
   function handleClick(event) {
     const pageTarget = event.target.closest("[data-home-page-target]");
     if (pageTarget) {
@@ -1356,6 +1362,13 @@ export function bindHome(context = {}) {
       closeWidgetPicker();
       return;
     }
+    const launcher = event.target.closest("[data-home-launch]");
+    if (launcher) {
+      event.preventDefault();
+      if (editing || Date.now() < suppressClickUntil) return;
+      openHomeLauncher(launcher);
+      return;
+    }
     if ((event.target.closest("[data-home-item-id]") || event.target.closest("[data-home-widget-id]")) && (editing || Date.now() < suppressClickUntil)) {
       event.preventDefault();
     }
@@ -1386,6 +1399,12 @@ export function bindHome(context = {}) {
   }
 
   function handleKeyDown(event) {
+    const launcher = event.target.closest?.("[data-home-launch]") || null;
+    if (launcher && !editing && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      openHomeLauncher(launcher);
+      return;
+    }
     if (event.key === "Escape") {
       if (widgetPicker && !widgetPicker.hidden) closeWidgetPicker();
       else if (editing) setEditing(false);

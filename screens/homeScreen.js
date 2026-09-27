@@ -132,7 +132,7 @@ function renderMobileLauncherItem({ href, label, emoji, tone = "blue", dock = fa
   const labelClass = dock ? "mobile-home-dock__label" : "mobile-home-app__label";
   const iconMarkup = `<span class="mobile-home-emoji" aria-hidden="true">${escapeHtml(emoji)}</span>`;
   const content = `<span class="${iconClass} mobile-home-tone--${escapeHtml(tone)}">${iconMarkup}</span><span class="${labelClass}">${escapeHtml(label)}</span>`;
-  return `<div class="${className} mobile-home-launcher" data-home-launcher><a class="mobile-home-app__launch" href="${escapeHtml(href)}" aria-label="${escapeHtml(label)}">${content}</a><button type="button" class="mobile-home-app-remove" data-home-app-remove aria-label="${escapeHtml(label)}をホームから外す">−</button></div>`;
+  return `<div class="${className} mobile-home-launcher" data-home-launcher><div class="mobile-home-app__launch" data-home-launch data-home-href="${escapeHtml(href)}" role="link" tabindex="0" aria-label="${escapeHtml(label)}">${content}</div><button type="button" class="mobile-home-app-remove" data-home-app-remove aria-label="${escapeHtml(label)}をホームから外す">−</button></div>`;
 }
 
 function renderMobileTodayWidget(experience, draft) {
