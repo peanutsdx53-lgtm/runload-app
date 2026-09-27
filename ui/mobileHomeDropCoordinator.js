@@ -7,6 +7,7 @@ let trackedSource = null;
 let trackedSourcePage = null;
 let trackedSourcePlacement = null;
 let dockNormalizeQueued = false;
+let releasingCoreDrag = false;
 
 function mobileLayoutMatches() {
   if (typeof globalThis.matchMedia === "function") return globalThis.matchMedia(MOBILE_HOME_QUERY).matches;
@@ -69,6 +70,14 @@ function persistHomePositions(root) {
   } catch {
     // Position persistence is optional; the current layout remains usable.
   }
+}
+
+function swapDomPositions(source, target) {
+  if (!source || !target || source === target || source.parentNode !== target.parentNode) return;
+  const marker = document.createComment("mobile-home-owned-swap");
+  source.replaceWith(marker);
+  target.replaceWith(source);
+  marker.replaceWith(target);
 }
 
 function resetTracking() {
@@ -135,6 +144,26 @@ function swapCandidate(event) {
   };
 }
 
+function releaseCoreDrag(candidate, event) {
+  const { source } = candidate;
+  if (typeof PointerEvent !== "function") return false;
+  releasingCoreDrag = true;
+  try {
+    source.dispatchEvent(new PointerEvent("pointercancel", {
+      bubbles: true,
+      cancelable: true,
+      pointerId: event.pointerId,
+      pointerType: event.pointerType || "touch",
+      clientX: event.clientX,
+      clientY: event.clientY,
+      isPrimary: true,
+    }));
+    return true;
+  } finally {
+    releasingCoreDrag = false;
+  }
+}
+
 function finalizeSwap(candidate) {
   const { root, source, target, sourceId, sourcePage, sourcePlacement, targetPlacement } = candidate;
   if (!source.isConnected || !target.isConnected) return;
@@ -144,6 +173,7 @@ function finalizeSwap(candidate) {
     && !source.closest(".mobile-home-dock")
     && !target.closest(".mobile-home-dock");
   if (!stillSamePage) return;
+  swapDomPositions(source, target);
   applyIconPlacement(source, targetPlacement);
   applyIconPlacement(target, sourcePlacement);
   persistHomePositions(root);
@@ -151,29 +181,46 @@ function finalizeSwap(candidate) {
 }
 
 function handlePointerDown(event) {
+  if (releasingCoreDrag) return;
   resetTracking();
   rememberSource(event);
 }
 
 function handlePointerMove(event) {
-  if (!mobileLayoutMatches()) return;
+  if (releasingCoreDrag || !mobileLayoutMatches()) return;
   if (trackedPointerId == null && document.querySelector(".mobile-home-os.is-home-drag-active")) adoptActiveSource(event);
 }
 
 function handlePointerUp(event) {
+  if (releasingCoreDrag) return;
   const candidate = swapCandidate(event);
-  if (candidate) {
-    // Suppress the legacy free-slot path for this single home-to-home swap.
-    // The source token is restored in the microtask after the normal drag cleanup.
-    delete candidate.source.dataset.homeItemId;
-    queueMicrotask(() => finalizeSwap(candidate));
+  if (!candidate) {
+    queueDockNormalization(trackedRoot || document);
+    resetTracking();
+    return;
   }
-  const root = candidate?.root || trackedRoot || document;
-  queueDockNormalization(root);
+
+  // Direct home-icon swaps are owned here. The original pointerup is stopped so
+  // neither the legacy free-slot path nor the older post-drop helper can also run.
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  // Temporarily remove the app token while a synthetic pointercancel lets the
+  // existing drag core perform only its visual/pointer cleanup. With no source
+  // token, its free-placement branch cannot move either icon.
+  delete candidate.source.dataset.homeItemId;
+  const released = releaseCoreDrag(candidate, event);
+  if (!released) {
+    candidate.source.dataset.homeItemId = candidate.sourceId;
+    queueMicrotask(() => finalizeSwap(candidate));
+  } else {
+    finalizeSwap(candidate);
+  }
   resetTracking();
 }
 
 function handlePointerCancel() {
+  if (releasingCoreDrag) return;
   queueDockNormalization(trackedRoot || document);
   resetTracking();
 }
