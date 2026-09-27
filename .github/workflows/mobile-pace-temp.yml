@@ -1,0 +1,54 @@
+name: Mobile pace calculator temporary validation
+
+on:
+  push:
+    branches:
+      - feature/mobile-pace-calculator-20260927
+    paths:
+      - .github/workflows/mobile-pace-temp.yml
+
+permissions:
+  contents: write
+
+jobs:
+  integrate-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Integrate pace calculator
+        run: |
+          set -euo pipefail
+          python3 .github/pace_integrate_temp.py
+          rm .github/pace_integrate_temp.py
+          rm .github/workflows/mobile-pace-temp.yml
+      - name: JavaScript syntax
+        run: find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Diff and boundary checks
+        run: |
+          set -euo pipefail
+          git diff --check origin/main
+          grep -q 'href: "#/pace-tool"' screens/homeScreen.js
+          grep -q 'emoji: "🧮"' screens/homeScreen.js
+          grep -q '"pace-tool": renderPaceCalculatorScreen' app.js
+          grep -q '"pace-tool": bindMobilePaceCalculator' ui/screenInteractions.js
+          grep -q './styles/mobile-pace-calculator.css' service-worker.js
+          if grep -R -nE 'fetch\(|XMLHttpRequest|localStorage|indexedDB' screens/mobilePaceCalculatorScreen.js ui/interactions/mobilePaceCalculatorInteractions.js; then exit 1; fi
+          test ! -e .github/pace_integrate_temp.py
+          test ! -e .github/workflows/mobile-pace-temp.yml
+      - name: Commit validated feature
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Integrate smartphone pace calculator"
+          git push origin HEAD:feature/mobile-pace-calculator-20260927
