@@ -1,0 +1,59 @@
+name: Mobile home native swipe and picker temporary validation v2
+
+on:
+  push:
+    branches:
+      - fix/mobile-home-native-swipe-picker-20260927
+    paths:
+      - .github/workflows/mobile-home-native-swipe-picker-temp2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply focused patches
+        run: |
+          set -euo pipefail
+          python3 .tmp_patch_mobile_home_native_swipe.py
+          python3 .tmp_patch_mobile_home_native_swipe_tests.py
+          git rm .tmp_patch_mobile_home_native_swipe.py .tmp_patch_mobile_home_native_swipe_tests.py .github/workflows/mobile-home-native-swipe-picker-temp.yml .github/workflows/mobile-home-native-swipe-picker-temp2.yml
+      - name: Validate JavaScript syntax
+        run: |
+          set -euo pipefail
+          find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Run all regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Validate focused contracts
+        run: |
+          set -euo pipefail
+          git diff --check
+          grep -q 'scroll-snap-type: x mandatory' styles/mobile-home-editing.css
+          grep -q -- '-webkit-overflow-scrolling: touch' styles/mobile-home-editing.css
+          grep -q 'if (!editing) return;' ui/interactions/homeInteractions.js
+          grep -q 'mobile-home-widget-picker__add' ui/interactions/homeInteractions.js
+          if grep -q 'mobile-home-widget-picker__option--app" data-home-app-add-id' ui/interactions/homeInteractions.js; then exit 1; fi
+          if grep -q 'mobile-home-widget-picker__option--widget" data-home-widget-add-id' ui/interactions/homeInteractions.js; then exit 1; fi
+          if grep -q 'function updatePageMotionVisuals' ui/interactions/homeInteractions.js; then exit 1; fi
+          test ! -e .tmp_patch_mobile_home_native_swipe.py
+          test ! -e .tmp_patch_mobile_home_native_swipe_tests.py
+          test ! -e .github/workflows/mobile-home-native-swipe-picker-temp.yml
+          test ! -e .github/workflows/mobile-home-native-swipe-picker-temp2.yml
+      - name: Commit validated changes
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Use native mobile home paging and plus-only picker actions"
+          git push origin HEAD:fix/mobile-home-native-swipe-picker-20260927
