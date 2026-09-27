@@ -100,6 +100,8 @@ await test('PHOTO-MEMO-STORES-BYTES-AND-DISPLAYS-VIA-DATA-URL', () => {
   assert.ok(interactions.includes('blobToDataUrl'));
   assert.ok(interactions.includes('reader.readAsDataURL(blob)'));
   assert.ok(interactions.includes('entry?.imageBytes instanceof ArrayBuffer'));
+  assert.ok(interactions.includes('previewUrl = await blobToDataUrl(prepared.blob)'));
+  assert.ok(!interactions.includes('previewUrl = URL.createObjectURL(prepared.blob)'));
 });
 
 await test('PHOTO-MEMO-PWA-ASSETS-ARE-PRECACHED', () => {

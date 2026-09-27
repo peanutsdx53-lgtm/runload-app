@@ -213,8 +213,8 @@ export function bindMobilePhotoMemo(context = {}) {
   const viewer = ensureViewer(root);
 
   const revokePreview = () => {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
     previewUrl = "";
+    previewImage.removeAttribute("src");
   };
 
   const revokeHistoryUrls = () => {
@@ -299,7 +299,7 @@ export function bindMobilePhotoMemo(context = {}) {
     setStatus(root, "写真を保存用に調整しています。");
     try {
       prepared = await preparePhoto(file);
-      previewUrl = URL.createObjectURL(prepared.blob);
+      previewUrl = await blobToDataUrl(prepared.blob);
       previewImage.src = previewUrl;
       if (previewName) previewName.textContent = file.name || "選択した写真";
       if (previewSize) previewSize.textContent = `${prepared.width}×${prepared.height}px ・ ${formatBytes(prepared.blob.size)}`;
