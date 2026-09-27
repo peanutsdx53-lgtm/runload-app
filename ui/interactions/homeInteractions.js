@@ -709,10 +709,10 @@ function refreshWidgetPicker(root) {
   const availableApps = HOME_APP_CATALOG.filter((item) => !installedApps.has(item.id));
   const groups = [];
   if (availableApps.length) {
-    groups.push(`<p class="mobile-home-widget-picker__group-title">アプリアイコン</p>${availableApps.map((item) => `<button type="button" class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app" data-home-app-add-id="${item.id}">${appPickerIconMarkup(root, item.id)}<div class="mobile-home-widget-picker__copy"><strong>${item.label}</strong><span>${item.description}</span></div><b aria-hidden="true">＋</b></button>`).join("")}`);
+    groups.push(`<p class="mobile-home-widget-picker__group-title">アプリアイコン</p>${availableApps.map((item) => `<div class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app">${appPickerIconMarkup(root, item.id)}<div class="mobile-home-widget-picker__copy"><strong>${item.label}</strong><span>${item.description}</span></div><button type="button" class="mobile-home-widget-picker__add" data-home-app-add-id="${item.id}" aria-label="${item.label}をホームに追加">＋</button></div>`).join("")}`);
   }
   if (availableWidgets.length) {
-    groups.push(`<p class="mobile-home-widget-picker__group-title">ウィジェット</p>${availableWidgets.map((item) => `<button type="button" class="mobile-home-widget-picker__option mobile-home-widget-picker__option--widget" data-home-widget-add-id="${item.id}"><strong>${item.label}</strong><span>${item.description}</span><b aria-hidden="true">＋</b></button>`).join("")}`);
+    groups.push(`<p class="mobile-home-widget-picker__group-title">ウィジェット</p>${availableWidgets.map((item) => `<div class="mobile-home-widget-picker__option mobile-home-widget-picker__option--widget"><strong>${item.label}</strong><span>${item.description}</span><button type="button" class="mobile-home-widget-picker__add" data-home-widget-add-id="${item.id}" aria-label="${item.label}をホームに追加">＋</button></div>`).join("")}`);
   }
   list.innerHTML = groups.join("") || '<p class="mobile-home-widget-picker__empty">追加できる項目はありません。</p>';
 }
@@ -866,28 +866,10 @@ export function bindHome(context = {}) {
     }
   }
 
-  function clearPageMotionVisuals() {
-    pageElements(root).forEach((page) => {
-      page.style.removeProperty("transform");
-      page.style.removeProperty("opacity");
-    });
-  }
-
-  function updatePageMotionVisuals() {
-    const width = Math.max(1, viewport.clientWidth);
-    const progress = viewport.scrollLeft / width;
-    pageElements(root).forEach((page, index) => {
-      const distance = Math.min(1, Math.abs(index - progress));
-      page.style.transform = `scale(${(1 - distance * 0.018).toFixed(4)})`;
-      page.style.opacity = String((1 - distance * 0.14).toFixed(3));
-    });
-  }
-
   function cancelPageAnimation() {
     if (pageAnimationFrame) cancelAnimationFrame(pageAnimationFrame);
     pageAnimationFrame = null;
     root.classList.remove("is-home-page-transitioning");
-    clearPageMotionVisuals();
   }
 
   function animatePageViewport(left) {
@@ -900,13 +882,12 @@ export function bindHome(context = {}) {
       return;
     }
     const startedAt = globalThis.performance?.now?.() ?? Date.now();
-    const duration = 280;
+    const duration = 180;
     root.classList.add("is-home-page-transitioning");
     const step = (now) => {
       const progress = Math.min(1, Math.max(0, now - startedAt) / duration);
       const eased = 1 - Math.pow(1 - progress, 3);
       viewport.scrollLeft = from + distance * eased;
-      updatePageMotionVisuals();
       if (progress < 1) {
         pageAnimationFrame = requestAnimationFrame(step);
         return;
@@ -914,7 +895,6 @@ export function bindHome(context = {}) {
       viewport.scrollLeft = left;
       pageAnimationFrame = null;
       root.classList.remove("is-home-page-transitioning");
-      clearPageMotionVisuals();
     };
     pageAnimationFrame = requestAnimationFrame(step);
   }
@@ -1583,6 +1563,7 @@ export function bindHome(context = {}) {
   }
 
   function handlePagePointerDown(event) {
+    if (!editing) return;
     if (pageSwipePointerId != null || dragging || dragArmed) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
     if (isPageSwipeBlockedTarget(event.target)) return;
@@ -1635,7 +1616,6 @@ export function bindHome(context = {}) {
     const width = Math.max(1, viewport.clientWidth);
     const maxLeft = Math.max(0, (pageElements(root).length - 1) * width);
     viewport.scrollLeft = Math.max(0, Math.min(maxLeft, pageSwipeStartLeft - dx));
-    updatePageMotionVisuals();
   }
 
   function finishPageSwipe(event, cancelled = false) {

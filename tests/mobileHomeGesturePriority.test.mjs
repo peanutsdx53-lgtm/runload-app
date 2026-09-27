@@ -14,11 +14,13 @@ async function test(id, fn) {
   }
 }
 
-await test('HOME-ITEM-TOUCH-IS-RESERVED-FOR-TAP-OR-DRAG', () => {
+await test('HOME-ITEM-TOUCH-USES-NATIVE-PAGING-UNTIL-EDIT-DRAG', () => {
+  assert.ok(css.includes('scroll-snap-type: x mandatory;'));
+  assert.ok(css.includes('touch-action: pan-x pan-y;'));
+  assert.ok(css.includes('.mobile-home-os.is-home-editing [data-home-item-id]'));
   assert.ok(css.includes('touch-action: none;'));
   assert.ok(css.includes('.mobile-home-os.is-home-drag-active .mobile-home-page-viewport'));
   assert.ok(css.includes('overflow-x: hidden;'));
-  assert.ok(css.includes('scroll-snap-type: none;'));
 });
 
 await test('HOME-LONG-PRESS-ARMS-BEFORE-MOVING-THE-ICON', () => {
