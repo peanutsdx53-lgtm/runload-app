@@ -175,8 +175,8 @@ function animateHomeArrival(state, backdrop) {
 
   const indicator = document.querySelector(".mobile-home-page-indicator");
   animateOnce(indicator, [
-    { transform: "translateX(-50%) translateY(7px)", opacity: .35 },
-    { transform: "translateX(-50%) translateY(0)", opacity: 1 },
+    { opacity: .35 },
+    { opacity: 1 },
   ], {
     duration: 250,
     delay: 35,

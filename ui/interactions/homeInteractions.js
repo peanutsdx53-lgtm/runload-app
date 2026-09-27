@@ -14,6 +14,7 @@ const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const LONG_PRESS_MS = 380;
+const EDIT_DRAG_ARM_MS = 180;
 const LAUNCH_ANIMATION_MS = 360;
 const LAUNCH_NAVIGATION_MS = 260;
 const TAP_SLOP_PX = 8;
@@ -865,10 +866,28 @@ export function bindHome(context = {}) {
     }
   }
 
+  function clearPageMotionVisuals() {
+    pageElements(root).forEach((page) => {
+      page.style.removeProperty("transform");
+      page.style.removeProperty("opacity");
+    });
+  }
+
+  function updatePageMotionVisuals() {
+    const width = Math.max(1, viewport.clientWidth);
+    const progress = viewport.scrollLeft / width;
+    pageElements(root).forEach((page, index) => {
+      const distance = Math.min(1, Math.abs(index - progress));
+      page.style.transform = `scale(${(1 - distance * 0.018).toFixed(4)})`;
+      page.style.opacity = String((1 - distance * 0.14).toFixed(3));
+    });
+  }
+
   function cancelPageAnimation() {
     if (pageAnimationFrame) cancelAnimationFrame(pageAnimationFrame);
     pageAnimationFrame = null;
     root.classList.remove("is-home-page-transitioning");
+    clearPageMotionVisuals();
   }
 
   function animatePageViewport(left) {
@@ -887,6 +906,7 @@ export function bindHome(context = {}) {
       const progress = Math.min(1, Math.max(0, now - startedAt) / duration);
       const eased = 1 - Math.pow(1 - progress, 3);
       viewport.scrollLeft = from + distance * eased;
+      updatePageMotionVisuals();
       if (progress < 1) {
         pageAnimationFrame = requestAnimationFrame(step);
         return;
@@ -894,6 +914,7 @@ export function bindHome(context = {}) {
       viewport.scrollLeft = left;
       pageAnimationFrame = null;
       root.classList.remove("is-home-page-transitioning");
+      clearPageMotionVisuals();
     };
     pageAnimationFrame = requestAnimationFrame(step);
   }
@@ -1201,10 +1222,9 @@ export function bindHome(context = {}) {
     lastY = event.clientY;
     pressMoved = false;
     target.classList.add("is-home-pressing");
-    try { target.setPointerCapture(event.pointerId); } catch {}
     if (editing) {
       event.preventDefault();
-      armDrag(target, kind);
+      pressTimer = setTimeout(() => armDrag(target, kind), EDIT_DRAG_ARM_MS);
       return;
     }
     pressTimer = setTimeout(() => armDrag(target, kind), LONG_PRESS_MS);
@@ -1523,6 +1543,12 @@ export function bindHome(context = {}) {
       closeWidgetPicker();
       return;
     }
+    const navigationSurface = event.target.closest("[data-home-launch], [data-home-widget-id]");
+    if (navigationSurface && (editing || Date.now() < suppressClickUntil)) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
     const launcher = event.target.closest("[data-home-launch]");
     if (launcher) {
       event.preventDefault();
@@ -1544,7 +1570,7 @@ export function bindHome(context = {}) {
   }
 
   function isPageSwipeBlockedTarget(target) {
-    return Boolean(target?.closest?.("button, a, input, textarea, select, [contenteditable=\"true\"], [data-home-item-id], [data-home-widget-id], [data-home-widget-picker]"));
+    return Boolean(target?.closest?.("button, input, textarea, select, [contenteditable=\"true\"], [data-home-widget-picker]"));
   }
 
   function resetPageSwipe() {
@@ -1568,29 +1594,48 @@ export function bindHome(context = {}) {
     pageSwipeStartLeft = viewport.scrollLeft;
     pageSwipeStartTime = globalThis.performance?.now?.() ?? Date.now();
     pageSwipeHorizontal = false;
-    try { viewport.setPointerCapture(event.pointerId); } catch {}
+  }
+
+  function claimPageSwipe() {
+    cancelPressTimer();
+    clearPressState();
+    dragArmed = false;
+    if (pointerId === pageSwipePointerId) {
+      pointerId = null;
+      pressTarget = null;
+      pressKind = "";
+      pressMoved = true;
+    }
+    suppressClickUntil = Date.now() + 700;
   }
 
   function handlePagePointerMove(event) {
     if (event.pointerId !== pageSwipePointerId) return;
+    if (dragging || dragArmed) {
+      resetPageSwipe();
+      return;
+    }
     const dx = event.clientX - pageSwipeStartX;
     const dy = event.clientY - pageSwipeStartY;
     const absX = Math.abs(dx);
     const absY = Math.abs(dy);
     if (!pageSwipeHorizontal) {
-      if (absX < 8 && absY < 8) return;
-      if (absY > absX) {
+      if (absX < 6 && absY < 6) return;
+      if (absY > absX * 1.05) {
         resetPageSwipe();
         return;
       }
+      if (absX < 8) return;
       pageSwipeHorizontal = true;
+      claimPageSwipe();
+      try { viewport.setPointerCapture(event.pointerId); } catch {}
       root.classList.add("is-home-page-swiping");
-      suppressClickUntil = Date.now() + 500;
     }
     event.preventDefault();
     const width = Math.max(1, viewport.clientWidth);
     const maxLeft = Math.max(0, (pageElements(root).length - 1) * width);
     viewport.scrollLeft = Math.max(0, Math.min(maxLeft, pageSwipeStartLeft - dx));
+    updatePageMotionVisuals();
   }
 
   function finishPageSwipe(event, cancelled = false) {
@@ -1599,14 +1644,14 @@ export function bindHome(context = {}) {
     const elapsed = Math.max(1, (globalThis.performance?.now?.() ?? Date.now()) - pageSwipeStartTime);
     const velocity = Math.abs(dx) / elapsed;
     const width = Math.max(1, viewport.clientWidth);
-    const crossed = Math.abs(dx) >= width * 0.16 || velocity >= 0.45;
+    const crossed = Math.abs(dx) >= Math.min(56, width * 0.12) || velocity >= 0.28;
     let target = activePage;
     if (!cancelled && pageSwipeHorizontal && crossed) target += dx < 0 ? 1 : -1;
     else if (pageSwipeHorizontal) target = Math.round(viewport.scrollLeft / width);
     target = Math.max(0, Math.min(pageElements(root).length - 1, target));
     if (pageSwipeHorizontal) {
       event.preventDefault();
-      suppressClickUntil = Date.now() + 450;
+      suppressClickUntil = Date.now() + 700;
     }
     resetPageSwipe();
     setActivePage(target, { smooth: true, persist: true });

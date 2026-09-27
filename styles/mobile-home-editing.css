@@ -28,6 +28,8 @@
     min-width: 0;
     scroll-snap-align: start;
     scroll-snap-stop: always;
+    transform-origin: center center;
+    will-change: transform, opacity;
   }
 
   .mobile-home-page-indicator {
@@ -131,7 +133,7 @@
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
-    touch-action: none;
+    touch-action: pan-y;
   }
 
   .mobile-home-os.is-home-drag-active .mobile-home-page-viewport {
