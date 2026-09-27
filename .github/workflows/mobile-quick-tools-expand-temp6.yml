@@ -1,0 +1,105 @@
+name: Mobile quick tools expansion temporary validation v6
+
+on:
+  push:
+    branches:
+      - feature/mobile-quick-tools-expand-20260927
+    paths:
+      - .github/workflows/mobile-quick-tools-expand-temp6.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply expansion and patch save branch by line content
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          workflow = Path('.github/workflows/mobile-quick-tools-expand-temp3.yml').read_text(encoding='utf-8')
+          start_marker = "          cat > /tmp/expand_tools.py <<'PY'\n"
+          end_marker = "\n          PY\n          python3 /tmp/expand_tools.py"
+          start = workflow.index(start_marker) + len(start_marker)
+          end = workflow.index(end_marker, start)
+          code = workflow[start:end]
+          code = '\n'.join(line[10:] if line.startswith('          ') else line for line in code.splitlines()) + '\n'
+
+          bad = '''regex_replace_once(path,
+            r'    : tool === "gear"\\n      \\? saveGear\\(form, root\\)\\n      : false;',
+            '    : tool === "gear"\\n      ? saveGear(form, root)\\n      : tool === "departure"\\n        ? saveDeparture(form, root)\\n        : tool === "fuel"\\n          ? saveFuel(form, root)\\n          : false;')'''
+          if bad not in code:
+              raise SystemExit('Could not find known save-branch patch block')
+          code = code.replace(bad, '# save branch is patched by line content after this script', 1)
+          Path('/tmp/expand_tools_fixed.py').write_text(code, encoding='utf-8')
+          subprocess.run(['python3', '/tmp/expand_tools_fixed.py'], check=True)
+
+          p = Path('ui/interactions/mobileQuickToolsInteractions.js')
+          lines = p.read_text(encoding='utf-8').splitlines()
+          matches = [i for i in range(len(lines) - 2)
+                     if lines[i].strip() == ': tool === "gear"'
+                     and lines[i + 1].strip() == '? saveGear(form, root)'
+                     and lines[i + 2].strip() == ': false;']
+          if len(matches) != 1:
+              raise SystemExit(f'Expected one gear save branch, found {len(matches)}')
+          i = matches[0]
+          base = lines[i][:len(lines[i]) - len(lines[i].lstrip())]
+          child = lines[i + 1][:len(lines[i + 1]) - len(lines[i + 1].lstrip())]
+          replacement = [
+              f'{base}: tool === "gear"',
+              f'{child}? saveGear(form, root)',
+              f'{child}: tool === "departure"',
+              f'{child}  ? saveDeparture(form, root)',
+              f'{child}  : tool === "fuel"',
+              f'{child}    ? saveFuel(form, root)',
+              f'{child}    : false;',
+          ]
+          lines[i:i + 3] = replacement
+          p.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          PY
+          git rm .github/workflows/mobile-quick-tools-expand-temp.yml .github/workflows/mobile-quick-tools-expand-temp2.yml .github/workflows/mobile-quick-tools-expand-temp3.yml .github/workflows/mobile-quick-tools-expand-temp4.yml .github/workflows/mobile-quick-tools-expand-temp5.yml .github/workflows/mobile-quick-tools-expand-temp6.yml
+      - name: Validate JavaScript syntax
+        run: |
+          set -euo pipefail
+          find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Run regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Validate diff
+        run: |
+          set -euo pipefail
+          git diff --check
+          grep -q 'emoji: "✅"' screens/homeScreen.js
+          grep -q 'emoji: "💧"' screens/homeScreen.js
+          grep -q 'renderDepartureCheckScreen' screens/mobileQuickToolsScreen.js
+          grep -q 'renderFuelNoteScreen' screens/mobileQuickToolsScreen.js
+          grep -q 'mobile-home-widget-picker__option.mobile-home-widget-picker__option--app > b' styles/mobile-home-editing.css
+          grep -q 'tool === "departure"' ui/interactions/mobileQuickToolsInteractions.js
+          grep -q 'tool === "fuel"' ui/interactions/mobileQuickToolsInteractions.js
+          grep -q 'departureChecks' ui/mobileQuickToolsStore.js
+          grep -q 'fuelNotes' ui/mobileQuickToolsStore.js
+          test ! -e .github/workflows/mobile-quick-tools-expand-temp.yml
+          test ! -e .github/workflows/mobile-quick-tools-expand-temp2.yml
+          test ! -e .github/workflows/mobile-quick-tools-expand-temp3.yml
+          test ! -e .github/workflows/mobile-quick-tools-expand-temp4.yml
+          test ! -e .github/workflows/mobile-quick-tools-expand-temp5.yml
+          test ! -e .github/workflows/mobile-quick-tools-expand-temp6.yml
+      - name: Commit validated changes
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Align home add controls and add two mobile tools"
+          git push
