@@ -1,5 +1,13 @@
 import { addMobileQuickToolEntry, removeMobileQuickToolEntry } from "../mobileQuickToolsStore.js";
 
+const DELETE_LABEL_BY_TOOL = Object.freeze({
+  location: "地点メモ",
+  quick: "1分メモ",
+  gear: "装備メモ",
+  departure: "出発チェック",
+  fuel: "補給メモ",
+});
+
 function setFormStatus(root, message, state = "") {
   const status = root.querySelector("[data-mobile-tool-form-status]");
   if (!status) return;
@@ -145,6 +153,13 @@ function saveFuel(form, root) {
   return true;
 }
 
+function confirmDelete(tool) {
+  const label = DELETE_LABEL_BY_TOOL[tool] || "保存内容";
+  return typeof globalThis.confirm === "function"
+    ? globalThis.confirm(`${label}を削除しますか？`)
+    : false;
+}
+
 export function bindMobileQuickTool(context = {}) {
   const root = document.querySelector("[data-mobile-tool]");
   if (!root) return null;
@@ -176,6 +191,7 @@ export function bindMobileQuickTool(context = {}) {
     event.preventDefault();
     const tool = remove.dataset.mobileToolDeleteKind || "";
     const id = remove.dataset.mobileToolDelete || "";
+    if (!confirmDelete(tool)) return;
     if (removeMobileQuickToolEntry(tool, id)) context.rerender?.();
   };
 
