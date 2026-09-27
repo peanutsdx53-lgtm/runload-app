@@ -9,6 +9,7 @@ import { APP_GUIDE_VERSION, DEFAULT_GUIDE_SECTION, normalizeGuideSection, should
 import { bindAppShellInteractions } from "./ui/shellInteractions.js";
 import { bindScreenInteractions } from "./ui/screenInteractions.js";
 import { prepareUiMotion } from "./ui/uiMotion.js";
+import { notifyMobileScreenRendered } from "./ui/mobileHomeReturnTransition.js";
 import { bindScreenTutorial } from "./ui/screenTutorial.js";
 import { handleRecordInputRouteChange, resolveRecordInputReturnState } from "./ui/recordInputWorkspace.js";
 import { renderStartScreen } from "./screens/startScreen.js";
@@ -182,6 +183,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
   if (desktopHeaderRoot?.firstElementChild) {
     bindScreenTutorial({ root: desktopHeaderRoot, screenName });
   }
+  notifyMobileScreenRendered(screenName);
 
   window.requestAnimationFrame(() => {
     const requestedFocusSelector = focusSelector || recordInputReturnState?.focusSelector || "";
