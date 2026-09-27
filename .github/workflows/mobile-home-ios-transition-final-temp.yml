@@ -1,0 +1,51 @@
+name: Final mobile home iOS-style launch transition validation
+
+on:
+  push:
+    branches:
+      - feature/mobile-home-ios-launch-transition-20260927
+    paths:
+      - .github/workflows/mobile-home-ios-transition-final-temp.yml
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply final patch
+        run: python3 .github/scripts/finalize-mobile-home-ios-transition.py
+      - name: Remove temporary files
+        run: git rm .github/scripts/finalize-mobile-home-ios-transition.py .github/workflows/mobile-home-ios-transition-final-temp.yml
+      - name: JavaScript syntax
+        run: |
+          set -euo pipefail
+          find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Focused contracts
+        run: |
+          set -euo pipefail
+          git diff --check
+          grep -q 'LAUNCH_NAVIGATION_MS = 260' ui/interactions/homeInteractions.js
+          grep -q 'if (event.target !== surface) return' ui/interactions/homeInteractions.js
+          grep -q 'surface.addEventListener("animationend", handleSurfaceAnimationEnd)' ui/interactions/homeInteractions.js
+          test ! -e .github/scripts/finalize-mobile-home-ios-transition.py
+          test ! -e .github/workflows/mobile-home-ios-transition-final-temp.yml
+      - name: Commit validated changes
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Refine mobile home launch transition timing"
+          git push origin HEAD:feature/mobile-home-ios-launch-transition-20260927
