@@ -645,6 +645,14 @@
   .mobile-home-dock__icon {
     transition: none !important;
   }
+
+
+  .mobile-home-launcher.is-home-launch-target,
+  .mobile-home-launcher.is-home-launch-target :is(.mobile-home-app__icon, .mobile-home-dock__icon, .mobile-home-app__label, .mobile-home-dock__label),
+  .mobile-home-os.is-home-launching [data-home-item-id],
+  .mobile-home-os.is-home-launching [data-home-widget-id] {
+    animation: none !important;
+  }
 }
 
 

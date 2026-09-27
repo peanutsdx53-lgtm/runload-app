@@ -13,6 +13,7 @@ const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const LONG_PRESS_MS = 380;
+const LAUNCH_ANIMATION_MS = 190;
 const TAP_SLOP_PX = 8;
 const DRAG_START_PX = 10;
 const MAX_HOME_PAGES = 4;
@@ -788,6 +789,7 @@ export function bindHome(context = {}) {
   let dropPlacement = null;
   let dropPreview = null;
   let suppressClickUntil = 0;
+  let launchTimer = null;
   let edgeTimer = null;
   let edgeTargetPage = -1;
   let scrollFrame = null;
@@ -1352,7 +1354,23 @@ export function bindHome(context = {}) {
   function openHomeLauncher(launcher) {
     const href = String(launcher?.dataset?.homeHref || "");
     if (!href.startsWith("#/")) return;
-    globalThis.location.hash = href.slice(1);
+    if (root.classList.contains("is-home-launching")) return;
+
+    const navigate = () => {
+      launchTimer = null;
+      globalThis.location.hash = href.slice(1);
+    };
+    const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    if (reduceMotion) {
+      navigate();
+      return;
+    }
+
+    const item = launcher.closest("[data-home-item-id]") || launcher;
+    root.classList.add("is-home-launching");
+    item.classList.add("is-home-launch-target");
+    launcher.setAttribute("aria-busy", "true");
+    launchTimer = setTimeout(navigate, LAUNCH_ANIMATION_MS);
   }
 
   function handleClick(event) {
@@ -1486,6 +1504,7 @@ export function bindHome(context = {}) {
     ghost?.remove();
     clearEdgePaging();
     if (scrollFrame) cancelAnimationFrame(scrollFrame);
+    if (launchTimer) clearTimeout(launchTimer);
     viewport.removeEventListener("scroll", handlePageScroll);
     widgetPicker?.removeEventListener("pointerup", handleWidgetPickerPointerUp);
     root.removeEventListener("pointerdown", handlePointerDown);
