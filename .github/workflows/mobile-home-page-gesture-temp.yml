@@ -20,29 +20,27 @@ jobs:
           set -euo pipefail
           cat > /tmp/patch_mobile_home.py <<'PY'
           from pathlib import Path
+          import re
+
+          def sub_one(path, pattern, replacement, flags=0):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              out, count = re.subn(pattern, replacement, text, count=1, flags=flags)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected one regex match, found {count}: {pattern[:80]}')
+              p.write_text(out, encoding='utf-8')
 
           def replace_one(path, old, new):
               p = Path(path)
               text = p.read_text(encoding='utf-8')
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f'{path}: expected one anchor, found {count}')
+              if text.count(old) != 1:
+                  raise SystemExit(f'{path}: expected one exact match, found {text.count(old)}')
               p.write_text(text.replace(old, new, 1), encoding='utf-8')
 
-          # Preserve the page indicator's centering transform during home-return animation.
-          replace_one('ui/mobileHomeReturnTransition.js', '''  const dock = document.querySelector(".mobile-home-dock");
-          const indicator = document.querySelector(".mobile-home-page-indicator");
-          [dock, indicator].forEach((element) => {
-            animateOnce(element, [
-              { transform: "translateY(9px)", opacity: .35 },
-              { transform: "translateY(0)", opacity: 1 },
-            ], {
-              duration: 250,
-              delay: 35,
-              easing: RETURN_EASING,
-            });
-          });
-          ''', '''  const dock = document.querySelector(".mobile-home-dock");
+          sub_one(
+              'ui/mobileHomeReturnTransition.js',
+              r'  const dock = document\.querySelector\("\.mobile-home-dock"\);\n  const indicator = document\.querySelector\("\.mobile-home-page-indicator"\);\n  \[dock, indicator\]\.forEach\(\(element\) => \{.*?\n  \}\);\n\n  const target =',
+              '''  const dock = document.querySelector(".mobile-home-dock");
           animateOnce(dock, [
             { transform: "translateY(9px)", opacity: .35 },
             { transform: "translateY(0)", opacity: 1 },
@@ -61,21 +59,15 @@ jobs:
             delay: 35,
             easing: RETURN_EASING,
           });
-          ''')
 
-          # Reserve horizontal gestures for the in-app home pager instead of browser history/navigation.
-          replace_one('styles/mobile-home-editing.css', '''  .mobile-home-page-viewport {
-            width: 100%;
-            margin-bottom: 40px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scroll-snap-type: x mandatory;
-            overscroll-behavior-x: contain;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-            transition: height 160ms ease;
-          }
-          ''', '''  .mobile-home-page-viewport {
+          const target =''',
+              re.S,
+          )
+
+          sub_one(
+              'styles/mobile-home-editing.css',
+              r'  \.mobile-home-page-viewport \{\n.*?\n  \}',
+              '''  .mobile-home-page-viewport {
             width: 100%;
             margin-bottom: 40px;
             overflow-x: auto;
@@ -86,43 +78,27 @@ jobs:
             scrollbar-width: none;
             -webkit-overflow-scrolling: auto;
             transition: height 160ms ease;
-          }
-          ''')
-          replace_one('styles/mobile-home-editing.css', '''  .mobile-home-os.is-home-editing .mobile-home-page-viewport,
-          .mobile-home-os.is-home-drag-active .mobile-home-page-viewport {
+          }''',
+              re.S,
+          )
+          sub_one(
+              'styles/mobile-home-editing.css',
+              r'  \.mobile-home-os\.is-home-editing \.mobile-home-page-viewport,\n  \.mobile-home-os\.is-home-drag-active \.mobile-home-page-viewport \{\n    overflow-x: hidden;\n    scroll-snap-type: none;\n  \}',
+              '''  .mobile-home-os.is-home-drag-active .mobile-home-page-viewport {
             overflow-x: hidden;
-            scroll-snap-type: none;
-          }
-          ''', '''  .mobile-home-os.is-home-drag-active .mobile-home-page-viewport {
-            overflow-x: hidden;
-          }
-          ''')
+          }''',
+          )
 
-          # Add controlled page swipe state.
-          replace_one('ui/interactions/homeInteractions.js', '''  let scrollFrame = null;
-          ''', '''  let scrollFrame = null;
-          let pageAnimationFrame = null;
-          let pageSwipePointerId = null;
-          let pageSwipeStartX = 0;
-          let pageSwipeStartY = 0;
-          let pageSwipeStartLeft = 0;
-          let pageSwipeStartTime = 0;
-          let pageSwipeHorizontal = false;
-          ''')
+          replace_one(
+              'ui/interactions/homeInteractions.js',
+              '  let scrollFrame = null;\n',
+              '  let scrollFrame = null;\n  let pageAnimationFrame = null;\n  let pageSwipePointerId = null;\n  let pageSwipeStartX = 0;\n  let pageSwipeStartY = 0;\n  let pageSwipeStartLeft = 0;\n  let pageSwipeStartTime = 0;\n  let pageSwipeHorizontal = false;\n',
+          )
 
-          old_set_active = '''  function setActivePage(index, { smooth = true, persist = false } = {}) {
-            const pages = pageElements(root);
-            if (!pages.length) return;
-            activePage = Math.max(0, Math.min(pages.length - 1, Number(index) || 0));
-            const left = activePage * viewport.clientWidth;
-            viewport.scrollTo({ left, behavior: smooth ? "smooth" : "auto" });
-            if (dragging) clearDropPreview();
-            updatePageIndicator();
-            updateViewportHeight();
-            if (persist) writeLayout(root, dockContainer, activePage);
-          }
-          '''
-          new_set_active = '''  function cancelPageAnimation() {
+          sub_one(
+              'ui/interactions/homeInteractions.js',
+              r'  function setActivePage\(index, \{ smooth = true, persist = false \} = \{\}\) \{.*?\n  \}\n\n  function addPage\(\) \{',
+              '''  function cancelPageAnimation() {
             if (pageAnimationFrame) cancelAnimationFrame(pageAnimationFrame);
             pageAnimationFrame = null;
             root.classList.remove("is-home-page-transitioning");
@@ -141,8 +117,7 @@ jobs:
             const duration = 280;
             root.classList.add("is-home-page-transitioning");
             const step = (now) => {
-              const elapsed = Math.max(0, now - startedAt);
-              const progress = Math.min(1, elapsed / duration);
+              const progress = Math.min(1, Math.max(0, now - startedAt) / duration);
               const eased = 1 - Math.pow(1 - progress, 3);
               viewport.scrollLeft = from + distance * eased;
               if (progress < 1) {
@@ -171,19 +146,19 @@ jobs:
             updateViewportHeight();
             if (persist) writeLayout(root, dockContainer, activePage);
           }
-          '''
-          replace_one('ui/interactions/homeInteractions.js', old_set_active, new_set_active)
 
-          # Never allow a home app to launch while edit mode is active, even through an indirect caller.
-          replace_one('ui/interactions/homeInteractions.js', '''  function openHomeLauncher(launcher) {
-            const href = String(launcher?.dataset?.homeHref || "");
-          ''', '''  function openHomeLauncher(launcher) {
-            if (editing) return;
-            const href = String(launcher?.dataset?.homeHref || "");
-          ''')
+          function addPage() {''',
+              re.S,
+          )
 
-          page_handlers = '''  function isPageSwipeBlockedTarget(target) {
-            return Boolean(target?.closest?.("button, a, input, textarea, select, [contenteditable=\"true\"], [data-home-item-id], [data-home-widget-id], [data-home-widget-picker]"));
+          replace_one(
+              'ui/interactions/homeInteractions.js',
+              '  function openHomeLauncher(launcher) {\n    const href = String(launcher?.dataset?.homeHref || "");\n',
+              '  function openHomeLauncher(launcher) {\n    if (editing) return;\n    const href = String(launcher?.dataset?.homeHref || "");\n',
+          )
+
+          handlers = '''  function isPageSwipeBlockedTarget(target) {
+            return Boolean(target?.closest?.("button, a, input, textarea, select, [contenteditable=\\"true\\"], [data-home-item-id], [data-home-widget-id], [data-home-widget-picker]"));
           }
 
           function resetPageSwipe() {
@@ -260,100 +235,43 @@ jobs:
           }
 
           '''
-          replace_one('ui/interactions/homeInteractions.js', '''  function handlePageScroll() {
-          ''', page_handlers + '''  function handlePageScroll() {
-          ''')
+          replace_one('ui/interactions/homeInteractions.js', '  function handlePageScroll() {\n', handlers + '  function handlePageScroll() {\n')
+          replace_one(
+              'ui/interactions/homeInteractions.js',
+              '      if (!viewport.clientWidth || dragging || dragArmed) return;\n',
+              '      if (!viewport.clientWidth || dragging || dragArmed || pageSwipePointerId != null || pageAnimationFrame) return;\n',
+          )
+          replace_one(
+              'ui/interactions/homeInteractions.js',
+              '  viewport.addEventListener("scroll", handlePageScroll, { passive: true });\n',
+              '  viewport.addEventListener("pointerdown", handlePagePointerDown);\n  viewport.addEventListener("pointermove", handlePagePointerMove, { passive: false });\n  viewport.addEventListener("pointerup", handlePagePointerUp);\n  viewport.addEventListener("pointercancel", handlePagePointerCancel);\n  viewport.addEventListener("scroll", handlePageScroll, { passive: true });\n',
+          )
+          replace_one(
+              'ui/interactions/homeInteractions.js',
+              '    if (scrollFrame) cancelAnimationFrame(scrollFrame);\n    if (launchTimer) clearTimeout(launchTimer);\n    viewport.removeEventListener("scroll", handlePageScroll);\n',
+              '    if (scrollFrame) cancelAnimationFrame(scrollFrame);\n    cancelPageAnimation();\n    resetPageSwipe();\n    if (launchTimer) clearTimeout(launchTimer);\n    viewport.removeEventListener("pointerdown", handlePagePointerDown);\n    viewport.removeEventListener("pointermove", handlePagePointerMove);\n    viewport.removeEventListener("pointerup", handlePagePointerUp);\n    viewport.removeEventListener("pointercancel", handlePagePointerCancel);\n    viewport.removeEventListener("scroll", handlePageScroll);\n',
+          )
 
-          replace_one('ui/interactions/homeInteractions.js', '''      if (!viewport.clientWidth || dragging || dragArmed) return;
-          ''', '''      if (!viewport.clientWidth || dragging || dragArmed || pageSwipePointerId != null || pageAnimationFrame) return;
-          ''')
+          replace_one(
+              'tests/mobileHomeFixedUi.test.mjs',
+              "test('HOME-RETURN-PAINTS-SNAPSHOT-BEFORE-NAVIGATION', () => {\n",
+              "test('HOME-RETURN-KEEPS-PAGE-INDICATOR-CENTERED-DURING-ANIMATION', () => {\n  const source = read('ui/mobileHomeReturnTransition.js');\n  assert.ok(source.includes('translateX(-50%) translateY(7px)'));\n  assert.ok(source.includes('translateX(-50%) translateY(0)'));\n});\n\ntest('HOME-RETURN-PAINTS-SNAPSHOT-BEFORE-NAVIGATION', () => {\n",
+          )
 
-          replace_one('ui/interactions/homeInteractions.js', '''  viewport.addEventListener("scroll", handlePageScroll, { passive: true });
-          ''', '''  viewport.addEventListener("pointerdown", handlePagePointerDown);
-          viewport.addEventListener("pointermove", handlePagePointerMove, { passive: false });
-          viewport.addEventListener("pointerup", handlePagePointerUp);
-          viewport.addEventListener("pointercancel", handlePagePointerCancel);
-          viewport.addEventListener("scroll", handlePageScroll, { passive: true });
-          ''')
-
-          replace_one('ui/interactions/homeInteractions.js', '''    if (scrollFrame) cancelAnimationFrame(scrollFrame);
-            if (launchTimer) clearTimeout(launchTimer);
-            viewport.removeEventListener("scroll", handlePageScroll);
-          ''', '''    if (scrollFrame) cancelAnimationFrame(scrollFrame);
-            cancelPageAnimation();
-            resetPageSwipe();
-            if (launchTimer) clearTimeout(launchTimer);
-            viewport.removeEventListener("pointerdown", handlePagePointerDown);
-            viewport.removeEventListener("pointermove", handlePagePointerMove);
-            viewport.removeEventListener("pointerup", handlePagePointerUp);
-            viewport.removeEventListener("pointercancel", handlePagePointerCancel);
-            viewport.removeEventListener("scroll", handlePageScroll);
-          ''')
-
-          # Extend fixed UI test with the centering contract.
-          replace_one('tests/mobileHomeFixedUi.test.mjs', '''test('HOME-RETURN-PAINTS-SNAPSHOT-BEFORE-NAVIGATION', () => {
-          ''', '''test('HOME-RETURN-KEEPS-PAGE-INDICATOR-CENTERED-DURING-ANIMATION', () => {
-            const source = read('ui/mobileHomeReturnTransition.js');
-            assert.ok(source.includes('translateX(-50%) translateY(7px)'));
-            assert.ok(source.includes('translateX(-50%) translateY(0)'));
-          });
-
-          test('HOME-RETURN-PAINTS-SNAPSHOT-BEFORE-NAVIGATION', () => {
-          ''')
-
-          Path('tests/mobileHomePageGesture.test.mjs').write_text(r'''import assert from 'node:assert/strict';
+          Path('tests/mobileHomePageGesture.test.mjs').write_text('''import assert from 'node:assert/strict';
           import fs from 'node:fs';
           import path from 'node:path';
           import { fileURLToPath } from 'node:url';
-
           const here = path.dirname(fileURLToPath(import.meta.url));
           const root = path.resolve(here, '..');
           const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
           const results = [];
-
-          function test(id, fn) {
-            try { fn(); results.push({ id, status: 'PASS' }); }
-            catch (error) { results.push({ id, status: 'FAIL', message: error?.stack || String(error) }); }
-          }
-
-          test('HOME-PAGER-RESERVES-HORIZONTAL-GESTURE-FROM-BROWSER-HISTORY', () => {
-            const css = read('styles/mobile-home-editing.css');
-            assert.ok(css.includes('touch-action: pan-y;'));
-            assert.ok(css.includes('overscroll-behavior-x: none;'));
-            assert.ok(css.includes('scroll-snap-type: none;'));
-          });
-
-          test('HOME-PAGER-USES-POINTER-CAPTURED-IN-APP-SWIPE', () => {
-            const source = read('ui/interactions/homeInteractions.js');
-            for (const name of ['handlePagePointerDown', 'handlePagePointerMove', 'handlePagePointerUp', 'handlePagePointerCancel']) {
-              assert.ok(source.includes(name));
-            }
-            assert.ok(source.includes('viewport.setPointerCapture(event.pointerId)'));
-            assert.ok(source.includes('viewport.scrollLeft = Math.max(0, Math.min(maxLeft, pageSwipeStartLeft - dx))'));
-          });
-
-          test('HOME-PAGER-FOLLOWS-FINGER-THEN-EASES-TO-PAGE', () => {
-            const source = read('ui/interactions/homeInteractions.js');
-            assert.ok(source.includes('function animatePageViewport(left)'));
-            assert.ok(source.includes('const duration = 280;'));
-            assert.ok(source.includes('1 - Math.pow(1 - progress, 3)'));
-            assert.ok(source.includes('setActivePage(target, { smooth: true, persist: true })'));
-          });
-
-          test('HOME-EDIT-MODE-CANNOT-LAUNCH-APP', () => {
-            const source = read('ui/interactions/homeInteractions.js');
-            const start = source.indexOf('function openHomeLauncher(launcher)');
-            assert.ok(start >= 0);
-            const segment = source.slice(start, start + 240);
-            assert.ok(segment.includes('if (editing) return;'));
-            assert.ok(source.includes('if (editing || Date.now() < suppressClickUntil) return;'));
-          });
-
-          test('HOME-PAGER-DOES-NOT-CHANGE-ACTIVE-PAGE-MID-SWIPE-OR-ANIMATION', () => {
-            const source = read('ui/interactions/homeInteractions.js');
-            assert.ok(source.includes('pageSwipePointerId != null || pageAnimationFrame'));
-          });
-
+          function test(id, fn) { try { fn(); results.push({ id, status: 'PASS' }); } catch (error) { results.push({ id, status: 'FAIL', message: error?.stack || String(error) }); } }
+          test('HOME-PAGER-RESERVES-HORIZONTAL-GESTURE-FROM-BROWSER-HISTORY', () => { const css = read('styles/mobile-home-editing.css'); assert.ok(css.includes('touch-action: pan-y;')); assert.ok(css.includes('overscroll-behavior-x: none;')); assert.ok(css.includes('scroll-snap-type: none;')); });
+          test('HOME-PAGER-USES-POINTER-CAPTURED-IN-APP-SWIPE', () => { const source = read('ui/interactions/homeInteractions.js'); for (const name of ['handlePagePointerDown', 'handlePagePointerMove', 'handlePagePointerUp', 'handlePagePointerCancel']) assert.ok(source.includes(name)); assert.ok(source.includes('viewport.setPointerCapture(event.pointerId)')); assert.ok(source.includes('pageSwipeStartLeft - dx')); });
+          test('HOME-PAGER-FOLLOWS-FINGER-THEN-EASES-TO-PAGE', () => { const source = read('ui/interactions/homeInteractions.js'); assert.ok(source.includes('function animatePageViewport(left)')); assert.ok(source.includes('const duration = 280;')); assert.ok(source.includes('1 - Math.pow(1 - progress, 3)')); assert.ok(source.includes('setActivePage(target, { smooth: true, persist: true })')); });
+          test('HOME-EDIT-MODE-CANNOT-LAUNCH-APP', () => { const source = read('ui/interactions/homeInteractions.js'); const start = source.indexOf('function openHomeLauncher(launcher)'); assert.ok(start >= 0); assert.ok(source.slice(start, start + 240).includes('if (editing) return;')); assert.ok(source.includes('if (editing || Date.now() < suppressClickUntil) return;')); });
+          test('HOME-PAGER-DOES-NOT-CHANGE-ACTIVE-PAGE-MID-SWIPE-OR-ANIMATION', () => { const source = read('ui/interactions/homeInteractions.js'); assert.ok(source.includes('pageSwipePointerId != null || pageAnimationFrame')); });
           const failed = results.filter((item) => item.status === 'FAIL');
           console.log(JSON.stringify({ suite: 'Mobile Home Page Gesture', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
           if (failed.length) process.exitCode = 1;
