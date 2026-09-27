@@ -32,6 +32,7 @@ import { renderMoreScreen } from "./screens/moreScreen.js";
 import { renderSimulationScreen } from "./screens/simulationScreen.js";
 import { renderGpxAnalysisScreen } from "./screens/gpxAnalysisScreen.js";
 import { renderLocationNoteScreen, renderQuickNoteScreen, renderGearNoteScreen, renderDepartureCheckScreen, renderFuelNoteScreen } from "./screens/mobileQuickToolsScreen.js";
+import { renderPhotoMemoScreen } from "./screens/mobilePhotoMemoScreen.js";
 
 const screenRenderers = {
   start: renderStartScreen,
@@ -59,6 +60,7 @@ const screenRenderers = {
   "gear-note": renderGearNoteScreen,
   "departure-check": renderDepartureCheckScreen,
   "fuel-note": renderFuelNoteScreen,
+  "photo-note": renderPhotoMemoScreen,
 };
 
 const appRoot = document.getElementById("app");
@@ -102,7 +104,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
   const screenName = currentLocation.screen;
   document.body.classList.toggle("course-derived-open", ["course-library", "course-editor", "gpx-analysis"].includes(screenName));
   document.body.classList.toggle("run-standalone-open", ["start", "run-measurement"].includes(screenName));
-  document.body.classList.toggle("secondary-derived-open", ["plan", "consultation", "support-guidance", "reading", "privacy", "settings", "location-note", "quick-note", "gear-note", "departure-check", "fuel-note"].includes(screenName));
+  document.body.classList.toggle("secondary-derived-open", ["plan", "consultation", "support-guidance", "reading", "privacy", "settings", "location-note", "quick-note", "gear-note", "departure-check", "fuel-note", "photo-note"].includes(screenName));
   const recordInputReturnState = screenName === "record-input"
     ? resolveRecordInputReturnState(currentLocation)
     : null;
