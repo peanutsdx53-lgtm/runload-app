@@ -138,6 +138,8 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "location-note") return { title: "地点メモ", backHref: "#/home", backLabel: "ホーム" };
   if (screen === "quick-note") return { title: "1分メモ", backHref: "#/home", backLabel: "ホーム" };
   if (screen === "gear-note") return { title: "装備メモ", backHref: "#/home", backLabel: "ホーム" };
+  if (screen === "departure-check") return { title: "出発チェック", backHref: "#/home", backLabel: "ホーム" };
+  if (screen === "fuel-note") return { title: "補給メモ", backHref: "#/home", backLabel: "ホーム" };
 
   if (screen === "plan") {
     const interpretationReturn = interpretationReturnContext(parameter, recordId || parameter("sourceRecordId"));

@@ -5,6 +5,8 @@ const COLLECTION_BY_TOOL = Object.freeze({
   location: "locationNotes",
   quick: "quickNotes",
   gear: "gearNotes",
+  departure: "departureChecks",
+  fuel: "fuelNotes",
 });
 
 function emptyState() {
@@ -13,6 +15,8 @@ function emptyState() {
     locationNotes: [],
     quickNotes: [],
     gearNotes: [],
+    departureChecks: [],
+    fuelNotes: [],
   };
 }
 
@@ -42,6 +46,8 @@ export function loadMobileQuickTools() {
       locationNotes: normalizeCollection(parsed.locationNotes),
       quickNotes: normalizeCollection(parsed.quickNotes),
       gearNotes: normalizeCollection(parsed.gearNotes),
+      departureChecks: normalizeCollection(parsed.departureChecks),
+      fuelNotes: normalizeCollection(parsed.fuelNotes),
     };
   } catch {
     return emptyState();

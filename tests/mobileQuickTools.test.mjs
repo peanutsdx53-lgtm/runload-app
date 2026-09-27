@@ -24,6 +24,13 @@ await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
   assert.ok(home.includes('href: "#/location-note"'));
   assert.ok(home.includes('href: "#/quick-note"'));
   assert.ok(home.includes('href: "#/gear-note"'));
+  assert.ok(home.includes('href: "#/departure-check"'));
+  assert.ok(home.includes('href: "#/fuel-note"'));
+  assert.ok(home.includes('emoji: "📍"'));
+  assert.ok(home.includes('emoji: "📝"'));
+  assert.ok(home.includes('emoji: "🎒"'));
+  assert.ok(home.includes('emoji: "✅"'));
+  assert.ok(home.includes('emoji: "💧"'));
   assert.ok(interactions.includes('OPTIONAL_APP_CATALOG'));
   assert.ok(interactions.includes('data-home-app-add-id'));
   assert.ok(interactions.includes('removeOptionalApp'));
@@ -38,6 +45,8 @@ await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
   assert.ok(interactions.includes('mobile-home-widget-picker__option--widget'));
   assert.ok(css.includes('.mobile-home-widget-picker__app-icon svg'));
   assert.ok(css.includes('.mobile-home-widget-picker__option--app'));
+  assert.ok(css.includes('.mobile-home-widget-picker__option.mobile-home-widget-picker__option--app > b'));
+  assert.ok(read('styles/mobile-home.css').includes('.mobile-home-emoji'));
 });
 
 await test('MOBILE-QUICK-TOOLS-PRESERVE-REQUIRED-HOME-LAYOUT', () => {
@@ -51,7 +60,7 @@ await test('MOBILE-QUICK-TOOLS-HAVE-ROUTES-AND-HOME-BACK-NAVIGATION', () => {
   const app = read('app.js');
   const architecture = read('ui/screenArchitecture.js');
   const binders = read('ui/screenInteractions.js');
-  for (const route of ['location-note', 'quick-note', 'gear-note']) {
+  for (const route of ['location-note', 'quick-note', 'gear-note', 'departure-check', 'fuel-note']) {
     assert.ok(app.includes(`"${route}":`));
     assert.ok(binders.includes(`"${route}": bindMobileQuickTool`));
     assert.ok(architecture.includes(`screen === "${route}"`));
@@ -72,6 +81,8 @@ await test('MOBILE-QUICK-TOOLS-SCREENS-COVER-THREE-TOOLS', () => {
   assert.ok(screens.includes('export function renderLocationNoteScreen'));
   assert.ok(screens.includes('export function renderQuickNoteScreen'));
   assert.ok(screens.includes('export function renderGearNoteScreen'));
+  assert.ok(screens.includes('export function renderDepartureCheckScreen'));
+  assert.ok(screens.includes('export function renderFuelNoteScreen'));
   assert.ok(screens.includes('この端末のブラウザ内に保存します。自動送信はしません。'));
 });
 

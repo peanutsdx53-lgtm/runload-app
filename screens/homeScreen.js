@@ -144,11 +144,12 @@ function mobileHomeIcon(name) {
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[name] || paths.settings}</svg>`;
 }
 
-function renderMobileLauncherItem({ href, label, icon, tone = "blue", dock = false, optional = false }) {
+function renderMobileLauncherItem({ href, label, icon, emoji = "", tone = "blue", dock = false, optional = false }) {
   const className = dock ? "mobile-home-dock__item" : "mobile-home-app";
   const iconClass = dock ? "mobile-home-dock__icon" : "mobile-home-app__icon";
   const labelClass = dock ? "mobile-home-dock__label" : "mobile-home-app__label";
-  const content = `<span class="${iconClass} mobile-home-tone--${escapeHtml(tone)}">${mobileHomeIcon(icon)}</span><span class="${labelClass}">${escapeHtml(label)}</span>`;
+  const iconMarkup = emoji ? `<span class="mobile-home-emoji" aria-hidden="true">${escapeHtml(emoji)}</span>` : mobileHomeIcon(icon);
+  const content = `<span class="${iconClass} mobile-home-tone--${escapeHtml(tone)}">${iconMarkup}</span><span class="${labelClass}">${escapeHtml(label)}</span>`;
   if (!optional) return `<a class="${className}" href="${escapeHtml(href)}">${content}</a>`;
   return `<div class="${className} mobile-home-app--optional" data-home-optional-app><a class="mobile-home-app__launch" href="${escapeHtml(href)}" aria-label="${escapeHtml(label)}">${content}</a><button type="button" class="mobile-home-app-remove" data-home-app-remove aria-label="${escapeHtml(label)}をホームから外す">−</button></div>`;
 }
@@ -188,9 +189,11 @@ function renderMobileHomeOs({ services, latestExperience, draft }) {
     { href: "#/settings?from=home", label: "設定", icon: "settings", tone: "gray" },
   ];
   const optionalApps = [
-    { href: "#/location-note", label: "地点メモ", icon: "location-note", tone: "cyan", optional: true },
-    { href: "#/quick-note", label: "1分メモ", icon: "quick-note", tone: "violet", optional: true },
-    { href: "#/gear-note", label: "装備メモ", icon: "gear-note", tone: "orange", optional: true },
+    { href: "#/location-note", label: "地点メモ", emoji: "📍", tone: "cyan", optional: true },
+    { href: "#/quick-note", label: "1分メモ", emoji: "📝", tone: "violet", optional: true },
+    { href: "#/gear-note", label: "装備メモ", emoji: "🎒", tone: "orange", optional: true },
+    { href: "#/departure-check", label: "出発チェック", emoji: "✅", tone: "green", optional: true },
+    { href: "#/fuel-note", label: "補給メモ", emoji: "💧", tone: "cyan", optional: true },
   ];
   const dock = [
     { href: "#/record-input", label: "記録", icon: "record", tone: "blue" },

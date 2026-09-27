@@ -116,6 +116,35 @@ function saveGear(form, root) {
   return true;
 }
 
+function saveDeparture(form, root) {
+  const data = new FormData(form);
+  const checks = data.getAll("checks").map((value) => String(value || "").trim()).filter(Boolean);
+  const note = String(data.get("note") || "").trim();
+  if (!checks.length && !note) {
+    setFormStatus(root, "確認項目を選ぶか、メモを入力してください。", "error");
+    return false;
+  }
+  if (!addMobileQuickToolEntry("departure", { checks, note })) {
+    setFormStatus(root, "保存できませんでした。端末の保存領域を確認してください。", "error");
+    return false;
+  }
+  return true;
+}
+
+function saveFuel(form, root) {
+  const values = formValues(form);
+  const payload = { kind: String(values.kind || "水分").trim(), amount: String(values.amount || "").trim(), note: String(values.note || "").trim() };
+  if (!payload.amount && !payload.note) {
+    setFormStatus(root, "量・内容またはメモを入力してください。", "error");
+    return false;
+  }
+  if (!addMobileQuickToolEntry("fuel", payload)) {
+    setFormStatus(root, "保存できませんでした。端末の保存領域を確認してください。", "error");
+    return false;
+  }
+  return true;
+}
+
 export function bindMobileQuickTool(context = {}) {
   const root = document.querySelector("[data-mobile-tool]");
   if (!root) return null;
@@ -132,7 +161,11 @@ export function bindMobileQuickTool(context = {}) {
         ? saveQuick(form, root)
         : tool === "gear"
           ? saveGear(form, root)
-          : false;
+          : tool === "departure"
+            ? saveDeparture(form, root)
+            : tool === "fuel"
+              ? saveFuel(form, root)
+              : false;
     if (!saved) return;
     context.rerender?.();
   };
