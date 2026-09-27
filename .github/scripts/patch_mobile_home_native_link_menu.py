@@ -101,6 +101,19 @@ replace_once(
 
 replace_once(
     'tests/mobileQuickTools.test.mjs',
+    '''await test('MOBILE-HOME-NESTED-LAUNCH-LINK-SUPPRESSES-IOS-LINK-CALLOUT', () => {
+  const home = read('screens/homeScreen.js');
+  const css = read('styles/mobile-quick-tools.css');
+''',
+    '''await test('MOBILE-HOME-NESTED-LAUNCH-LINK-SUPPRESSES-IOS-LINK-CALLOUT', () => {
+  const home = read('screens/homeScreen.js');
+  const interactions = read('ui/interactions/homeInteractions.js');
+  const css = read('styles/mobile-quick-tools.css');
+'''
+)
+
+replace_once(
+    'tests/mobileQuickTools.test.mjs',
     "  assert.ok(css.includes('-webkit-touch-callout: none !important'));\n",
     "  assert.ok(css.includes('-webkit-touch-callout: none !important'));\n  assert.ok(home.includes('data-home-launch data-home-href='));\n  assert.ok(home.includes('role=\\\"link\\\" tabindex=\\\"0\\\"'));\n  assert.ok(!home.includes('<a class=\\\"mobile-home-app__launch\\\"'));\n  assert.ok(interactions.includes('function openHomeLauncher(launcher)'));\n  assert.ok(interactions.includes('globalThis.location.hash = href.slice(1)'));\n"
 )
