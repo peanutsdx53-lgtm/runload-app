@@ -14,31 +14,42 @@ async function test(id, fn) {
   }
 }
 
-await test('HOME-EDITABLE-SURFACES-RESERVE-HORIZONTAL-GESTURES-FOR-DRAG', () => {
-  assert.ok(css.includes('touch-action: pan-y;'));
-  assert.ok(css.includes('.mobile-home-os.is-home-editing .mobile-home-page-viewport'));
+await test('HOME-ITEM-TOUCH-IS-RESERVED-FOR-TAP-OR-DRAG', () => {
+  assert.ok(css.includes('touch-action: none;'));
+  assert.ok(css.includes('.mobile-home-os.is-home-drag-active .mobile-home-page-viewport'));
   assert.ok(css.includes('overflow-x: hidden;'));
   assert.ok(css.includes('scroll-snap-type: none;'));
 });
 
-await test('HOME-PENDING-LONG-PRESS-TOLERATES-HORIZONTAL-DRIFT', () => {
-  assert.ok(interactions.includes('const TAP_SLOP_PX = 8;'));
-  assert.ok(interactions.includes('const VERTICAL_SCROLL_CANCEL_PX = 18;'));
-  assert.ok(interactions.includes('Math.abs(dy) > VERTICAL_SCROLL_CANCEL_PX && Math.abs(dy) > Math.abs(dx)'));
-  assert.ok(!interactions.includes('Math.hypot(event.clientX - startX, event.clientY - startY) > MOVE_CANCEL_PX'));
+await test('HOME-LONG-PRESS-ARMS-BEFORE-MOVING-THE-ICON', () => {
+  assert.ok(interactions.includes('const DRAG_START_PX = 10;'));
+  assert.ok(interactions.includes('let dragArmed = false;'));
+  assert.ok(interactions.includes('function armDrag(target, kind)'));
+  assert.ok(interactions.includes('if (distance < DRAG_START_PX) return;'));
+  assert.ok(interactions.includes('beginDrag(pressTarget, event, pressKind);'));
+  assert.ok(!interactions.includes('setTimeout(() => beginDrag'));
+});
+
+await test('HOME-POINTER-STREAM-IS-CAPTURED-FROM-TOUCH-DOWN', () => {
+  assert.ok(interactions.includes('target.setPointerCapture(event.pointerId)'));
+  assert.ok(interactions.includes('pressTarget?.releasePointerCapture(pointerId)'));
+});
+
+await test('HOME-POINTER-CANCEL-COMMITS-LAST-VALID-DRAG-POSITION', () => {
+  assert.ok(interactions.includes('finishDrag({ clientX: lastX, clientY: lastY });'));
+  assert.ok(!interactions.includes('if (dragging) finishDrag(event, true);'));
 });
 
 await test('HOME-MOVE-INTENT-CANNOT-FALL-THROUGH-TO-APP-LAUNCH', () => {
-  assert.ok(interactions.includes('let pressMoved = false;'));
-  assert.ok(interactions.includes('if (Math.hypot(dx, dy) > TAP_SLOP_PX) pressMoved = true;'));
-  assert.ok(interactions.includes('if (moved) {'));
+  assert.ok(interactions.includes('const wasArmed = dragArmed;'));
+  assert.ok(interactions.includes('if (moved || wasArmed)'));
   assert.ok(interactions.includes('suppressClickUntil = Date.now() + 350;'));
 });
 
-await test('HOME-LONG-PRESS-DRAG-STARTS-AT-CURRENT-FINGER-POSITION', () => {
-  assert.ok(interactions.includes('clientX: lastX'));
-  assert.ok(interactions.includes('clientY: lastY'));
-  assert.ok(interactions.includes('setActivePage(activePage, { smooth: false });'));
+await test('HOME-PAGE-SCROLL-STATE-DOES-NOT-UPDATE-WHILE-ARMED-OR-DRAGGING', () => {
+  assert.ok(interactions.includes('if (!viewport.clientWidth || dragging || dragArmed) return;'));
+  assert.ok(interactions.includes('root.classList.add("is-home-drag-active")'));
+  assert.ok(interactions.includes('root.classList.remove("is-home-drag-active")'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

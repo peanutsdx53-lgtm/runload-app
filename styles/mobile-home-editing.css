@@ -130,12 +130,17 @@
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
-    touch-action: pan-y;
+    touch-action: none;
   }
 
-  .mobile-home-os.is-home-editing .mobile-home-page-viewport {
+  .mobile-home-os.is-home-editing .mobile-home-page-viewport,
+  .mobile-home-os.is-home-drag-active .mobile-home-page-viewport {
     overflow-x: hidden;
     scroll-snap-type: none;
+  }
+
+  .mobile-home-os.is-home-drag-active {
+    overscroll-behavior: none;
   }
 
   .mobile-home-os [data-home-edit-toggle] {
@@ -219,7 +224,9 @@
   }
 
   .mobile-home-os .is-home-pressing .mobile-home-app__icon,
-  .mobile-home-os .is-home-pressing .mobile-home-dock__icon {
+  .mobile-home-os .is-home-pressing .mobile-home-dock__icon,
+  .mobile-home-os .is-home-drag-armed .mobile-home-app__icon,
+  .mobile-home-os .is-home-drag-armed .mobile-home-dock__icon {
     transform: scale(.92) translateY(1px);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, .55),
