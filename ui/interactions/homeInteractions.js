@@ -50,6 +50,7 @@ const OPTIONAL_APP_CATALOG = Object.freeze([
   Object.freeze({ id: "departure-check", label: "出発チェック", description: "出発前の準備を確認" }),
   Object.freeze({ id: "fuel-note", label: "補給メモ", description: "水分や補給を時刻付きで記録" }),
   Object.freeze({ id: "photo-note", label: "写真メモ", description: "自分の写真と短いメモを端末内に保存" }),
+  Object.freeze({ id: "pace-tool", label: "ペース換算", description: "距離と時間からペースを換算" }),
 ]);
 const OPTIONAL_ITEM_IDS = Object.freeze(OPTIONAL_APP_CATALOG.map((item) => item.id));
 
@@ -65,6 +66,7 @@ const ITEM_ID_BY_HREF = Object.freeze([
   ["#/departure-check", "departure-check"],
   ["#/fuel-note", "fuel-note"],
   ["#/photo-note", "photo-note"],
+  ["#/pace-tool", "pace-tool"],
   ["#/record-input", "record"],
   ["#/run-measurement", "measure"],
   ["#/history", "history"],
