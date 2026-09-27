@@ -12,6 +12,7 @@ let pointerId = null;
 let pointerType = "touch";
 let root = null;
 let gestureTarget = null;
+let dragOrigin = null;
 let startX = 0;
 let startY = 0;
 let lastY = 0;
@@ -54,6 +55,7 @@ function resetGesture() {
   pointerType = "touch";
   root = null;
   gestureTarget = null;
+  dragOrigin = null;
   editScrolling = false;
 }
 
@@ -142,23 +144,6 @@ function dragScrollSpeedForPoint(clientX, clientY) {
   return 0;
 }
 
-function adoptActiveDrag(event) {
-  if (pointerId != null || dispatchingSyntheticEvent || !mobileLayoutMatches()) return;
-  const activeRoot = event.target.closest?.(".mobile-home-os.is-home-drag-active") || document.querySelector(".mobile-home-os.is-home-drag-active");
-  if (!activeRoot) return;
-  const draggingTarget = event.target.closest?.(".is-home-dragging, .is-home-widget-dragging")
-    || activeRoot.querySelector(".is-home-dragging, .is-home-widget-dragging");
-  if (!draggingTarget) return;
-
-  pointerId = event.pointerId;
-  pointerType = event.pointerType || "touch";
-  root = activeRoot;
-  gestureTarget = draggingTarget;
-  lastY = event.clientY;
-  lastClientX = event.clientX;
-  lastClientY = event.clientY;
-}
-
 function homeGridToken(element) {
   const appId = element?.dataset?.homeItemId || "";
   if (appId) return `app:${appId}`;
@@ -173,12 +158,71 @@ function placementOf(element) {
   };
 }
 
+function samePlacement(left, right) {
+  return Boolean(left && right && left.row === right.row && left.col === right.col);
+}
+
+function captureDragOrigin(homeRoot, target) {
+  if (!homeRoot || !target?.dataset?.homeItemId || target.closest(".mobile-home-dock")) {
+    dragOrigin = null;
+    return;
+  }
+  const page = target.closest(".mobile-home-page");
+  if (!page) {
+    dragOrigin = null;
+    return;
+  }
+  dragOrigin = {
+    source: target,
+    page,
+    placement: placementOf(target),
+  };
+}
+
+function adoptActiveDrag(event) {
+  if (pointerId != null || dispatchingSyntheticEvent || !mobileLayoutMatches()) return;
+  const activeRoot = event.target.closest?.(".mobile-home-os.is-home-drag-active") || document.querySelector(".mobile-home-os.is-home-drag-active");
+  if (!activeRoot) return;
+  const draggingTarget = event.target.closest?.(".is-home-dragging, .is-home-widget-dragging")
+    || activeRoot.querySelector(".is-home-dragging, .is-home-widget-dragging");
+  if (!draggingTarget) return;
+
+  pointerId = event.pointerId;
+  pointerType = event.pointerType || "touch";
+  root = activeRoot;
+  gestureTarget = draggingTarget;
+  captureDragOrigin(activeRoot, draggingTarget);
+  lastY = event.clientY;
+  lastClientX = event.clientX;
+  lastClientY = event.clientY;
+}
+
 function applyIconPlacement(element, placement) {
   if (!element || !placement) return;
   element.dataset.homeRow = String(placement.row);
   element.dataset.homeCol = String(placement.col);
   element.style.gridRow = `${placement.row} / span 1`;
   element.style.gridColumn = `${placement.col} / span 1`;
+}
+
+function clearGridPlacement(element) {
+  if (!element) return;
+  element.style.removeProperty("grid-row");
+  element.style.removeProperty("grid-column");
+  delete element.dataset.homeRow;
+  delete element.dataset.homeCol;
+}
+
+function normalizeDockPlacements(homeRoot) {
+  homeRoot?.querySelectorAll(".mobile-home-dock [data-home-item-id]").forEach(clearGridPlacement);
+}
+
+function swapDomPositions(source, target) {
+  if (!source || !target || source === target || source.parentNode !== target.parentNode) return;
+  const marker = document.createComment("mobile-home-icon-swap");
+  source.replaceWith(marker);
+  target.replaceWith(source);
+  marker.replaceWith(target);
 }
 
 function persistHomePositions(homeRoot) {
@@ -212,27 +256,49 @@ function iconSwapCandidate(event) {
   const targetPage = target.closest(".mobile-home-page");
   if (!sourcePage || sourcePage !== targetPage) return null;
 
+  const sourcePlacement = dragOrigin?.source === source && dragOrigin.page === sourcePage
+    ? { ...dragOrigin.placement }
+    : placementOf(source);
+  const targetPlacement = placementOf(target);
+  if (samePlacement(sourcePlacement, targetPlacement)) return null;
+
   return {
     homeRoot: root,
     source,
     target,
-    sourcePlacement: placementOf(source),
-    targetPlacement: placementOf(target),
+    page: sourcePage,
+    sourcePlacement,
+    targetPlacement,
   };
 }
 
-function scheduleIconSwap(event) {
-  const candidate = iconSwapCandidate(event);
-  if (!candidate) return;
-  const { homeRoot, source, target, sourcePlacement, targetPlacement } = candidate;
-  queueMicrotask(() => {
-    if (!homeRoot.isConnected || !source.isConnected || !target.isConnected) return;
-    if (source.closest(".mobile-home-dock") || target.closest(".mobile-home-dock")) return;
-    if (source.closest(".mobile-home-page") !== target.closest(".mobile-home-page")) return;
-    applyIconPlacement(source, targetPlacement);
-    applyIconPlacement(target, sourcePlacement);
-    persistHomePositions(homeRoot);
-  });
+function finalizeDrop(homeRoot, swapCandidate) {
+  if (!homeRoot?.isConnected) return;
+  normalizeDockPlacements(homeRoot);
+
+  if (swapCandidate) {
+    const { source, target, page, sourcePlacement, targetPlacement } = swapCandidate;
+    const stillValid = source.isConnected
+      && target.isConnected
+      && !source.closest(".mobile-home-dock")
+      && !target.closest(".mobile-home-dock")
+      && source.closest(".mobile-home-page") === page
+      && target.closest(".mobile-home-page") === page;
+    if (stillValid) {
+      swapDomPositions(source, target);
+      applyIconPlacement(source, targetPlacement);
+      applyIconPlacement(target, sourcePlacement);
+    }
+  }
+
+  persistHomePositions(homeRoot);
+}
+
+function scheduleDropFinalization(event) {
+  const homeRoot = root;
+  if (!homeRoot?.isConnected) return;
+  const swapCandidate = iconSwapCandidate(event);
+  Promise.resolve().then(() => finalizeDrop(homeRoot, swapCandidate));
 }
 
 function hideFreePlacementPreviewForIconTarget() {
@@ -255,6 +321,7 @@ function handlePointerDown(event) {
   pointerType = event.pointerType || "touch";
   root = homeRoot;
   gestureTarget = target;
+  captureDragOrigin(homeRoot, target);
   startX = event.clientX;
   startY = event.clientY;
   lastY = event.clientY;
@@ -307,13 +374,15 @@ function handlePointerMoveBubble(event) {
 
 function handlePointerUp(event) {
   if (dispatchingSyntheticEvent || event.pointerId !== pointerId) return;
-  scheduleIconSwap(event);
+  scheduleDropFinalization(event);
   resetGesture();
 }
 
 function handlePointerCancel(event) {
   if (dispatchingSyntheticEvent || event.pointerId !== pointerId) return;
+  const homeRoot = root;
   resetGesture();
+  if (homeRoot?.isConnected) Promise.resolve().then(() => normalizeDockPlacements(homeRoot));
 }
 
 document.addEventListener("pointerdown", handlePointerDown, true);
