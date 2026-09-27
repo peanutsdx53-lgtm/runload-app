@@ -31,6 +31,9 @@ await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
   assert.ok(home.includes('emoji: "🎒"'));
   assert.ok(home.includes('emoji: "✅"'));
   assert.ok(home.includes('emoji: "💧"'));
+  for (const emoji of ['⚖️', '📅', '📖', '📤', '⚙️', '📒', '⏱️', '🕘', '🗺️']) assert.ok(home.includes(`emoji: "${emoji}"`));
+  assert.ok(!home.includes('function mobileHomeIcon'));
+  assert.ok(!home.includes('<svg viewBox="0 0 24 24"'));
   assert.ok(interactions.includes('OPTIONAL_APP_CATALOG'));
   assert.ok(interactions.includes('data-home-app-add-id'));
   assert.ok(interactions.includes('removeOptionalApp'));
@@ -43,7 +46,7 @@ await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
   assert.ok(interactions.includes('.mobile-home-app__icon'));
   assert.ok(interactions.includes('mobile-home-widget-picker__option--app'));
   assert.ok(interactions.includes('mobile-home-widget-picker__option--widget'));
-  assert.ok(css.includes('.mobile-home-widget-picker__app-icon svg'));
+  assert.ok(css.includes('.mobile-home-widget-picker__app-icon .mobile-home-emoji'));
   assert.ok(css.includes('.mobile-home-widget-picker__option--app'));
   assert.ok(css.includes('.mobile-home-widget-picker__option.mobile-home-widget-picker__option--app > b'));
   assert.ok(read('styles/mobile-home.css').includes('.mobile-home-emoji'));
