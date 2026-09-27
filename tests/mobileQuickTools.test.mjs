@@ -70,10 +70,16 @@ await test('MOBILE-HOME-ALL-APP-LAUNCHERS-ARE-REMOVABLE-AND-RESTORABLE', () => {
 
 await test('MOBILE-HOME-NESTED-LAUNCH-LINK-SUPPRESSES-IOS-LINK-CALLOUT', () => {
   const home = read('screens/homeScreen.js');
+  const interactions = read('ui/interactions/homeInteractions.js');
   const css = read('styles/mobile-quick-tools.css');
   assert.ok(home.includes('class="mobile-home-app__launch"'));
   assert.ok(css.includes('.mobile-home-app__launch'));
   assert.ok(css.includes('-webkit-touch-callout: none !important'));
+  assert.ok(home.includes('data-home-launch data-home-href='));
+  assert.ok(home.includes('role=\"link\" tabindex=\"0\"'));
+  assert.ok(!home.includes('<a class=\"mobile-home-app__launch\"'));
+  assert.ok(interactions.includes('function openHomeLauncher(launcher)'));
+  assert.ok(interactions.includes('globalThis.location.hash = href.slice(1)'));
 });
 
 await test('MOBILE-QUICK-TOOLS-HAVE-ROUTES-AND-HOME-BACK-NAVIGATION', () => {
