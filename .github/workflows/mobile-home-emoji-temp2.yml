@@ -1,0 +1,119 @@
+name: Mobile home emoji icon temporary validation v2
+
+on:
+  push:
+    branches:
+      - refine/mobile-home-emoji-icons-20260927
+    paths:
+      - .github/workflows/mobile-home-emoji-temp2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Replace mobile home SVG icons with Unicode emoji
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          home = Path('screens/homeScreen.js')
+          text = home.read_text(encoding='utf-8')
+          pattern = r'function mobileHomeIcon\(name\) \{.*?\n\}\n\nfunction renderMobileLauncherItem\(\{ href, label, icon, emoji = "", tone = "blue", dock = false, optional = false \}\) \{\n'
+          replacement = 'function renderMobileLauncherItem({ href, label, emoji, tone = "blue", dock = false, optional = false }) {\n'
+          text, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit(f'expected one mobileHomeIcon block, found {count}')
+          old = '  const iconMarkup = emoji ? `<span class="mobile-home-emoji" aria-hidden="true">${escapeHtml(emoji)}</span>` : mobileHomeIcon(icon);\n'
+          new = '  const iconMarkup = `<span class="mobile-home-emoji" aria-hidden="true">${escapeHtml(emoji)}</span>`;\n'
+          if text.count(old) != 1:
+              raise SystemExit('icon markup anchor mismatch')
+          text = text.replace(old, new, 1)
+          replacements = {
+              '{ href: "#/simulation?from=home", label: "条件比較", icon: "simulation", tone: "violet" }': '{ href: "#/simulation?from=home", label: "条件比較", emoji: "⚖️", tone: "violet" }',
+              '{ href: "#/plan", label: "予定", icon: "plan", tone: "orange" }': '{ href: "#/plan", label: "予定", emoji: "📅", tone: "orange" }',
+              '{ href: "#/reading?origin=home", label: "読みもの", icon: "reading", tone: "green" }': '{ href: "#/reading?origin=home", label: "読みもの", emoji: "📖", tone: "green" }',
+              '{ href: "#/consultation?from=home", label: "共有", icon: "share", tone: "cyan" }': '{ href: "#/consultation?from=home", label: "共有", emoji: "📤", tone: "cyan" }',
+              '{ href: "#/settings?from=home", label: "設定", icon: "settings", tone: "gray" }': '{ href: "#/settings?from=home", label: "設定", emoji: "⚙️", tone: "gray" }',
+              '{ href: "#/record-input", label: "記録", icon: "record", tone: "blue" }': '{ href: "#/record-input", label: "記録", emoji: "📒", tone: "blue" }',
+              '{ href: "#/run-measurement", label: "測定", icon: "measure", tone: "red" }': '{ href: "#/run-measurement", label: "測定", emoji: "⏱️", tone: "red" }',
+              '{ href: "#/history", label: "履歴", icon: "history", tone: "indigo" }': '{ href: "#/history", label: "履歴", emoji: "🕘", tone: "indigo" }',
+              '{ href: "#/course-library?returnTo=%23%2Fhome", label: "コース", icon: "course", tone: "green" }': '{ href: "#/course-library?returnTo=%23%2Fhome", label: "コース", emoji: "🗺️", tone: "green" }',
+          }
+          for old_value, new_value in replacements.items():
+              if text.count(old_value) != 1:
+                  raise SystemExit(f'launcher anchor mismatch: {old_value}')
+              text = text.replace(old_value, new_value, 1)
+          home.write_text(text, encoding='utf-8')
+
+          css = Path('styles/mobile-home.css')
+          text = css.read_text(encoding='utf-8')
+          text, count = re.subn(r'\n  \.mobile-home-app__icon svg,\n  \.mobile-home-dock__icon svg \{.*?\n  \}\n', '\n', text, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit('shared svg CSS block mismatch')
+          text, count = re.subn(r'\n  \.mobile-home-dock__icon svg \{\n    width: 27px;\n    height: 27px;\n  \}\n', '\n', text, count=1)
+          if count != 1:
+              raise SystemExit('dock svg CSS block mismatch')
+          css.write_text(text, encoding='utf-8')
+
+          edit_css = Path('styles/mobile-home-editing.css')
+          text = edit_css.read_text(encoding='utf-8')
+          text, count = re.subn(r'\n  \.mobile-home-widget-picker__app-icon svg \{.*?\n  \}\n', '\n', text, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit('picker svg CSS block mismatch')
+          edit_css.write_text(text, encoding='utf-8')
+
+          test_file = Path('tests/mobileQuickTools.test.mjs')
+          text = test_file.read_text(encoding='utf-8')
+          anchor = '  assert.ok(home.includes(\'emoji: "💧"\'));\n'
+          extra = anchor + '  for (const emoji of [\'⚖️\', \'📅\', \'📖\', \'📤\', \'⚙️\', \'📒\', \'⏱️\', \'🕘\', \'🗺️\']) assert.ok(home.includes(`emoji: "${emoji}"`));\n  assert.ok(!home.includes(\'function mobileHomeIcon\'));\n  assert.ok(!home.includes(\'<svg viewBox="0 0 24 24"\'));\n'
+          if text.count(anchor) != 1:
+              raise SystemExit('emoji test anchor mismatch')
+          text = text.replace(anchor, extra, 1)
+          old_assert = "  assert.ok(css.includes('.mobile-home-widget-picker__app-icon svg'));\n"
+          new_assert = "  assert.ok(css.includes('.mobile-home-widget-picker__app-icon .mobile-home-emoji'));\n"
+          if text.count(old_assert) != 1:
+              raise SystemExit('picker test anchor mismatch')
+          text = text.replace(old_assert, new_assert, 1)
+          test_file.write_text(text, encoding='utf-8')
+          PY
+          git rm .github/workflows/mobile-home-emoji-temp.yml .github/workflows/mobile-home-emoji-temp2.yml
+      - name: Validate JavaScript syntax
+        run: |
+          set -euo pipefail
+          find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Run regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Validate icon contract and diff
+        run: |
+          set -euo pipefail
+          git diff --check
+          grep -q 'emoji: "⚖️"' screens/homeScreen.js
+          grep -q 'emoji: "📒"' screens/homeScreen.js
+          grep -q 'emoji: "🗺️"' screens/homeScreen.js
+          if grep -q 'function mobileHomeIcon' screens/homeScreen.js; then exit 1; fi
+          if grep -q '<svg viewBox="0 0 24 24"' screens/homeScreen.js; then exit 1; fi
+          if grep -q 'mobile-home-app__icon svg' styles/mobile-home.css; then exit 1; fi
+          if grep -q 'mobile-home-widget-picker__app-icon svg' styles/mobile-home-editing.css; then exit 1; fi
+          test ! -e .github/workflows/mobile-home-emoji-temp.yml
+          test ! -e .github/workflows/mobile-home-emoji-temp2.yml
+      - name: Commit validated changes
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Use emoji icons across mobile home"
+          git push origin HEAD:refine/mobile-home-emoji-icons-20260927
