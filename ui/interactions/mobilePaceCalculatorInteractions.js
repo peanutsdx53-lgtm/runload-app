@@ -3,7 +3,7 @@ function numberValue(form, name) {
   return Number.isFinite(value) ? value : 0;
 }
 
-function formatDuration(totalSeconds) {
+export function formatPaceDuration(totalSeconds) {
   const seconds = Math.max(0, Math.round(Number(totalSeconds) || 0));
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -12,7 +12,7 @@ function formatDuration(totalSeconds) {
   return `${minutes}:${String(remainder).padStart(2, "0")}`;
 }
 
-function formatPace(secondsPerKm) {
+export function formatSecondsPerKm(secondsPerKm) {
   const rounded = Math.max(0, Math.round(Number(secondsPerKm) || 0));
   const minutes = Math.floor(rounded / 60);
   const seconds = rounded % 60;
@@ -25,12 +25,26 @@ function splitInterval(distanceKm) {
   return 5;
 }
 
-function splitPoints(distanceKm) {
+export function paceSplitPoints(distanceKm) {
   const interval = splitInterval(distanceKm);
   const points = [];
   for (let point = interval; point < distanceKm - 1e-9; point += interval) points.push(point);
   points.push(distanceKm);
   return points;
+}
+
+export function calculatePaceSummary(distanceKm, totalSeconds) {
+  const distance = Number(distanceKm);
+  const duration = Number(totalSeconds);
+  if (!(distance > 0) || distance > 100 || !(duration > 0) || duration > 24 * 3600) return null;
+  const secondsPerKm = duration / distance;
+  return Object.freeze({
+    distanceKm: distance,
+    totalSeconds: duration,
+    secondsPerKm,
+    speedKmh: distance / (duration / 3600),
+    splitPoints: Object.freeze(paceSplitPoints(distance)),
+  });
 }
 
 function setStatus(root, message = "", state = "") {
@@ -57,21 +71,21 @@ function calculate(root, form) {
     return;
   }
 
-  const secondsPerKm = totalSeconds / distanceKm;
-  const speedKmh = distanceKm / (totalSeconds / 3600);
+  const summary = calculatePaceSummary(distanceKm, totalSeconds);
+  if (!summary) return;
   const average = root.querySelector("[data-mobile-pace-average]");
   const speed = root.querySelector("[data-mobile-pace-speed]");
   const splits = root.querySelector("[data-mobile-pace-splits]");
   const result = root.querySelector("[data-mobile-pace-result]");
   if (!average || !speed || !splits || !result) return;
 
-  average.textContent = formatPace(secondsPerKm);
-  speed.textContent = speedKmh.toFixed(1);
-  splits.innerHTML = splitPoints(distanceKm).map((point) => {
-    const isFinish = Math.abs(point - distanceKm) < 1e-9;
-    const label = isFinish ? `${Number(distanceKm.toFixed(3))} km` : `${Number(point.toFixed(1))} km`;
-    const cumulative = totalSeconds * (point / distanceKm);
-    return `<div class="mobile-pace-split-row"><span>${label}</span><strong>${formatDuration(cumulative)}</strong>${isFinish ? '<small>ゴール</small>' : ""}</div>`;
+  average.textContent = formatSecondsPerKm(summary.secondsPerKm);
+  speed.textContent = summary.speedKmh.toFixed(1);
+  splits.innerHTML = summary.splitPoints.map((point) => {
+    const isFinish = Math.abs(point - summary.distanceKm) < 1e-9;
+    const label = isFinish ? `${Number(summary.distanceKm.toFixed(3))} km` : `${Number(point.toFixed(1))} km`;
+    const cumulative = summary.totalSeconds * (point / summary.distanceKm);
+    return `<div class="mobile-pace-split-row"><span>${label}</span><strong>${formatPaceDuration(cumulative)}</strong>${isFinish ? '<small>ゴール</small>' : ""}</div>`;
   }).join("");
   result.hidden = false;
   setStatus(root, "換算しました。", "success");
