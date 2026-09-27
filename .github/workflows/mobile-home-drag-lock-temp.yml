@@ -1,0 +1,54 @@
+name: Mobile home drag lock temporary validation
+
+on:
+  push:
+    branches:
+      - fix/mobile-home-drag-lock-20260927
+    paths:
+      - .github/workflows/mobile-home-drag-lock-temp.yml
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply focused patch
+        run: python3 .github/scripts/mobile-home-drag-lock-patch.py
+      - name: Remove temporary files
+        run: git rm .github/scripts/mobile-home-drag-lock-patch.py .github/workflows/mobile-home-drag-lock-temp.yml
+      - name: JavaScript syntax
+        run: |
+          set -euo pipefail
+          find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Focused contracts
+        run: |
+          set -euo pipefail
+          git diff --check
+          grep -q 'const DRAG_START_PX = 10;' ui/interactions/homeInteractions.js
+          grep -q 'function armDrag(target, kind)' ui/interactions/homeInteractions.js
+          grep -q 'target.setPointerCapture(event.pointerId)' ui/interactions/homeInteractions.js
+          grep -q 'finishDrag({ clientX: lastX, clientY: lastY });' ui/interactions/homeInteractions.js
+          grep -q 'touch-action: none;' styles/mobile-home-editing.css
+          grep -q 'is-home-drag-active' styles/mobile-home-editing.css
+          test ! -e .github/scripts/mobile-home-drag-lock-patch.py
+          test ! -e .github/workflows/mobile-home-drag-lock-temp.yml
+      - name: Commit validated changes
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Stabilize mobile home drag interaction"
+          git push origin HEAD:fix/mobile-home-drag-lock-20260927
