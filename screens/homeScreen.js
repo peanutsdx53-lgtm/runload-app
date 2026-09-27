@@ -177,6 +177,7 @@ function renderMobileHomeOs({ services, latestExperience, draft }) {
     { href: "#/departure-check", label: "出発チェック", emoji: "✅", tone: "green", optional: true },
     { href: "#/fuel-note", label: "補給メモ", emoji: "💧", tone: "cyan", optional: true },
     { href: "#/photo-note", label: "写真メモ", emoji: "📷", tone: "gray", optional: true },
+    { href: "#/pace-tool", label: "ペース換算", emoji: "🧮", tone: "violet", optional: true },
   ];
   const dock = [
     { href: "#/record-input", label: "記録", emoji: "📒", tone: "blue" },
