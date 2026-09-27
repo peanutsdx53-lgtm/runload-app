@@ -14,7 +14,7 @@ const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const LONG_PRESS_MS = 380;
 const TAP_SLOP_PX = 8;
-const VERTICAL_SCROLL_CANCEL_PX = 18;
+const DRAG_START_PX = 10;
 const MAX_HOME_PAGES = 4;
 const PAGE_EDGE_PX = 16;
 const PAGE_EDGE_DELAY_MS = 850;
@@ -781,6 +781,7 @@ export function bindHome(context = {}) {
   let lastX = 0;
   let lastY = 0;
   let pressMoved = false;
+  let dragArmed = false;
   let dragging = false;
   let ghost = null;
   let dropItem = null;
@@ -979,7 +980,7 @@ export function bindHome(context = {}) {
   }
 
   function clearPressState() {
-    pressTarget?.classList.remove("is-home-pressing");
+    pressTarget?.classList.remove("is-home-pressing", "is-home-drag-armed");
   }
 
   function closeWidgetPicker() {
@@ -1086,16 +1087,35 @@ export function bindHome(context = {}) {
     ghost?.remove();
     ghost = null;
     dragging = false;
+    dragArmed = false;
+    root.classList.remove("is-home-drag-active");
     suppressClickUntil = Date.now() + 350;
     try { pressTarget.releasePointerCapture(pointerId); } catch {}
   }
 
+  function armDrag(target, kind) {
+    if (!target || dragging) return;
+    cancelPressTimer();
+    setEditing(true);
+    dragArmed = true;
+    pressTarget = target;
+    pressKind = kind;
+    startX = lastX;
+    startY = lastY;
+    pressMoved = false;
+    target.classList.remove("is-home-pressing");
+    target.classList.add("is-home-drag-armed");
+    suppressClickUntil = Date.now() + 800;
+  }
+
   function beginDrag(target, event, kind) {
     if (!target || dragging) return;
-    target.classList.remove("is-home-pressing");
+    target.classList.remove("is-home-pressing", "is-home-drag-armed");
     setEditing(true);
     setActivePage(activePage, { smooth: false });
+    dragArmed = false;
     dragging = true;
+    root.classList.add("is-home-drag-active");
     pressTarget = target;
     pressKind = kind;
     pointerId = event.pointerId;
@@ -1133,17 +1153,13 @@ export function bindHome(context = {}) {
     lastY = event.clientY;
     pressMoved = false;
     target.classList.add("is-home-pressing");
+    try { target.setPointerCapture(event.pointerId); } catch {}
     if (editing) {
       event.preventDefault();
-      beginDrag(target, event, kind);
+      armDrag(target, kind);
       return;
     }
-    const activePointerId = event.pointerId;
-    pressTimer = setTimeout(() => beginDrag(target, {
-      pointerId: activePointerId,
-      clientX: lastX,
-      clientY: lastY,
-    }, kind), LONG_PRESS_MS);
+    pressTimer = setTimeout(() => armDrag(target, kind), LONG_PRESS_MS);
   }
 
   function handlePointerMove(event) {
@@ -1153,9 +1169,16 @@ export function bindHome(context = {}) {
     if (!dragging) {
       const dx = event.clientX - startX;
       const dy = event.clientY - startY;
-      if (Math.hypot(dx, dy) > TAP_SLOP_PX) pressMoved = true;
-      if (Math.abs(dy) > VERTICAL_SCROLL_CANCEL_PX && Math.abs(dy) > Math.abs(dx)) cancelPendingPress();
-      return;
+      const distance = Math.hypot(dx, dy);
+      if (distance > TAP_SLOP_PX) pressMoved = true;
+      if (!dragArmed) {
+        if (distance > TAP_SLOP_PX) cancelPressTimer();
+        return;
+      }
+      event.preventDefault();
+      if (distance < DRAG_START_PX) return;
+      beginDrag(pressTarget, event, pressKind);
+      if (!dragging) return;
     }
     event.preventDefault();
     moveGhost(ghost, event.clientX, event.clientY);
@@ -1172,32 +1195,40 @@ export function bindHome(context = {}) {
   function handlePointerUp(event) {
     if (event.pointerId !== pointerId) return;
     const moved = pressMoved;
+    const wasArmed = dragArmed;
     cancelPressTimer();
     if (dragging) {
       event.preventDefault();
       finishDrag(event);
     } else {
       clearPressState();
-      if (moved) {
+      if (moved || wasArmed) {
         event.preventDefault();
         suppressClickUntil = Date.now() + 350;
       }
+      try { pressTarget?.releasePointerCapture(pointerId); } catch {}
     }
     pointerId = null;
     pressTarget = null;
     pressKind = "";
     pressMoved = false;
+    dragArmed = false;
   }
 
   function handlePointerCancel(event) {
     if (event.pointerId !== pointerId) return;
     cancelPressTimer();
-    if (dragging) finishDrag(event, true);
-    clearPressState();
+    if (dragging) {
+      finishDrag({ clientX: lastX, clientY: lastY });
+    } else {
+      clearPressState();
+      try { pressTarget?.releasePointerCapture(pointerId); } catch {}
+    }
     pointerId = null;
     pressTarget = null;
     pressKind = "";
     pressMoved = false;
+    dragArmed = false;
   }
 
   function cycleWidgetSize(id) {
@@ -1411,7 +1442,7 @@ export function bindHome(context = {}) {
     if (scrollFrame) cancelAnimationFrame(scrollFrame);
     scrollFrame = requestAnimationFrame(() => {
       scrollFrame = null;
-      if (!viewport.clientWidth || dragging) return;
+      if (!viewport.clientWidth || dragging || dragArmed) return;
       const index = Math.round(viewport.scrollLeft / viewport.clientWidth);
       const bounded = Math.max(0, Math.min(pageElements(root).length - 1, index));
       if (bounded !== activePage) {
