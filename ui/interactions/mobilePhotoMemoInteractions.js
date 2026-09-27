@@ -115,16 +115,42 @@ async function preparePhoto(file) {
   }
 }
 
+function detectImageMime(bytes, fallback = "image/jpeg") {
+  const view = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes || new ArrayBuffer(0));
+  if (view.length >= 3 && view[0] === 0xff && view[1] === 0xd8 && view[2] === 0xff) return "image/jpeg";
+  if (view.length >= 8 && view[0] === 0x89 && view[1] === 0x50 && view[2] === 0x4e && view[3] === 0x47) return "image/png";
+  if (view.length >= 12 && view[0] === 0x52 && view[1] === 0x49 && view[2] === 0x46 && view[3] === 0x46 && view[8] === 0x57 && view[9] === 0x45 && view[10] === 0x42 && view[11] === 0x50) return "image/webp";
+  return String(fallback || "image/jpeg");
+}
+
 async function displayBlobForEntry(entry) {
-  const blob = entry?.blob;
-  if (!(blob instanceof Blob) || !blob.size) return null;
-  const mimeType = String(blob.type || entry?.mimeType || "").toLowerCase();
+  let bytes = null;
+  if (entry?.imageBytes instanceof ArrayBuffer) bytes = entry.imageBytes;
+  else if (ArrayBuffer.isView(entry?.imageBytes)) bytes = entry.imageBytes.buffer.slice(entry.imageBytes.byteOffset, entry.imageBytes.byteOffset + entry.imageBytes.byteLength);
+  else if (entry?.blob instanceof Blob && entry.blob.size) bytes = await entry.blob.arrayBuffer();
+  if (!(bytes instanceof ArrayBuffer) || !bytes.byteLength) return null;
+
+  const mimeType = detectImageMime(bytes, entry?.mimeType || "image/jpeg");
+  const blob = new Blob([bytes], { type: mimeType });
   if (["image/jpeg", "image/png", "image/webp"].includes(mimeType)) return blob;
   try {
     return (await preparePhoto(blob)).blob;
   } catch {
     return blob;
   }
+}
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    if (!(blob instanceof Blob) || !blob.size || typeof FileReader !== "function") {
+      reject(new Error("IMAGE_DATA_URL_FAILED"));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => typeof reader.result === "string" ? resolve(reader.result) : reject(new Error("IMAGE_DATA_URL_FAILED"));
+    reader.onerror = () => reject(reader.error || new Error("IMAGE_DATA_URL_FAILED"));
+    reader.readAsDataURL(blob);
+  });
 }
 
 function ensureViewer(root) {
@@ -182,7 +208,6 @@ export function bindMobilePhotoMemo(context = {}) {
   let prepared = null;
   let previewUrl = "";
   let historyUrls = [];
-  let viewerUrl = "";
   let currentEntries = [];
   let preparing = false;
   const viewer = ensureViewer(root);
@@ -193,19 +218,12 @@ export function bindMobilePhotoMemo(context = {}) {
   };
 
   const revokeHistoryUrls = () => {
-    historyUrls.forEach((url) => URL.revokeObjectURL(url));
     historyUrls = [];
-  };
-
-  const revokeViewerUrl = () => {
-    if (viewerUrl) URL.revokeObjectURL(viewerUrl);
-    viewerUrl = "";
   };
 
   const closeViewer = () => {
     viewer.hidden = true;
     viewer.querySelector("[data-mobile-photo-memo-viewer-image]")?.removeAttribute("src");
-    revokeViewerUrl();
     document.body.classList.remove("mobile-photo-memo-viewer-open");
   };
 
@@ -220,7 +238,7 @@ export function bindMobilePhotoMemo(context = {}) {
       }
       const displayEntries = await Promise.all(entries.map(async (entry) => {
         const blob = await displayBlobForEntry(entry);
-        const url = blob ? URL.createObjectURL(blob) : "";
+        const url = blob ? await blobToDataUrl(blob).catch(() => "") : "";
         if (url) historyUrls.push(url);
         return { entry, url };
       }));
@@ -248,11 +266,10 @@ export function bindMobilePhotoMemo(context = {}) {
     const size = viewer.querySelector("[data-mobile-photo-memo-viewer-size]");
     if (!image || !media || !date || !note || !size) return;
 
-    revokeViewerUrl();
     media.classList.remove("is-image-error");
     const blob = await displayBlobForEntry(entry);
-    if (blob) {
-      viewerUrl = URL.createObjectURL(blob);
+    const viewerUrl = blob ? await blobToDataUrl(blob).catch(() => "") : "";
+    if (viewerUrl) {
       image.src = viewerUrl;
       image.onerror = () => media.classList.add("is-image-error");
     } else {

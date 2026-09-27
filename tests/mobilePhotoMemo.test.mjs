@@ -91,6 +91,17 @@ await test('PHOTO-MEMO-NORMALIZES-NEW-PHOTOS-TO-JPEG', () => {
   assert.ok(interactions.includes('displayBlobForEntry'));
 });
 
+await test('PHOTO-MEMO-STORES-BYTES-AND-DISPLAYS-VIA-DATA-URL', () => {
+  const store = read('ui/mobilePhotoMemoStore.js');
+  const interactions = read('ui/interactions/mobilePhotoMemoInteractions.js');
+  assert.ok(store.includes('const imageBytes = await blob.arrayBuffer()'));
+  assert.ok(store.includes('imageBytes,'));
+  assert.ok(interactions.includes('detectImageMime'));
+  assert.ok(interactions.includes('blobToDataUrl'));
+  assert.ok(interactions.includes('reader.readAsDataURL(blob)'));
+  assert.ok(interactions.includes('entry?.imageBytes instanceof ArrayBuffer'));
+});
+
 await test('PHOTO-MEMO-PWA-ASSETS-ARE-PRECACHED', () => {
   const sw = read('service-worker.js');
   for (const asset of [
