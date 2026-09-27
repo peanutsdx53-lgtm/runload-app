@@ -14,7 +14,7 @@ const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const LONG_PRESS_MS = 380;
 const LAUNCH_ANIMATION_MS = 360;
-const LAUNCH_NAVIGATION_MS = 170;
+const LAUNCH_NAVIGATION_MS = 260;
 const TAP_SLOP_PX = 8;
 const DRAG_START_PX = 10;
 const MAX_HOME_PAGES = 4;
@@ -1376,7 +1376,12 @@ export function bindHome(context = {}) {
     document.body.append(surface);
 
     const removeSurface = () => surface.remove();
-    surface.addEventListener("animationend", removeSurface, { once: true });
+    const handleSurfaceAnimationEnd = (event) => {
+      if (event.target !== surface) return;
+      surface.removeEventListener("animationend", handleSurfaceAnimationEnd);
+      removeSurface();
+    };
+    surface.addEventListener("animationend", handleSurfaceAnimationEnd);
     globalThis.setTimeout(removeSurface, LAUNCH_ANIMATION_MS + 180);
     return surface;
   }
