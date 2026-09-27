@@ -1,0 +1,55 @@
+name: Mobile home native menu validation v2
+
+on:
+  push:
+    branches:
+      - fix/mobile-home-native-link-menu-20260927
+    paths:
+      - .github/workflows/mobile-home-no-native-link-menu-temp2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply patch
+        run: python3 .github/scripts/patch_mobile_home_native_link_menu.py
+      - name: Remove temporary files
+        run: git rm .github/scripts/patch_mobile_home_native_link_menu.py .github/workflows/mobile-home-no-native-link-menu-temp.yml .github/workflows/mobile-home-no-native-link-menu-temp2.yml
+      - name: JavaScript syntax
+        run: find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Focused contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          grep -q 'data-home-launch data-home-href=' screens/homeScreen.js
+          grep -q 'role="link" tabindex="0"' screens/homeScreen.js
+          if grep -q '<a class="mobile-home-app__launch"' screens/homeScreen.js; then exit 1; fi
+          grep -q 'function openHomeLauncher(launcher)' ui/interactions/homeInteractions.js
+          grep -q 'globalThis.location.hash = href.slice(1)' ui/interactions/homeInteractions.js
+          test ! -e .github/scripts/patch_mobile_home_native_link_menu.py
+          test ! -e .github/workflows/mobile-home-no-native-link-menu-temp.yml
+          test ! -e .github/workflows/mobile-home-no-native-link-menu-temp2.yml
+      - name: Commit validated changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Avoid native link menus on mobile home"
+          git push origin HEAD:fix/mobile-home-native-link-menu-20260927
