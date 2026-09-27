@@ -53,3 +53,5 @@ jobs:
           git add -A
           git commit -m "Avoid native link menus on mobile home"
           git push origin HEAD:fix/mobile-home-native-link-menu-20260927
+
+# retry after test patch correction
