@@ -1594,7 +1594,6 @@ export function bindHome(context = {}) {
     pageSwipeStartLeft = viewport.scrollLeft;
     pageSwipeStartTime = globalThis.performance?.now?.() ?? Date.now();
     pageSwipeHorizontal = false;
-    try { viewport.setPointerCapture(event.pointerId); } catch {}
   }
 
   function claimPageSwipe() {
@@ -1629,6 +1628,7 @@ export function bindHome(context = {}) {
       if (absX < 8) return;
       pageSwipeHorizontal = true;
       claimPageSwipe();
+      try { viewport.setPointerCapture(event.pointerId); } catch {}
       root.classList.add("is-home-page-swiping");
     }
     event.preventDefault();

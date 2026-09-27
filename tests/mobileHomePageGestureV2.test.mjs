@@ -28,6 +28,10 @@ test('PAGE-SWIPE-WINS-BEFORE-DRAG-AND-BLOCKS-NAVIGATION', () => {
   assert.ok(source.includes('function claimPageSwipe()'));
   assert.ok(source.includes('navigationSurface && (editing || Date.now() < suppressClickUntil)'));
   assert.ok(source.includes('suppressClickUntil = Date.now() + 700;'));
+  const down = source.slice(source.indexOf('function handlePagePointerDown'), source.indexOf('function claimPageSwipe'));
+  const move = source.slice(source.indexOf('function handlePagePointerMove'), source.indexOf('function finishPageSwipe'));
+  assert.equal(down.includes('viewport.setPointerCapture'), false);
+  assert.ok(move.includes('viewport.setPointerCapture(event.pointerId)'));
 });
 
 test('EDIT-CONTROLS-ARE-HANDLED-BEFORE-NAVIGATION-GUARD', () => {
