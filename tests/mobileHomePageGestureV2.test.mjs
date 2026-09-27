@@ -39,25 +39,29 @@ test('EDIT-CONTROLS-ARE-HANDLED-BEFORE-NAVIGATION-GUARD', () => {
   assert.ok(source.indexOf('[data-home-widget-resize]') < source.indexOf('const navigationSurface'));
 });
 
-test('PAGE-SWIPE-IS-RESPONSIVE-AND-FINGER-TRACKED', () => {
+test('NORMAL-MODE-USES-NATIVE-IOS-HORIZONTAL-PAGING', () => {
+  assert.ok(css.includes('scroll-snap-type: x mandatory;'));
+  assert.ok(css.includes('-webkit-overflow-scrolling: touch;'));
+  assert.ok(css.includes('touch-action: pan-x pan-y;'));
+  const down = source.slice(source.indexOf('function handlePagePointerDown'), source.indexOf('function claimPageSwipe'));
+  assert.ok(down.includes('if (!editing) return;'));
+});
+
+test('EDIT-MODE-KEEPS-CUSTOM-HORIZONTAL-SWIPE-AND-DRAG-SEPARATE', () => {
   assert.ok(source.includes('Math.min(56, width * 0.12)'));
   assert.ok(source.includes('velocity >= 0.28'));
   assert.ok(source.includes('pageSwipeStartLeft - dx'));
-  assert.ok(source.includes('function updatePageMotionVisuals()'));
-  assert.ok(source.includes('const duration = 280;'));
-});
-
-test('NORMAL-ITEM-TOUCH-ALLOWS-VERTICAL-PAN', () => {
-  const block = css.slice(css.indexOf('.mobile-home-os [data-home-item-id]'), css.indexOf('.mobile-home-os.is-home-drag-active'));
-  assert.ok(block.includes('touch-action: pan-y;'));
+  assert.ok(source.includes('const duration = 180;'));
+  assert.ok(css.includes('.mobile-home-os.is-home-editing .mobile-home-page-viewport'));
+  assert.ok(css.includes('touch-action: pan-y;'));
   assert.ok(css.includes('.mobile-home-os.is-home-editing [data-home-item-id]'));
   assert.ok(css.includes('touch-action: none;'));
 });
 
-test('PAGE-MOTION-HAS-SUBTLE-SEAMLESS-VISUAL', () => {
-  assert.ok(css.includes('will-change: transform, opacity;'));
-  assert.ok(source.includes('page.style.transform = `scale('));
-  assert.ok(source.includes('page.style.opacity = String('));
+test('PAGE-MOTION-AVOIDS-PER-FRAME-SCALE-AND-OPACITY-WORK', () => {
+  assert.equal(source.includes('function updatePageMotionVisuals()'), false);
+  assert.equal(source.includes('page.style.transform = `scale('), false);
+  assert.equal(css.includes('will-change: transform, opacity;'), false);
 });
 
 test('RETURN-INDICATOR-NEVER-CHANGES-POSITION', () => {

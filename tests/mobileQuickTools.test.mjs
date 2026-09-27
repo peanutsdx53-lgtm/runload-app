@@ -48,7 +48,9 @@ await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
   assert.ok(interactions.includes('mobile-home-widget-picker__option--widget'));
   assert.ok(css.includes('.mobile-home-widget-picker__app-icon .mobile-home-emoji'));
   assert.ok(css.includes('.mobile-home-widget-picker__option--app'));
-  assert.ok(css.includes('.mobile-home-widget-picker__option.mobile-home-widget-picker__option--app > b'));
+  assert.ok(css.includes('.mobile-home-widget-picker__option--app > .mobile-home-widget-picker__add'));
+  assert.ok(interactions.includes('<div class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app">'));
+  assert.ok(interactions.includes('class="mobile-home-widget-picker__add" data-home-app-add-id='));
   assert.ok(read('styles/mobile-home.css').includes('.mobile-home-emoji'));
 });
 

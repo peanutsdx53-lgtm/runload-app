@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const here = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(here, '..');
+const source = fs.readFileSync(path.join(root, 'ui/interactions/homeInteractions.js'), 'utf8');
+const css = fs.readFileSync(path.join(root, 'styles/mobile-home-editing.css'), 'utf8');
+assert.ok(source.includes('<div class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app">'));
+assert.ok(source.includes('<div class="mobile-home-widget-picker__option mobile-home-widget-picker__option--widget">'));
+assert.ok(source.includes('class="mobile-home-widget-picker__add" data-home-app-add-id='));
+assert.ok(source.includes('class="mobile-home-widget-picker__add" data-home-widget-add-id='));
+assert.equal(source.includes('class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app" data-home-app-add-id='), false);
+assert.equal(source.includes('class="mobile-home-widget-picker__option mobile-home-widget-picker__option--widget" data-home-widget-add-id='), false);
+assert.ok(css.includes('.mobile-home-widget-picker__add'));
+assert.ok(css.includes('min-height: 44px;'));
+console.log(JSON.stringify({ suite: 'Mobile Home Picker Add Control', status: 'PASS' }, null, 2));
