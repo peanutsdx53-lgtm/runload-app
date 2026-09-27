@@ -1,4 +1,5 @@
 const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
+const MOBILE_HOME_MAX_WIDTH_PX = 879;
 const SCROLL_INTENT_PX = 8;
 const SCROLL_INTENT_RATIO = 1.15;
 const DRAG_TOP_EDGE_PX = 88;
@@ -22,7 +23,8 @@ let lastDragTargetRefresh = 0;
 let dispatchingSyntheticEvent = false;
 
 function mobileLayoutMatches() {
-  return globalThis.matchMedia?.(MOBILE_HOME_QUERY)?.matches ?? true;
+  if (typeof globalThis.matchMedia === "function") return globalThis.matchMedia(MOBILE_HOME_QUERY).matches;
+  return Number(globalThis.innerWidth || 0) <= MOBILE_HOME_MAX_WIDTH_PX;
 }
 
 function scrollingElement() {
@@ -102,7 +104,11 @@ function dragAutoScrollStep(now) {
     return;
   }
   const moved = scrollDocumentBy(dragScrollSpeed);
-  if (moved) refreshExistingDragTarget(now);
+  if (!moved) {
+    dragScrollSpeed = 0;
+    return;
+  }
+  refreshExistingDragTarget(now);
   dragScrollFrame = requestAnimationFrame(dragAutoScrollStep);
 }
 
@@ -133,6 +139,23 @@ function dragScrollSpeedForPoint(clientX, clientY) {
     return 2 + Math.round(DRAG_SCROLL_MAX_STEP * ratio * ratio);
   }
   return 0;
+}
+
+function adoptActiveDrag(event) {
+  if (pointerId != null || dispatchingSyntheticEvent || !mobileLayoutMatches()) return;
+  const activeRoot = event.target.closest?.(".mobile-home-os.is-home-drag-active") || document.querySelector(".mobile-home-os.is-home-drag-active");
+  if (!activeRoot) return;
+  const draggingTarget = event.target.closest?.(".is-home-dragging, .is-home-widget-dragging")
+    || activeRoot.querySelector(".is-home-dragging, .is-home-widget-dragging");
+  if (!draggingTarget) return;
+
+  pointerId = event.pointerId;
+  pointerType = event.pointerType || "touch";
+  root = activeRoot;
+  gestureTarget = draggingTarget;
+  lastY = event.clientY;
+  lastClientX = event.clientX;
+  lastClientY = event.clientY;
 }
 
 function handlePointerDown(event) {
@@ -184,7 +207,9 @@ function handlePointerMoveCapture(event) {
 }
 
 function handlePointerMoveBubble(event) {
-  if (dispatchingSyntheticEvent || event.pointerId !== pointerId || !root?.isConnected) return;
+  if (dispatchingSyntheticEvent) return;
+  if (pointerId == null) adoptActiveDrag(event);
+  if (event.pointerId !== pointerId || !root?.isConnected) return;
   lastClientX = event.clientX;
   lastClientY = event.clientY;
   if (!root.classList.contains("is-home-drag-active")) {
