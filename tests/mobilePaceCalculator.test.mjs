@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { calculatePaceSummary, formatSecondsPerKm, formatPaceDuration } from '../ui/interactions/mobilePaceCalculatorInteractions.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
@@ -39,11 +40,21 @@ await test('PACE-TOOL-HAS-ROUTE-BINDER-AND-HOME-NAVIGATION', () => {
   assert.ok(architecture.includes('title: "ペース換算", backHref: "#/home", backLabel: "ホーム"'));
 });
 
+await test('PACE-TOOL-5KM-35MIN-CALCULATION-IS-EXACT', () => {
+  const summary = calculatePaceSummary(5, 35 * 60);
+  assert.ok(summary);
+  assert.equal(summary.secondsPerKm, 420);
+  assert.equal(formatSecondsPerKm(summary.secondsPerKm), '7:00');
+  assert.equal(summary.speedKmh.toFixed(1), '8.6');
+  assert.deepEqual([...summary.splitPoints], [1, 2, 3, 4, 5]);
+  assert.equal(formatPaceDuration(summary.totalSeconds), '35:00');
+});
+
 await test('PACE-TOOL-CALCULATES-LOCALLY-WITHOUT-STORAGE-OR-NETWORK', () => {
   const interactions = read('ui/interactions/mobilePaceCalculatorInteractions.js');
-  assert.ok(interactions.includes('secondsPerKm = totalSeconds / distanceKm'));
-  assert.ok(interactions.includes('speedKmh = distanceKm / (totalSeconds / 3600)'));
-  assert.ok(interactions.includes('splitPoints(distanceKm)'));
+  assert.ok(interactions.includes('const secondsPerKm = duration / distance'));
+  assert.ok(interactions.includes('speedKmh: distance / (duration / 3600)'));
+  assert.ok(interactions.includes('paceSplitPoints(distance)'));
   assert.ok(!interactions.includes('localStorage'));
   assert.ok(!interactions.includes('indexedDB'));
   assert.ok(!interactions.includes('fetch('));
