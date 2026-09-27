@@ -58,12 +58,15 @@ test('HOME-RETURN-SHRINKS-SNAPSHOT-TO-STORED-ICON-POSITION', () => {
   assert.ok(source.includes('RETURN_DURATION_MS = 330'));
 });
 
-test('HOME-RETURN-ANIMATES-HOME-ARRIVAL-AND-TARGET-ICON', () => {
+test('HOME-RETURN-ANIMATES-CONTENT-WITHOUT-TRANSFORMING-HOME-ROOT', () => {
   const source = read('ui/mobileHomeReturnTransition.js');
   assert.ok(source.includes('animateHomeArrival'));
-  assert.ok(source.includes('.mobile-home-os'));
-  assert.ok(source.includes('scale(.975)'));
+  assert.ok(source.includes('.mobile-home-page-viewport'));
+  assert.ok(source.includes('.mobile-home-dock'));
+  assert.ok(source.includes('.mobile-home-page-indicator'));
+  assert.ok(source.includes('scale(.985)'));
   assert.ok(source.includes('scale(1.045)'));
+  assert.equal(source.includes('document.querySelector(".mobile-home-os")'), false);
 });
 
 test('HOME-RETURN-IS-BOUND-TO-SHELL-HOME-LINKS', () => {

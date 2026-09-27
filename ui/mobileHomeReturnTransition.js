@@ -143,30 +143,50 @@ function createReturnVisual(root) {
   return Object.freeze({ backdrop, snapshot });
 }
 
+function animateOnce(element, keyframes, options) {
+  if (!element?.animate) return null;
+  const animation = element.animate(keyframes, { ...options, fill: "none" });
+  animation.finished.then(() => animation.cancel(), () => animation.cancel());
+  return animation;
+}
+
 function animateHomeArrival(state, backdrop) {
-  const home = document.querySelector(".mobile-home-os");
-  if (home?.animate) {
-    home.animate([
-      { transform: "scale(.975)", opacity: .72, filter: "blur(.9px)" },
-      { transform: "scale(1)", opacity: 1, filter: "blur(0)" },
+  const header = document.querySelector(".mobile-home-os__header");
+  const viewport = document.querySelector(".mobile-home-page-viewport");
+  [header, viewport].forEach((element) => {
+    animateOnce(element, [
+      { transform: "translateY(4px) scale(.985)", opacity: .72 },
+      { transform: "translateY(0) scale(1)", opacity: 1 },
     ], {
       duration: RETURN_DURATION_MS,
       easing: RETURN_EASING,
-      fill: "both",
     });
-  }
-  const target = findTargetIcon(String(state?.id || ""));
-  if (target?.animate) {
-    target.animate([
-      { transform: "scale(.88)" },
-      { transform: "scale(1.045)", offset: .68 },
-      { transform: "scale(1)" },
+  });
+
+  const dock = document.querySelector(".mobile-home-dock");
+  const indicator = document.querySelector(".mobile-home-page-indicator");
+  [dock, indicator].forEach((element) => {
+    animateOnce(element, [
+      { transform: "translateY(9px)", opacity: .35 },
+      { transform: "translateY(0)", opacity: 1 },
     ], {
-      duration: 280,
-      delay: 110,
+      duration: 250,
+      delay: 35,
       easing: RETURN_EASING,
     });
-  }
+  });
+
+  const target = findTargetIcon(String(state?.id || ""));
+  animateOnce(target, [
+    { transform: "scale(.88)" },
+    { transform: "scale(1.045)", offset: .68 },
+    { transform: "scale(1)" },
+  ], {
+    duration: 280,
+    delay: 110,
+    easing: RETURN_EASING,
+  });
+
   if (backdrop?.animate) {
     backdrop.animate([{ opacity: 1 }, { opacity: 0 }], {
       duration: 180,
@@ -196,7 +216,6 @@ function runSnapshotReturn(root, state) {
 
   const metrics = targetMetrics(state);
   listenForHomeArrival(state, visual.backdrop);
-  globalThis.location.hash = HOME_QUERY.slice(1);
 
   const animation = visual.snapshot.animate([
     {
@@ -216,6 +235,15 @@ function runSnapshotReturn(root, state) {
     easing: RETURN_EASING,
     fill: "forwards",
   });
+  animation.pause();
+  animation.currentTime = 0;
+
+  const startReturn = () => {
+    animation.play();
+    globalThis.location.hash = HOME_QUERY.slice(1);
+  };
+  if (typeof globalThis.requestAnimationFrame === "function") globalThis.requestAnimationFrame(startReturn);
+  else globalThis.setTimeout(startReturn, 0);
 
   const cleanup = () => {
     visual.snapshot.remove();
