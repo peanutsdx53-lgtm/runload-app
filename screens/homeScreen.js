@@ -126,14 +126,13 @@ function renderPlanCard(services) {
   return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong></div><span class="pill">保存済み</span></div><div class="plan"><strong>${escapeHtml(main)}</strong><span>${escapeHtml(details)}</span></div><a class="card-link" href="#/plan?planId=${encodeURIComponent(plan.id)}"><span>予定を開く</span><span>›</span></a></article>`;
 }
 
-function renderMobileLauncherItem({ href, label, emoji, tone = "blue", dock = false, optional = false }) {
+function renderMobileLauncherItem({ href, label, emoji, tone = "blue", dock = false }) {
   const className = dock ? "mobile-home-dock__item" : "mobile-home-app";
   const iconClass = dock ? "mobile-home-dock__icon" : "mobile-home-app__icon";
   const labelClass = dock ? "mobile-home-dock__label" : "mobile-home-app__label";
   const iconMarkup = `<span class="mobile-home-emoji" aria-hidden="true">${escapeHtml(emoji)}</span>`;
   const content = `<span class="${iconClass} mobile-home-tone--${escapeHtml(tone)}">${iconMarkup}</span><span class="${labelClass}">${escapeHtml(label)}</span>`;
-  if (!optional) return `<a class="${className}" href="${escapeHtml(href)}">${content}</a>`;
-  return `<div class="${className} mobile-home-app--optional" data-home-optional-app><a class="mobile-home-app__launch" href="${escapeHtml(href)}" aria-label="${escapeHtml(label)}">${content}</a><button type="button" class="mobile-home-app-remove" data-home-app-remove aria-label="${escapeHtml(label)}をホームから外す">−</button></div>`;
+  return `<div class="${className} mobile-home-launcher" data-home-launcher><a class="mobile-home-app__launch" href="${escapeHtml(href)}" aria-label="${escapeHtml(label)}">${content}</a><button type="button" class="mobile-home-app-remove" data-home-app-remove aria-label="${escapeHtml(label)}をホームから外す">−</button></div>`;
 }
 
 function renderMobileTodayWidget(experience, draft) {

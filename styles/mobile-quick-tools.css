@@ -587,10 +587,13 @@
     display: none !important;
   }
 
-  .mobile-home-app--optional .mobile-home-app__launch {
+  .mobile-home-app__launch {
     display: contents;
     color: inherit;
     text-decoration: none;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .mobile-home-app-remove {
@@ -613,7 +616,7 @@
     box-shadow: 0 4px 10px rgba(31, 47, 60, .18);
   }
 
-  .mobile-home-os.is-home-editing .mobile-home-app--optional:not(.mobile-home-dock__item) .mobile-home-app-remove {
+  .mobile-home-os.is-home-editing .mobile-home-app-remove {
     display: grid;
     place-items: center;
   }

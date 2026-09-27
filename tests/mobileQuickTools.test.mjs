@@ -34,9 +34,9 @@ await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
   for (const emoji of ['⚖️', '📅', '📖', '📤', '⚙️', '📒', '⏱️', '🕘', '🗺️']) assert.ok(home.includes(`emoji: "${emoji}"`));
   assert.ok(!home.includes('function mobileHomeIcon'));
   assert.ok(!home.includes('<svg viewBox="0 0 24 24"'));
-  assert.ok(interactions.includes('OPTIONAL_APP_CATALOG'));
+  assert.ok(interactions.includes('HOME_APP_CATALOG'));
   assert.ok(interactions.includes('data-home-app-add-id'));
-  assert.ok(interactions.includes('removeOptionalApp'));
+  assert.ok(interactions.includes('removeHomeApp'));
 });
 
 await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
@@ -52,11 +52,28 @@ await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
   assert.ok(read('styles/mobile-home.css').includes('.mobile-home-emoji'));
 });
 
-await test('MOBILE-QUICK-TOOLS-PRESERVE-REQUIRED-HOME-LAYOUT', () => {
+await test('MOBILE-HOME-ALL-APP-LAUNCHERS-ARE-REMOVABLE-AND-RESTORABLE', () => {
+  const home = read('screens/homeScreen.js');
   const interactions = read('ui/interactions/homeInteractions.js');
-  assert.ok(interactions.includes('const REQUIRED_ITEM_IDS'));
-  assert.ok(interactions.includes('REQUIRED_ITEM_IDS.every'));
-  assert.ok(interactions.includes('OPTIONAL_ITEM_IDS'));
+  const css = read('styles/mobile-quick-tools.css');
+  assert.ok(interactions.includes('const HOME_APP_CATALOG'));
+  for (const id of ['simulation', 'plan', 'reading', 'share', 'settings', 'record', 'measure', 'history', 'course', 'pace-tool']) {
+    assert.ok(interactions.includes(`id: "${id}"`), `missing app catalog entry ${id}`);
+  }
+  assert.ok(interactions.includes('function removeHomeApp(id)'));
+  assert.ok(interactions.includes('function addHomeApp(id)'));
+  assert.ok(interactions.includes('dock.length > DEFAULT_LAYOUT.dock.length'));
+  assert.ok(!interactions.includes('REQUIRED_ITEM_IDS.every'));
+  assert.ok(home.includes('data-home-app-remove'));
+  assert.ok(css.includes('.mobile-home-os.is-home-editing .mobile-home-app-remove'));
+});
+
+await test('MOBILE-HOME-NESTED-LAUNCH-LINK-SUPPRESSES-IOS-LINK-CALLOUT', () => {
+  const home = read('screens/homeScreen.js');
+  const css = read('styles/mobile-quick-tools.css');
+  assert.ok(home.includes('class="mobile-home-app__launch"'));
+  assert.ok(css.includes('.mobile-home-app__launch'));
+  assert.ok(css.includes('-webkit-touch-callout: none !important'));
 });
 
 await test('MOBILE-QUICK-TOOLS-HAVE-ROUTES-AND-HOME-BACK-NAVIGATION', () => {

@@ -43,7 +43,16 @@ const DEFAULT_WIDGET_SIZES = Object.freeze({
 });
 const WIDGET_SIZE_LABELS = Object.freeze({ small: "小", medium: "中", large: "大" });
 
-const OPTIONAL_APP_CATALOG = Object.freeze([
+const HOME_APP_CATALOG = Object.freeze([
+  Object.freeze({ id: "simulation", label: "条件比較", description: "条件を変えて比較" }),
+  Object.freeze({ id: "plan", label: "予定", description: "次の予定を作成・確認" }),
+  Object.freeze({ id: "reading", label: "読みもの", description: "走行に関する情報を確認" }),
+  Object.freeze({ id: "share", label: "共有", description: "記録を共有用に整理" }),
+  Object.freeze({ id: "settings", label: "設定", description: "表示や共有情報を設定" }),
+  Object.freeze({ id: "record", label: "記録", description: "走行・休養を記録" }),
+  Object.freeze({ id: "measure", label: "測定", description: "GPSで走行を測定" }),
+  Object.freeze({ id: "history", label: "履歴", description: "保存した記録を確認" }),
+  Object.freeze({ id: "course", label: "コース", description: "コースを保存・確認" }),
   Object.freeze({ id: "location-note", label: "地点メモ", description: "現在地と短いメモを保存" }),
   Object.freeze({ id: "quick-note", label: "1分メモ", description: "気づきを短く残す" }),
   Object.freeze({ id: "gear-note", label: "装備メモ", description: "その日の装備を保存" }),
@@ -52,7 +61,6 @@ const OPTIONAL_APP_CATALOG = Object.freeze([
   Object.freeze({ id: "photo-note", label: "写真メモ", description: "自分の写真と短いメモを端末内に保存" }),
   Object.freeze({ id: "pace-tool", label: "ペース換算", description: "距離と時間からペースを換算" }),
 ]);
-const OPTIONAL_ITEM_IDS = Object.freeze(OPTIONAL_APP_CATALOG.map((item) => item.id));
 
 const ITEM_ID_BY_HREF = Object.freeze([
   ["#/simulation", "simulation"],
@@ -73,8 +81,7 @@ const ITEM_ID_BY_HREF = Object.freeze([
   ["#/course-library", "course"],
 ]);
 
-const REQUIRED_ITEM_IDS = Object.freeze([...DEFAULT_LAYOUT.pages.flat(), ...DEFAULT_LAYOUT.dock]);
-const ALL_ITEM_IDS = Object.freeze([...REQUIRED_ITEM_IDS, ...OPTIONAL_ITEM_IDS]);
+const ALL_ITEM_IDS = Object.freeze(HOME_APP_CATALOG.map((item) => item.id));
 const ALL_ITEM_ID_SET = new Set(ALL_ITEM_IDS);
 
 const APP_TOKEN_PREFIX = "app:";
@@ -265,8 +272,8 @@ function readLayout() {
     const parsed = JSON.parse(globalThis.localStorage?.getItem(STORAGE_KEY) || "null");
     if (!parsed || typeof parsed !== "object") return defaultGridLayout();
 
-    const dock = Array.isArray(parsed.dock) ? parsed.dock.map(String) : [];
-    if (dock.length !== DEFAULT_LAYOUT.dock.length || new Set(dock).size !== dock.length || !dock.every((id) => ALL_ITEM_ID_SET.has(id))) {
+    const dock = Array.isArray(parsed.dock) ? parsed.dock.map(String) : [...DEFAULT_LAYOUT.dock];
+    if (dock.length > DEFAULT_LAYOUT.dock.length || new Set(dock).size !== dock.length || !dock.every((id) => ALL_ITEM_ID_SET.has(id))) {
       return defaultGridLayout();
     }
 
@@ -300,7 +307,6 @@ function readLayout() {
       if (!validTokens
         || new Set(allApps).size !== allApps.length
         || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))
-        || !REQUIRED_ITEM_IDS.every((id) => allApps.includes(id))
         || widgetIds.length !== DEFAULT_WIDGET_ORDER.length
         || new Set(widgetIds).size !== DEFAULT_WIDGET_ORDER.length
         || !widgetIds.every((id) => WIDGET_ID_SET.has(id))) {
@@ -310,8 +316,7 @@ function readLayout() {
       const legacyApps = flattened;
       const allApps = [...legacyApps, ...dock];
       if (new Set(allApps).size !== allApps.length
-        || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))
-        || !REQUIRED_ITEM_IDS.every((id) => allApps.includes(id))) {
+        || !allApps.every((id) => ALL_ITEM_ID_SET.has(id))) {
         return defaultGridLayout();
       }
       const widgetLayout = readWidgetLayout();
@@ -603,6 +608,21 @@ function applyLayout(root, dockContainer, layout = readLayout()) {
     setItemZone(item, "dock");
     dockContainer.append(item);
   });
+
+  const installedIds = new Set([
+    ...layout.pages.flatMap((tokens) => tokens.filter((token) => token.startsWith(APP_TOKEN_PREFIX)).map((token) => token.slice(APP_TOKEN_PREFIX.length))),
+    ...layout.dock,
+  ]);
+  const catalog = root.querySelector("[data-home-app-catalog]");
+  apps.forEach((item, id) => {
+    if (installedIds.has(id)) return;
+    setItemZone(item, "apps");
+    catalog?.append(item);
+    item.style.removeProperty("grid-row");
+    item.style.removeProperty("grid-column");
+    delete item.dataset.homeRow;
+    delete item.dataset.homeCol;
+  });
   return Math.max(0, Math.min(pageElements(root).length - 1, layout.activePage || 0));
 }
 
@@ -681,7 +701,7 @@ function refreshWidgetPicker(root) {
   const visibleWidgets = new Set([...root.querySelectorAll("[data-home-widget-id]:not([hidden])")].map((item) => item.dataset.homeWidgetId));
   const availableWidgets = WIDGET_CATALOG.filter((item) => !visibleWidgets.has(item.id));
   const installedApps = new Set([...root.querySelectorAll(".mobile-home-page [data-home-item-id], .mobile-home-dock [data-home-item-id]")].map((item) => item.dataset.homeItemId));
-  const availableApps = OPTIONAL_APP_CATALOG.filter((item) => !installedApps.has(item.id));
+  const availableApps = HOME_APP_CATALOG.filter((item) => !installedApps.has(item.id));
   const groups = [];
   if (availableApps.length) {
     groups.push(`<p class="mobile-home-widget-picker__group-title">アプリアイコン</p>${availableApps.map((item) => `<button type="button" class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app" data-home-app-add-id="${item.id}">${appPickerIconMarkup(root, item.id)}<div class="mobile-home-widget-picker__copy"><strong>${item.label}</strong><span>${item.description}</span></div><b aria-hidden="true">＋</b></button>`).join("")}`);
@@ -939,7 +959,7 @@ export function bindHome(context = {}) {
   }
 
   function updatePlacementPreview(event) {
-    if (!dragging || !pressTarget || pressTarget.closest(".mobile-home-dock")) return;
+    if (!dragging || !pressTarget) return;
     const page = currentPageElement();
     const grid = pageContainers(page).grid;
     const token = gridTokenForElement(pressTarget);
@@ -1007,15 +1027,33 @@ export function bindHome(context = {}) {
       } else if (targetApp && targetApp !== source && targetApp.closest(".mobile-home-dock")) {
         targetApp.before(source);
         changed = true;
+      } else if (dropPlacement && dropPlacement.pageIndex === activePage && sourceToken) {
+        const destinationGrid = pageContainers(currentPageElement()).grid;
+        if (destinationGrid) {
+          destinationGrid.append(source);
+          setItemZone(source, "apps");
+          applyPlacementStyle(source, dropPlacement, currentWidgetSizes(root));
+          changed = true;
+        }
       }
-    } else if (!sourceIsWidget && targetDock && targetApp && targetApp !== source) {
-      const sourceRow = Number(source.dataset.homeRow) || 1;
-      const sourceCol = Number(source.dataset.homeCol) || 1;
-      swapItems(source, targetApp);
-      setItemZone(source, "dock");
-      setItemZone(targetApp, "apps");
-      applyPlacementStyle(targetApp, { row: sourceRow, col: sourceCol }, currentWidgetSizes(root));
-      changed = true;
+    } else if (!sourceIsWidget && targetDock) {
+      if (targetApp && targetApp !== source) {
+        const sourceRow = Number(source.dataset.homeRow) || 1;
+        const sourceCol = Number(source.dataset.homeCol) || 1;
+        swapItems(source, targetApp);
+        setItemZone(source, "dock");
+        setItemZone(targetApp, "apps");
+        applyPlacementStyle(targetApp, { row: sourceRow, col: sourceCol }, currentWidgetSizes(root));
+        changed = true;
+      } else if (!targetApp && targetDock.querySelectorAll("[data-home-item-id]").length < DEFAULT_LAYOUT.dock.length) {
+        targetDock.append(source);
+        setItemZone(source, "dock");
+        source.style.removeProperty("grid-row");
+        source.style.removeProperty("grid-column");
+        delete source.dataset.homeRow;
+        delete source.dataset.homeCol;
+        changed = true;
+      }
     } else if (dropPlacement && dropPlacement.pageIndex === activePage && sourceToken) {
       const destinationGrid = pageContainers(currentPageElement()).grid;
       if (destinationGrid) {
@@ -1195,9 +1233,9 @@ export function bindHome(context = {}) {
     updateViewportHeight();
   }
 
-  function addOptionalApp(id) {
+  function addHomeApp(id) {
     const item = root.querySelector(`[data-home-app-catalog] [data-home-item-id="${id}"]`);
-    if (!item || !OPTIONAL_ITEM_IDS.includes(id)) return;
+    if (!item || !ALL_ITEM_ID_SET.has(id)) return;
     const page = currentPageElement();
     const grid = pageContainers(page).grid;
     if (!grid) return;
@@ -1217,12 +1255,13 @@ export function bindHome(context = {}) {
     updateViewportHeight();
   }
 
-  function removeOptionalApp(id) {
-    if (!OPTIONAL_ITEM_IDS.includes(id)) return;
+  function removeHomeApp(id) {
+    if (!ALL_ITEM_ID_SET.has(id)) return;
     const item = root.querySelector(`[data-home-item-id="${id}"]`);
     const catalog = root.querySelector("[data-home-app-catalog]");
-    if (!item || !catalog || item.closest(".mobile-home-dock")) return;
+    if (!item || !catalog) return;
     catalog.append(item);
+    setItemZone(item, "apps");
     item.style.removeProperty("grid-row");
     item.style.removeProperty("grid-column");
     delete item.dataset.homeRow;
@@ -1239,7 +1278,7 @@ export function bindHome(context = {}) {
     if (appOption) {
       event.preventDefault();
       event.stopPropagation();
-      addOptionalApp(appOption.dataset.homeAppAddId);
+      addHomeApp(appOption.dataset.homeAppAddId);
       return;
     }
     const option = event.target.closest("[data-home-widget-add-id]");
@@ -1297,13 +1336,13 @@ export function bindHome(context = {}) {
     if (appRemove) {
       event.preventDefault();
       event.stopPropagation();
-      if (editing) removeOptionalApp(appRemove.closest("[data-home-item-id]")?.dataset.homeItemId || "");
+      if (editing) removeHomeApp(appRemove.closest("[data-home-item-id]")?.dataset.homeItemId || "");
       return;
     }
     const appAdd = event.target.closest("[data-home-app-add-id]");
     if (appAdd) {
       event.preventDefault();
-      addOptionalApp(appAdd.dataset.homeAppAddId);
+      addHomeApp(appAdd.dataset.homeAppAddId);
       return;
     }
     const add = event.target.closest("[data-home-widget-add-id]");
