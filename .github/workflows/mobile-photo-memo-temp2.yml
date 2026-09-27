@@ -1,0 +1,270 @@
+name: Mobile photo memo temporary validation v2
+
+on:
+  push:
+    branches:
+      - feature/mobile-photo-memo-20260927
+    paths:
+      - .github/workflows/mobile-photo-memo-temp2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  integrate-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Integrate photo memo with robust anchors
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected 1 anchor, found {count}: {old!r}')
+              p.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          replace_once(
+              'screens/homeScreen.js',
+              '    { href: "#/fuel-note", label: "補給メモ", emoji: "💧", tone: "cyan", optional: true },',
+              '    { href: "#/fuel-note", label: "補給メモ", emoji: "💧", tone: "cyan", optional: true },\n    { href: "#/photo-note", label: "写真メモ", emoji: "📷", tone: "gray", optional: true },'
+          )
+
+          replace_once(
+              'ui/interactions/homeInteractions.js',
+              '  Object.freeze({ id: "fuel-note", label: "補給メモ", description: "水分や補給を時刻付きで記録" }),',
+              '  Object.freeze({ id: "fuel-note", label: "補給メモ", description: "水分や補給を時刻付きで記録" }),\n  Object.freeze({ id: "photo-note", label: "写真メモ", description: "自分の写真と短いメモを端末内に保存" }),'
+          )
+          replace_once(
+              'ui/interactions/homeInteractions.js',
+              '  ["#/fuel-note", "fuel-note"],',
+              '  ["#/fuel-note", "fuel-note"],\n  ["#/photo-note", "photo-note"],'
+          )
+
+          replace_once(
+              'app.js',
+              'import { renderLocationNoteScreen, renderQuickNoteScreen, renderGearNoteScreen, renderDepartureCheckScreen, renderFuelNoteScreen } from "./screens/mobileQuickToolsScreen.js";',
+              'import { renderLocationNoteScreen, renderQuickNoteScreen, renderGearNoteScreen, renderDepartureCheckScreen, renderFuelNoteScreen } from "./screens/mobileQuickToolsScreen.js";\nimport { renderPhotoMemoScreen } from "./screens/mobilePhotoMemoScreen.js";'
+          )
+          replace_once(
+              'app.js',
+              '  "fuel-note": renderFuelNoteScreen,',
+              '  "fuel-note": renderFuelNoteScreen,\n  "photo-note": renderPhotoMemoScreen,'
+          )
+          replace_once(
+              'app.js',
+              '"departure-check", "fuel-note"].includes(screenName)',
+              '"departure-check", "fuel-note", "photo-note"].includes(screenName)'
+          )
+
+          replace_once(
+              'ui/screenInteractions.js',
+              'import { bindMobileQuickTool } from "./interactions/mobileQuickToolsInteractions.js";',
+              'import { bindMobileQuickTool } from "./interactions/mobileQuickToolsInteractions.js";\nimport { bindMobilePhotoMemo } from "./interactions/mobilePhotoMemoInteractions.js";'
+          )
+          replace_once(
+              'ui/screenInteractions.js',
+              '  "fuel-note": bindMobileQuickTool,',
+              '  "fuel-note": bindMobileQuickTool,\n  "photo-note": bindMobilePhotoMemo,'
+          )
+
+          replace_once(
+              'ui/screenArchitecture.js',
+              '  if (screen === "fuel-note") return { title: "補給メモ", backHref: "#/home", backLabel: "ホーム" };',
+              '  if (screen === "fuel-note") return { title: "補給メモ", backHref: "#/home", backLabel: "ホーム" };\n  if (screen === "photo-note") return { title: "写真メモ", backHref: "#/home", backLabel: "ホーム" };'
+          )
+
+          replace_once(
+              'service-worker.js',
+              '  "./screens/mobileQuickToolsScreen.js",',
+              '  "./screens/mobileQuickToolsScreen.js",\n  "./screens/mobilePhotoMemoScreen.js",'
+          )
+          replace_once(
+              'service-worker.js',
+              '  "./ui/interactions/mobileQuickToolsInteractions.js",',
+              '  "./ui/interactions/mobileQuickToolsInteractions.js",\n  "./ui/interactions/mobilePhotoMemoInteractions.js",'
+          )
+          replace_once(
+              'service-worker.js',
+              '  "./ui/mobileQuickToolsStore.js",',
+              '  "./ui/mobileQuickToolsStore.js",\n  "./ui/mobilePhotoMemoStore.js",'
+          )
+
+          replace_once(
+              'styles/mobile-quick-tools.css',
+              '  .mobile-tool-location-status[data-state="success"] {',
+              '  .mobile-tool-location-status[data-state="success"],\n  .mobile-tool-form-status[data-state="success"] {'
+          )
+
+          photo_css = '''  .mobile-photo-memo-picker {
+            position: relative;
+            min-height: 52px;
+            display: grid;
+            place-items: center;
+            border: 1px dashed color-mix(in srgb, var(--color-accent-strong) 48%, var(--color-line));
+            border-radius: 16px;
+            background: color-mix(in srgb, var(--color-accent-soft) 36%, var(--color-surface));
+            color: var(--color-accent-strong);
+            font-size: 13px;
+            font-weight: 900;
+            overflow: hidden;
+          }
+
+          .mobile-photo-memo-picker input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+          }
+
+          .mobile-photo-memo-preview {
+            padding: 10px;
+            display: grid;
+            grid-template-columns: 88px minmax(0, 1fr);
+            gap: 12px;
+            align-items: center;
+            border: 1px solid var(--color-line);
+            border-radius: 17px;
+            background: var(--color-surface-muted);
+          }
+
+          .mobile-photo-memo-preview[hidden] {
+            display: none !important;
+          }
+
+          .mobile-photo-memo-preview img {
+            width: 88px;
+            height: 72px;
+            border-radius: 13px;
+            object-fit: cover;
+            background: var(--color-surface);
+          }
+
+          .mobile-photo-memo-preview strong,
+          .mobile-photo-memo-preview span {
+            display: block;
+            overflow-wrap: anywhere;
+          }
+
+          .mobile-photo-memo-preview strong {
+            color: var(--color-ink);
+            font-size: 12px;
+          }
+
+          .mobile-photo-memo-preview span {
+            margin-top: 5px;
+            color: var(--color-muted);
+            font-size: 10px;
+          }
+
+          .mobile-photo-memo-limit {
+            margin: -4px 0 0;
+            color: var(--color-muted);
+            font-size: 10px;
+            line-height: 1.5;
+          }
+
+          .mobile-photo-memo-history {
+            display: grid;
+            gap: 9px;
+          }
+
+          .mobile-photo-memo-history__item {
+            padding: 10px;
+            display: grid;
+            grid-template-columns: 74px minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+            border: 1px solid color-mix(in srgb, var(--color-line) 82%, transparent);
+            border-radius: 17px;
+            background: color-mix(in srgb, var(--color-surface-muted) 52%, var(--color-surface));
+          }
+
+          .mobile-photo-memo-history__item img {
+            width: 74px;
+            height: 62px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: var(--color-surface);
+          }
+
+          .mobile-photo-memo-history__item > div {
+            min-width: 0;
+          }
+
+          .mobile-photo-memo-history__item small,
+          .mobile-photo-memo-history__item strong,
+          .mobile-photo-memo-history__item span {
+            display: block;
+          }
+
+          .mobile-photo-memo-history__item small {
+            margin-bottom: 4px;
+            color: var(--color-muted);
+            font-size: 9px;
+          }
+
+          .mobile-photo-memo-history__item strong {
+            color: var(--color-ink);
+            font-size: 12px;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+          }
+
+          .mobile-photo-memo-history__item span {
+            margin-top: 4px;
+            color: var(--color-muted);
+            font-size: 9px;
+          }
+
+          '''
+          replace_once(
+              'styles/mobile-quick-tools.css',
+              '  .mobile-home-app-catalog {',
+              photo_css + '  .mobile-home-app-catalog {'
+          )
+          PY
+          git rm .github/workflows/mobile-photo-memo-temp.yml .github/workflows/mobile-photo-memo-temp2.yml
+      - name: Validate JavaScript syntax
+        run: |
+          set -euo pipefail
+          find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Run all regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Validate photo memo boundary and diff
+        run: |
+          set -euo pipefail
+          git diff --check
+          grep -q 'href: "#/photo-note"' screens/homeScreen.js
+          grep -q 'emoji: "📷"' screens/homeScreen.js
+          grep -q 'indexedDB' ui/mobilePhotoMemoStore.js
+          grep -q 'PHOTO_MEMO_MAX_COUNT = 20' ui/mobilePhotoMemoStore.js
+          grep -q 'renderPhotoMemoScreen' app.js
+          grep -q 'bindMobilePhotoMemo' ui/screenInteractions.js
+          grep -q './ui/mobilePhotoMemoStore.js' service-worker.js
+          if grep -R -nE 'https?://' screens/mobilePhotoMemoScreen.js ui/mobilePhotoMemoStore.js ui/interactions/mobilePhotoMemoInteractions.js; then exit 1; fi
+          if grep -R -nE 'fetch\(|XMLHttpRequest' screens/mobilePhotoMemoScreen.js ui/mobilePhotoMemoStore.js ui/interactions/mobilePhotoMemoInteractions.js; then exit 1; fi
+          test ! -e .github/workflows/mobile-photo-memo-temp.yml
+          test ! -e .github/workflows/mobile-photo-memo-temp2.yml
+      - name: Commit validated integration
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Integrate local smartphone photo memo"
+          git push origin HEAD:feature/mobile-photo-memo-20260927
