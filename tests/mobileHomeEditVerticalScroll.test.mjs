@@ -29,13 +29,25 @@ test('EDIT-DRAG-AUTO-SCROLLS-AT-VIEWPORT-EDGES', () => {
   assert.ok(support.includes('refreshExistingDragTarget(now)'));
 });
 
+test('NORMAL-LONG-PRESS-DRAG-CAN-JOIN-AUTO-SCROLL', () => {
+  assert.ok(support.includes('function adoptActiveDrag(event)'));
+  assert.ok(support.includes('.mobile-home-os.is-home-drag-active'));
+  assert.ok(support.includes('if (pointerId == null) adoptActiveDrag(event);'));
+});
+
+test('DRAG-AUTO-SCROLL-STOPS-AT-DOCUMENT-EDGE', () => {
+  assert.ok(support.includes('if (!moved) {'));
+  assert.ok(support.includes('dragScrollSpeed = 0;'));
+});
+
 test('DRAG-AUTO-SCROLL-DOES-NOT-FIGHT-DOCK-OR-PAGE-CONTROLS', () => {
   assert.ok(support.includes('.mobile-home-dock, .mobile-home-page-indicator, [data-home-widget-picker]'));
 });
 
 test('SUPPORT-IS-MOBILE-ONLY', () => {
   assert.ok(support.includes('(max-width: 54.99rem)'));
-  assert.ok(support.includes('mobileLayoutMatches()'));
+  assert.ok(support.includes('typeof globalThis.matchMedia === "function"'));
+  assert.ok(support.includes('MOBILE_HOME_MAX_WIDTH_PX'));
 });
 
 test('SUPPORT-IS-LOADED-AND-PRECACHED', () => {
