@@ -104,6 +104,7 @@ const PRECACHE_URLS = [
   "./ui/interactions/historyInteractions.js",
   "./ui/interactions/homeInteractions.js",
   "./ui/interactions/homeGridModel.js",
+  "./ui/mobileHomeReturnTransition.js",
   "./ui/interactions/mobileQuickToolsInteractions.js",
   "./ui/interactions/mobilePhotoMemoInteractions.js",
   "./ui/interactions/mobilePaceCalculatorInteractions.js",

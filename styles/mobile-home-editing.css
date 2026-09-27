@@ -758,3 +758,12 @@
     min-height: 112px;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-mobile-home-return-transition::view-transition-old(root),
+  html.is-mobile-home-return-transition::view-transition-new(root),
+  .mobile-home-return-surface,
+  .mobile-home-return-surface.is-closing {
+    animation: none !important;
+  }
+}

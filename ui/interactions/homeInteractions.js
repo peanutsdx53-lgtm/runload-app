@@ -8,6 +8,7 @@ import {
   packTokens,
   usedRowCount,
 } from "./homeGridModel.js";
+import { rememberMobileHomeLaunch } from "../mobileHomeReturnTransition.js";
 
 const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
@@ -1402,6 +1403,7 @@ export function bindHome(context = {}) {
     }
 
     const item = launcher.closest("[data-home-item-id]") || launcher;
+    rememberMobileHomeLaunch(item.dataset.homeItemId || "");
     const surface = createLaunchSurface(launcher);
     if (!surface) {
       navigate();
