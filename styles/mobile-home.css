@@ -180,6 +180,13 @@
     border-radius: 17px;
   }
 
+  .mobile-home-emoji {
+    display: block;
+    font-size: 30px;
+    line-height: 1;
+    font-family: system-ui, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  }
+
   .mobile-home-app__icon svg,
   .mobile-home-dock__icon svg {
     width: 29px;

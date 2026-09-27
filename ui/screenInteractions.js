@@ -31,6 +31,8 @@ const SCREEN_INTERACTION_BINDERS = Object.freeze({
   "location-note": bindMobileQuickTool,
   "quick-note": bindMobileQuickTool,
   "gear-note": bindMobileQuickTool,
+  "departure-check": bindMobileQuickTool,
+  "fuel-note": bindMobileQuickTool,
 });
 
 let activeCleanup = null;

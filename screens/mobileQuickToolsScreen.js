@@ -53,6 +53,24 @@ function renderGearHistory(entries) {
   }).join("");
 }
 
+function renderDepartureHistory(entries) {
+  if (!entries.length) return renderEmptyHistory("保存した出発チェック");
+  return entries.slice(0, 5).map((entry) => {
+    const checks = Array.isArray(entry.checks) ? entry.checks.filter(Boolean) : [];
+    const summary = checks.length ? checks.join(" ・ ") : "確認項目なし";
+    return `<article class="mobile-tool-history__item"><div><small>${escapeHtml(formatTimestamp(entry.createdAt))}</small><strong>出発チェック</strong><p>${escapeHtml(summary)}</p>${entry.note ? `<span>${escapeHtml(entry.note)}</span>` : ""}</div>${renderDeleteButton("departure", entry.id)}</article>`;
+  }).join("");
+}
+
+function renderFuelHistory(entries) {
+  if (!entries.length) return renderEmptyHistory("保存した補給メモ");
+  return entries.slice(0, 5).map((entry) => {
+    const title = entry.kind || "補給";
+    const details = [entry.amount, entry.note].filter(Boolean).join(" ・ ");
+    return `<article class="mobile-tool-history__item"><div><small>${escapeHtml(formatTimestamp(entry.createdAt))}</small><strong>${escapeHtml(title)}</strong><p>${escapeHtml(details || "内容メモなし")}</p></div>${renderDeleteButton("fuel", entry.id)}</article>`;
+  }).join("");
+}
+
 function renderShell({ tool, eyebrow, title, description, form, historyTitle, history }) {
   return `<div class="screen screen-layout screen-layout--mobile-tool mobile-tool-screen" data-mobile-tool="${escapeHtml(tool)}">
     <section class="mobile-tool-head">
@@ -133,4 +151,29 @@ export function renderGearNoteScreen() {
     historyTitle: "最近の装備メモ",
     history: renderGearHistory(state.gearNotes),
   });
+}
+
+export function renderDepartureCheckScreen() {
+  const state = loadMobileQuickTools();
+  const form = `<form class="mobile-tool-card" data-mobile-tool-form="departure">
+    <div class="mobile-tool-card__lead"><div><small>出発前</small><strong>必要な準備だけ短く確認</strong></div></div>
+    <fieldset class="mobile-tool-choice mobile-tool-choice--checklist"><legend>確認項目</legend><label><input type="checkbox" name="checks" value="水分"><span>水分</span></label><label><input type="checkbox" name="checks" value="鍵・連絡手段"><span>鍵・連絡手段</span></label><label><input type="checkbox" name="checks" value="ライト・反射材"><span>ライト・反射材</span></label><label><input type="checkbox" name="checks" value="必要な装備"><span>必要な装備</span></label></fieldset>
+    <label class="mobile-tool-field"><span>メモ</span><textarea name="note" rows="3" maxlength="160" placeholder="例：折り返し地点で給水する"></textarea></label>
+    <p class="mobile-tool-form-status" data-mobile-tool-form-status aria-live="polite"></p>
+    <button type="submit" class="primary mobile-tool-save">確認内容を保存</button>
+  </form>`;
+  return renderShell({ tool: "departure", eyebrow: "SMARTPHONE TOOL", title: "出発チェック", description: "持ち物や準備を確認して、その時点の内容を残します。", form, historyTitle: "最近の出発チェック", history: renderDepartureHistory(state.departureChecks) });
+}
+
+export function renderFuelNoteScreen() {
+  const state = loadMobileQuickTools();
+  const form = `<form class="mobile-tool-card" data-mobile-tool-form="fuel">
+    <div class="mobile-tool-card__lead"><div><small>補給</small><strong>水分・補給・休憩をその時刻で残す</strong></div></div>
+    <fieldset class="mobile-tool-choice"><legend>種類</legend><label><input type="radio" name="kind" value="水分" checked><span>水分</span></label><label><input type="radio" name="kind" value="補給"><span>補給</span></label><label><input type="radio" name="kind" value="休憩"><span>休憩</span></label><label><input type="radio" name="kind" value="その他"><span>その他</span></label></fieldset>
+    <label class="mobile-tool-field"><span>量・内容</span><input type="text" name="amount" maxlength="80" placeholder="例：水を数口"></label>
+    <label class="mobile-tool-field"><span>メモ</span><textarea name="note" rows="3" maxlength="160" placeholder="例：折り返し地点で補給"></textarea></label>
+    <p class="mobile-tool-form-status" data-mobile-tool-form-status aria-live="polite"></p>
+    <button type="submit" class="primary mobile-tool-save">補給メモを保存</button>
+  </form>`;
+  return renderShell({ tool: "fuel", eyebrow: "SMARTPHONE TOOL", title: "補給メモ", description: "水分、補給、休憩を時刻付きで短く残します。", form, historyTitle: "最近の補給メモ", history: renderFuelHistory(state.fuelNotes) });
 }
