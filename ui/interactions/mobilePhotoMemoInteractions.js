@@ -88,10 +88,6 @@ async function preparePhoto(file) {
     const height = Number(decoded.height) || 0;
     if (!(width > 0) || !(height > 0)) throw new Error("IMAGE_DECODE_FAILED");
 
-    if (Math.max(width, height) <= PHOTO_MEMO_MAX_DIMENSION && file.size <= PHOTO_MEMO_MAX_BYTES) {
-      return { blob: file, width, height };
-    }
-
     const scale = Math.min(1, PHOTO_MEMO_MAX_DIMENSION / Math.max(width, height));
     const outputWidth = Math.max(1, Math.round(width * scale));
     const outputHeight = Math.max(1, Math.round(height * scale));
@@ -117,6 +113,43 @@ async function preparePhoto(file) {
   } finally {
     decoded.cleanup?.();
   }
+}
+
+async function displayBlobForEntry(entry) {
+  const blob = entry?.blob;
+  if (!(blob instanceof Blob) || !blob.size) return null;
+  const mimeType = String(blob.type || entry?.mimeType || "").toLowerCase();
+  if (["image/jpeg", "image/png", "image/webp"].includes(mimeType)) return blob;
+  try {
+    return (await preparePhoto(blob)).blob;
+  } catch {
+    return blob;
+  }
+}
+
+function ensureViewer(root) {
+  let viewer = root.querySelector("[data-mobile-photo-memo-viewer]");
+  if (viewer) return viewer;
+  viewer = document.createElement("div");
+  viewer.className = "mobile-photo-memo-viewer";
+  viewer.dataset.mobilePhotoMemoViewer = "";
+  viewer.hidden = true;
+  viewer.innerHTML = `
+    <button type="button" class="mobile-photo-memo-viewer__backdrop" data-mobile-photo-memo-viewer-close aria-label="写真メモを閉じる"></button>
+    <section class="mobile-photo-memo-viewer__panel" role="dialog" aria-modal="true" aria-label="写真メモ">
+      <header><strong>写真メモ</strong><button type="button" data-mobile-photo-memo-viewer-close>閉じる</button></header>
+      <div class="mobile-photo-memo-viewer__media" data-mobile-photo-memo-viewer-media>
+        <img alt="保存した写真" data-mobile-photo-memo-viewer-image>
+        <span>画像を表示できません</span>
+      </div>
+      <div class="mobile-photo-memo-viewer__meta">
+        <small data-mobile-photo-memo-viewer-date></small>
+        <p data-mobile-photo-memo-viewer-note hidden></p>
+        <span data-mobile-photo-memo-viewer-size></span>
+      </div>
+    </section>`;
+  root.append(viewer);
+  return viewer;
 }
 
 function saveFailureMessage(reason) {
@@ -149,7 +182,10 @@ export function bindMobilePhotoMemo(context = {}) {
   let prepared = null;
   let previewUrl = "";
   let historyUrls = [];
+  let viewerUrl = "";
+  let currentEntries = [];
   let preparing = false;
+  const viewer = ensureViewer(root);
 
   const revokePreview = () => {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -161,22 +197,75 @@ export function bindMobilePhotoMemo(context = {}) {
     historyUrls = [];
   };
 
+  const revokeViewerUrl = () => {
+    if (viewerUrl) URL.revokeObjectURL(viewerUrl);
+    viewerUrl = "";
+  };
+
+  const closeViewer = () => {
+    viewer.hidden = true;
+    viewer.querySelector("[data-mobile-photo-memo-viewer-image]")?.removeAttribute("src");
+    revokeViewerUrl();
+    document.body.classList.remove("mobile-photo-memo-viewer-open");
+  };
+
   const renderHistory = async () => {
     revokeHistoryUrls();
     try {
       const entries = await listPhotoMemos();
+      currentEntries = entries;
       if (!entries.length) {
         history.innerHTML = '<p class="mobile-tool-history__empty">保存した写真メモはまだありません。</p>';
         return;
       }
-      history.innerHTML = entries.map((entry) => {
-        const url = URL.createObjectURL(entry.blob);
-        historyUrls.push(url);
-        return `<article class="mobile-photo-memo-history__item"><img src="${url}" alt=""><div><small>${escapeHtml(formatTimestamp(entry.createdAt))}</small><strong>${escapeHtml(entry.note || "写真メモ")}</strong><span>${escapeHtml(formatBytes(entry.byteSize))}</span></div><button type="button" class="mobile-tool-history__delete" data-mobile-photo-memo-delete="${escapeHtml(entry.id)}">削除</button></article>`;
+      const displayEntries = await Promise.all(entries.map(async (entry) => {
+        const blob = await displayBlobForEntry(entry);
+        const url = blob ? URL.createObjectURL(blob) : "";
+        if (url) historyUrls.push(url);
+        return { entry, url };
+      }));
+      history.innerHTML = displayEntries.map(({ entry, url }) => {
+        const noteMarkup = entry.note ? `<strong>${escapeHtml(entry.note)}</strong>` : "";
+        const imageMarkup = url ? `<img src="${url}" alt="" data-mobile-photo-memo-thumb>` : "";
+        return `<article class="mobile-photo-memo-history__item"><button type="button" class="mobile-photo-memo-history__open" data-mobile-photo-memo-open="${escapeHtml(entry.id)}" aria-label="写真メモを表示"><span class="mobile-photo-memo-history__image"><span>画像</span>${imageMarkup}</span><span class="mobile-photo-memo-history__copy"><small>${escapeHtml(formatTimestamp(entry.createdAt))}</small>${noteMarkup}<span>${escapeHtml(formatBytes(entry.byteSize))}</span></span><span class="mobile-photo-memo-history__chevron" aria-hidden="true">›</span></button><button type="button" class="mobile-tool-history__delete" data-mobile-photo-memo-delete="${escapeHtml(entry.id)}">削除</button></article>`;
       }).join("");
+      history.querySelectorAll("[data-mobile-photo-memo-thumb]").forEach((image) => {
+        image.addEventListener("error", () => image.closest(".mobile-photo-memo-history__image")?.classList.add("is-image-error"), { once: true });
+      });
     } catch {
+      currentEntries = [];
       history.innerHTML = '<p class="mobile-tool-history__empty">この端末では保存した写真を読み込めません。</p>';
     }
+  };
+
+  const openViewer = async (id) => {
+    const entry = currentEntries.find((item) => String(item.id) === String(id));
+    if (!entry) return;
+    const image = viewer.querySelector("[data-mobile-photo-memo-viewer-image]");
+    const media = viewer.querySelector("[data-mobile-photo-memo-viewer-media]");
+    const date = viewer.querySelector("[data-mobile-photo-memo-viewer-date]");
+    const note = viewer.querySelector("[data-mobile-photo-memo-viewer-note]");
+    const size = viewer.querySelector("[data-mobile-photo-memo-viewer-size]");
+    if (!image || !media || !date || !note || !size) return;
+
+    revokeViewerUrl();
+    media.classList.remove("is-image-error");
+    const blob = await displayBlobForEntry(entry);
+    if (blob) {
+      viewerUrl = URL.createObjectURL(blob);
+      image.src = viewerUrl;
+      image.onerror = () => media.classList.add("is-image-error");
+    } else {
+      image.removeAttribute("src");
+      media.classList.add("is-image-error");
+    }
+    date.textContent = formatTimestamp(entry.createdAt);
+    note.textContent = String(entry.note || "").trim();
+    note.hidden = !note.textContent;
+    size.textContent = formatBytes(entry.byteSize);
+    viewer.hidden = false;
+    document.body.classList.add("mobile-photo-memo-viewer-open");
+    viewer.querySelector("[data-mobile-photo-memo-viewer-close]:not(.mobile-photo-memo-viewer__backdrop)")?.focus();
   };
 
   const handleFileChange = async () => {
@@ -228,9 +317,27 @@ export function bindMobilePhotoMemo(context = {}) {
   };
 
   const handleClick = async (event) => {
+    const close = event.target.closest("[data-mobile-photo-memo-viewer-close]");
+    if (close) {
+      event.preventDefault();
+      closeViewer();
+      return;
+    }
+
+    const open = event.target.closest("[data-mobile-photo-memo-open]");
+    if (open) {
+      event.preventDefault();
+      await openViewer(open.dataset.mobilePhotoMemoOpen);
+      return;
+    }
+
     const button = event.target.closest("[data-mobile-photo-memo-delete]");
     if (!button) return;
     event.preventDefault();
+    const confirmed = typeof globalThis.confirm === "function"
+      ? globalThis.confirm("この写真メモを削除しますか？")
+      : false;
+    if (!confirmed) return;
     button.disabled = true;
     const deleted = await deletePhotoMemo(button.dataset.mobilePhotoMemoDelete);
     if (!deleted) {
@@ -242,16 +349,23 @@ export function bindMobilePhotoMemo(context = {}) {
     else await renderHistory();
   };
 
+  const handleKeydown = (event) => {
+    if (event.key === "Escape" && !viewer.hidden) closeViewer();
+  };
+
   fileInput.addEventListener("change", handleFileChange);
   form.addEventListener("submit", handleSubmit);
   root.addEventListener("click", handleClick);
+  document.addEventListener("keydown", handleKeydown);
   renderHistory();
 
   return () => {
     fileInput.removeEventListener("change", handleFileChange);
     form.removeEventListener("submit", handleSubmit);
     root.removeEventListener("click", handleClick);
+    document.removeEventListener("keydown", handleKeydown);
     revokePreview();
     revokeHistoryUrls();
+    closeViewer();
   };
 }
