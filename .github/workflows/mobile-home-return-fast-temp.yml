@@ -1,0 +1,34 @@
+name: Mobile home return fast temporary validation
+on:
+  push:
+    branches:
+      - fix/mobile-home-return-fast-20260927
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: JavaScript syntax
+        run: |
+          set -euo pipefail
+          find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Focused contracts
+        run: |
+          set -euo pipefail
+          node tests/mobileHomeReturnTransition.test.mjs
+          ! grep -q 'document.startViewTransition' ui/mobileHomeReturnTransition.js
+          ! grep -q 'HOME_RETURN_TIMEOUT_MS' ui/mobileHomeReturnTransition.js
+          grep -q 'root.cloneNode(true)' ui/mobileHomeReturnTransition.js
+          grep -q 'RETURN_DURATION_MS = 330' ui/mobileHomeReturnTransition.js
+          git diff --check origin/main...HEAD
