@@ -130,7 +130,12 @@
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
-    touch-action: manipulation;
+    touch-action: pan-y;
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-page-viewport {
+    overflow-x: hidden;
+    scroll-snap-type: none;
   }
 
   .mobile-home-os [data-home-edit-toggle] {
