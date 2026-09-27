@@ -17,34 +17,53 @@ function test(id, fn) {
   }
 }
 
-test('HOME-RETURN-REMEMBERS-LAUNCHER', () => {
+test('HOME-RETURN-REMEMBERS-LAUNCHER-AND-GEOMETRY', () => {
   const source = read('ui/mobileHomeReturnTransition.js');
   assert.ok(source.includes('running-record-mobile-home-last-launch-v1'));
   assert.ok(source.includes('rememberMobileHomeLaunch'));
-  assert.ok(source.includes('sessionStorage'));
+  assert.ok(source.includes('leftRatio'));
+  assert.ok(source.includes('topRatio'));
+  assert.ok(source.includes('widthRatio'));
+  assert.ok(source.includes('heightRatio'));
+  assert.ok(source.includes('JSON.stringify(state)'));
 });
 
-test('HOME-RETURN-USES-VIEW-TRANSITION-WITH-FALLBACK', () => {
+test('HOME-RETURN-DOES-NOT-WAIT-FOR-VIEW-TRANSITION', () => {
   const source = read('ui/mobileHomeReturnTransition.js');
-  assert.ok(source.includes('document.startViewTransition'));
-  assert.ok(source.includes('runViewTransitionReturn'));
-  assert.ok(source.includes('runFallbackReturn'));
-  assert.ok(source.includes('mobile-home-return-surface'));
+  assert.equal(source.includes('document.startViewTransition'), false);
+  assert.equal(source.includes('HOME_RETURN_TIMEOUT_MS'), false);
+  assert.equal(source.includes('waitForHomeRender'), false);
+  assert.ok(source.includes('runSnapshotReturn'));
 });
 
-test('HOME-RETURN-WAITS-FOR-HOME-RENDER', () => {
+test('HOME-RETURN-CAPTURES-CURRENT-SCREEN-BEFORE-NAVIGATION', () => {
   const source = read('ui/mobileHomeReturnTransition.js');
-  assert.ok(source.includes('running-record:screen-rendered'));
-  assert.ok(source.includes('notifyMobileScreenRendered'));
-  assert.ok(source.includes('waitForHomeRender'));
+  assert.ok(source.includes('root.cloneNode(true)'));
+  assert.ok(source.includes('mobile-home-return-snapshot'));
+  assert.ok(source.includes('mobile-home-return-backdrop'));
 });
 
-test('HOME-RETURN-SHRINKS-TO-LAUNCH-ICON', () => {
+test('HOME-RETURN-NAVIGATES-WITHOUT-BLOCKING-ON-HOME-RENDER', () => {
   const source = read('ui/mobileHomeReturnTransition.js');
-  assert.ok(source.includes('[data-home-item-id]'));
-  assert.ok(source.includes('--home-return-scale-x'));
-  assert.ok(source.includes('--home-return-scale-y'));
-  assert.ok(source.includes('is-home-return-arrival-target'));
+  assert.ok(source.includes('listenForHomeArrival(state, visual.backdrop);'));
+  assert.ok(source.includes('globalThis.location.hash = HOME_QUERY.slice(1);'));
+  assert.equal(source.includes('await rendered'), false);
+});
+
+test('HOME-RETURN-SHRINKS-SNAPSHOT-TO-STORED-ICON-POSITION', () => {
+  const source = read('ui/mobileHomeReturnTransition.js');
+  assert.ok(source.includes('visual.snapshot.animate'));
+  assert.ok(source.includes('translate3d(${metrics.left}px, ${metrics.top}px, 0)'));
+  assert.ok(source.includes('scale(${metrics.scaleX}, ${metrics.scaleY})'));
+  assert.ok(source.includes('RETURN_DURATION_MS = 330'));
+});
+
+test('HOME-RETURN-ANIMATES-HOME-ARRIVAL-AND-TARGET-ICON', () => {
+  const source = read('ui/mobileHomeReturnTransition.js');
+  assert.ok(source.includes('animateHomeArrival'));
+  assert.ok(source.includes('.mobile-home-os'));
+  assert.ok(source.includes('scale(.975)'));
+  assert.ok(source.includes('scale(1.045)'));
 });
 
 test('HOME-RETURN-IS-BOUND-TO-SHELL-HOME-LINKS', () => {
@@ -65,19 +84,10 @@ test('APP-NOTIFIES-SCREEN-RENDER-COMPLETION', () => {
   assert.ok(app.includes('notifyMobileScreenRendered(screenName)'));
 });
 
-test('HOME-RETURN-CSS-HAS-REVERSE-MOTION', () => {
-  const css = read('styles/mobile-home.css');
-  assert.ok(css.includes('::view-transition-old(root)'));
-  assert.ok(css.includes('mobile-home-ios-return-old'));
-  assert.ok(css.includes('mobile-home-ios-return-new'));
-  assert.ok(css.includes('.mobile-home-return-surface.is-closing'));
-});
-
 test('HOME-RETURN-RESPECTS-REDUCED-MOTION', () => {
   const source = read('ui/mobileHomeReturnTransition.js');
-  const css = read('styles/mobile-home-editing.css');
   assert.ok(source.includes('prefers-reduced-motion: reduce'));
-  assert.ok(css.includes('is-mobile-home-return-transition'));
+  assert.ok(source.includes('motionReduced()'));
 });
 
 const failed = results.filter((item) => item.status === 'FAIL');
