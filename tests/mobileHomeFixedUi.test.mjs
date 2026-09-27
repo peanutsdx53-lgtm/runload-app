@@ -33,10 +33,12 @@ test('HOME-RETURN-ANIMATIONS-DO-NOT-PERSIST-TRANSFORMS', () => {
   assert.ok(source.includes('animation.cancel()'));
 });
 
-test('HOME-RETURN-KEEPS-PAGE-INDICATOR-CENTERED-DURING-ANIMATION', () => {
+test('HOME-RETURN-KEEPS-PAGE-INDICATOR-FIXED-DURING-ANIMATION', () => {
   const source = read('ui/mobileHomeReturnTransition.js');
-  assert.ok(source.includes('translateX(-50%) translateY(7px)'));
-  assert.ok(source.includes('translateX(-50%) translateY(0)'));
+  const start = source.indexOf('const indicator =');
+  const block = source.slice(start, source.indexOf('const target =', start));
+  assert.ok(block.includes('{ opacity: .35 }'));
+  assert.equal(block.includes('transform:'), false);
 });
 
 test('HOME-RETURN-PAINTS-SNAPSHOT-BEFORE-NAVIGATION', () => {
