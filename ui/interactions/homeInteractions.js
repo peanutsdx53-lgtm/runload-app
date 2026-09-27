@@ -821,7 +821,7 @@ export function bindHome(context = {}) {
   function updatePageIndicator() {
     if (!pageIndicator) return;
     const pages = pageElements(root);
-    pageIndicator.hidden = pages.length <= 1 && !editing;
+    pageIndicator.hidden = false;
     pageIndicator.replaceChildren();
     pages.forEach((page, index) => {
       const dot = document.createElement("button");
