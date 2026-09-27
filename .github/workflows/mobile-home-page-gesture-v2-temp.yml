@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/mobile-home-page-gesture-v2-temp.yml
       - tools/tmp_patch_mobile_home_page_gesture_v5.py
+      - tools/tmp_fix_gesture_tests.py
 
 permissions:
   contents: write
@@ -25,7 +26,8 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/tmp_patch_mobile_home_page_gesture_v5.py
-          git rm tools/tmp_patch_mobile_home_page_gesture_v4.py tools/tmp_patch_mobile_home_page_gesture_v5.py .github/workflows/mobile-home-page-gesture-v2-temp.yml
+          python3 tools/tmp_fix_gesture_tests.py
+          git rm tools/tmp_patch_mobile_home_page_gesture_v4.py tools/tmp_patch_mobile_home_page_gesture_v5.py tools/tmp_fix_gesture_tests.py .github/workflows/mobile-home-page-gesture-v2-temp.yml
       - name: JavaScript syntax
         run: |
           set -euo pipefail
@@ -42,6 +44,7 @@ jobs:
           git diff --check origin/main...HEAD
           test ! -e tools/tmp_patch_mobile_home_page_gesture_v4.py
           test ! -e tools/tmp_patch_mobile_home_page_gesture_v5.py
+          test ! -e tools/tmp_fix_gesture_tests.py
           test ! -e .github/workflows/mobile-home-page-gesture-v2-temp.yml
       - name: Commit validated changes
         run: |
