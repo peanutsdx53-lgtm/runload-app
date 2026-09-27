@@ -1,0 +1,25 @@
+name: Mobile audit temporary validation
+
+on:
+  push:
+    branches:
+      - audit/mobile-quick-tools-consistency-20260927
+    paths:
+      - .github/workflows/mobile-audit-temp.yml
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: JavaScript syntax
+        run: find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+      - name: Regression tests
+        run: |
+          set -euo pipefail
+          for test in tests/*.test.mjs; do node "$test"; done
+      - name: Diff hygiene
+        run: git diff --check HEAD~3..HEAD
