@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.27.2";
+const CACHE_NAME = "running-record-app-runtime-2026.09.27.3";
 const CACHE_PREFIX = "running-record-app-";
 const LEGACY_CACHE_PREFIXES = Object.freeze(["runload-app-"]);
 const PRECACHE_URLS = [
