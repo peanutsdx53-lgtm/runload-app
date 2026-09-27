@@ -1,0 +1,37 @@
+name: Mobile photo preview temporary fix v2
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/mobile-photo-preview-main-temp2.yml]
+permissions:
+  contents: write
+jobs:
+  patch-test-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Patch preview
+        run: |
+          python3 -c 'from pathlib import Path; p=Path("ui/interactions/mobilePhotoMemoInteractions.js"); t=p.read_text(); old="    if (previewUrl) URL.revokeObjectURL(previewUrl);\n    previewUrl = \"\";"; new="    previewUrl = \"\";\n    previewImage.removeAttribute(\"src\");"; assert t.count(old)==1; t=t.replace(old,new,1); old2="      previewUrl = URL.createObjectURL(prepared.blob);"; new2="      previewUrl = await blobToDataUrl(prepared.blob);"; assert t.count(old2)==1; p.write_text(t.replace(old2,new2,1))'
+          python3 -c 'from pathlib import Path; p=Path("tests/mobilePhotoMemo.test.mjs"); t=p.read_text(); old="  assert.ok(interactions.includes(\x27entry?.imageBytes instanceof ArrayBuffer\x27));"; new=old+"\n  assert.ok(interactions.includes(\x27previewUrl = await blobToDataUrl(prepared.blob)\x27));\n  assert.ok(!interactions.includes(\x27previewUrl = URL.createObjectURL(prepared.blob)\x27));"; assert t.count(old)==1; p.write_text(t.replace(old,new,1))'
+          git rm .github/workflows/mobile-photo-preview-main-temp2.yml
+      - name: Validate
+        run: |
+          set -euo pipefail
+          find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | xargs -0 -n1 node --check
+          for test in tests/*.test.mjs; do node "$test"; done
+          git diff --check
+          grep -q 'previewUrl = await blobToDataUrl(prepared.blob)' ui/interactions/mobilePhotoMemoInteractions.js
+          if grep -q 'previewUrl = URL.createObjectURL(prepared.blob)' ui/interactions/mobilePhotoMemoInteractions.js; then exit 1; fi
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Fix selected photo preview on iPhone'
+          git push origin HEAD:main
