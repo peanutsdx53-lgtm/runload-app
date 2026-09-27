@@ -1,0 +1,100 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(here, '..');
+const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
+const results = [];
+
+async function test(id, fn) {
+  try {
+    await fn();
+    results.push({ id, status: 'PASS' });
+  } catch (error) {
+    results.push({ id, status: 'FAIL', message: error?.stack || String(error) });
+  }
+}
+
+await test('PHOTO-MEMO-HOME-ENTRY-USES-EMOJI', () => {
+  const home = read('screens/homeScreen.js');
+  const interactions = read('ui/interactions/homeInteractions.js');
+  assert.ok(home.includes('href: "#/photo-note"'));
+  assert.ok(home.includes('label: "写真メモ"'));
+  assert.ok(home.includes('emoji: "📷"'));
+  assert.ok(interactions.includes('id: "photo-note"'));
+  assert.ok(interactions.includes('["#/photo-note", "photo-note"]'));
+});
+
+await test('PHOTO-MEMO-HAS-ROUTE-BINDER-AND-HOME-RETURN', () => {
+  const app = read('app.js');
+  const binders = read('ui/screenInteractions.js');
+  const architecture = read('ui/screenArchitecture.js');
+  assert.ok(app.includes('renderPhotoMemoScreen'));
+  assert.ok(app.includes('"photo-note": renderPhotoMemoScreen'));
+  assert.ok(binders.includes('bindMobilePhotoMemo'));
+  assert.ok(binders.includes('"photo-note": bindMobilePhotoMemo'));
+  assert.ok(architecture.includes('screen === "photo-note"'));
+  assert.ok(architecture.includes('title: "写真メモ", backHref: "#/home"'));
+});
+
+await test('PHOTO-MEMO-USES-LOCAL-INDEXEDDB-WITH-CONSERVATIVE-LIMITS', () => {
+  const store = read('ui/mobilePhotoMemoStore.js');
+  assert.ok(store.includes('running-record-mobile-media-v1'));
+  assert.ok(store.includes('indexedDB'));
+  assert.ok(store.includes('PHOTO_MEMO_MAX_COUNT = 20'));
+  assert.ok(store.includes('PHOTO_MEMO_MAX_BYTES = 1_000_000'));
+  assert.ok(store.includes('PHOTO_MEMO_MAX_DIMENSION = 1440'));
+  assert.ok(!store.includes('localStorage'));
+  assert.ok(!store.includes('fetch('));
+  assert.ok(!store.includes('XMLHttpRequest'));
+});
+
+await test('PHOTO-MEMO-SCREEN-ACCEPTS-USER-SELECTED-IMAGES-ONLY', () => {
+  const screen = read('screens/mobilePhotoMemoScreen.js');
+  assert.ok(screen.includes('type="file"'));
+  assert.ok(screen.includes('accept="image/*"'));
+  assert.ok(screen.includes('写真とメモは、この端末のブラウザ内にのみ保存します。自動送信はしません。'));
+  assert.ok(!screen.includes('http://'));
+  assert.ok(!screen.includes('https://'));
+});
+
+await test('PHOTO-MEMO-COMPRESSES-AND-DOES-NOT-UPLOAD', () => {
+  const interactions = read('ui/interactions/mobilePhotoMemoInteractions.js');
+  assert.ok(interactions.includes('preparePhoto'));
+  assert.ok(interactions.includes('canvas.toBlob'));
+  assert.ok(interactions.includes('PHOTO_MEMO_MAX_BYTES'));
+  assert.ok(interactions.includes('PHOTO_MEMO_MAX_DIMENSION'));
+  assert.ok(interactions.includes('URL.createObjectURL'));
+  assert.ok(!interactions.includes('fetch('));
+  assert.ok(!interactions.includes('XMLHttpRequest'));
+});
+
+await test('PHOTO-MEMO-PWA-ASSETS-ARE-PRECACHED', () => {
+  const sw = read('service-worker.js');
+  for (const asset of [
+    './screens/mobilePhotoMemoScreen.js',
+    './ui/interactions/mobilePhotoMemoInteractions.js',
+    './ui/mobilePhotoMemoStore.js',
+  ]) assert.ok(sw.includes(asset));
+});
+
+await test('PHOTO-MEMO-STYLE-IS-SMARTPHONE-SCOPED', () => {
+  const css = read('styles/mobile-quick-tools.css');
+  assert.ok(css.includes('.mobile-photo-memo-picker'));
+  assert.ok(css.includes('.mobile-photo-memo-preview'));
+  assert.ok(css.includes('.mobile-photo-memo-history__item'));
+  assert.ok(css.includes('@media (max-width: 54.99rem)'));
+});
+
+const failed = results.filter((item) => item.status === 'FAIL');
+console.log(JSON.stringify({
+  suite: 'Mobile Photo Memo',
+  total: results.length,
+  passed: results.length - failed.length,
+  failed: failed.length,
+  status: failed.length ? 'FAIL' : 'PASS',
+  results,
+}, null, 2));
+if (failed.length) process.exitCode = 1;
