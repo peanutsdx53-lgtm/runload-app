@@ -1,5 +1,6 @@
 const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
 const MOBILE_HOME_MAX_WIDTH_PX = 879;
+const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const SCROLL_INTENT_PX = 8;
 const SCROLL_INTENT_RATIO = 1.15;
 const DRAG_TOP_EDGE_PX = 88;
@@ -158,6 +159,90 @@ function adoptActiveDrag(event) {
   lastClientY = event.clientY;
 }
 
+function homeGridToken(element) {
+  const appId = element?.dataset?.homeItemId || "";
+  if (appId) return `app:${appId}`;
+  const widgetId = element?.dataset?.homeWidgetId || "";
+  return widgetId ? `widget:${widgetId}` : "";
+}
+
+function placementOf(element) {
+  return {
+    row: Number(element?.dataset?.homeRow) || 1,
+    col: Number(element?.dataset?.homeCol) || 1,
+  };
+}
+
+function applyIconPlacement(element, placement) {
+  if (!element || !placement) return;
+  element.dataset.homeRow = String(placement.row);
+  element.dataset.homeCol = String(placement.col);
+  element.style.gridRow = `${placement.row} / span 1`;
+  element.style.gridColumn = `${placement.col} / span 1`;
+}
+
+function persistHomePositions(homeRoot) {
+  if (!homeRoot) return;
+  const pages = [...homeRoot.querySelectorAll(".mobile-home-page")].map((page) => [
+    ...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]"),
+  ].flatMap((element) => {
+    const token = homeGridToken(element);
+    if (!token) return [];
+    return [{ token, ...placementOf(element) }];
+  }));
+  try {
+    globalThis.localStorage?.setItem(POSITION_STORAGE_KEY, JSON.stringify({ version: 1, pages }));
+  } catch {
+    // Position persistence is optional; the current edited layout remains visible.
+  }
+}
+
+function iconSwapCandidate(event) {
+  if (!mobileLayoutMatches() || !root?.isConnected || !root.classList.contains("is-home-editing")) return null;
+  if (!root.classList.contains("is-home-drag-active")) return null;
+  const source = root.querySelector(".is-home-dragging[data-home-item-id]");
+  if (!source || source.closest(".mobile-home-dock")) return null;
+
+  const pointTarget = document.elementFromPoint(event.clientX, event.clientY);
+  const target = pointTarget?.closest?.("[data-home-item-id]")
+    || root.querySelector(".is-home-drop-target[data-home-item-id]");
+  if (!target || target === source || target.closest(".mobile-home-dock")) return null;
+
+  const sourcePage = source.closest(".mobile-home-page");
+  const targetPage = target.closest(".mobile-home-page");
+  if (!sourcePage || sourcePage !== targetPage) return null;
+
+  return {
+    homeRoot: root,
+    source,
+    target,
+    sourcePlacement: placementOf(source),
+    targetPlacement: placementOf(target),
+  };
+}
+
+function scheduleIconSwap(event) {
+  const candidate = iconSwapCandidate(event);
+  if (!candidate) return;
+  const { homeRoot, source, target, sourcePlacement, targetPlacement } = candidate;
+  queueMicrotask(() => {
+    if (!homeRoot.isConnected || !source.isConnected || !target.isConnected) return;
+    if (source.closest(".mobile-home-dock") || target.closest(".mobile-home-dock")) return;
+    if (source.closest(".mobile-home-page") !== target.closest(".mobile-home-page")) return;
+    applyIconPlacement(source, targetPlacement);
+    applyIconPlacement(target, sourcePlacement);
+    persistHomePositions(homeRoot);
+  });
+}
+
+function hideFreePlacementPreviewForIconTarget() {
+  if (!root?.classList.contains("is-home-drag-active")) return;
+  const source = root.querySelector(".is-home-dragging[data-home-item-id]");
+  const target = root.querySelector(".is-home-drop-target[data-home-item-id]");
+  if (!source || !target || target.closest(".mobile-home-dock")) return;
+  root.querySelectorAll(".mobile-home-drop-preview").forEach((preview) => preview.remove());
+}
+
 function handlePointerDown(event) {
   if (dispatchingSyntheticEvent || !mobileLayoutMatches()) return;
   if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -217,9 +302,16 @@ function handlePointerMoveBubble(event) {
     return;
   }
   setDragAutoScrollSpeed(dragScrollSpeedForPoint(event.clientX, event.clientY));
+  hideFreePlacementPreviewForIconTarget();
 }
 
-function handlePointerEnd(event) {
+function handlePointerUp(event) {
+  if (dispatchingSyntheticEvent || event.pointerId !== pointerId) return;
+  scheduleIconSwap(event);
+  resetGesture();
+}
+
+function handlePointerCancel(event) {
   if (dispatchingSyntheticEvent || event.pointerId !== pointerId) return;
   resetGesture();
 }
@@ -227,5 +319,5 @@ function handlePointerEnd(event) {
 document.addEventListener("pointerdown", handlePointerDown, true);
 document.addEventListener("pointermove", handlePointerMoveCapture, { capture: true, passive: false });
 document.addEventListener("pointermove", handlePointerMoveBubble, { passive: true });
-document.addEventListener("pointerup", handlePointerEnd, true);
-document.addEventListener("pointercancel", handlePointerEnd, true);
+document.addEventListener("pointerup", handlePointerUp, true);
+document.addEventListener("pointercancel", handlePointerCancel, true);
