@@ -51,6 +51,12 @@ function positiveNumberOrNull(value) {
   return Number.isFinite(number) && number > 0 ? number : null;
 }
 
+function nonNegativeNumberOrNull(value) {
+  if (value === null || value === "" || value === undefined) return null;
+  const number = Number(value);
+  return Number.isFinite(number) && number >= 0 ? number : null;
+}
+
 function normalizeEnergyEstimate(value) {
   if (!value || typeof value !== "object") return null;
   const estimatedKcal = Number(value.estimatedKcal);
@@ -72,6 +78,61 @@ function normalizeEnergyEstimate(value) {
   });
 }
 
+function normalizeStepEstimate(value) {
+  if (!value || typeof value !== "object") return null;
+  const steps = Number(value.steps);
+  const cadenceSpm = Number(value.cadenceSpm);
+  const activeDurationMinutes = Number(value.activeDurationMinutes);
+  if (!Number.isInteger(steps) || steps < 0 || !Number.isFinite(cadenceSpm) || cadenceSpm < 0 || !Number.isFinite(activeDurationMinutes) || activeDurationMinutes <= 0) return null;
+  return Object.freeze({
+    modelId: String(value.modelId || ""),
+    method: String(value.method || "DEVICE_MOTION_ESTIMATE"),
+    steps,
+    cadenceSpm,
+    activeDurationMinutes,
+  });
+}
+
+function normalizeCourseAnalysis(value) {
+  if (!value || typeof value !== "object") return null;
+  const routePattern = ["LOOP", "OUT_AND_BACK", "ONE_WAY", "MIXED", "UNKNOWN"].includes(String(value.routePattern || "").toUpperCase())
+    ? String(value.routePattern || "UNKNOWN").toUpperCase()
+    : "UNKNOWN";
+  const gradeKnowledge = String(value.gradeKnowledge || "UNKNOWN").toUpperCase() === "KNOWN_PROFILE" ? "KNOWN_PROFILE" : "UNKNOWN";
+  const normalized = {
+    modelId: String(value.modelId || ""),
+    source: String(value.source || "LIVE_GPS_ANALYSIS"),
+    name: String(value.name || "GPS測定コース").slice(0, 80),
+    routePattern,
+    retraceRatio: nonNegativeNumberOrNull(value.retraceRatio),
+    distanceKm: positiveNumberOrNull(value.distanceKm),
+    durationMinutes: positiveNumberOrNull(value.durationMinutes),
+    elevationGainM: nonNegativeNumberOrNull(value.elevationGainM),
+    elevationLossM: nonNegativeNumberOrNull(value.elevationLossM),
+    elevationCoverage: nonNegativeNumberOrNull(value.elevationCoverage),
+    gradeKnowledge,
+    gradeInputMode: gradeKnowledge === "KNOWN_PROFILE" ? "SUMMARY" : "UNKNOWN",
+    upPercent: nonNegativeNumberOrNull(value.upPercent) ?? 0,
+    downPercent: nonNegativeNumberOrNull(value.downPercent) ?? 0,
+    flatPercent: nonNegativeNumberOrNull(value.flatPercent),
+    upGradePercent: nonNegativeNumberOrNull(value.upGradePercent) ?? 0,
+    downGradePercent: nonNegativeNumberOrNull(value.downGradePercent) ?? 0,
+    surfaceInputMode: "UNKNOWN",
+    modelSurfaceClass: "UNKNOWN",
+    modelSurfaceProfile: [],
+    pavedPercent: 0,
+    trackPercent: 0,
+    treadmillPercent: 0,
+    soilPercent: 0,
+    trailPercent: 0,
+    naturalGrassPercent: 0,
+    artificialTurfPercent: 0,
+    sandPercent: 0,
+    rawPointCount: Math.max(0, Math.round(Number(value.rawPointCount || 0))),
+  };
+  return Object.freeze(normalized);
+}
+
 function normalizePending(payload = {}) {
   const track = payload.saveRoute === false ? [] : simplifyTrackForStorage(payload.track || []);
   return Object.freeze({
@@ -86,6 +147,8 @@ function normalizePending(payload = {}) {
     distanceKm: Number(payload.distanceKm || 0),
     durationMinutes: Number(payload.durationMinutes || 0),
     energyEstimate: normalizeEnergyEstimate(payload.energyEstimate),
+    stepEstimate: normalizeStepEstimate(payload.stepEstimate),
+    courseAnalysis: normalizeCourseAnalysis(payload.courseAnalysis),
     planId: String(payload.planId || ""),
     saveRoute: payload.saveRoute !== false,
     track,
@@ -149,6 +212,8 @@ export function commitPendingRunMeasurement(recordId = "") {
     distanceKm: Number(pending.distanceKm || 0),
     durationMinutes: Number(pending.durationMinutes || 0),
     energyEstimate: normalizeEnergyEstimate(pending.energyEstimate),
+    stepEstimate: normalizeStepEstimate(pending.stepEstimate),
+    courseAnalysis: normalizeCourseAnalysis(pending.courseAnalysis),
     planId: String(pending.planId || ""),
     acceptedPointCount: Number(pending.acceptedPointCount || pending.track.length),
     rejectedPointCount: Number(pending.rejectedPointCount || 0),

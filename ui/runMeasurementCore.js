@@ -39,6 +39,7 @@ export function normalizeGeolocationPosition(position) {
   const lon = Number(coords.longitude);
   const accuracyM = Number(coords.accuracy);
   const altitudeM = coords.altitude == null ? null : Number(coords.altitude);
+  const altitudeAccuracyM = coords.altitudeAccuracy == null ? null : Number(coords.altitudeAccuracy);
   const reportedSpeedMps = coords.speed == null ? null : Number(coords.speed);
   const timestamp = Number(position?.timestamp || Date.now());
 
@@ -48,6 +49,7 @@ export function normalizeGeolocationPosition(position) {
     lon,
     accuracyM: Number.isFinite(accuracyM) && accuracyM >= 0 ? accuracyM : null,
     altitudeM: Number.isFinite(altitudeM) ? altitudeM : null,
+    altitudeAccuracyM: Number.isFinite(altitudeAccuracyM) && altitudeAccuracyM >= 0 ? altitudeAccuracyM : null,
     reportedSpeedMps: Number.isFinite(reportedSpeedMps) && reportedSpeedMps >= 0 ? reportedSpeedMps : null,
     timestamp,
   });
@@ -178,6 +180,7 @@ export function simplifyTrackForStorage(points = [], maximumPoints = DEFAULT_OPT
     lon: round(point.lon, 6),
     timestamp: Math.round(Number(point.timestamp)),
     accuracyM: finite(point.accuracyM) ? round(point.accuracyM, 1) : null,
+    altitudeM: finite(point.altitudeM) ? round(point.altitudeM, 1) : null,
+    altitudeAccuracyM: finite(point.altitudeAccuracyM) ? round(point.altitudeAccuracyM, 1) : null,
   })));
 }
-

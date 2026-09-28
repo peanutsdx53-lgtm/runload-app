@@ -153,7 +153,7 @@ test('WIDGET-ICON-CROSS-SWAP-IS-OWNED-SEPARATELY', () => {
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.15');
+  assert.equal(version, '2026.09.28.16');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
   assert.ok(worker.includes('"./styles/mobile-home-three-row.css"'));

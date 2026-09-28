@@ -141,6 +141,51 @@
     margin-top: 2px;
   }
 
+  .run-measurement-auto-note {
+    margin: 8px 0 0;
+    color: var(--color-muted);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .run-measurement-auto-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--color-line);
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .run-measurement-auto-facts > div {
+    min-width: 0;
+    display: grid;
+    gap: 3px;
+    padding: 10px 12px;
+    background: var(--color-surface);
+  }
+
+  .run-measurement-auto-facts small,
+  .run-measurement-auto-facts em {
+    color: var(--color-muted);
+    font-size: 10px;
+    font-style: normal;
+    line-height: 1.35;
+  }
+
+  .run-measurement-auto-facts strong {
+    color: var(--color-ink);
+    font-family: var(--font-numeric);
+    font-size: 20px;
+    line-height: 1.1;
+  }
+
+  .run-measurement-auto-facts strong b {
+    color: var(--color-muted);
+    font-family: inherit;
+    font-size: 11px;
+  }
+
   .run-measurement-energy {
     display: flex;
     align-items: center;
@@ -182,15 +227,54 @@
     font-size: 11px;
   }
 
-  .run-measurement-post__summary .run-measurement-post__energy {
-    grid-column: 1 / -1;
+  .run-measurement-post__facts {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
   }
 
+  .run-measurement-post__facts > span {
+    min-width: 0;
+  }
+
+  .run-measurement-post__facts em,
   .run-measurement-post__energy em {
     color: var(--color-muted);
     font-size: 10px;
     font-style: normal;
     line-height: 1.35;
+  }
+
+  .run-measurement-course-analysis {
+    display: grid;
+    gap: 6px;
+    padding: 12px 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+  }
+
+  .run-measurement-course-analysis > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: baseline;
+  }
+
+  .run-measurement-course-analysis small,
+  .run-measurement-course-analysis span,
+  .run-measurement-course-analysis em {
+    color: var(--color-muted);
+    font-size: 10px;
+    font-style: normal;
+    line-height: 1.45;
+  }
+
+  .run-measurement-course-analysis p {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.45;
   }
 
   .run-measurement-finish-requirement {

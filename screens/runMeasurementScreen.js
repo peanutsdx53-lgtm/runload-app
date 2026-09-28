@@ -78,6 +78,7 @@ export function renderRunMeasurementScreen({ services, context }) {
 
         <section class="run-measurement-prep__options">
           <label class="run-measurement__route-save"><input type="checkbox" data-save-route checked><span><strong>走行軌跡を端末内に保存</strong><small>記録保存後、その記録と関連付けます。外部解析サービスへは送信しません。</small></span></label>
+          <p class="run-measurement-auto-note">測定中は、端末モーションが利用できる場合に推定歩数、GPS高度が十分な場合に坂道・コース形状を自動整理します。路面は自動判定しません。</p>
         </section>
 
         <p class="run-measurement__status run-measurement-prep__status" data-measurement-prep-status role="status" aria-live="polite">開始すると位置情報の許可を確認します。</p>
@@ -112,9 +113,9 @@ export function renderRunMeasurementScreen({ services, context }) {
         <article><small>平均ペース</small><strong><span data-measurement-average-pace>—</span> /km</strong></article>
       </section>
 
-      <section class="run-measurement-energy" data-measurement-energy aria-live="polite">
-        <div><small>推定消費エネルギー</small><strong><span data-measurement-energy-value>—</span> <b>kcal</b></strong></div>
-        <span data-measurement-energy-status>GPS取得後に表示します。</span>
+      <section class="run-measurement-auto-facts" aria-label="自動整理した測定値">
+        <div><small>推定歩数</small><strong><span data-measurement-step-value>—</span> <b>歩</b></strong><em data-measurement-step-status>端末モーションから推定します。</em></div>
+        <div><small>推定消費エネルギー</small><strong><span data-measurement-energy-value>—</span> <b>kcal</b></strong><em data-measurement-energy-status>GPS取得後に表示します。</em></div>
       </section>
 
       <div class="run-measurement__warning" data-pace-warning role="status" aria-live="assertive" hidden><strong>予定より速いペースが続いています</strong><span>現在ペースを確認してください。</span></div>
@@ -135,7 +136,15 @@ export function renderRunMeasurementScreen({ services, context }) {
     <section class="run-measurement-post" data-measurement-post hidden>
       <header class="run-measurement__header"><span></span><strong>測定終了</strong><span></span></header>
       <main class="run-measurement-post__body">
-        <section class="run-measurement-post__summary"><p class="eyebrow">DONE</p><h1>走行を測定しました</h1><div><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span><span class="run-measurement-post__energy"><small>推定消費エネルギー</small><strong><span data-measurement-post-energy>—</span> kcal</strong><em data-measurement-post-energy-status>推定できませんでした。</em></span></div></section>
+        <section class="run-measurement-post__summary"><p class="eyebrow">DONE</p><h1>走行を測定しました</h1><div class="run-measurement-post__facts"><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span><span><small>推定歩数</small><strong data-measurement-post-steps>—</strong><em data-measurement-post-step-status>端末モーション利用時のみ</em></span><span class="run-measurement-post__energy"><small>推定消費エネルギー</small><strong><span data-measurement-post-energy>—</span> kcal</strong><em data-measurement-post-energy-status>推定できませんでした。</em></span></div></section>
+
+        <section class="run-measurement-course-analysis">
+          <div><small>GPSから自動整理</small><strong>コース条件</strong></div>
+          <p data-measurement-post-course>解析しています。</p>
+          <span data-measurement-post-elevation>高度情報が十分な場合だけ坂道を自動入力します。</span>
+          <em>路面はGPSから決めず、記録画面で未確認のまま残します。</em>
+        </section>
+
         ${fatigueScaleMarkup("after")}
         <p class="run-measurement__status" data-measurement-post-status role="status" aria-live="polite">疲労感は任意です。そのまま記録入力へ進めます。</p>
         <button type="button" class="run-measurement__start" data-action="record-post-fatigue" disabled>この値を記録して次へ</button>
