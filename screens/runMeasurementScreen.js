@@ -112,6 +112,11 @@ export function renderRunMeasurementScreen({ services, context }) {
         <article><small>平均ペース</small><strong><span data-measurement-average-pace>—</span> /km</strong></article>
       </section>
 
+      <section class="run-measurement-energy" data-measurement-energy aria-live="polite">
+        <div><small>推定消費エネルギー</small><strong><span data-measurement-energy-value>—</span> <b>kcal</b></strong></div>
+        <span data-measurement-energy-status>GPS取得後に表示します。</span>
+      </section>
+
       <div class="run-measurement__warning" data-pace-warning role="status" aria-live="assertive" hidden><strong>予定より速いペースが続いています</strong><span>現在ペースを確認してください。</span></div>
 
       <section class="run-measurement-goal-reached" data-measurement-goal-reached hidden role="status" aria-live="assertive">
@@ -130,7 +135,7 @@ export function renderRunMeasurementScreen({ services, context }) {
     <section class="run-measurement-post" data-measurement-post hidden>
       <header class="run-measurement__header"><span></span><strong>測定終了</strong><span></span></header>
       <main class="run-measurement-post__body">
-        <section class="run-measurement-post__summary"><p class="eyebrow">DONE</p><h1>走行を測定しました</h1><div><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span></div></section>
+        <section class="run-measurement-post__summary"><p class="eyebrow">DONE</p><h1>走行を測定しました</h1><div><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span><span class="run-measurement-post__energy"><small>推定消費エネルギー</small><strong><span data-measurement-post-energy>—</span> kcal</strong><em data-measurement-post-energy-status>推定できませんでした。</em></span></div></section>
         ${fatigueScaleMarkup("after")}
         <p class="run-measurement__status" data-measurement-post-status role="status" aria-live="polite">疲労感は任意です。そのまま記録入力へ進めます。</p>
         <button type="button" class="run-measurement__start" data-action="record-post-fatigue" disabled>この値を記録して次へ</button>
