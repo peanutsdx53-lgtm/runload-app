@@ -10,6 +10,7 @@ const index = fs.readFileSync('index.html', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const versionModule = fs.readFileSync('ui/appVersionStatus.js', 'utf8');
 const coordinator = fs.readFileSync('ui/mobileHomeDropCoordinator.js', 'utf8');
+const crossSwap = fs.readFileSync('ui/mobileHomeWidgetIconSwap.js', 'utf8');
 
 const results = [];
 function test(id, fn) {
@@ -137,13 +138,27 @@ test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
   assert.ok(coordinator.includes('swapDomPositions(source, target);'));
 });
 
+test('WIDGET-ICON-CROSS-SWAP-IS-OWNED-SEPARATELY', () => {
+  assert.ok(index.includes('./ui/mobileHomeWidgetIconSwap.js'));
+  assert.ok(worker.includes('"./ui/mobileHomeWidgetIconSwap.js"'));
+  assert.ok(crossSwap.includes('sourceIsWidget && targetIsApp'));
+  assert.ok(crossSwap.includes('sourceIsApp && targetIsWidget'));
+  assert.ok(crossSwap.includes('conflicts'));
+  assert.ok(crossSwap.includes('originCells'));
+  assert.ok(crossSwap.includes('delete candidate.source.dataset[identity.key]'));
+  assert.ok(crossSwap.includes('ensurePagingUnlocked'));
+  assert.ok(crossSwap.includes('WIDGET_STORAGE_KEY'));
+  assert.ok(crossSwap.includes('LAYOUT_STORAGE_KEY'));
+});
+
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.9');
+  assert.equal(version, '2026.09.28.10');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
   assert.ok(worker.includes('"./styles/mobile-home-three-row.css"'));
   assert.ok(worker.includes('"./ui/mobileHomePageCapacity.js"'));
+  assert.ok(worker.includes('"./ui/mobileHomeWidgetIconSwap.js"'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');
