@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 const versionModule = fs.readFileSync('ui/appVersionStatus.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const platform = fs.readFileSync('core/internal/platformInfrastructure.js', 'utf8');
+const compatibilityShim = fs.readFileSync('core/legacyCompatibility.js', 'utf8');
 const rofConstants = fs.readFileSync('core/rofJConstants.js', 'utf8');
 const rofCore = fs.readFileSync('core/rofJCore.js', 'utf8');
 const tutorial = fs.readFileSync('ui/screenTutorial.js', 'utf8');
@@ -23,19 +24,30 @@ function test(id, fn) {
 
 const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
 
-test('RETIRED-COMPATIBILITY-MODULE-IS-ABSENT', () => {
-  assert.equal(fs.existsSync('core/legacyCompatibility.js'), false);
+test('UPDATE-TRANSITION-SHIM-DOES-NOT-RESTORE-LEGACY-DATA-COMPATIBILITY', () => {
+  assert.equal(fs.existsSync('core/legacyCompatibility.js'), true);
+  assert.ok(compatibilityShim.includes('LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES = Object.freeze([])'));
+  assert.ok(compatibilityShim.includes('LEGACY_ROF_J_SEMANTIC_VERSIONS = Object.freeze([])'));
+  assert.ok(compatibilityShim.includes('LEGACY_ROF_J_STORAGE_SCHEMA_VERSIONS = Object.freeze([])'));
+  assert.ok(compatibilityShim.includes('LEGACY_ROF_J_LIFECYCLE_SCHEMA_VERSIONS = Object.freeze([])'));
+  assert.ok(compatibilityShim.includes('return false;'));
   assert.ok(!platform.includes('legacyCompatibility'));
   assert.ok(!platform.includes('LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES'));
-  assert.ok(!worker.includes('legacyCompatibility'));
-  assert.ok(!worker.includes('LEGACY_CACHE_PREFIXES'));
+  assert.ok(worker.includes('./core/legacyCompatibility.js'));
 });
 
 test('PWA-CACHE-USES-CURRENT-RELEASE-CONTRACT', () => {
-  assert.equal(version, '2026.09.28.18');
+  assert.equal(version, '2026.09.29.1');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('const CACHE_PREFIX = "running-record-app-";'));
   assert.ok(platform.includes('registration.unregister()'));
+});
+
+test('SERVICE-WORKER-DOES-NOT-AUTO-ACTIVATE-DURING-BOOT', () => {
+  const installBlock = worker.match(/self\.addEventListener\("install"[\s\S]*?\n\}\);/)?.[0] || '';
+  assert.ok(installBlock.includes('cache.addAll(PRECACHE_URLS)'));
+  assert.ok(!installBlock.includes('self.skipWaiting()'));
+  assert.ok(worker.includes('if (event.data?.type === "SKIP_WAITING") self.skipWaiting();'));
 });
 
 test('ROF-J-ACCEPTS-CURRENT-SCHEMA-ONLY', () => {
