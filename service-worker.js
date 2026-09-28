@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.28.15";
+const CACHE_NAME = "running-record-app-runtime-2026.09.28.16";
 const CACHE_PREFIX = "running-record-app-";
 const LEGACY_CACHE_PREFIXES = Object.freeze(["runload-app-"]);
 const PRECACHE_URLS = [
@@ -97,6 +97,7 @@ const PRECACHE_URLS = [
   "./ui/pwaUpdateBootstrap.js",
   "./ui/appVersionStatus.js",
   "./ui/rofJVisualEnhancement.js",
+  "./ui/mobileMeasurementRecordAutofill.js",
   "./ui/appRouter.js",
   "./ui/deviceLayout.js",
   "./ui/appSettings.js",
@@ -141,6 +142,7 @@ const PRECACHE_URLS = [
   "./ui/gpxLocalAnalysis.js",
   "./ui/runMeasurementCore.js",
   "./ui/runMeasurementEnergy.js",
+  "./ui/runMeasurementAutoRecord.js",
   "./ui/runMeasurementMap.js",
   "./ui/runMeasurementState.js",
   "./ui/interactions/runMeasurementInteractions.js",
