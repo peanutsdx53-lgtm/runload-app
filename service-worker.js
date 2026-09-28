@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.28.9";
+const CACHE_NAME = "running-record-app-runtime-2026.09.28.10";
 const CACHE_PREFIX = "running-record-app-";
 const LEGACY_CACHE_PREFIXES = Object.freeze(["runload-app-"]);
 const PRECACHE_URLS = [
@@ -109,6 +109,7 @@ const PRECACHE_URLS = [
   "./ui/interactions/homeGridModel.js",
   "./ui/mobileHomePageCapacity.js",
   "./ui/mobileHomeDropCoordinator.js",
+  "./ui/mobileHomeWidgetIconSwap.js",
   "./ui/iosHomeEditScrollFix.js",
   "./ui/mobileHomeEditScroll.js",
   "./ui/mobileHomeReturnTransition.js",
