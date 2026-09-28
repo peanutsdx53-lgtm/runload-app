@@ -210,12 +210,13 @@ export function analyzeMeasuredCourse({ track = [], durationMs = 0, name = "GPSæ
     const accuracyB = finite(b.altitudeAccuracyM) ? Number(b.altitudeAccuracyM) : null;
     const altitudeAccurate = (accuracyA == null || accuracyA <= MAX_ALTITUDE_ACCURACY_M)
       && (accuracyB == null || accuracyB <= MAX_ALTITUDE_ACCURACY_M);
-    if (!finite(altitudeA) || !finite(altitudeB) || !altitudeAccurate || distanceM < MIN_GRADE_DISTANCE_M) continue;
+    if (!finite(altitudeA) || !finite(altitudeB) || !altitudeAccurate) continue;
+    altitudeCoverageM += distanceM;
+    if (distanceM < MIN_GRADE_DISTANCE_M) continue;
 
     const riseM = Number(altitudeB) - Number(altitudeA);
     const grade = riseM / distanceM * 100;
     if (!Number.isFinite(grade) || Math.abs(grade) > MAX_ABS_GRADE_PERCENT) continue;
-    altitudeCoverageM += distanceM;
     if (riseM > 0) gainM += riseM;
     else lossM += Math.abs(riseM);
 
