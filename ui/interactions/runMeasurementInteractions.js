@@ -36,7 +36,7 @@ function createWarningTone() {
   };
 }
 
-export function bindRunMeasurement({ router }) {
+export function bindRunMeasurement({ router, services }) {
   const root = document.querySelector("[data-run-measurement]");
   if (!root) return undefined;
 
@@ -53,6 +53,9 @@ export function bindRunMeasurement({ router }) {
   const finishButton = root.querySelector('[data-action="finish-measurement"]');
   const cancelButton = root.querySelector('[data-action="cancel-measurement"]');
   const saveRouteControl = root.querySelector("[data-save-route]");
+  const fatigueSlider = root.querySelector("[data-measurement-fatigue-slider]");
+  const fatigueValue = root.querySelector("[data-measurement-fatigue-value]");
+  const fatigueStatus = root.querySelector("[data-measurement-fatigue-status]");
   const planId = String(root.dataset.planId || "");
   const plannedPace = Number(root.dataset.targetPace || 0) || null;
   const playWarningTone = createWarningTone();
@@ -70,6 +73,8 @@ export function bindRunMeasurement({ router }) {
   let track = [];
   let paceExceededAt = null;
   let lastWarningAt = 0;
+  let fatigueTouched = false;
+  let fatigueRunId = "";
 
   function activeElapsedMs() {
     return running && startedAtMs ? Math.max(0, Date.now() - startedAtMs) : 0;
@@ -79,6 +84,46 @@ export function bindRunMeasurement({ router }) {
     if (!statusNode) return;
     statusNode.textContent = message;
     statusNode.classList.toggle("is-error", error);
+  }
+
+  function refreshFatigue() {
+    if (!fatigueSlider || !fatigueValue || !fatigueStatus) return;
+    if (!fatigueTouched) {
+      fatigueValue.textContent = "—";
+      fatigueStatus.textContent = "触れなければ記録せず、そのまま測定できます。";
+      return;
+    }
+    fatigueValue.textContent = String(fatigueSlider.value);
+    fatigueStatus.textContent = `走る前 ${fatigueSlider.value} を測定開始と関連付けます。`;
+  }
+
+  function selectFatigue() {
+    fatigueTouched = true;
+    refreshFatigue();
+  }
+
+  function discardFatigueLink() {
+    if (!fatigueRunId || !services?.fatigue) return;
+    services.fatigue.lifecycle?.removeState?.(fatigueRunId);
+    services.fatigue.repository?.removeByRunId?.(fatigueRunId);
+    fatigueRunId = "";
+  }
+
+  function capturePreFatigue() {
+    if (!fatigueTouched || !services?.fatigue) return { ok: true, linked: false };
+    const runId = services.fatigue.createRunId?.() || "";
+    if (!runId) return { ok: false, code: "ROF_J_RUN_ID_FAILED" };
+    const createdAt = new Date().toISOString();
+    const lifecycle = services.fatigue.beginLifecycle?.({ runId, createdAt });
+    if (!lifecycle?.ok) return lifecycle || { ok: false, code: "ROF_J_LIFECYCLE_FAILED" };
+    const captured = services.fatigue.capturePreDirect?.(runId, Number(fatigueSlider?.value), new Date().toISOString());
+    if (!captured?.ok) {
+      services.fatigue.lifecycle?.removeState?.(runId);
+      services.fatigue.repository?.removeByRunId?.(runId);
+      return captured || { ok: false, code: "ROF_J_PRE_CAPTURE_FAILED" };
+    }
+    fatigueRunId = runId;
+    return { ok: true, linked: true, runId };
   }
 
   function updateMetrics() {
@@ -182,9 +227,25 @@ export function bindRunMeasurement({ router }) {
       return;
     }
     clearPendingRunMeasurement();
-    running = true;
+    discardFatigueLink();
+    const fatigueLink = capturePreFatigue();
+    if (!fatigueLink.ok) {
+      setStatus("走る前の疲労感を保存できませんでした。もう一度お試しください。", true);
+      return;
+    }
+
     startedAtMs = Date.now();
     startedAtIso = new Date(startedAtMs).toISOString();
+    if (fatigueRunId) {
+      const marked = services.fatigue.markRunStart?.(fatigueRunId, startedAtIso);
+      if (!marked?.ok) {
+        discardFatigueLink();
+        setStatus("疲労感を測定開始と関連付けられませんでした。もう一度お試しください。", true);
+        return;
+      }
+    }
+
+    running = true;
     distanceM = 0;
     acceptedPointCount = 0;
     rejectedPointCount = 0;
@@ -192,6 +253,7 @@ export function bindRunMeasurement({ router }) {
     track = [];
     paceExceededAt = null;
     lastWarningAt = 0;
+    if (fatigueSlider) fatigueSlider.disabled = true;
     startButton.hidden = true;
     finishButton.hidden = false;
     cancelButton.hidden = false;
@@ -215,7 +277,8 @@ export function bindRunMeasurement({ router }) {
     timerId = null;
     await releaseWakeLock();
 
-    const result = savePendingRunMeasurement({
+    const payload = {
+      runId: fatigueRunId,
       startedAt: startedAtIso,
       endedAt: endedAtIso,
       distanceKm: Number((distanceM / 1000).toFixed(2)),
@@ -225,7 +288,8 @@ export function bindRunMeasurement({ router }) {
       track,
       acceptedPointCount,
       rejectedPointCount,
-    });
+    };
+    const result = savePendingRunMeasurement(payload);
     if (!result.ok) {
       running = true;
       startedAtMs = Date.now() - elapsed;
@@ -235,13 +299,24 @@ export function bindRunMeasurement({ router }) {
       setStatus("測定結果を端末内に保持できませんでした。ブラウザーの保存容量を確認してください。", true);
       return;
     }
+
+    if (fatigueRunId) {
+      const ended = services.fatigue.markRunEnd?.(fatigueRunId, endedAtIso);
+      if (!ended?.ok) {
+        discardFatigueLink();
+        savePendingRunMeasurement({ ...payload, runId: "" });
+      }
+    }
+
     const parameters = { measurement: "1" };
     if (planId) parameters.planId = planId;
+    if (fatigueRunId) parameters.runId = fatigueRunId;
     router.navigateToScreen("record-input", parameters);
   }
 
   async function cancel() {
     if (!running) {
+      discardFatigueLink();
       router.navigateToScreen("home");
       return;
     }
@@ -252,8 +327,14 @@ export function bindRunMeasurement({ router }) {
     timerId = null;
     await releaseWakeLock();
     clearPendingRunMeasurement();
+    discardFatigueLink();
     router.navigateToScreen("home");
   }
+
+  fatigueSlider?.addEventListener("pointerdown", selectFatigue);
+  fatigueSlider?.addEventListener("input", selectFatigue);
+  fatigueSlider?.addEventListener("change", selectFatigue);
+  refreshFatigue();
 
   startButton?.addEventListener("click", start);
   finishButton?.addEventListener("click", finish);
@@ -267,6 +348,7 @@ export function bindRunMeasurement({ router }) {
   document.addEventListener("visibilitychange", visibilityHandler);
 
   return () => {
+    const wasRunning = running;
     running = false;
     stopWatch();
     if (timerId) window.clearInterval(timerId);
@@ -274,5 +356,6 @@ export function bindRunMeasurement({ router }) {
     releaseWakeLock();
     map?.destroy();
     document.removeEventListener("visibilitychange", visibilityHandler);
+    if (wasRunning) discardFatigueLink();
   };
 }
