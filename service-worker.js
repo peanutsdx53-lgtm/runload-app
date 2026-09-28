@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.28.18";
+const CACHE_NAME = "running-record-app-runtime-2026.09.29.1";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -7,6 +7,7 @@ const PRECACHE_URLS = [
   "./core/appCore.js",
   "./core/rofJConstants.js",
   "./core/rofJCore.js",
+  "./core/legacyCompatibility.js",
   "./core/internal/modules.js",
   "./core/internal/platformInfrastructure.js",
   "./core/internal/modelSupport.js",
@@ -92,6 +93,7 @@ const PRECACHE_URLS = [
   "./styles/desktop.css",
   "./styles/tokens.css",
   "./styles/run-measurement.css",
+  "./ui/bootRecovery.js",
   "./ui/appVersionStatus.js",
   "./ui/rofJVisualEnhancement.js",
   "./ui/mobileMeasurementRecordAutofill.js",
@@ -159,7 +161,6 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
   );
 });
 

@@ -1,0 +1,17 @@
+// Update-transition shim only.
+// Current application code must not import or use these exports for stored-data compatibility.
+// They exist solely so an older cached module graph can finish loading while a new service worker is waiting.
+
+export const LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES = Object.freeze([]);
+export const LEGACY_TUTORIAL_STORAGE_KEY = "running-record.screenTutorial.seen.v1";
+export const LEGACY_ROF_J_SEMANTIC_VERSIONS = Object.freeze([]);
+export const LEGACY_ROF_J_STORAGE_SCHEMA_VERSIONS = Object.freeze([]);
+export const LEGACY_ROF_J_LIFECYCLE_SCHEMA_VERSIONS = Object.freeze([]);
+
+export function hasLegacyRofJSourceMetadata() {
+  return false;
+}
+
+export function removeLegacyRofJSourceMetadata(entry) {
+  return entry;
+}
