@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.28.12";
+const CACHE_NAME = "running-record-app-runtime-2026.09.28.13";
 const CACHE_PREFIX = "running-record-app-";
 const LEGACY_CACHE_PREFIXES = Object.freeze(["runload-app-"]);
 const PRECACHE_URLS = [
@@ -82,6 +82,7 @@ const PRECACHE_URLS = [
   "./styles/mobile-record.css",
   "./styles/rof-j-visual.css",
   "./styles/rof-j-compact.css",
+  "./styles/mobile-run-measurement-v2.css",
   "./styles/mobile-app-screens.css",
   "./styles/mobile-quick-tools.css",
   "./styles/mobile-pace-calculator.css",
