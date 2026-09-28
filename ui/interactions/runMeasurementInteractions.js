@@ -9,6 +9,7 @@ import {
   updatePaceWarningState,
 } from "../runMeasurementCore.js";
 import { estimateRunningEnergy } from "../runMeasurementEnergy.js";
+import { analyzeMeasuredCourse, createMotionStepEstimator, routePatternLabel } from "../runMeasurementAutoRecord.js";
 import { createRunMeasurementMap } from "../runMeasurementMap.js";
 import { clearPendingRunMeasurement, savePendingRunMeasurement } from "../runMeasurementState.js";
 
@@ -112,6 +113,22 @@ function energyStatusText(result) {
   return "測定開始後に表示します。";
 }
 
+function stepStatusText(status, hasEstimate = false) {
+  if (hasEstimate) return "端末モーションから推定しています。";
+  if (status === "DENIED") return "モーション利用が許可されていないため算出しません。";
+  if (status === "UNAVAILABLE") return "この端末ではモーション歩数を利用できません。";
+  return "端末モーションから推定中です。";
+}
+
+function courseSummaryText(course) {
+  if (!course) return "GPS軌跡からコース条件を作れませんでした。";
+  const route = routePatternLabel(course.routePattern);
+  const grade = course.gradeKnowledge === "KNOWN_PROFILE"
+    ? `上り ${course.upPercent}%・平坦 ${course.flatPercent}%・下り ${course.downPercent}%`
+    : "坂道は高度情報不足のため未設定";
+  return `${route}・${grade}`;
+}
+
 export function bindRunMeasurement({ router, services }) {
   const root = document.querySelector("[data-run-measurement]");
   if (!root) return undefined;
@@ -131,6 +148,8 @@ export function bindRunMeasurement({ router, services }) {
   const averagePaceNode = root.querySelector("[data-measurement-average-pace]");
   const energyValueNode = root.querySelector("[data-measurement-energy-value]");
   const energyStatusNode = root.querySelector("[data-measurement-energy-status]");
+  const stepValueNode = root.querySelector("[data-measurement-step-value]");
+  const stepStatusNode = root.querySelector("[data-measurement-step-status]");
   const primaryLabel = root.querySelector("[data-measurement-primary-label]");
   const primaryValue = root.querySelector("[data-measurement-primary]");
   const goalCaption = root.querySelector("[data-measurement-goal-caption]");
@@ -145,6 +164,10 @@ export function bindRunMeasurement({ router, services }) {
   const postDistance = root.querySelector("[data-measurement-post-distance]");
   const postEnergy = root.querySelector("[data-measurement-post-energy]");
   const postEnergyStatus = root.querySelector("[data-measurement-post-energy-status]");
+  const postSteps = root.querySelector("[data-measurement-post-steps]");
+  const postStepStatus = root.querySelector("[data-measurement-post-step-status]");
+  const postCourse = root.querySelector("[data-measurement-post-course]");
+  const postElevation = root.querySelector("[data-measurement-post-elevation]");
   const postRecordButton = root.querySelector('[data-action="record-post-fatigue"]');
 
   const targetMinutesInput = root.querySelector("[data-measurement-target-minutes]");
@@ -154,6 +177,7 @@ export function bindRunMeasurement({ router, services }) {
   const plannedPace = Number(root.dataset.targetPace || 0) || null;
   const playWarningTone = createTone(740);
   const playGoalTone = createTone(920);
+  const stepEstimator = createMotionStepEstimator(window);
 
   const beforeFatigue = createFatigueControl(root.querySelector('[data-measurement-fatigue-phase="before"]'));
   const afterFatigue = createFatigueControl(root.querySelector('[data-measurement-fatigue-phase="after"]'), ({ touched }) => {
@@ -216,9 +240,30 @@ export function bindRunMeasurement({ router, services }) {
     return result;
   }
 
+  function updateSteps(elapsed = activeElapsedMs()) {
+    const count = stepEstimator.liveSteps();
+    const estimate = stepEstimator.snapshot(elapsed);
+    if (stepValueNode) stepValueNode.textContent = Number.isInteger(count) && count >= 4 ? String(count) : "—";
+    if (stepStatusNode) stepStatusNode.textContent = stepStatusText(stepEstimator.status(), Boolean(estimate));
+    return estimate;
+  }
+
   function renderPostEnergy(result) {
     if (postEnergy) postEnergy.textContent = result?.ok ? String(Math.round(result.estimatedKcal)) : "—";
     if (postEnergyStatus) postEnergyStatus.textContent = energyStatusText(result);
+  }
+
+  function renderPostAutoRecord(payload) {
+    const stepEstimate = payload?.stepEstimate || null;
+    const course = payload?.courseAnalysis || null;
+    if (postSteps) postSteps.textContent = stepEstimate ? `${stepEstimate.steps.toLocaleString("ja-JP")} 歩` : "—";
+    if (postStepStatus) postStepStatus.textContent = stepStatusText(stepEstimator.status(), Boolean(stepEstimate));
+    if (postCourse) postCourse.textContent = courseSummaryText(course);
+    if (postElevation) {
+      postElevation.textContent = course?.elevationGainM != null
+        ? `獲得標高 ${Math.round(course.elevationGainM)} m・下降 ${Math.round(course.elevationLossM || 0)} m`
+        : "高度情報が十分な場合だけ坂道を自動入力します。";
+    }
   }
 
   function selectedMode() {
@@ -353,6 +398,7 @@ export function bindRunMeasurement({ router, services }) {
     if (distanceNode) distanceNode.textContent = (distanceM / 1000).toFixed(2);
     if (averagePaceNode) averagePaceNode.textContent = formatPace(averagePaceSecondsPerKm(distanceM, elapsed));
     updateEnergy(elapsed);
+    updateSteps(elapsed);
     updatePrimary(elapsed);
   }
 
@@ -424,8 +470,10 @@ export function bindRunMeasurement({ router, services }) {
 
     clearPendingRunMeasurement();
     discardFatigueLink();
+    await stepEstimator.start();
     const fatigueLink = capturePreFatigue();
     if (!fatigueLink.ok) {
+      stepEstimator.stop();
       setMessage(prepStatus, "走る前の疲労感を保存できませんでした。疲労感を未選択に戻すか、もう一度お試しください。", true);
       return;
     }
@@ -438,6 +486,7 @@ export function bindRunMeasurement({ router, services }) {
     if (fatigueRunId) {
       const marked = services.fatigue.markRunStart?.(fatigueRunId, startedAtIso);
       if (!marked?.ok) {
+        stepEstimator.stop();
         discardFatigueLink();
         setMessage(prepStatus, "疲労感を測定開始と関連付けられませんでした。もう一度お試しください。", true);
         return;
@@ -476,10 +525,11 @@ export function bindRunMeasurement({ router, services }) {
       paused = true;
       pausedAtMs = Date.now();
       stopWatch();
+      stepEstimator.pause();
       lastAcceptedPoint = null;
       await releaseWakeLock();
       if (pauseButton) pauseButton.textContent = "再開";
-      setMessage(activeStatus, "一時停止中です。時間と距離の加算を止めています。");
+      setMessage(activeStatus, "一時停止中です。時間・距離・推定歩数の加算を止めています。");
       updateMetrics();
       return;
     }
@@ -487,6 +537,7 @@ export function bindRunMeasurement({ router, services }) {
     pausedTotalMs += Math.max(0, Date.now() - Number(pausedAtMs || Date.now()));
     pausedAtMs = null;
     paused = false;
+    stepEstimator.resume();
     lastAcceptedPoint = null;
     if (pauseButton) pauseButton.textContent = "一時停止";
     setMessage(activeStatus, "測定を再開しました。GPSを取得しています。");
@@ -497,6 +548,8 @@ export function bindRunMeasurement({ router, services }) {
 
   function measurementPayload(elapsed) {
     const energyEstimate = calculateEnergy(elapsed);
+    const stepEstimate = stepEstimator.snapshot(elapsed);
+    const courseAnalysis = analyzeMeasuredCourse({ track, durationMs: elapsed });
     return {
       runId: fatigueRunId,
       measurementMode,
@@ -507,6 +560,8 @@ export function bindRunMeasurement({ router, services }) {
       distanceKm: Number((distanceM / 1000).toFixed(2)),
       durationMinutes: Number((elapsed / 60000).toFixed(2)),
       energyEstimate: energyEstimate.ok ? energyEstimate : null,
+      stepEstimate,
+      courseAnalysis,
       planId,
       saveRoute: saveRouteControl?.checked !== false,
       track,
@@ -528,6 +583,7 @@ export function bindRunMeasurement({ router, services }) {
     finalElapsedMs = elapsed;
     measurementStarted = false;
     stopWatch();
+    stepEstimator.pause();
     if (timerId) window.clearInterval(timerId);
     timerId = null;
     await releaseWakeLock();
@@ -537,7 +593,10 @@ export function bindRunMeasurement({ router, services }) {
     if (!result.ok) {
       measurementStarted = true;
       paused = wasPaused;
-      if (!paused) beginWatch();
+      if (!paused) {
+        beginWatch();
+        stepEstimator.resume();
+      }
       timerId = window.setInterval(updateMetrics, 500);
       await requestWakeLock();
       setMessage(activeStatus, "測定結果を端末内に保持できませんでした。ブラウザーの保存容量を確認してください。", true);
@@ -552,6 +611,7 @@ export function bindRunMeasurement({ router, services }) {
         result = savePendingRunMeasurement(payload);
         if (!result.ok) {
           clearPendingRunMeasurement();
+          stepEstimator.stop();
           setMessage(activeStatus, "測定結果を次の画面へ引き継げませんでした。", true);
           return;
         }
@@ -562,6 +622,8 @@ export function bindRunMeasurement({ router, services }) {
     if (postTime) postTime.textContent = formatElapsed(elapsed);
     if (postDistance) postDistance.textContent = `${(distanceM / 1000).toFixed(2)} km`;
     renderPostEnergy(payload.energyEstimate || calculateEnergy(elapsed));
+    renderPostAutoRecord(payload);
+    stepEstimator.stop();
     afterFatigue?.reset();
     showPhase("post");
     setMessage(postStatus, fatigueRunId ? "走る前の値と同じ走行として記録できます。" : "疲労感は任意です。そのまま記録入力へ進めます。");
@@ -621,6 +683,7 @@ export function bindRunMeasurement({ router, services }) {
 
   async function cancel() {
     if (!measurementStarted) {
+      stepEstimator.stop();
       clearPendingRunMeasurement();
       discardFatigueLink();
       router.navigateToScreen("home");
@@ -629,6 +692,7 @@ export function bindRunMeasurement({ router, services }) {
     if (!window.confirm("測定中の内容を破棄して終了しますか？")) return;
     measurementStarted = false;
     stopWatch();
+    stepEstimator.stop();
     if (timerId) window.clearInterval(timerId);
     timerId = null;
     await releaseWakeLock();
@@ -666,6 +730,7 @@ export function bindRunMeasurement({ router, services }) {
     const wasActive = measurementStarted;
     measurementStarted = false;
     stopWatch();
+    stepEstimator.stop();
     if (timerId) window.clearInterval(timerId);
     timerId = null;
     releaseWakeLock();
