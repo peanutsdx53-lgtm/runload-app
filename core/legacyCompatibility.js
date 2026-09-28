@@ -21,26 +21,19 @@ export const LEGACY_ROF_J_LIFECYCLE_SCHEMA_VERSIONS = Object.freeze([
   "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1",
 ]);
 
-const CURRENT_ROF_J_ENTRY_FIELDS = Object.freeze(new Set([
-  "runId",
-  "instrumentId",
-  "instrumentSemanticVersion",
-  "sourceVersion",
-  "visualSourceId",
-  "measurements",
-  "createdAt",
-  "updatedAt",
-]));
+const LEGACY_ROF_J_SOURCE_FIELD_PREFIX = "japaneseSource";
+
+function legacyRofJSourceMetadataKeys(entry) {
+  if (!entry || typeof entry !== "object" || Array.isArray(entry)) return [];
+  return Object.keys(entry).filter((key) => key.startsWith(LEGACY_ROF_J_SOURCE_FIELD_PREFIX));
+}
 
 export function hasLegacyRofJSourceMetadata(entry) {
-  if (!entry || typeof entry !== "object" || Array.isArray(entry)) return false;
-  return Object.keys(entry).some((key) => !CURRENT_ROF_J_ENTRY_FIELDS.has(key));
+  return legacyRofJSourceMetadataKeys(entry).length > 0;
 }
 
 export function removeLegacyRofJSourceMetadata(entry) {
   if (!entry || typeof entry !== "object" || Array.isArray(entry)) return entry;
-  for (const key of Object.keys(entry)) {
-    if (!CURRENT_ROF_J_ENTRY_FIELDS.has(key)) delete entry[key];
-  }
+  for (const key of legacyRofJSourceMetadataKeys(entry)) delete entry[key];
   return entry;
 }
