@@ -18,9 +18,9 @@
   }
 
   .mobile-home-os.is-home-editing .mobile-home-page-viewport {
-    overflow-x: hidden;
-    touch-action: none;
-    scroll-snap-type: none;
+    overflow-x: auto;
+    touch-action: pan-x;
+    scroll-snap-type: x mandatory;
     overscroll-behavior-x: none;
     overscroll-behavior-y: none;
     margin-bottom: 28px;
@@ -79,7 +79,7 @@
   html.is-runload-ios-home-native-scroll
   .mobile-home-os.is-home-editing
   .mobile-home-page [data-home-widget-id] {
-    touch-action: none;
+    touch-action: pan-x;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
