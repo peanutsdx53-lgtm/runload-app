@@ -53,8 +53,11 @@ await test('UNUSED-SCREEN-ARCHITECTURE-HELPERS-REMOVED',()=>{
   assert.doesNotMatch(architecture,/renderRecordsWorkspaceNavigation/);
 });
 
-await test('PWA-CACHE-NAME-IS-STABLE',()=>{
-  assert.match(read('service-worker.js'),/const CACHE_NAME = "running-record-app-runtime-v1";/);
+await test('PWA-CACHE-NAME-MATCHES-CURRENT-APP-VERSION',()=>{
+  const versionModule=read('ui/appVersionStatus.js');
+  const version=versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1]||'';
+  assert.match(version,/^\d{4}\.\d{2}\.\d{2}\.\d+$/);
+  assert.ok(read('service-worker.js').includes(`const CACHE_NAME = "running-record-app-runtime-${version}";`));
   assert.doesNotMatch(read('service-worker.js'),/desktop-final-visual-audit|20260922-37/);
 });
 
