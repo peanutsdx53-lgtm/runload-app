@@ -59,6 +59,19 @@ test('EDIT-MODE-LOCKS-VERTICAL-DOCUMENT-OVERFLOW', () => {
   assert.ok(threeRowCss.includes('max-height: 100dvh;'));
 });
 
+test('IOS-EDIT-HARD-LOCKS-DOCUMENT-VERTICALLY', () => {
+  assert.ok(iosFix.includes('IOS_VERTICAL_LOCK_CLASS'));
+  assert.ok(iosFix.includes('is-runload-ios-home-edit-vertical-locked'));
+  assert.ok(iosFix.includes('lockedScrollY'));
+  assert.ok(iosFix.includes('lockVerticalDocument()'));
+  assert.ok(iosFix.includes('unlockVerticalDocument()'));
+  assert.ok(iosFix.includes('globalThis.scrollTo?.'));
+  assert.ok(iosCss.includes('html.is-runload-ios-home-edit-vertical-locked body'));
+  assert.ok(iosCss.includes('position: fixed;'));
+  assert.ok(iosCss.includes('height: 100dvh;'));
+  assert.ok(iosCss.includes('overflow: hidden !important;'));
+});
+
 test('IOS-REORDERING-HANDLE-REMAINS-EXPLICIT', () => {
   assert.ok(iosFix.includes('handle.dataset.homeDragHandle = "";'));
   assert.ok(iosFix.includes('handle.className = "mobile-home-ios-drag-handle";'));
@@ -66,6 +79,12 @@ test('IOS-REORDERING-HANDLE-REMAINS-EXPLICIT', () => {
   assert.ok(iosFix.includes('[data-home-drag-handle]'));
   assert.ok(iosCss.includes('.mobile-home-ios-drag-handle'));
   assert.ok(iosCss.includes('touch-action: none;'));
+});
+
+test('IOS-DOCK-ITEMS-ALSO-GET-MOVE-HANDLES', () => {
+  assert.ok(iosFix.includes('.mobile-home-dock [data-home-item-id]'));
+  assert.ok(iosCss.includes('.mobile-home-dock [data-home-item-id] > .mobile-home-ios-drag-handle'));
+  assert.ok(iosCss.includes(':is(.mobile-home-page, .mobile-home-dock)'));
 });
 
 test('IOS-EDIT-SUPPRESSES-COPY-CALLOUT-AND-SELECTION', () => {
@@ -120,7 +139,7 @@ test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.8');
+  assert.equal(version, '2026.09.28.9');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
   assert.ok(worker.includes('"./styles/mobile-home-three-row.css"'));
