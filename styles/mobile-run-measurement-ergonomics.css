@@ -1,0 +1,168 @@
+/* Smartphone measurement usability corrections. Loaded after the V2 measurement stylesheet. */
+@media (max-width: 54.99rem) {
+  .run-measurement-goal-settings input::placeholder {
+    color: var(--color-muted);
+    opacity: 0.72;
+    font-weight: 650;
+  }
+
+  .run-measurement-fatigue {
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .run-measurement-fatigue__head {
+    align-items: center;
+  }
+
+  .run-measurement-fatigue__head strong {
+    font-size: 18px;
+    line-height: 1.25;
+  }
+
+  .run-measurement-fatigue__question {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .run-measurement-fatigue .rof-scale-panel {
+    min-width: 0;
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .run-measurement-fatigue .rof-current {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto 42px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+  }
+
+  .run-measurement-fatigue .rof-current > span {
+    color: var(--color-muted);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .run-measurement-fatigue .rof-current > strong {
+    color: var(--color-accent-strong);
+    font-family: var(--font-numeric);
+    font-size: 28px;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .run-measurement-fatigue .rof-current > em {
+    min-width: 0;
+    color: var(--color-muted);
+    font-size: 12px;
+    font-style: normal;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .run-measurement-fatigue .rof-visual-guide--compact {
+    width: 100%;
+    margin: 0;
+  }
+
+  .run-measurement-fatigue .rof-slider-wrap {
+    min-width: 0;
+    display: grid;
+    gap: 7px;
+    margin: 0;
+  }
+
+  .run-measurement-fatigue .rof-slider-wrap input[type="range"] {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .run-measurement-fatigue .rof-ticks {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(11, minmax(0, 1fr));
+    align-items: center;
+    width: 100%;
+    color: var(--color-muted);
+    font-family: var(--font-numeric);
+    font-size: 10px;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .run-measurement-fatigue .rof-ticks span {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .run-measurement-fatigue .rof-anchor-guide {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 9px 10px;
+    border-radius: 10px;
+    background: var(--color-surface-muted);
+  }
+
+  .run-measurement-fatigue .rof-anchor-guide small {
+    color: var(--color-muted);
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .run-measurement-fatigue [data-record-rof-anchor] {
+    min-width: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .run-measurement-fatigue .rof-about {
+    margin: 0;
+  }
+
+  .run-measurement-fatigue .rof-about > summary {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .run-measurement-prep__start {
+    position: static;
+    bottom: auto;
+    z-index: auto;
+    margin-top: 2px;
+  }
+
+  .run-measurement-finish-requirement {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 11px;
+    font-weight: 750;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .run-measurement-active__controls .run-measurement__status.is-error {
+    margin: 0;
+    padding: 10px 12px;
+    color: var(--color-danger);
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1.45;
+    background: color-mix(in srgb, var(--color-danger) 8%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--color-danger) 30%, var(--color-line));
+    border-radius: 12px;
+  }
+
+  .run-measurement-goal-reached > span {
+    line-height: 1.45;
+  }
+}
