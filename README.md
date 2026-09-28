@@ -1,16 +1,18 @@
 # 走行記録アプリ
 
-This browser-based application helps beginner runners review their own running records, body-region Reference-100 values, subjective fatigue (ROF-J), history, plans, courses, and local GPX information.
+This browser-based application helps beginner runners review their own running records, body-region Reference-100 values, subjective fatigue (ROF-J), history, plans, courses, local GPX information, and smartphone running measurements.
 
 ## Current application structure
 
-The repository root is the deployable application.
+The repository contains both the deployable runtime and development/reference material.
 
 - `core/`: deterministic domain logic and interpretation logic
 - `screens/`: screen-level rendering and screen-specific composition
 - `ui/`: shared presentation, navigation, interactions, and browser UI services
 - `styles/`: theme tokens, shared layout/components, screen styles, responsive/mobile/desktop layers
+- `assets/`, `icons/`: bundled runtime image assets
 - `tests/`: executable regression, boundary, navigation, presentation, and integration tests
+- `docs/`: architecture, source records, and implementation documentation
 
 See `docs/CODEBASE_ARCHITECTURE.md` for ownership and maintenance rules.
 
@@ -27,12 +29,36 @@ See `docs/CODEBASE_ARCHITECTURE.md` for ownership and maintenance rules.
 
 ## Runtime technology
 
-Runtime implementation is vanilla JavaScript, CSS, and HTML. The Web Manifest and PNG icons are deployment assets, and `.mjs` files are JavaScript regression tests. No framework or build step is required.
+Runtime implementation is vanilla JavaScript, CSS, and HTML. The Web Manifest and PNG files are deployment assets. No framework or build step is required.
 
-## Data and deployment
+Application data is stored locally in the browser. GPX analysis is local-only. Smartphone GPS measurement is processed in the browser; OpenStreetMap map images are the primary external network dependency during map display.
 
-Application data is stored locally in the browser. GPX analysis is local-only. The repository root is the PWA/web deployment payload.
+## Distribution boundary
+
+A runtime-only distribution can be produced without the development/reference material.
+
+Keep these runtime items:
+
+- `index.html`
+- `manifest.webmanifest`
+- `service-worker.js`
+- `.nojekyll` when publishing through GitHub Pages
+- `app.js`
+- `core/`
+- `screens/`
+- `ui/`
+- `styles/`
+- `assets/`
+- `icons/`
+
+The following can be separated from the runtime distribution without changing application execution:
+
+- `tests/`
+- `docs/`
+- this repository `README.md`
+
+The application should be opened through an HTTP/HTTPS server rather than directly as a local `file:` URL. After the deployed PWA has completed an online cache installation, the precached runtime remains available offline except for functions that intentionally depend on external resources or browser/device services, such as live OpenStreetMap map images.
 
 ## Verification
 
-Changes should keep all JavaScript/MJS syntax checks, runtime reachability checks, PWA precache-path checks, and all test suites passing.
+Changes should keep JavaScript/MJS syntax checks, runtime reachability checks, PWA precache-path checks, and all maintained test suites passing. Real-device GPS, motion, sound, vibration, and permission behavior still require device testing because browser/platform support cannot be established by static code inspection alone.
