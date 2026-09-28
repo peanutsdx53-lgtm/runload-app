@@ -37,7 +37,7 @@ test('UPDATE-TRANSITION-SHIM-DOES-NOT-RESTORE-LEGACY-DATA-COMPATIBILITY', () => 
 });
 
 test('PWA-CACHE-USES-CURRENT-RELEASE-CONTRACT', () => {
-  assert.equal(version, '2026.09.29.1');
+  assert.equal(version, '2026.09.29.2');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('const CACHE_PREFIX = "running-record-app-";'));
   assert.ok(platform.includes('registration.unregister()'));
