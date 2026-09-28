@@ -141,6 +141,58 @@
     margin-top: 2px;
   }
 
+  .run-measurement-energy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .run-measurement-energy > div {
+    display: grid;
+    gap: 2px;
+  }
+
+  .run-measurement-energy small,
+  .run-measurement-energy > span {
+    color: var(--color-muted);
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .run-measurement-energy > span {
+    max-width: 48%;
+    text-align: right;
+  }
+
+  .run-measurement-energy strong {
+    color: var(--color-ink);
+    font-family: var(--font-numeric);
+    font-size: 20px;
+    line-height: 1.1;
+  }
+
+  .run-measurement-energy strong b {
+    color: var(--color-muted);
+    font-family: inherit;
+    font-size: 11px;
+  }
+
+  .run-measurement-post__summary .run-measurement-post__energy {
+    grid-column: 1 / -1;
+  }
+
+  .run-measurement-post__energy em {
+    color: var(--color-muted);
+    font-size: 10px;
+    font-style: normal;
+    line-height: 1.35;
+  }
+
   .run-measurement-finish-requirement {
     margin: 0;
     color: var(--color-muted);
