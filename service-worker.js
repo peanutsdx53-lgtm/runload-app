@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.28.10";
+const CACHE_NAME = "running-record-app-runtime-2026.09.28.11";
 const CACHE_PREFIX = "running-record-app-";
 const LEGACY_CACHE_PREFIXES = Object.freeze(["runload-app-"]);
 const PRECACHE_URLS = [
@@ -39,6 +39,11 @@ const PRECACHE_URLS = [
   "./core/internal/applicationServices.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
+  "./assets/rof/rof-visual-lowest.png",
+  "./assets/rof/rof-visual-low.png",
+  "./assets/rof/rof-visual-moderate.png",
+  "./assets/rof/rof-visual-high.png",
+  "./assets/rof/rof-visual-highest.png",
   "./index.html",
   "./manifest.webmanifest",
   "./screens/bodyPartDetailScreen.js",
@@ -75,6 +80,7 @@ const PRECACHE_URLS = [
   "./styles/mobile-home-ios-editing.css",
   "./styles/mobile-home-three-row.css",
   "./styles/mobile-record.css",
+  "./styles/rof-j-visual.css",
   "./styles/mobile-app-screens.css",
   "./styles/mobile-quick-tools.css",
   "./styles/mobile-pace-calculator.css",
@@ -87,6 +93,7 @@ const PRECACHE_URLS = [
   "./styles/run-measurement.css",
   "./ui/pwaUpdateBootstrap.js",
   "./ui/appVersionStatus.js",
+  "./ui/rofJVisualEnhancement.js",
   "./ui/appRouter.js",
   "./ui/deviceLayout.js",
   "./ui/appSettings.js",
