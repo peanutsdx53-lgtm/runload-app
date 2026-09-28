@@ -1,6 +1,6 @@
 export const HOME_COLUMNS = 4;
-export const HOME_MIN_ROWS = 4;
-export const HOME_MAX_ROWS = 4;
+export const HOME_MIN_ROWS = 3;
+export const HOME_MAX_ROWS = 3;
 
 function widgetIdFromToken(token = "") {
   return String(token).startsWith("widget:") ? String(token).slice("widget:".length) : "";
