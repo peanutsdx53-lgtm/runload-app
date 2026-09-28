@@ -5,13 +5,12 @@ import { internalModules } from "./modules.js";
 {
 const moduleExports = Object.create(null);
 const { createBodyProfileSnapshot, normalizeBodyProfile } = internalModules.bodyProfileAdjustment;
-const { createV27ResultRecord, upsertV27ResultRecord } = internalModules.legacyLoadResultService;
 const { isPrimaryRegionalV2Record, stampCurrentRegionalModel } = internalModules.primaryRegionalSnapshot;
 const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = internalModules.inputValidation;
 const { normalizeSubjectiveFeedback } = internalModules.subjectiveFeedback;
 const { evaluateSupportDecision } = internalModules.supportDecision;
 const { STORAGE_KEYS } = internalModules.storageKeys;
-const { createPrimaryRegionalV2ResultRecord, upsertPrimaryRegionalV2ResultRecord, validatePrimaryRegionalV2ResultRecord, PRIMARY_REGIONAL_V2_MODEL_VERSION, LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION } = internalModules.primaryRegionalResultService;
+const { createPrimaryRegionalV2ResultRecord, upsertPrimaryRegionalV2ResultRecord, validatePrimaryRegionalV2ResultRecord, PRIMARY_REGIONAL_V2_MODEL_VERSION } = internalModules.primaryRegionalResultService;
 
 function cloneValue(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -38,18 +37,10 @@ function upsertById(items, item, getId) {
   return nextItems;
 }
 
-function regionalResultCreatorForRecord() { return createPrimaryRegionalV2ResultRecord; }
-
-function regionalModelVersionForRecord(record = {}) {
-  const stamped = String(record?.regionalModelSnapshot?.modelVersion || "");
-  return stamped === LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION ? LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION : PRIMARY_REGIONAL_V2_MODEL_VERSION;
-}
-
 function storedRegionalResultForRecord(repository, record = {}) {
-  const expectedVersion = regionalModelVersionForRecord(record);
   const rows = repository?.loadForRecord?.(record.id) || [];
   return [...rows]
-    .filter((item) => item?.model_version === expectedVersion)
+    .filter((item) => item?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
     .sort((left, right) => (
       String(right.source_record_revision || "").localeCompare(String(left.source_record_revision || ""))
       || String(right.generated_at || "").localeCompare(String(left.generated_at || ""))
@@ -61,20 +52,18 @@ function createModelExperience(
   records,
   subjectiveFeedback,
   targetRecordId,
-  modelResultV27Repository,
   modelResultRegionalV2Repository,
 ) {
   const sortedRecords = sortRecords(records);
   const index = sortedRecords.findIndex((record) => record.id === targetRecordId);
   if (index < 0) return null;
   const record = sortedRecords[index];
-  const v27ByRecord = modelResultV27Repository?.latestByRecord?.() || new Map();
-  const v27ResultRecord = v27ByRecord.get(targetRecordId) || null;
   const storedRegionalV2ResultRecord = storedRegionalResultForRecord(modelResultRegionalV2Repository, record);
   const feedback = subjectiveFeedback.find((item) => item.recordId === targetRecordId) || null;
   let regionalV2ResultRecord = storedRegionalV2ResultRecord;
   let regionalV2Recovery = null;
-  if (storedRegionalV2ResultRecord && storedRegionalV2ResultRecord.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION) {
+
+  if (storedRegionalV2ResultRecord) {
     const primaryValidation = validatePrimaryRegionalV2ResultRecord(storedRegionalV2ResultRecord);
     const bodyMapRegions = storedRegionalV2ResultRecord.body_map_payload?.regions;
     const bodyMapValid = storedRegionalV2ResultRecord.state === "REST" || (Array.isArray(bodyMapRegions) && bodyMapRegions.length === 12);
@@ -115,19 +104,17 @@ function createModelExperience(
       }
     }
   }
+
   const supportDecision = feedback?.supportDecisionSnapshot
     || evaluateSupportDecision({ feedback: feedback || {}, planOutcome: record.planOutcome || {} });
   return Object.freeze({
     record: cloneValue(record),
     feedback: cloneValue(feedback),
-    v27ResultRecord: cloneValue(v27ResultRecord),
-    v27Result: cloneValue(v27ResultRecord?.result || null),
     regionalV2ResultRecord: cloneValue(regionalV2ResultRecord),
     regionalV2Result: cloneValue(regionalV2ResultRecord?.result || null),
     bodyMapV2: cloneValue(regionalV2ResultRecord?.body_map_payload || null),
     regionalV2Recovery: cloneValue(regionalV2Recovery),
-    regionalSemanticState: regionalV2ResultRecord?.model_version === LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION ? "LEGACY_V2_RESTORED_NOT_REINTERPRETED" : regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION ? "REFERENCE100_V3" : "NONE",
-    personalReferenceSnapshots: cloneValue(v27ResultRecord?.personal_reference_snapshots || {}),
+    regionalSemanticState: regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION ? "REFERENCE100_V3" : "NONE",
     supportDecision: cloneValue(supportDecision),
   });
 }
@@ -137,7 +124,6 @@ function createRecordWorkflow({
   recordsRepository,
   subjectiveFeedbackRepository,
   profileRepository,
-  modelResultV27Repository,
   modelResultRegionalV2Repository,
 }) {
   function loadCollectionForMutation(repository, sourceName) {
@@ -174,11 +160,8 @@ function createRecordWorkflow({
     if (!recordsRead.ok) return recordsRead;
     const feedbackRead = loadCollectionForMutation(subjectiveFeedbackRepository, "subjectiveFeedback");
     if (!feedbackRead.ok) return feedbackRead;
-    const v27Read = loadCollectionForMutation(modelResultV27Repository, "modelResultsV27");
-    if (!v27Read.ok) return v27Read;
     const regionalRead = loadCollectionForMutation(modelResultRegionalV2Repository, "modelResultsRegionalV2");
     if (!regionalRead.ok) return regionalRead;
-
 
     const currentRecords = recordsRead.items;
     const currentFeedback = feedbackRead.items;
@@ -246,38 +229,26 @@ function createRecordWorkflow({
       normalizedFeedback,
       (item) => item.recordId,
     ));
-    const currentV27Results = v27Read.items;
     const currentRegionalV2Results = regionalRead.items;
-    // Secondary V2.7 is legacy-only for new/current records. Existing stored V2.7 results remain untouched for restore/history compatibility.
-    const calculation = Object.freeze({ ok: true, resultRecord: null, state: "LEGACY_V27_NEW_GENERATION_RETIRED" });
-    const nextV27Results = currentV27Results;
-    const regionalCalculation = regionalResultCreatorForRecord(normalizedRecord)({
+    const regionalCalculation = createPrimaryRegionalV2ResultRecord({
       record: normalizedRecord,
       feedback: normalizedFeedback,
       sessionSequence: nextRecords.filter((item) => item.date === normalizedRecord.date).findIndex((item) => item.id === normalizedRecord.id) + 1,
       allRecords: nextRecords,
     });
     if (!regionalCalculation.ok) {
-      return { ok: false, code: regionalCalculation.code || "REGIONAL_V1_RESULT_CREATION_FAILED", validation: regionalCalculation.validation || null, message: regionalCalculation.error?.messageKey || "" };
+      return { ok: false, code: regionalCalculation.code || "REGIONAL_RESULT_CREATION_FAILED", validation: regionalCalculation.validation || null, message: regionalCalculation.error?.messageKey || "" };
     }
     const nextRegionalV2Results = upsertPrimaryRegionalV2ResultRecord(currentRegionalV2Results, regionalCalculation.resultRecord);
 
     const changes = [
       { key: STORAGE_KEYS.records, value: nextRecords },
       { key: STORAGE_KEYS.subjectiveFeedback, value: nextFeedback },
-      { key: STORAGE_KEYS.modelResultsV27, value: nextV27Results },
       { key: STORAGE_KEYS.modelResultsRegionalV2, value: nextRegionalV2Results },
     ];
-    if (explicitProfile) {
-      changes.push({ key: STORAGE_KEYS.profile, value: normalizedProfile });
-    }
+    if (explicitProfile) changes.push({ key: STORAGE_KEYS.profile, value: normalizedProfile });
     const saveResult = gateway.transact(changes);
-    if (!saveResult.ok) {
-      return {
-        ...saveResult,
-        code: "RECORD_EXPERIENCE_SAVE_FAILED",
-      };
-    }
+    if (!saveResult.ok) return { ...saveResult, code: "RECORD_EXPERIENCE_SAVE_FAILED" };
 
     return {
       ok: true,
@@ -289,7 +260,6 @@ function createRecordWorkflow({
         nextRecords,
         nextFeedback,
         normalizedRecord.id,
-        modelResultV27Repository,
         modelResultRegionalV2Repository,
       ),
     };
@@ -301,7 +271,6 @@ function createRecordWorkflow({
       recordsRepository.loadAll(),
       subjectiveFeedbackRepository.loadAll(),
       recordId,
-      modelResultV27Repository,
       modelResultRegionalV2Repository,
     );
   }
@@ -321,7 +290,6 @@ function createRecordWorkflow({
       records,
       feedback,
       record.id,
-      modelResultV27Repository,
       modelResultRegionalV2Repository,
     ));
   }
