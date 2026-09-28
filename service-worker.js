@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.29.2";
+const CACHE_NAME = "running-record-app-runtime-2026.09.29.3";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -7,7 +7,6 @@ const PRECACHE_URLS = [
   "./core/appCore.js",
   "./core/rofJConstants.js",
   "./core/rofJCore.js",
-  "./core/legacyCompatibility.js",
   "./core/internal/modules.js",
   "./core/internal/platformInfrastructure.js",
   "./core/internal/modelSupport.js",
