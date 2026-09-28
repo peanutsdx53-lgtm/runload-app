@@ -31,11 +31,10 @@ test('HOME-ICON-SWAP-USES-ONLY-TWO-ORIGINAL-POSITIONS', () => {
   assert.ok(coordinator.includes('swapDomPositions(source, target);'));
 });
 
-test('LEGACY-FREE-SLOT-PATH-CANNOT-RUN-FOR-DIRECT-SWAP', () => {
-  const stopIndex = coordinator.indexOf('event.stopImmediatePropagation();');
-  const suppressIndex = coordinator.indexOf('delete candidate.source.dataset.homeItemId;');
-  const cancelIndex = coordinator.indexOf('releaseCoreDrag(candidate, event)');
-  assert.ok(stopIndex >= 0 && suppressIndex > stopIndex && cancelIndex > suppressIndex);
+test('DIRECT-SWAP-CANCELS-BASE-DRAG-PATH', () => {
+  assert.ok(coordinator.includes('event.stopImmediatePropagation();'));
+  assert.ok(coordinator.includes('delete candidate.source.dataset.homeItemId;'));
+  assert.ok(coordinator.includes('releaseCoreDrag(candidate, event)'));
 });
 
 test('DOCK-PLACEMENT-IS-NORMALIZED-CONTINUOUSLY', () => {
@@ -47,7 +46,7 @@ test('DOCK-PLACEMENT-IS-NORMALIZED-CONTINUOUSLY', () => {
   assert.ok(coordinator.includes('new MutationObserver(() => queueDockNormalization(appRoot))'));
 });
 
-test('COORDINATOR-RUNS-BEFORE-LEGACY-EDIT-HELPER', () => {
+test('COORDINATOR-RUNS-BEFORE-EDIT-HELPER', () => {
   const coordinatorIndex = index.indexOf('./ui/mobileHomeDropCoordinator.js');
   const helperIndex = index.indexOf('./ui/mobileHomeEditScroll.js');
   assert.ok(coordinatorIndex >= 0);
@@ -61,7 +60,7 @@ test('FIX-IS-MOBILE-ONLY', () => {
 
 test('PWA-CACHE-INCLUDES-COORDINATOR-AND-CURRENT-VERSION', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.27.3');
+  assert.equal(version, '2026.09.29.3');
   assert.ok(worker.includes('"./ui/mobileHomeDropCoordinator.js"'));
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
 });

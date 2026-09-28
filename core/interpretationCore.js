@@ -212,7 +212,6 @@ function resolveCalculationPath(targetExperience = null, region = null) {
   });
 
   if (!region || !row || modelVersion !== CURRENT_PRIMARY_MODEL_VERSION) return unavailable("CURRENT_MODEL_RESULT_REQUIRED");
-  if (String(targetExperience?.regionalSemanticState || "").startsWith("LEGACY")) return unavailable("LEGACY_RESULT_NOT_REINTERPRETED");
   if (String(row.calculationState || "") !== "CALCULATED" || !finite(row.value)) return unavailable("CALCULATED_REGION_REQUIRED");
   if (!engineInput) return unavailable("ENGINE_INPUT_SNAPSHOT_REQUIRED");
 
@@ -324,7 +323,6 @@ function overviewRegion(region, comparison = {}) {
 
 function regionalState(base = {}) {
   if (String(base?.context?.activityType || "").toLowerCase() === "rest") return "REST";
-  if (String(base?.context?.regionalSemanticState || "").startsWith("LEGACY")) return "LEGACY";
   const regions = base?.current?.regions || [];
   const available = regions.filter((region) => finite(region.value)).length;
   if (!available) return "UNAVAILABLE";
@@ -568,7 +566,6 @@ export function buildInterpretation({
       history: base?.availability?.regionalHistory ? "AVAILABLE" : "NONE",
       subjective: subjectiveContext.state,
       support: String(base?.safety?.route || "normal").toUpperCase(),
-      legacy: String(base?.context?.regionalSemanticState || "").startsWith("LEGACY"),
     }),
     overview: Object.freeze({
       regions: frozenArray(regions),

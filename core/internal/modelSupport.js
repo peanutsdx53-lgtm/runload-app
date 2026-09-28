@@ -282,13 +282,6 @@ internalModules.modelConstants = moduleExports;
 {
 const moduleExports = Object.create(null);
 const REGIONAL_MODEL_SNAPSHOT_ID = "PRIMARY_REGIONAL_REFERENCE100_V3";
-const LEGACY_REGIONAL_MODEL_SNAPSHOT_ID = "PRIMARY_REGIONAL_V2";
-const LEGACY_PRIMARY_REGIONAL_V2_SNAPSHOT = Object.freeze({
-  snapshotId: LEGACY_REGIONAL_MODEL_SNAPSHOT_ID,
-  modelVersion: "runload-primary-regional-v2.0",
-  outputSemanticVersion: "runload-primary-regional-output-semantics-v2.0",
-  authorityVersion: "RunLoad Primary Regional V2 Current Authority 2026-09-15",
-});
 const PRIMARY_REGIONAL_V2_SNAPSHOT = Object.freeze({
   snapshotId: REGIONAL_MODEL_SNAPSHOT_ID,
   modelVersion: "runload-primary-regional-reference100-v3.0",
@@ -300,7 +293,6 @@ const CURRENT_REGIONAL_MODEL_SNAPSHOT = PRIMARY_REGIONAL_V2_SNAPSHOT;
 function normalizeRegionalModelSnapshot(value) {
   const source = value && typeof value === "object" ? value : null;
   if (source?.snapshotId === REGIONAL_MODEL_SNAPSHOT_ID) return PRIMARY_REGIONAL_V2_SNAPSHOT;
-  if (source?.snapshotId === LEGACY_REGIONAL_MODEL_SNAPSHOT_ID) return LEGACY_PRIMARY_REGIONAL_V2_SNAPSHOT;
   return null;
 }
 
@@ -318,8 +310,6 @@ function isCurrentRegionalModelRecord(record = {}) {
 const isPrimaryRegionalV2Record = isCurrentRegionalModelRecord;
 function regionalModelGenerationForRecord() { return REGIONAL_MODEL_SNAPSHOT_ID; }
 moduleExports["REGIONAL_MODEL_SNAPSHOT_ID"] = REGIONAL_MODEL_SNAPSHOT_ID;
-moduleExports["LEGACY_REGIONAL_MODEL_SNAPSHOT_ID"] = LEGACY_REGIONAL_MODEL_SNAPSHOT_ID;
-moduleExports["LEGACY_PRIMARY_REGIONAL_V2_SNAPSHOT"] = LEGACY_PRIMARY_REGIONAL_V2_SNAPSHOT;
 moduleExports["PRIMARY_REGIONAL_V2_SNAPSHOT"] = PRIMARY_REGIONAL_V2_SNAPSHOT;
 moduleExports["CURRENT_REGIONAL_MODEL_SNAPSHOT"] = CURRENT_REGIONAL_MODEL_SNAPSHOT;
 moduleExports["normalizeRegionalModelSnapshot"] = normalizeRegionalModelSnapshot;

@@ -6,7 +6,6 @@ import {
   isSupportedRofJStorageSchema,
   isSupportedRofJLifecycleSchema,
 } from "../rofJConstants.js";
-import { hasLegacyRofJSourceMetadata } from "../legacyCompatibility.js";
 
 // ===== core/storage/restoreInspection.js =====
 {
@@ -261,10 +260,9 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
           return;
         }
         const currentSourceVersion = entry.sourceVersion === ROF_J_SOURCE_VERSION;
-        const legacySourceFingerprint = hasLegacyRofJSourceMetadata(entry);
         if (entry.instrumentId !== "ROF_J"
           || !isSupportedRofJSemanticVersion(entry.instrumentSemanticVersion)
-          || (!currentSourceVersion && !legacySourceFingerprint)
+          || !currentSourceVersion
           || entry.visualSourceId !== "ROF_ORIGINAL_2017") {
           issues.push(issue("BLOCKING", "ROF_J_SEMANTIC_PROVENANCE_INVALID", "rofJData", "ROF-J記録の尺度・出典情報が現在の仕様と一致しません。", itemId));
         }

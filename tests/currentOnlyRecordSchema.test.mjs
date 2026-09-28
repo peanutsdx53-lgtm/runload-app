@@ -4,7 +4,6 @@ import assert from 'node:assert/strict';
 const versionModule = fs.readFileSync('ui/appVersionStatus.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const platform = fs.readFileSync('core/internal/platformInfrastructure.js', 'utf8');
-const compatibilityShim = fs.readFileSync('core/legacyCompatibility.js', 'utf8');
 const rofConstants = fs.readFileSync('core/rofJConstants.js', 'utf8');
 const rofCore = fs.readFileSync('core/rofJCore.js', 'utf8');
 const tutorial = fs.readFileSync('ui/screenTutorial.js', 'utf8');
@@ -24,20 +23,14 @@ function test(id, fn) {
 
 const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
 
-test('UPDATE-TRANSITION-SHIM-DOES-NOT-RESTORE-LEGACY-DATA-COMPATIBILITY', () => {
-  assert.equal(fs.existsSync('core/legacyCompatibility.js'), true);
-  assert.ok(compatibilityShim.includes('LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES = Object.freeze([])'));
-  assert.ok(compatibilityShim.includes('LEGACY_ROF_J_SEMANTIC_VERSIONS = Object.freeze([])'));
-  assert.ok(compatibilityShim.includes('LEGACY_ROF_J_STORAGE_SCHEMA_VERSIONS = Object.freeze([])'));
-  assert.ok(compatibilityShim.includes('LEGACY_ROF_J_LIFECYCLE_SCHEMA_VERSIONS = Object.freeze([])'));
-  assert.ok(compatibilityShim.includes('return false;'));
+test('PRE-RELEASE-BUILD-HAS-NO-STORED-DATA-COMPATIBILITY-SHIM', () => {
+  assert.equal(fs.existsSync('core/legacyCompatibility.js'), false);
   assert.ok(!platform.includes('legacyCompatibility'));
-  assert.ok(!platform.includes('LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES'));
-  assert.ok(worker.includes('./core/legacyCompatibility.js'));
+  assert.ok(!worker.includes('./core/legacyCompatibility.js'));
 });
 
 test('PWA-CACHE-USES-CURRENT-RELEASE-CONTRACT', () => {
-  assert.equal(version, '2026.09.29.2');
+  assert.equal(version, '2026.09.29.3');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('const CACHE_PREFIX = "running-record-app-";'));
   assert.ok(platform.includes('registration.unregister()'));

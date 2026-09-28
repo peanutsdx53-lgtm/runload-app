@@ -49,10 +49,6 @@ await test('SUPPORT-PRIORITY-OVERRIDES-ORDINARY-MEANING',()=>{
   assert.equal(out.primaryCode,'SUPPORT_PRIORITY');
 });
 
-await test('LEGACY-OUTPUT-IS-LIMITED-NOT-REINTERPRETED',()=>{
-  const out=buildMeaningFrame(args({targetExperience:{record:{id:'r1',activityType:'run'},regionalSemanticState:'LEGACY_V2_RESTORED_NOT_REINTERPRETED'}}));
-  assert.equal(out.primaryCode,'LIMITED_RESULT');
-});
 
 await test('REPEATED-OBSERVATION-HAS-HIGHEST-ORDINARY-PRIORITY',()=>{
   const out=buildMeaningFrame(args({

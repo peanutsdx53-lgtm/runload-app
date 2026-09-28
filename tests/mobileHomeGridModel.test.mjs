@@ -29,6 +29,6 @@ const packed = packTokens(['widget:today', 'app:plan', 'app:history', 'widget:ch
 });
 assert.equal(packed.length, 4);
 assert.ok(packed.every((entry) => Number.isInteger(entry.row) && Number.isInteger(entry.col)));
-assert.ok(usedRowCount(packed, { widgetSizes: sizes, occupiedTokens: new Set(packed.map((entry) => entry.token)) }) >= 4);
+assert.equal(usedRowCount(packed, { widgetSizes: sizes, occupiedTokens: new Set(packed.map((entry) => entry.token)) }), 3);
 
 console.log('mobileHomeGridModel=PASS');

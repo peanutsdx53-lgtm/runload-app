@@ -11,7 +11,6 @@ Domain and deterministic interpretation logic only.
 - `appCore.js`: public domain API used by screens and shared UI modules.
 - `rofJCore.js`: protected ROF-J logic.
 - `rofJConstants.js`: current ROF-J contract identifiers.
-- `legacyCompatibility.js`: old storage/cache/schema identifiers required only to read or clean up data created by earlier releases.
 - `interpretationBase.js`: reusable persisted-result interpretation primitives.
 - `interpretationCore.js`: current beginner-facing interpretation projection. It consumes persisted outputs and does not recalculate Primary Reference-100 or ROF-J.
 - `internal/platformInfrastructure.js`: PWA registration, storage keys, and storage gateway.
@@ -124,7 +123,7 @@ Avoid:
 
 Semantic model/schema versions are exempt when the version is part of the data contract.
 
-Legacy product names or retired implementation labels must not be introduced into new runtime names, UI text, or new storage contracts. If an old literal is required to read existing data or remove an old browser cache, keep it inside `legacyCompatibility.js` where the ES-module runtime can share it. Service Worker cache cleanup may keep a local legacy prefix because the worker is intentionally loaded as a classic script. Historical scientific model identifiers may remain where exact comparison with saved results is required; presentation code must not expose those identifiers as interface labels.
+The pre-release application accepts only the current storage and result contracts. Do not add migration aliases, retired storage keys, retired result versions, or compatibility readers for unpublished builds. Historical scientific model identifiers such as V27 may remain when they identify an active research calculation path; they are model identifiers, not stored-data compatibility hooks. Presentation code must not expose internal identifiers as interface labels.
 
 ## 5. Cleanup and deletion rules
 
