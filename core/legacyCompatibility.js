@@ -1,39 +1,13 @@
-// Legacy identifiers are kept only to read or clean up data created by older releases.
-// Do not use these values for new records or user-facing labels.
+// Temporary bridge while current-only imports are being consolidated.
+// No pre-release stored data, schema, tutorial key, or cache prefix is accepted.
 
-export const LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES = Object.freeze([
-  "runload-journal-",
-  "running-journal-",
-  "runload-new-model-",
-]);
+export const LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES = Object.freeze([]);
+export const LEGACY_TUTORIAL_STORAGE_KEY = "running-record.screenTutorial.seen.v1";
 
-export const LEGACY_TUTORIAL_STORAGE_KEY = "runload.screenTutorial.seen.v1";
-
-export const LEGACY_ROF_J_SEMANTIC_VERSIONS = Object.freeze([
-  "ROF_J_SUZUKI_ARAI_2026_RUNLOAD_V1",
-]);
-
-export const LEGACY_ROF_J_STORAGE_SCHEMA_VERSIONS = Object.freeze([
-  "RUNLOAD_SECOND_PILLAR_ROFJ_STORAGE_V1",
-]);
-
-export const LEGACY_ROF_J_LIFECYCLE_SCHEMA_VERSIONS = Object.freeze([
-  "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1",
-]);
-
-const LEGACY_ROF_J_SOURCE_FIELD_PREFIX = "japaneseSource";
-
-function legacyRofJSourceMetadataKeys(entry) {
-  if (!entry || typeof entry !== "object" || Array.isArray(entry)) return [];
-  return Object.keys(entry).filter((key) => key.startsWith(LEGACY_ROF_J_SOURCE_FIELD_PREFIX));
-}
-
-export function hasLegacyRofJSourceMetadata(entry) {
-  return legacyRofJSourceMetadataKeys(entry).length > 0;
+export function hasLegacyRofJSourceMetadata() {
+  return false;
 }
 
 export function removeLegacyRofJSourceMetadata(entry) {
-  if (!entry || typeof entry !== "object" || Array.isArray(entry)) return entry;
-  for (const key of legacyRofJSourceMetadataKeys(entry)) delete entry[key];
   return entry;
 }
