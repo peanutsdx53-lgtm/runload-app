@@ -1,0 +1,62 @@
+@media (max-width: 54.99rem) {
+  html.is-runload-ios-home-native-scroll
+  .mobile-home-os.is-home-editing
+  .mobile-home-page [data-home-item-id],
+  html.is-runload-ios-home-native-scroll
+  .mobile-home-os.is-home-editing
+  .mobile-home-page [data-home-widget-id] {
+    touch-action: pan-y;
+  }
+
+  .mobile-home-ios-drag-handle {
+    display: none;
+  }
+
+  html.is-runload-ios-home-native-scroll
+  .mobile-home-os.is-home-editing
+  .mobile-home-page .mobile-home-ios-drag-handle {
+    position: absolute;
+    z-index: 9;
+    display: grid;
+    place-items: center;
+    min-width: 28px;
+    width: 28px;
+    height: 22px;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--color-line) 82%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-surface) 94%, var(--color-paper));
+    color: var(--color-muted);
+    box-shadow: 0 3px 9px rgba(20, 37, 52, .12);
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  html.is-runload-ios-home-native-scroll
+  .mobile-home-os.is-home-editing
+  .mobile-home-page [data-home-item-id] > .mobile-home-ios-drag-handle {
+    top: -11px;
+    right: -6px;
+  }
+
+  html.is-runload-ios-home-native-scroll
+  .mobile-home-os.is-home-editing
+  .mobile-home-page [data-home-widget-id] > .mobile-home-ios-drag-handle {
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  html.is-runload-ios-home-native-scroll
+  .mobile-home-os.is-home-editing
+  .mobile-home-page :is(.is-home-dragging, .is-home-widget-dragging)
+  > .mobile-home-ios-drag-handle {
+    display: none;
+  }
+}

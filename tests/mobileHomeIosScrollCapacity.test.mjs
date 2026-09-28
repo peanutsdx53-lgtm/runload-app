@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const iosFix = fs.readFileSync('ui/iosHomeEditScrollFix.js', 'utf8');
+const iosCss = fs.readFileSync('styles/mobile-home-ios-editing.css', 'utf8');
 const capacity = fs.readFileSync('ui/mobileHomePageCapacity.js', 'utf8');
 const grid = fs.readFileSync('ui/interactions/homeGridModel.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
@@ -21,31 +22,32 @@ test('IOS-EDIT-SCROLL-IS-IOS-ONLY', () => {
   assert.ok(iosFix.includes('mobileLayoutMatches()'));
 });
 
-test('IOS-EDIT-SCROLL-USES-ABSOLUTE-GESTURE-ORIGIN', () => {
-  assert.ok(iosFix.includes('startScrollTop = currentScrollTop();'));
-  assert.ok(iosFix.includes('startScrollTop + (startY - event.clientY)'));
-  assert.ok(iosFix.includes('globalThis.scrollTo(0, next);'));
+test('ICON-AND-WIDGET-BODIES-USE-NATIVE-IOS-PAN', () => {
+  assert.ok(iosCss.includes('touch-action: pan-y;'));
+  assert.ok(iosCss.includes('.mobile-home-page [data-home-item-id]'));
+  assert.ok(iosCss.includes('.mobile-home-page [data-home-widget-id]'));
   assert.ok(iosFix.includes('event.stopImmediatePropagation();'));
+  assert.ok(!iosFix.includes('globalThis.scrollTo('));
+  assert.ok(!iosFix.includes('startScrollTop'));
 });
 
-test('ICON-ORIGIN-VERTICAL-SWIPE-BEATS-EARLY-DRAG-ARM', () => {
-  assert.ok(iosFix.includes('const IOS_EDIT_DRAG_HOLD_MS = 360;'));
-  assert.ok(iosFix.includes('pressStartedAt = nowMs();'));
-  assert.ok(iosFix.includes('const heldLongEnoughForDrag = nowMs() - pressStartedAt >= IOS_EDIT_DRAG_HOLD_MS;'));
-  assert.ok(iosFix.includes('if (heldLongEnoughForDrag && target?.classList.contains("is-home-drag-armed")) return;'));
-  assert.ok(iosFix.includes('scrolling = true;'));
-  assert.ok(iosFix.includes('cancelLegacyPress(event);'));
+test('IOS-REORDERING-HAS-A-SEPARATE-DRAG-HANDLE', () => {
+  assert.ok(iosFix.includes('handle.dataset.homeDragHandle = "";'));
+  assert.ok(iosFix.includes('handle.className = "mobile-home-ios-drag-handle";'));
+  assert.ok(iosFix.includes('button, [data-home-drag-handle]'));
+  assert.ok(iosCss.includes('.mobile-home-ios-drag-handle'));
+  assert.ok(iosCss.includes('touch-action: none;'));
 });
 
-test('ACTIVE-DRAG-STILL-KEEPS-DRAG-OWNERSHIP', () => {
-  assert.ok(iosFix.includes('if (root.classList.contains("is-home-drag-active")) return;'));
+test('IOS-NATIVE-SCROLL-OVERRIDE-LOADS-AFTER-BASE-EDITING-CSS', () => {
+  const baseIndex = index.indexOf('./styles/mobile-home-editing.css');
+  const iosIndex = index.indexOf('./styles/mobile-home-ios-editing.css');
+  assert.ok(baseIndex >= 0 && iosIndex > baseIndex);
 });
 
-test('ANDROID-LEGACY-SCROLL-PATH-REMAINS-LOADED', () => {
+test('ANDROID-GENERIC-HELPER-REMAINS-LOADED', () => {
   assert.ok(index.includes('./ui/mobileHomeEditScroll.js'));
-  const iosIndex = index.indexOf('./ui/iosHomeEditScrollFix.js');
-  const legacyIndex = index.indexOf('./ui/mobileHomeEditScroll.js');
-  assert.ok(iosIndex >= 0 && legacyIndex > iosIndex);
+  assert.ok(index.includes('./ui/iosHomeEditScrollFix.js'));
 });
 
 test('HOME-PAGE-CAPACITY-IS-FOUR-ROWS', () => {
@@ -82,12 +84,13 @@ test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.2');
+  assert.equal(version, '2026.09.28.3');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
+  assert.ok(worker.includes('"./styles/mobile-home-ios-editing.css"'));
   assert.ok(worker.includes('"./ui/mobileHomePageCapacity.js"'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');
-console.log(JSON.stringify({ suite: 'Mobile Home iOS Scroll and Capacity', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
+console.log(JSON.stringify({ suite: 'Mobile Home iOS Native Scroll and Capacity', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
 if (failed.length) process.exit(1);
