@@ -5,6 +5,12 @@ const MAX_ROWS = 3;
 const COLUMNS = 4;
 const MAX_PAGES = 4;
 const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
+const DEFAULT_WIDGET_SIZES = Object.freeze({
+  today: "medium",
+  plan: "small",
+  changes: "small",
+  checkpoint: "small",
+});
 
 let repairQueued = false;
 let repairing = false;
@@ -28,7 +34,10 @@ function writeJson(key, value) {
 function widgetState() {
   const stored = readJson(WIDGET_STORAGE_KEY) || {};
   return {
-    sizes: stored.sizes && typeof stored.sizes === "object" ? stored.sizes : {},
+    sizes: {
+      ...DEFAULT_WIDGET_SIZES,
+      ...(stored.sizes && typeof stored.sizes === "object" ? stored.sizes : {}),
+    },
     visible: new Set(Array.isArray(stored.visible) ? stored.visible.map(String) : ["today", "plan", "changes"]),
   };
 }
