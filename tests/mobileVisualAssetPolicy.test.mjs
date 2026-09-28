@@ -29,18 +29,28 @@ async function test(id, fn) {
 
 await test('MOBILE-VISUAL-ASSET-POLICY-IS-DOCUMENTED', () => {
   const policy = read('docs/VISUAL_ASSET_POLICY.md');
-  assert.ok(policy.includes('AI-generated images or illustrations'));
+  assert.ok(policy.includes('unknown provenance or unclear usage rights'));
   assert.ok(policy.includes('Unicode emoji'));
   assert.ok(policy.includes('user-created asset'));
   assert.ok(policy.includes('icons/icon-192.png'));
   assert.ok(policy.includes('icons/icon-512.png'));
+  assert.ok(policy.includes('assets/rof/rof-visual-lowest.png'));
+  assert.ok(policy.includes('assets/rof/README.md'));
 });
 
 await test('BUNDLED-IMAGE-ASSETS-ARE-EXPLICITLY-ACCOUNTED-FOR', () => {
   const imageAssets = walk(root)
     .filter((rel) => /\.(png|jpe?g|webp|gif|svg)$/i.test(rel))
     .sort();
-  assert.deepEqual(imageAssets, ['icons/icon-192.png', 'icons/icon-512.png']);
+  assert.deepEqual(imageAssets, [
+    'assets/rof/rof-visual-high.png',
+    'assets/rof/rof-visual-highest.png',
+    'assets/rof/rof-visual-low.png',
+    'assets/rof/rof-visual-lowest.png',
+    'assets/rof/rof-visual-moderate.png',
+    'icons/icon-192.png',
+    'icons/icon-512.png',
+  ]);
 });
 
 await test('SMARTPHONE-HOME-LAUNCHERS-USE-UNICODE-EMOJI', () => {
