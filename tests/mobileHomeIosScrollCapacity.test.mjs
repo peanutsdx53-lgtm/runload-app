@@ -47,6 +47,14 @@ test('EDIT-PAGE-NO-LONGER-DEPENDS-ON-VERTICAL-SCROLL', () => {
   assert.ok(threeRowCss.includes('grid-template-rows: repeat(var(--home-grid-rows, 3), 112px);'));
 });
 
+test('EDIT-MODE-LOCKS-VERTICAL-DOCUMENT-OVERFLOW', () => {
+  assert.ok(threeRowCss.includes('html:has(.mobile-home-os.is-home-editing)'));
+  assert.ok(threeRowCss.includes('body:has(.mobile-home-os.is-home-editing)'));
+  assert.ok(threeRowCss.includes('overflow-y: hidden;'));
+  assert.ok(threeRowCss.includes('::-webkit-scrollbar'));
+  assert.ok(threeRowCss.includes('max-height: 100dvh;'));
+});
+
 test('IOS-REORDERING-HANDLE-REMAINS-EXPLICIT', () => {
   assert.ok(iosFix.includes('handle.dataset.homeDragHandle = "";'));
   assert.ok(iosFix.includes('handle.className = "mobile-home-ios-drag-handle";'));
@@ -108,7 +116,7 @@ test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.5');
+  assert.equal(version, '2026.09.28.6');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
   assert.ok(worker.includes('"./styles/mobile-home-three-row.css"'));
