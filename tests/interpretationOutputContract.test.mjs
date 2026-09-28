@@ -221,13 +221,6 @@ await test('REST-RECORD-DOES-NOT-CREATE-REGIONAL-INTERPRETATION',()=>{
   assert.equal(out.selectedRegion,null);
 });
 
-await test('LEGACY-RESULT-IS-NOT-REINTERPRETED-AS-CURRENT-CALCULATION-PATH',()=>{
-  const target=fakeExperience({semantic:'LEGACY_V2_RESTORED_NOT_REINTERPRETED'});
-  const out=build({target,selectedRegionId:'BA-DISP-014'});
-  assert.equal(out.state.legacy,true);
-  assert.equal(out.selectedRegion.calculationPath.resolutionStatus,'UNAVAILABLE');
-  assert.ok(out.selectedRegion.calculationPath.explanationTokens.includes('LEGACY_RESULT_NOT_REINTERPRETED'));
-});
 
 await test('SUPPORT-ROUTE-TAKES-NEXT-ACTION-PRECEDENCE',()=>{
   const supportDecision={route:'urgent',reasons:['safety_chest_pain_reported'],blocks:['normal_plan_suggestions'],nextActions:['check_official_help']};

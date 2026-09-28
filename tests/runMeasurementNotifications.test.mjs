@@ -110,7 +110,7 @@ await test('MEASUREMENT-PREWARMS-AUDIO-FROM-START-ACTION', async () => {
 
 await test('NOTIFICATION-MODULE-IS-PRECACHED-AND-VERSIONED', async () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.17');
+  assert.equal(version, '2026.09.29.3');
   assert.ok(worker.includes('"./ui/runMeasurementNotifications.js"'));
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
 });

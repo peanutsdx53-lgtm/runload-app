@@ -33,7 +33,6 @@ const PRIMARY_REGIONAL_V2_MODEL_VERSION = "runload-primary-regional-reference100
 const PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION = "runload-primary-regional-reference100-output-v3.0";
 const PRIMARY_REGIONAL_V2_AUTHORITY_VERSION = "RunLoad-Calculation-Engine-V1.2Plus-20260916";
 const PRIMARY_REGIONAL_V2_BUILD_ID = BUILD_ID;
-const LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION = "runload-primary-regional-v2.0";
 
 const DISPLAY_BY_R = new Map(PRIMARY_REGIONAL_V2_REGION_DEFS.map((d) => [d.id, d]));
 const DEF_BY_R = new Map(REGION_DEFS.map((d) => [d.id, d]));
@@ -137,7 +136,6 @@ function validatePrimaryRegionalV2ResultRecord(item={}){
 }
 function upsertPrimaryRegionalV2ResultRecord(items=[],resultRecord){const next=(Array.isArray(items)?items:[]).filter((x)=>x.id!==resultRecord.id&&!(x.record_id===resultRecord.record_id&&x.source_record_revision===resultRecord.source_record_revision&&x.model_version===PRIMARY_REGIONAL_V2_MODEL_VERSION));next.push(resultRecord);return next.sort((a,b)=>String(a.record_id).localeCompare(String(b.record_id))||String(a.source_record_revision).localeCompare(String(b.source_record_revision))||String(a.id).localeCompare(String(b.id)));}
 moduleExports["PRIMARY_REGIONAL_V2_MODEL_VERSION"] = PRIMARY_REGIONAL_V2_MODEL_VERSION;
-moduleExports["LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION"] = LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION;
 moduleExports["PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION"] = PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION;
 moduleExports["PRIMARY_REGIONAL_V2_AUTHORITY_VERSION"] = PRIMARY_REGIONAL_V2_AUTHORITY_VERSION;
 moduleExports["PRIMARY_REGIONAL_V2_BUILD_ID"] = PRIMARY_REGIONAL_V2_BUILD_ID;
@@ -152,12 +150,12 @@ internalModules.primaryRegionalResultService = moduleExports;
 // ===== core/storage/modelResultRegionalV2Repository.js =====
 {
 const moduleExports = Object.create(null);
-const { PRIMARY_REGIONAL_V2_MODEL_VERSION, LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION } = internalModules.primaryRegionalResultService;
+const { PRIMARY_REGIONAL_V2_MODEL_VERSION } = internalModules.primaryRegionalResultService;
 const { createCollectionRepository } = internalModules.collectionRepository;
 const { STORAGE_KEYS } = internalModules.storageKeys;
 
 function normalize(item = {}) {
-  if (!item || typeof item !== "object" || ![PRIMARY_REGIONAL_V2_MODEL_VERSION, LEGACY_PRIMARY_REGIONAL_V2_MODEL_VERSION].includes(item.model_version) || !item.id || !item.record_id) return null;
+  if (!item || typeof item !== "object" || item.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION || !item.id || !item.record_id) return null;
   return Object.freeze({ ...item, id: String(item.id), record_id: String(item.record_id), source_record_revision: String(item.source_record_revision || ""), generated_at: String(item.generated_at || "") });
 }
 function sort(items) { return [...items].sort((a,b)=>a.record_id.localeCompare(b.record_id)||a.source_record_revision.localeCompare(b.source_record_revision)||a.id.localeCompare(b.id)); }

@@ -113,6 +113,6 @@ This is intended to keep the estimate reproducible even if the user's profile bo
 
 Retrieved and reviewed for RunLoad on 2026-09-28.
 
-Supporting legacy reference:
+Supporting prior reference:
 
 Ainsworth BE, Haskell WL, Herrmann SD, et al. **2011 Compendium of Physical Activities: a second update of codes and MET values.** Medicine & Science in Sports & Exercise. 2011;43(8):1575-1581. DOI: 10.1249/MSS.0b013e31821ece12. PubMed: https://pubmed.ncbi.nlm.nih.gov/21681120/

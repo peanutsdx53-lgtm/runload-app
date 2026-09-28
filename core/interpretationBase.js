@@ -405,7 +405,6 @@ function buildSummaryCodes({ targetExperience, availability, currentRegions, reg
   const regionalDifferenceExists = Object.values(regionalById).some((item) => finite(item.delta) && Math.abs(item.delta) >= 1);
   if (regionalDifferenceExists && conditionSummary.differences.length) codes.push("NON_CAUSAL_BOUNDARY_REQUIRED");
   if (targetExperience?.regionalV2Recovery?.status === "RECOVERED") codes.push("REGIONAL_TRANSIENT_RECOVERY");
-  if (String(targetExperience?.regionalSemanticState || "").startsWith("LEGACY")) codes.push("LEGACY_REGIONAL_BOUNDARY");
   if (safety.route !== "normal") codes.push(`SUPPORT_${safety.route.toUpperCase()}`);
   return Object.freeze(codes);
 }
@@ -581,7 +580,7 @@ export function buildMeaningFrame({ targetExperience = null, currentRegions = []
   let primaryCode = "COMPARISON_BASELINE";
   if (resolvedSafety.route && resolvedSafety.route !== "normal") {
     primaryCode = "SUPPORT_PRIORITY";
-  } else if (!resolvedAvailability.regional || semanticState.startsWith("LEGACY")) {
+  } else if (!resolvedAvailability.regional) {
     primaryCode = "LIMITED_RESULT";
   } else if (repeated) {
     primaryCode = "REPEATED_OBSERVATION";
@@ -635,7 +634,6 @@ function limitationCodes(targetExperience, evidence) {
     "ROF_SEPARATE_SUBJECTIVE_LAYER",
   ];
   if (!evidence.completeness.completePerContributionTrace) codes.push("NO_COMPLETE_BIBLIOGRAPHY_CLAIM");
-  if (String(targetExperience?.regionalSemanticState || "").startsWith("LEGACY")) codes.push("LEGACY_NOT_REINTERPRETED_AS_CURRENT");
   return Object.freeze(codes);
 }
 

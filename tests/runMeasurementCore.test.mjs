@@ -83,7 +83,7 @@ await test('GPS-STORED-TRACK-IS-CAPPED',()=>{
   const points=Array.from({length:3000},(_,index)=>({lat:35+index*1e-6,lon:140,timestamp:index}));
   const stored=simplifyTrackForStorage(points);
   assert.equal(stored.length,2000);
-  assert.deepEqual(stored[0],{lat:35,lon:140,timestamp:0,accuracyM:null});
+  assert.deepEqual(stored[0],{lat:35,lon:140,timestamp:0,accuracyM:null,altitudeM:null,altitudeAccuracyM:null});
   assert.equal(stored.at(-1).timestamp,2999);
 });
 

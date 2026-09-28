@@ -45,8 +45,10 @@ test('FREE-TIME-DISTANCE-MODES-ARE-AVAILABLE', () => {
 test('TIME-AND-DISTANCE-TARGETS-START-BLANK', () => {
   assert.ok(screen.includes('value="" placeholder="例：30" data-measurement-target-minutes'));
   assert.ok(screen.includes('value="" placeholder="例：5.0" data-measurement-target-distance'));
-  assert.ok(screen.includes('data-target-minutes-preset="20"'));
-  assert.ok(screen.includes('data-target-distance-preset="1"'));
+  assert.ok(screen.includes('data-target-minutes-preset="${value}"'));
+  assert.ok(screen.includes('[20,30,45,60]'));
+  assert.ok(screen.includes('data-target-distance-preset="${value}"'));
+  assert.ok(screen.includes('[1,3,5,10]'));
 });
 
 test('TIME-MODE-HAS-COUNTDOWN-AND-DISTANCE-MODE-HAS-REMAINING-DISTANCE', () => {

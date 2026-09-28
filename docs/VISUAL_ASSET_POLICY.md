@@ -28,7 +28,7 @@ Smartphone Home launcher icons use Unicode emoji. New optional smartphone apps s
 - `icons/icon-192.png`
 - `icons/icon-512.png`
 
-These PWA icons were inherited from the pre-release application. Their provenance is not documented in the current repository. They are therefore treated as legacy-only assets: do not reuse them for new UI or derive new artwork from them. Replace them only with a user-created asset or a free asset with documented licensing.
+These PWA icons were inherited from the pre-release application. Their provenance is not documented in the current repository. They are therefore treated as pre-release-only assets: do not reuse them for new UI or derive new artwork from them. Replace them only with a user-created asset or a free asset with documented licensing.
 
 ### ROF visual guide
 
@@ -42,7 +42,7 @@ These five files are controlled crops from the original ROF scale published by M
 
 ## Existing code-drawn visuals
 
-Existing functional diagrams drawn from source-code geometry, such as the body-region display, are legacy UI components rather than newly bundled illustration files. Do not add new illustrative artwork in code as a way to bypass the source/license rules above.
+Existing functional diagrams drawn from source-code geometry, such as the body-region display, are existing pre-release UI components rather than newly bundled illustration files. Do not add new illustrative artwork in code as a way to bypass the source/license rules above.
 
 ## Change rule
 

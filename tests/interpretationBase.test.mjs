@@ -231,12 +231,6 @@ await test('HIGH-REGIONAL-VALUE-ALONE-DOES-NOT-ESCALATE-SAFETY',()=>{
   assert.equal(out.actions.find(x=>x.actionId==='simulation').enabled,true);
 });
 
-await test('LEGACY-SEMANTIC-IS-BOUNDARY-ONLY',()=>{
-  const target=fakeExperience({id:'target',value:110,regionalSemanticState:'LEGACY_V2_RESTORED_NOT_REINTERPRETED'});
-  const out=buildBaseInterpretation({targetExperience:target,allExperiences:[target]});
-  assert.ok(out.interpretation.summaryCodes.includes('LEGACY_REGIONAL_BOUNDARY'));
-  assert.ok(out.interpretation.limitationCodes.includes('LEGACY_NOT_REINTERPRETED_AS_CURRENT'));
-});
 
 await test('TRANSIENT-RECOVERY-IS-EXPOSED-AS-METADATA',()=>{
   const target=fakeExperience({id:'target',value:110});
