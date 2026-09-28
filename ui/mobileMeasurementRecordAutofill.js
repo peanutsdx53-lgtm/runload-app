@@ -20,7 +20,7 @@ function courseMeta(course = {}) {
   return `${route}・${grade}・路面未確認`;
 }
 
-function installCourseSaveOption(form, course) {
+function installCourseSaveOption(form) {
   const entry = form.querySelector(".record-course-entry");
   if (!entry || entry.querySelector("[data-measurement-course-save-option]")) return;
   const wrapper = document.createElement("div");
@@ -45,6 +45,9 @@ function applyMeasurementAutofill() {
   if (Number.isInteger(Number(steps)) && Number(steps) >= 0) {
     setValue(form, "steps", Math.round(Number(steps)));
     setValue(form, "stepsProvenance", "ESTIMATED");
+    const provenance = form.querySelector('[name="stepsProvenance"]');
+    const estimatedOption = provenance?.querySelector?.('option[value="ESTIMATED"]');
+    if (estimatedOption) estimatedOption.textContent = "スマホで推定";
     form.querySelectorAll('[data-optional-status="compare"], [data-save-optional="compare"] b').forEach((node) => { node.textContent = "入力あり"; });
   }
 
@@ -69,7 +72,7 @@ function applyMeasurementAutofill() {
     const metaNode = form.querySelector("[data-record-course-meta]");
     if (metaNode) metaNode.textContent = courseMeta(course);
     form.querySelectorAll('[data-optional-status="course"], [data-save-optional="course"] b').forEach((node) => { node.textContent = "入力あり"; });
-    installCourseSaveOption(form, course);
+    installCourseSaveOption(form);
   }
 
   const banner = document.querySelector(".screen--record-input .parity-record-banner");
