@@ -1,9 +1,8 @@
-export const APP_VERSION = "2026.09.28.17";
+export const APP_VERSION = "2026.09.28.18";
 export const APP_VERSION_LABEL = `v${APP_VERSION}`;
 
 const APP_CACHE_PREFIXES = Object.freeze([
   "running-record-app-",
-  "runload-app-",
 ]);
 
 let enhancementQueued = false;

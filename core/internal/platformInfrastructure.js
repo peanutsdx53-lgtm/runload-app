@@ -1,4 +1,3 @@
-import { LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES } from "../legacyCompatibility.js";
 import { internalModules } from "./modules.js";
 
 // ===== core/pwaRegistration.js =====
@@ -35,7 +34,7 @@ function showUpdateNotice(registration) {
 }
 
 function isLocalLiveServerDevelopment() {
-  return window.location.protocol === "http:"
+  return window.location.protocol === "http"
     && LOCAL_DEVELOPMENT_HOSTS.has(window.location.hostname);
 }
 
@@ -51,14 +50,6 @@ async function clearLocalPwaDeliveryState() {
         return scriptUrl.endsWith("/service-worker.js");
       })
       .map((registration) => registration.unregister()));
-  }
-
-  if ("caches" in window) {
-    const keys = await caches.keys();
-    const legacyKeys = keys.filter((key) => (
-      LEGACY_LOCAL_DELIVERY_CACHE_PREFIXES.some((prefix) => key.startsWith(prefix))
-    ));
-    await Promise.all(legacyKeys.map((key) => caches.delete(key)));
   }
 }
 

@@ -1,9 +1,5 @@
 import { STORAGE_KEYS } from "./appCore.js";
 import {
-  hasLegacyRofJSourceMetadata,
-  removeLegacyRofJSourceMetadata,
-} from "./legacyCompatibility.js";
-import {
   ROF_J_INSTRUMENT_ID,
   ROF_J_SEMANTIC_VERSION,
   ROF_J_SOURCE_VERSION,
@@ -41,37 +37,6 @@ function clone(value) {
 }
 function isObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function normalizeRofJEntry(entry) {
-  if (!isObject(entry)) return entry;
-  const normalized = clone(entry);
-  if (isSupportedRofJSemanticVersion(normalized.instrumentSemanticVersion)) {
-    normalized.instrumentSemanticVersion = ROF_J_SEMANTIC_VERSION;
-  }
-  if (normalized.sourceVersion == null && hasLegacyRofJSourceMetadata(normalized)) {
-    normalized.sourceVersion = ROF_J_SOURCE_VERSION;
-  }
-  removeLegacyRofJSourceMetadata(normalized);
-  return normalized;
-}
-
-function normalizeRofJStorageEnvelope(value) {
-  if (!isObject(value) || !isObject(value.entries)) return value;
-  return {
-    schemaVersion: ROF_J_STORAGE_SCHEMA_VERSION,
-    entries: Object.fromEntries(
-      Object.entries(value.entries).map(([runId, entry]) => [runId, normalizeRofJEntry(entry)]),
-    ),
-  };
-}
-
-function normalizeRofJLifecycleEnvelope(value) {
-  if (!isObject(value) || !isObject(value.pendingByRunId)) return value;
-  return {
-    ...clone(value),
-    schemaVersion: ROF_J_LIFECYCLE_SCHEMA_VERSION,
-  };
 }
 function isIsoDateTime(value) {
   if (typeof value !== "string" || !value.trim()) return false;
@@ -279,9 +244,7 @@ function validateRofJRunEntry(entry) {
   if (!String(entry.runId || "").trim()) issues.push("RUN_ID_REQUIRED");
   if (entry.instrumentId !== ROF_J_INSTRUMENT_ID) issues.push("INSTRUMENT_ID_MISMATCH");
   if (!isSupportedRofJSemanticVersion(entry.instrumentSemanticVersion)) issues.push("SEMANTIC_VERSION_MISMATCH");
-  const legacySourceMetadata = hasLegacyRofJSourceMetadata(entry);
-  if (entry.sourceVersion != null && entry.sourceVersion !== ROF_J_SOURCE_VERSION) issues.push("SOURCE_VERSION_MISMATCH");
-  if (entry.sourceVersion == null && !legacySourceMetadata) issues.push("SOURCE_VERSION_MISSING");
+  if (entry.sourceVersion !== ROF_J_SOURCE_VERSION) issues.push("SOURCE_VERSION_MISMATCH");
   if (entry.visualSourceId !== ROF_J_VISUAL_SOURCE_ID) issues.push("VISUAL_SOURCE_MISMATCH");
   for (const phase of [ROF_J_PHASES.PRE, ROF_J_PHASES.POST]) {
     const m = entry.measurements?.[phase];
@@ -336,7 +299,7 @@ function createRofJRepository(gateway) {
     if (result.value == null) return { ok: true, exists: false, envelope: empty() };
     const validation = validateRofJStorageEnvelope(result.value);
     if (!validation.ok) return { ok: false, code: "ROF_J_STORAGE_INVALID", validation, envelope: empty() };
-    return { ok: true, exists: true, envelope: normalizeRofJStorageEnvelope(result.value) };
+    return { ok: true, exists: true, envelope: clone(result.value) };
   }
   function loadByRunId(runId) {
     const result = loadEnvelopeResult();
@@ -349,8 +312,6 @@ function createRofJRepository(gateway) {
   }
   function saveEntry(entry) {
     const normalizedEntry = clone(entry);
-    removeLegacyRofJSourceMetadata(normalizedEntry);
-    normalizedEntry.sourceVersion = ROF_J_SOURCE_VERSION;
     const validation = validateRofJRunEntry(normalizedEntry);
     if (!validation.ok) return { ok: false, code: "ROF_J_ENTRY_INVALID", validation };
     const current = loadEnvelopeResult();
@@ -383,7 +344,7 @@ function createRofJLifecycleRepository(gateway) {
     if (result.value == null) return { ok: true, exists: false, envelope: empty() };
     const validation = validateRofJLifecycleEnvelope(result.value);
     if (!validation.ok) return { ok: false, code: "ROF_J_LIFECYCLE_STORAGE_INVALID", validation, envelope: empty() };
-    return { ok: true, exists: true, envelope: normalizeRofJLifecycleEnvelope(result.value) };
+    return { ok: true, exists: true, envelope: clone(result.value) };
   }
   function saveState(state) {
     if (!state?.runId) return { ok: false, code: "RUN_ID_REQUIRED" };
