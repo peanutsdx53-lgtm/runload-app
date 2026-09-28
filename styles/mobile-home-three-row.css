@@ -1,0 +1,33 @@
+@media (max-width: 54.99rem) {
+  .mobile-home-os.is-home-editing .mobile-home-page-viewport {
+    touch-action: pan-x;
+    overscroll-behavior-y: none;
+    margin-bottom: 28px;
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-page {
+    min-height: 0;
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-grid {
+    grid-auto-rows: 112px;
+    grid-template-rows: repeat(var(--home-grid-rows, 3), 112px);
+    padding-bottom: 42px;
+  }
+
+  .mobile-home-page-indicator {
+    bottom: calc(106px + env(safe-area-inset-bottom));
+  }
+
+  html.is-runload-ios-home-native-scroll
+  .mobile-home-os.is-home-editing
+  .mobile-home-page [data-home-item-id],
+  html.is-runload-ios-home-native-scroll
+  .mobile-home-os.is-home-editing
+  .mobile-home-page [data-home-widget-id] {
+    touch-action: pan-x;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}

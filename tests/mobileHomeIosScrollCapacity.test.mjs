@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 const iosFix = fs.readFileSync('ui/iosHomeEditScrollFix.js', 'utf8');
 const iosCss = fs.readFileSync('styles/mobile-home-ios-editing.css', 'utf8');
+const threeRowCss = fs.readFileSync('styles/mobile-home-three-row.css', 'utf8');
 const capacity = fs.readFileSync('ui/mobileHomePageCapacity.js', 'utf8');
 const grid = fs.readFileSync('ui/interactions/homeGridModel.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
@@ -16,75 +17,73 @@ function test(id, fn) {
   catch (error) { results.push({ id, status: 'FAIL', message: String(error?.stack || error) }); }
 }
 
-test('IOS-EDIT-SCROLL-IS-IOS-ONLY', () => {
+test('IOS-EDIT-PAGING-IS-IOS-ONLY', () => {
   assert.ok(iosFix.includes('/iPhone|iPad|iPod/i'));
   assert.ok(iosFix.includes('platform === "MacIntel" && touchPoints > 1'));
   assert.ok(iosFix.includes('mobileLayoutMatches()'));
 });
 
-test('ICON-AND-WIDGET-BODIES-KEEP-NATIVE-IOS-VERTICAL-PAN', () => {
-  assert.ok(iosCss.includes('touch-action: pan-y;'));
-  assert.ok(iosCss.includes('.mobile-home-page [data-home-item-id]'));
-  assert.ok(iosCss.includes('.mobile-home-page [data-home-widget-id]'));
-  assert.ok(!iosFix.includes('globalThis.scrollTo('));
-  assert.ok(!iosFix.includes('startScrollTop'));
+test('EDIT-PAGE-SWIPE-USES-NATIVE-HORIZONTAL-PAN', () => {
+  assert.ok(threeRowCss.includes('.mobile-home-os.is-home-editing .mobile-home-page-viewport'));
+  assert.ok(threeRowCss.includes('touch-action: pan-x;'));
+  assert.ok(iosFix.includes('nativePagingViewportFromEvent'));
+  assert.ok(iosFix.includes('event.stopImmediatePropagation();'));
+  assert.ok(!iosFix.includes('pageViewport.scrollLeft'));
+  assert.ok(!iosFix.includes('document.addEventListener("pointermove"'));
+  assert.ok(!iosFix.includes('preventDefault()'));
 });
 
-test('ICON-ORIGIN-HORIZONTAL-SWIPE-RESTORES-PAGE-MOVEMENT', () => {
-  assert.ok(iosFix.includes('const PAGE_SWIPE_SLOP_PX = 8;'));
-  assert.ok(iosFix.includes('pageHorizontal = true;'));
-  assert.ok(iosFix.includes('pageViewport.scrollLeft = clampPageLeft'));
-  assert.ok(iosFix.includes('viewport.scrollTo({ left, behavior: "smooth" });'));
-  assert.ok(iosFix.includes('document.addEventListener("pointermove", handlePointerMove, { capture: true, passive: false });'));
+test('ICON-AND-BLANK-SURFACES-SHARE-NATIVE-IOS-PAGING', () => {
+  assert.ok(iosFix.includes('event.target.closest?.(".mobile-home-page-viewport")'));
+  assert.ok(threeRowCss.includes('.mobile-home-page [data-home-item-id]'));
+  assert.ok(threeRowCss.includes('.mobile-home-page [data-home-widget-id]'));
+  assert.ok(threeRowCss.includes('touch-action: pan-x;'));
 });
 
-test('VERTICAL-GESTURE-DOES-NOT-ENTER-HORIZONTAL-PAGE-SWIPE', () => {
-  assert.ok(iosFix.includes('if (absY > absX * PAGE_SWIPE_AXIS_RATIO)'));
-  assert.ok(iosFix.includes('pageVertical = true;'));
-  assert.ok(iosFix.includes('if (!pageHorizontal) return;'));
+test('EDIT-PAGE-NO-LONGER-DEPENDS-ON-VERTICAL-SCROLL', () => {
+  assert.ok(threeRowCss.includes('.mobile-home-os.is-home-editing .mobile-home-page'));
+  assert.ok(threeRowCss.includes('min-height: 0;'));
+  assert.ok(threeRowCss.includes('grid-auto-rows: 112px;'));
+  assert.ok(threeRowCss.includes('grid-template-rows: repeat(var(--home-grid-rows, 3), 112px);'));
 });
 
-test('IOS-REORDERING-HANDLE-IS-EXPLICIT', () => {
+test('IOS-REORDERING-HANDLE-REMAINS-EXPLICIT', () => {
   assert.ok(iosFix.includes('handle.dataset.homeDragHandle = "";'));
   assert.ok(iosFix.includes('handle.className = "mobile-home-ios-drag-handle";'));
   assert.ok(iosFix.includes('handle.textContent = "移動";'));
-  assert.ok(iosFix.includes('button, [data-home-drag-handle]'));
+  assert.ok(iosFix.includes('[data-home-drag-handle]'));
   assert.ok(iosCss.includes('.mobile-home-ios-drag-handle'));
   assert.ok(iosCss.includes('touch-action: none;'));
 });
 
 test('IOS-EDIT-SUPPRESSES-COPY-CALLOUT-AND-SELECTION', () => {
-  assert.ok(iosCss.includes('-webkit-touch-callout: none;'));
-  assert.ok(iosCss.includes('-webkit-user-select: none;'));
-  assert.ok(iosCss.includes('user-select: none;'));
+  assert.ok(threeRowCss.includes('-webkit-touch-callout: none;'));
+  assert.ok(threeRowCss.includes('-webkit-user-select: none;'));
+  assert.ok(threeRowCss.includes('user-select: none;'));
   assert.ok(iosCss.includes('-webkit-user-drag: none;'));
 });
 
-test('IOS-NATIVE-SCROLL-OVERRIDE-LOADS-AFTER-BASE-EDITING-CSS', () => {
-  const baseIndex = index.indexOf('./styles/mobile-home-editing.css');
+test('THREE-ROW-OVERRIDE-LOADS-AFTER-IOS-EDITING-CSS', () => {
   const iosIndex = index.indexOf('./styles/mobile-home-ios-editing.css');
-  assert.ok(baseIndex >= 0 && iosIndex > baseIndex);
+  const threeRowIndex = index.indexOf('./styles/mobile-home-three-row.css');
+  assert.ok(iosIndex >= 0 && threeRowIndex > iosIndex);
 });
 
-test('ANDROID-GENERIC-HELPER-REMAINS-LOADED', () => {
-  assert.ok(index.includes('./ui/mobileHomeEditScroll.js'));
-  assert.ok(index.includes('./ui/iosHomeEditScrollFix.js'));
-});
-
-test('HOME-PAGE-CAPACITY-IS-FOUR-ROWS', () => {
-  assert.ok(grid.includes('export const HOME_MAX_ROWS = 4;'));
-  assert.ok(capacity.includes('const MAX_ROWS = 4;'));
+test('HOME-PAGE-CAPACITY-IS-THREE-ROWS', () => {
+  assert.ok(grid.includes('export const HOME_MIN_ROWS = 3;'));
+  assert.ok(grid.includes('export const HOME_MAX_ROWS = 3;'));
+  assert.ok(capacity.includes('const MAX_ROWS = 3;'));
   assert.ok(capacity.includes('const COLUMNS = 4;'));
   assert.ok(capacity.includes('const MAX_PAGES = 4;'));
 });
 
-test('WIDGET-FOOTPRINTS-SHARE-THE-FOUR-ROW-BUDGET', () => {
+test('WIDGET-FOOTPRINTS-SHARE-THE-THREE-ROW-BUDGET', () => {
   assert.ok(capacity.includes('if (size === "large") return { columns: 4, rows: 2 };'));
   assert.ok(capacity.includes('if (size === "medium") return { columns: 4, rows: 1 };'));
   assert.ok(capacity.includes('return { columns: 2, rows: 1 };'));
 });
 
-test('OLD-OVERFLOW-MIGRATES-TO-LATER-PAGES', () => {
+test('OLD-FOURTH-ROW-CONTENT-MIGRATES-TO-LATER-PAGES', () => {
   assert.ok(capacity.includes('migrateStoredPositions();'));
   assert.ok(capacity.includes('for (let pageIndex = originalPage; pageIndex < MAX_PAGES'));
   assert.ok(capacity.includes('while (output.length <= pageIndex) output.push([]);'));
@@ -97,6 +96,10 @@ test('FUTURE-OVERFLOW-IS-REPAIRED', () => {
   assert.ok(capacity.includes('persistDom(root);'));
 });
 
+test('PAGE-INDICATOR-IS-MOVED-SLIGHTLY-DOWN', () => {
+  assert.ok(threeRowCss.includes('bottom: calc(106px + env(safe-area-inset-bottom));'));
+});
+
 test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
   assert.ok(coordinator.includes('event.stopImmediatePropagation();'));
   assert.ok(coordinator.includes('releaseCoreDrag(candidate, event)'));
@@ -105,13 +108,13 @@ test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.4');
+  assert.equal(version, '2026.09.28.5');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
-  assert.ok(worker.includes('"./styles/mobile-home-ios-editing.css"'));
+  assert.ok(worker.includes('"./styles/mobile-home-three-row.css"'));
   assert.ok(worker.includes('"./ui/mobileHomePageCapacity.js"'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');
-console.log(JSON.stringify({ suite: 'Mobile Home iOS Native Scroll and Capacity', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
+console.log(JSON.stringify({ suite: 'Mobile Home Native Paging and Three-Row Capacity', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
 if (failed.length) process.exit(1);
