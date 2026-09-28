@@ -1,7 +1,7 @@
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const LAYOUT_STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
-const MAX_ROWS = 4;
+const MAX_ROWS = 3;
 const COLUMNS = 4;
 const MAX_PAGES = 4;
 const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
