@@ -43,10 +43,6 @@ export function renderRunMeasurementScreen({ services, context }) {
   const plan = requestedPlanId ? services.storage.plans.findById(requestedPlanId) : null;
   const validPlan = plan && plan.planType !== "rest" && plan.plannedSession?.activityType !== "rest" ? plan : null;
   const targetPace = validPlan ? plannedPaceSecondsPerKm(validPlan) : null;
-  const plannedDuration = Number(validPlan?.plannedSession?.durationMinutes || 0);
-  const plannedDistance = Number(validPlan?.plannedSession?.distanceKm || 0);
-  const defaultDuration = plannedDuration > 0 ? Math.max(1, Math.round(plannedDuration)) : 30;
-  const defaultDistance = plannedDistance > 0 ? Number(plannedDistance.toFixed(2)) : 5;
 
   return `<div class="screen screen--run-measurement run-measurement run-measurement--v2" data-run-measurement data-plan-id="${escapeHtml(validPlan?.id || "")}" data-target-pace="${escapeHtml(targetPace || "")}">
     <section class="run-measurement-prep" data-measurement-prep>
@@ -67,12 +63,12 @@ export function renderRunMeasurementScreen({ services, context }) {
         </fieldset>
 
         <section class="run-measurement-goal-settings" data-measurement-goal="time" hidden>
-          <label><span>走る時間</span><div><input type="number" inputmode="numeric" min="1" max="600" step="1" value="${escapeHtml(defaultDuration)}" data-measurement-target-minutes><b>分</b></div></label>
+          <label><span>走る時間</span><div><input type="number" inputmode="numeric" min="1" max="600" step="1" value="" placeholder="例：30" data-measurement-target-minutes><b>分</b></div></label>
           <div class="run-measurement-presets" aria-label="時間の候補">${[20,30,45,60].map((value) => `<button type="button" data-target-minutes-preset="${value}">${value}分</button>`).join("")}</div>
         </section>
 
         <section class="run-measurement-goal-settings" data-measurement-goal="distance" hidden>
-          <label><span>走る距離</span><div><input type="number" inputmode="decimal" min="0.1" max="1000" step="0.1" value="${escapeHtml(defaultDistance)}" data-measurement-target-distance><b>km</b></div></label>
+          <label><span>走る距離</span><div><input type="number" inputmode="decimal" min="0.1" max="1000" step="0.1" value="" placeholder="例：5.0" data-measurement-target-distance><b>km</b></div></label>
           <div class="run-measurement-presets" aria-label="距離の候補">${[1,3,5,10].map((value) => `<button type="button" data-target-distance-preset="${value}">${value} km</button>`).join("")}</div>
         </section>
 
@@ -120,11 +116,12 @@ export function renderRunMeasurementScreen({ services, context }) {
 
       <section class="run-measurement-goal-reached" data-measurement-goal-reached hidden role="status" aria-live="assertive">
         <strong data-measurement-goal-reached-title>設定した目標に到達しました</strong>
-        <span>測定を終了するか、そのまま続けられます。</span>
+        <span>終了にはGPSで10m以上の移動取得が必要です。足りない場合はそのまま続けてください。</span>
         <div><button type="button" data-action="finish-from-goal">測定を終了</button><button type="button" data-action="continue-after-goal">そのまま続ける</button></div>
       </section>
 
       <section class="run-measurement-active__controls">
+        <p class="run-measurement-finish-requirement">終了にはGPSで10m以上の移動取得が必要です。</p>
         <p class="run-measurement__status" data-measurement-status role="status" aria-live="polite">GPSを取得しています。</p>
         <div class="run-measurement-active__control-row"><button type="button" class="run-measurement-active__pause" data-action="pause-measurement">一時停止</button><button type="button" class="run-measurement__finish" data-action="finish-measurement">測定を終了</button></div>
       </section>

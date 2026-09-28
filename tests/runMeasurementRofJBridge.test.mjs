@@ -8,6 +8,7 @@ const enhancer = fs.readFileSync('ui/rofJVisualEnhancement.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const measurementCss = fs.readFileSync('styles/mobile-run-measurement-v2.css', 'utf8');
+const ergonomicsCss = fs.readFileSync('styles/mobile-run-measurement-ergonomics.css', 'utf8');
 
 const results = [];
 function test(id, fn) {
@@ -40,6 +41,13 @@ test('FREE-TIME-DISTANCE-MODES-ARE-AVAILABLE', () => {
   assert.ok(interactions.includes('measurementMode === "distance"'));
 });
 
+test('TIME-AND-DISTANCE-TARGETS-START-BLANK', () => {
+  assert.ok(screen.includes('value="" placeholder="例：30" data-measurement-target-minutes'));
+  assert.ok(screen.includes('value="" placeholder="例：5.0" data-measurement-target-distance'));
+  assert.ok(screen.includes('data-target-minutes-preset="20"'));
+  assert.ok(screen.includes('data-target-distance-preset="1"'));
+});
+
 test('TIME-MODE-HAS-COUNTDOWN-AND-DISTANCE-MODE-HAS-REMAINING-DISTANCE', () => {
   assert.ok(interactions.includes('const remaining = Math.max(0, total - elapsed)'));
   assert.ok(interactions.includes('primaryLabel.textContent = "残り時間"'));
@@ -48,6 +56,13 @@ test('TIME-MODE-HAS-COUNTDOWN-AND-DISTANCE-MODE-HAS-REMAINING-DISTANCE', () => {
   assert.ok(interactions.includes('remaining.toFixed(2)'));
   assert.ok(interactions.includes('reachGoal()'));
   assert.ok(screen.includes('そのまま続ける'));
+});
+
+test('FINISH-DISTANCE-GUARD-IS-EXPLICIT-IN-UI', () => {
+  assert.ok(interactions.includes('distanceM >= 10'));
+  assert.ok(interactions.includes('まだ十分な移動距離を取得できていません'));
+  assert.ok(screen.includes('終了にはGPSで10m以上の移動取得が必要です。'));
+  assert.ok(ergonomicsCss.includes('.run-measurement-active__controls .run-measurement__status.is-error'));
 });
 
 test('PAUSE-EXCLUDES-PAUSED-TIME-AND-PREVENTS-GPS-JUMP', () => {
@@ -70,6 +85,17 @@ test('MEASUREMENT-USES-SAME-ROF-PANEL-CONTRACT-AS-RECORD-INPUT', () => {
   assert.ok(screen.includes('fatigueScaleMarkup("after")'));
   assert.ok(enhancer.includes('panel.closest("[data-rof-context], .rof-sheet")'));
   assert.ok(enhancer.includes('pointerdown'));
+});
+
+test('MEASUREMENT-ROF-LAYOUT-HAS-DEDICATED-MOBILE-CORRECTIONS', () => {
+  assert.ok(index.includes('./styles/mobile-run-measurement-ergonomics.css'));
+  assert.ok(worker.includes('"./styles/mobile-run-measurement-ergonomics.css"'));
+  assert.ok(ergonomicsCss.includes('.run-measurement-fatigue .rof-current'));
+  assert.ok(ergonomicsCss.includes('grid-template-columns: auto 42px minmax(0, 1fr);'));
+  assert.ok(ergonomicsCss.includes('.run-measurement-fatigue .rof-ticks'));
+  assert.ok(ergonomicsCss.includes('grid-template-columns: repeat(11, minmax(0, 1fr));'));
+  assert.ok(ergonomicsCss.includes('.run-measurement-prep__start'));
+  assert.ok(ergonomicsCss.includes('position: static;'));
 });
 
 test('ROF-LIFECYCLE-REMAINS-OPTIONAL-AND-SEPARATE', () => {
