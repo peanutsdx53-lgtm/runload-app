@@ -29,7 +29,7 @@ function decorateDragHandles(scope = document) {
   });
 }
 
-function nativePagingViewportFromEvent(event) {
+function lockedEditViewportFromEvent(event) {
   if (!isIOSLike() || !mobileLayoutMatches()) return null;
   const root = event.target.closest?.(".mobile-home-os.is-home-editing") || null;
   if (!root) return null;
@@ -38,12 +38,12 @@ function nativePagingViewportFromEvent(event) {
 }
 
 function handlePointerDown(event) {
-  if (!nativePagingViewportFromEvent(event)) return;
+  if (!lockedEditViewportFromEvent(event)) return;
 
-  // Three-row edit pages do not need vertical document scrolling. Let Safari own
-  // horizontal panning and scroll-snap for the entire page surface, including icons
-  // and blank cells. Stop app-level drag/page gesture handlers from competing with it.
-  // Do not preventDefault: the browser's native horizontal pan must remain available.
+  // Editing uses tap-only page navigation. Block both Safari panning and the app's
+  // page-swipe handlers on the page surface. Explicit controls, including the
+  // dedicated move handle and page dots, remain interactive.
+  event.preventDefault();
   event.stopImmediatePropagation();
 }
 
