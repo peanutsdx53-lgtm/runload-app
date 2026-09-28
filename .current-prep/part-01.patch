@@ -1,0 +1,82 @@
+Exports["CURRENT_REGIONAL_MODEL_SNAPSHOT"] = CURRENT_REGIONAL_MODEL_SNAPSHOT;
+ moduleExports["normalizeRegionalModelSnapshot"] = normalizeRegionalModelSnapshot;
+--- a/core/interpretationBase.js
++++ b/core/interpretationBase.js
+@@ -405,7 +405,6 @@
+   const regionalDifferenceExists = Object.values(regionalById).some((item) => finite(item.delta) && Math.abs(item.delta) >= 1);
+   if (regionalDifferenceExists && conditionSummary.differences.length) codes.push("NON_CAUSAL_BOUNDARY_REQUIRED");
+   if (targetExperience?.regionalV2Recovery?.status === "RECOVERED") codes.push("REGIONAL_TRANSIENT_RECOVERY");
+-  if (String(targetExperience?.regionalSemanticState || "").startsWith("LEGACY")) codes.push("LEGACY_REGIONAL_BOUNDARY");
+   if (safety.route !== "normal") codes.push(`SUPPORT_${safety.route.toUpperCase()}`);
+   return Object.freeze(codes);
+ }
+@@ -581,7 +580,7 @@
+   let primaryCode = "COMPARISON_BASELINE";
+   if (resolvedSafety.route && resolvedSafety.route !== "normal") {
+     primaryCode = "SUPPORT_PRIORITY";
+-  } else if (!resolvedAvailability.regional || semanticState.startsWith("LEGACY")) {
++  } else if (!resolvedAvailability.regional) {
+     primaryCode = "LIMITED_RESULT";
+   } else if (repeated) {
+     primaryCode = "REPEATED_OBSERVATION";
+@@ -635,7 +634,6 @@
+     "ROF_SEPARATE_SUBJECTIVE_LAYER",
+   ];
+   if (!evidence.completeness.completePerContributionTrace) codes.push("NO_COMPLETE_BIBLIOGRAPHY_CLAIM");
+-  if (String(targetExperience?.regionalSemanticState || "").startsWith("LEGACY")) codes.push("LEGACY_NOT_REINTERPRETED_AS_CURRENT");
+   return Object.freeze(codes);
+ }
+ 
+--- a/core/interpretationCore.js
++++ b/core/interpretationCore.js
+@@ -212,7 +212,6 @@
+   });
+ 
+   if (!region || !row || modelVersion !== CURRENT_PRIMARY_MODEL_VERSION) return unavailable("CURRENT_MODEL_RESULT_REQUIRED");
+-  if (String(targetExperience?.regionalSemanticState || "").startsWith("LEGACY")) return unavailable("LEGACY_RESULT_NOT_REINTERPRETED");
+   if (String(row.calculationState || "") !== "CALCULATED" || !finite(row.value)) return unavailable("CALCULATED_REGION_REQUIRED");
+   if (!engineInput) return unavailable("ENGINE_INPUT_SNAPSHOT_REQUIRED");
+ 
+@@ -324,7 +323,6 @@
+ 
+ function regionalState(base = {}) {
+   if (String(base?.context?.activityType || "").toLowerCase() === "rest") return "REST";
+-  if (String(base?.context?.regionalSemanticState || "").startsWith("LEGACY")) return "LEGACY";
+   const regions = base?.current?.regions || [];
+   const available = regions.filter((region) => finite(region.value)).length;
+   if (!available) return "UNAVAILABLE";
+@@ -568,7 +566,6 @@
+       history: base?.availability?.regionalHistory ? "AVAILABLE" : "NONE",
+       subjective: subjectiveContext.state,
+       support: String(base?.safety?.route || "normal").toUpperCase(),
+-      legacy: String(base?.context?.regionalSemanticState || "").startsWith("LEGACY"),
+     }),
+     overview: Object.freeze({
+       regions: frozenArray(regions),
+--- a/docs/CODEBASE_ARCHITECTURE.md
++++ b/docs/CODEBASE_ARCHITECTURE.md
+@@ -11,7 +11,6 @@
+ - `appCore.js`: public domain API used by screens and shared UI modules.
+ - `rofJCore.js`: protected ROF-J logic.
+ - `rofJConstants.js`: current ROF-J contract identifiers.
+-- `legacyCompatibility.js`: old storage/cache/schema identifiers required only to read or clean up data created by earlier releases.
+ - `interpretationBase.js`: reusable persisted-result interpretation primitives.
+ - `interpretationCore.js`: current beginner-facing interpretation projection. It consumes persisted outputs and does not recalculate Primary Reference-100 or ROF-J.
+ - `internal/platformInfrastructure.js`: PWA registration, storage keys, and storage gateway.
+@@ -124,7 +123,7 @@
+ 
+ Semantic model/schema versions are exempt when the version is part of the data contract.
+ 
+-Legacy product names or retired implementation labels must not be introduced into new runtime names, UI text, or new storage contracts. If an old literal is required to read existing data or remove an old browser cache, keep it inside `legacyCompatibility.js` where the ES-module runtime can share it. Service Worker cache cleanup may keep a local legacy prefix because the worker is intentionally loaded as a classic script. Historical scientific model identifiers may remain where exact comparison with saved results is required; presentation code must not expose those identifiers as interface labels.
++The pre-release application accepts only the current storage and result contracts. Do not add migration aliases, retired storage keys, retired result versions, or compatibility readers for unpublished builds. Historical scientific model identifiers such as V27 may remain when they identify an active research calculation path; they are model identifiers, not stored-data compatibility hooks. Presentation code must not expose internal identifiers as interface labels.
+ 
+ ## 5. Cleanup and deletion rules
+ 
+--- a/docs/VISUAL_ASSET_POLICY.md
++++ b/docs/VISUAL_ASSET_POLICY.md
+@@ -28,7 +28,7 @@
+ - `icons/icon-192.png`
+ - `icons/icon-512.png`
+ 
+-These PWA icons were inherited from the pre-release application. Their provenance is not documented in the current repository. They are therefore treated as legacy-only assets: do not reuse them for new UI or derive new artwork from them. Replace them only with a user-created asset or a free asset with documented licensing.
++These PWA icons were inherited from the pre-release application. Their provenance is not documented in the c
