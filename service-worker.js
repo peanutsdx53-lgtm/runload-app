@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.28.14";
+const CACHE_NAME = "running-record-app-runtime-2026.09.28.15";
 const CACHE_PREFIX = "running-record-app-";
 const LEGACY_CACHE_PREFIXES = Object.freeze(["runload-app-"]);
 const PRECACHE_URLS = [
@@ -140,6 +140,7 @@ const PRECACHE_URLS = [
   "./ui/flowSessionState.js",
   "./ui/gpxLocalAnalysis.js",
   "./ui/runMeasurementCore.js",
+  "./ui/runMeasurementEnergy.js",
   "./ui/runMeasurementMap.js",
   "./ui/runMeasurementState.js",
   "./ui/interactions/runMeasurementInteractions.js",
