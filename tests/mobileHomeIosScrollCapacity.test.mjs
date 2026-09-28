@@ -28,6 +28,19 @@ test('IOS-EDIT-SCROLL-USES-ABSOLUTE-GESTURE-ORIGIN', () => {
   assert.ok(iosFix.includes('event.stopImmediatePropagation();'));
 });
 
+test('ICON-ORIGIN-VERTICAL-SWIPE-BEATS-EARLY-DRAG-ARM', () => {
+  assert.ok(iosFix.includes('const IOS_EDIT_DRAG_HOLD_MS = 360;'));
+  assert.ok(iosFix.includes('pressStartedAt = nowMs();'));
+  assert.ok(iosFix.includes('const heldLongEnoughForDrag = nowMs() - pressStartedAt >= IOS_EDIT_DRAG_HOLD_MS;'));
+  assert.ok(iosFix.includes('if (heldLongEnoughForDrag && target?.classList.contains("is-home-drag-armed")) return;'));
+  assert.ok(iosFix.includes('scrolling = true;'));
+  assert.ok(iosFix.includes('cancelLegacyPress(event);'));
+});
+
+test('ACTIVE-DRAG-STILL-KEEPS-DRAG-OWNERSHIP', () => {
+  assert.ok(iosFix.includes('if (root.classList.contains("is-home-drag-active")) return;'));
+});
+
 test('ANDROID-LEGACY-SCROLL-PATH-REMAINS-LOADED', () => {
   assert.ok(index.includes('./ui/mobileHomeEditScroll.js'));
   const iosIndex = index.indexOf('./ui/iosHomeEditScrollFix.js');
@@ -69,7 +82,7 @@ test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.1');
+  assert.equal(version, '2026.09.28.2');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
   assert.ok(worker.includes('"./ui/mobileHomePageCapacity.js"'));
