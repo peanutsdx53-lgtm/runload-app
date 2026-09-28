@@ -122,9 +122,19 @@ test('OLD-FOURTH-ROW-CONTENT-MIGRATES-TO-LATER-PAGES', () => {
   assert.ok(capacity.includes('pageByToken'));
 });
 
+test('INITIAL-AND-FUTURE-OVERFLOW-CREATES-A-PAGE-WITHOUT-EDIT-MODE', () => {
+  assert.ok(capacity.includes('function createRepairPage(root)'));
+  assert.ok(capacity.includes('track.append(page);'));
+  assert.ok(capacity.includes('function placeOverflowItem('));
+  assert.ok(capacity.includes('while (pages.length < MAX_PAGES)'));
+  assert.ok(capacity.includes('const page = createRepairPage(root);'));
+  assert.ok(capacity.includes('syncPassivePageIndicator(root);'));
+  assert.ok(!capacity.includes('root.querySelector("[data-home-page-add]")?.click();'));
+});
+
 test('FUTURE-OVERFLOW-IS-REPAIRED', () => {
   assert.ok(capacity.includes('new MutationObserver(queueRepair)'));
-  assert.ok(capacity.includes('root.querySelector("[data-home-page-add]")?.click();'));
+  assert.ok(capacity.includes('placeOverflowItem(root, element, token, startPage, sizes, visible)'));
   assert.ok(capacity.includes('persistDom(root);'));
 });
 
@@ -153,7 +163,7 @@ test('WIDGET-ICON-CROSS-SWAP-IS-OWNED-SEPARATELY', () => {
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.29.1');
+  assert.equal(version, '2026.09.29.2');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
   assert.ok(worker.includes('"./styles/mobile-home-three-row.css"'));
