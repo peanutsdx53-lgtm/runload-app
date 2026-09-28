@@ -4,6 +4,7 @@ const LAYOUT_STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const HOME_COLUMNS = 4;
 const HOME_ROWS = 3;
+const DEFAULT_WIDGET_SIZES = Object.freeze({ today: "medium", plan: "small", changes: "small", checkpoint: "small" });
 
 let pointerId = null;
 let root = null;
@@ -119,7 +120,7 @@ function persist(homeRoot) {
     version: 2,
     order: allWidgets.map((item) => item.dataset.homeWidgetId),
     visible: allWidgets.filter((item) => !item.hidden).map((item) => item.dataset.homeWidgetId),
-    sizes: Object.fromEntries(allWidgets.map((item) => [item.dataset.homeWidgetId, item.dataset.homeWidgetSize || "small"])),
+    sizes: Object.fromEntries(allWidgets.map((item) => [item.dataset.homeWidgetId, item.dataset.homeWidgetSize || DEFAULT_WIDGET_SIZES[item.dataset.homeWidgetId] || "small"])),
     pageById: Object.fromEntries(allWidgets.map((item) => [
       item.dataset.homeWidgetId,
       pageIndex(homeRoot, item.closest(".mobile-home-page")),
@@ -223,7 +224,11 @@ function candidateFor(event) {
   if (!conflicts.includes(app)) return null;
   if (conflicts.some((item) => !item.dataset.homeItemId || item.closest(".mobile-home-dock"))) return null;
 
-  const originCells = cellsFor(normalizePlacement(widgetOrigin, widgetFootprint), widgetFootprint);
+  const fullOriginCells = cellsFor(normalizePlacement(widgetOrigin, widgetFootprint), widgetFootprint);
+  const destinationCells = new Set(cellsFor(widgetDestination, widgetFootprint).map((cell) => `${cell.row}:${cell.col}`));
+  const originCells = widgetPage === appPage
+    ? fullOriginCells.filter((cell) => !destinationCells.has(`${cell.row}:${cell.col}`))
+    : fullOriginCells;
   if (conflicts.length > originCells.length) return null;
   conflicts.sort((left, right) => {
     if (left === app) return -1;
