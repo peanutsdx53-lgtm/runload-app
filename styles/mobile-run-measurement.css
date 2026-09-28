@@ -1,4 +1,4 @@
-.run-measurement--v2 {
+.run-measurement--mobile {
   display: block;
   width: 100%;
   max-width: none;
@@ -7,7 +7,7 @@
   background: var(--color-paper);
 }
 
-.run-measurement--v2 [hidden] {
+.run-measurement--mobile [hidden] {
   display: none !important;
 }
 

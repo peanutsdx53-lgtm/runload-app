@@ -18,9 +18,12 @@ await test('PWA-PRECACHE-EXCLUDES-RETIRED-ACTIVATION-SCREEN',async()=>{
   assert.ok(!precache(sw).includes('./screens/activationScreen.js'));
 });
 
-await test('PWA-STABLE-CACHE-NAME-RETAINED',async()=>{
+await test('PWA-CACHE-NAME-MATCHES-VISIBLE-APP-VERSION',async()=>{
   const sw=await source('service-worker.js');
-  assert.match(sw,/const CACHE_NAME = "running-record-app-runtime-v1";/);
+  const versionModule=await source('ui/appVersionStatus.js');
+  const version=versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1]||'';
+  assert.match(version,/^\d{4}\.\d{2}\.\d{2}\.\d+$/);
+  assert.ok(sw.includes(`const CACHE_NAME = "running-record-app-runtime-${version}";`));
 });
 
 await test('PWA-ACTIVATE-PRUNES-STALE-SAME-CACHE-RESOURCES',async()=>{
@@ -43,14 +46,23 @@ await test('PWA-INTERPRETATION-STYLESHEET-IS-SAME-ORIGIN-EXTERNAL',async()=>{
 await test('PWA-PRECACHE-PATHS-ALL-EXIST',async()=>{
   const sw=await source('service-worker.js');
   for(const rel of precache(sw)){
-    const path=rel.replace(/^\.\//,'');
-    await access(new URL(`../${path}`,import.meta.url));
+    const file=rel.replace(/^\.\//,'');
+    await access(new URL(`../${file}`,import.meta.url));
   }
 });
 
 await test('PWA-PRECACHE-EXCLUDES-UNUSED-EXPLANATION-MODULE',async()=>{
   const sw=await source('service-worker.js');
   assert.ok(!precache(sw).includes('./ui/hierarchicalExplanation.js'));
+});
+
+await test('PWA-HAS-ONE-CANONICAL-REGISTRATION-PATH',async()=>{
+  const html=await source('index.html');
+  const app=await source('app.js');
+  const platform=await source('core/internal/platformInfrastructure.js');
+  assert.ok(!html.includes('pwaUpdateBootstrap.js'));
+  assert.ok(app.includes('registerPwaServiceWorker();'));
+  assert.ok(platform.includes('function registerPwaServiceWorker()'));
 });
 
 await test('PWA-PRECACHE-COVERS-RUNTIME-MODULE-GRAPH',async()=>{
@@ -78,7 +90,6 @@ await test('PWA-PRECACHE-COVERS-RUNTIME-MODULE-GRAPH',async()=>{
     }
   }
   await visit('app.js');
-  await visit('ui/pwaUpdateBootstrap.js');
   for(const file of visited){
     assert.ok(cached.has(file),`runtime module missing from precache: ${file}`);
   }

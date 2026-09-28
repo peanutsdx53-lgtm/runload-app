@@ -8,7 +8,7 @@ const energy = fs.readFileSync('ui/runMeasurementEnergy.js', 'utf8');
 const enhancer = fs.readFileSync('ui/rofJVisualEnhancement.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
-const measurementCss = fs.readFileSync('styles/mobile-run-measurement-v2.css', 'utf8');
+const measurementCss = fs.readFileSync('styles/mobile-run-measurement.css', 'utf8');
 const ergonomicsCss = fs.readFileSync('styles/mobile-run-measurement-ergonomics.css', 'utf8');
 
 const results = [];
@@ -155,14 +155,16 @@ test('CANCEL-CLEANS-UP-UNSAVED-MEASUREMENT-AND-ROF', () => {
   assert.ok(interactions.includes('discardFatigueLink();'));
 });
 
-test('MOBILE-MEASUREMENT-V2-STYLES-ARE-LOADED-AND-PRECACHED', () => {
-  assert.ok(index.includes('./styles/mobile-run-measurement-v2.css'));
-  assert.ok(worker.includes('"./styles/mobile-run-measurement-v2.css"'));
+test('MOBILE-MEASUREMENT-STYLES-ARE-CANONICAL-LOADED-AND-PRECACHED', () => {
+  assert.ok(index.includes('./styles/mobile-run-measurement.css'));
+  assert.ok(worker.includes('"./styles/mobile-run-measurement.css"'));
+  assert.ok(screen.includes('run-measurement--mobile'));
+  assert.ok(!screen.includes('run-measurement--v2'));
   assert.ok(measurementCss.includes('.run-measurement-prep'));
   assert.ok(measurementCss.includes('.run-measurement-active'));
   assert.ok(measurementCss.includes('.run-measurement-post'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');
-console.log(JSON.stringify({ suite: 'Mobile Run Measurement V2', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
+console.log(JSON.stringify({ suite: 'Mobile Run Measurement', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
 if (failed.length) process.exit(1);

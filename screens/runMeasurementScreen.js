@@ -44,7 +44,7 @@ export function renderRunMeasurementScreen({ services, context }) {
   const validPlan = plan && plan.planType !== "rest" && plan.plannedSession?.activityType !== "rest" ? plan : null;
   const targetPace = validPlan ? plannedPaceSecondsPerKm(validPlan) : null;
 
-  return `<div class="screen screen--run-measurement run-measurement run-measurement--v2" data-run-measurement data-plan-id="${escapeHtml(validPlan?.id || "")}" data-target-pace="${escapeHtml(targetPace || "")}">
+  return `<div class="screen screen--run-measurement run-measurement run-measurement--mobile" data-run-measurement data-plan-id="${escapeHtml(validPlan?.id || "")}" data-target-pace="${escapeHtml(targetPace || "")}">
     <section class="run-measurement-prep" data-measurement-prep>
       <header class="run-measurement__header run-measurement-prep__header">
         <a href="#/home" class="run-measurement__back">← ホーム</a>
