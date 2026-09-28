@@ -1,5 +1,8 @@
 const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
 const IOS_NATIVE_SCROLL_CLASS = "is-runload-ios-home-native-scroll";
+const IOS_VERTICAL_LOCK_CLASS = "is-runload-ios-home-edit-vertical-locked";
+
+let lockedScrollY = null;
 
 function mobileLayoutMatches() {
   return typeof globalThis.matchMedia === "function"
@@ -17,7 +20,7 @@ function isIOSLike() {
 function decorateDragHandles(scope = document) {
   if (!isIOSLike()) return;
   scope.querySelectorAll?.(
-    ".mobile-home-page [data-home-item-id], .mobile-home-page [data-home-widget-id]"
+    ".mobile-home-page [data-home-item-id], .mobile-home-page [data-home-widget-id], .mobile-home-dock [data-home-item-id]"
   ).forEach((item) => {
     if (item.querySelector("[data-home-drag-handle]")) return;
     const handle = document.createElement("span");
@@ -27,6 +30,44 @@ function decorateDragHandles(scope = document) {
     handle.textContent = "移動";
     item.append(handle);
   });
+}
+
+function currentDocumentScrollY() {
+  return Math.max(0, Number(globalThis.scrollY || document.documentElement?.scrollTop || 0));
+}
+
+function editingHomePresent(scope = document) {
+  return Boolean(scope.querySelector?.(".mobile-home-os.is-home-editing")
+    || document.querySelector(".mobile-home-os.is-home-editing"));
+}
+
+function lockVerticalDocument() {
+  if (lockedScrollY !== null) return;
+  lockedScrollY = currentDocumentScrollY();
+  const root = document.documentElement;
+  root.style.setProperty("--runload-ios-home-edit-lock-top", `${-lockedScrollY}px`);
+  root.classList.add(IOS_VERTICAL_LOCK_CLASS);
+}
+
+function unlockVerticalDocument() {
+  if (lockedScrollY === null) return;
+  const restoreY = lockedScrollY;
+  lockedScrollY = null;
+  const root = document.documentElement;
+  root.classList.remove(IOS_VERTICAL_LOCK_CLASS);
+  root.style.removeProperty("--runload-ios-home-edit-lock-top");
+  globalThis.requestAnimationFrame?.(() => {
+    globalThis.scrollTo?.({ left: 0, top: restoreY, behavior: "auto" });
+  });
+}
+
+function syncVerticalDocumentLock(scope = document) {
+  if (!isIOSLike() || !mobileLayoutMatches()) {
+    unlockVerticalDocument();
+    return;
+  }
+  if (editingHomePresent(scope)) lockVerticalDocument();
+  else unlockVerticalDocument();
 }
 
 function nativePagingViewportFromEvent(event) {
@@ -40,9 +81,8 @@ function nativePagingViewportFromEvent(event) {
 function handlePointerDown(event) {
   if (!nativePagingViewportFromEvent(event)) return;
 
-  // Let Safari own horizontal paging and scroll-snap across the edit surface.
-  // Stop app-level drag/page handlers from competing, but do not prevent the
-  // browser's native pan. Reordering remains available through the move handle.
+  // Safari owns horizontal paging and scroll-snap. The document itself is fixed
+  // while editing, so vertical page movement and its scroll indicator cannot occur.
   event.stopImmediatePropagation();
 }
 
@@ -52,10 +92,18 @@ if (isIOSLike()) {
 
   const appRoot = document.getElementById("app");
   if (appRoot && typeof MutationObserver === "function") {
-    new MutationObserver(() => decorateDragHandles(appRoot)).observe(appRoot, {
+    const enhance = () => {
+      decorateDragHandles(appRoot);
+      syncVerticalDocumentLock(appRoot);
+    };
+    new MutationObserver(enhance).observe(appRoot, {
       childList: true,
       subtree: true,
+      attributes: true,
+      attributeFilter: ["class", "data-home-item-id", "data-home-widget-id"],
     });
-    decorateDragHandles(appRoot);
+    enhance();
+  } else {
+    syncVerticalDocumentLock();
   }
 }
