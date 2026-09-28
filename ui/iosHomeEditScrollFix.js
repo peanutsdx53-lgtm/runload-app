@@ -29,7 +29,7 @@ function decorateDragHandles(scope = document) {
   });
 }
 
-function lockedEditViewportFromEvent(event) {
+function nativePagingViewportFromEvent(event) {
   if (!isIOSLike() || !mobileLayoutMatches()) return null;
   const root = event.target.closest?.(".mobile-home-os.is-home-editing") || null;
   if (!root) return null;
@@ -38,12 +38,11 @@ function lockedEditViewportFromEvent(event) {
 }
 
 function handlePointerDown(event) {
-  if (!lockedEditViewportFromEvent(event)) return;
+  if (!nativePagingViewportFromEvent(event)) return;
 
-  // Editing uses tap-only page navigation. Block both Safari panning and the app's
-  // page-swipe handlers on the page surface. Explicit controls, including the
-  // dedicated move handle and page dots, remain interactive.
-  event.preventDefault();
+  // Let Safari own horizontal paging and scroll-snap across the edit surface.
+  // Stop app-level drag/page handlers from competing, but do not prevent the
+  // browser's native pan. Reordering remains available through the move handle.
   event.stopImmediatePropagation();
 }
 
