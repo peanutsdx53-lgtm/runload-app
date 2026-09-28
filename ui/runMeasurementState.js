@@ -46,6 +46,7 @@ function normalizePending(payload = {}) {
   return Object.freeze({
     version: 1,
     createdAt: new Date().toISOString(),
+    runId: String(payload.runId || ""),
     startedAt: String(payload.startedAt || ""),
     endedAt: String(payload.endedAt || ""),
     distanceKm: Number(payload.distanceKm || 0),
@@ -103,6 +104,7 @@ export function commitPendingRunMeasurement(recordId = "") {
     version: 1,
     id: `measurement-${id}`,
     recordId: id,
+    runId: String(pending.runId || ""),
     capturedAt: String(pending.createdAt || new Date().toISOString()),
     startedAt: String(pending.startedAt || ""),
     endedAt: String(pending.endedAt || ""),
@@ -119,5 +121,4 @@ export function commitPendingRunMeasurement(recordId = "") {
   clearPendingRunMeasurement();
   return { ok: true, saved: true, item: clone(item) };
 }
-
 
