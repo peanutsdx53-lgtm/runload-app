@@ -21,15 +21,26 @@ export const LEGACY_ROF_J_LIFECYCLE_SCHEMA_VERSIONS = Object.freeze([
   "RUNLOAD_SECOND_PILLAR_ROFJ_LIFECYCLE_V1",
 ]);
 
-
-const LEGACY_ROF_J_SOURCE_FIELD = "japaneseSourceSha256";
+const CURRENT_ROF_J_ENTRY_FIELDS = Object.freeze(new Set([
+  "runId",
+  "instrumentId",
+  "instrumentSemanticVersion",
+  "sourceVersion",
+  "visualSourceId",
+  "measurements",
+  "createdAt",
+  "updatedAt",
+]));
 
 export function hasLegacyRofJSourceMetadata(entry) {
-  const value = entry?.[LEGACY_ROF_J_SOURCE_FIELD];
-  return typeof value === "string" && /^[0-9a-f]{64}$/i.test(value);
+  if (!entry || typeof entry !== "object" || Array.isArray(entry)) return false;
+  return Object.keys(entry).some((key) => !CURRENT_ROF_J_ENTRY_FIELDS.has(key));
 }
 
 export function removeLegacyRofJSourceMetadata(entry) {
-  if (entry && typeof entry === "object") delete entry[LEGACY_ROF_J_SOURCE_FIELD];
+  if (!entry || typeof entry !== "object" || Array.isArray(entry)) return entry;
+  for (const key of Object.keys(entry)) {
+    if (!CURRENT_ROF_J_ENTRY_FIELDS.has(key)) delete entry[key];
+  }
   return entry;
 }
