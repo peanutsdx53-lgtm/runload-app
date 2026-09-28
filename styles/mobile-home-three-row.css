@@ -18,7 +18,10 @@
   }
 
   .mobile-home-os.is-home-editing .mobile-home-page-viewport {
-    touch-action: pan-x;
+    overflow-x: hidden;
+    touch-action: none;
+    scroll-snap-type: none;
+    overscroll-behavior-x: none;
     overscroll-behavior-y: none;
     margin-bottom: 28px;
   }
@@ -37,13 +40,46 @@
     bottom: calc(106px + env(safe-area-inset-bottom));
   }
 
+  .mobile-home-os.is-home-editing .mobile-home-page-dot {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    min-height: 28px;
+    background: transparent;
+    transform: none;
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-page-dot::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-muted) 42%, transparent);
+    transform: translate(-50%, -50%);
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-page-dot[aria-current="page"] {
+    width: 28px;
+    background: transparent;
+    transform: none;
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-page-dot[aria-current="page"]::after {
+    width: 10px;
+    height: 10px;
+    background: var(--color-accent-strong);
+  }
+
   html.is-runload-ios-home-native-scroll
   .mobile-home-os.is-home-editing
   .mobile-home-page [data-home-item-id],
   html.is-runload-ios-home-native-scroll
   .mobile-home-os.is-home-editing
   .mobile-home-page [data-home-widget-id] {
-    touch-action: pan-x;
+    touch-action: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
