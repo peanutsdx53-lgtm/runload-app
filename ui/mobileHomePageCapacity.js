@@ -151,6 +151,54 @@ function applyPlacement(element, placement, token, sizes) {
   element.style.gridColumn = `${placement.col} / span ${size.columns}`;
 }
 
+function syncPageIndices(root) {
+  [...root.querySelectorAll(".mobile-home-page")].forEach((page, index) => {
+    page.dataset.homePageIndex = String(index);
+    page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);
+  });
+}
+
+function createRepairPage(root) {
+  const track = root.querySelector("[data-home-pages]");
+  const pages = [...root.querySelectorAll(".mobile-home-page")];
+  if (!track || pages.length >= MAX_PAGES) return null;
+
+  const page = document.createElement("section");
+  page.className = "mobile-home-page";
+  page.dataset.homePageIndex = String(pages.length);
+  page.setAttribute("aria-label", `ホーム ${pages.length + 1}ページ目`);
+
+  const grid = document.createElement("div");
+  grid.className = "mobile-home-grid";
+  grid.setAttribute("aria-label", "ホーム配置");
+  page.append(grid);
+  track.append(page);
+  syncPageIndices(root);
+  return page;
+}
+
+function syncPassivePageIndicator(root) {
+  if (root.classList.contains("is-home-editing")) return;
+  const indicator = root.querySelector("[data-home-page-indicator]");
+  if (!indicator) return;
+  const pages = [...root.querySelectorAll(".mobile-home-page")];
+  if (!pages.length) return;
+  const layout = readJson(LAYOUT_STORAGE_KEY) || {};
+  const activePage = Math.max(0, Math.min(pages.length - 1, Number(layout.activePage) || 0));
+
+  indicator.hidden = false;
+  indicator.replaceChildren();
+  pages.forEach((page, index) => {
+    const dot = document.createElement("button");
+    dot.type = "button";
+    dot.className = "mobile-home-page-dot";
+    dot.dataset.homePageTarget = String(index);
+    dot.setAttribute("aria-label", `${index + 1}ページ目へ移動`);
+    dot.setAttribute("aria-current", index === activePage ? "page" : "false");
+    indicator.append(dot);
+  });
+}
+
 function persistDom(root) {
   const pages = [...root.querySelectorAll(".mobile-home-page")];
   writeJson(POSITION_STORAGE_KEY, {
@@ -172,19 +220,54 @@ function persistDom(root) {
   });
 }
 
+function visiblePlacementsOnPage(page, ignoredElement, sizes, visible) {
+  return [...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]")].flatMap((item) => {
+    if (item === ignoredElement || item.hidden) return [];
+    const itemToken = tokenForElement(item);
+    if (!itemToken || !tokenIsVisible(itemToken, visible)) return [];
+    return [{ token: itemToken, row: Number(item.dataset.homeRow) || 1, col: Number(item.dataset.homeCol) || 1 }];
+  });
+}
+
+function placeOverflowItem(root, element, token, startPage, sizes, visible) {
+  let pages = [...root.querySelectorAll(".mobile-home-page")];
+
+  for (let pageIndex = startPage; pageIndex < pages.length; pageIndex += 1) {
+    const page = pages[pageIndex];
+    const placement = firstFree(visiblePlacementsOnPage(page, element, sizes, visible), token, sizes, visible);
+    if (!placement) continue;
+    page.querySelector(".mobile-home-grid")?.append(element);
+    applyPlacement(element, placement, token, sizes);
+    return true;
+  }
+
+  while (pages.length < MAX_PAGES) {
+    const page = createRepairPage(root);
+    if (!page) break;
+    pages = [...root.querySelectorAll(".mobile-home-page")];
+    const placement = firstFree([], token, sizes, visible);
+    if (!placement) continue;
+    page.querySelector(".mobile-home-grid")?.append(element);
+    applyPlacement(element, placement, token, sizes);
+    return true;
+  }
+
+  return false;
+}
+
 function repairDomCapacity() {
   repairQueued = false;
   if (repairing || !mobileLayoutMatches()) return;
   const root = document.querySelector(".mobile-home-os");
   if (!root || root.classList.contains("is-home-drag-active")) return;
-  const pages = [...root.querySelectorAll(".mobile-home-page")];
-  if (!pages.length) return;
+  const initialPages = [...root.querySelectorAll(".mobile-home-page")];
+  if (!initialPages.length) return;
 
   repairing = true;
   try {
     const { sizes, visible } = widgetState();
     const invalid = [];
-    pages.forEach((page) => {
+    initialPages.forEach((page, pageIndex) => {
       const accepted = [];
       [...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]")].forEach((element) => {
         const token = tokenForElement(element);
@@ -193,37 +276,21 @@ function repairDomCapacity() {
         const normalized = normalizedPlacement(raw, token, sizes);
         const exact = raw.row === normalized.row && raw.col === normalized.col;
         const free = exact ? freeOnPage(accepted, token, normalized, sizes, visible) : null;
-        if (!free) invalid.push({ element, token, startPage: pages.indexOf(page) });
+        if (!free) invalid.push({ element, token, startPage: pageIndex });
         else accepted.push({ token, ...free });
       });
     });
 
     let changed = false;
     invalid.forEach(({ element, token, startPage }) => {
-      for (let pageIndex = startPage; pageIndex < pages.length; pageIndex += 1) {
-        const page = pages[pageIndex];
-        const current = [...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]")].flatMap((item) => {
-          if (item === element || item.hidden) return [];
-          const itemToken = tokenForElement(item);
-          if (!itemToken || !tokenIsVisible(itemToken, visible)) return [];
-          return [{ token: itemToken, row: Number(item.dataset.homeRow) || 1, col: Number(item.dataset.homeCol) || 1 }];
-        });
-        const placement = firstFree(current, token, sizes, visible);
-        if (!placement) continue;
-        const grid = page.querySelector(".mobile-home-grid");
-        grid?.append(element);
-        applyPlacement(element, placement, token, sizes);
-        changed = true;
-        return;
-      }
-
-      if (pages.length < MAX_PAGES) {
-        root.querySelector("[data-home-page-add]")?.click();
-        queueRepair();
-      }
+      if (placeOverflowItem(root, element, token, startPage, sizes, visible)) changed = true;
     });
 
-    if (changed) persistDom(root);
+    if (changed) {
+      syncPageIndices(root);
+      persistDom(root);
+      syncPassivePageIndicator(root);
+    }
   } finally {
     repairing = false;
   }
