@@ -7,6 +7,8 @@ export const DEFAULT_APP_SETTINGS = Object.freeze({
   regionalResultInitialView: "all",
   regionalResultLastView: "all",
   showRegionalPreviousComparison: true,
+  measurementSoundEnabled: true,
+  measurementVibrationEnabled: true,
 });
 
 export const APPEARANCE_MODE_OPTIONS = Object.freeze([
@@ -63,6 +65,11 @@ function pick(value, allowedValues, fallback) {
   return allowedValues.has(normalized) ? normalized : fallback;
 }
 
+function enabled(value, fallback = true) {
+  if (value === undefined || value === null || value === "") return fallback;
+  return value !== false && value !== "off" && value !== "false" && value !== 0;
+}
+
 export function normalizeAppSettings(settings = {}) {
   const source = settings && typeof settings === "object" ? settings : {};
   return Object.freeze({
@@ -75,6 +82,8 @@ export function normalizeAppSettings(settings = {}) {
     regionalResultInitialView: pick(source.regionalResultInitialView, REGIONAL_RESULT_INITIAL_VIEW_VALUES, DEFAULT_APP_SETTINGS.regionalResultInitialView),
     regionalResultLastView: pick(source.regionalResultLastView, REGIONAL_RESULT_VIEW_VALUES, DEFAULT_APP_SETTINGS.regionalResultLastView),
     showRegionalPreviousComparison: source.showRegionalPreviousComparison !== false && source.showRegionalPreviousComparison !== "hide",
+    measurementSoundEnabled: enabled(source.measurementSoundEnabled, DEFAULT_APP_SETTINGS.measurementSoundEnabled),
+    measurementVibrationEnabled: enabled(source.measurementVibrationEnabled, DEFAULT_APP_SETTINGS.measurementVibrationEnabled),
   });
 }
 

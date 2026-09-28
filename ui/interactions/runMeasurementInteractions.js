@@ -8,9 +8,11 @@ import {
   rollingPaceSecondsPerKm,
   updatePaceWarningState,
 } from "../runMeasurementCore.js";
+import { normalizeAppSettings } from "../appSettings.js";
 import { estimateRunningEnergy } from "../runMeasurementEnergy.js";
 import { analyzeMeasuredCourse, createMotionStepEstimator, routePatternLabel } from "../runMeasurementAutoRecord.js";
 import { createRunMeasurementMap } from "../runMeasurementMap.js";
+import { createRunMeasurementNotifier } from "../runMeasurementNotifications.js";
 import { clearPendingRunMeasurement, savePendingRunMeasurement } from "../runMeasurementState.js";
 
 function geolocationErrorMessage(error) {
@@ -18,25 +20,6 @@ function geolocationErrorMessage(error) {
   if (error?.code === 2) return "現在地を取得できません。屋外でGPSを受信しやすい場所に移動して再度お試しください。";
   if (error?.code === 3) return "現在地の取得に時間がかかっています。GPS受信状態を確認してください。";
   return "現在地を取得できませんでした。";
-}
-
-function createTone(frequency = 740) {
-  let context = null;
-  return () => {
-    try {
-      context ||= new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.frequency.value = frequency;
-      gain.gain.setValueAtTime(0.0001, context.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.12, context.currentTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.24);
-      oscillator.connect(gain);
-      gain.connect(context.destination);
-      oscillator.start();
-      oscillator.stop(context.currentTime + 0.26);
-    } catch {}
-  };
 }
 
 function rofAnchorText(value) {
@@ -175,8 +158,8 @@ export function bindRunMeasurement({ router, services }) {
   const modeControls = [...root.querySelectorAll('[name="measurementMode"]')];
   const planId = String(root.dataset.planId || "");
   const plannedPace = Number(root.dataset.targetPace || 0) || null;
-  const playWarningTone = createTone(740);
-  const playGoalTone = createTone(920);
+  const notificationSettings = normalizeAppSettings(services.storage.settings.load());
+  const notifier = createRunMeasurementNotifier(window, notificationSettings);
   const stepEstimator = createMotionStepEstimator(window);
 
   const beforeFatigue = createFatigueControl(root.querySelector('[data-measurement-fatigue-phase="before"]'));
@@ -354,8 +337,7 @@ export function bindRunMeasurement({ router, services }) {
   function emitPaceWarning() {
     if (!warningNode) return;
     warningNode.hidden = false;
-    playWarningTone();
-    try { navigator.vibrate?.([180, 80, 180]); } catch {}
+    notifier.notify("pace");
     window.setTimeout(() => { if (warningNode) warningNode.hidden = true; }, 5000);
   }
 
@@ -364,8 +346,7 @@ export function bindRunMeasurement({ router, services }) {
     goalNotified = true;
     if (goalReachedTitle) goalReachedTitle.textContent = measurementMode === "time" ? "設定した時間になりました" : "設定した距離に到達しました";
     if (goalReached) goalReached.hidden = false;
-    playGoalTone();
-    try { navigator.vibrate?.([280, 120, 280]); } catch {}
+    notifier.notify("goal");
   }
 
   function updatePrimary(elapsed) {
@@ -468,6 +449,7 @@ export function bindRunMeasurement({ router, services }) {
     }
     if (!validateGoal()) return;
 
+    await notifier.prepare();
     clearPendingRunMeasurement();
     discardFatigueLink();
     await stepEstimator.start();
@@ -731,6 +713,7 @@ export function bindRunMeasurement({ router, services }) {
     measurementStarted = false;
     stopWatch();
     stepEstimator.stop();
+    notifier.close();
     if (timerId) window.clearInterval(timerId);
     timerId = null;
     releaseWakeLock();

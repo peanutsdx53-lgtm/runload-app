@@ -1,6 +1,7 @@
 import { normalizeBodyProfile, STORAGE_KEYS } from "../../core/appCore.js";
 
 import { DEFAULT_APP_SETTINGS, applyAppSettings, mergeAppSettings } from "../appSettings.js";
+import { createRunMeasurementNotifier } from "../runMeasurementNotifications.js";
 import { downloadJsonText } from "./browserUtilities.js";
 import { showDataMessage, showFormMessages } from "./formUtilities.js";
 import { clearRecordInputWorkspace } from "../recordInputWorkspace.js";
@@ -8,13 +9,16 @@ import { renderRestoreInspection } from "../restorePreviewPresentation.js";
 
 function readSettingsForm(form) {
   const data = new FormData(form);
-  return {
+  const values = {
     appearanceMode: String(data.get("appearanceMode") || "system"),
     colorTheme: String(data.get("colorTheme") || "standard"),
     textSize: String(data.get("textSize") || "standard"),
     regionalResultInitialView: String(data.get("regionalResultInitialView") || "all"),
     showRegionalPreviousComparison: String(data.get("showRegionalPreviousComparison") || "show") === "show",
   };
+  if (form.elements.namedItem("measurementSoundEnabled")) values.measurementSoundEnabled = data.has("measurementSoundEnabled");
+  if (form.elements.namedItem("measurementVibrationEnabled")) values.measurementVibrationEnabled = data.has("measurementVibrationEnabled");
+  return values;
 }
 
 function readProfileForm(form) {
@@ -180,6 +184,54 @@ function bindImmediateDisplaySettings({ services, form }) {
   });
 }
 
+function bindMeasurementNotificationSettings({ services, form }) {
+  const status = form?.querySelector("[data-measurement-notification-status]");
+  const soundControl = form?.elements?.namedItem?.("measurementSoundEnabled");
+  const vibrationControl = form?.elements?.namedItem?.("measurementVibrationEnabled");
+  if (!soundControl && !vibrationControl) return;
+
+  const announce = (message) => { if (status) status.textContent = message; };
+
+  form.querySelectorAll("[data-immediate-measurement-setting]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const result = saveSettings(services, { [input.name]: input.checked });
+      if (!result.ok) {
+        input.checked = !input.checked;
+        announce("測定通知の設定を保存できませんでした。");
+        return;
+      }
+      announce(`${input.name === "measurementSoundEnabled" ? "通知音" : "振動"}を${input.checked ? "オン" : "オフ"}にしました。`);
+    });
+  });
+
+  form.querySelector('[data-action="test-measurement-sound"]')?.addEventListener("click", async () => {
+    if (!soundControl?.checked) {
+      announce("通知音をオンにすると試せます。");
+      return;
+    }
+    const notifier = createRunMeasurementNotifier(window, { measurementSoundEnabled: true, measurementVibrationEnabled: false });
+    const ready = await notifier.prepare();
+    if (!ready.soundReady) {
+      announce("この端末では通知音を再生できませんでした。");
+      await notifier.close();
+      return;
+    }
+    notifier.previewSound();
+    announce("通知音を再生しました。");
+    window.setTimeout(() => notifier.close(), 700);
+  });
+
+  form.querySelector('[data-action="test-measurement-vibration"]')?.addEventListener("click", () => {
+    if (!vibrationControl?.checked) {
+      announce("振動をオンにすると試せます。");
+      return;
+    }
+    const notifier = createRunMeasurementNotifier(window, { measurementSoundEnabled: false, measurementVibrationEnabled: true });
+    const vibrated = notifier.previewVibration();
+    announce(vibrated ? "振動を実行しました。" : "この端末では振動を利用できません。");
+  });
+}
+
 export function bindSettings({ services, router, rerender }) {
   const form = document.getElementById("app-settings-form");
   form?.addEventListener("submit", (event) => {
@@ -192,6 +244,7 @@ export function bindSettings({ services, router, rerender }) {
     router.navigateToScreen("settings", { status: "saved" });
   });
   bindImmediateDisplaySettings({ services, form });
+  bindMeasurementNotificationSettings({ services, form });
   form?.querySelector('[data-action="reset-app-settings"]')?.addEventListener("click", () => {
     const result = saveSettings(services, DEFAULT_APP_SETTINGS);
     if (!result.ok) {

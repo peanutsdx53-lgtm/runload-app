@@ -99,7 +99,7 @@ test('ATTRIBUTION-AND-LICENSE-ARE-EXPLICIT-BUT-NOT-PRIMARY-INPUT-CONTENT', () =>
 
 test('VERSION-AND-PWA-CACHE-MATCH-ROF-COMPACT-RELEASE', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.16');
+  assert.equal(version, '2026.09.28.17');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
 });
 
