@@ -1,4 +1,4 @@
-/* Smartphone measurement usability corrections. Loaded after the V2 measurement stylesheet. */
+/* Smartphone measurement usability corrections. Loaded after the main measurement stylesheet. */
 @media (max-width: 54.99rem) {
   .run-measurement-goal-settings input::placeholder {
     color: var(--color-muted);
