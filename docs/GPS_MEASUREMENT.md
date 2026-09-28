@@ -2,99 +2,190 @@
 
 ## Purpose
 
-The GPS measurement flow records observable run facts before the existing saved record flow.
+The smartphone measurement flow records observable running facts and carries supported values into the normal record flow.
 
-Flow on the mobile layout:
+Current mobile flow:
 
-`start -> run-measurement -> record-input -> result -> run-route`
+`start -> run-measurement preparation -> active measurement -> post-measurement -> record-input -> result -> run-route`
 
-The root entry follows the existing responsive breakpoint rather than browser/OS identification. Mobile-width layouts open the start choice screen; desktop-width layouts open the normal home screen. GPS actions are de-emphasized on desktop, while records, plans, results, history, settings, storage, and scientific logic remain shared.
+Desktop layout does not expose GPS measurement as an active feature. Records, plans, results, history, settings, storage, and the scientific calculation model remain shared.
 
-GPS measurement does not replace or modify the scientific calculation model. It supplies measured distance and elapsed time to the existing record input screen. A saved route is stored separately and linked to the saved record ID.
+GPS measurement does not replace or modify Reference-100 or ROF-J. It supplies measured or explicitly labelled estimated facts to the existing record flow.
 
 ## Runtime requirements
 
 - HTML, CSS, and JavaScript only.
-- HTTPS secure context is required for browser geolocation. GitHub Pages provides HTTPS.
-- The user must explicitly allow location access in the browser/OS.
+- HTTPS secure context is required for browser geolocation on deployed use.
+- The user must explicitly allow location access.
 - The application should remain in the foreground during measurement. Browser background or screen-lock GPS continuity is not guaranteed.
-- Screen Wake Lock is requested when supported. Failure to obtain a wake lock does not stop measurement.
+- Screen Wake Lock is requested when supported. Failure to obtain it does not stop measurement.
+- Device motion access is optional and may require separate permission on some smartphones.
 
-## Measurement logic
+## Measurement modes
 
-The implementation is intentionally small and explainable.
+The preparation screen supports:
 
-- Position source: `navigator.geolocation.watchPosition()`
-- High-accuracy location requested.
+- free running;
+- target duration;
+- target distance.
+
+Target-duration mode shows remaining time. Target-distance mode shows remaining distance. Reaching a target produces an in-app notice and, according to the user's settings and device support, a generated notification tone and vibration.
+
+The user can pause and resume active measurement. Paused time is excluded from active duration and from the device-motion step estimate.
+
+## GPS measurement logic
+
+- Position source: `navigator.geolocation.watchPosition()`.
+- High-accuracy location is requested.
 - Position accuracy worse than 50 m is rejected.
 - A segment implying speed above 15 m/s is rejected as implausible for the intended running use.
 - Movement below 2 m is not added to distance unless enough time has passed for a stationary sample.
 - Distance is calculated with the Haversine formula.
 - Current pace uses approximately the latest 20 seconds and requires at least 30 m of movement in that window.
-- Average pace uses measured distance and elapsed time.
-- When a saved plan has both distance and duration, its average planned pace is used as the comparison value.
+- Average pace uses accepted GPS distance and active elapsed time.
+- When a saved plan has both distance and duration, its average planned pace can be used for comparison.
 - A faster-than-planned condition must continue for 10 seconds before an in-app warning is emitted.
-- The warning is visual and attempts a short tone and vibration when supported.
+- Finishing a measurement requires at least 10 m of accepted GPS movement so that an accidental zero-distance record is not treated as a completed measured run.
 - Stored routes are reduced to at most 2,000 points to limit browser storage use.
 
 These values are implementation filters and UI behavior, not medical, injury-risk, or safety thresholds.
 
-## Route map
+## Notification behavior
 
-The application uses a small internal Web Mercator/slippy-tile renderer. No third-party JavaScript map library is bundled.
+Measurement notification sound and vibration can be enabled or disabled separately in settings.
+
+- Notification sound is generated in code with the Web Audio API; no external sound file is required.
+- Audio is prepared from the user's measurement-start interaction so that supported mobile browsers can play later measurement notices more reliably.
+- Vibration uses `navigator.vibrate()` only when the browser exposes it.
+- Unsupported vibration does not block sound or visual notices.
+- Goal-reached and pace-warning notices remain visible in the application even when sound or vibration is disabled.
+
+## Estimated steps
+
+When browser device-motion access is available, RunLoad can show and store **estimated steps**.
+
+- Source: `DeviceMotionEvent` acceleration signals.
+- Method: deterministic movement-peak and refractory-time detection.
+- Stored/displayed status: estimated, not a validated pedometer measurement.
+- If motion access is unavailable or denied, no step count is fabricated.
+- No distance-to-height stride-length fallback is used.
+
+## Estimated energy expenditure
+
+The smartphone measurement flow can show **estimated energy expenditure (kcal)** when the required data are available.
+
+- Body mass is read from the stored profile at measurement start.
+- Accepted GPS distance and active duration produce an average speed.
+- A running-speed MET value is selected from the controlled 2024 Adult Compendium running rows.
+- Estimated energy uses `MET × 3.5 × body mass (kg) ÷ 200 × duration (min)`.
+- Height is not used by this model.
+- Missing body mass, insufficient distance, missing duration, or unsupported speed produces no estimate.
+- The output remains an estimate and is separate from Reference-100, ROF-J, readiness, safety, and injury-risk interpretation.
+
+The source record and exact model boundary are kept in `docs/references/mobile-measurement-energy-expenditure.md`.
+
+## Course auto-analysis
+
+The accepted smartphone GPS track can be used to reduce manual course entry after measurement.
+
+Automatically carried or proposed values include:
+
+- measured distance;
+- active duration;
+- saved route geometry when route saving is enabled;
+- estimated steps when device motion is available;
+- route-pattern candidate;
+- uphill / flat / downhill candidate when altitude coverage is sufficient;
+- estimated energy expenditure when eligible.
+
+### Route pattern
+
+The route pattern is a geometric candidate among loop, out-and-back, one-way, mixed, and unknown. It is editable before the record is saved and is not treated as ground truth.
+
+### Altitude and grade
+
+- Live GPS altitude and altitude accuracy can be preserved with accepted route points.
+- Altitude is smoothed before segment-grade calculation.
+- Implausible grade segments are excluded.
+- Uphill / flat / downhill uses the existing ±1% directional boundary.
+- Grade is treated as known only when usable altitude coverage reaches at least 80% of measured route distance.
+- If altitude data are insufficient, slope remains unknown rather than inferred.
+
+### Surface
+
+Road or ground surface is not inferred from GPS alone. Surface fields remain user-confirmed inputs.
+
+## ROF-J connection
+
+The preparation screen and post-measurement screen use the same ROF-J input presentation as the normal record flow.
+
+- PRE is optional.
+- POST is optional.
+- When used, the same run lifecycle is carried through measurement and record input.
+- ROF-J remains a subjective fatigue record only and is not combined with GPS, pace, estimated steps, estimated energy, readiness, or safety decisions.
+
+## Route map and external communication
+
+The application uses an internal Web Mercator/slippy-tile renderer. No third-party JavaScript map library is bundled.
 
 Map tiles are loaded from the OpenStreetMap standard tile service:
 
-- https://tile.openstreetmap.org/
-- Attribution is displayed in the map as `© OpenStreetMap contributors`.
-- OpenStreetMap data is provided under the ODbL.
-- Use of the standard tile service must follow the OpenStreetMap Foundation Tile Usage Policy.
+- `https://tile.openstreetmap.org/`
+- Attribution is displayed as `© OpenStreetMap contributors`.
 
-The application does not bulk-download tiles or provide offline map tile storage.
+The application does not bulk-download or precache map tiles. Therefore the live map is the main measurement feature that requires external network access after the application itself has been cached.
 
-## Data handling
+The requested tile URLs necessarily correspond to the displayed geographic area. Saved records and stored GPS route data are not automatically uploaded to an external analysis service.
 
-GPS permission is requested only when the user starts measurement.
+## Local storage and offline behavior
 
-During measurement, the application processes location points in the browser. If the user keeps **Save route on this device** enabled, the simplified route is stored in browser local storage after the corresponding saved record is successfully saved.
+The application runtime files are precached by the Service Worker. After a successful online load and cache installation, the main application can start and use local record, result, history, plan, course, settings, ROF-J, local GPX, and other locally implemented functions without network access.
 
-Saved GPS routes:
+Expected exceptions include:
 
-- are linked by saved record ID;
-- are included in application backup/export data;
-- are restored with supported backups;
-- are removed when the associated record is deleted;
-- are restored if that record deletion is undone;
-- are removed by the application's full local-data deletion operation.
+- OpenStreetMap map images;
+- external reference links;
+- browser features that depend on device/browser permission or platform support.
 
-Displaying a map requires external requests for map images. The requested tile URLs necessarily correspond to the displayed geographic area. The application does not automatically upload the saved saved record or stored GPS route to an external analysis service.
+GPS positioning itself is supplied by the device/browser rather than by an application web API endpoint, but availability and quality depend on the device and operating environment.
+
+## Saved measurement data
+
+When route saving is enabled and the corresponding record is saved, supported measurement metadata can include:
+
+- start/end timestamps;
+- distance and active duration;
+- route points;
+- accepted/rejected GPS point counts;
+- measurement mode and target;
+- estimated steps and their provenance;
+- route-analysis candidate metadata;
+- estimated energy and its calculation provenance.
+
+Saved GPS measurement data are linked to the saved record, included in supported application backup/restore handling, and removed together with the associated record according to the application's data-management workflow.
 
 ## Deliberate boundaries
 
-The GPS feature does not automatically infer:
+The smartphone measurement feature does not automatically determine:
 
 - road or surface material;
 - a medically meaningful workload or risk state;
-- reliable elevation/grade from phone GPS;
-- background tracking while the browser is suspended;
-- location when the user has not started measurement and granted permission.
+- readiness or recovery;
+- injury probability;
+- whether the user should run;
+- reliable background tracking while the browser is suspended.
 
-Surface and other course facts that affect the existing model remain user-confirmed inputs.
+## Verification status
 
-## Verification
+Deterministic helpers and integration contracts are covered by the repository test files, including GPS core logic, ROF-J handoff, energy estimation, auto-record handling, and notification settings.
 
-The repository contains `tests/runMeasurementCore.test.mjs` for the deterministic GPS calculation helpers. PWA precache references are verified directly by integration tests.
+Real-device acceptance remains necessary for behavior that cannot be guaranteed by static code inspection, especially:
 
-Manual acceptance status (2026-09-23):
-
-- iPhone: launch screen, screen transitions, map display, and location movement tracking passed.
-- Run-dependent distance/pace behavior, pace warning, finish-to-record flow, and saved route behavior still require an actual run.
-
-Real-device acceptance testing is still required for:
-
-- iOS Safari/PWA location permission behavior;
-- Android Chrome/PWA location permission behavior;
-- GPS stability outdoors;
+- outdoor GPS quality;
+- iOS and Android permission behavior;
 - screen wake behavior;
-- audible/vibration warning behavior;
-- OpenStreetMap tile loading over the deployed GitHub Pages origin.
+- notification sound behavior;
+- vibration support on compatible devices;
+- device-motion step estimation;
+- altitude availability and quality;
+- OpenStreetMap tile loading.
