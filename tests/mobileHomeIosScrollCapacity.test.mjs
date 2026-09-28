@@ -22,21 +22,42 @@ test('IOS-EDIT-SCROLL-IS-IOS-ONLY', () => {
   assert.ok(iosFix.includes('mobileLayoutMatches()'));
 });
 
-test('ICON-AND-WIDGET-BODIES-USE-NATIVE-IOS-PAN', () => {
+test('ICON-AND-WIDGET-BODIES-KEEP-NATIVE-IOS-VERTICAL-PAN', () => {
   assert.ok(iosCss.includes('touch-action: pan-y;'));
   assert.ok(iosCss.includes('.mobile-home-page [data-home-item-id]'));
   assert.ok(iosCss.includes('.mobile-home-page [data-home-widget-id]'));
-  assert.ok(iosFix.includes('event.stopImmediatePropagation();'));
   assert.ok(!iosFix.includes('globalThis.scrollTo('));
   assert.ok(!iosFix.includes('startScrollTop'));
 });
 
-test('IOS-REORDERING-HAS-A-SEPARATE-DRAG-HANDLE', () => {
+test('ICON-ORIGIN-HORIZONTAL-SWIPE-RESTORES-PAGE-MOVEMENT', () => {
+  assert.ok(iosFix.includes('const PAGE_SWIPE_SLOP_PX = 8;'));
+  assert.ok(iosFix.includes('pageHorizontal = true;'));
+  assert.ok(iosFix.includes('pageViewport.scrollLeft = clampPageLeft'));
+  assert.ok(iosFix.includes('viewport.scrollTo({ left, behavior: "smooth" });'));
+  assert.ok(iosFix.includes('document.addEventListener("pointermove", handlePointerMove, { capture: true, passive: false });'));
+});
+
+test('VERTICAL-GESTURE-DOES-NOT-ENTER-HORIZONTAL-PAGE-SWIPE', () => {
+  assert.ok(iosFix.includes('if (absY > absX * PAGE_SWIPE_AXIS_RATIO)'));
+  assert.ok(iosFix.includes('pageVertical = true;'));
+  assert.ok(iosFix.includes('if (!pageHorizontal) return;'));
+});
+
+test('IOS-REORDERING-HANDLE-IS-EXPLICIT', () => {
   assert.ok(iosFix.includes('handle.dataset.homeDragHandle = "";'));
   assert.ok(iosFix.includes('handle.className = "mobile-home-ios-drag-handle";'));
+  assert.ok(iosFix.includes('handle.textContent = "移動";'));
   assert.ok(iosFix.includes('button, [data-home-drag-handle]'));
   assert.ok(iosCss.includes('.mobile-home-ios-drag-handle'));
   assert.ok(iosCss.includes('touch-action: none;'));
+});
+
+test('IOS-EDIT-SUPPRESSES-COPY-CALLOUT-AND-SELECTION', () => {
+  assert.ok(iosCss.includes('-webkit-touch-callout: none;'));
+  assert.ok(iosCss.includes('-webkit-user-select: none;'));
+  assert.ok(iosCss.includes('user-select: none;'));
+  assert.ok(iosCss.includes('-webkit-user-drag: none;'));
 });
 
 test('IOS-NATIVE-SCROLL-OVERRIDE-LOADS-AFTER-BASE-EDITING-CSS', () => {
@@ -84,7 +105,7 @@ test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.3');
+  assert.equal(version, '2026.09.28.4');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
   assert.ok(worker.includes('"./styles/mobile-home-ios-editing.css"'));
