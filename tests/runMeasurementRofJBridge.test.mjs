@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 const screen = fs.readFileSync('screens/runMeasurementScreen.js', 'utf8');
 const interactions = fs.readFileSync('ui/interactions/runMeasurementInteractions.js', 'utf8');
 const state = fs.readFileSync('ui/runMeasurementState.js', 'utf8');
+const energy = fs.readFileSync('ui/runMeasurementEnergy.js', 'utf8');
 const enhancer = fs.readFileSync('ui/rofJVisualEnhancement.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
@@ -107,6 +108,35 @@ test('ROF-LIFECYCLE-REMAINS-OPTIONAL-AND-SEPARATE', () => {
   assert.ok(interactions.includes('skip-post-fatigue'));
   assert.ok(!interactions.includes('Reference-100'));
   assert.ok(!interactions.includes('readiness'));
+});
+
+test('ESTIMATED-ENERGY-IS-SMARTPHONE-MEASUREMENT-ONLY', () => {
+  assert.ok(screen.includes('data-measurement-energy-value'));
+  assert.ok(screen.includes('data-measurement-post-energy'));
+  assert.ok(screen.includes('推定消費エネルギー'));
+  assert.ok(interactions.includes('estimateRunningEnergy'));
+  assert.ok(interactions.includes('services.storage.profile.load()'));
+  assert.ok(interactions.includes('energyBodyMassKg = Number(profile?.weightKg)'));
+  assert.ok(interactions.includes('energyEstimate: energyEstimate.ok ? energyEstimate : null'));
+  assert.ok(ergonomicsCss.includes('.run-measurement-energy'));
+});
+
+test('ENERGY-MODEL-USES-CONTROLLED-COMPENDIUM-BOUNDARY', () => {
+  assert.ok(energy.includes('adult-compendium-2024-running-speed-v1'));
+  assert.ok(energy.includes('MET × 3.5 × body mass (kg) ÷ 200'));
+  assert.ok(energy.includes('BODY_MASS_UNAVAILABLE'));
+  assert.ok(energy.includes('GPS_DISTANCE_INSUFFICIENT'));
+  assert.ok(energy.includes('SPEED_OUT_OF_SUPPORTED_RANGE'));
+  assert.ok(!energy.includes('heightCm'));
+  assert.ok(worker.includes('"./ui/runMeasurementEnergy.js"'));
+});
+
+test('ENERGY-METADATA-IS-PRESERVED-SEPARATELY', () => {
+  assert.ok(state.includes('function normalizeEnergyEstimate(value)'));
+  assert.ok(state.includes('energyEstimate: normalizeEnergyEstimate(payload.energyEstimate)'));
+  assert.ok(state.includes('energyEstimate: normalizeEnergyEstimate(pending.energyEstimate)'));
+  assert.ok(!energy.includes('ROF_J'));
+  assert.ok(!energy.includes('Reference-100'));
 });
 
 test('MEASUREMENT-MODE-METADATA-IS-PRESERVED-SEPARATELY', () => {

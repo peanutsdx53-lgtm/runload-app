@@ -8,6 +8,7 @@ import {
   rollingPaceSecondsPerKm,
   updatePaceWarningState,
 } from "../runMeasurementCore.js";
+import { estimateRunningEnergy } from "../runMeasurementEnergy.js";
 import { createRunMeasurementMap } from "../runMeasurementMap.js";
 import { clearPendingRunMeasurement, savePendingRunMeasurement } from "../runMeasurementState.js";
 
@@ -103,6 +104,14 @@ function modeLabel(mode) {
   return "自由に走る";
 }
 
+function energyStatusText(result) {
+  if (result?.ok) return "体重と平均速度から推定しています。";
+  if (result?.reason === "BODY_MASS_UNAVAILABLE") return "設定で体重を入力すると表示できます。";
+  if (result?.reason === "GPS_DISTANCE_INSUFFICIENT") return "GPSで10m以上取得後に表示します。";
+  if (result?.reason === "SPEED_OUT_OF_SUPPORTED_RANGE") return "平均速度がランニング換算範囲外のため表示しません。";
+  return "測定開始後に表示します。";
+}
+
 export function bindRunMeasurement({ router, services }) {
   const root = document.querySelector("[data-run-measurement]");
   if (!root) return undefined;
@@ -120,6 +129,8 @@ export function bindRunMeasurement({ router, services }) {
   const distanceNode = root.querySelector("[data-measurement-distance]");
   const currentPaceNode = root.querySelector("[data-measurement-current-pace]");
   const averagePaceNode = root.querySelector("[data-measurement-average-pace]");
+  const energyValueNode = root.querySelector("[data-measurement-energy-value]");
+  const energyStatusNode = root.querySelector("[data-measurement-energy-status]");
   const primaryLabel = root.querySelector("[data-measurement-primary-label]");
   const primaryValue = root.querySelector("[data-measurement-primary]");
   const goalCaption = root.querySelector("[data-measurement-goal-caption]");
@@ -132,6 +143,8 @@ export function bindRunMeasurement({ router, services }) {
   const saveRouteControl = root.querySelector("[data-save-route]");
   const postTime = root.querySelector("[data-measurement-post-time]");
   const postDistance = root.querySelector("[data-measurement-post-distance]");
+  const postEnergy = root.querySelector("[data-measurement-post-energy]");
+  const postEnergyStatus = root.querySelector("[data-measurement-post-energy-status]");
   const postRecordButton = root.querySelector('[data-action="record-post-fatigue"]');
 
   const targetMinutesInput = root.querySelector("[data-measurement-target-minutes]");
@@ -172,6 +185,8 @@ export function bindRunMeasurement({ router, services }) {
   let fatigueRunId = "";
   let pendingPayload = null;
   let handoffToRecord = false;
+  let energyBodyMassKg = null;
+  let latestEnergyEstimate = null;
 
   function setMessage(node, message, error = false) {
     if (!node) return;
@@ -183,6 +198,27 @@ export function bindRunMeasurement({ router, services }) {
     if (!startedAtMs) return finalElapsedMs || 0;
     const endpoint = paused && pausedAtMs ? pausedAtMs : Date.now();
     return Math.max(0, endpoint - startedAtMs - pausedTotalMs);
+  }
+
+  function calculateEnergy(elapsed = activeElapsedMs()) {
+    return estimateRunningEnergy({
+      bodyMassKg: energyBodyMassKg,
+      distanceKm: distanceM / 1000,
+      durationMs: elapsed,
+    });
+  }
+
+  function updateEnergy(elapsed = activeElapsedMs()) {
+    const result = calculateEnergy(elapsed);
+    latestEnergyEstimate = result.ok ? result : null;
+    if (energyValueNode) energyValueNode.textContent = result.ok ? String(Math.round(result.estimatedKcal)) : "—";
+    if (energyStatusNode) energyStatusNode.textContent = energyStatusText(result);
+    return result;
+  }
+
+  function renderPostEnergy(result) {
+    if (postEnergy) postEnergy.textContent = result?.ok ? String(Math.round(result.estimatedKcal)) : "—";
+    if (postEnergyStatus) postEnergyStatus.textContent = energyStatusText(result);
   }
 
   function selectedMode() {
@@ -316,6 +352,7 @@ export function bindRunMeasurement({ router, services }) {
     if (elapsedNode) elapsedNode.textContent = formatElapsed(elapsed);
     if (distanceNode) distanceNode.textContent = (distanceM / 1000).toFixed(2);
     if (averagePaceNode) averagePaceNode.textContent = formatPace(averagePaceSecondsPerKm(distanceM, elapsed));
+    updateEnergy(elapsed);
     updatePrimary(elapsed);
   }
 
@@ -393,6 +430,9 @@ export function bindRunMeasurement({ router, services }) {
       return;
     }
 
+    const profile = services.storage.profile.load();
+    energyBodyMassKg = Number(profile?.weightKg);
+    latestEnergyEstimate = null;
     startedAtMs = Date.now();
     startedAtIso = new Date(startedAtMs).toISOString();
     if (fatigueRunId) {
@@ -456,6 +496,7 @@ export function bindRunMeasurement({ router, services }) {
   }
 
   function measurementPayload(elapsed) {
+    const energyEstimate = calculateEnergy(elapsed);
     return {
       runId: fatigueRunId,
       measurementMode,
@@ -465,6 +506,7 @@ export function bindRunMeasurement({ router, services }) {
       endedAt: endedAtIso,
       distanceKm: Number((distanceM / 1000).toFixed(2)),
       durationMinutes: Number((elapsed / 60000).toFixed(2)),
+      energyEstimate: energyEstimate.ok ? energyEstimate : null,
       planId,
       saveRoute: saveRouteControl?.checked !== false,
       track,
@@ -519,6 +561,7 @@ export function bindRunMeasurement({ router, services }) {
     pendingPayload = payload;
     if (postTime) postTime.textContent = formatElapsed(elapsed);
     if (postDistance) postDistance.textContent = `${(distanceM / 1000).toFixed(2)} km`;
+    renderPostEnergy(payload.energyEstimate || calculateEnergy(elapsed));
     afterFatigue?.reset();
     showPhase("post");
     setMessage(postStatus, fatigueRunId ? "走る前の値と同じ走行として記録できます。" : "疲労感は任意です。そのまま記録入力へ進めます。");

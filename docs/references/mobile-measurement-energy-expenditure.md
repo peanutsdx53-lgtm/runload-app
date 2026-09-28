@@ -2,6 +2,8 @@
 
 Status: supporting reference for the smartphone-only measurement feature. This is not promoted to the RunLoad primary research foundation.
 
+Implementation status: implemented for the mobile measurement flow in app version `v2026.09.28.15`.
+
 ## Purpose
 
 RunLoad may display an **estimated energy expenditure (kcal)** for smartphone GPS running measurements. It must not be presented as a directly measured calorie value.
@@ -25,35 +27,87 @@ The official Compendium material states:
 - METs to kcal/min: MET × 3.5 × body mass (kg) ÷ 200.
 - The 2024 Running table provides speed/activity-specific MET values for running and jogging.
 
-The official unit-conversion page also lists the ACSM running metabolic equation, but RunLoad should not adopt that equation automatically unless its validity range and grade handling are explicitly implemented and verified.
+The official unit-conversion page also lists the ACSM running metabolic equation, but RunLoad does not use that equation in this implementation because grade handling and its implementation boundary have not been adopted.
 
-## Initial RunLoad implementation boundary
+## Implemented RunLoad model
 
-Recommended first implementation:
+Model ID: `adult-compendium-2024-running-speed-v1`
 
-1. Use the user's stored **body mass (kg)**.
-2. Use the completed measurement's valid running duration and GPS-derived average speed.
-3. Select the corresponding running/jogging MET category from the controlled 2024 Adult Compendium table.
-4. Estimate energy expenditure using the standard MET conversion.
-5. Display the result as **推定消費エネルギー（kcal）** or equivalent wording that clearly indicates estimation.
+Implementation file: `ui/runMeasurementEnergy.js`
 
-Do not silently invent a default body mass. If body mass is missing or invalid, do not calculate the value.
+The implementation:
+
+1. Takes the user's stored **body mass (kg)** at measurement start.
+2. Uses GPS-derived running distance and the measurement's active duration (paused time excluded by the measurement layer).
+3. Calculates average speed.
+4. Selects a level-running/jogging MET value from the controlled 2024 Adult Compendium Running table.
+5. Calculates estimated energy using `MET × 3.5 × body mass (kg) ÷ 200 × duration (min)`.
+6. Displays the value as **推定消費エネルギー**.
+7. Stores calculation provenance together with the saved measurement when measurement metadata is persisted.
+
+### Included running rows
+
+The first model uses only the level speed-based running/jogging rows from codes `12026`, `12028`, `12029`, `12030`, `12045`, `12050`, `12060`, `12070`, `12080`, `12090`, `12100`, `12110`, `12115`, `12120`, `12130`, `12132`, `12134`, and `12135`.
+
+The supported speed domain is therefore 2.6 to 14.0 mph. The model does not extrapolate outside that domain.
+
+Some official speed rows contain small gaps. When an average speed falls inside one of those gaps, RunLoad selects the nearest adjacent official speed band. It does **not** interpolate or invent a new MET value. The stored `mapping` field records whether the speed was within an official range or was assigned to the nearest adjacent range.
+
+### Excluded rows / conditions
+
+The initial model does not automatically use:
+
+- jog/walk combination rows,
+- uphill/downhill rows,
+- hilly terrain rows,
+- stairs,
+- competitive track rows,
+- stroller/backpack/barefoot variants,
+- corrected MET / resting-metabolic-rate adjustment.
+
+These require separate model decisions if they are added later.
+
+## Missing / invalid data behavior
+
+No estimate is generated when:
+
+- stored body mass is missing or outside the app's accepted profile range (25–180 kg),
+- valid GPS distance is below 10 m,
+- duration is unavailable,
+- average speed is outside the supported running speed domain.
+
+RunLoad does not silently invent a default body mass or substitute another value.
 
 ## Height
 
-Height is already available in RunLoad profile data, but the standard Compendium MET conversion above does **not** require height. Height must therefore not be inserted into the first calculation merely because it is available.
+Height is already available in RunLoad profile data, but the standard Compendium MET conversion above does **not** require height. Height is therefore not used in this first calculation.
 
 The Compendium also discusses corrected MET approaches in which individual characteristics may be used to adjust resting metabolic rate. Such a correction would be a separate model decision and requires its own implementation and validation boundary.
+
+## Stored provenance
+
+When an estimate is available, the measurement metadata preserves:
+
+- model ID,
+- estimated kcal,
+- selected MET,
+- Compendium activity code,
+- speed-band mapping type,
+- body mass used,
+- average speed used,
+- active duration used.
+
+This is intended to keep the estimate reproducible even if the user's profile body mass changes later.
 
 ## Scientific / UI boundary
 
 - This output is an estimate, not a direct calorimetry measurement.
 - It is not a safety, recovery, readiness, injury-risk, or run/no-run judgment.
-- It must remain separate from Reference-100 and ROF-J.
-- GPS values that are not sufficiently valid must not generate a fabricated estimate.
-- Run/walk sessions require special handling; they must not be treated as continuous running without an explicit model decision.
-- Elevation/grade correction is not included in the initial model unless a reliable grade input and an appropriate validated equation are explicitly adopted.
-- The Compendium itself notes that it was not developed to determine precise individual energy cost. RunLoad must therefore avoid wording that implies precision.
+- It remains separate from Reference-100 and ROF-J.
+- GPS values that are not sufficiently valid do not generate a fabricated estimate.
+- Run/walk sessions require special handling; they are not treated as continuous running without an explicit model decision.
+- Elevation/grade correction is not included in the initial model.
+- The Compendium itself notes that it was not developed to determine precise individual energy cost. RunLoad therefore avoids wording that implies precision.
 
 ## Citation / provenance record
 
