@@ -51,6 +51,27 @@ function positiveNumberOrNull(value) {
   return Number.isFinite(number) && number > 0 ? number : null;
 }
 
+function normalizeEnergyEstimate(value) {
+  if (!value || typeof value !== "object") return null;
+  const estimatedKcal = Number(value.estimatedKcal);
+  const met = Number(value.met);
+  const bodyMassKg = Number(value.bodyMassKg);
+  const averageSpeedKmh = Number(value.averageSpeedKmh);
+  const durationMinutes = Number(value.durationMinutes);
+  if (![estimatedKcal, met, bodyMassKg, averageSpeedKmh, durationMinutes].every(Number.isFinite)) return null;
+  if (estimatedKcal < 0 || met <= 0 || bodyMassKg <= 0 || averageSpeedKmh <= 0 || durationMinutes <= 0) return null;
+  return Object.freeze({
+    modelId: String(value.modelId || ""),
+    estimatedKcal,
+    met,
+    compendiumCode: String(value.compendiumCode || ""),
+    mapping: String(value.mapping || ""),
+    bodyMassKg,
+    averageSpeedKmh,
+    durationMinutes,
+  });
+}
+
 function normalizePending(payload = {}) {
   const track = payload.saveRoute === false ? [] : simplifyTrackForStorage(payload.track || []);
   return Object.freeze({
@@ -64,6 +85,7 @@ function normalizePending(payload = {}) {
     endedAt: String(payload.endedAt || ""),
     distanceKm: Number(payload.distanceKm || 0),
     durationMinutes: Number(payload.durationMinutes || 0),
+    energyEstimate: normalizeEnergyEstimate(payload.energyEstimate),
     planId: String(payload.planId || ""),
     saveRoute: payload.saveRoute !== false,
     track,
@@ -126,6 +148,7 @@ export function commitPendingRunMeasurement(recordId = "") {
     endedAt: String(pending.endedAt || ""),
     distanceKm: Number(pending.distanceKm || 0),
     durationMinutes: Number(pending.durationMinutes || 0),
+    energyEstimate: normalizeEnergyEstimate(pending.energyEstimate),
     planId: String(pending.planId || ""),
     acceptedPointCount: Number(pending.acceptedPointCount || pending.track.length),
     rejectedPointCount: Number(pending.rejectedPointCount || 0),
