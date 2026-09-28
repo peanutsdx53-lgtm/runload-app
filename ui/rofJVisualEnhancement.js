@@ -18,20 +18,18 @@ let enhancementQueued = false;
 
 function createVisualGuide() {
   const section = document.createElement("section");
-  section.className = "rof-visual-guide";
+  section.className = "rof-visual-guide rof-visual-guide--compact";
   section.dataset.rofVisualGuide = "";
-  section.setAttribute("aria-labelledby", "rof-visual-guide-title");
+  section.setAttribute("aria-label", "疲労感の視覚的な目安");
 
   const heading = document.createElement("div");
   heading.className = "rof-visual-guide__head";
-  heading.innerHTML = `
-    <strong id="rof-visual-guide-title">ROF原版の図</strong>
-    <small>数値との対応を作り替えず、疲労感の低い側から高い側への視覚的な目安として表示します。</small>`;
+  heading.innerHTML = "<small>疲労感の目安</small>";
 
   const strip = document.createElement("div");
   strip.className = "rof-visual-strip";
   strip.setAttribute("role", "img");
-  strip.setAttribute("aria-label", "ROF原版の5つの図。左から右へ、疲労感が低い側から高い側を示す視覚的な目安。数値との対応はこの表示では定義しない。");
+  strip.setAttribute("aria-label", "ROF原版の5つの図。左から右へ疲労感が低い側から高い側を示す視覚的な目安。個々の図に新しい数値対応は設定していない。");
   ORIGINAL_ROF_VISUALS.forEach(({ src, position }) => {
     const figure = document.createElement("span");
     figure.className = "rof-visual-strip__item";
@@ -49,37 +47,26 @@ function createVisualGuide() {
   const axis = document.createElement("div");
   axis.className = "rof-visual-axis";
   axis.setAttribute("aria-hidden", "true");
-  axis.innerHTML = "<span>疲労感が低い側</span><i></i><span>高い側</span>";
+  axis.innerHTML = "<span>低い</span><i></i><span>高い</span>";
 
   section.append(heading, strip, axis);
   return section;
 }
 
-function createDescriptorGuide() {
+function createReferenceGuide() {
   const section = document.createElement("section");
-  section.className = "rof-descriptor-guide";
-  section.dataset.rofDescriptorGuide = "";
-
-  const heading = document.createElement("div");
-  heading.className = "rof-descriptor-guide__head";
-  heading.innerHTML = "<strong>ROF-Jの正式な言葉</strong><small>補足資料の日本語表現をそのまま表示しています。</small>";
+  section.className = "rof-about-reference";
+  section.dataset.rofReferenceGuide = "";
+  section.innerHTML = "<strong>ROF-Jの正式な言葉</strong><small>補足資料の日本語表現を改変せず表示しています。</small>";
 
   const list = document.createElement("div");
-  list.className = "rof-descriptor-list";
-  list.setAttribute("aria-label", "ROF-Jの正式な説明文");
+  list.className = "rof-about-reference__list";
   OFFICIAL_DESCRIPTOR_VALUES.forEach((value) => {
-    const item = document.createElement("div");
-    item.className = "rof-descriptor-list__item";
-    item.dataset.rofDescriptorValue = String(value);
-    const number = document.createElement("b");
-    number.textContent = String(value);
-    const text = document.createElement("span");
-    text.textContent = ROF_J_DESCRIPTOR_MAP[value];
-    item.append(number, text);
-    list.append(item);
+    const row = document.createElement("p");
+    row.innerHTML = `<b>${value}</b><span>${ROF_J_DESCRIPTOR_MAP[value]}</span>`;
+    list.append(row);
   });
-
-  section.append(heading, list);
+  section.append(list);
   return section;
 }
 
@@ -90,8 +77,17 @@ function createRightsNote() {
   wrapper.innerHTML = `
     <p><strong>出典・ライセンス</strong></p>
     <p>日本語の尺度文言：Suzuki &amp; Arai (2026)。文言は改変していません。<a href="${ROF_J_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">ROF-J原典</a>・<a href="${ROF_J_LICENSE_URL}" target="_blank" rel="noopener noreferrer">CC BY-NC-ND 4.0</a></p>
-    <p>図：Micklewright et al. (2017)。原版から図部分を切り出し、低い側から高い側への横並びに変更しています。<a href="${ORIGINAL_ROF_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">ROF原典</a>・<a href="${ORIGINAL_ROF_LICENSE_URL}" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></p>`;
+    <p>図：Micklewright et al. (2017)。原版から図部分を切り出し、低い側から高い側への横並びに変更しています。個々の図に新しい数値対応は設定していません。<a href="${ORIGINAL_ROF_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">ROF原典</a>・<a href="${ORIGINAL_ROF_LICENSE_URL}" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></p>`;
   return wrapper;
+}
+
+function makeInitialFiveSelectable(panel) {
+  const slider = panel.querySelector("[data-record-rof-slider]");
+  if (!slider || slider.dataset.rofPointerSelectBound === "true") return;
+  slider.dataset.rofPointerSelectBound = "true";
+  slider.addEventListener("pointerdown", () => {
+    slider.dispatchEvent(new Event("input", { bubbles: true }));
+  });
 }
 
 function enhanceRofScale(panel) {
@@ -104,15 +100,19 @@ function enhanceRofScale(panel) {
   }
 
   const anchorGuide = panel.querySelector(".rof-anchor-guide");
-  if (anchorGuide && !panel.querySelector("[data-rof-descriptor-guide]")) {
-    anchorGuide.after(createDescriptorGuide());
-  }
+  const anchorLabel = anchorGuide?.querySelector("small");
+  if (anchorLabel) anchorLabel.textContent = "選択の目安";
 
   const sheet = panel.closest(".rof-sheet");
   const aboutBody = sheet?.querySelector(".rof-about > div");
+  if (aboutBody && !aboutBody.querySelector("[data-rof-reference-guide]")) {
+    aboutBody.append(createReferenceGuide());
+  }
   if (aboutBody && !aboutBody.querySelector("[data-rof-rights-note]")) {
     aboutBody.append(createRightsNote());
   }
+
+  makeInitialFiveSelectable(panel);
 }
 
 function enhanceAll() {

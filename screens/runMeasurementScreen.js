@@ -43,6 +43,13 @@ export function renderRunMeasurementScreen({ services, context }) {
       <div><small>予定と連携</small><strong>${escapeHtml(planSummary(validPlan))}</strong><span>予定平均ペース ${escapeHtml(formatPace(targetPace))}/km</span></div>
     </section>` : `<section class="run-measurement__plan run-measurement__plan--empty"><div><small>予定</small><strong>予定なしで測定</strong><span>距離・時間・軌跡を測定します。</span></div></section>`}
 
+    <section class="run-measurement__fatigue" data-measurement-pre-fatigue aria-label="走る前の疲労感">
+      <div class="run-measurement__fatigue-head"><div><small>任意</small><strong>走る前の疲労感</strong></div><output data-measurement-fatigue-value>—</output></div>
+      <input type="range" min="0" max="10" step="1" value="5" data-measurement-fatigue-slider aria-label="走る前の疲労感 0から10">
+      <div class="run-measurement__fatigue-scale" aria-hidden="true"><span>0</span><span>5</span><span>10</span></div>
+      <p class="run-measurement__fatigue-status" data-measurement-fatigue-status>触れなければ記録せず、そのまま測定できます。</p>
+    </section>
+
     <div class="run-measurement__warning" data-pace-warning role="status" aria-live="assertive" hidden>
       <strong>予定より速いペースが続いています</strong>
       <span>現在ペースを確認してください。</span>
