@@ -52,6 +52,11 @@ test('FULL-DESCRIPTORS-AND-RIGHTS-ARE-HIDDEN-IN-ABOUT-DETAILS', () => {
   assert.ok(moduleText.includes('出典・ライセンス'));
 });
 
+test('RECORD-AND-MEASUREMENT-CAN-SHARE-ROF-VISUAL-ENHANCEMENT', () => {
+  assert.ok(moduleText.includes('panel.closest("[data-rof-context], .rof-sheet")'));
+  assert.ok(moduleText.includes('document.querySelectorAll(".rof-scale-panel")'));
+});
+
 test('INITIAL-FIVE-CAN-BE-SELECTED-WITHOUT-MOVING-SLIDER', () => {
   assert.ok(moduleText.includes('pointerdown'));
   assert.ok(moduleText.includes('dispatchEvent(new Event("input", { bubbles: true }))'));
@@ -94,7 +99,7 @@ test('ATTRIBUTION-AND-LICENSE-ARE-EXPLICIT-BUT-NOT-PRIMARY-INPUT-CONTENT', () =>
 
 test('VERSION-AND-PWA-CACHE-MATCH-ROF-COMPACT-RELEASE', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.28.12');
+  assert.equal(version, '2026.09.28.13');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
 });
 
