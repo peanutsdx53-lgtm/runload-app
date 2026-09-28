@@ -17,7 +17,7 @@ function courseMeta(course = {}) {
   const grade = course.gradeKnowledge === "KNOWN_PROFILE"
     ? `上り${course.upPercent}%・平坦${course.flatPercent}%・下り${course.downPercent}%`
     : "坂道未判定";
-  return `${route}・${grade}・路面未確認`;
+  return `GPS候補：${route}・${grade}・路面未確認`;
 }
 
 function installCourseSaveOption(form) {
@@ -26,7 +26,7 @@ function installCourseSaveOption(form) {
   const wrapper = document.createElement("div");
   wrapper.className = "record-course-library-save";
   wrapper.dataset.measurementCourseSaveOption = "";
-  wrapper.innerHTML = `<label class="choice-card record-course-library-save__choice"><input type="checkbox" name="savePlanCourseToLibrary" value="1"><span><strong>この測定コースを保存したコースにも残す</strong><small>GPSから整理した坂道・形状を保存します。路面は未確認のままです。</small></span></label>`;
+  wrapper.innerHTML = `<label class="choice-card record-course-library-save__choice"><input type="checkbox" name="savePlanCourseToLibrary" value="1"><span><strong>この測定コースを保存したコースにも残す</strong><small>GPS候補の坂道・形状を確認して保存します。路面は未確認のままです。</small></span></label>`;
   entry.append(wrapper);
 }
 
@@ -77,7 +77,7 @@ function applyMeasurementAutofill() {
 
   const banner = document.querySelector(".screen--record-input .parity-record-banner");
   if (banner && (measurement.stepEstimate || measurement.courseAnalysis)) {
-    banner.textContent = "GPS測定結果から距離・時間と取得できた走行事実を転記しています。路面など未確認の項目だけ必要に応じて補ってください。";
+    banner.textContent = "GPS測定結果から距離・時間と取得できた走行事実を転記しています。GPS由来のコース条件は候補値です。路面など未確認の項目だけ必要に応じて補ってください。";
   }
 
   form.dataset.measurementAutoFilled = "true";
