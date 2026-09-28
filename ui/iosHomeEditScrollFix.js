@@ -1,6 +1,7 @@
 const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
 const SCROLL_INTENT_PX = 8;
 const SCROLL_INTENT_RATIO = 1.15;
+const IOS_EDIT_DRAG_HOLD_MS = 360;
 
 let pointerId = null;
 let root = null;
@@ -8,6 +9,7 @@ let target = null;
 let startY = 0;
 let startX = 0;
 let startScrollTop = 0;
+let pressStartedAt = 0;
 let scrolling = false;
 let dispatchingCancel = false;
 
@@ -38,10 +40,15 @@ function scrollToAbsolute(top) {
   globalThis.scrollTo(0, next);
 }
 
+function nowMs() {
+  return globalThis.performance?.now?.() ?? Date.now();
+}
+
 function reset() {
   pointerId = null;
   root = null;
   target = null;
+  pressStartedAt = 0;
   scrolling = false;
 }
 
@@ -76,12 +83,13 @@ function handlePointerDown(event) {
   startX = event.clientX;
   startY = event.clientY;
   startScrollTop = currentScrollTop();
+  pressStartedAt = nowMs();
   scrolling = false;
 }
 
 function handlePointerMove(event) {
   if (dispatchingCancel || event.pointerId !== pointerId || !root?.isConnected) return;
-  if (root.classList.contains("is-home-drag-active") || target?.classList.contains("is-home-drag-armed")) return;
+  if (root.classList.contains("is-home-drag-active")) return;
 
   const dx = event.clientX - startX;
   const dy = event.clientY - startY;
@@ -89,6 +97,12 @@ function handlePointerMove(event) {
   const absY = Math.abs(dy);
   if (!scrolling) {
     if (absY < SCROLL_INTENT_PX || absY <= absX * SCROLL_INTENT_RATIO) return;
+
+    const heldLongEnoughForDrag = nowMs() - pressStartedAt >= IOS_EDIT_DRAG_HOLD_MS;
+    if (heldLongEnoughForDrag && target?.classList.contains("is-home-drag-armed")) return;
+
+    // On iPhone/iPad, an ordinary vertical swipe that begins on an icon/widget
+    // remains a scroll gesture even if the 180 ms core arm timer has already fired.
     scrolling = true;
     cancelLegacyPress(event);
   }
