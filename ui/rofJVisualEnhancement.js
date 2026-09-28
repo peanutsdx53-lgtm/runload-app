@@ -103,8 +103,8 @@ function enhanceRofScale(panel) {
   const anchorLabel = anchorGuide?.querySelector("small");
   if (anchorLabel) anchorLabel.textContent = "選択の目安";
 
-  const sheet = panel.closest(".rof-sheet");
-  const aboutBody = sheet?.querySelector(".rof-about > div");
+  const context = panel.closest("[data-rof-context], .rof-sheet");
+  const aboutBody = context?.querySelector(".rof-about > div");
   if (aboutBody && !aboutBody.querySelector("[data-rof-reference-guide]")) {
     aboutBody.append(createReferenceGuide());
   }
