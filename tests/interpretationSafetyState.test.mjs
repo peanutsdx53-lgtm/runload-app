@@ -24,7 +24,7 @@ await testCase('DEFERRED-IGNORES-STALE-URGENT-FLAG',()=>{
     unexpectedSymptom:'1',
   }));
   assert.equal(feedback.safetyFlags.chestPainOrPressure,false);
-  assert.equal(feedback.unexpectedSymptom,false);
+  assert.equal(Object.prototype.hasOwnProperty.call(feedback,'unexpectedSymptom'),false);
   assert.equal(feedback.consultationNote,'');
   assert.equal(feedback.safetyCheck.status,'not_asked');
 });

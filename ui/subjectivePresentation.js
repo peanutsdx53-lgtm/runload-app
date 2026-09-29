@@ -16,10 +16,6 @@ export function subjectiveFieldsFromFeedback(feedback = {}) {
   const fields = {
     subjectiveStatus: status,
     consultationNote: feedback.consultationNote || "",
-    unexpectedSymptom: feedback.unexpectedSymptom ? "1" : "__unchecked__",
-    symptomTiming: feedback.symptomContext?.timing || "",
-    symptomStartedWhen: feedback.symptomContext?.startedWhen || "",
-    symptomNote: feedback.symptomContext?.note || "",
     bodyObservationTiming: feedback.bodyAreaObservations?.[0]?.noticedTiming || "UNKNOWN",
     bodyObservationSensation: feedback.bodyAreaObservations?.[0]?.sensationType || "NOT_SELECTED",
     bodyObservationNote: feedback.bodyAreaObservations?.[0]?.note || "",

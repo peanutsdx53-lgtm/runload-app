@@ -664,12 +664,6 @@ export function readSubjectiveFeedback(formData) {
     checkStatus,
     bodyAreaObservations,
     consultationNote: consultationFactsActive ? String(formData.get("consultationNote") || "") : "",
-    unexpectedSymptom: consultationFactsActive ? booleanValue(formData, "unexpectedSymptom") : false,
-    symptomContext: {
-      timing: String(formData.get("symptomTiming") || ""),
-      startedWhen: String(formData.get("symptomStartedWhen") || ""),
-      note: String(formData.get("symptomNote") || ""),
-    },
     safetyFlags,
     safetyCheck: {
       status: hasSafetyFlag
@@ -746,26 +740,13 @@ function readRecordInput(formData, services) {
     course: readCourse(formData, distanceKm),
     memo: String(formData.get("memo") || ""),
     environmentContext: {
-      weather: String(formData.get("weather") || ""),
       temperatureC: optionalNumberValue(formData, "temperatureC"),
-      windSummary: String(formData.get("windSummary") || ""),
       environmentNote: String(formData.get("environmentNote") || ""),
-    },
-    recoveryContext: {
-      sleepSummary: String(formData.get("sleepSummary") || ""),
-      nutritionHydrationSummary: String(formData.get("nutritionHydrationSummary") || ""),
-      lifestyleNote: String(formData.get("lifestyleNote") || ""),
     },
     reflectionContext: {
       postRunReflection: String(formData.get("postRunReflection") || ""),
       perceivedDifference: String(formData.get("perceivedDifference") || ""),
-      reflectionKeyPoint: String(formData.get("reflectionKeyPoint") || ""),
       nextCheckPoint: String(formData.get("nextCheckPoint") || ""),
-    },
-    consultationContext: {
-      consultationTarget: String(formData.get("consultationTarget") || ""),
-      consultationQuestion: String(formData.get("consultationQuestion") || ""),
-      consultationDataSelection: formData.getAll("consultationDataSelection").map(String),
     },
     planOutcome: plan ? {
       status: plan.outcomeStatus || "completed",
@@ -815,7 +796,7 @@ function validateSubjectiveFeedback(feedback, formData) {
   const messages = [];
   const hasBodyAreaObservation = Array.isArray(feedback.bodyAreaObservations)
     && feedback.bodyAreaObservations.length > 0;
-  const hasSafetyInformation = Object.values(feedback.safetyFlags || {}).some(Boolean) || Boolean(feedback.unexpectedSymptom);
+  const hasSafetyInformation = Object.values(feedback.safetyFlags || {}).some(Boolean);
   const primaryStatus = String(formData.get("subjectiveStatus") || "");
   const requiresBodyDetail = primaryStatus === "body_reported" || ["discomfort_reported", "strong_reported"].includes(feedback.checkStatus);
   if (requiresBodyDetail && !feedback.checkStatus) messages.push("身体の記録を残す場合は、内容を選んでください。");

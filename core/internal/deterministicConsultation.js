@@ -392,7 +392,6 @@ function buildMemo({ purpose, record, feedback, audience, question, dataSelectio
     const reflection = record.reflectionContext || {};
     appendSection(lines, "次回に残しておきたいメモ：", [
       reflection.nextCheckPoint ? `次回確認したいこと：${reflection.nextCheckPoint}` : "次回確認したいことは未入力",
-      reflection.reflectionKeyPoint ? `今回の主な気づき：${reflection.reflectionKeyPoint}` : "",
     ]);
   }
 
@@ -420,12 +419,10 @@ function buildDeterministicConsultation({
   const supportRoute = experience.supportDecision?.route || "normal";
   const normalizedPurpose = normalizePurpose(purpose, supportRoute);
   const normalizedRegionId = normalizeRegionId(regionId, experience);
-  const consultationContext = experience.record.consultationContext || {};
-  const dataSelection = normalizeDataSelection(consultationContext.consultationDataSelection, normalizedPurpose);
-  const audience = String(consultationContext.consultationTarget || "").trim();
+  const dataSelection = normalizeDataSelection([], normalizedPurpose);
+  const audience = "";
   const question = String(
-    consultationContext.consultationQuestion
-    || experience.feedback?.consultationNote
+    experience.feedback?.consultationNote
     || DEFAULT_QUESTION_BY_PURPOSE[normalizedPurpose]
     || "",
   ).trim();

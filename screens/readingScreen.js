@@ -84,7 +84,6 @@ function buildColumnRecommendation(services, experience, allExperiences = [], co
   const route = supportDecision?.route || "normal";
   const course = record.course || {};
   const environment = record.environmentContext || {};
-  const recovery = record.recoveryContext || {};
   const up = numberValue(course.upPercent, 0);
   const down = numberValue(course.downPercent, 0);
   const observations = bodyAreaObservations(feedback);
@@ -96,17 +95,7 @@ function buildColumnRecommendation(services, experience, allExperiences = [], co
   const hasTemperature = environment.temperatureC !== null
     && environment.temperatureC !== undefined
     && String(environment.temperatureC).trim() !== "";
-  const hasNutritionHydrationContext = Boolean(
-    String(recovery.nutritionHydrationSummary || "").trim(),
-  );
-  const hasSleepContext = Boolean(String(recovery.sleepSummary || "").trim());
-  const hasRecordedContext = hasTemperature || [
-    environment.weather,
-    environment.windSummary,
-    environment.environmentNote,
-    recovery.nutritionHydrationSummary,
-    recovery.lifestyleNote,
-  ].some((value) => String(value || "").trim());
+  const hasRecordedContext = hasTemperature || Boolean(String(environment.environmentNote || "").trim());
 
   if (route === "consult" || route === "urgent") {
     return recommendation(CONSULTATION_PREP_CORE_ARTICLE_ID, "共有する前に、伝える内容を整理するための記事です。");
@@ -124,17 +113,11 @@ function buildColumnRecommendation(services, experience, allExperiences = [], co
   if (observations.length) {
     return recommendation("regional-six-eight-28", `身体の記録と12部位の目安を分けて見返す方法を確認できます。`);
   }
-  if (hasNutritionHydrationContext) {
-    return recommendation("hydration-not-more-is-better", "水分のメモがある記録なので、量だけで見ない振り返り方を確認できます。");
-  }
-  if (hasSleepContext) {
-    return recommendation("sleep-not-hours-only", "睡眠のメモがある記録なので、時間以外も含めた見返し方を確認できます。");
-  }
   if (hasTemperature) {
     return recommendation("heat-not-temperature-only", "気温の記録があるため、暑さを気温以外も含めて見るポイントを確認できます。");
   }
   if (hasRecordedContext) {
-    return recommendation("context-not-single-cause", "天候や生活のメモを、ひとつの原因に決めずに見返すための記事です。");
+    return recommendation("context-not-single-cause", "環境メモを、ひとつの原因に決めずに見返すための記事です。");
   }
   if (course.gradeKnowledge === "KNOWN_PROFILE" && (up > 0 || down > 0)) {
     return recommendation("grade-and-coverage", "坂のある記録なので、上り・下りで身体の使われ方が変わる理由を確認できます。");

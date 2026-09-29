@@ -208,9 +208,6 @@ function evaluateSupportDecision(input = {}) {
 
   const reviewReasons = [];
   const subjectiveStatus = String(feedback.subjectiveCheck?.status || feedback.checkStatus || "");
-  if (Boolean(feedback.unexpectedSymptom ?? feedback.symptomContext?.hasUnexpectedSymptom)) {
-    reviewReasons.push("unexpected_symptom_reported");
-  }
 
   let route = "normal";
   let routeReasons = ["no_subjective_concern"];
@@ -304,7 +301,7 @@ function normalizeSafetyFlags(source = {}) {
 
 function inferSubjectiveCheckStatus(feedback = {}, explicitStatus = "") {
   const hasSafetyFlag = SAFETY_FLAG_KEYS.some((key) => Boolean(feedback.safetyFlags?.[key]));
-  if (hasSafetyFlag || Boolean(feedback.unexpectedSymptom ?? feedback.symptomContext?.hasUnexpectedSymptom)) {
+  if (hasSafetyFlag) {
     return "strong_reported";
   }
   if (normalizeBodyAreaObservations(feedback.bodyAreaObservations).length) {
@@ -319,13 +316,9 @@ function inferSubjectiveCheckStatus(feedback = {}, explicitStatus = "") {
 function normalizeSubjectiveFeedback(input = {}, context = {}) {
   const safetyFlags = normalizeSafetyFlags(input.safetyFlags || {});
   const hasActiveSafetyFlag = SAFETY_FLAG_KEYS.some((key) => safetyFlags[key]);
-  const unexpectedSymptom = Boolean(
-    input.unexpectedSymptom ?? input.symptomContext?.hasUnexpectedSymptom,
-  );
   const bodyAreaObservations = normalizeBodyAreaObservations(input.bodyAreaObservations);
   const checkStatus = inferSubjectiveCheckStatus({
     bodyAreaObservations,
-    unexpectedSymptom,
     safetyFlags,
     safetyCheck: input.safetyCheck,
   }, input.checkStatus || input.subjectiveCheck?.status);
@@ -342,17 +335,6 @@ function normalizeSubjectiveFeedback(input = {}, context = {}) {
     checkedAt: normalizeSingleLineText(input.checkedAt || input.subjectiveCheck?.checkedAt, 40),
     bodyAreaObservations,
     consultationNote: normalizePlainText(input.consultationNote, 500),
-    unexpectedSymptom,
-    symptomContext: Object.freeze({
-      timing: normalizeSingleLineText(input.symptomContext?.timing, 40),
-      startedWhen: normalizeSingleLineText(input.symptomContext?.startedWhen, 40),
-      triggers: Object.freeze(
-        Array.from(new Set(Array.isArray(input.symptomContext?.triggers)
-          ? input.symptomContext.triggers.map((value) => normalizeSingleLineText(value, 40)).filter(Boolean)
-          : [])).slice(0, 6),
-      ),
-      note: normalizePlainText(input.symptomContext?.note, 320),
-    }),
     safetyFlags,
     safetyCheck: Object.freeze({
       status: safetyCheckStatus,
