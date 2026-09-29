@@ -9,7 +9,7 @@ const version = read("ui/appVersionStatus.js");
 const worker = read("service-worker.js");
 const results = [];
 function test(name, fn) { try { fn(); results.push({ name, status: "PASS" }); } catch (error) { results.push({ name, status: "FAIL", message: error.message }); } }
-test("app version advances for Phase 3", () => { assert.match(version, /APP_VERSION = "2026\.09\.29\.10"/); assert.match(worker, /running-record-app-runtime-2026\.09\.29\.10/); });
+test("Phase 3 remains present in the current or later mobile release", () => { const current = version.match(/APP_VERSION = "2026\.09\.29\.(\d+)"/)?.[1]; assert.ok(Number(current) >= 10); assert.ok(worker.includes(`running-record-app-runtime-2026.09.29.${current}`)); });
 test("interpretation screen gates additions to mobile layout", () => { assert.ok(screen.includes("matchesMobileLayout")); assert.ok(screen.includes("mobileLayout: matchesMobileLayout()")); });
 test("mobile interpretation exposes three-step path and one next check", () => { assert.ok(presentation.includes("interpretation-room-mobile-path")); assert.ok(presentation.includes("記録した事実")); assert.ok(presentation.includes("次回確認を1つ残す")); assert.ok(presentation.includes('focus: "next-check"')); });
 test("record input deep link opens stage 4", () => { assert.ok(recordInteractions.includes("applyMobileRecordEntryFocus")); assert.ok(recordInteractions.includes('setActiveMobileRecordStage(form, 4)')); assert.ok(recordInteractions.includes('nextCheckPoint')); });
