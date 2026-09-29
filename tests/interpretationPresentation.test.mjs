@@ -219,6 +219,22 @@ await test('NO-SUBJECTIVE-PAIR-DOES-NOT-INVENT-DIFFERENCE',()=>{
   assert.doesNotMatch(html,/疲労 \+/);
 });
 
+
+await test('OVERVIEW-WITH-NO-ATTENTION-STILL-HAS-A-CONSISTENT-ANSWER',()=>{
+  const out=baseOutput();
+  out.overview.attention={
+    counts:{total:12,available:12,unavailable:0,previousComparable:0,previousChanged:0,repeated:0,above:0,near:12,below:0,conditionDifferences:0},
+    groups:[],
+    noCrossRegionRanking:true,
+  };
+  out.conditions={...out.conditions,differences:[]};
+  out.subjectiveContext={state:'NONE',pre:{available:false},post:{available:false},difference:{eligible:false},recentReferences:{},boundaryTokens:[]};
+  const html=renderInterpretationRoom({output:out});
+  assert.match(html,/今回の記録を、次回比較の基準点として使えます/);
+  assert.match(html,/interpretation-room--dashboard/);
+  assert.doesNotMatch(html,/対象の保存記録がありません/);
+});
+
 await test('SUPPORT-STATE-TAKES-PRECEDENCE',()=>{
   const out=baseOutput();
   out.state.support='URGENT';

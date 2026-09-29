@@ -45,9 +45,21 @@ test('REPAIRED-PLACEMENT-IS-PERSISTED', () => {
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.29.3');
+  assert.equal(version, '2026.09.29.4');
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/mobileHomePageCapacity.js"'));
+});
+
+
+test('POSITION-FALLBACK-PRESERVES-EXPLICIT-SLOTS-BEFORE-FILLING-MISSING-ONES', () => {
+  const start = home.indexOf('function buildPositionLayoutFromDom');
+  const end = home.indexOf('function readPositionLayout', start);
+  const block = home.slice(start, end);
+  assert.ok(block.includes('const explicitRow = Number(element.dataset.homeRow);'));
+  assert.ok(block.includes('const explicitCol = Number(element.dataset.homeCol);'));
+  assert.ok(block.includes('placementIsFree(placements, token, explicit'));
+  assert.ok(block.includes('pending.forEach((token) =>'));
+  assert.equal(block.includes('packTokens('), false);
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

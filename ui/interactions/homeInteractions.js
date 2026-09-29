@@ -5,7 +5,7 @@ import {
   findNearestFreePlacement,
   footprintForToken,
   normalizePlacement,
-  packTokens,
+  placementIsFree,
   usedRowCount,
 } from "./homeGridModel.js";
 import { rememberMobileHomeLaunch } from "../mobileHomeReturnTransition.js";
@@ -149,8 +149,31 @@ function buildPositionLayoutFromDom(root) {
   return {
     version: 1,
     pages: pageElements(root).map((page) => {
-      const tokens = [...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]")].map(gridTokenForElement).filter(Boolean);
-      return packTokens(tokens, { widgetSizes, occupiedTokens: visibleTokensForPage(page) });
+      const occupiedTokens = visibleTokensForPage(page);
+      const placements = [];
+      const pending = [];
+      [...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]")].forEach((element) => {
+        const token = gridTokenForElement(element);
+        if (!token) return;
+        const explicitRow = Number(element.dataset.homeRow);
+        const explicitCol = Number(element.dataset.homeCol);
+        const hasExplicitPlacement = Number.isInteger(explicitRow) && explicitRow > 0 && Number.isInteger(explicitCol) && explicitCol > 0;
+        if (!hasExplicitPlacement) {
+          pending.push(token);
+          return;
+        }
+        const footprint = footprintForToken(token, widgetSizes);
+        const explicit = normalizePlacement({ row: explicitRow, col: explicitCol }, footprint);
+        const exact = explicit.row === explicitRow && explicit.col === explicitCol;
+        const free = exact && placementIsFree(placements, token, explicit, { widgetSizes, occupiedTokens });
+        if (free) placements.push({ token, ...explicit });
+        else pending.push(token);
+      });
+      pending.forEach((token) => {
+        const free = findNearestFreePlacement(placements, token, { row: 1, col: 1 }, { widgetSizes, occupiedTokens });
+        if (free) placements.push({ token, ...free });
+      });
+      return placements;
     }),
   };
 }
@@ -1265,6 +1288,7 @@ export function bindHome(context = {}) {
 
   function handlePointerCancel(event) {
     if (event.pointerId !== pointerId) return;
+    const cancelledNavigationGesture = Boolean(pressTarget) && !editing;
     cancelPressTimer();
     if (dragging) {
       finishDrag({ clientX: lastX, clientY: lastY });
@@ -1272,6 +1296,7 @@ export function bindHome(context = {}) {
       clearPressState();
       try { pressTarget?.releasePointerCapture(pointerId); } catch {}
     }
+    if (cancelledNavigationGesture) suppressClickUntil = Date.now() + 700;
     pointerId = null;
     pressTarget = null;
     pressKind = "";
@@ -1650,6 +1675,8 @@ export function bindHome(context = {}) {
     scrollFrame = requestAnimationFrame(() => {
       scrollFrame = null;
       if (!viewport.clientWidth || dragging || dragArmed || pageSwipePointerId != null || pageAnimationFrame) return;
+      const expectedLeft = activePage * viewport.clientWidth;
+      if (!editing && Math.abs(viewport.scrollLeft - expectedLeft) > 4) suppressClickUntil = Date.now() + 700;
       const index = Math.round(viewport.scrollLeft / viewport.clientWidth);
       const bounded = Math.max(0, Math.min(pageElements(root).length - 1, index));
       if (bounded !== activePage) {

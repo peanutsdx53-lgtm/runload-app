@@ -1,5 +1,6 @@
 const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
+const LAYOUT_STORAGE_KEY = "running-record-mobile-home-layout-v1";
 
 let trackedPointerId = null;
 let trackedRoot = null;
@@ -57,18 +58,45 @@ function gridTokenForElement(element) {
   return widgetId ? `widget:${widgetId}` : "";
 }
 
+function activePageIndex(root, pageCount) {
+  const currentDot = root.querySelector('.mobile-home-page-dot[aria-current="page"]');
+  const explicit = Number(currentDot?.dataset?.homePageTarget);
+  if (Number.isInteger(explicit) && explicit >= 0) return Math.min(Math.max(0, pageCount - 1), explicit);
+  try {
+    const stored = JSON.parse(globalThis.localStorage?.getItem(LAYOUT_STORAGE_KEY) || "null");
+    const index = Number(stored?.activePage);
+    if (Number.isInteger(index) && index >= 0) return Math.min(Math.max(0, pageCount - 1), index);
+  } catch {
+    // Fall back to the first page when stored state is unavailable.
+  }
+  return 0;
+}
+
 function persistHomePositions(root) {
-  const pages = [...root.querySelectorAll(".mobile-home-page")].map((page) => [
+  const pageElements = [...root.querySelectorAll(".mobile-home-page")];
+  const positionPages = pageElements.map((page) => [
     ...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]"),
   ].flatMap((element) => {
     const token = gridTokenForElement(element);
     if (!token) return [];
     return [{ token, ...placementOf(element) }];
   }));
+  const layoutPages = pageElements.map((page) => [
+    ...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]"),
+  ].map(gridTokenForElement).filter(Boolean));
+  const dock = [...root.querySelectorAll(".mobile-home-dock [data-home-item-id]")]
+    .map((item) => item.dataset.homeItemId)
+    .filter(Boolean);
   try {
-    globalThis.localStorage?.setItem(POSITION_STORAGE_KEY, JSON.stringify({ version: 1, pages }));
+    globalThis.localStorage?.setItem(POSITION_STORAGE_KEY, JSON.stringify({ version: 1, pages: positionPages }));
+    globalThis.localStorage?.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
+      version: 3,
+      pages: layoutPages.length ? layoutPages : [[]],
+      dock,
+      activePage: activePageIndex(root, pageElements.length),
+    }));
   } catch {
-    // Position persistence is optional; the current layout remains usable.
+    // Persistence is optional; the current layout remains usable.
   }
 }
 

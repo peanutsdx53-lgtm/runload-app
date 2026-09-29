@@ -54,6 +54,14 @@ await test('HOME-PAGE-SCROLL-STATE-DOES-NOT-UPDATE-WHILE-ARMED-OR-DRAGGING', () 
   assert.ok(interactions.includes('root.classList.remove("is-home-drag-active")'));
 });
 
+
+await test('HOME-NATIVE-PAGING-CANCEL-OR-SCROLL-CANNOT-LAUNCH-AN-APP', () => {
+  assert.ok(interactions.includes('const cancelledNavigationGesture = Boolean(pressTarget) && !editing;'));
+  assert.ok(interactions.includes('if (cancelledNavigationGesture) suppressClickUntil = Date.now() + 700;'));
+  assert.ok(interactions.includes('const expectedLeft = activePage * viewport.clientWidth;'));
+  assert.ok(interactions.includes('Math.abs(viewport.scrollLeft - expectedLeft) > 4'));
+});
+
 const failed = results.filter((item) => item.status !== 'PASS');
 console.log(JSON.stringify({ suite: 'Mobile Home Gesture Priority', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
 if (failed.length) process.exit(1);
