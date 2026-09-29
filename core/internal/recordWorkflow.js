@@ -198,7 +198,6 @@ function createRecordWorkflow({
         .filter((record) => record.id !== recordInput.id)
         .map((record) => record.id),
       nowIso,
-      assumeExplicitRpe: true,
     });
     const normalizedRecord = stampCurrentRegionalModel(normalizedRecordBase);
     const recordValidation = validateRunningRecord(normalizedRecord);

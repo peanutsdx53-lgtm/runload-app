@@ -15,7 +15,7 @@ Domain and deterministic interpretation logic only.
 - `interpretationCore.js`: current beginner-facing interpretation projection. It consumes persisted outputs and does not recalculate Primary Reference-100 or ROF-J.
 - `internal/platformInfrastructure.js`: PWA registration, storage keys, and storage gateway.
 - `internal/modelSupport.js`: shared model constants, persisted-model snapshot metadata, and numeric utilities.
-- `internal/inputSupport.js`: input safety, personal context, RPE provenance, and record validation.
+- `internal/inputSupport.js`: input safety, personal context, and record validation.
 - `internal/recordRepositories.js`: collection and running-record repositories.
 - `internal/primaryModelEngine.js`: primary regional calculation engine, trace builder, and input adapter.
 - `internal/primaryInputCatalog.js`: formal primary-input catalog and metadata.

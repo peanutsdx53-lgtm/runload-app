@@ -834,36 +834,9 @@ moduleExports["validateFormalInputBundle"] = validateFormalInputBundle;
 internalModules.formalInputAdapter = moduleExports;
 }
 
-// ===== core/model/primaryRegionalV2/primaryRegionalV2TraceAdapter.js =====
-{
-const moduleExports = Object.create(null);
-const { adaptStoredRecordToPrimaryRegionalV2Input, primaryRegionalV2ProfileContext } = internalModules.primaryRegionalInputAdapter;
-const { adaptPrototypeRecord } = internalModules.formalInputAdapter;
-
-function clone(value){return value==null?value:JSON.parse(JSON.stringify(value));}
-
-function buildPrimaryRegionalV2FormalInputTrace({record,feedback={},sessionSequence=1}={}){
-  const uiInput=adaptStoredRecordToPrimaryRegionalV2Input(record,feedback);
-  const adapted=adaptPrototypeRecord(uiInput,{sessionId:record.id,sessionSequence,recordRevision:1,profile:primaryRegionalV2ProfileContext(record)});
-  if(!adapted.ok)return {ok:false,code:adapted.error?.code||"PRIMARY_TRACE_ADAPTER_FAILED",error:adapted.error||null};
-  const bundle=clone(adapted.value);
-  bundle.contractOnlyInputs={
-    runWalkRunningDistanceKm:record.runningFormat==="RUN_WALK"?Number(record.runWalkRunningDistanceKm)||null:null,
-    runWalkRunningDurationMinutes:record.runningFormat==="RUN_WALK"?Number(record.runWalkRunningDurationMinutes)||null:null,
-    runWalkRunningSections:record.runningFormat==="RUN_WALK"?clone(record.runWalkRunningSections||[]):[],
-  };
-  return {ok:true,value:bundle,uiInput};
-}
-moduleExports["buildPrimaryRegionalV2FormalInputTrace"] = buildPrimaryRegionalV2FormalInputTrace;
-internalModules.primaryRegionalTraceAdapter = moduleExports;
-}
-
 // ===== core/model/primaryRegionalV2/primaryRegionalV2AppAdapter.js =====
 {
 const moduleExports = Object.create(null);
-const { RETAINED_INPUTS } = internalModules.primaryRegionalInputTrace;
-const { buildPrimaryRegionalV2FormalInputTrace } = internalModules.primaryRegionalTraceAdapter;
-
 function clone(v){return v==null?v:JSON.parse(JSON.stringify(v));}
 function finite(v){return typeof v==='number'&&Number.isFinite(v);}
 function speedOf(record={}){const d=Number(record.distanceKm),t=Number(record.durationMinutes);return d>0&&t>0?d*1000/(t*60):null;}
@@ -889,45 +862,6 @@ function personalHabitualCadenceReference(record={},allRecords=[]){
     cadences.push(steps/dur);
   }
   return cadences.length>=3?{value:median(cadences),state:'MODEL_DERIVED_PERSONAL_REFERENCE',eligibleCount:cadences.length,speedNeighborhoodMps:0.10}:{value:null,state:'REFERENCE_BUILDING',eligibleCount:cadences.length,speedNeighborhoodMps:0.10};
-}
-
-function rawRepairValue(name,record={},feedback={}){
-  const map={
-    weatherState:()=>record.environmentContext?.weather,
-    temperatureC:()=>record.environmentContext?.temperatureC,
-    windLevel:()=>record.environmentContext?.windSummary,
-    environmentNote:()=>record.environmentContext?.environmentNote,
-    'equipmentTags[]':()=>record.personalContext?.equipmentTags,
-    equipmentNote:()=>record.personalContext?.equipmentNote,
-    postRunReflection:()=>record.reflectionContext?.postRunReflection,
-    perceivedDifference:()=>record.reflectionContext?.perceivedDifference,
-    runningStartDateOrBand:()=>record.bodyProfileSnapshot?.runningStartDateOrBand,
-    experienceSelfAssessment:()=>record.bodyProfileSnapshot?.experienceSelfAssessment,
-    'runningGoalTags[]':()=>record.bodyProfileSnapshot?.runningGoalTags,
-    sleepSummary:()=>record.recoveryContext?.sleepSummary,
-    nutritionHydrationSummary:()=>record.recoveryContext?.nutritionHydrationSummary,
-    lifestyleNote:()=>record.recoveryContext?.lifestyleNote,
-    reflectionKeyPoint:()=>record.reflectionContext?.reflectionKeyPoint,
-    nextCheckPoint:()=>record.reflectionContext?.nextCheckPoint,
-    consultationTarget:()=>record.consultationContext?.consultationTarget,
-    consultationQuestion:()=>record.consultationContext?.consultationQuestion,
-    consultationDataSelection:()=>record.consultationContext?.consultationDataSelection,
-  };return map[name]?clone(map[name]()):undefined;
-}
-
-function buildAppRetainedInputTrace({record,feedback={},sessionSequence=1}={}){
-  const currentTrace=buildPrimaryRegionalV2FormalInputTrace({record,feedback,sessionSequence});
-  if(!currentTrace.ok)return currentTrace;
-  const formal=currentTrace.value?.formalInputs||{};
-  const entries=RETAINED_INPUTS.map(d=>{
-    const f=formal[d.inputId]||null; let value=f?.value??null; let status=f?.status||'MISSING'; let provenance=f?.provenance||null;
-    if(d.traceAction==='CURRENT_APP_CONTEXT_TRACE'){
-      const raw=rawRepairValue(d.technicalName,record,feedback);
-      if(raw!==undefined&&raw!==null&&!(Array.isArray(raw)&&raw.length===0)&&raw!==''){value=raw;status='KNOWN';provenance='CURRENT_RAW_RECORD_CONTEXT';}
-    }
-    return {...d,present:status==='KNOWN'||status==='EXPLICIT_UNKNOWN',value,status,provenance,currentFormalInput:f};
-  });
-  return {ok:true,value:{count:entries.length,entries,runSettingProvenance:'SURFACE_DERIVED',traceVersion:'primary-regional-v2-app-input-trace-v1',formalInputCount:Object.keys(formal).length},uiInput:currentTrace.uiInput};
 }
 
 function adaptCurrentRecordToPrimaryRegionalV2({record,allRecords=[]}={}){
@@ -959,7 +893,6 @@ function adaptCurrentRecordToPrimaryRegionalV2({record,allRecords=[]}={}){
   return target;
 }
 moduleExports["personalHabitualCadenceReference"] = personalHabitualCadenceReference;
-moduleExports["buildAppRetainedInputTrace"] = buildAppRetainedInputTrace;
 moduleExports["adaptCurrentRecordToPrimaryRegionalV2"] = adaptCurrentRecordToPrimaryRegionalV2;
 internalModules.primaryRegionalAppAdapter = moduleExports;
 }

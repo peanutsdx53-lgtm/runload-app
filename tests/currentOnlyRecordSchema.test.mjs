@@ -24,6 +24,8 @@ const courseRepository = fs.readFileSync('core/internal/courseRepository.js', 'u
 const recordWorkflow = fs.readFileSync('core/internal/recordWorkflow.js', 'utf8');
 const readingScreen = fs.readFileSync('screens/readingScreen.js', 'utf8');
 const gradeDomainConfirmation = fs.readFileSync('ui/interactions/gradeDomainConfirmation.js', 'utf8');
+const primaryInputProcessing = fs.readFileSync('core/internal/primaryInputProcessing.js', 'utf8');
+const recordRepositories = fs.readFileSync('core/internal/recordRepositories.js', 'utf8');
 
 const results = [];
 function test(id, fn) {
@@ -186,6 +188,22 @@ test('CURRENT-MODULE-CHAIN-NO-LONGER-DEPENDS-ON-V27', () => {
   assert.ok(appCore.includes('BODY_AREA_TO_PRIMARY_REGIONAL_V2'));
   assert.ok(primaryModelEngine.includes('PRIMARY_REGIONAL_GRADE_COMMON_DIRECT_MAX_ABS_PERCENT'));
   assert.ok(primaryModelEngine.includes('PRIMARY_REGIONAL_GRADE_UPHILL_DIRECT_MAX_PERCENT'));
+});
+
+
+test('RETIRED-FIXED-TRACE-AND-RPE-PLUMBING-ARE-ABSENT', () => {
+  assert.ok(!primaryModelEngine.includes('primaryRegionalInputTrace'));
+  assert.ok(!primaryModelEngine.includes('RETAINED_INPUTS'));
+  assert.ok(!primaryModelEngine.includes('Current 93-input trace'));
+  assert.ok(!primaryInputProcessing.includes('buildAppRetainedInputTrace'));
+  assert.ok(!primaryInputProcessing.includes('primaryRegionalTraceAdapter'));
+  assert.ok(!primaryInputProcessing.includes('rawRepairValue'));
+  assert.ok(!inputSupport.includes('RPE_PROVENANCE'));
+  assert.ok(!inputSupport.includes('normalizeRpeProvenance'));
+  assert.ok(!inputSupport.includes('reportedRpeValue'));
+  assert.ok(!inputSupport.includes('validateProvidedNumber(errors, input, "perceivedExertion"'));
+  assert.ok(!recordWorkflow.includes('assumeExplicitRpe'));
+  assert.ok(!recordRepositories.includes('assumeExplicitRpe'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

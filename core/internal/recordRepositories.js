@@ -145,7 +145,6 @@ function createRecordRepository(gateway) {
     const normalizedRecord = normalizeRunningRecord(stampCurrentRegionalModel(record), {
       existingIds: existingRecords.map((item) => item.id),
       nowIso: new Date().toISOString(),
-      assumeExplicitRpe: true,
     });
     const validation = validateRunningRecord(normalizedRecord);
     if (!validation.ok) {

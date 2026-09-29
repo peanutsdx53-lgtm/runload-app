@@ -273,30 +273,6 @@ moduleExports["summarizePersonalContext"] = summarizePersonalContext;
 internalModules.personalContext = moduleExports;
 }
 
-// ===== core/safety/rpeProvenance.js =====
-{
-const moduleExports = Object.create(null);
-const RPE_PROVENANCE = Object.freeze({ userReported: "USER_REPORTED", notReported: "NOT_REPORTED" });
-function normalizeRpeProvenance(value = "", { hasValue = false, assumeExplicit = false } = {}) {
-  const requested = String(value || "").toUpperCase();
-  if (requested === RPE_PROVENANCE.userReported) return RPE_PROVENANCE.userReported;
-  if (requested === RPE_PROVENANCE.notReported) return RPE_PROVENANCE.notReported;
-  if (!hasValue) return RPE_PROVENANCE.notReported;
-  return assumeExplicit ? RPE_PROVENANCE.userReported : RPE_PROVENANCE.notReported;
-}
-function isReportedRpeProvenance(value = "") { return String(value || "").toUpperCase() === RPE_PROVENANCE.userReported; }
-function reportedRpeValue(record = {}) {
-  if (!isReportedRpeProvenance(record.rpeProvenance)) return null;
-  const value = Number(record.perceivedExertion);
-  return Number.isFinite(value) && value >= 0 && value <= 10 ? value : null;
-}
-moduleExports["RPE_PROVENANCE"] = RPE_PROVENANCE;
-moduleExports["normalizeRpeProvenance"] = normalizeRpeProvenance;
-moduleExports["isReportedRpeProvenance"] = isReportedRpeProvenance;
-moduleExports["reportedRpeValue"] = reportedRpeValue;
-internalModules.rpeProvenance = moduleExports;
-}
-
 // ===== core/safety/inputValidation.js =====
 {
 const moduleExports = Object.create(null);
@@ -464,7 +440,6 @@ function validateRunningRecordInput(input = {}) {
     validateRequiredPositiveNumber(errors, input, "distanceKm", INPUT_LIMITS.distanceKm, "走行記録では、0より大きい距離が必要です。");
     validateRequiredPositiveNumber(errors, input, "durationMinutes", INPUT_LIMITS.durationMinutes, "走行記録では、0より大きい実走時間が必要です。");
     validateProvidedNumber(errors, input, "steps", 0, INPUT_LIMITS.steps, "歩数が入力可能な範囲を超えています。");
-    validateProvidedNumber(errors, input, "perceivedExertion", 0, 10, "きつさは0〜10で入力してください。");
     const runningFormat = String(input.runningFormat || "UNKNOWN").toUpperCase();
     if (!["CONTINUOUS_RUN", "RUN_WALK", "UNKNOWN"].includes(runningFormat)) errors.push({ field: "runningFormat", code: "INVALID_RUNNING_FORMAT", message: "走行形式を選び直してください。" });
     if (runningFormat === "RUN_WALK") {
