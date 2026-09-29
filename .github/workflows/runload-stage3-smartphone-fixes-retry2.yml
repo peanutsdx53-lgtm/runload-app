@@ -1,0 +1,113 @@
+name: RunLoad Stage 3 smartphone fixes retry 2
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage3-smartphone-fixes-retry2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "be2a048ccc1331d522b0bdca8c5a9d7acbf88ffb"
+
+      - name: Apply corrected Stage 3 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import textwrap
+
+          source = Path('.github/workflows/runload-stage3-smartphone-fixes.yml').read_text()
+          start_marker = "          python - <<'PY'\n"
+          end_marker = "          PY\n\n      - name: Verify exact candidate change set"
+          start = source.find(start_marker)
+          end = source.find(end_marker, start + len(start_marker))
+          if start < 0 or end < 0:
+              raise SystemExit('unable to extract original Stage 3 candidate')
+          code = textwrap.dedent(source[start + len(start_marker):end])
+          broken = "expected_test_version_files = {\\n              'tests/mobileHomeAtomicDropCoordinator.test.mjs',\\n              'tests/mobileHomeInitialLayout.test.mjs',\\n              'tests/mobileHomeIosScrollCapacity.test.mjs',\\n          }"
+          fixed = "expected_test_version_files = {'tests/currentOnlyRecordSchema.test.mjs', 'tests/mobileHomeAtomicDropCoordinator.test.mjs', 'tests/mobileHomeInitialLayout.test.mjs', 'tests/mobileHomeIosScrollCapacity.test.mjs', 'tests/runMeasurementNotifications.test.mjs'}"
+          if broken not in code:
+              raise SystemExit('expected broken set literal not found')
+          code = code.replace(broken, fixed, 1)
+          exec(compile(code, '<stage3-candidate>', 'exec'), {'__name__': '__main__'})
+          PY
+
+      - name: Verify exact candidate change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=$(cat <<'EOF'
+          service-worker.js
+          tests/currentOnlyRecordSchema.test.mjs
+          tests/interpretationPresentation.test.mjs
+          tests/mobileHomeAtomicDropCoordinator.test.mjs
+          tests/mobileHomeGesturePriority.test.mjs
+          tests/mobileHomeInitialLayout.test.mjs
+          tests/mobileHomeIosScrollCapacity.test.mjs
+          tests/runMeasurementNotifications.test.mjs
+          ui/appVersionStatus.js
+          ui/interactions/homeInteractions.js
+          ui/mobileHomeDropCoordinator.js
+          EOF
+          )
+          actual=$(git diff --name-only | sort)
+          test "$actual" = "$(printf '%s\n' "$expected" | sort)"
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do
+            echo "[TEST] $test_file"
+            node "$test_file"
+          done
+
+      - name: Check all JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find . -type f -name '*.js' -not -path './.git/*' | sort)
+          for file in "${files[@]}"; do
+            node --check "$file" >/dev/null
+          done
+          echo "JS syntax OK: ${#files[@]} files"
+
+      - name: Verify Stage 3 invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'cancelledNavigationGesture' ui/interactions/homeInteractions.js
+          grep -q 'placementIsFree(placements, token, explicit' ui/interactions/homeInteractions.js
+          ! grep -A40 'function buildPositionLayoutFromDom' ui/interactions/homeInteractions.js | grep -q 'packTokens('
+          grep -q 'LAYOUT_STORAGE_KEY' ui/mobileHomeDropCoordinator.js
+          grep -q 'setItem(LAYOUT_STORAGE_KEY' ui/mobileHomeDropCoordinator.js
+          grep -q 'APP_VERSION = "2026.09.29.4"' ui/appVersionStatus.js
+          grep -q 'running-record-app-runtime-2026.09.29.4' service-worker.js
+
+      - name: Commit verified Stage 3
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add service-worker.js tests/currentOnlyRecordSchema.test.mjs tests/interpretationPresentation.test.mjs tests/mobileHomeAtomicDropCoordinator.test.mjs tests/mobileHomeGesturePriority.test.mjs tests/mobileHomeInitialLayout.test.mjs tests/mobileHomeIosScrollCapacity.test.mjs tests/runMeasurementNotifications.test.mjs ui/appVersionStatus.js ui/interactions/homeInteractions.js ui/mobileHomeDropCoordinator.js
+          git commit -m 'Stage 3: harden smartphone swipe and home placement'
+          git push origin HEAD:main
