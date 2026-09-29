@@ -1,0 +1,60 @@
+name: RunLoad Stage 4 reproducibility audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage4-repro-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "14ef828b4879fb97c0490005442f9495ad71e307"
+
+      - name: Audit persisted calculation-route trace
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== interpretation fallback markers ==='
+          grep -R -n -E 'PERSISTED_RESULT_DOES_NOT_RETAIN_FINAL_CONDITIONAL_ROUTE_TRACE|PERSISTED_INPUTS_WITHOUT_SEGMENT_ROUTE_TRACE|VERSION_LOCKED_REGION_ROUTE' core ui screens || true
+          echo '=== engine trace creation and summary retention ==='
+          grep -n -E 'trace\.components|trace\.unquantified|function summarizeRegions|segmentEvidence|conditionTrace|routeTrace' core/internal/primaryModelEngine.js || true
+          echo '=== persisted result fields ==='
+          grep -n -E 'axisEstimates|optionalApplied|sourceIds|conditionTrace|routeTrace|engine_input_snapshot' core/internal/primaryModelResults.js || true
+
+      - name: Audit internal/development terminology in presentation paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pattern in 'Reference-100' 'P1_SOURCE_MODEL_EXTENSION' 'P2_CROSS_SOURCE_BRIDGE' 'P2 bridge' 'BA-DISP-[0-9]+' 'R0[1-9]|R1[0-2]' 'runload-primary-regional' 'PRIMARY_[A-Z0-9_]+'; do
+            echo "=== $pattern ==="
+            grep -R -n -E "$pattern" screens ui styles index.html core/interpretation*.js --exclude-dir=.git || true
+          done
+
+      - name: Audit Japanese terminology variants
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pattern in 'Reference' 'cadence|Cadence' 'stress|strain|proxy|bridge|Direct|P1|P2' '基準100|基準点|基準値' '数値なし|表示なし|算出不可|計算不可'; do
+            echo "=== TERM $pattern ==="
+            grep -R -n -E "$pattern" screens ui core/interpretation*.js --exclude-dir=.git || true
+          done
+
+      - name: Confirm audit is read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
