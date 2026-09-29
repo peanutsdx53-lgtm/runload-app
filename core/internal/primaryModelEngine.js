@@ -415,7 +415,6 @@ internalModules.primaryRegionalInputTrace = moduleExports;
 {
 const moduleExports = Object.create(null);
 const { SURFACE_FIELDS } = internalModules.modelConstants;
-const { reportedRpeValue } = internalModules.rpeProvenance;
 
 const SURFACE_KEY_BY_RECORD_KEY = Object.freeze(Object.fromEntries(
   SURFACE_FIELDS.map(({ recordKey, modelKey }) => [recordKey, modelKey]),
@@ -545,7 +544,6 @@ function adaptStoredRecordToPrimaryRegionalV2Input(record = {}, feedback = {}) {
     steps: record.activityType === "run" && Number(record.steps) > 0 ? Number(record.steps) : null,
     stepsProvenance: record.stepsProvenance === "ESTIMATED" ? "ESTIMATED" : (record.stepsProvenance || "UNKNOWN"),
     runningFormat: record.activityType === "run" ? (record.runningFormat || "UNKNOWN") : null,
-    rpe: reportedRpeValue(record),
     memo: record.memo || "",
     course: {
       courseId: record.course?.id || null,

@@ -475,8 +475,6 @@ function normalizeSession(session = {}, planType = "run") {
     && rawSteps != null
     && Number.isFinite(Number(rawSteps))
     && Number(rawSteps) > 0;
-  const rawRpe = source.perceivedExertion;
-  const hasRpe = rawRpe !== "" && rawRpe != null && Number.isFinite(Number(rawRpe));
   return Object.freeze({
     ...cloned,
     activityType: planType,
@@ -495,12 +493,6 @@ function normalizeSession(session = {}, planType = "run") {
         ? String(source.stepsProvenance || "UNKNOWN").toUpperCase()
         : "UNKNOWN",
     } : {}),
-    perceivedExertion: planType === "rest" || !hasRpe
-      ? null
-      : Math.min(10, Math.max(0, Number(rawRpe))),
-    rpeProvenance: planType === "rest" || !hasRpe
-      ? "NOT_REPORTED"
-      : String(source.rpeProvenance || "USER_REPORTED"),
     course: normalizeCourse(source.course),
   });
 }

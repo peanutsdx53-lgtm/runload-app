@@ -305,7 +305,6 @@ const { normalizeRegionalModelSnapshot } = internalModules.primaryRegionalSnapsh
 const { roundNumber, toFiniteNumber } = internalModules.numberUtilities;
 const { normalizePlainText, normalizeSingleLineText, INPUT_LIMITS } = internalModules.inputSafety;
 const { normalizePersonalContext } = internalModules.personalContext;
-const { normalizeRpeProvenance, RPE_PROVENANCE } = internalModules.rpeProvenance;
 
 function isValidLocalDate(value = "") {
   const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -521,16 +520,12 @@ function normalizeRunningRecord(input = {}, options = {}) {
   const distanceKm = isRest ? 0 : roundNumber(toFiniteNumber(input.distanceKm, 0), 2);
   const durationMinutes = isRest ? 0 : toFiniteNumber(input.durationMinutes, 0);
   const steps = isRest ? 0 : Math.round(toFiniteNumber(input.steps, 0));
-  const rawRpe = input.perceivedExertion;
-  const hasRpe = !isRest && present(rawRpe) && Number.isFinite(Number(rawRpe));
-  const perceivedExertion = hasRpe ? Number(rawRpe) : null;
-  const rpeProvenance = isRest ? RPE_PROVENANCE.notReported : normalizeRpeProvenance(input.rpeProvenance, { hasValue: hasRpe, assumeExplicit: options.assumeExplicitRpe === true });
   const existingIds = Array.isArray(options.existingIds) ? options.existingIds : [];
   const id = normalizeSingleLineText(input.id, 100) || createReadableRecordId(date, existingIds);
   const planOutcomeSource = input.planOutcome && typeof input.planOutcome === "object" ? input.planOutcome : {};
   const runningFormat = String(input.runningFormat || "UNKNOWN").toUpperCase();
   return Object.freeze({
-    id, date, activityType, distanceKm, durationMinutes, steps, perceivedExertion, rpeProvenance,
+    id, date, activityType, distanceKm, durationMinutes, steps,
     runningFormat: isRest ? "NOT_APPLICABLE" : ["CONTINUOUS_RUN", "RUN_WALK", "UNKNOWN"].includes(runningFormat) ? runningFormat : "UNKNOWN",
     runWalkRunningDistanceKm: isRest || runningFormat !== "RUN_WALK" ? null : (Number.isFinite(Number(input.runWalkRunningDistanceKm)) && Number(input.runWalkRunningDistanceKm) > 0 ? roundNumber(Number(input.runWalkRunningDistanceKm), 3) : null),
     runWalkRunningDurationMinutes: isRest || runningFormat !== "RUN_WALK" ? null : (Number.isFinite(Number(input.runWalkRunningDurationMinutes)) && Number(input.runWalkRunningDurationMinutes) > 0 ? Number(input.runWalkRunningDurationMinutes) : null),
@@ -571,10 +566,6 @@ function validateRunningRecord(record = {}) {
     if (!Number.isFinite(record.distanceKm) || record.distanceKm <= 0 || record.distanceKm > INPUT_LIMITS.distanceKm) errors.push({ field: "distanceKm", code: "INVALID_DISTANCE", message: "走行記録では、0より大きい距離が必要です。" });
     if (!Number.isFinite(record.durationMinutes) || record.durationMinutes <= 0 || record.durationMinutes > INPUT_LIMITS.durationMinutes) errors.push({ field: "durationMinutes", code: "INVALID_DURATION", message: "走行記録では、0より大きい実走時間が必要です。" });
     if (record.steps < 0 || record.steps > INPUT_LIMITS.steps) errors.push({ field: "steps", code: "INVALID_STEPS", message: "歩数が入力可能な範囲を超えています。" });
-    if (record.perceivedExertion != null && (!Number.isFinite(record.perceivedExertion) || record.perceivedExertion < 0 || record.perceivedExertion > 10)) errors.push({ field: "perceivedExertion", code: "INVALID_EXERTION", message: "きつさは0〜10で入力してください。" });
-    if (!Object.values(RPE_PROVENANCE).includes(record.rpeProvenance)) errors.push({ field: "rpeProvenance", code: "INVALID_RPE_PROVENANCE", message: "きつさの入力状態を確認してください。" });
-    if (record.rpeProvenance === RPE_PROVENANCE.userReported && record.perceivedExertion == null) errors.push({ field: "perceivedExertion", code: "REPORTED_RPE_VALUE_REQUIRED", message: "きつさを入力した状態では0〜10の値が必要です。" });
-    if (record.rpeProvenance === RPE_PROVENANCE.notReported && record.perceivedExertion != null) errors.push({ field: "rpeProvenance", code: "UNREPORTED_RPE_VALUE_CONTRADICTION", message: "きつさの値と入力状態が一致していません。" });
     const surfaceSum = SURFACE_FIELDS.reduce((total, { recordKey }) => total + toFiniteNumber(record.course?.[recordKey], 0), 0);
     if (surfaceSum > 0 && Math.abs(surfaceSum - 100) > 1e-9) errors.push({ field: "course", code: "SURFACE_SUM_NOT_100", message: "路面の合計を100%にしてください。", details: { surfaceSum } });
     if (hasTreadmillOutdoorSurfaceMixFromCourse(record.course || {})) errors.push({ field: "course", code: "TREADMILL_OUTDOOR_MIX_FORBIDDEN", message: "トレッドミルと屋外路面は、同じ走行の路面割合として混ぜて入力できません。" });

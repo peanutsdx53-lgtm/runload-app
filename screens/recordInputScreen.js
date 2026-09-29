@@ -195,7 +195,7 @@ export function renderRecordInputScreen({ services, context }) {
   const savedDraft = !existingExperience && !selectedPlan && !measurement && !startNew ? services.storage.draft.load() : null;
   const editing = Boolean(existingExperience);
   const plannedSession = selectedPlan?.plannedSession || {};
-  const planUsesModelAssumptions = Boolean(plannedSession?.planModelAssumptions?.steps || plannedSession?.planModelAssumptions?.perceivedExertion);
+  const planUsesModelAssumptions = Boolean(plannedSession?.planModelAssumptions?.steps);
   const draftRecord = savedDraft?.record || {};
   const measuredRecord = measurement ? {
     id: "",
@@ -204,8 +204,6 @@ export function renderRecordInputScreen({ services, context }) {
     distanceKm: measurement.distanceKm ?? "",
     durationMinutes: measurement.durationMinutes ?? "",
     steps: "",
-    perceivedExertion: null,
-    rpeProvenance: "NOT_REPORTED",
     runningFormat: plannedSession.runningFormat || "UNKNOWN",
     stepsProvenance: "UNKNOWN",
     course: plannedSession.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
@@ -218,8 +216,6 @@ export function renderRecordInputScreen({ services, context }) {
     distanceKm: plannedSession.distanceKm ?? "",
     durationMinutes: plannedSession.durationMinutes ?? "",
     steps: planUsesModelAssumptions ? "" : plannedSession.steps ?? "",
-    perceivedExertion: null,
-    rpeProvenance: plannedSession.rpeProvenance || "NOT_REPORTED",
     runningFormat: plannedSession.runningFormat || "UNKNOWN",
     stepsProvenance: plannedSession.stepsProvenance || "UNKNOWN",
     course: plannedSession.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
@@ -231,8 +227,6 @@ export function renderRecordInputScreen({ services, context }) {
     distanceKm: draftRecord.distanceKm ?? "",
     durationMinutes: draftRecord.durationMinutes ?? "",
     steps: draftRecord.steps ?? "",
-    perceivedExertion: null,
-    rpeProvenance: draftRecord.rpeProvenance || "NOT_REPORTED",
     runningFormat: draftRecord.runningFormat || "UNKNOWN",
     stepsProvenance: draftRecord.stepsProvenance || "UNKNOWN",
     course: draftRecord.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },

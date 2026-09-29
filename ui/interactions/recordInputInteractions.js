@@ -738,8 +738,6 @@ function readRecordInput(formData, services) {
     distanceKm,
     durationMinutes: numberValue(formData, "durationMinutes"),
     steps: numberValue(formData, "steps"),
-    perceivedExertion: null,
-    rpeProvenance: "NOT_REPORTED",
     runningFormat: String(formData.get("runningFormat") || "UNKNOWN"),
     runWalkRunningDistanceKm: optionalNumberValue(formData, "runWalkRunningDistanceKm"),
     runWalkRunningDurationMinutes: optionalNumberValue(formData, "runWalkRunningDurationMinutes"),

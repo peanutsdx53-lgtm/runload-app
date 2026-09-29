@@ -8,7 +8,6 @@ const { PRIMARY_REGIONAL_V2_REGION_DEFS } = internalModules.primaryRegionalRegio
 const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = internalModules.primaryRegionalResultService;
 const { bodyAreaLateralityLabel } = internalModules.bodyAreaTaxonomy;
 const { summarizePersonalContext } = internalModules.personalContext;
-const { reportedRpeValue } = internalModules.rpeProvenance;
 
 
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
@@ -60,7 +59,6 @@ function rawFacts(record = {}) {
     durationMinutes: record.activityType === "rest" ? null : finiteOrNull(record.durationMinutes),
     steps: record.activityType === "rest" ? null : finiteOrNull(record.steps),
     stepsProvenance: String(record.stepsProvenance || ""),
-    rpe: record.activityType === "rest" ? null : reportedRpeValue(record),
     runningFormat: String(record.runningFormat || ""),
     course: record.course && typeof record.course === "object" ? JSON.parse(JSON.stringify(record.course)) : {},
   });
@@ -143,19 +141,12 @@ function modelReference(experience, regionId) {
   const isRest = experience?.record?.activityType === "rest";
   const total = totalReference(experience);
   const regional = regionalReference(experience, regionId);
-  const rpeWasReported = reportedRpeValue(experience?.record || {}) != null;
-  const internal = experience?.v27ResultRecord?.result?.internal;
   return Object.freeze({
     modelVersion: String(experience?.regionalV2ResultRecord?.model_version || experience?.v27ResultRecord?.model_version || ""),
     primaryRegionalV2: experience?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION,
     state: isRest ? "REST" : total || regional.state === "SUPPORTED_NUMERIC" ? "RUN" : "NO_NUMERIC_RESULT",
     total,
     regional,
-    internalResponse: isRest ? null : Object.freeze({
-      state: rpeWasReported ? String(internal?.state || "UNKNOWN") : "UNKNOWN",
-      srpeAu: rpeWasReported ? finiteOrNull(internal?.srpe_au) : null,
-      separateFromRunFactModel: internal?.separate_from_objective_model === true,
-    }),
   });
 }
 
@@ -194,7 +185,6 @@ function recentFacts(allExperiences, target, regionId) {
         regionalValue: compared.directDeltaAllowed ? regional.value : null,
         regionalDirectComparable: compared.directDeltaAllowed,
         regionalExclusionReasons: compared.directDeltaAllowed ? [] : [compared.reason || "SEMANTIC_OR_MODEL_MISMATCH"],
-        rpe: reportedRpeValue(item.record),
         exactObservations: normalizeExactObservations(item.feedback || {}),
       });
     });
@@ -308,7 +298,6 @@ function createStandardConsultationText(report) {
     lines.push(regionalText(report.modelReference.regional));
     lines.push(exposureText(report.modelReference.regional?.exposure));
     lines.push("部位の目安は、その部位自身の固定基準100と比較します。走行距離は数値へ掛けません。安全値・正常値・初心者平均ではなく、別の部位との大小比較にも使いません。");
-    if (report.rawFacts.rpe != null) lines.push(`走り全体のきつさ（RPE）：${report.rawFacts.rpe}/10（数値表示とは分けて記載）`);
   } else if (report.modelReference.state === "REST") {
     lines.push("数値表示：休養記録のため走行の目安なし");
   } else {
@@ -327,8 +316,7 @@ function createDetailedConsultationText(report) {
     const regional = item.regionalDirectComparable && hasFiniteValue(item.regionalValue)
       ? `${regionLabel}の部位の目安 ${Math.round(item.regionalValue * 10) / 10}`
       : `${regionLabel}の部位の目安 比較なし`;
-    const rpe = item.rpe == null ? "" : `／RPE ${item.rpe}`;
-    return `- ${item.date}：${item.activity}／${total}／${regional}${rpe}`;
+    return `- ${item.date}：${item.activity}／${total}／${regional}`;
   });
   return `${standard}\n\n最近の保存記録：\n${recent.join("\n")}\n\n部位の目安の差は、同じ部位・同じ計算方法・同じ基準で比べられる記録だけで扱います。`;
 }
