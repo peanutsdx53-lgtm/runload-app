@@ -1,0 +1,254 @@
+name: RunLoad Stage 2B2 gated facts-only plan preview
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage2b2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "e86e9f928225a4c9b04d5b9d5e54b79e23382985"
+
+      - name: Replace old V27 plan preview with current fact preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > core/internal/planPreview.js <<'EOF'
+          import "./historyWorkflow.js";
+          import { internalModules } from "./modules.js";
+
+          // ===== core/planning/planFactPreview.js =====
+          {
+          const moduleExports = Object.create(null);
+          const { SURFACE_FIELDS } = internalModules.modelConstants;
+          const { validateRunningRecordInput } = internalModules.inputValidation;
+
+          const GRADE_KNOWLEDGE = new Set(["UNKNOWN", "KNOWN_FLAT", "KNOWN_PROFILE"]);
+          const SURFACE_CLASSES = new Set([
+            "REF_HARD_EVEN_STABLE",
+            "DRY_STABLE_GRASS_TURF",
+            "DEEP_DRY_SOFT_SAND",
+            "EXPLICIT_UNEVEN",
+            "KNOWN_OTHER",
+            "UNKNOWN",
+          ]);
+          const RUNNING_FORMATS = new Set(["CONTINUOUS_RUN", "RUN_WALK", "UNKNOWN"]);
+          const PLAN_FACT_PREVIEW_VERSION = "plan-facts-v1";
+
+          function finiteNumber(value, fallback = 0) {
+            const number = Number(value);
+            return Number.isFinite(number) ? number : fallback;
+          }
+
+          function provided(value) {
+            return value !== undefined && value !== null && value !== "";
+          }
+
+          function validateRawPlanSession(session = {}) {
+            const errors = [];
+            const activityType = String(session?.activityType || "run");
+            if (!["run", "rest"].includes(activityType)) {
+              errors.push({ field: "activityType", code: "INVALID_PLAN_ACTIVITY_TYPE", message: "予定の種類を選び直してください。" });
+            }
+            if (activityType !== "rest") {
+              const runningFormat = String(session?.runningFormat || "UNKNOWN").toUpperCase();
+              if (!RUNNING_FORMATS.has(runningFormat)) {
+                errors.push({ field: "runningFormat", code: "INVALID_PLAN_RUNNING_FORMAT", message: "予定の走行形式を選び直してください。" });
+              }
+              const course = session?.course && typeof session.course === "object" ? session.course : {};
+              const gradeKnowledge = String(course.gradeKnowledge || "UNKNOWN").toUpperCase();
+              if (!GRADE_KNOWLEDGE.has(gradeKnowledge)) {
+                errors.push({ field: "course.gradeKnowledge", code: "INVALID_PLAN_GRADE_KNOWLEDGE", message: "予定の坂道の入力方法を選び直してください。" });
+              }
+              const modelSurfaceClass = String(course.modelSurfaceClass || "UNKNOWN").toUpperCase();
+              if (!SURFACE_CLASSES.has(modelSurfaceClass)) {
+                errors.push({ field: "course.modelSurfaceClass", code: "INVALID_PLAN_SURFACE_CLASS", message: "予定の路面材質を選び直してください。" });
+              }
+              const surfaceValues = SURFACE_FIELDS.map(({ recordKey }) => Number(course[recordKey] || 0));
+              if (surfaceValues.some((value) => !Number.isFinite(value) || value < 0 || value > 100)) {
+                errors.push({ field: "course", code: "INVALID_PLAN_SURFACE_SHARE", message: "予定の路面割合を0〜100で入力してください。" });
+              } else {
+                const total = surfaceValues.reduce((sum, value) => sum + value, 0);
+                if (total > 0 && Math.abs(total - 100) > 0.01) {
+                  errors.push({ field: "course", code: "PLAN_SURFACE_SUM_NOT_100", message: "予定の路面割合の合計を100%にしてください。" });
+                }
+              }
+              ["upPercent", "downPercent", "upGradePercent", "downGradePercent"].forEach((field) => {
+                if (!provided(course[field])) return;
+                const value = Number(course[field]);
+                if (!Number.isFinite(value) || value < 0 || value > 100) {
+                  errors.push({ field: `course.${field}`, code: "INVALID_PLAN_GRADE_VALUE", message: "予定の坂道割合・代表勾配は0〜100の数値で入力してください。" });
+                }
+              });
+            }
+            return Object.freeze({ ok: errors.length === 0, errors: Object.freeze(errors) });
+          }
+
+          function normalizeCourse(course = {}) {
+            const source = course && typeof course === "object" ? course : {};
+            const gradeKnowledge = String(source.gradeKnowledge || "UNKNOWN").toUpperCase();
+            const modelSurfaceClass = String(source.modelSurfaceClass || "UNKNOWN").toUpperCase();
+            const normalized = {
+              ...JSON.parse(JSON.stringify(source)),
+              name: String(source.name || "").trim(),
+              gradeKnowledge: GRADE_KNOWLEDGE.has(gradeKnowledge) ? gradeKnowledge : "UNKNOWN",
+              upPercent: finiteNumber(source.upPercent),
+              downPercent: finiteNumber(source.downPercent),
+              upGradePercent: finiteNumber(source.upGradePercent),
+              downGradePercent: finiteNumber(source.downGradePercent),
+              surfaceInputMode: ["UNKNOWN", "SINGLE", "MIXED"].includes(String(source.surfaceInputMode || "").toUpperCase()) ? String(source.surfaceInputMode).toUpperCase() : "UNKNOWN",
+              modelSurfaceClass: SURFACE_CLASSES.has(modelSurfaceClass) ? modelSurfaceClass : "UNKNOWN",
+              modelSurfaceProfile: Array.isArray(source.modelSurfaceProfile)
+                ? source.modelSurfaceProfile.map((item) => ({ sharePercent: finiteNumber(item?.sharePercent), surfaceClass: String(item?.surfaceClass || "UNKNOWN") }))
+                : [],
+            };
+            SURFACE_FIELDS.forEach(({ recordKey }) => { normalized[recordKey] = finiteNumber(source[recordKey]); });
+            return Object.freeze(normalized);
+          }
+
+          function normalizePlanFactSession(session = {}) {
+            const activityType = String(session?.activityType || "run") === "rest" ? "rest" : "run";
+            const runningFormat = String(session?.runningFormat || "UNKNOWN").toUpperCase();
+            return Object.freeze({
+              activityType,
+              distanceKm: activityType === "rest" ? 0 : finiteNumber(session?.distanceKm),
+              durationMinutes: activityType === "rest" ? 0 : finiteNumber(session?.durationMinutes),
+              runningFormat: activityType === "rest" ? "NOT_APPLICABLE" : RUNNING_FORMATS.has(runningFormat) ? runningFormat : "UNKNOWN",
+              course: activityType === "rest" ? normalizeCourse({}) : normalizeCourse(session?.course),
+            });
+          }
+
+          function clonePlanFactPreview(preview) {
+            return preview == null ? preview : JSON.parse(JSON.stringify(preview));
+          }
+
+          function invalidPlanFactPreview(session, validation, message = "") {
+            return Object.freeze({
+              ok: false,
+              state: "INVALID",
+              modelVersion: PLAN_FACT_PREVIEW_VERSION,
+              session,
+              facts: null,
+              validation,
+              message: message || validation?.errors?.map((item) => item.message || item.code).join(" ") || "予定入力を確認してください。",
+            });
+          }
+
+          function previewRecord(session, scheduledDate, previewId) {
+            return Object.freeze({
+              id: previewId,
+              date: scheduledDate,
+              activityType: session.activityType,
+              distanceKm: session.distanceKm,
+              durationMinutes: session.durationMinutes,
+              runningFormat: session.runningFormat,
+              stepsProvenance: "UNKNOWN",
+              course: session.course,
+            });
+          }
+
+          function createPlanFactPreview({ session: rawSession = {}, scheduledDate = "", previewId = "plan-fact-preview" } = {}) {
+            const session = normalizePlanFactSession(rawSession);
+            const rawValidation = validateRawPlanSession(rawSession);
+            if (!rawValidation.ok) return invalidPlanFactPreview(session, rawValidation);
+            if (session.activityType === "rest") {
+              return Object.freeze({
+                ok: true,
+                state: "REST",
+                modelVersion: PLAN_FACT_PREVIEW_VERSION,
+                session,
+                facts: Object.freeze({ activityType: "rest" }),
+                validation: Object.freeze({ ok: true, errors: Object.freeze([]) }),
+                message: "休養予定として保存します。",
+              });
+            }
+            const record = previewRecord(session, scheduledDate, previewId);
+            const validation = validateRunningRecordInput(record);
+            if (!validation.ok) return invalidPlanFactPreview(session, validation);
+            return Object.freeze({
+              ok: true,
+              state: "RUN",
+              modelVersion: PLAN_FACT_PREVIEW_VERSION,
+              session,
+              facts: Object.freeze({
+                activityType: "run",
+                distanceKm: session.distanceKm,
+                durationMinutes: session.durationMinutes,
+                runningFormat: session.runningFormat,
+                course: session.course,
+              }),
+              validation,
+              message: "入力した予定条件を事実として確認します。数値による負荷予測は行いません。",
+            });
+          }
+
+          moduleExports["validateRawPlanSession"] = validateRawPlanSession;
+          moduleExports["normalizePlanFactSession"] = normalizePlanFactSession;
+          moduleExports["createPlanFactPreview"] = createPlanFactPreview;
+          moduleExports["clonePlanFactPreview"] = clonePlanFactPreview;
+          moduleExports["PLAN_FACT_PREVIEW_VERSION"] = PLAN_FACT_PREVIEW_VERSION;
+          internalModules.planPreview = moduleExports;
+          }
+          EOF
+          sed -i 's/^          //' core/internal/planPreview.js
+
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('tests/currentOnlyRecordSchema.test.mjs'); s=p.read_text()
+          anchor="const appEntry = fs.readFileSync('app.js', 'utf8');"
+          if anchor not in s: raise SystemExit('test anchor missing')
+          s=s.replace(anchor,anchor+"\nconst planPreview = fs.readFileSync('core/internal/planPreview.js', 'utf8');",1)
+          marker="\nconst failed = results.filter((item) => item.status !== 'PASS');"
+          block="""\n\ntest('PLAN-PREVIEW-IS-CURRENT-FACTS-ONLY', () => {\n  assert.ok(planPreview.includes('PLAN_FACT_PREVIEW_VERSION'));\n  assert.ok(planPreview.includes('数値による負荷予測は行いません'));\n  assert.ok(!planPreview.includes('legacyLoad'));\n  assert.ok(!planPreview.includes('V27_'));\n  assert.ok(!planPreview.includes('createV27PlanPreview'));\n  assert.ok(!planPreview.includes('calculateV27Session'));\n  assert.ok(!planPreview.includes('rpeProvenance'));\n});\n"""
+          if marker not in s: raise SystemExit('test insertion anchor missing')
+          p.write_text(s.replace(marker,block+marker,1))
+          PY
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do node "$test_file"; done
+
+      - name: Check all JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t jsfiles < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          test "${#jsfiles[@]}" -eq 164
+          for file in "${jsfiles[@]}"; do node --check "$file" >/dev/null; done
+
+      - name: Verify exact change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          printf '%s\n' 'core/internal/planPreview.js' 'tests/currentOnlyRecordSchema.test.mjs' | sort > /tmp/expected.txt
+          git diff --cached --name-only | sort > /tmp/actual.txt
+          diff -u /tmp/expected.txt /tmp/actual.txt
+
+      - name: Commit verified Stage 2B2
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Stage 2B2: make plan preview facts-only'
+          git push origin HEAD:main
