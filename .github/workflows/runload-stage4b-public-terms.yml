@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "8ecd3e632a1ff2af4b40518c49d442e2f0bc04f8"
+          test "$(git rev-parse HEAD^)" = "983a054ddefc4d1c9f56eebd1c894764e5a94e46"
 
       - name: Capture calculation and storage core hashes
         shell: bash
