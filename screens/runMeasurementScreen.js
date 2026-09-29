@@ -44,7 +44,7 @@ export function renderRunMeasurementScreen({ services, context }) {
   const validPlan = plan && plan.planType !== "rest" && plan.plannedSession?.activityType !== "rest" ? plan : null;
   const targetPace = validPlan ? plannedPaceSecondsPerKm(validPlan) : null;
 
-  return `<div class="screen screen--run-measurement run-measurement run-measurement--mobile" data-run-measurement data-plan-id="${escapeHtml(validPlan?.id || "")}" data-target-pace="${escapeHtml(targetPace || "")}">
+  return `<div class="screen screen--run-measurement run-measurement run-measurement--mobile" data-run-measurement data-plan-id="${escapeHtml(validPlan?.id || "")}" data-target-pace="${escapeHtml(targetPace || "")}" data-gps-quality="waiting">
     <section class="run-measurement-prep" data-measurement-prep>
       <header class="run-measurement__header run-measurement-prep__header">
         <a href="#/home" class="run-measurement__back">← ホーム</a>
@@ -99,7 +99,11 @@ export function renderRunMeasurementScreen({ services, context }) {
         <span data-measurement-goal-caption>自由に走っています</span>
       </section>
 
-      <section class="run-measurement__map-wrap run-measurement-active__map-wrap">
+      <section class="run-measurement__map-wrap run-measurement-active__map-wrap" data-measurement-map-panel>
+        <div class="run-measurement-active__map-toolbar">
+          <strong>走行地図</strong>
+          <button type="button" data-action="toggle-measurement-map" aria-expanded="true">地図を隠す</button>
+        </div>
         <div id="run-measurement-map" class="run-measurement__map" role="img" aria-label="現在地と走行軌跡を表示する地図">
           <div class="run-measurement__map-placeholder"><strong>現在地を取得しています</strong><span>GPSを受信すると地図を表示します。</span></div>
         </div>
@@ -113,10 +117,13 @@ export function renderRunMeasurementScreen({ services, context }) {
         <article><small>平均ペース</small><strong><span data-measurement-average-pace>—</span> /km</strong></article>
       </section>
 
-      <section class="run-measurement-auto-facts" aria-label="自動整理した測定値">
-        <div><small>推定歩数</small><strong><span data-measurement-step-value>—</span> <b>歩</b></strong><em data-measurement-step-status>端末モーションから推定します。</em></div>
-        <div><small>推定消費エネルギー</small><strong><span data-measurement-energy-value>—</span> <b>kcal</b></strong><em data-measurement-energy-status>GPS取得後に表示します。</em></div>
-      </section>
+      <details class="run-measurement-active__secondary">
+        <summary><strong>自動整理</strong><span>歩数・消費エネルギー</span></summary>
+        <section class="run-measurement-auto-facts" aria-label="自動整理した測定値">
+          <div><small>推定歩数</small><strong><span data-measurement-step-value>—</span> <b>歩</b></strong><em data-measurement-step-status>端末モーションから推定します。</em></div>
+          <div><small>推定消費エネルギー</small><strong><span data-measurement-energy-value>—</span> <b>kcal</b></strong><em data-measurement-energy-status>GPS取得後に表示します。</em></div>
+        </section>
+      </details>
 
       <div class="run-measurement__warning" data-pace-warning role="status" aria-live="assertive" hidden><strong>予定より速いペースが続いています</strong><span>現在ペースを確認してください。</span></div>
 
@@ -136,19 +143,29 @@ export function renderRunMeasurementScreen({ services, context }) {
     <section class="run-measurement-post" data-measurement-post hidden>
       <header class="run-measurement__header"><span></span><strong>測定終了</strong><span></span></header>
       <main class="run-measurement-post__body">
-        <section class="run-measurement-post__summary"><p class="eyebrow">DONE</p><h1>走行を測定しました</h1><div class="run-measurement-post__facts"><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span><span><small>推定歩数</small><strong data-measurement-post-steps>—</strong><em data-measurement-post-step-status>端末モーション利用時のみ</em></span><span class="run-measurement-post__energy"><small>推定消費エネルギー</small><strong><span data-measurement-post-energy>—</span> kcal</strong><em data-measurement-post-energy-status>推定できませんでした。</em></span></div></section>
+        <section class="run-measurement-post__summary"><p class="eyebrow">DONE</p><h1>走行を測定しました</h1><div class="run-measurement-post__facts run-measurement-post__facts--primary"><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span></div></section>
 
-        <section class="run-measurement-course-analysis">
-          <div><small>GPSから自動整理</small><strong>コース条件</strong></div>
-          <p data-measurement-post-course>解析しています。</p>
-          <span data-measurement-post-elevation>高度情報が十分な場合だけ坂道を自動入力します。</span>
-          <em>路面はGPSから決めず、記録画面で未確認のまま残します。</em>
-        </section>
+        <details class="run-measurement-post__auto-details">
+          <summary><span><small>自動整理</small><strong>補助記録を確認</strong></span><b>歩数・消費エネルギー・コース</b></summary>
+          <div class="run-measurement-post__auto-body">
+            <div class="run-measurement-post__facts run-measurement-post__facts--secondary"><span><small>推定歩数</small><strong data-measurement-post-steps>—</strong><em data-measurement-post-step-status>端末モーション利用時のみ</em></span><span class="run-measurement-post__energy"><small>推定消費エネルギー</small><strong><span data-measurement-post-energy>—</span> kcal</strong><em data-measurement-post-energy-status>推定できませんでした。</em></span></div>
+            <section class="run-measurement-course-analysis">
+              <div><small>GPSから自動整理</small><strong>コース条件</strong></div>
+              <p data-measurement-post-course>解析しています。</p>
+              <span data-measurement-post-elevation>高度情報が十分な場合だけ坂道を自動入力します。</span>
+              <em>路面はGPSから決めず、記録画面で未確認のまま残します。</em>
+            </section>
+          </div>
+        </details>
 
         ${fatigueScaleMarkup("after")}
-        <p class="run-measurement__status" data-measurement-post-status role="status" aria-live="polite">疲労感は任意です。そのまま記録入力へ進めます。</p>
-        <button type="button" class="run-measurement__start" data-action="record-post-fatigue" disabled>この値を記録して次へ</button>
-        <button type="button" class="run-measurement-post__skip" data-action="skip-post-fatigue">記録せず次へ</button>
+        <p class="run-measurement-post__fatigue-comparison" data-measurement-fatigue-comparison hidden></p>
+        <section class="run-measurement-post__completion">
+          <div><small>次の操作</small><strong>記録を完成する</strong></div>
+          <p class="run-measurement__status" data-measurement-post-status role="status" aria-live="polite">疲労感は任意です。そのまま記録入力へ進めます。</p>
+          <button type="button" class="run-measurement__start" data-action="record-post-fatigue" disabled>疲労感を保存して記録を完成する</button>
+          <button type="button" class="run-measurement-post__skip" data-action="skip-post-fatigue">疲労感なしで記録を完成する</button>
+        </section>
       </main>
     </section>
   </div>`;

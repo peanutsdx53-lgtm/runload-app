@@ -1,5 +1,13 @@
 # RunLoad Mobile Release History
 
+## APP v2026.09.30.14 — Mobile Phase 7
+- Smartphone GPS active view: keeps one dominant goal metric while moving automatic step/energy estimates into a secondary disclosure.
+- Smartphone GPS active view: adds a collapsible route map and a compact GPS quality badge.
+- Smartphone GPS active view: keeps pause and finish controls reachable with a sticky bottom action surface.
+- Smartphone post-run view: separates primary time/distance results from automatically organized supplemental facts.
+- Smartphone post-run view: shows before/after fatigue values together when both are selected and clarifies the final record-completion action.
+- PC presentation and scientific calculation contracts are intentionally unchanged.
+
 ## APP v2026.09.30.13 — Mobile Phase 6
 - Smartphone plan: separates editing from the save-review step so the confirmation panel opens only when requested.
 - Smartphone plan: makes run/rest selection larger and easier to distinguish.

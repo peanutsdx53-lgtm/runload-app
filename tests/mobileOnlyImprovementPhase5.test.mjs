@@ -34,6 +34,6 @@ test("mobile body-region trend points are interactive", () => {
 
 test("Phase 5 remains present in the current or later mobile release", () => {
   const current=parseVersion(version);
-  assert.ok(atLeast(current,"2026.09.30.13"));
+  assert.ok(atLeast(current,"2026.09.30.14"));
   assert.ok(worker.includes(`running-record-app-runtime-${current}`));
 });

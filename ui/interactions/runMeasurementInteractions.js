@@ -152,6 +152,9 @@ export function bindRunMeasurement({ router, services }) {
   const postCourse = root.querySelector("[data-measurement-post-course]");
   const postElevation = root.querySelector("[data-measurement-post-elevation]");
   const postRecordButton = root.querySelector('[data-action="record-post-fatigue"]');
+  const mapPanel = root.querySelector("[data-measurement-map-panel]");
+  const mapToggleButton = root.querySelector('[data-action="toggle-measurement-map"]');
+  const fatigueComparison = root.querySelector("[data-measurement-fatigue-comparison]");
 
   const targetMinutesInput = root.querySelector("[data-measurement-target-minutes]");
   const targetDistanceInput = root.querySelector("[data-measurement-target-distance]");
@@ -163,8 +166,20 @@ export function bindRunMeasurement({ router, services }) {
   const stepEstimator = createMotionStepEstimator(window);
 
   const beforeFatigue = createFatigueControl(root.querySelector('[data-measurement-fatigue-phase="before"]'));
-  const afterFatigue = createFatigueControl(root.querySelector('[data-measurement-fatigue-phase="after"]'), ({ touched }) => {
+  function renderFatigueComparison({ touched, value }) {
+    if (!fatigueComparison) return;
+    fatigueComparison.hidden = !touched;
+    if (!touched) {
+      fatigueComparison.textContent = "";
+      return;
+    }
+    const before = beforeFatigue?.hasSelection() ? beforeFatigue.value() : null;
+    fatigueComparison.textContent = before == null ? `走った後 ${value}` : `走る前 ${before} → 走った後 ${value}`;
+  }
+
+  const afterFatigue = createFatigueControl(root.querySelector('[data-measurement-fatigue-phase="after"]'), ({ touched, value }) => {
     if (postRecordButton) postRecordButton.disabled = !touched;
+    renderFatigueComparison({ touched, value });
   });
 
   let watchId = null;
@@ -199,6 +214,26 @@ export function bindRunMeasurement({ router, services }) {
     if (!node) return;
     node.textContent = message;
     node.classList.toggle("is-error", error);
+  }
+
+  function setGpsStatus(message, quality = "waiting") {
+    if (gpsStatus) gpsStatus.textContent = message;
+    root.dataset.gpsQuality = quality;
+  }
+
+  function gpsQuality(accuracyM) {
+    const accuracy = Number(accuracyM);
+    if (!Number.isFinite(accuracy)) return { label: "GPS 受信中", quality: "waiting" };
+    if (accuracy <= 15) return { label: `GPS 良好 ±${Math.round(accuracy)}m`, quality: "good" };
+    if (accuracy <= 30) return { label: `GPS 安定 ±${Math.round(accuracy)}m`, quality: "fair" };
+    return { label: `GPS 弱い ±${Math.round(accuracy)}m`, quality: "weak" };
+  }
+
+  function toggleMapPanel() {
+    if (!mapPanel || !mapToggleButton) return;
+    const collapsed = mapPanel.classList.toggle("is-collapsed");
+    mapToggleButton.setAttribute("aria-expanded", String(!collapsed));
+    mapToggleButton.textContent = collapsed ? "地図を表示" : "地図を隠す";
   }
 
   function activeElapsedMs() {
@@ -391,8 +426,8 @@ export function bindRunMeasurement({ router, services }) {
     const evaluation = evaluateTrackPoint(lastAcceptedPoint, point);
     if (!evaluation.accepted) {
       rejectedPointCount += 1;
-      if (evaluation.reason === "LOW_ACCURACY" && gpsStatus) {
-        gpsStatus.textContent = `GPS ±${Math.round(Number(point?.accuracyM || 0))}m`;
+      if (evaluation.reason === "LOW_ACCURACY") {
+        setGpsStatus(`GPS 弱い ±${Math.round(Number(point?.accuracyM || 0))}m`, "weak");
       }
       return;
     }
@@ -406,10 +441,8 @@ export function bindRunMeasurement({ router, services }) {
     map ||= createRunMeasurementMap(mapContainer, { initialZoom: 16 });
     map?.setCenter(accepted);
     map?.setTrack(track);
-    if (gpsStatus) {
-      const accuracy = Number.isFinite(Number(accepted.accuracyM)) ? `±${Math.round(accepted.accuracyM)}m` : "精度不明";
-      gpsStatus.textContent = `GPS ${accuracy}`;
-    }
+    const quality = gpsQuality(accepted.accuracyM);
+    setGpsStatus(quality.label, quality.quality);
 
     const currentPace = rollingPaceSecondsPerKm(track);
     if (currentPaceNode) currentPaceNode.textContent = formatPace(currentPace);
@@ -431,7 +464,7 @@ export function bindRunMeasurement({ router, services }) {
   function handlePositionError(error) {
     rejectedPointCount += 1;
     setMessage(activeStatus, geolocationErrorMessage(error), true);
-    if (gpsStatus) gpsStatus.textContent = "GPSエラー";
+    setGpsStatus("GPS エラー", "error");
   }
 
   function beginWatch() {
@@ -700,6 +733,7 @@ export function bindRunMeasurement({ router, services }) {
   root.querySelector('[data-action="finish-from-goal"]')?.addEventListener("click", finish);
   root.querySelector('[data-action="continue-after-goal"]')?.addEventListener("click", () => { if (goalReached) goalReached.hidden = true; });
   root.querySelector('[data-action="cancel-measurement"]')?.addEventListener("click", cancel);
+  mapToggleButton?.addEventListener("click", toggleMapPanel);
   postRecordButton?.addEventListener("click", recordPostFatigue);
   root.querySelector('[data-action="skip-post-fatigue"]')?.addEventListener("click", navigateToRecord);
   root.querySelector('[data-action="map-zoom-in"]')?.addEventListener("click", () => map?.setZoom((map?.getZoom() || 16) + 1));
