@@ -1,0 +1,82 @@
+name: RunLoad Stage 1A1 gated verifier
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage1a1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-apply:
+    if: github.event.head_commit.message == 'Stage 1A1: install gated verifier'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 3
+
+      - name: Verify staged ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "0e196e98f6ab633571517aae096a0fa542034062"
+          test "$(git rev-parse HEAD^^)" = "57b9162a851ed168b57c92c1d5195c9bbeda88b7"
+
+      - name: Apply reviewed Stage 1A1 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git apply --check -p1 .github/runload-stage1a1.patch
+          git apply -p1 .github/runload-stage1a1.patch
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do
+            echo "[TEST] $test_file"
+            node "$test_file"
+          done
+
+      - name: Check all JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t jsfiles < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          test "${#jsfiles[@]}" -eq 164
+          for file in "${jsfiles[@]}"; do
+            node --check "$file" >/dev/null
+          done
+          echo "syntax: ${#jsfiles[@]}/${#jsfiles[@]} PASS"
+
+      - name: Verify exact staged change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/runload-stage1a1.patch
+          git add -A
+          printf '%s\n' \
+            '.github/runload-stage1a1.patch' \
+            'core/internal/applicationDomain.js' \
+            'core/internal/consultationReport.js' \
+            'core/internal/inputSupport.js' \
+            'core/internal/primaryModelEngine.js' \
+            'screens/recordInputScreen.js' \
+            'ui/interactions/recordInputInteractions.js' | sort > /tmp/expected.txt
+          git diff --cached --name-only | sort > /tmp/actual.txt
+          diff -u /tmp/expected.txt /tmp/actual.txt
+
+      - name: Commit verified source changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Stage 1A1: remove active RPE record paths'
+          git push origin HEAD:main
