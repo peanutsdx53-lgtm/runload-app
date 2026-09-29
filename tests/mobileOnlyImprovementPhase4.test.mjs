@@ -8,7 +8,7 @@ const version = read("ui/appVersionStatus.js");
 const worker = read("service-worker.js");
 const results = [];
 function test(name, fn) { try { fn(); results.push({ name, status: "PASS" }); } catch (error) { results.push({ name, status: "FAIL", message: error.message }); } }
-test("app version advances for Phase 4", () => { assert.match(version, /APP_VERSION = "2026\.09\.29\.11"/); assert.match(worker, /running-record-app-runtime-2026\.09\.29\.11/); });
+test("app version advances for Phase 4", () => { assert.match(version, /APP_VERSION = "2026\.09\.29\.12"/); assert.match(worker, /running-record-app-runtime-2026\.09\.29\.12/); });
 test("condition comparison exposes a mobile-only one-condition picker", () => { assert.ok(screen.includes("data-mobile-simulation-picker")); for (const tab of ["distance","time","course","format"]) assert.ok(screen.includes(`data-simulation-mobile-tab="${tab}"`)); assert.ok(screen.includes("何を変えて比べる？")); });
 test("desktop keeps all condition sections while mobile narrows to one", () => { assert.ok(interactions.includes("syncMobileSimulationPicker")); assert.ok(interactions.includes("if(!mobile){mobileSections.forEach")); assert.ok(interactions.includes("section.hidden=String(section.dataset.simulationMobileSection")); });
 test("multiple-condition caution is mobile-only", () => { assert.ok(screen.includes("data-simulation-multi-warning")); assert.ok(interactions.includes("changedItems.length>1")); assert.ok(interactions.includes("Boolean(mobileMedia?.matches)")); });

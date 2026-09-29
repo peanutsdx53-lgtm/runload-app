@@ -1,5 +1,13 @@
 # RunLoad Mobile Release History
 
+## APP v2026.09.29.12 — Mobile Phase 5
+- Smartphone result: body-map touch targets are widened without changing the visible body-map geometry.
+- Smartphone result: the body-map hint states that 100 is each region's own reference, not a score or ranking.
+- Smartphone body-region detail: the current value is paired with difference from reference 100, previous value, and difference from the previous comparable record.
+- Smartphone body-region detail: tapping a trend point reveals the selected saved record's date, region value, distance, and duration context.
+- Smartphone body-region detail: duplicated comparison text is reduced so the locator, current value, and comparison cards remain easy to scan.
+- PC presentation and scientific calculation contracts are intentionally unchanged.
+
 ## APP v2026.09.29.11 — Mobile Phase 4
 - Smartphone condition comparison: starts from a four-choice selector for distance, time, course, or running style.
 - Smartphone condition comparison: only the selected condition editor is shown at one time.

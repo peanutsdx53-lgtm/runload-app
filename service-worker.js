@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.29.11";
+const CACHE_NAME = "running-record-app-runtime-2026.09.29.12";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -127,6 +127,7 @@ const PRECACHE_URLS = [
   "./ui/interactions/gpxAnalysisInteractions.js",
   "./ui/interactions/recordInputInteractions.js",
   "./ui/interactions/resultInteractions.js",
+  "./ui/interactions/bodyPartDetailInteractions.js",
   "./ui/interactions/settingsInteractions.js",
   "./ui/mobileQuickToolsStore.js",
   "./ui/mobilePhotoMemoStore.js",

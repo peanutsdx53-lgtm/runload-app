@@ -6,6 +6,7 @@ import { bindHome } from "./interactions/homeInteractions.js";
 import { bindPlan } from "./interactions/planInteractions.js";
 import { bindRecordInput } from "./interactions/recordInputInteractions.js";
 import { bindResult } from "./interactions/resultInteractions.js";
+import { bindBodyPartDetail } from "./interactions/bodyPartDetailInteractions.js";
 import { bindSettings } from "./interactions/settingsInteractions.js";
 import { bindSimulation } from "./interactions/simulationInteractions.js";
 import { bindGpxAnalysis } from "./interactions/gpxAnalysisInteractions.js";
@@ -21,6 +22,7 @@ const SCREEN_INTERACTION_BINDERS = Object.freeze({
   "course-library": bindCourseLibrary,
   "course-editor": bindCourseEditor,
   result: bindResult,
+  "body-part-detail": bindBodyPartDetail,
   history: bindHistory,
   plan: bindPlan,
   consultation: bindConsultation,
