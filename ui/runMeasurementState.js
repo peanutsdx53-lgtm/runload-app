@@ -186,8 +186,10 @@ export function findSavedRunMeasurement(recordId = "") {
   return listSavedRunMeasurements().find((item) => item.recordId === String(recordId || "")) || null;
 }
 
-export function commitPendingRunMeasurement(recordId = "") {
+export function commitPendingRunMeasurement(recordId = "", options = {}) {
   const id = String(recordId || "").trim();
+  const runningFormat = String(options?.runningFormat || "UNKNOWN").toUpperCase();
+  const keepContinuousRunEnergy = runningFormat === "CONTINUOUS_RUN";
   const pending = peekPendingRunMeasurement();
   if (!pending) return { ok: true, saved: false, reason: "NO_PENDING_MEASUREMENT" };
   if (!id) return { ok: false, saved: false, code: "RUN_MEASUREMENT_RECORD_ID_REQUIRED" };
@@ -211,7 +213,7 @@ export function commitPendingRunMeasurement(recordId = "") {
     endedAt: String(pending.endedAt || ""),
     distanceKm: Number(pending.distanceKm || 0),
     durationMinutes: Number(pending.durationMinutes || 0),
-    energyEstimate: normalizeEnergyEstimate(pending.energyEstimate),
+    energyEstimate: keepContinuousRunEnergy ? normalizeEnergyEstimate(pending.energyEstimate) : null,
     stepEstimate: normalizeStepEstimate(pending.stepEstimate),
     courseAnalysis: normalizeCourseAnalysis(pending.courseAnalysis),
     planId: String(pending.planId || ""),

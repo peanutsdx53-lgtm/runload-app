@@ -123,6 +123,12 @@ test('ESTIMATED-ENERGY-IS-SMARTPHONE-MEASUREMENT-ONLY', () => {
   assert.ok(ergonomicsCss.includes('.run-measurement-energy'));
 });
 
+test('LIVE-ENERGY-IS-LABELED-AS-PROVISIONAL-CONTINUOUS-RUN-ESTIMATE', () => {
+  assert.ok(interactions.includes('連続して走った場合として仮推定しています。走り＋歩きの記録には保存しません。'));
+  assert.ok(state.includes('keepContinuousRunEnergy'));
+  assert.ok(state.includes('runningFormat === "CONTINUOUS_RUN"'));
+});
+
 test('ENERGY-MODEL-USES-CONTROLLED-COMPENDIUM-BOUNDARY', () => {
   assert.ok(energy.includes('adult-compendium-2024-running-speed-v1'));
   assert.ok(energy.includes('MET × 3.5 × body mass (kg) ÷ 200'));
@@ -136,7 +142,7 @@ test('ENERGY-MODEL-USES-CONTROLLED-COMPENDIUM-BOUNDARY', () => {
 test('ENERGY-METADATA-IS-PRESERVED-SEPARATELY', () => {
   assert.ok(state.includes('function normalizeEnergyEstimate(value)'));
   assert.ok(state.includes('energyEstimate: normalizeEnergyEstimate(payload.energyEstimate)'));
-  assert.ok(state.includes('energyEstimate: normalizeEnergyEstimate(pending.energyEstimate)'));
+  assert.ok(state.includes('energyEstimate: keepContinuousRunEnergy ? normalizeEnergyEstimate(pending.energyEstimate) : null'));
   assert.ok(!energy.includes('ROF_J'));
   assert.ok(!energy.includes('Reference-100'));
 });

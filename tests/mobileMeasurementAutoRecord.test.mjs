@@ -6,6 +6,12 @@ import {
   analyzeMeasuredCourse,
   createMotionStepEstimator,
 } from '../ui/runMeasurementAutoRecord.js';
+import {
+  clearPendingRunMeasurement,
+  commitPendingRunMeasurement,
+  findSavedRunMeasurement,
+  savePendingRunMeasurement,
+} from '../ui/runMeasurementState.js';
 
 const stateText = fs.readFileSync('ui/runMeasurementState.js', 'utf8');
 const interactionText = fs.readFileSync('ui/interactions/runMeasurementInteractions.js', 'utf8');
@@ -146,6 +152,47 @@ await test('MEASUREMENT-PERSISTS-STEPS-AND-COURSE-ANALYSIS-SEPARATELY', async ()
   assert.ok(stateText.includes('function normalizeCourseAnalysis'));
   assert.ok(stateText.includes('stepEstimate: normalizeStepEstimate(payload.stepEstimate)'));
   assert.ok(stateText.includes('courseAnalysis: normalizeCourseAnalysis(payload.courseAnalysis)'));
+});
+
+await test('ENERGY-ESTIMATE-IS-STORED-ONLY-AFTER-CONTINUOUS-RUN-CONFIRMATION', async () => {
+  const track = [
+    { lat: 35, lon: 139, timestamp: 0, cumulativeDistanceM: 0 },
+    { lat: 35.001, lon: 139.001, timestamp: 60000, cumulativeDistanceM: 100 },
+  ];
+  const energyEstimate = {
+    modelId: 'adult-compendium-2024-running-speed-v1',
+    estimatedKcal: 240, met: 8.5, compendiumCode: '12030', mapping: 'test',
+    bodyMassKg: 60, averageSpeedKmh: 10, durationMinutes: 30,
+  };
+
+  clearPendingRunMeasurement();
+  let pending = savePendingRunMeasurement({
+    runId: 'energy-continuous', distanceKm: 5, durationMinutes: 30,
+    energyEstimate, track, saveRoute: true,
+  });
+  assert.equal(pending.ok, true);
+  let committed = commitPendingRunMeasurement('energy-continuous-record', { runningFormat: 'CONTINUOUS_RUN' });
+  assert.equal(committed.ok, true);
+  assert.equal(committed.saved, true);
+  assert.equal(findSavedRunMeasurement('energy-continuous-record')?.energyEstimate?.estimatedKcal, 240);
+
+  pending = savePendingRunMeasurement({
+    runId: 'energy-run-walk', distanceKm: 5, durationMinutes: 30,
+    energyEstimate, track, saveRoute: true,
+  });
+  assert.equal(pending.ok, true);
+  committed = commitPendingRunMeasurement('energy-run-walk-record', { runningFormat: 'RUN_WALK' });
+  assert.equal(committed.ok, true);
+  assert.equal(findSavedRunMeasurement('energy-run-walk-record')?.energyEstimate, null);
+
+  pending = savePendingRunMeasurement({
+    runId: 'energy-unknown', distanceKm: 5, durationMinutes: 30,
+    energyEstimate, track, saveRoute: true,
+  });
+  assert.equal(pending.ok, true);
+  committed = commitPendingRunMeasurement('energy-unknown-record', { runningFormat: 'UNKNOWN' });
+  assert.equal(committed.ok, true);
+  assert.equal(findSavedRunMeasurement('energy-unknown-record')?.energyEstimate, null);
 });
 
 await test('SMARTPHONE-UI-SHOWS-AUTO-FACTS-AND-KEEPS-SURFACE-MANUAL', async () => {

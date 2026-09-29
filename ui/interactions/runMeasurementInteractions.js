@@ -89,7 +89,7 @@ function modeLabel(mode) {
 }
 
 function energyStatusText(result) {
-  if (result?.ok) return "体重と平均速度から推定しています。";
+  if (result?.ok) return "連続して走った場合として仮推定しています。走り＋歩きの記録には保存しません。";
   if (result?.reason === "BODY_MASS_UNAVAILABLE") return "設定で体重を入力すると表示できます。";
   if (result?.reason === "GPS_DISTANCE_INSUFFICIENT") return "GPSで10m以上取得後に表示します。";
   if (result?.reason === "SPEED_OUT_OF_SUPPORTED_RANGE") return "平均速度がランニング換算範囲外のため表示しません。";

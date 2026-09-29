@@ -960,7 +960,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
       if (!planResult.ok) postSaveWarnings.push("記録は保存しましたが、予定との関連付けを保存できませんでした。");
     }
     if (context?.parameters?.get("measurement") === "1") {
-      const measurementResult = commitPendingRunMeasurement(result.record.id);
+      const measurementResult = commitPendingRunMeasurement(result.record.id, { runningFormat: result.record.runningFormat });
       if (!measurementResult.ok) postSaveWarnings.push("記録は保存しましたが、GPS走行軌跡を端末内へ保存できませんでした。");
     }
     const draftResult = services.storage.draft.clear();
