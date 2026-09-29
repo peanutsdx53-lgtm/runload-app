@@ -1,0 +1,93 @@
+name: RunLoad Stage 2A gated fixed-trace removal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage2a.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "82fe37681a8f7df29ea81cba7bdf23bd514305da"
+
+      - name: Remove fixed 93 trace from current regional result contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p=Path(path); s=p.read_text()
+              if old not in s:
+                  raise SystemExit(f"expected text not found: {path}")
+              p.write_text(s.replace(old,new,1))
+
+          replace_once('core/internal/primaryModelResults.js',
+            'const { adaptCurrentRecordToPrimaryRegionalV2, buildAppRetainedInputTrace } = internalModules.primaryRegionalAppAdapter;',
+            'const { adaptCurrentRecordToPrimaryRegionalV2 } = internalModules.primaryRegionalAppAdapter;')
+          replace_once('core/internal/primaryModelResults.js',
+            'function createPrimaryRegionalV2ResultRecord({record,feedback={},sessionSequence=1,allRecords=[]}={}){\n  const trace=buildAppRetainedInputTrace({record,feedback,sessionSequence}); if(!trace.ok) return trace;\n  const common={id:`primary-reference100-v3-result-${sanitize(record.id)}-${sanitize(revision(record))}`,record_id:record.id,source_record_revision:revision(record),generated_at:new Date().toISOString(),model_version:PRIMARY_REGIONAL_V2_MODEL_VERSION,authority_version:PRIMARY_REGIONAL_V2_AUTHORITY_VERSION,engine_build_version:PRIMARY_REGIONAL_V2_BUILD_ID,output_semantic_version:PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION,input_trace:clone(trace.value),formal_input_snapshot:clone(trace.value),input_snapshot:clone(trace.uiInput),source_registry:SOURCE_REGISTRY};',
+            'function createPrimaryRegionalV2ResultRecord({record,feedback={},sessionSequence=1,allRecords=[]}={}){\n  const common={id:`primary-reference100-v3-result-${sanitize(record.id)}-${sanitize(revision(record))}`,record_id:record.id,source_record_revision:revision(record),generated_at:new Date().toISOString(),model_version:PRIMARY_REGIONAL_V2_MODEL_VERSION,authority_version:PRIMARY_REGIONAL_V2_AUTHORITY_VERSION,engine_build_version:PRIMARY_REGIONAL_V2_BUILD_ID,output_semantic_version:PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION,source_registry:SOURCE_REGISTRY};')
+          replace_once('core/internal/primaryModelResults.js',
+            '  if(item.input_trace?.count!==93||!Array.isArray(item.input_trace?.entries)||item.input_trace.entries.length!==93)issues.push("INPUT_TRACE_93_REQUIRED");\n  const repairs=(item.input_trace?.entries||[]).filter((x)=>x.traceAction==="CURRENT_APP_CONTEXT_TRACE");\n  if(repairs.length!==19)issues.push("TRACE_APP_CONTEXT_19_REQUIRED");\n', '')
+
+          p=Path('tests/currentOnlyRecordSchema.test.mjs'); s=p.read_text()
+          needle="const inputSupport = fs.readFileSync('core/internal/inputSupport.js', 'utf8');"
+          if needle not in s: raise SystemExit('test import anchor missing')
+          s=s.replace(needle, needle+"\nconst primaryResults = fs.readFileSync('core/internal/primaryModelResults.js', 'utf8');",1)
+          marker="\nconst failed = results.filter((item) => item.status !== 'PASS');"
+          block="""\n\ntest('PRIMARY-REGIONAL-RESULT-NO-LONGER-DEPENDS-ON-FIXED-93-TRACE', () => {\n  assert.ok(!primaryResults.includes('INPUT_TRACE_93_REQUIRED'));\n  assert.ok(!primaryResults.includes('TRACE_APP_CONTEXT_19_REQUIRED'));\n  assert.ok(!primaryResults.includes('input_trace:'));\n  assert.ok(!primaryResults.includes('formal_input_snapshot:'));\n  assert.ok(!primaryResults.includes('buildAppRetainedInputTrace'));\n  assert.ok(primaryResults.includes('engine_input_snapshot'));\n});\n"""
+          if marker not in s: raise SystemExit('test insertion anchor missing')
+          p.write_text(s.replace(marker,block+marker,1))
+          PY
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do node "$test_file"; done
+
+      - name: Check all JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t jsfiles < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          test "${#jsfiles[@]}" -eq 164
+          for file in "${jsfiles[@]}"; do node --check "$file" >/dev/null; done
+
+      - name: Verify exact change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          printf '%s\n' \
+            'core/internal/primaryModelResults.js' \
+            'tests/currentOnlyRecordSchema.test.mjs' | sort > /tmp/expected.txt
+          git diff --cached --name-only | sort > /tmp/actual.txt
+          diff -u /tmp/expected.txt /tmp/actual.txt
+
+      - name: Commit verified Stage 2A
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Stage 2A: remove fixed 93 trace dependency'
+          git push origin HEAD:main
