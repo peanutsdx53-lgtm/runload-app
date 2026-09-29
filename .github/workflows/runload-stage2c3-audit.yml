@@ -1,0 +1,43 @@
+name: RunLoad Stage 2C3 final legacy residue audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage2c3-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "3eb515f55afc3afca596fe2215b62125bd84cd10"
+
+      - name: Audit remaining legacy names
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pattern in \
+            'v27|v2\.7' \
+            'RPE|rpe|perceivedExertion' \
+            'unexpectedSymptom|symptomContext' \
+            'weatherState|windSummary|sleepSummary|nutritionHydrationSummary|lifestyleNote' \
+            'reflectionKeyPoint|consultationTarget|consultationQuestion' \
+            '93-input|93項目|93 inputs'; do
+            echo "=== RUNTIME/DOC PATTERN: $pattern ==="
+            grep -R -n -i -E "$pattern" app.js core screens ui docs service-worker.js \
+              --exclude-dir=.git || true
+            echo "=== TEST PATTERN: $pattern ==="
+            grep -R -n -i -E "$pattern" tests --exclude-dir=.git || true
+          done
