@@ -1,0 +1,43 @@
+name: RunLoad Stage 2C2 formal input dependency audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage2c2-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "5f0aa3d819e0d7aee0c08270f59d28a3be17e6d6"
+
+      - name: Map formal input catalog and adapter consumers
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pattern in \
+            'formalInputCatalog|FORMAL_INPUT_CATALOG' \
+            'formalInputAdapter|adaptPrototypeRecord|validateFormalInputBundle' \
+            'formalInputValidation|validateFormalBundleSemantics|validatePrototypeRecordInput' \
+            'primaryRegionalTraceAdapter|buildPrimaryRegionalV2FormalInputTrace' \
+            'RL-IN-090|RL-IN-091|RL-IN-092|RL-IN-117|RL-IN-118|RL-IN-119|RL-IN-120|RL-IN-122|RL-IN-123' \
+            'primaryInputCatalog\.js'; do
+            echo "=== PATTERN: $pattern ==="
+            grep -R -n -E "$pattern" app.js core screens ui tests docs service-worker.js \
+              --exclude-dir=.git || true
+          done
+          echo '=== tests that import primaryInputProcessing/catalog directly ==='
+          grep -R -n -E "primaryInputProcessing|primaryInputCatalog|adaptPrototypeRecord|validateFormalInputBundle|FORMAL_INPUT_CATALOG" tests || true
