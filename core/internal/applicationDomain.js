@@ -1,7 +1,7 @@
 import "./primaryModelResults.js";
 import { internalModules } from "./modules.js";
 
-// ===== core/model/v27/bodyAreaTaxonomy.js =====
+// ===== core/model/current/bodyAreaTaxonomy.js =====
 {
 const moduleExports = Object.create(null);
 const BODY_AREA_GROUPS = Object.freeze([
@@ -532,7 +532,7 @@ const { clampNumber, toFiniteNumber } = internalModules.numberUtilities;
 
 // Current profile data is context-only. It does not create a body-size coefficient.
 const PERSONAL_PROFILE_SCHEMA_VERSION = 2;
-const PERSONAL_PROFILE_NUMERIC_USE = "CONTEXT_ONLY_NO_A4_OR_V27_COEFFICIENT";
+const PERSONAL_PROFILE_NUMERIC_USE = "CONTEXT_ONLY_NO_PRIMARY_MODEL_COEFFICIENT";
 
 const PROFILE_AGE_BAND_OPTIONS = Object.freeze([
   Object.freeze({ key: "18-29", label: "18〜29歳", minAge: 18, maxAge: 29 }),

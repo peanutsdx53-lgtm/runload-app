@@ -50,7 +50,7 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
   }),
   sourceRecord({
     sourceId: "APP-COL-MINETTI",
-    sourceRole: "V27_ACTIVE_MODEL_AND_APP_READING",
+    sourceRole: "APP_READING_BACKGROUND",
     title: "Energy cost of walking and running at extreme uphill and downhill slopes",
     locator: "Methods/equation and grade-cost results / PDF pp.3-6; Current packaged PDF identity in Source Crosswalk",
     evidenceStatus: "FULL_TEXT_IDENTITY_VERIFIED",
@@ -58,14 +58,14 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
     modelSourceIds: ["SRC-NEW-001"],
     anchorIds: [],
     relatedInputs: ["代表勾配", "上り区間割合", "下り区間割合"],
-    relatedRoutes: ["V2.7 grade energy-cost route"],
+    relatedRoutes: ["general-knowledge grade energy-cost reading"],
     relatedRegions: ["なし（総合推定負荷の別指標）"],
-    allowedClaim: "資料内の勾配と代謝コストの方向・比率を、宣言したV2.7比較用変換の範囲で説明できる。",
+    allowedClaim: "資料内の勾配と代謝コストの方向・比率を、資料条件の範囲で説明できる。",
     prohibitedClaim: "個人の消費エネルギー実測値、疲労、傷害、走行可否へ変換しない。",
   }),
   sourceRecord({
     sourceId: "APP-COL-VAN-HOOREN",
-    sourceRole: "REGIONAL_A4_V27_AND_APP_READING",
+    sourceRole: "PRIMARY_REGIONAL_AND_APP_READING",
     title: "Per-step and cumulative load at three common running injury locations: The effect of speed, surface gradient, and cadence",
     locator: "Table 2 / PDF p.9",
     evidenceStatus: "FULL_TEXT_AND_A4_ANCHORS_VERIFIED",
@@ -80,7 +80,7 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
   }),
   sourceRecord({
     sourceId: "APP-COL-NUCKOLS",
-    sourceRole: "REGIONAL_A4_V27_AND_APP_READING",
+    sourceRole: "PRIMARY_REGIONAL_AND_APP_READING",
     title: "Mechanics of walking and running up and downhill: a joint-level perspective",
     locator: "Table 1 / PDF p.6",
     evidenceStatus: "FULL_TEXT_AND_A4_ANCHORS_VERIFIED",
@@ -357,7 +357,7 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
     reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
     modelSourceIds: ["CUR-SRC-028"],
     anchorIds: [],
-    relatedInputs: ["走行ペース", "RPE", "会話のしやすさの本人メモ"],
+    relatedInputs: ["走行ペース", "会話のしやすさの本人メモ"],
     relatedRoutes: ["general-knowledge column route", "subjective talk-ease reading route"],
     relatedRegions: ["なし（走行全体の主観的な強さ）"],
     allowedClaim: "健康成人17人のトレッドミル研究で、3段階の会話テストと複数の生理・心理指標に関連があったことを、標本と条件の限界付きで説明できる。",
@@ -368,12 +368,6 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
 const SOURCE_BY_ID = new Map(SOURCE_EVIDENCE_REGISTRY.map((source) => [source.sourceId, source]));
 
 const ARTICLE_EVIDENCE_REGISTRY = Object.freeze([
-  articleRecord({
-    articleId: "model-total-v27", claimId: "COL-CLM-001", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-MINETTI"],
-    relatedInputs: ["距離", "代表勾配", "上り・下り割合", "路面性質"], relatedRoutes: ["V2.7 total-load route", "coverage route"], relatedRegions: ["なし（総合推定負荷）"],
-    allowedClaim: "距離を土台に、対応資料がある坂と路面だけを比較用推定へ反映する設計を説明する。",
-    prohibitedClaim: "実測した身体負荷、消費エネルギー、疲労、傷害リスクとして説明しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
-  }),
   articleRecord({
     articleId: "regional-three-views", claimId: "COL-CLM-002", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
     relatedInputs: ["速度", "勾配", "cadence", "路面", "足部接地ほかA4 route入力"], relatedRoutes: ["Regional A4 endpoint-family routes", "coverage/status route"], relatedRegions: ["12部位"],
@@ -388,7 +382,7 @@ const ARTICLE_EVIDENCE_REGISTRY = Object.freeze([
   }),
   articleRecord({
     articleId: "grade-and-coverage", claimId: "COL-CLM-005", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-MINETTI", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
-    relatedInputs: ["上り割合", "下り割合", "代表勾配", "勾配把握状態"], relatedRoutes: ["V2.7 grade route", "Regional A4 grade routes", "supported-domain route"], relatedRegions: ["routeごとの対応部位"],
+    relatedInputs: ["上り割合", "下り割合", "代表勾配", "勾配把握状態"], relatedRoutes: ["Regional A4 grade routes", "supported-domain route"], relatedRegions: ["routeごとの対応部位"],
     allowedClaim: "区間割合、代表勾配、資料範囲、反映率を分けて扱う設計を説明する。",
     prohibitedClaim: "範囲外を端値へ丸めず、コース全変化や実測組織負荷として扱わない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
@@ -417,7 +411,7 @@ const ARTICLE_EVIDENCE_REGISTRY = Object.freeze([
     prohibitedClaim: "結果予測、練習処方、実施の推奨、安全保証として扱わない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "consultation-prep-v27", claimId: "COL-CLM-010", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-LINTON"],
+    articleId: "consultation-prep", claimId: "COL-CLM-010", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-LINTON"],
     relatedInputs: ["本人申告", "走行事実", "選択部位", "共有範囲"], relatedRoutes: ["deterministic consultation route"], relatedRegions: ["本人が明示選択した1部位"],
     allowedClaim: "本人入力、走行事実、モデル表示を分け、共有前に整理する方法を説明する。",
     prohibitedClaim: "診断、原因特定、走行可否、治療・練習処方を行わない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
@@ -429,7 +423,7 @@ const ARTICLE_EVIDENCE_REGISTRY = Object.freeze([
     prohibitedClaim: "endpoint間を共通単位で順位付けせず、直接測定された身体負荷と呼ばない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "model-limits-v27", claimId: "COL-CLM-012", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-LINTON", "APP-COL-VAN-HOOREN"],
+    articleId: "model-limits", claimId: "COL-CLM-012", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-LINTON", "APP-COL-VAN-HOOREN"],
     relatedInputs: ["全入力群", "欠測", "範囲外", "本人申告"], relatedRoutes: ["claim boundary", "unsupported-domain route", "information separation"], relatedRegions: ["12部位と別指標"],
     allowedClaim: "モデルの対応範囲、算出状態、非主張、本人入力との分離を説明する。",
     prohibitedClaim: "測定・診断・傷害確率・危険スコア・走行可否・因果推定を主張しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,

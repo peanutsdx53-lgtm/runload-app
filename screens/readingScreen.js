@@ -5,13 +5,9 @@ const REGION_BY_ID = new Map(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => [re
 const SLOPE_DIRECT_REGION_IDS = new Set(PRIMARY_REGIONAL_V2_REGION_DEFS
   .filter((region) => ["R05", "R06", "R09", "R10"].includes(region.id))
   .map((region) => region.displayId));
-const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep-v27";
-const PUBLIC_ARTICLE_ID_ALIASES = new Map([
-  [CONSULTATION_PREP_CORE_ARTICLE_ID, "consultation-prep"],
-]);
-const DEFERRED_READING_ARTICLE_IDS = new Set(["model-total-v27"]);
-const visibleArticles = (articles = []) => articles.filter((article) => !DEFERRED_READING_ARTICLE_IDS.has(article?.id));
-const publicArticleId = (articleId = "") => PUBLIC_ARTICLE_ID_ALIASES.get(String(articleId || "")) || String(articleId || "");
+const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep";
+const visibleArticles = (articles = []) => articles;
+const publicArticleId = (articleId = "") => String(articleId || "");
 
 function numberValue(value, fallback = 0) {
   const number = Number(value);
@@ -283,7 +279,7 @@ const READING_COPY = Object.freeze({
     ]),
     practicePoints: Object.freeze(["走る場所と時間の最新WBGTを見る。", "気温・天候・時間帯を分けて残す。", "過去の一回だけでなく、その日の情報を見る。"]),
   }),
-  "consultation-prep-v27": Object.freeze({
+  "consultation-prep": Object.freeze({
     category: "相談・共有",
     title: "共有するときは、事実と自分の言葉を分ける",
     lead: "日付・距離・時間などの記録と、自分が感じたことを分けてまとめると、相手が確認しやすくなります。",

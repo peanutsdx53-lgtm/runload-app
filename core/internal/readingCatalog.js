@@ -20,7 +20,7 @@ const COLUMN_CATEGORIES = Object.freeze([
   "相談・共有",
 ]);
 
-const PROJECT_V27 = Object.freeze({
+const PROJECT_CURRENT = Object.freeze({
   sourceId: "APP-SPEC-CURRENT",
   title: "表示と比較の考え方",
   organization: "アプリ内資料",
@@ -276,26 +276,6 @@ function article(input) {
 
 const COLUMN_ARTICLES = Object.freeze([
   article({
-    id: "model-total-v27",
-    title: "走り全体の目安で、何を見返せるか",
-    category: "結果の読み方",
-    tags: ["走り全体の目安", "距離", "勾配", "路面"],
-    lead: "走った量とコース条件をまとめて振り返り、自分の記録どうしを比べるための目安です。",
-    summary: "長い距離を走った日と短い日、平坦な日と坂のある日では、走行の内容が違います。その違いを見返す手掛かりにします。",
-    body: [
-      "走行距離が増えると、走る動作を繰り返す回数や時間も増えます。上り・下りでは、平坦路と比べて身体の使い方も変わります。",
-      "路面の硬さや凹凸も、足の接地や身体の動かし方に関係します。そのため、数値だけを見るのではなく、距離・坂・路面など、その日の記録を一緒に見ることが大切です。",
-      "この値は自分の記録を同じ意味で比べるための目安です。身体に加わった力や消費エネルギーを直接測った値ではありません。",
-    ],
-    practicePoints: [
-      "値と一緒に、距離、時間、坂、路面を確認する。",
-      "距離が大きく違う日は、まず走った量の違いを考える。",
-      "分からない条件がある日は、分かっている範囲の目安として読む。",
-    ],
-    caution: "この値は実測した力、疲労、障害の有無や確率、走行可否を表しません。",
-    sources: [PROJECT_V27, MINETTI_2002],
-  }),
-  article({
     id: "regional-three-views",
     title: "12部位の目安をどう読むか",
     category: "結果の読み方",
@@ -313,7 +293,7 @@ const COLUMN_ARTICLES = Object.freeze([
       "過去比較があるときは、同じ意味で比べられる記録かを確認する。",
     ],
     caution: "この部位の目安は、実測した力、けがの確率、危険度、走ってよいかどうか、部位どうしの順位を示すものではありません。基準100は安全値・正常値・初心者平均でもありません。",
-    sources: [PROJECT_V27, VAN_HOOREN_2024, NUCKOLS_2020],
+    sources: [PROJECT_CURRENT, VAN_HOOREN_2024, NUCKOLS_2020],
   }),
   article({
     id: "regional-six-eight-28",
@@ -333,7 +313,7 @@ const COLUMN_ARTICLES = Object.freeze([
       "2つが一致したかどうかだけで原因を決めない。",
     ],
     caution: "部位分類はアプリの情報設計であり、診断分類や普遍的な人体区分ではありません。",
-    sources: [PROJECT_V27],
+    sources: [PROJECT_CURRENT],
   }),
   article({
     id: "grade-and-coverage",
@@ -353,7 +333,7 @@ const COLUMN_ARTICLES = Object.freeze([
       "部位の数値は、坂だけで決まるものとして読まない。",
     ],
     caution: "代表勾配はコースの全変化を再現するものではなく、部位表示は実際の筋・腱・関節力ではありません。",
-    sources: [PROJECT_V27, MINETTI_2002, VAN_HOOREN_2024, NUCKOLS_2020],
+    sources: [PROJECT_CURRENT, MINETTI_2002, VAN_HOOREN_2024, NUCKOLS_2020],
   }),
   article({
     id: "surface-missingness",
@@ -373,7 +353,7 @@ const COLUMN_ARTICLES = Object.freeze([
       "迷う条件は『不明』として残す。",
     ],
     caution: "路面による数値の違いは、個人の障害原因や、その路面を走ってよいかを示しません。",
-    sources: [PROJECT_V27, YAMIN_2021, VOLOSHINA_2015, HORIGUCHI_2025],
+    sources: [PROJECT_CURRENT, YAMIN_2021, VOLOSHINA_2015, HORIGUCHI_2025],
   }),
   article({
     id: "personal-reference",
@@ -393,7 +373,7 @@ const COLUMN_ARTICLES = Object.freeze([
       "前回より上でも下でも、それだけで良し悪しを決めない。",
     ],
     caution: "部位の前回比較は、正常範囲、身体の適応、障害リスク、原因を示しません。異なる条件経路どうしの数値を直接つなぎません。",
-    sources: [PROJECT_V27],
+    sources: [PROJECT_CURRENT],
   }),
   article({
     id: "history-compatible",
@@ -413,7 +393,7 @@ const COLUMN_ARTICLES = Object.freeze([
       "書き出したデータでは、比べた記録の件数も一緒に確認する。",
     ],
     caution: "履歴の変化だけから身体状態、原因、障害の発生確率を推定しません。",
-    sources: [PROJECT_V27],
+    sources: [PROJECT_CURRENT],
   }),
   article({
     id: "plan-facts-current",
@@ -433,7 +413,7 @@ const COLUMN_ARTICLES = Object.freeze([
       "走ったあとは、実際の歩数・走行時間を記録し、ROF-Jを利用する場合は主観的疲労として別に残す。",
     ],
     caution: "予定の入力事実は最適な練習、達成可能性、身体状態、走行可否を示しません。",
-    sources: [PROJECT_V27],
+    sources: [PROJECT_CURRENT],
   }),
   article({
     id: "training-progression-no-universal-rule",
@@ -617,7 +597,7 @@ const COLUMN_ARTICLES = Object.freeze([
     sources: [KWON_2023],
   }),
   article({
-    id: "consultation-prep-v27",
+    id: "consultation-prep",
     title: "相談資料に入れるもの・入れないもの",
     category: "相談・共有",
     tags: ["相談準備", "自分の記録", "基準100", "共有"],
@@ -634,7 +614,7 @@ const COLUMN_ARTICLES = Object.freeze([
       "共有前に、見せたくないメモが含まれていないか確認する。",
     ],
     caution: "相談資料は記録整理であり、医学的評価や専門家の判断を代替しません。",
-    sources: [PROJECT_V27, LINTON_2025],
+    sources: [PROJECT_CURRENT, LINTON_2025],
   }),
   article({
     id: "slope-endpoints",
@@ -654,10 +634,10 @@ const COLUMN_ARTICLES = Object.freeze([
       "上り・下りの一つの結果を、障害名や原因へ結びつけない。",
     ],
     caution: "表示される値は、個人の筋・腱・関節に加わる力の実測値や、けがの予測ではありません。",
-    sources: [PROJECT_V27, VAN_HOOREN_2024, NUCKOLS_2020],
+    sources: [PROJECT_CURRENT, VAN_HOOREN_2024, NUCKOLS_2020],
   }),
   article({
-    id: "model-limits-v27",
+    id: "model-limits",
     title: "この表示が言えること・言えないこと",
     category: "相談・共有",
     tags: ["非主張", "限界", "多因子", "自己判断"],
@@ -674,7 +654,7 @@ const COLUMN_ARTICLES = Object.freeze([
       "分からない条件は、推測で埋めずにそのまま残す。",
     ],
     caution: "アプリの表示を医療判断、障害予防の保証、個別の練習処方へ使用しません。",
-    sources: [PROJECT_V27, LINTON_2025, VAN_HOOREN_2024],
+    sources: [PROJECT_CURRENT, LINTON_2025, VAN_HOOREN_2024],
   }),
 ]);
 moduleExports["COLUMN_CATEGORIES"] = COLUMN_CATEGORIES;

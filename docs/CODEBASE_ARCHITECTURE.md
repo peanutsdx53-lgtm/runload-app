@@ -120,7 +120,7 @@ Avoid:
 
 Semantic model/schema versions are exempt when the version is part of the data contract.
 
-The pre-release application accepts only the current storage and result contracts. Do not add migration aliases, retired storage keys, retired result versions, or compatibility readers for unpublished builds. Historical scientific model identifiers such as V27 may remain when they identify an active research calculation path; they are model identifiers, not stored-data compatibility hooks. Presentation code must not expose internal identifiers as interface labels.
+The pre-release application accepts only the current storage and result contracts. Do not add migration aliases, retired storage keys, retired result versions, or compatibility readers for unpublished builds. Retired scientific model identifiers must not remain in active runtime or presentation paths. Regression tests may name retired identifiers only to verify that those paths stay absent.
 
 ## 5. Cleanup and deletion rules
 

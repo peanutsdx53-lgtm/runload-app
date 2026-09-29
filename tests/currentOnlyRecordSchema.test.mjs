@@ -26,6 +26,10 @@ const readingScreen = fs.readFileSync('screens/readingScreen.js', 'utf8');
 const gradeDomainConfirmation = fs.readFileSync('ui/interactions/gradeDomainConfirmation.js', 'utf8');
 const primaryInputProcessing = fs.readFileSync('core/internal/primaryInputProcessing.js', 'utf8');
 const surfacePresetCatalog = fs.readFileSync('core/internal/surfacePresetCatalog.js', 'utf8');
+const applicationDomain = fs.readFileSync('core/internal/applicationDomain.js', 'utf8');
+const readingCatalog = fs.readFileSync('core/internal/readingCatalog.js', 'utf8');
+const evidenceData = fs.readFileSync('core/internal/evidenceData.js', 'utf8');
+const architectureDoc = fs.readFileSync('docs/CODEBASE_ARCHITECTURE.md', 'utf8');
 const recordRepositories = fs.readFileSync('core/internal/recordRepositories.js', 'utf8');
 
 const results = [];
@@ -221,6 +225,20 @@ test('DEAD-FORMAL-INPUT-SYSTEM-IS-RETIRED-WHILE-SURFACE-PRESETS-REMAIN', () => {
   assert.ok(!primaryInputProcessing.includes('validateFormalInputBundle'));
   assert.ok(!worker.includes('./core/internal/primaryInputCatalog.js'));
   assert.ok(worker.includes('./core/internal/surfacePresetCatalog.js'));
+});
+
+
+test('ACTIVE-READING-AND-EVIDENCE-NAMING-HAS-NO-RETIRED-V27-PATH', () => {
+  assert.ok(!applicationDomain.toLowerCase().includes('model/v27'));
+  assert.ok(!applicationDomain.includes('A4_OR_V27'));
+  assert.ok(!readingCatalog.toLowerCase().includes('v27'));
+  assert.ok(!evidenceData.toLowerCase().includes('v2.7'));
+  assert.ok(!evidenceData.toLowerCase().includes('v27'));
+  assert.ok(!evidenceData.includes('"RPE"'));
+  assert.ok(!readingScreen.toLowerCase().includes('v27'));
+  assert.ok(!architectureDoc.includes('V27 may remain'));
+  assert.ok(readingCatalog.includes('id: "consultation-prep"'));
+  assert.ok(readingCatalog.includes('id: "model-limits"'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');
