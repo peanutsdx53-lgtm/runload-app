@@ -60,7 +60,7 @@ test('FIX-IS-MOBILE-ONLY', () => {
 
 test('PWA-CACHE-INCLUDES-COORDINATOR-AND-CURRENT-VERSION', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.09.29.5');
+  assert.equal(version, '2026.09.29.6');
   assert.ok(worker.includes('"./ui/mobileHomeDropCoordinator.js"'));
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
 });

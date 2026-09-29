@@ -159,6 +159,32 @@ await test('ADVANCED-COPY-HIDES-INTERNAL-REFERENCE-LABEL',()=>{
   assert.doesNotMatch(html,/Reference-100/);
 });
 
+await test('ADVANCED-COPY-TRANSLATES-RESEARCH-INTERNALS-BEFORE-DISPLAY',()=>{
+  const stress=baseOutput({selected:true});
+  stress.advanced.evidence.regions['BA-DISP-014']={
+    construct:'膝蓋大腿関節stress力積に基づく部位内Reference-100',
+    sources:[
+      {label:'Gazendam & Hof 2007',role:'保存原典Figure 3とTable 3から再現した筋活動経路'},
+      {label:'Gazendam & Hof 2007',role:'Table 3係数と2.5 m/s正規化で再現した下腿後面筋活動経路'},
+      {label:'Hagen et al. 2023',role:'膝蓋大腿関節の速度・相対cadence応答'},
+      {label:'Van Hooren et al. 2024',role:'脛骨・アキレス腱の速度/条件応答'},
+    ],
+  };
+  const stressHtml=renderInterpretationRoom({output:stress});
+  assert.match(stressHtml,/膝蓋大腿関節の応力の積み重なりを表す指標に基づく部位内基準100/);
+  assert.match(stressHtml,/保存原典の図3と表3から再現した筋活動の関係/);
+  assert.match(stressHtml,/表3の係数を使い、2\.5 m\/sを基準にそろえて再現した下腿後面の筋活動の関係/);
+  assert.match(stressHtml,/相対ピッチ応答/);
+  assert.match(stressHtml,/脛骨・アキレス腱の速度と走行条件への応答/);
+  assert.doesNotMatch(stressHtml,/stress力積|strain力積|Figure 3|Table 3|cadence|正規化|Reference-100/i);
+
+  const strain=baseOutput({selected:true});
+  strain.advanced.evidence.regions['BA-DISP-014'].construct='アキレス腱strain力積に基づく部位内Reference-100';
+  const strainHtml=renderInterpretationRoom({output:strain});
+  assert.match(strainHtml,/アキレス腱のひずみの積み重なりを表す指標に基づく部位内基準100/);
+  assert.doesNotMatch(strainHtml,/stress力積|strain力積|Reference-100/i);
+});
+
 await test('REGION-LINK-CARRIES-RECORD-AND-REGION',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/#\/interpretation-room\?recordId=r1&amp;origin=result&amp;regionId=BA-DISP-014/);

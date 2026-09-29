@@ -633,9 +633,25 @@ function renderNext(output) {
 }
 function publicConstructText(value = "") {
   return String(value || "")
+    .replace(/膝蓋大腿関節stress力積/gi, "膝蓋大腿関節の応力の積み重なりを表す指標")
+    .replace(/脛骨stress力積/gi, "脛骨の応力の積み重なりを表す指標")
+    .replace(/アキレス腱strain力積/gi, "アキレス腱のひずみの積み重なりを表す指標")
+    .replace(/stress力積/gi, "応力の積み重なりを表す指標")
+    .replace(/strain力積/gi, "ひずみの積み重なりを表す指標")
     .replace(/Reference[- ]?100/gi, "基準100")
     .replace(/reference[- ]?100/gi, "基準100")
     .replace(/Reference/gi, "基準");
+}
+
+function publicSourceRoleText(value = "") {
+  return String(value || "")
+    .replace(/保存原典Figure 3とTable 3から再現した筋活動経路/gi, "保存原典の図3と表3から再現した筋活動の関係")
+    .replace(/Table 3係数と2\.5 m\/s正規化で再現した下腿後面筋活動経路/gi, "表3の係数を使い、2.5 m/sを基準にそろえて再現した下腿後面の筋活動の関係")
+    .replace(/Figure\s*([0-9]+)/gi, "図$1")
+    .replace(/Table\s*([0-9]+)/gi, "表$1")
+    .replace(/cadence/gi, "ピッチ")
+    .replace(/速度\/条件応答/g, "速度と走行条件への応答")
+    .replace(/速度\/上り応答/g, "速度と上り条件への応答");
 }
 
 function renderAdvanced(output, region) {
@@ -643,7 +659,7 @@ function renderAdvanced(output, region) {
   const evidence = output?.advanced?.evidence?.regions?.[region.regionId] || null;
   if (!evidence) return renderCalculationDetails(region);
   const sources = Array.isArray(evidence.sources) ? evidence.sources : [];
-  return `${renderCalculationDetails(region)}<details class="interpretation-room-advanced"><summary>計算の考え方と根拠を詳しく見る</summary><div>${evidence.construct ? `<p><strong>この数値が表す内容</strong><br>${escapeHtml(publicConstructText(evidence.construct))}</p>` : ""}${sources.length ? `<p><strong>この計算の背景資料</strong></p><ul>${sources.map((source) => `<li>${escapeHtml(source.label || "参考資料")}${source.role ? ` — ${escapeHtml(source.role)}` : ""}</li>`).join("")}</ul>` : ""}<p class="interpretation-room-boundary-line">ここでは、選択した部位の計算に関係する情報を確認できます。</p></div></details>`;
+  return `${renderCalculationDetails(region)}<details class="interpretation-room-advanced"><summary>計算の考え方と根拠を詳しく見る</summary><div>${evidence.construct ? `<p><strong>この数値が表す内容</strong><br>${escapeHtml(publicConstructText(evidence.construct))}</p>` : ""}${sources.length ? `<p><strong>この計算の背景資料</strong></p><ul>${sources.map((source) => `<li>${escapeHtml(source.label || "参考資料")}${source.role ? ` — ${escapeHtml(publicSourceRoleText(source.role))}` : ""}</li>`).join("")}</ul>` : ""}<p class="interpretation-room-boundary-line">ここでは、選択した部位の計算に関係する情報を確認できます。</p></div></details>`;
 }
 export function renderInterpretationRoom({ output } = {}) {
   if (!output?.state?.targetAvailable) {
