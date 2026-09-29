@@ -488,3 +488,24 @@
     }
   }
 }
+
+
+/* Mobile Phase 2: state-adaptive Today / checkpoint widgets. */
+@media (max-width: 54.99rem) {
+  .mobile-home-widget--today { position: relative; }
+  .mobile-home-widget--today::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+  .mobile-home-widget--state-draft {
+    background: linear-gradient(145deg, color-mix(in srgb, var(--color-accent-soft) 88%, var(--color-surface)), var(--color-surface));
+  }
+  .mobile-home-widget--state-saved-run,
+  .mobile-home-widget--state-saved-rest {
+    background: linear-gradient(145deg, color-mix(in srgb, var(--color-model-soft) 62%, var(--color-surface)), var(--color-surface));
+  }
+  .mobile-home-widget--checkpoint.has-checkpoint strong {
+    display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  }
+  .mobile-home-widget--checkpoint.is-empty strong { font-size: 15px; }
+}

@@ -136,18 +136,25 @@ function renderMobileLauncherItem({ href, label, emoji, tone = "blue", dock = fa
 }
 
 function renderMobileTodayWidget(experience, draft) {
+  const state = homeState(experience, draft);
   const record = experience?.record || null;
-  if (draft) {
-    return `<a class="mobile-home-widget mobile-home-widget--wide" href="#/record-input"><small>今日</small><strong>入力途中の記録があります</strong><span>続きから入力する</span></a>`;
+  if (state === "draft") {
+    return `<a class="mobile-home-widget mobile-home-widget--wide mobile-home-widget--today mobile-home-widget--state-draft" href="#/record-input"><small>今日・入力途中</small><strong>入力途中の記録があります</strong><span>続きから保存まで進める</span></a>`;
   }
-  if (record && String(record.date || "") === localTodayIso()) {
-    if (record.activityType === "rest") {
-      return `<a class="mobile-home-widget mobile-home-widget--wide" href="#/result?recordId=${encodeURIComponent(record.id)}"><small>今日</small><strong>休養を記録しました</strong><span>記録を見る</span></a>`;
-    }
+  if (state === "saved-rest" && record) {
+    return `<a class="mobile-home-widget mobile-home-widget--wide mobile-home-widget--today mobile-home-widget--state-saved-rest" href="#/result?recordId=${encodeURIComponent(record.id)}"><small>今日・保存済み</small><strong>休養を記録しました</strong><span>保存した内容を確認する</span></a>`;
+  }
+  if (state === "saved-run" && record) {
     const summary = [Number(record.distanceKm) > 0 ? `${formatNumber(record.distanceKm, 2)} km` : "", Number(record.durationMinutes) > 0 ? `${formatNumber(record.durationMinutes, 0)}分` : ""].filter(Boolean).join(" ・ ");
-    return `<a class="mobile-home-widget mobile-home-widget--wide" href="#/result?recordId=${encodeURIComponent(record.id)}"><small>今日の走行</small><strong>${escapeHtml(summary || "保存済み")}</strong><span>今回の結果を見る</span></a>`;
+    return `<a class="mobile-home-widget mobile-home-widget--wide mobile-home-widget--today mobile-home-widget--state-saved-run" href="#/result?recordId=${encodeURIComponent(record.id)}"><small>今日・保存済み</small><strong>${escapeHtml(summary || "走行を保存しました")}</strong><span>今回の結果を振り返る</span></a>`;
   }
-  return `<a class="mobile-home-widget mobile-home-widget--wide" href="#/record-input"><small>今日</small><strong>まだ記録はありません</strong><span>記録を始める</span></a>`;
+  if (state === "history" && record) {
+    const previousSummary = record.activityType === "rest"
+      ? `${shortDate(record.date)}・休養`
+      : [shortDate(record.date), Number(record.distanceKm) > 0 ? `${formatNumber(record.distanceKm, 2)} km` : ""].filter(Boolean).join(" ・ ");
+    return `<a class="mobile-home-widget mobile-home-widget--wide mobile-home-widget--today mobile-home-widget--state-history" href="#/record-input"><small>今日</small><strong>今日の記録を始める</strong><span>前回 ${escapeHtml(previousSummary)} ／ GPS測定も利用できます</span></a>`;
+  }
+  return `<a class="mobile-home-widget mobile-home-widget--wide mobile-home-widget--today mobile-home-widget--state-first" href="#/record-input"><small>はじめての記録</small><strong>はじめの記録を残す</strong><span>手入力またはGPS測定から始められます</span></a>`;
 }
 
 function renderMobilePlanWidget(services) {

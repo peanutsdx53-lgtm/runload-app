@@ -544,7 +544,8 @@ function createCheckpointWidget(services) {
   const checkpoint = recordCheckpoint || quickCheckpoint;
   const source = recordCheckpoint ? "record" : quickCheckpoint ? "quick" : "none";
   const anchor = document.createElement("a");
-  anchor.className = "mobile-home-widget";
+  anchor.className = `mobile-home-widget mobile-home-widget--checkpoint${checkpoint ? " has-checkpoint" : " is-empty"}`;
+  anchor.dataset.checkpointSource = source;
   anchor.href = source === "record" && record?.id
     ? `#/result?recordId=${encodeURIComponent(record.id)}`
     : source === "quick"
@@ -553,9 +554,9 @@ function createCheckpointWidget(services) {
   const small = document.createElement("small");
   small.textContent = "次に確認";
   const strong = document.createElement("strong");
-  strong.textContent = checkpoint || "まだありません";
+  strong.textContent = checkpoint || "次回の確認点を残す";
   const span = document.createElement("span");
-  span.textContent = source === "record" ? "前回の記録から" : source === "quick" ? "1分メモから" : "記録で残せます";
+  span.textContent = source === "record" ? "前回の記録から引き継ぎ" : source === "quick" ? "1分メモから引き継ぎ" : "記録や1分メモから設定できます";
   anchor.append(small, strong, span);
   return anchor;
 }
