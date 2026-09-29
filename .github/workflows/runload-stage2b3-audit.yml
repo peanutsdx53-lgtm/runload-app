@@ -22,15 +22,23 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "8e194f8ec08768335c5d92040e658281a93852c6"
+          test "$(git rev-parse HEAD^)" = "104366f1211ed87ba93fc9ffa7495d4690eeb044"
 
-      - name: List legacy V27 references
+      - name: Map current module dependencies
         shell: bash
         run: |
           set -euo pipefail
-          echo '=== legacy file imports and symbols ==='
-          grep -R -n -E 'modelV27|v27ApplicationModel|v27ApplicationServices|legacyLoad|V27_' . \
-            --exclude-dir=.git \
-            --exclude='runload-stage2b3-audit.yml' || true
-          echo '=== direct legacy filenames ==='
-          find core tests ui screens -type f \( -name '*V27*' -o -name '*v27*' \) -print | sort
+          for file in \
+            core/internal/primaryModelEngine.js \
+            core/internal/courseRepository.js \
+            core/internal/recordWorkflow.js \
+            core/internal/applicationDomain.js \
+            core/internal/publicHelpGuidance.js; do
+            echo "=== $file imports ==="
+            grep -n '^import ' "$file" || true
+            echo "=== $file internalModules refs ==="
+            grep -n -o -E 'internalModules\.[A-Za-z0-9_]+' "$file" | sort -u || true
+          done
+          echo '=== providers of needed modules ==='
+          grep -R -n -E 'internalModules\.(modelConstants|inputSafety|collectionRepository|storageKeys|bodyProfileAdjustment|primaryRegionalSnapshot|inputValidation|subjectiveFeedback|supportDecision|primaryRegionalResultService) =' core/internal \
+            --exclude-dir=.git || true
