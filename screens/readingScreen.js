@@ -6,7 +6,7 @@ const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep-v27";
 const PUBLIC_ARTICLE_ID_ALIASES = new Map([
   [CONSULTATION_PREP_CORE_ARTICLE_ID, "consultation-prep"],
 ]);
-const DEFERRED_READING_ARTICLE_IDS = new Set(["rpe-separated", "model-total-v27"]);
+const DEFERRED_READING_ARTICLE_IDS = new Set(["model-total-v27"]);
 const visibleArticles = (articles = []) => articles.filter((article) => !DEFERRED_READING_ARTICLE_IDS.has(article?.id));
 const publicArticleId = (articleId = "") => PUBLIC_ARTICLE_ID_ALIASES.get(String(articleId || "")) || String(articleId || "");
 

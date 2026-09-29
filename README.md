@@ -23,7 +23,7 @@ See `docs/CODEBASE_ARCHITECTURE.md` for ownership and maintenance rules.
 - Missing or unsupported data is not converted to zero or fabricated as q=1.
 - ROF-J records subjective fatigue at the time of answering; it is separate from Reference-100.
 - ROF-J is not a readiness, recovery, safety, injury-risk, or run/no-run score.
-- session-RPE is not implemented.
+- 主観的疲労はROF-Jとして独立して扱い、12部位の数値とは合成しません。
 - The app does not diagnose, prescribe training, estimate injury risk, or make automatic safety decisions.
 - Legacy records are not silently reinterpreted as current Reference-100 values.
 

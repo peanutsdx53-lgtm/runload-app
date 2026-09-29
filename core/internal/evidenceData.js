@@ -139,21 +139,6 @@ const SOURCE_EVIDENCE_REGISTRY = Object.freeze([
     prohibitedClaim: "個人の接地型を推定せず、障害原因、最適な接地、走行可否には用いない。",
   }),
   sourceRecord({
-    sourceId: "APP-COL-HADDAD",
-    sourceRole: "V27_ACTIVE_MODEL_AND_APP_READING",
-    title: "Session-RPE Method for Training Load Monitoring",
-    locator: "Session-RPE method and influencing-factor review / PDF pp.2-9",
-    evidenceStatus: "FULL_TEXT_IDENTITY_VERIFIED",
-    reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
-    modelSourceIds: ["SRC-CUR-017"],
-    anchorIds: [],
-    relatedInputs: ["実走時間", "RPE"],
-    relatedRoutes: ["session-RPE separate subjective route"],
-    relatedRegions: ["なし（走行全体の本人申告）"],
-    allowedClaim: "実走時間と本人RPEを別指標として記録する方法と、影響要因があることを一般的に説明できる。",
-    prohibitedClaim: "Regional A4係数、部位別実測値、健康状態、傷害予測へ使用しない。",
-  }),
-  sourceRecord({
     sourceId: "APP-COL-LINTON",
     sourceRole: "RESEARCH_PLAN_AND_APP_READING",
     title: "Running-Centred Injury Prevention Support: A Scoping Review on Current Injury Risk Reduction Practices for Runners",
@@ -402,12 +387,6 @@ const ARTICLE_EVIDENCE_REGISTRY = Object.freeze([
     prohibitedClaim: "一致・不一致から原因、診断、走行起因性を推定しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
   articleRecord({
-    articleId: "rpe-separated", claimId: "COL-CLM-004", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-HADDAD"],
-    relatedInputs: ["実走時間", "RPE"], relatedRoutes: ["session-RPE subjective route", "A4/V2.7 separation"], relatedRegions: ["なし（走行全体）"],
-    allowedClaim: "RPEを本人の走行全体の感じ方として、走行事実モデルとは別に保存・表示する理由を説明する。",
-    prohibitedClaim: "RPEを部位係数、健康判定、傷害予測へ変換しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
-  }),
-  articleRecord({
     articleId: "grade-and-coverage", claimId: "COL-CLM-005", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-MINETTI", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
     relatedInputs: ["上り割合", "下り割合", "代表勾配", "勾配把握状態"], relatedRoutes: ["V2.7 grade route", "Regional A4 grade routes", "supported-domain route"], relatedRegions: ["routeごとの対応部位"],
     allowedClaim: "区間割合、代表勾配、資料範囲、反映率を分けて扱う設計を説明する。",
@@ -505,8 +484,8 @@ const ARTICLE_EVIDENCE_REGISTRY = Object.freeze([
   }),
   articleRecord({
     articleId: "talk-test-as-subjective-cue", claimId: "COL-CLM-021", sourceIds: ["APP-COL-KWON-TALK"],
-    relatedInputs: ["走行ペース", "RPE", "会話のしやすさの本人メモ"], relatedRoutes: ["general-knowledge column route", "subjective talk-ease reading route"], relatedRegions: ["なし（走行全体の主観的な強さ）"],
-    allowedClaim: "会話のしやすさを、速度やRPEとは別の主観的な手掛かりとして本人が記録・振り返る考え方を説明する。",
+    relatedInputs: ["走行ペース", "会話のしやすさの本人メモ"], relatedRoutes: ["general-knowledge column route", "subjective talk-ease reading route"], relatedRegions: ["なし（走行全体の主観的な強さ）"],
+    allowedClaim: "会話のしやすさを、速度とは別の主観的な手掛かりとして本人が記録・振り返る考え方を説明する。",
     prohibitedClaim: "会話のしやすさから、正確なペース、心肺機能、病気、安全な強さ、走行可否を評価または処方しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
   }),
 ]);
