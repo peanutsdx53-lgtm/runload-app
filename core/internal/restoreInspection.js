@@ -1,3 +1,4 @@
+import "./applicationDomain.js";
 import "./courseRepository.js";
 import { internalModules } from "./modules.js";
 import {

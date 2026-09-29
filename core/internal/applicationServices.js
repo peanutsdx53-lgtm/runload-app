@@ -1,3 +1,4 @@
+import "./publicHelpGuidance.js";
 import "./deterministicConsultation.js";
 import { internalModules } from "./modules.js";
 

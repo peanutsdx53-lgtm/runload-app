@@ -1,4 +1,4 @@
-import "./v27ApplicationModel.js";
+import "./recordRepositories.js";
 import { internalModules } from "./modules.js";
 
 // ===== core/storage/courseRepository.js =====

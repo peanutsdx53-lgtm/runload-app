@@ -1,7 +1,10 @@
 import { escapeHtml } from "../ui/commonComponents.js";
-import { V27_EMPHASIS_REGION_IDS, V27_REGIONS, BODY_AREA_BY_ID } from "../core/appCore.js";
+import { BODY_AREA_BY_ID, BODY_AREA_TO_PRIMARY_REGIONAL_V2, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/appCore.js";
 
-const REGION_BY_ID = new Map(V27_REGIONS.map((region) => [region.id, region]));
+const REGION_BY_ID = new Map(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => [region.displayId, region]));
+const SLOPE_DIRECT_REGION_IDS = new Set(PRIMARY_REGIONAL_V2_REGION_DEFS
+  .filter((region) => ["R05", "R06", "R09", "R10"].includes(region.id))
+  .map((region) => region.displayId));
 const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep-v27";
 const PUBLIC_ARTICLE_ID_ALIASES = new Map([
   [CONSULTATION_PREP_CORE_ARTICLE_ID, "consultation-prep"],
@@ -68,8 +71,8 @@ function targetRegionId(context, experience) {
   const requested = context?.parameters?.get?.("regionId") || "";
   if (REGION_BY_ID.has(requested)) return requested;
   const observation = bodyAreaObservations(experience?.feedback || {})
-    .find((item) => BODY_AREA_BY_ID[item.areaId]?.modelRegionId);
-  return BODY_AREA_BY_ID[observation?.areaId]?.modelRegionId || "";
+    .find((item) => BODY_AREA_TO_PRIMARY_REGIONAL_V2[item?.areaId]);
+  return BODY_AREA_TO_PRIMARY_REGIONAL_V2[observation?.areaId] || "";
 }
 
 function buildColumnRecommendation(services, experience, allExperiences = [], context = {}) {
@@ -107,8 +110,8 @@ function buildColumnRecommendation(services, experience, allExperiences = [], co
     const labels = repeatedAreas.slice(0, 2).map((item) => item.label).join("、");
     return recommendation(CONSULTATION_PREP_CORE_ARTICLE_ID, `${labels}の記録が続いているため、共有するときの整理方法を確認できます。`);
   }
-  if (selectedRegionId && V27_EMPHASIS_REGION_IDS.includes(selectedRegionId)) {
-    return recommendation("slope-endpoints", `${REGION_BY_ID.get(selectedRegionId)?.label || selectedRegionId}の数字がどう動くかを、坂との関係から確認できます。`);
+  if (selectedRegionId && SLOPE_DIRECT_REGION_IDS.has(selectedRegionId)) {
+    return recommendation("slope-endpoints", `${REGION_BY_ID.get(selectedRegionId)?.name || selectedRegionId}の数字がどう動くかを、坂との関係から確認できます。`);
   }
   if (observations.length) {
     return recommendation("regional-six-eight-28", `身体の記録と12部位の目安を分けて見返す方法を確認できます。`);

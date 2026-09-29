@@ -18,6 +18,12 @@ const restoreInspection = fs.readFileSync('core/internal/restoreInspection.js', 
 const consultationReport = fs.readFileSync('core/internal/consultationReport.js', 'utf8');
 const appEntry = fs.readFileSync('app.js', 'utf8');
 const planPreview = fs.readFileSync('core/internal/planPreview.js', 'utf8');
+const appCore = fs.readFileSync('core/appCore.js', 'utf8');
+const primaryModelEngine = fs.readFileSync('core/internal/primaryModelEngine.js', 'utf8');
+const courseRepository = fs.readFileSync('core/internal/courseRepository.js', 'utf8');
+const recordWorkflow = fs.readFileSync('core/internal/recordWorkflow.js', 'utf8');
+const readingScreen = fs.readFileSync('screens/readingScreen.js', 'utf8');
+const gradeDomainConfirmation = fs.readFileSync('ui/interactions/gradeDomainConfirmation.js', 'utf8');
 
 const results = [];
 function test(id, fn) {
@@ -152,6 +158,23 @@ test('PLAN-PREVIEW-IS-CURRENT-FACTS-ONLY', () => {
   assert.ok(!planPreview.includes('createV27PlanPreview'));
   assert.ok(!planPreview.includes('calculateV27Session'));
   assert.ok(!planPreview.includes('rpeProvenance'));
+});
+
+
+test('CURRENT-MODULE-CHAIN-NO-LONGER-DEPENDS-ON-V27', () => {
+  assert.ok(!primaryModelEngine.includes('modelV27.js'));
+  assert.ok(primaryResults.includes('recordRepositories.js'));
+  assert.ok(!courseRepository.includes('v27ApplicationModel.js'));
+  assert.ok(!recordWorkflow.includes('v27ApplicationServices.js'));
+  assert.ok(appServices.includes('publicHelpGuidance.js'));
+  assert.ok(restoreInspection.includes('applicationDomain.js'));
+  assert.ok(!appCore.includes('legacyLoadModelConstants'));
+  assert.ok(!appCore.includes('export const V27_'));
+  assert.ok(!readingScreen.includes('V27_'));
+  assert.ok(!gradeDomainConfirmation.includes('V27_'));
+  assert.ok(appCore.includes('BODY_AREA_TO_PRIMARY_REGIONAL_V2'));
+  assert.ok(primaryModelEngine.includes('PRIMARY_REGIONAL_GRADE_COMMON_DIRECT_MAX_ABS_PERCENT'));
+  assert.ok(primaryModelEngine.includes('PRIMARY_REGIONAL_GRADE_UPHILL_DIRECT_MAX_PERCENT'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

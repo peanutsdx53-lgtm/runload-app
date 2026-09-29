@@ -1,4 +1,4 @@
-import "./v27ApplicationServices.js";
+import "./applicationDomain.js";
 import { internalModules } from "./modules.js";
 
 // ===== core/workflows/recordWorkflow.js =====

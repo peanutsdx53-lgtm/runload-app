@@ -1,4 +1,4 @@
-import "./modelV27.js";
+import "./modelSupport.js";
 import { internalModules } from "./modules.js";
 
 // ===== core/model/primaryRegionalV2/primaryRegionalV2Engine.js =====
@@ -67,6 +67,9 @@ const R12_GRASS_ENVELOPE=[0.895910642027,0.914520670558];
 const HAGEN_REL_DEC={8:-.08,10:-.07,12:-.06,14:-.06,16:-.05};
 const HAGEN_REL_INC={8:.10,10:.11,12:.11,14:.11,16:.10};
 const VERIFIED_PROVENANCE=new Set(['VIDEO_VERIFIED','DEVICE_VERIFIED','INSTRUMENT_VERIFIED','LAB_VERIFIED']);
+const PRIMARY_REGIONAL_GRADE_DIRECT_MAX_ABS_DEGREES=6;
+const PRIMARY_REGIONAL_GRADE_COMMON_DIRECT_MAX_ABS_PERCENT=Math.tan(PRIMARY_REGIONAL_GRADE_DIRECT_MAX_ABS_DEGREES*Math.PI/180)*100;
+const PRIMARY_REGIONAL_GRADE_UPHILL_DIRECT_MAX_PERCENT=15;
 
 function finite(x){return typeof x==='number'&&Number.isFinite(x)}
 function near(a,b,t=1e-9){return Math.abs(a-b)<=t}
@@ -181,13 +184,13 @@ function evaluateRegionSegment(regionId,{distanceKm,speedMps,gradePercent=null,c
   // Grade: fixed/source-native Direct families only; no transfer and no multiplication with another axis.
   if(gradePercent!=null&&finite(Number(gradePercent))){
     const gp=Number(gradePercent),gd=gradePctToDeg(gp);
-    if(regionId==='R05'&&near(v,2.78,1e-6)&&Math.abs(gd)<=6+1e-12){
+    if(regionId==='R05'&&near(v,2.78,1e-6)&&Math.abs(gd)<=PRIMARY_REGIONAL_GRADE_DIRECT_MAX_ABS_DEGREES+1e-12){
       if(!cadenceApplied){const raw=interp(VH_GRADE.R05,gd);if(raw!=null){q=raw/VH_GRADE.R05['0'];gradeApplied=true;addComponent(trace,{axis:'GRADE',sourceFamily:'VAN_HOOREN_2024_R05_GRADE',evidenceState:'DIRECT',gradeDeg:gd,fixedSpeedMps:2.78});}}
       else trace.unquantified.push({axis:'GRADE',state:'EVIDENCE_INSUFFICIENT',reason:'GRADE_CADENCE_COMBINATION_NOT_AUTHORIZED'});
-    } else if((regionId==='R06'||regionId==='R09')&&near(v,2.78,1e-6)&&Math.abs(gd)<=6+1e-12){
+    } else if((regionId==='R06'||regionId==='R09')&&near(v,2.78,1e-6)&&Math.abs(gd)<=PRIMARY_REGIONAL_GRADE_DIRECT_MAX_ABS_DEGREES+1e-12){
       if(!cadenceApplied){const raw=interp(VH_GRADE[regionId],gd);if(raw!=null){q=raw/VAN_SPEED[regionId][2.78];gradeApplied=true;addComponent(trace,{axis:'GRADE',sourceFamily:'VAN_HOOREN_2024_GRADE',evidenceState:'DIRECT',gradeDeg:gd,fixedSpeedMps:2.78});}}
       else trace.unquantified.push({axis:'GRADE',state:'EVIDENCE_INSUFFICIENT',reason:'GRADE_CADENCE_COMBINATION_NOT_AUTHORIZED'});
-    } else if(regionId==='R10'&&near(v,2.0,1e-6)&&gp>=0&&gp<=15+1e-12){
+    } else if(regionId==='R10'&&near(v,2.0,1e-6)&&gp>=0&&gp<=PRIMARY_REGIONAL_GRADE_UPHILL_DIRECT_MAX_PERCENT+1e-12){
       const raw=interp(HO_HEEL_GRADE,gp);if(raw!=null){q=raw/HO.He[2.5];gradeApplied=true;addComponent(trace,{axis:'GRADE',sourceFamily:'HO_2010_R10_UPHILL',evidenceState:'DIRECT',gradePercent:gp,fixedSpeedMps:2.0});}
     } else if(Math.abs(gp)>1e-12){
       trace.unquantified.push({axis:'GRADE',state:'EVIDENCE_INSUFFICIENT',reason:'OUTSIDE_AUTHORIZED_DIRECT_CONDITION_GEOMETRY'});
@@ -285,6 +288,9 @@ moduleExports["OUTPUT_SEMANTIC_VERSION"] = OUTPUT_SEMANTIC_VERSION;
 moduleExports["BUILD_ID"] = BUILD_ID;
 moduleExports["REGION_DEFS"] = REGION_DEFS;
 moduleExports["R12_GRASS_ENVELOPE"] = R12_GRASS_ENVELOPE;
+moduleExports["PRIMARY_REGIONAL_GRADE_DIRECT_MAX_ABS_DEGREES"] = PRIMARY_REGIONAL_GRADE_DIRECT_MAX_ABS_DEGREES;
+moduleExports["PRIMARY_REGIONAL_GRADE_COMMON_DIRECT_MAX_ABS_PERCENT"] = PRIMARY_REGIONAL_GRADE_COMMON_DIRECT_MAX_ABS_PERCENT;
+moduleExports["PRIMARY_REGIONAL_GRADE_UPHILL_DIRECT_MAX_PERCENT"] = PRIMARY_REGIONAL_GRADE_UPHILL_DIRECT_MAX_PERCENT;
 moduleExports["baselineResponse"] = baselineResponse;
 moduleExports["evaluateRegionSegment"] = evaluateRegionSegment;
 moduleExports["calculateRun"] = calculateRun;
