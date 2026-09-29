@@ -1,0 +1,197 @@
+name: RunLoad Stage 2C3 gated legacy naming cleanup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage2c3.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "00001f69b4f262ba2569b6d50c4cb26136fb217a"
+
+      - name: Remove obsolete V27 naming while preserving current reading content
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              s = p.read_text()
+              if old not in s:
+                  raise SystemExit(f"expected text not found: {path}: {old[:120]!r}")
+              p.write_text(s.replace(old, new, 1))
+
+          def remove_between(path, start_marker, end_marker):
+              p = Path(path)
+              s = p.read_text()
+              start = s.find(start_marker)
+              end = s.find(end_marker, start + len(start_marker))
+              if start < 0 or end < 0:
+                  raise SystemExit(f"markers not found: {path}")
+              p.write_text(s[:start] + end_marker + s[end + len(end_marker):])
+
+          # Current body-area/profile naming.
+          replace_once('core/internal/applicationDomain.js', '// ===== core/model/v27/bodyAreaTaxonomy.js =====', '// ===== core/model/current/bodyAreaTaxonomy.js =====')
+          replace_once('core/internal/applicationDomain.js', 'CONTEXT_ONLY_NO_A4_OR_V27_COEFFICIENT', 'CONTEXT_ONLY_NO_PRIMARY_MODEL_COEFFICIENT')
+
+          # Retire the hidden total-load V27 reading; keep current educational articles with current IDs.
+          remove_between(
+              'core/internal/readingCatalog.js',
+              '  article({\n    id: "model-total-v27",\n',
+              '  article({\n    id: "regional-three-views",\n',
+          )
+          p = Path('core/internal/readingCatalog.js')
+          s = p.read_text().replace('PROJECT_V27', 'PROJECT_CURRENT')
+          s = s.replace('id: "consultation-prep-v27"', 'id: "consultation-prep"')
+          s = s.replace('id: "model-limits-v27"', 'id: "model-limits"')
+          p.write_text(s)
+
+          # Evidence metadata: remove retired model-route labels without changing primary-source identities.
+          remove_between(
+              'core/internal/evidenceData.js',
+              '  articleRecord({\n    articleId: "model-total-v27",',
+              '  articleRecord({\n    articleId: "regional-three-views",',
+          )
+          p = Path('core/internal/evidenceData.js')
+          s = p.read_text()
+          replacements = {
+              'sourceRole: "V27_ACTIVE_MODEL_AND_APP_READING"': 'sourceRole: "APP_READING_BACKGROUND"',
+              'sourceRole: "REGIONAL_A4_V27_AND_APP_READING"': 'sourceRole: "PRIMARY_REGIONAL_AND_APP_READING"',
+              'relatedRoutes: ["V2.7 grade energy-cost route"]': 'relatedRoutes: ["general-knowledge grade energy-cost reading"]',
+              'allowedClaim: "資料内の勾配と代謝コストの方向・比率を、宣言したV2.7比較用変換の範囲で説明できる。"': 'allowedClaim: "資料内の勾配と代謝コストの方向・比率を、資料条件の範囲で説明できる。"',
+              'relatedRoutes: ["V2.7 grade route", "Regional A4 grade routes", "supported-domain route"]': 'relatedRoutes: ["Regional A4 grade routes", "supported-domain route"]',
+              'articleId: "consultation-prep-v27"': 'articleId: "consultation-prep"',
+              'articleId: "model-limits-v27"': 'articleId: "model-limits"',
+              'relatedInputs: ["走行ペース", "RPE", "会話のしやすさの本人メモ"]': 'relatedInputs: ["走行ペース", "会話のしやすさの本人メモ"]',
+          }
+          for old, new in replacements.items():
+              if old not in s:
+                  raise SystemExit(f'evidence replacement not found: {old}')
+              s = s.replace(old, new)
+          p.write_text(s)
+
+          # Reading screen no longer needs V27 aliases/deferred hidden article handling.
+          p = Path('screens/readingScreen.js')
+          s = p.read_text()
+          old_top = '''const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep-v27";
+          const PUBLIC_ARTICLE_ID_ALIASES = new Map([
+            [CONSULTATION_PREP_CORE_ARTICLE_ID, "consultation-prep"],
+          ]);
+          const DEFERRED_READING_ARTICLE_IDS = new Set(["model-total-v27"]);
+          const visibleArticles = (articles = []) => articles.filter((article) => !DEFERRED_READING_ARTICLE_IDS.has(article?.id));
+          const publicArticleId = (articleId = "") => PUBLIC_ARTICLE_ID_ALIASES.get(String(articleId || "")) || String(articleId || "");
+          '''.replace('          ', '')
+          new_top = '''const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep";
+          const visibleArticles = (articles = []) => articles;
+          const publicArticleId = (articleId = "") => String(articleId || "");
+          '''.replace('          ', '')
+          if old_top not in s:
+              raise SystemExit('reading top legacy alias block not found')
+          s = s.replace(old_top, new_top, 1)
+          s = s.replace('"consultation-prep-v27": Object.freeze({', '"consultation-prep": Object.freeze({')
+          p.write_text(s)
+
+          replace_once(
+              'docs/CODEBASE_ARCHITECTURE.md',
+              'Historical scientific model identifiers such as V27 may remain when they identify an active research calculation path; they are model identifiers, not stored-data compatibility hooks. Presentation code must not expose internal identifiers as interface labels.',
+              'Retired scientific model identifiers must not remain in active runtime or presentation paths. Regression tests may name retired identifiers only to verify that those paths stay absent.',
+          )
+
+          # Regression guard for active source/doc paths. Tests may still name retired identifiers to assert absence.
+          p = Path('tests/currentOnlyRecordSchema.test.mjs')
+          s = p.read_text()
+          declaration_anchor = "const surfacePresetCatalog = fs.readFileSync('core/internal/surfacePresetCatalog.js', 'utf8');\n"
+          additions = """const readingCatalog = fs.readFileSync('core/internal/readingCatalog.js', 'utf8');
+          const evidenceData = fs.readFileSync('core/internal/evidenceData.js', 'utf8');
+          const architectureDoc = fs.readFileSync('docs/CODEBASE_ARCHITECTURE.md', 'utf8');
+          """.replace('          ', '')
+          if declaration_anchor not in s:
+              raise SystemExit('test declaration anchor not found')
+          s = s.replace(declaration_anchor, declaration_anchor + additions, 1)
+          insert_before = "\nconst failed = results.filter((item) => item.status !== 'PASS');"
+          new_test = """
+
+          test('ACTIVE-READING-AND-EVIDENCE-NAMING-HAS-NO-RETIRED-V27-PATH', () => {
+            assert.ok(!applicationDomain.toLowerCase().includes('model/v27'));
+            assert.ok(!applicationDomain.includes('A4_OR_V27'));
+            assert.ok(!readingCatalog.toLowerCase().includes('v27'));
+            assert.ok(!evidenceData.toLowerCase().includes('v2.7'));
+            assert.ok(!evidenceData.toLowerCase().includes('v27'));
+            assert.ok(!evidenceData.includes('"RPE"'));
+            assert.ok(!readingScreen.toLowerCase().includes('v27'));
+            assert.ok(!architectureDoc.includes('V27 may remain'));
+            assert.ok(readingCatalog.includes('id: "consultation-prep"'));
+            assert.ok(readingCatalog.includes('id: "model-limits"'));
+          });
+          """.replace('          ', '')
+          if insert_before not in s:
+              raise SystemExit('test insertion anchor not found')
+          p.write_text(s.replace(insert_before, new_test + insert_before, 1))
+          PY
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do
+            echo "[TEST] $test_file"
+            node "$test_file"
+          done
+
+      - name: Check all JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t jsfiles < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          test "${#jsfiles[@]}" -eq 161
+          for file in "${jsfiles[@]}"; do node --check "$file" >/dev/null; done
+
+      - name: Verify retired V27 naming is absent from active paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -R -n -i -E 'v27|v2\.7' core screens ui docs service-worker.js --exclude-dir=.git
+          ! grep -n -E '"RPE"' core/internal/evidenceData.js
+
+      - name: Verify exact change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          printf '%s\n' \
+            'core/internal/applicationDomain.js' \
+            'core/internal/evidenceData.js' \
+            'core/internal/readingCatalog.js' \
+            'docs/CODEBASE_ARCHITECTURE.md' \
+            'screens/readingScreen.js' \
+            'tests/currentOnlyRecordSchema.test.mjs' | sort > /tmp/expected.txt
+          git diff --cached --name-only | sort > /tmp/actual.txt
+          diff -u /tmp/expected.txt /tmp/actual.txt
+
+      - name: Commit verified Stage 2C3
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Stage 2C3: remove retired V27 naming from active paths'
+          git push origin HEAD:main
