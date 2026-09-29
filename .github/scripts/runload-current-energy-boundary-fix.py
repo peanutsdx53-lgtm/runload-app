@@ -55,7 +55,13 @@ anchor = "test('ENERGY-MODEL-USES-CONTROLLED-COMPENDIUM-BOUNDARY', () => {\n"
 insert = '''test('LIVE-ENERGY-IS-LABELED-AS-PROVISIONAL-CONTINUOUS-RUN-ESTIMATE', () => {\n  assert.ok(interactions.includes('連続して走った場合として仮推定しています。走り＋歩きの記録には保存しません。'));\n  assert.ok(state.includes('keepContinuousRunEnergy'));\n  assert.ok(state.includes('runningFormat === "CONTINUOUS_RUN"'));\n});\n\n'''
 if anchor not in text:
     raise SystemExit("energy UI contract insertion anchor not found")
-p.write_text(text.replace(anchor, insert + anchor, 1))
+text = text.replace(anchor, insert + anchor, 1)
+old_expectation = "  assert.ok(state.includes('energyEstimate: normalizeEnergyEstimate(pending.energyEstimate)'));\n"
+new_expectation = "  assert.ok(state.includes('energyEstimate: keepContinuousRunEnergy ? normalizeEnergyEstimate(pending.energyEstimate) : null'));\n"
+if old_expectation not in text:
+    raise SystemExit("stale energy persistence expectation not found")
+text = text.replace(old_expectation, new_expectation, 1)
+p.write_text(text)
 
 # Runtime behavior changed: advance app/cache version.
 old = "2026.09.29.7"
