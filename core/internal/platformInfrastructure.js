@@ -100,7 +100,6 @@ const moduleExports = Object.create(null);
 const STORAGE_NAMESPACE = "runner-load-app-new-v1";
 const STORAGE_KEYS = Object.freeze({
   records: `${STORAGE_NAMESPACE}-records-v1`,
-  modelResultsV27: `${STORAGE_NAMESPACE}-model-results-v2.7`,
   modelResultsRegionalV2: `${STORAGE_NAMESPACE}-model-results-regional-v2`,
   subjectiveFeedback: `${STORAGE_NAMESPACE}-subjective-feedback-v1`,
   plans: `${STORAGE_NAMESPACE}-plans-v1`,
@@ -118,7 +117,6 @@ const STORAGE_KEYS = Object.freeze({
 
 const USER_DATA_STORAGE_KEYS = Object.freeze([
   STORAGE_KEYS.records,
-  STORAGE_KEYS.modelResultsV27,
   STORAGE_KEYS.modelResultsRegionalV2,
   STORAGE_KEYS.subjectiveFeedback,
   STORAGE_KEYS.plans,

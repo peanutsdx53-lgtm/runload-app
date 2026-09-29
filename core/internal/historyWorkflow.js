@@ -66,7 +66,6 @@ function restorePlanReferences(currentPlan, previousPlan, recordId) {
 function createHistoryWorkflow({
   gateway,
   recordsRepository,
-  modelResultV27Repository,
   modelResultRegionalV2Repository,
   subjectiveFeedbackRepository,
   planRepository,
@@ -143,10 +142,6 @@ function createHistoryWorkflow({
     if (!feedbackRead.ok) return feedbackRead;
     const feedbackItems = feedbackRead.items;
     const removedFeedback = feedbackItems.find((item) => item.recordId === recordId) || null;
-    const v27Read = readCollectionForMutation(modelResultV27Repository, "modelResultsV27");
-    if (!v27Read.ok) return v27Read;
-    const modelResultItems = v27Read.items;
-    const removedModelResults = modelResultItems.filter((item) => item.record_id === recordId);
     const regionalRead = readCollectionForMutation(modelResultRegionalV2Repository, "modelResultsRegionalV2");
     if (!regionalRead.ok) return regionalRead;
     const regionalV2Items = regionalRead.items;
@@ -181,11 +176,10 @@ function createHistoryWorkflow({
     const runMeasurements = runMeasurementsRead.value;
     const removedRunMeasurement = cloneValue(runMeasurements.find((item) => item?.recordId === recordId) || null);
     const undoEntry = {
-      version: 7,
+      version: 8,
       deletedAt: new Date().toISOString(),
       record,
       feedback: removedFeedback,
-      modelResultsV27: removedModelResults,
       modelResultsRegionalV2: removedRegionalV2Results,
       rofJ: removedRofJ,
       rofJLifecycle: removedRofJLifecycle,
@@ -195,7 +189,6 @@ function createHistoryWorkflow({
     const operations = [
       { key: STORAGE_KEYS.records, value: records.filter((item) => item.id !== recordId) },
       { key: STORAGE_KEYS.subjectiveFeedback, value: feedbackItems.filter((item) => item.recordId !== recordId) },
-      { key: STORAGE_KEYS.modelResultsV27, value: modelResultItems.filter((item) => item.record_id !== recordId) },
       { key: STORAGE_KEYS.modelResultsRegionalV2, value: regionalV2Items.filter((item) => item.record_id !== recordId) },
       { key: STORAGE_KEYS.plans, value: nextPlans },
       { key: STORAGE_KEYS.runMeasurements, value: runMeasurements.filter((item) => item?.recordId !== recordId) },
@@ -240,14 +233,6 @@ function createHistoryWorkflow({
     if (!feedbackRead.ok) return feedbackRead;
     const feedbackItems = feedbackRead.items.filter((item) => item.recordId !== recordId);
     if (entry.feedback) feedbackItems.push(entry.feedback);
-    const removedResultIds = new Set(
-      (entry.modelResultsV27 || []).map((item) => item.id),
-    );
-    const v27Read = readCollectionForMutation(modelResultV27Repository, "modelResultsV27");
-    if (!v27Read.ok) return v27Read;
-    const modelResultItems = v27Read.items
-      .filter((item) => !removedResultIds.has(item.id));
-    modelResultItems.push(...(entry.modelResultsV27 || []));
     const removedRegionalV2Ids = new Set((entry.modelResultsRegionalV2 || []).map((item) => item.id));
     const regionalRead = readCollectionForMutation(modelResultRegionalV2Repository, "modelResultsRegionalV2");
     if (!regionalRead.ok) return regionalRead;
@@ -303,7 +288,6 @@ function createHistoryWorkflow({
     const operations = [
       { key: STORAGE_KEYS.records, value: records },
       { key: STORAGE_KEYS.subjectiveFeedback, value: feedbackItems },
-      { key: STORAGE_KEYS.modelResultsV27, value: modelResultItems },
       { key: STORAGE_KEYS.modelResultsRegionalV2, value: regionalV2Items },
       { key: STORAGE_KEYS.plans, value: nextPlans },
       { key: STORAGE_KEYS.runMeasurements, value: nextRunMeasurements },

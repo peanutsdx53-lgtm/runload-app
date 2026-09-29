@@ -76,7 +76,6 @@ const fatigue = createRofJServices({
 const linkedHistoryWorkflow = createHistoryWorkflow({
   gateway: baseApplicationServices.storage.gateway,
   recordsRepository: baseApplicationServices.storage.records,
-  modelResultV27Repository: baseApplicationServices.storage.modelResultsV27,
   modelResultRegionalV2Repository: baseApplicationServices.storage.modelResultsRegionalV2,
   subjectiveFeedbackRepository: baseApplicationServices.storage.subjectiveFeedback,
   planRepository: baseApplicationServices.storage.plans,

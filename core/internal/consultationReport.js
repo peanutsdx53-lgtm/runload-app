@@ -123,29 +123,13 @@ function regionalReference(experience, regionId) {
   });
 }
 
-function totalReference(experience) {
-  const resultRecord = experience?.v27ResultRecord;
-  if (!resultRecord || resultRecord.state !== "RUN") return null;
-  const total = resultRecord.result?.total;
-  return Object.freeze({
-    central: finiteOrNull(total?.central_points),
-    range: Array.isArray(total?.range_points) ? [...total.range_points] : null,
-    showRange: total?.show_range_primary === true,
-    gradeCoverage: finiteOrNull(total?.grade_coverage),
-    surfaceCoverage: finiteOrNull(total?.surface_coverage),
-    pairingState: String(total?.pairing_state || ""),
-  });
-}
-
 function modelReference(experience, regionId) {
   const isRest = experience?.record?.activityType === "rest";
-  const total = totalReference(experience);
   const regional = regionalReference(experience, regionId);
   return Object.freeze({
-    modelVersion: String(experience?.regionalV2ResultRecord?.model_version || experience?.v27ResultRecord?.model_version || ""),
+    modelVersion: String(experience?.regionalV2ResultRecord?.model_version || ""),
     primaryRegionalV2: experience?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION,
-    state: isRest ? "REST" : total || regional.state === "SUPPORTED_NUMERIC" ? "RUN" : "NO_NUMERIC_RESULT",
-    total,
+    state: isRest ? "REST" : regional.state === "SUPPORTED_NUMERIC" ? "RUN" : "NO_NUMERIC_RESULT",
     regional,
   });
 }
@@ -180,7 +164,6 @@ function recentFacts(allExperiences, target, regionId) {
         date: item.record.date,
         activity: activitySummary(item.record),
         activityType: item.record.activityType === "rest" ? "rest" : "run",
-        total: totalReference(item)?.central ?? null,
         regionalState: regional.state,
         regionalValue: compared.directDeltaAllowed ? regional.value : null,
         regionalDirectComparable: compared.directDeltaAllowed,
@@ -271,8 +254,6 @@ function createShortConsultationMemo(report) {
   if (observations.length) lines.push(`記録した部位：${[...new Set(observations)].join("、")}。`);
   if (report.consultationNote) lines.push(`聞きたいこと：${report.consultationNote}`);
   if (report.modelReference.state === "RUN") {
-    const total = report.modelReference.total?.central;
-    if (hasFiniteValue(total)) lines.push(`走り全体の目安：${Math.round(total * 10) / 10}ポイント`);
     lines.push(regionalText(report.modelReference.regional));
     lines.push(exposureText(report.modelReference.regional?.exposure));
   }
@@ -293,8 +274,6 @@ function createStandardConsultationText(report) {
   lines.push(...(observationLines.length ? observationLines : ["- 部位入力なし"]));
   if (report.consultationNote) lines.push(`相談したいこと：${report.consultationNote}`);
   if (report.modelReference.state === "RUN") {
-    const total = report.modelReference.total?.central;
-    lines.push(hasFiniteValue(total) ? `走り全体の目安：${Math.round(total * 10) / 10}ポイント` : "走り全体の目安：数値なし");
     lines.push(regionalText(report.modelReference.regional));
     lines.push(exposureText(report.modelReference.regional?.exposure));
     lines.push("部位の目安は、その部位自身の固定基準100と比較します。走行距離は数値へ掛けません。安全値・正常値・初心者平均ではなく、別の部位との大小比較にも使いません。");
@@ -312,11 +291,10 @@ function createDetailedConsultationText(report) {
   if (!report || !report.recent.length) return standard;
   const regionLabel = report.modelReference.regional?.regionLabel || "選択した部位";
   const recent = report.recent.map((item) => {
-    const total = item.total == null ? "走行全体 数値なし" : `走行全体 ${Math.round(item.total * 10) / 10}`;
     const regional = item.regionalDirectComparable && hasFiniteValue(item.regionalValue)
       ? `${regionLabel}の部位の目安 ${Math.round(item.regionalValue * 10) / 10}`
       : `${regionLabel}の部位の目安 比較なし`;
-    return `- ${item.date}：${item.activity}／${total}／${regional}`;
+    return `- ${item.date}：${item.activity}／${regional}`;
   });
   return `${standard}\n\n最近の保存記録：\n${recent.join("\n")}\n\n部位の目安の差は、同じ部位・同じ計算方法・同じ基準で比べられる記録だけで扱います。`;
 }

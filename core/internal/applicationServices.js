@@ -21,7 +21,6 @@ internalModules.dataManagementService = moduleExports;
 const moduleExports = Object.create(null);
 const { createStorageGateway } = internalModules.storageGateway;
 const { createRecordRepository } = internalModules.recordRepository;
-const { createModelResultV27Repository } = internalModules.legacyLoadResultRepository;
 const { createModelResultRegionalV2Repository } = internalModules.primaryRegionalResultRepository;
 const { createSubjectiveFeedbackRepository } = internalModules.subjectiveFeedbackRepository;
 const { createPlanRepository } = internalModules.planRepository;
@@ -39,16 +38,12 @@ const { createColumnService } = internalModules.columnService;
 const { createDataManagementService } = internalModules.dataManagementService;
 const { buildConsultationReport, createShortConsultationMemo, createStandardConsultationText, createDetailedConsultationText } = internalModules.consultationReport;
 const { buildDeterministicConsultation, CONSULTATION_PURPOSES, DETERMINISTIC_CONSULTATION_VERSION } = internalModules.deterministicConsultation;
-const { adaptRecordToV27Session } = internalModules.legacyLoadInputAdapter;
-const { assertV27ResultSemantics, calculateV27Session } = internalModules.legacyLoadModel;
-const { createV27ResultRecord } = internalModules.legacyLoadResultService;
 const { createPrimaryRegionalV2ResultRecord } = internalModules.primaryRegionalResultService;
 const { calculateRun: calculatePrimaryRegionalV2 } = internalModules.primaryRegionalEngine;
 
 function createApplicationServices(options = {}) {
   const gateway = options.gateway || createStorageGateway(options.storage);
   const records = createRecordRepository(gateway);
-  const modelResultsV27 = createModelResultV27Repository(gateway);
   const modelResultsRegionalV2 = createModelResultRegionalV2Repository(gateway);
   const subjectiveFeedback = createSubjectiveFeedbackRepository(gateway);
   const plans = createPlanRepository(gateway);
@@ -58,19 +53,12 @@ function createApplicationServices(options = {}) {
     recordsRepository: records,
     subjectiveFeedbackRepository: subjectiveFeedback,
     profileRepository: profile,
-    modelResultV27Repository: modelResultsV27,
     modelResultRegionalV2Repository: modelResultsRegionalV2,
   });
 
   const services = {
     model: Object.freeze({
       primaryRegionalV2: Object.freeze({ calculatePrimaryRegionalV2, createPrimaryRegionalV2ResultRecord }),
-      v27: Object.freeze({
-        adaptRecordToV27Session,
-        calculateV27Session,
-        assertV27ResultSemantics,
-        createV27ResultRecord,
-      }),
     }),
     safety: Object.freeze({
       evaluateSupportDecision,
@@ -85,7 +73,6 @@ function createApplicationServices(options = {}) {
     storage: Object.freeze({
       gateway,
       records,
-      modelResultsV27,
       modelResultsRegionalV2,
       subjectiveFeedback,
       plans,
@@ -112,7 +99,6 @@ function createApplicationServices(options = {}) {
   services.workflows.history = createHistoryWorkflow({
     gateway,
     recordsRepository: records,
-    modelResultV27Repository: modelResultsV27,
     modelResultRegionalV2Repository: modelResultsRegionalV2,
     subjectiveFeedbackRepository: subjectiveFeedback,
     planRepository: plans,

@@ -12,8 +12,6 @@ import {
 const moduleExports = Object.create(null);
 const { PERSONAL_PROFILE_SCHEMA_VERSION } = internalModules.bodyProfileAdjustment;
 const { PRIMARY_REGIONAL_V2_MODEL_VERSION, validatePrimaryRegionalV2ResultRecord } = internalModules.primaryRegionalResultService;
-const { V27_MODEL_VERSION } = internalModules.legacyLoadModelConstants;
-const { assertV27ResultSemantics } = internalModules.legacyLoadModel;
 const { INPUT_LIMITS } = internalModules.inputSafety;
 const { validateRunningRecordInput, normalizeRunningRecord, validateRunningRecord } = internalModules.inputValidation;
 const { validateCoursePresetInput } = internalModules.courseRepository;
@@ -104,35 +102,6 @@ function inspectRecords(records, issues) {
   });
 }
 
-function inspectV27Results(results, recordIds, issues) {
-  addDuplicateIssues(results, (item) => item?.id, "v27Results", "走行全体の保存済み結果", issues);
-  (results || []).forEach((item, index) => {
-    const itemId = String(item?.id || `#${index + 1}`);
-    if (!isObject(item) || !item.id || !item.record_id) {
-      issues.push(issue("BLOCKING", "V27_RESULT_ID_REQUIRED", "v27Results", "走行全体の保存済み結果の識別情報が不足しています。", itemId));
-      return;
-    }
-    if (item.model_version !== V27_MODEL_VERSION) {
-      issues.push(issue("BLOCKING", "V27_VERSION_UNSUPPORTED", "v27Results", "対応していない走行全体の結果形式です。", itemId));
-    }
-    if (!recordIds.has(String(item.record_id))) {
-      issues.push(issue("BLOCKING", "V27_RECORD_REFERENCE_MISSING", "v27Results", "結果が参照する走行・休養記録がバックアップ内にありません。", itemId));
-    }
-    if (item.input_snapshot?.record?.id && String(item.input_snapshot.record.id) !== String(item.record_id)) {
-      issues.push(issue("BLOCKING", "V27_SNAPSHOT_REFERENCE_MISMATCH", "v27Results", "結果と元の記録の対応を確認できません。", itemId));
-    }
-    if (item.state === "RUN") {
-      const semantic = assertV27ResultSemantics(item.result);
-      if (!semantic.ok) {
-        issues.push(issue("BLOCKING", "V27_SEMANTICS_INVALID", "v27Results", "走行全体の保存済み結果が現在の意味規則に適合しません。", itemId, { errors: semantic.errors }));
-      }
-    } else if (item.state !== "REST" || item.result !== null) {
-      issues.push(issue("BLOCKING", "V27_STATE_INVALID", "v27Results", "走行全体の結果状態を確認できません。", itemId));
-    }
-    deepFiniteNumbers(item, "", issues, "v27Results", itemId);
-  });
-}
-
 function inspectRegionalResults(results, recordIds, issues) {
   addDuplicateIssues(results, (item) => item?.id, "regionalResults", "部位別の保存済み結果", issues);
   (results || []).forEach((item, index) => {
@@ -149,7 +118,7 @@ function inspectRegionalResults(results, recordIds, issues) {
     }
     if (item.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION) {
       const outputValidation = validatePrimaryRegionalV2ResultRecord(item);
-      if (!outputValidation.valid) issues.push(issue("BLOCKING", "PRIMARY_REGIONAL_V2_OUTPUT_INVALID", "regionalResults", "部位別比較値の12部位・入力追跡情報を確認できません。", itemId, { issueCodes: outputValidation.issues.slice(0, 20) }));
+      if (!outputValidation.valid) issues.push(issue("BLOCKING", "PRIMARY_REGIONAL_V2_OUTPUT_INVALID", "regionalResults", "部位別比較値の12部位・計算結果を確認できません。", itemId, { issueCodes: outputValidation.issues.slice(0, 20) }));
     }
     deepFiniteNumbers(item, "", issues, "regionalResults", itemId);
   });
@@ -231,7 +200,6 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   }
 
   const records = collection(snapshot, STORAGE_KEYS.records, []);
-  const v27Results = collection(snapshot, STORAGE_KEYS.modelResultsV27, []);
   const regionalResults = collection(snapshot, STORAGE_KEYS.modelResultsRegionalV2, []);
   const feedback = collection(snapshot, STORAGE_KEYS.subjectiveFeedback, []);
   const plans = collection(snapshot, STORAGE_KEYS.plans, []);
@@ -302,7 +270,6 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
 
   const expectedArrays = [
     [records, "records", "走行・休養記録"],
-    [v27Results, "v27Results", "走行全体の保存済み結果"],
     [regionalResults, "regionalResults", "部位別の保存済み結果"],
     [feedback, "subjectiveFeedback", "本人入力"],
     [plans, "plans", "予定"],
@@ -317,7 +284,6 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   });
 
   const recordsWithinLimit = withinCollectionLimit(records, INPUT_LIMITS.portableRecords, "records", "走行・休養記録", issues);
-  const v27WithinLimit = withinCollectionLimit(v27Results, INPUT_LIMITS.portableModelResults, "v27Results", "走行全体の保存済み結果", issues);
   const regionalWithinLimit = withinCollectionLimit(regionalResults, INPUT_LIMITS.portableModelResults, "regionalResults", "部位別の保存済み結果", issues);
   const feedbackWithinLimit = withinCollectionLimit(feedback, INPUT_LIMITS.portableFeedbackEntries, "subjectiveFeedback", "本人入力", issues);
   const plansWithinLimit = withinCollectionLimit(plans, INPUT_LIMITS.portablePlans, "plans", "予定", issues);
@@ -326,7 +292,6 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
 
   if (recordsWithinLimit) inspectRecords(records, issues);
   const recordIds = new Set(recordsWithinLimit ? records.map((item) => String(item?.id || "")).filter(Boolean) : []);
-  if (v27WithinLimit) inspectV27Results(v27Results, recordIds, issues);
   if (regionalWithinLimit) inspectRegionalResults(regionalResults, recordIds, issues);
   if (feedbackWithinLimit) inspectFeedback(feedback, recordIds, issues);
   if (plansWithinLimit) inspectPlans(plans, recordIds, issues);
@@ -383,7 +348,6 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   const counts = Object.freeze({
     records: Array.isArray(records) ? records.length : 0,
     subjectiveFeedback: Array.isArray(feedback) ? feedback.length : 0,
-    v27Results: Array.isArray(v27Results) ? v27Results.length : 0,
     regionalResults: Array.isArray(regionalResults) ? regionalResults.length : 0,
     plans: Array.isArray(plans) ? plans.length : 0,
     courses: Array.isArray(courses) ? courses.length : 0,

@@ -11,6 +11,12 @@ const recordInput = fs.readFileSync('ui/interactions/recordInputInteractions.js'
 const mobileAutofill = fs.readFileSync('ui/mobileMeasurementRecordAutofill.js', 'utf8');
 const inputSupport = fs.readFileSync('core/internal/inputSupport.js', 'utf8');
 const primaryResults = fs.readFileSync('core/internal/primaryModelResults.js', 'utf8');
+const appServices = fs.readFileSync('core/internal/applicationServices.js', 'utf8');
+const platformInfrastructure = fs.readFileSync('core/internal/platformInfrastructure.js', 'utf8');
+const historyWorkflow = fs.readFileSync('core/internal/historyWorkflow.js', 'utf8');
+const restoreInspection = fs.readFileSync('core/internal/restoreInspection.js', 'utf8');
+const consultationReport = fs.readFileSync('core/internal/consultationReport.js', 'utf8');
+const appEntry = fs.readFileSync('app.js', 'utf8');
 
 const results = [];
 function test(id, fn) {
@@ -118,6 +124,22 @@ test('PRIMARY-REGIONAL-RESULT-NO-LONGER-DEPENDS-ON-FIXED-93-TRACE', () => {
   assert.ok(!primaryResults.includes('formal_input_snapshot:'));
   assert.ok(!primaryResults.includes('buildAppRetainedInputTrace'));
   assert.ok(primaryResults.includes('engine_input_snapshot'));
+});
+
+
+test('CURRENT-RUNTIME-NO-LONGER-STORES-OR-EXPOSES-V27-RESULTS', () => {
+  assert.ok(!platformInfrastructure.includes('modelResultsV27'));
+  assert.ok(!platformInfrastructure.includes('model-results-v2.7'));
+  assert.ok(!appServices.includes('modelResultsV27'));
+  assert.ok(!appServices.includes('createModelResultV27Repository'));
+  assert.ok(!appServices.includes('v27: Object.freeze'));
+  assert.ok(!appEntry.includes('modelResultV27Repository'));
+  assert.ok(!historyWorkflow.includes('modelResultsV27'));
+  assert.ok(!historyWorkflow.includes('modelResultV27Repository'));
+  assert.ok(!restoreInspection.includes('inspectV27Results'));
+  assert.ok(!restoreInspection.includes('v27Results'));
+  assert.ok(!consultationReport.includes('v27ResultRecord'));
+  assert.ok(!consultationReport.includes('走り全体の目安'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');
