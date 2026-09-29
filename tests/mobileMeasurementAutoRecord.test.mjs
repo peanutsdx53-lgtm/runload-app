@@ -96,6 +96,33 @@ await test('GPS-LOOP-COURSE-IS-DETECTED-CONSERVATIVELY', async () => {
   assert.equal(result?.routePattern, 'LOOP');
 });
 
+await test('COURSE-ANALYSIS-USES-MEASUREMENT-DISTANCE-INSTEAD-OF-READDING-SMALL-GPS-MOVES', async () => {
+  const track = Array.from({ length: 11 }, (_, index) => ({
+    lat: 35,
+    lon: 139 + index * 0.00002,
+    timestamp: index * 6000,
+    cumulativeDistanceM: index,
+  }));
+  const result = analyzeMeasuredCourse({ track, durationMs: 60 * 1000 });
+  assert.equal(result?.distanceKm, 0.01);
+});
+
+await test('IMPLAUSIBLE-GRADE-SEGMENTS-DO-NOT-COUNT-AS-ELEVATION-COVERAGE-OR-FLAT', async () => {
+  const track = Array.from({ length: 7 }, (_, index) => ({
+    lat: 35,
+    lon: 139 + index * 0.0001,
+    timestamp: index * 10000,
+    cumulativeDistanceM: index * 10,
+    altitudeM: index * 100,
+    altitudeAccuracyM: 5,
+  }));
+  const result = analyzeMeasuredCourse({ track, durationMs: 60 * 1000 });
+  assert.equal(result?.elevationCoverage, 0);
+  assert.equal(result?.gradeKnowledge, 'UNKNOWN');
+  assert.equal(result?.flatPercent, null);
+  assert.equal(result?.elevationGainM, null);
+});
+
 await test('MISSING-ALTITUDE-DOES-NOT-FABRICATE-SLOPE', async () => {
   const track = Array.from({ length: 5 }, (_, index) => ({ lat: 35, lon: 139 + index * 0.001, timestamp: index * 60000 }));
   const result = analyzeMeasuredCourse({ track, durationMs: 20 * 60 * 1000 });

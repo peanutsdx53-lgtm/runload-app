@@ -146,6 +146,15 @@ function weightedMedian(rows = []) {
   return valid.at(-1)?.value ?? null;
 }
 
+function measuredSegmentDistanceMeters(a = {}, b = {}) {
+  const previousCumulative = Number(a?.cumulativeDistanceM);
+  const currentCumulative = Number(b?.cumulativeDistanceM);
+  if (finite(a?.cumulativeDistanceM) && finite(b?.cumulativeDistanceM) && currentCumulative >= previousCumulative) {
+    return currentCumulative - previousCumulative;
+  }
+  return haversineDistanceMeters(a, b);
+}
+
 function sampled(points = [], max = 80) {
   if (points.length <= max) return points;
   return Array.from({ length: max }, (_, index) => points[Math.round(index * (points.length - 1) / (max - 1))]);
@@ -188,7 +197,7 @@ export function analyzeMeasuredCourse({ track = [], durationMs = 0, name = "GPSæ
 
   const altitudes = smoothedAltitudes(points);
   let totalM = 0;
-  let altitudeCoverageM = 0;
+  let gradeEvaluatedM = 0;
   let upM = 0;
   let downM = 0;
   let flatM = 0;
@@ -200,7 +209,7 @@ export function analyzeMeasuredCourse({ track = [], durationMs = 0, name = "GPSæ
   for (let index = 1; index < points.length; index += 1) {
     const a = points[index - 1];
     const b = points[index];
-    const distanceM = haversineDistanceMeters(a, b);
+    const distanceM = measuredSegmentDistanceMeters(a, b);
     if (!(distanceM > 0)) continue;
     totalM += distanceM;
 
@@ -211,12 +220,12 @@ export function analyzeMeasuredCourse({ track = [], durationMs = 0, name = "GPSæ
     const altitudeAccurate = (accuracyA == null || accuracyA <= MAX_ALTITUDE_ACCURACY_M)
       && (accuracyB == null || accuracyB <= MAX_ALTITUDE_ACCURACY_M);
     if (!finite(altitudeA) || !finite(altitudeB) || !altitudeAccurate) continue;
-    altitudeCoverageM += distanceM;
     if (distanceM < MIN_GRADE_DISTANCE_M) continue;
 
     const riseM = Number(altitudeB) - Number(altitudeA);
     const grade = riseM / distanceM * 100;
     if (!Number.isFinite(grade) || Math.abs(grade) > MAX_ABS_GRADE_PERCENT) continue;
+    gradeEvaluatedM += distanceM;
     if (riseM > 0) gainM += riseM;
     else lossM += Math.abs(riseM);
 
@@ -232,8 +241,8 @@ export function analyzeMeasuredCourse({ track = [], durationMs = 0, name = "GPSæ
   }
 
   if (!(totalM > 0)) return null;
-  const elevationCoverage = altitudeCoverageM / totalM;
-  const gradeKnown = elevationCoverage >= 0.8;
+  const elevationCoverage = gradeEvaluatedM / totalM;
+  const gradeKnown = gradeEvaluatedM > 0 && elevationCoverage >= 0.8;
   const route = inferRoutePattern(points, totalM);
   const durationMinutes = Number(durationMs) > 0 ? Number(durationMs) / 60000 : null;
   const date = new Date();
@@ -252,9 +261,9 @@ export function analyzeMeasuredCourse({ track = [], durationMs = 0, name = "GPSæ
     elevationCoverage: round(elevationCoverage, 3),
     gradeKnowledge: gradeKnown ? "KNOWN_PROFILE" : "UNKNOWN",
     gradeInputMode: gradeKnown ? "SUMMARY" : "UNKNOWN",
-    upPercent: gradeKnown ? round(upM / totalM * 100, 1) : 0,
-    downPercent: gradeKnown ? round(downM / totalM * 100, 1) : 0,
-    flatPercent: gradeKnown ? round(Math.max(0, 100 - (upM + downM) / totalM * 100), 1) : null,
+    upPercent: gradeKnown ? round(upM / gradeEvaluatedM * 100, 1) : 0,
+    downPercent: gradeKnown ? round(downM / gradeEvaluatedM * 100, 1) : 0,
+    flatPercent: gradeKnown ? round(flatM / gradeEvaluatedM * 100, 1) : null,
     upGradePercent: gradeKnown ? round(weightedMedian(uphillGrades) || 0, 1) : 0,
     downGradePercent: gradeKnown ? round(weightedMedian(downhillGrades) || 0, 1) : 0,
     surfaceInputMode: "UNKNOWN",
