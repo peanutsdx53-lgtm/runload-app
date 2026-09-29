@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "4c2f035d5d60da06edf1ead6423653141e44bc55"
+          test "$(git rev-parse HEAD^)" = "69e5db748bbc91d81b48321b75531795d05e38b4"
 
       - name: Run all Node tests
         shell: bash
@@ -93,7 +93,7 @@ jobs:
           grep -q 'createPrimaryRegionalV2ResultRecord' core/internal/primaryModelResults.js
           grep -q 'PRIMARY_REGIONAL_V2_REGION_DEFS' core/internal/primaryModelResults.js
           grep -q 'rows.length!==12' core/internal/primaryModelResults.js
-          grep -q 'item.body_map_payload?.regions.length!==12' core/internal/primaryModelResults.js
+          grep -q 'item.body_map_payload.regions.length!==12' core/internal/primaryModelResults.js
           grep -q 'surfacePresetCatalog.js' core/internal/primaryInputProcessing.js
           test ! -e core/internal/primaryInputCatalog.js
           test ! -e core/internal/modelV27.js
