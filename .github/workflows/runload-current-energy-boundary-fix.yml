@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "b79a2374f41c53bb079fe0c553ce72bb45ba6f82"
+          test "$(git rev-parse HEAD^)" = "8a29bbada31eb64bf8004649b77853ff91a418d4"
 
       - name: Apply candidate
         shell: bash
