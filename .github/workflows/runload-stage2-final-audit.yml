@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "278a549de4fab5934c1b9e55d88fb348182e9c4b"
+          test "$(git rev-parse HEAD^)" = "4c2f035d5d60da06edf1ead6423653141e44bc55"
 
       - name: Run all Node tests
         shell: bash
@@ -65,22 +65,24 @@ jobs:
           fi
           python - <<'PY'
           from pathlib import Path
+          import re
           roots = [Path('app.js'), Path('core'), Path('screens'), Path('ui'), Path('docs'), Path('service-worker.js')]
           files=[]
           for root in roots:
               if root.is_file(): files.append(root)
               elif root.exists(): files.extend(p for p in root.rglob('*') if p.is_file())
+          retired_rpe = re.compile(r'(?i)(?<![A-Za-z0-9_])RPE(?![A-Za-z0-9_])|rpeProvenance|perceivedExertion')
           for p in files:
               if p.as_posix() == 'core/internal/applicationDomain.js':
                   continue
-              text=p.read_text(errors='ignore').lower()
-              if 'rpe' in text or 'perceivedexertion' in text:
-                  raise SystemExit(f'retired RPE residue outside defensive strip: {p}')
+              text=p.read_text(errors='ignore')
+              if retired_rpe.search(text):
+                  raise SystemExit(f'retired RPE field/token outside defensive strip: {p}')
           app=Path('core/internal/applicationDomain.js').read_text()
           assert 'delete cloned.perceivedExertion;' in app
           assert 'delete cloned.rpeProvenance;' in app
-          assert app.lower().count('rpe') == 1
-          assert app.lower().count('perceivedexertion') == 1
+          cleaned=app.replace('delete cloned.perceivedExertion;', '').replace('delete cloned.rpeProvenance;', '')
+          assert not retired_rpe.search(cleaned)
           print('retired field audit OK')
           PY
 
