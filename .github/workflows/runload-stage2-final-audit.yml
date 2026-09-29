@@ -1,0 +1,105 @@
+name: RunLoad Stage 2 final cross-audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage2-final-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "278a549de4fab5934c1b9e55d88fb348182e9c4b"
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do
+            echo "[TEST] $test_file"
+            node "$test_file"
+          done
+
+      - name: Check all JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find . -type f -name '*.js' -not -path './.git/*' | sort)
+          for file in "${files[@]}"; do
+            node --check "$file" >/dev/null
+          done
+          echo "JS syntax OK: ${#files[@]} files"
+
+      - name: Audit retired calculation and compatibility residue
+        shell: bash
+        run: |
+          set -euo pipefail
+          active_paths=(app.js core screens ui docs service-worker.js)
+          if grep -R -n -i -E 'v27|v2\.7|modelResultsV27|model-results-v2\.7|createModelResultV27Repository|v27Application|modelV27\.js|Current 93-input trace|93-input|93項目|formalInputCatalog|FORMAL_INPUT_CATALOG|RL-IN-090|RL-IN-091|RL-IN-092' "${active_paths[@]}" --exclude-dir=.git; then
+            echo 'Retired Stage 2 residue found in active paths' >&2
+            exit 1
+          fi
+
+      - name: Audit retired record fields
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -n -E 'unexpectedSymptom|symptomContext|weatherState|windSummary|sleepSummary|nutritionHydrationSummary|lifestyleNote|reflectionKeyPoint|consultationTarget|consultationQuestion' app.js core screens ui docs service-worker.js --exclude-dir=.git; then
+            echo 'Retired record field found in active paths' >&2
+            exit 1
+          fi
+          python - <<'PY'
+          from pathlib import Path
+          roots = [Path('app.js'), Path('core'), Path('screens'), Path('ui'), Path('docs'), Path('service-worker.js')]
+          files=[]
+          for root in roots:
+              if root.is_file(): files.append(root)
+              elif root.exists(): files.extend(p for p in root.rglob('*') if p.is_file())
+          for p in files:
+              if p.as_posix() == 'core/internal/applicationDomain.js':
+                  continue
+              text=p.read_text(errors='ignore').lower()
+              if 'rpe' in text or 'perceivedexertion' in text:
+                  raise SystemExit(f'retired RPE residue outside defensive strip: {p}')
+          app=Path('core/internal/applicationDomain.js').read_text()
+          assert 'delete cloned.perceivedExertion;' in app
+          assert 'delete cloned.rpeProvenance;' in app
+          assert app.lower().count('rpe') == 1
+          assert app.lower().count('perceivedexertion') == 1
+          print('retired field audit OK')
+          PY
+
+      - name: Verify current 12-region result path remains active
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'createPrimaryRegionalV2ResultRecord' core/internal/primaryModelResults.js
+          grep -q 'PRIMARY_REGIONAL_V2_REGION_DEFS' core/internal/primaryModelResults.js
+          grep -q 'rows.length!==12' core/internal/primaryModelResults.js
+          grep -q 'item.body_map_payload?.regions.length!==12' core/internal/primaryModelResults.js
+          grep -q 'surfacePresetCatalog.js' core/internal/primaryInputProcessing.js
+          test ! -e core/internal/primaryInputCatalog.js
+          test ! -e core/internal/modelV27.js
+          test ! -e core/internal/v27ApplicationModel.js
+          test ! -e core/internal/v27ApplicationServices.js
+
+      - name: Confirm audit is read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
