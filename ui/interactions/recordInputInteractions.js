@@ -133,6 +133,17 @@ function bindMobileRecordStageNavigation(form) {
   mobileRecordStageStatus(form);
 }
 
+function applyMobileRecordEntryFocus(form, context) {
+  if (!form.querySelector("[data-mobile-record-progress]")) return;
+  if (context?.parameters?.get?.("focus") !== "next-check") return;
+  setActiveMobileRecordStage(form, 4);
+  globalThis.requestAnimationFrame?.(() => {
+    const target = form.elements.namedItem("nextCheckPoint");
+    target?.scrollIntoView?.({ block: "center" });
+    target?.focus?.({ preventScroll: true });
+  });
+}
+
 const SURFACE_CLASS_BY_RECORD_KEY = Object.freeze({
   pavedPercent: "REF_HARD_EVEN_STABLE",
   trackPercent: "REF_HARD_EVEN_STABLE",
@@ -909,6 +920,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
   updatePersonalSummary(form);
   updateOptionalInputStatus(form);
   bindMobileRecordStageNavigation(form);
+  applyMobileRecordEntryFocus(form, context);
   bindFatigueLifecycle(form, { services, router, context });
   const returnStatus = form.querySelector("[data-record-return-status]");
   if (returnStatus && returnState?.notice) {
@@ -1028,6 +1040,13 @@ export function bindRecordInput({ services, router, context, returnState = null 
     if (postSaveWarnings.length) {
       window.alert(`記録は保存しました。\n\n${postSaveWarnings.join("\n")}`);
     }
-    router.navigateToScreen("result", { recordId: result.record.id });
+    const mobileReturnTo = form.querySelector("[data-mobile-record-progress]")
+      ? String(context?.parameters?.get?.("returnTo") || "")
+      : "";
+    if (mobileReturnTo === "interpretation-room") {
+      router.navigateToScreen("interpretation-room", { recordId: result.record.id, origin: "result" });
+    } else {
+      router.navigateToScreen("result", { recordId: result.record.id });
+    }
   });
 }

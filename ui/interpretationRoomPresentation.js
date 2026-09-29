@@ -608,7 +608,24 @@ const NEXT_CHECK_COPY = Object.freeze({
   CONTINUE_COMPARABLE_RECORDS: "同じ方法で記録を続けると、今回を含む推移として確認できる情報が増えます。",
 });
 
-function renderNextRail(output) {
+function mobileNextCheckHref(output) {
+  const recordId = String(output?.target?.recordId || "");
+  if (!recordId) return "#/record-input";
+  const query = new URLSearchParams({ recordId, focus: "next-check", returnTo: "interpretation-room" });
+  return `#/record-input?${query.toString()}`;
+}
+
+function renderMobileInterpretationPath() {
+  return `<nav class="interpretation-room-mobile-path" aria-label="結果整理の流れ">
+    <span><b>1</b><strong>記録した事実</strong></span>
+    <i aria-hidden="true">›</i>
+    <span><b>2</b><strong>今回を見る</strong></span>
+    <i aria-hidden="true">›</i>
+    <span><b>3</b><strong>次回1つ</strong></span>
+  </nav>`;
+}
+
+function renderNextRail(output, { mobileLayout = false } = {}) {
   const next = output?.next || {};
   const actions = [next.primaryAction, ...(next.otherActions || [])].filter((action) => action && action.enabled !== false).slice(0, 4);
   const check = output?.nextCheck || {};
@@ -620,6 +637,7 @@ function renderNextRail(output) {
     <div class="interpretation-room-next-rail__head"><span>${interpretationIcon("flag")}</span><div><small>次の比較</small><h2 id="interpretation-next-title">次に確かめる</h2></div></div>
     ${selected ? `<p class="interpretation-room-next-rail__check">${escapeHtml(checkCopy)}</p>` : ""}
     ${check.userRecorded ? `<div class="interpretation-room-next-rail__memo"><small>自分で残した次回確認</small><strong>${escapeHtml(check.userRecorded)}</strong></div>` : ""}
+    ${mobileLayout ? `<a class="interpretation-room-next-check-edit" href="${escapeHtml(mobileNextCheckHref(output))}"><span>${interpretationIcon("flag")}</span><div><small>次のランへつなぐ</small><strong>${check.userRecorded ? "次回確認を変更する" : "次回確認を1つ残す"}</strong></div><i aria-hidden="true">›</i></a>` : ""}
     ${primary ? renderAction(primary, output, { primary: true }) : ""}
     ${secondary.length ? `<div class="interpretation-room-next-rail__secondary">${secondary.map((action) => renderAction(action, output)).join("")}</div>` : ""}
   </aside>`;
@@ -661,7 +679,7 @@ function renderAdvanced(output, region) {
   const sources = Array.isArray(evidence.sources) ? evidence.sources : [];
   return `${renderCalculationDetails(region)}<details class="interpretation-room-advanced"><summary>計算の考え方と根拠を詳しく見る</summary><div>${evidence.construct ? `<p><strong>この数値が表す内容</strong><br>${escapeHtml(publicConstructText(evidence.construct))}</p>` : ""}${sources.length ? `<p><strong>この計算の背景資料</strong></p><ul>${sources.map((source) => `<li>${escapeHtml(source.label || "参考資料")}${source.role ? ` — ${escapeHtml(publicSourceRoleText(source.role))}` : ""}</li>`).join("")}</ul>` : ""}<p class="interpretation-room-boundary-line">ここでは、選択した部位の計算に関係する情報を確認できます。</p></div></details>`;
 }
-export function renderInterpretationRoom({ output } = {}) {
+export function renderInterpretationRoom({ output, mobileLayout = false } = {}) {
   if (!output?.state?.targetAvailable) {
     return `<div class="interpretation-room interpretation-room--empty" data-interpretation-room-state="empty"><header class="interpretation-room-hero"><p>結果を整理する</p><h1>対象の保存記録がありません</h1><p>保存した走行記録から、今回確認できることを整理します。</p></header><a class="interpretation-room-action interpretation-room-action--primary" href="#/record-input"><span class="interpretation-room-action__icon">${interpretationIcon("record")}</span><span class="interpretation-room-action__copy"><strong>記録を始める</strong><small>新しい走行記録を入力します。</small></span><i aria-hidden="true">›</i></a></div>`;
   }
@@ -672,9 +690,10 @@ export function renderInterpretationRoom({ output } = {}) {
   const selected = Boolean(output?.selectedRegion);
   if (!selected) {
     return `<div class="interpretation-room interpretation-room--overview interpretation-room--dashboard" data-interpretation-room-state="overview">
+      ${mobileLayout ? renderMobileInterpretationPath() : ""}
       <div class="interpretation-room-dashboard">
         ${renderOverviewInsight(output, date)}
-        ${renderNextRail(output)}
+        ${renderNextRail(output, { mobileLayout })}
         ${renderPatternBoard(output)}
         ${renderContextBoard(output)}
       </div>
@@ -689,7 +708,7 @@ export function renderInterpretationRoom({ output } = {}) {
         <div class="interpretation-room-selected-advanced-stack">${renderAdvanced(output, output?.selectedRegion)}</div>
       </div>
       <div class="interpretation-room-selected-side">
-        ${renderNextRail(output)}
+        ${renderNextRail(output, { mobileLayout })}
         ${renderSubjective(output)}
       </div>
     </div>

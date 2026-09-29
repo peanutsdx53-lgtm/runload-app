@@ -1,5 +1,6 @@
 import { buildInterpretation } from "../core/interpretationCore.js";
 import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
+import { matchesMobileLayout } from "../ui/deviceLayout.js";
 
 const ALLOWED_ORIGINS = new Set(["result", "history", "body-part-detail", "simulation", "home"]);
 
@@ -44,5 +45,5 @@ export function renderInterpretationRoomScreen({ services, context }) {
     supportDecision: targetExperience?.supportDecision || null,
   });
 
-  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output })}</section>`;
+  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, mobileLayout: matchesMobileLayout() })}</section>`;
 }
