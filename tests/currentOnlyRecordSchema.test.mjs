@@ -161,6 +161,17 @@ test('PLAN-PREVIEW-IS-CURRENT-FACTS-ONLY', () => {
 });
 
 
+test('RETIRED-V27-IMPLEMENTATION-FILES-ARE-ABSENT', () => {
+  for (const path of [
+    'core/internal/modelV27.js',
+    'core/internal/v27ApplicationModel.js',
+    'core/internal/v27ApplicationServices.js',
+  ]) assert.equal(fs.existsSync(path), false, path);
+  assert.ok(!worker.includes('./core/internal/modelV27.js'));
+  assert.ok(!worker.includes('./core/internal/v27ApplicationModel.js'));
+  assert.ok(!worker.includes('./core/internal/v27ApplicationServices.js'));
+});
+
 test('CURRENT-MODULE-CHAIN-NO-LONGER-DEPENDS-ON-V27', () => {
   assert.ok(!primaryModelEngine.includes('modelV27.js'));
   assert.ok(primaryResults.includes('recordRepositories.js'));
