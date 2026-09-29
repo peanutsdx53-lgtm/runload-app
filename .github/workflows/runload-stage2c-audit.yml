@@ -1,4 +1,4 @@
-name: RunLoad Stage 2C legacy residue audit
+name: RunLoad Stage 2C trace dependency audit
 
 on:
   push:
@@ -22,20 +22,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "7006591f37005eafbce488cc8ea6f6392c15df3b"
+          test "$(git rev-parse HEAD^)" = "fd40f4ad32dfd8694e1280e467d259a8377036ef"
 
-      - name: Audit legacy names and retired fields
+      - name: Map obsolete trace dependencies
         shell: bash
         run: |
           set -euo pipefail
           for pattern in \
-            'v27|v2\.7' \
-            'RPE|rpe' \
-            '93' \
-            'unexpectedSymptom|symptomContext' \
-            'weather|windSummary|sleepSummary|nutritionHydrationSummary|lifestyleNote' \
-            'consultationTarget|consultationQuestion|reflectionKeyPoint'; do
+            'primaryRegionalInputTrace|buildRetainedInputTrace|currentAppContextTraceNames|RETAINED_INPUTS' \
+            'PRIMARY_INPUT_CATALOG|PRIMARY_INPUT_BY_ID|FORMAL_INPUT|buildAppRetainedInputTrace|buildFormalInputSnapshot' \
+            'rpeProvenance|reportedRpeValue|normalizeRpeProvenance|RPE_PROVENANCE' \
+            'RL-IN-090|RL-IN-091|RL-IN-092|RL-IN-117|RL-IN-118|RL-IN-119|RL-IN-120|RL-IN-122|RL-IN-123'; do
             echo "=== PATTERN: $pattern ==="
-            grep -R -n -i -E "$pattern" app.js core screens ui docs tests service-worker.js \
+            grep -R -n -E "$pattern" app.js core screens ui tests service-worker.js \
               --exclude-dir=.git || true
           done
