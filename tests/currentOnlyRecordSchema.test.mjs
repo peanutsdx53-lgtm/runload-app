@@ -10,6 +10,7 @@ const tutorial = fs.readFileSync('ui/screenTutorial.js', 'utf8');
 const recordInput = fs.readFileSync('ui/interactions/recordInputInteractions.js', 'utf8');
 const mobileAutofill = fs.readFileSync('ui/mobileMeasurementRecordAutofill.js', 'utf8');
 const inputSupport = fs.readFileSync('core/internal/inputSupport.js', 'utf8');
+const primaryResults = fs.readFileSync('core/internal/primaryModelResults.js', 'utf8');
 
 const results = [];
 function test(id, fn) {
@@ -107,6 +108,16 @@ test('NORMALIZER-NO-LONGER-READS-PRE-RELEASE-RECORD-ALIASES', () => {
   assert.ok(inputSupport.includes('toFiniteNumber(input.distanceKm, 0)'));
   assert.ok(inputSupport.includes('toFiniteNumber(input.durationMinutes, 0)'));
   assert.ok(inputSupport.includes('course: normalizeCourse(input.course)'));
+});
+
+
+test('PRIMARY-REGIONAL-RESULT-NO-LONGER-DEPENDS-ON-FIXED-93-TRACE', () => {
+  assert.ok(!primaryResults.includes('INPUT_TRACE_93_REQUIRED'));
+  assert.ok(!primaryResults.includes('TRACE_APP_CONTEXT_19_REQUIRED'));
+  assert.ok(!primaryResults.includes('input_trace:'));
+  assert.ok(!primaryResults.includes('formal_input_snapshot:'));
+  assert.ok(!primaryResults.includes('buildAppRetainedInputTrace'));
+  assert.ok(primaryResults.includes('engine_input_snapshot'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

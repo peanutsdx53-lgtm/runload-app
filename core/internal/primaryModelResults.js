@@ -26,7 +26,7 @@ internalModules.primaryRegionalRegionDefinitions = moduleExports;
 {
 const moduleExports = Object.create(null);
 const { BUILD_ID, REGION_DEFS, calculateRun } = internalModules.primaryRegionalEngine;
-const { adaptCurrentRecordToPrimaryRegionalV2, buildAppRetainedInputTrace } = internalModules.primaryRegionalAppAdapter;
+const { adaptCurrentRecordToPrimaryRegionalV2 } = internalModules.primaryRegionalAppAdapter;
 const { PRIMARY_REGIONAL_V2_REGION_DEFS } = internalModules.primaryRegionalRegionDefinitions;
 
 const PRIMARY_REGIONAL_V2_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
@@ -108,8 +108,7 @@ function buildPrimaryRegionalV2ComparisonSignature(resultRecord={},rowOrRegionId
 function comparePrimaryRegionalV2Signatures(a,b){const same=Boolean(a&&b&&a.modelVersion===b.modelVersion&&a.outputSemanticVersion===b.outputSemanticVersion&&a.regionId===b.regionId&&a.constructId===b.constructId&&a.referenceId===b.referenceId);return Object.freeze({directDeltaAllowed:same,status:same?"COMPARABLE":"INCOMPATIBLE",reason:same?"SAME_REGION_SEMANTIC":"SEMANTIC_OR_MODEL_MISMATCH"});}
 
 function createPrimaryRegionalV2ResultRecord({record,feedback={},sessionSequence=1,allRecords=[]}={}){
-  const trace=buildAppRetainedInputTrace({record,feedback,sessionSequence}); if(!trace.ok) return trace;
-  const common={id:`primary-reference100-v3-result-${sanitize(record.id)}-${sanitize(revision(record))}`,record_id:record.id,source_record_revision:revision(record),generated_at:new Date().toISOString(),model_version:PRIMARY_REGIONAL_V2_MODEL_VERSION,authority_version:PRIMARY_REGIONAL_V2_AUTHORITY_VERSION,engine_build_version:PRIMARY_REGIONAL_V2_BUILD_ID,output_semantic_version:PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION,input_trace:clone(trace.value),formal_input_snapshot:clone(trace.value),input_snapshot:clone(trace.uiInput),source_registry:SOURCE_REGISTRY};
+  const common={id:`primary-reference100-v3-result-${sanitize(record.id)}-${sanitize(revision(record))}`,record_id:record.id,source_record_revision:revision(record),generated_at:new Date().toISOString(),model_version:PRIMARY_REGIONAL_V2_MODEL_VERSION,authority_version:PRIMARY_REGIONAL_V2_AUTHORITY_VERSION,engine_build_version:PRIMARY_REGIONAL_V2_BUILD_ID,output_semantic_version:PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION,source_registry:SOURCE_REGISTRY};
   if(String(record.activityType||"").toLowerCase()==="rest") return {ok:true,resultRecord:Object.freeze({...common,state:"REST",engine_input_snapshot:null,result:null,body_map_payload:Object.freeze({version:"primary-reference100-v3-bodymap-1.0",regions:Object.freeze([])}),comparison_signatures:Object.freeze({})})};
   const engineInput=adaptCurrentRecordToPrimaryRegionalV2({record,allRecords});
   const raw=calculateRun(engineInput);
@@ -124,9 +123,6 @@ function validatePrimaryRegionalV2ResultRecord(item={}){
   if(item.model_version!==PRIMARY_REGIONAL_V2_MODEL_VERSION)issues.push("MODEL_VERSION");
   if(item.output_semantic_version!==PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION)issues.push("OUTPUT_SEMANTIC_VERSION");
   if(!item.id||!item.record_id)issues.push("IDENTITY");
-  if(item.input_trace?.count!==93||!Array.isArray(item.input_trace?.entries)||item.input_trace.entries.length!==93)issues.push("INPUT_TRACE_93_REQUIRED");
-  const repairs=(item.input_trace?.entries||[]).filter((x)=>x.traceAction==="CURRENT_APP_CONTEXT_TRACE");
-  if(repairs.length!==19)issues.push("TRACE_APP_CONTEXT_19_REQUIRED");
   if(item.state==="REST")return Object.freeze({valid:issues.length===0,issues:Object.freeze(issues)});
   const rows=item.result?.regions;
   if(!Array.isArray(rows)||rows.length!==12)issues.push("REGION_COUNT_12");
