@@ -17,6 +17,7 @@ const historyWorkflow = fs.readFileSync('core/internal/historyWorkflow.js', 'utf
 const restoreInspection = fs.readFileSync('core/internal/restoreInspection.js', 'utf8');
 const consultationReport = fs.readFileSync('core/internal/consultationReport.js', 'utf8');
 const appEntry = fs.readFileSync('app.js', 'utf8');
+const planPreview = fs.readFileSync('core/internal/planPreview.js', 'utf8');
 
 const results = [];
 function test(id, fn) {
@@ -140,6 +141,17 @@ test('CURRENT-RUNTIME-NO-LONGER-STORES-OR-EXPOSES-V27-RESULTS', () => {
   assert.ok(!restoreInspection.includes('v27Results'));
   assert.ok(!consultationReport.includes('v27ResultRecord'));
   assert.ok(!consultationReport.includes('走り全体の目安'));
+});
+
+
+test('PLAN-PREVIEW-IS-CURRENT-FACTS-ONLY', () => {
+  assert.ok(planPreview.includes('PLAN_FACT_PREVIEW_VERSION'));
+  assert.ok(planPreview.includes('数値による負荷予測は行いません'));
+  assert.ok(!planPreview.includes('legacyLoad'));
+  assert.ok(!planPreview.includes('V27_'));
+  assert.ok(!planPreview.includes('createV27PlanPreview'));
+  assert.ok(!planPreview.includes('calculateV27Session'));
+  assert.ok(!planPreview.includes('rpeProvenance'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');
