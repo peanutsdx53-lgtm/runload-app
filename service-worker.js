@@ -13,7 +13,7 @@ const PRECACHE_URLS = [
   "./core/internal/inputSupport.js",
   "./core/internal/recordRepositories.js",
   "./core/internal/primaryModelEngine.js",
-  "./core/internal/primaryInputCatalog.js",
+  "./core/internal/surfacePresetCatalog.js",
   "./core/internal/primaryInputProcessing.js",
   "./core/internal/primaryModelResults.js",
   "./core/internal/applicationDomain.js",

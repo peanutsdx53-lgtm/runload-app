@@ -25,6 +25,7 @@ const recordWorkflow = fs.readFileSync('core/internal/recordWorkflow.js', 'utf8'
 const readingScreen = fs.readFileSync('screens/readingScreen.js', 'utf8');
 const gradeDomainConfirmation = fs.readFileSync('ui/interactions/gradeDomainConfirmation.js', 'utf8');
 const primaryInputProcessing = fs.readFileSync('core/internal/primaryInputProcessing.js', 'utf8');
+const surfacePresetCatalog = fs.readFileSync('core/internal/surfacePresetCatalog.js', 'utf8');
 const recordRepositories = fs.readFileSync('core/internal/recordRepositories.js', 'utf8');
 
 const results = [];
@@ -204,6 +205,22 @@ test('RETIRED-FIXED-TRACE-AND-RPE-PLUMBING-ARE-ABSENT', () => {
   assert.ok(!inputSupport.includes('validateProvidedNumber(errors, input, "perceivedExertion"'));
   assert.ok(!recordWorkflow.includes('assumeExplicitRpe'));
   assert.ok(!recordRepositories.includes('assumeExplicitRpe'));
+});
+
+
+test('DEAD-FORMAL-INPUT-SYSTEM-IS-RETIRED-WHILE-SURFACE-PRESETS-REMAIN', () => {
+  assert.equal(fs.existsSync('core/internal/primaryInputCatalog.js'), false);
+  assert.equal(fs.existsSync('core/internal/surfacePresetCatalog.js'), true);
+  assert.ok(surfacePresetCatalog.includes('const SURFACE_PRESETS = Object.freeze({'));
+  assert.ok(primaryInputProcessing.includes('surfacePresetCatalog.js'));
+  assert.ok(primaryInputProcessing.includes('internalModules.surfacePresetCatalog'));
+  assert.ok(!primaryInputProcessing.includes('formalInputValidation'));
+  assert.ok(!primaryInputProcessing.includes('formalInputAdapter'));
+  assert.ok(!primaryInputProcessing.includes('FORMAL_INPUT_CATALOG'));
+  assert.ok(!primaryInputProcessing.includes('adaptPrototypeRecord'));
+  assert.ok(!primaryInputProcessing.includes('validateFormalInputBundle'));
+  assert.ok(!worker.includes('./core/internal/primaryInputCatalog.js'));
+  assert.ok(worker.includes('./core/internal/surfacePresetCatalog.js'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

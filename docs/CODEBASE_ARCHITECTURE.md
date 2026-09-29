@@ -18,7 +18,7 @@ Domain and deterministic interpretation logic only.
 - `internal/inputSupport.js`: input safety, personal context, and record validation.
 - `internal/recordRepositories.js`: collection and running-record repositories.
 - `internal/primaryModelEngine.js`: primary regional calculation engine, trace builder, and input adapter.
-- `internal/primaryInputCatalog.js`: formal primary-input catalog and metadata.
+- `internal/surfacePresetCatalog.js`: current surface preset data used by the primary-model input adapter.
 - `internal/primaryInputProcessing.js`: formal-input utilities, validation, normalization, and app/trace adapters.
 - `internal/primaryModelResults.js`: primary region definitions, result construction, validation, and result repository.
 - `internal/applicationDomain.js`: body-region taxonomy, subjective/safety rules, profile adjustment, and small domain repositories.

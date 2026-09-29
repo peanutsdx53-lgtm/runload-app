@@ -1,3 +1,4 @@
+import "./primaryModelEngine.js";
 import "./primaryInputProcessing.js";
 import "./recordRepositories.js";
 import { internalModules } from "./modules.js";
