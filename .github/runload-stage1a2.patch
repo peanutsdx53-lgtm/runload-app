@@ -1,0 +1,178 @@
+diff -ruN /mnt/data/runload_stage1a1/README.md /mnt/data/runload_stage1a/README.md
+--- /mnt/data/runload_stage1a1/README.md	2026-09-28 16:50:25.000000000 +0000
++++ /mnt/data/runload_stage1a/README.md	2026-09-29 01:56:38.342377215 +0000
+@@ -23,7 +23,7 @@
+ - Missing or unsupported data is not converted to zero or fabricated as q=1.
+ - ROF-J records subjective fatigue at the time of answering; it is separate from Reference-100.
+ - ROF-J is not a readiness, recovery, safety, injury-risk, or run/no-run score.
+-- session-RPE is not implemented.
++- 主観的疲労はROF-Jとして独立して扱い、12部位の数値とは合成しません。
+ - The app does not diagnose, prescribe training, estimate injury risk, or make automatic safety decisions.
+ - Legacy records are not silently reinterpreted as current Reference-100 values.
+ 
+diff -ruN /mnt/data/runload_stage1a1/core/internal/evidenceData.js /mnt/data/runload_stage1a/core/internal/evidenceData.js
+--- /mnt/data/runload_stage1a1/core/internal/evidenceData.js	2026-09-28 16:50:25.000000000 +0000
++++ /mnt/data/runload_stage1a/core/internal/evidenceData.js	2026-09-29 01:56:38.342273538 +0000
+@@ -139,21 +139,6 @@
+     prohibitedClaim: "個人の接地型を推定せず、障害原因、最適な接地、走行可否には用いない。",
+   }),
+   sourceRecord({
+-    sourceId: "APP-COL-HADDAD",
+-    sourceRole: "V27_ACTIVE_MODEL_AND_APP_READING",
+-    title: "Session-RPE Method for Training Load Monitoring",
+-    locator: "Session-RPE method and influencing-factor review / PDF pp.2-9",
+-    evidenceStatus: "FULL_TEXT_IDENTITY_VERIFIED",
+-    reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
+-    modelSourceIds: ["SRC-CUR-017"],
+-    anchorIds: [],
+-    relatedInputs: ["実走時間", "RPE"],
+-    relatedRoutes: ["session-RPE separate subjective route"],
+-    relatedRegions: ["なし（走行全体の本人申告）"],
+-    allowedClaim: "実走時間と本人RPEを別指標として記録する方法と、影響要因があることを一般的に説明できる。",
+-    prohibitedClaim: "Regional A4係数、部位別実測値、健康状態、傷害予測へ使用しない。",
+-  }),
+-  sourceRecord({
+     sourceId: "APP-COL-LINTON",
+     sourceRole: "RESEARCH_PLAN_AND_APP_READING",
+     title: "Running-Centred Injury Prevention Support: A Scoping Review on Current Injury Risk Reduction Practices for Runners",
+@@ -402,12 +387,6 @@
+     prohibitedClaim: "一致・不一致から原因、診断、走行起因性を推定しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
+   }),
+   articleRecord({
+-    articleId: "rpe-separated", claimId: "COL-CLM-004", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-HADDAD"],
+-    relatedInputs: ["実走時間", "RPE"], relatedRoutes: ["session-RPE subjective route", "A4/V2.7 separation"], relatedRegions: ["なし（走行全体）"],
+-    allowedClaim: "RPEを本人の走行全体の感じ方として、走行事実モデルとは別に保存・表示する理由を説明する。",
+-    prohibitedClaim: "RPEを部位係数、健康判定、傷害予測へ変換しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
+-  }),
+-  articleRecord({
+     articleId: "grade-and-coverage", claimId: "COL-CLM-005", sourceIds: ["APP-SPEC-CURRENT", "APP-COL-MINETTI", "APP-COL-VAN-HOOREN", "APP-COL-NUCKOLS"],
+     relatedInputs: ["上り割合", "下り割合", "代表勾配", "勾配把握状態"], relatedRoutes: ["V2.7 grade route", "Regional A4 grade routes", "supported-domain route"], relatedRegions: ["routeごとの対応部位"],
+     allowedClaim: "区間割合、代表勾配、資料範囲、反映率を分けて扱う設計を説明する。",
+@@ -505,8 +484,8 @@
+   }),
+   articleRecord({
+     articleId: "talk-test-as-subjective-cue", claimId: "COL-CLM-021", sourceIds: ["APP-COL-KWON-TALK"],
+-    relatedInputs: ["走行ペース", "RPE", "会話のしやすさの本人メモ"], relatedRoutes: ["general-knowledge column route", "subjective talk-ease reading route"], relatedRegions: ["なし（走行全体の主観的な強さ）"],
+-    allowedClaim: "会話のしやすさを、速度やRPEとは別の主観的な手掛かりとして本人が記録・振り返る考え方を説明する。",
++    relatedInputs: ["走行ペース", "会話のしやすさの本人メモ"], relatedRoutes: ["general-knowledge column route", "subjective talk-ease reading route"], relatedRegions: ["なし（走行全体の主観的な強さ）"],
++    allowedClaim: "会話のしやすさを、速度とは別の主観的な手掛かりとして本人が記録・振り返る考え方を説明する。",
+     prohibitedClaim: "会話のしやすさから、正確なペース、心肺機能、病気、安全な強さ、走行可否を評価または処方しない。", reviewDate: EVIDENCE_GOVERNANCE_REVIEW_DATE,
+   }),
+ ]);
+diff -ruN /mnt/data/runload_stage1a1/core/internal/readingCatalog.js /mnt/data/runload_stage1a/core/internal/readingCatalog.js
+--- /mnt/data/runload_stage1a1/core/internal/readingCatalog.js	2026-09-28 16:50:25.000000000 +0000
++++ /mnt/data/runload_stage1a/core/internal/readingCatalog.js	2026-09-29 01:56:38.341056779 +0000
+@@ -97,17 +97,6 @@
+   lastChecked: "2026-08-05",
+ });
+ 
+-const HADDAD_2017 = Object.freeze({
+-  sourceId: "APP-COL-HADDAD",
+-  title: "Session-RPE Method for Training Load Monitoring: Validity, Ecological Usefulness, and Influencing Factors",
+-  organization: "Frontiers in Neuroscience",
+-  year: "2017",
+-  url: "https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2017.00612/full",
+-  sourceType: "reviewPaper",
+-  sourceTypeLabel: "参考資料",
+-  lastChecked: "2026-07-31",
+-});
+-
+ const LINTON_2025 = Object.freeze({
+   sourceId: "APP-COL-LINTON",
+   title: "Running-Centred Injury Prevention Support: A Scoping Review on Current Injury Risk Reduction Practices for Runners",
+@@ -347,26 +336,6 @@
+     sources: [PROJECT_V27],
+   }),
+   article({
+-    id: "rpe-separated",
+-    title: "走り全体のきつさ（RPE）を別に見る理由",
+-    category: "入力と振り返り",
+-    tags: ["RPE", "走り全体のきつさ", "振り返り"],
+-    lead: "同じ距離やコースでも、自分が感じるきつさは毎回同じとは限りません。",
+-    summary: "RPEは、走り終えた自分が1回の走行全体をどれくらいきつく感じたかを0〜10で残す方法です。",
+-    body: [
+-      "RPEは、走り終えた自分が、この1回をどれくらいきつく感じたかを0〜10で記録する方法です。トレーニングの振り返りに広く使われています。",
+-      "同じ距離やコースでも、暑さ、睡眠、体調、走る速さなどによって感じ方が違うことがあります。そのため、走行条件の数値だけでなく、自分の感じ方も別に残す意味があります。",
+-      "履歴では、走行全体の参考値、部位ごとの表示、RPE、自分の身体記録を分けて見ます。似た条件の日に感じ方がどう違ったかを振り返る材料にできます。",
+-    ],
+-    practicePoints: [
+-      "RPEは走行全体を振り返って入力する。",
+-      "数値とRPEが同じ方向でも違う方向でも、それだけで良し悪しを決めない。",
+-      "気になった背景は、睡眠や天候を断定せず自分のメモへ残す。",
+-    ],
+-    caution: "RPEは部位の実測値、健康状態の判定、障害予測ではありません。",
+-    sources: [PROJECT_V27, HADDAD_2017],
+-  }),
+-  article({
+     id: "grade-and-coverage",
+     title: "上り・下りで身体の使われ方が変わる理由",
+     category: "部位・コース",
+@@ -436,7 +405,7 @@
+     body: [
+       "走っていない日、記録していない日、同じ意味で比べられない記録は、数値の0ではありません。グラフでは0として線をつながず、含めなかった理由を表示します。",
+       "部位別の履歴では、選んだ部位・基準・計算方法がそろった記録だけをつなぎます。意味が違う記録は同じ線にしません。",
+-      "RPEと自分の身体記録は、数値結果とは別の記録です。並びを見て自分の記録を振り返る材料にはできますが、一致や不一致から原因を自動判定しません。",
++      "ROF-Jと自分の身体記録は、数値結果とは別の記録です。並びを見て自分の記録を振り返る材料にはできますが、一致や不一致から原因を自動判定しません。",
+     ],
+     practicePoints: [
+       "グラフの部位名・基準・条件経路の意味を確認する。",
+@@ -454,14 +423,14 @@
+     lead: "予定画面は、これから走る距離・時間・コース条件を整理する場所です。",
+     summary: "予定を数値スコアにせず、保存した入力条件と実績を後から比べる材料にします。",
+     body: [
+-      "走る前に分かるのは予定です。実際の歩数、走り全体のきつさ（RPE）、走行時間、コースの状態は、走ったあとで予定と違うことがあります。",
++      "走る前に分かるのは予定です。実際の歩数、ROF-J、走行時間、コースの状態は、走ったあとで予定と違うことがあります。",
+       "予定画面では、距離・時間・走行形式・コース条件を予定事実として確認します。旧形式の走行全体スコアは新しい予定には作りません。12部位の結果は、実際に走って記録を保存したあとに確認します。",
+       "保存した予定は、その時点で考えていた内容として残ります。実際の記録と並べると、距離、時間、コース条件がどのように違ったかを振り返れます。",
+     ],
+     practicePoints: [
+       "予定画面では距離・時間・コース条件が事実として確認できるかを見る。",
+       "予定はおすすめの練習メニューではなく、自分で考えた内容の記録として読む。",
+-      "走ったあとは、実際の歩数・RPE・走行時間を入力する。",
++      "走ったあとは、実際の歩数・走行時間を記録し、ROF-Jを利用する場合は主観的疲労として別に残す。",
+     ],
+     caution: "予定の入力事実は最適な練習、達成可能性、身体状態、走行可否を示しません。",
+     sources: [PROJECT_V27],
+@@ -631,17 +600,17 @@
+     id: "talk-test-as-subjective-cue",
+     title: "ペースが分からないときは、会話のしやすさも手掛かりになる",
+     category: "走る前・走っている間",
+-    tags: ["ペース", "会話", "走るときのきつさ", "RPE", "自分の感じ方"],
++    tags: ["ペース", "会話", "走るときのきつさ", "自分の感じ方"],
+     lead: "速度だけでなく、話しやすかったかどうかも、走っているときのきつさを振り返る手掛かりになります。",
+-    summary: "会話できる・話しにくいという自分の感覚を、速度や走り全体のきつさ（RPE）とは別の情報として扱います。",
++    summary: "会話できる・話しにくいという自分の感覚を、速度とは別の主観的な情報として扱います。",
+     body: [
+       "会話のしやすさは、走っているときのきつさを振り返る手掛かりの一つです。",
+       "ただし、会話のしやすさだけから、正確なペースや安全な強さを決めることはできません。",
+-      "会話のしやすさは自分の感覚であり、速度やRPEと同じ情報ではありません。『話しやすかった』『短い言葉なら話せた』『話しにくかった』などを自分のメモに残し、同じ人の記録を何回か見返す手掛かりにできます。",
++      "会話のしやすさは自分の感覚であり、速度と同じ情報ではありません。『話しやすかった』『短い言葉なら話せた』『話しにくかった』などを自分のメモに残し、同じ人の記録を何回か見返す手掛かりにできます。",
+     ],
+     practicePoints: [
+       "走っている間の話しやすさを、自分の言葉で短く残す。",
+-      "速度、RPE、会話のしやすさを、それぞれ別の記録として見る。",
++      "速度と会話のしやすさを別の情報として見る。",
+       "話せたかどうかだけで、安全・危険や目標ペースを決めない。",
+     ],
+     caution: "この記事は、心肺機能、病気、個人の目標ペース、走る強さ、走行可否を評価または処方しません。",
+@@ -655,7 +624,7 @@
+     lead: "入力した事実と自分の言葉を先に置き、数値には基準100の意味と注意点を添えます。",
+     summary: "相談相手が再確認できる情報をそろえ、順位・診断・原因推定は資料へ入れません。",
+     body: [
+-      "相談資料には、日付、距離、実走時間、走り全体のきつさ（RPE）、把握した坂・路面、自分のメモ、自分が選んだ身体部位を入れます。自分が感じたことと数値表示は別の欄にします。",
++      "相談資料には、日付、距離、実走時間、把握した坂・路面、自分のメモ、自分が選んだ身体部位を入れます。ROF-Jを共有する場合も、身体部位別の数値とは別の主観的疲労情報として扱います。",
+       "数値結果を入れる場合は、確認できた条件、選択した部位、100の意味、値が表す内容を明記します。自分の過去記録と比べる場合は、参照した件数と期間も添えます。",
+       "部位の順位、障害名、原因、発生確率、危険度、走行してよいかという結論は自動で作りません。短文は自分で編集し、アプリから自動送信せず、共有相手も自分で選びます。",
+     ],
+diff -ruN /mnt/data/runload_stage1a1/screens/readingScreen.js /mnt/data/runload_stage1a/screens/readingScreen.js
+--- /mnt/data/runload_stage1a1/screens/readingScreen.js	2026-09-28 16:50:25.000000000 +0000
++++ /mnt/data/runload_stage1a/screens/readingScreen.js	2026-09-29 01:56:38.338201632 +0000
+@@ -6,7 +6,7 @@
+ const PUBLIC_ARTICLE_ID_ALIASES = new Map([
+   [CONSULTATION_PREP_CORE_ARTICLE_ID, "consultation-prep"],
+ ]);
+-const DEFERRED_READING_ARTICLE_IDS = new Set(["rpe-separated", "model-total-v27"]);
++const DEFERRED_READING_ARTICLE_IDS = new Set(["model-total-v27"]);
+ const visibleArticles = (articles = []) => articles.filter((article) => !DEFERRED_READING_ARTICLE_IDS.has(article?.id));
+ const publicArticleId = (articleId = "") => PUBLIC_ARTICLE_ID_ALIASES.get(String(articleId || "")) || String(articleId || "");
+ 
