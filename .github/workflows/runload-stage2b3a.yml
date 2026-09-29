@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "48f26236e63016858c36e35a35b26b5bb3b769f4"
+          test "$(git rev-parse HEAD^)" = "29c1647a52ff02b74100135a8efb65a7ca803be4"
 
       - name: Switch current code away from legacy V27 dependencies
         shell: bash
@@ -43,6 +43,7 @@ jobs:
           replace_once('core/internal/primaryModelResults.js', 'import "./primaryInputProcessing.js";', 'import "./primaryInputProcessing.js";\nimport "./recordRepositories.js";')
           replace_once('core/internal/courseRepository.js', 'import "./v27ApplicationModel.js";', 'import "./recordRepositories.js";')
           replace_once('core/internal/recordWorkflow.js', 'import "./v27ApplicationServices.js";', 'import "./applicationDomain.js";')
+          replace_once('core/internal/applicationServices.js', 'import "./deterministicConsultation.js";', 'import "./publicHelpGuidance.js";\nimport "./deterministicConsultation.js";')
 
           # Promote the grade limits actually used by the current 12-region engine to named current constants.
           replace_once(
@@ -145,6 +146,7 @@ jobs:
             assert.ok(primaryResults.includes('recordRepositories.js'));
             assert.ok(!courseRepository.includes('v27ApplicationModel.js'));
             assert.ok(!recordWorkflow.includes('v27ApplicationServices.js'));
+            assert.ok(appServices.includes('publicHelpGuidance.js'));
             assert.ok(!appCore.includes('legacyLoadModelConstants'));
             assert.ok(!appCore.includes('export const V27_'));
             assert.ok(!readingScreen.includes('V27_'));
@@ -185,6 +187,7 @@ jobs:
           git add -A
           printf '%s\n' \
             'core/appCore.js' \
+            'core/internal/applicationServices.js' \
             'core/internal/courseRepository.js' \
             'core/internal/primaryModelEngine.js' \
             'core/internal/primaryModelResults.js' \
