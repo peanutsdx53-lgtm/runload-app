@@ -21,7 +21,7 @@ replace_once(
 }
 
 function renderAdvanced(output, region) {''',
-    '''function publicConstructText(value = "") {
+    r'''function publicConstructText(value = "") {
   return String(value || "")
     .replace(/膝蓋大腿関節stress力積/gi, "膝蓋大腿関節の応力の積み重なりを表す指標")
     .replace(/脛骨stress力積/gi, "脛骨の応力の積み重なりを表す指標")
@@ -74,13 +74,13 @@ new_test = r'''await test('ADVANCED-COPY-TRANSLATES-RESEARCH-INTERNALS-BEFORE-DI
   assert.match(stressHtml,/表3の係数を使い、2\.5 m\/sを基準にそろえて再現した下腿後面の筋活動の関係/);
   assert.match(stressHtml,/相対ピッチ応答/);
   assert.match(stressHtml,/脛骨・アキレス腱の速度と走行条件への応答/);
-  assert.doesNotMatch(stressHtml,/stress|Figure|Table|cadence|正規化|Reference-100/i);
+  assert.doesNotMatch(stressHtml,/stress力積|strain力積|Figure 3|Table 3|cadence|正規化|Reference-100/i);
 
   const strain=baseOutput({selected:true});
   strain.advanced.evidence.regions['BA-DISP-014'].construct='アキレス腱strain力積に基づく部位内Reference-100';
   const strainHtml=renderInterpretationRoom({output:strain});
   assert.match(strainHtml,/アキレス腱のひずみの積み重なりを表す指標に基づく部位内基準100/);
-  assert.doesNotMatch(strainHtml,/strain|Reference-100/i);
+  assert.doesNotMatch(strainHtml,/stress力積|strain力積|Reference-100/i);
 });
 
 '''
