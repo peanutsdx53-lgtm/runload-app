@@ -77,6 +77,25 @@ await test('INTERPRETATION-LABEL-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-WORKSPAC
   assert.doesNotMatch(outside,/今回の結果の解釈|RESULT INTERPRETATION|解釈エンジン/);
 });
 
+
+await test('PERSISTED-ROUTE-TRACE-IS-THE-INTERPRETATION-AUTHORITY',()=>{
+  const engine=read('core/internal/primaryModelEngine.js');
+  const resultsService=read('core/internal/primaryModelResults.js');
+  const core=read('core/interpretationCore.js');
+  const presentation=read('ui/interpretationRoomPresentation.js');
+  const resultScreen=read('screens/resultScreen.js');
+  assert.match(engine,/routeTrace/);
+  assert.match(resultsService,/route_trace_version/);
+  assert.match(resultsService,/routeTrace:Object\.freeze/);
+  assert.match(core,/PERSISTED_CALCULATION_TRACE/);
+  assert.match(core,/unsupportedInputs/);
+  assert.doesNotMatch(core,/PERSISTED_INPUTS_WITHOUT_SEGMENT_ROUTE_TRACE|PERSISTED_RESULT_DOES_NOT_RETAIN_FINAL_CONDITIONAL_ROUTE_TRACE|VERSION_LOCKED_REGION_ROUTE/);
+  assert.match(presentation,/確認できる資料範囲外・数値には未使用/);
+  assert.match(presentation,/関連情報として記録（数値には未使用）/);
+  assert.doesNotMatch(resultScreen,/Reference-100/);
+  assert.doesNotMatch(resultsService,/P2 bridge|R01\/R08|R10-R12/);
+});
+
 const failed=results.filter((x)=>x.status==='FAIL');
 console.log(JSON.stringify({suite:'Interpretation Architecture',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;

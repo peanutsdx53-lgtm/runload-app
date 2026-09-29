@@ -241,7 +241,23 @@ function summarizeRegions(segResults){
     const weightedNumerator=known.reduce((sum,x)=>sum+Number(x.distanceKm||0)*Number(x.value),0);
     const supportedOnlyValue=supportedDistance>0?weightedNumerator/supportedDistance:null;
     const fullValue=unsupportedDistance<=1e-9&&totalDistance>0?weightedNumerator/totalDistance:null;
-    out[r.id]={value:fullValue,knownValue:supportedOnlyValue,valueEnvelope:null,supportedDistanceKm:supportedDistance,unsupportedDistanceKm:unsupportedDistance,coverageProportion:totalDistance>0?supportedDistance/totalDistance:0,state:unsupportedDistance>1e-9?'PARTIAL_EVIDENCE':fullValue==null?'EVIDENCE_INSUFFICIENT':'OK',segmentEvidence:rs.map(x=>x?.evidenceState||'EVIDENCE_INSUFFICIENT')};
+    const routeTrace=segResults.map((segment,index)=>{
+      const x=segment.regionResults[r.id]||{};const trace=x.trace||{};
+      return {
+        segmentIndex:Number.isInteger(segment.index)?segment.index:index,
+        distanceKm:Number(x.distanceKm||0),
+        speedMps:Number.isFinite(Number(x.speedMps))?Number(x.speedMps):null,
+        speedProvenance:segment.speedProvenance||null,
+        remainderState:segment.remainderState||null,
+        calculationState:x.state||'EVIDENCE_INSUFFICIENT',
+        evidenceState:x.evidenceState||'EVIDENCE_INSUFFICIENT',
+        baseline:trace.baseline?JSON.parse(JSON.stringify(trace.baseline)):null,
+        appliedConditions:Array.isArray(trace.components)?JSON.parse(JSON.stringify(trace.components)):[],
+        notAppliedConditions:Array.isArray(trace.unquantified)?JSON.parse(JSON.stringify(trace.unquantified)):[],
+        interactionState:trace.interactionState||null,
+      };
+    });
+    out[r.id]={value:fullValue,knownValue:supportedOnlyValue,valueEnvelope:null,supportedDistanceKm:supportedDistance,unsupportedDistanceKm:unsupportedDistance,coverageProportion:totalDistance>0?supportedDistance/totalDistance:0,state:unsupportedDistance>1e-9?'PARTIAL_EVIDENCE':fullValue==null?'EVIDENCE_INSUFFICIENT':'OK',segmentEvidence:rs.map(x=>x?.evidenceState||'EVIDENCE_INSUFFICIENT'),routeTrace};
   }return out;
 }
 
@@ -263,7 +279,7 @@ function calculateRun(record={}){
   }
   if(seg.state!=='NONE')return {state:seg.state,...seg,modelVersion:MODEL_VERSION,outputSemanticVersion:OUTPUT_SEMANTIC_VERSION};
 
-  const baseSeg=[{distanceKm:exposure.distanceKm,speedMps:exposure.speedMps,runSetting:record.runSetting}];
+  const baseSeg=[{distanceKm:exposure.distanceKm,speedMps:exposure.speedMps,runSetting:record.runSetting,surfaceComponents:record.surfaceComponents}];
   const baseRegions=summarizeRegions(evalSegments(baseSeg,record,{useWholeCadence:false}));
   const cadenceRegions=summarizeRegions(evalSegments(baseSeg,record,{useWholeCadence:true}));
   const gsegs=gradeAxisSegments(record,exposure);

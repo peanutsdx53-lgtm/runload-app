@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.29.4";
+const CACHE_NAME = "running-record-app-runtime-2026.09.29.5";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",

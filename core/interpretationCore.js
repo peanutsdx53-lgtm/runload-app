@@ -11,13 +11,9 @@ import { officialRofJDescriptor } from "./rofJCore.js";
 
 export const INTERPRETATION_CORE_VERSION = "interpretation-core-v4.0";
 export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "INTERPRETATION_OUTPUT_V4";
-const INTERPRETATION_ROUTE_RESOLVER_VERSION = "primary-reference100-v3-explanation-route-v1";
+const INTERPRETATION_ROUTE_RESOLVER_VERSION = "persisted-calculation-route-trace-v1";
 
 const CURRENT_PRIMARY_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
-const SPEED_ONLY_PRIMARY_REGIONS = new Set(["R01", "R02", "R03", "R04", "R07", "R08", "R11", "R12"]);
-const CONDITIONAL_PRIMARY_REGIONS = new Set(["R05", "R06", "R09", "R10"]);
-const CADENCE_CAPABLE_PRIMARY_REGIONS = new Set(["R05", "R09"]);
-const GRADE_CAPABLE_PRIMARY_REGIONS = new Set(["R05", "R06", "R09", "R10"]);
 const ROF_ANCHORS = Object.freeze([2, 4, 6, 8, 10]);
 
 function finite(value) {
@@ -187,8 +183,31 @@ function exposureFacts(resultRecord = {}) {
   });
 }
 
-function inputItem(id, value, role, source = "engine_input_snapshot") {
-  return Object.freeze({ id, value, role, source });
+function inputItem(id, value, role, source = "engine_input_snapshot", details = {}) {
+  return Object.freeze({ id, value, role, source, ...details });
+}
+
+function pushUniqueInput(items, item) {
+  const key = `${item.id}|${item.role}|${item.reasonCategory || ""}`;
+  if (!items.some((existing) => `${existing.id}|${existing.role}|${existing.reasonCategory || ""}` === key)) items.push(item);
+}
+
+function traceReasonCategory(item = {}) {
+  const state = String(item.state || "");
+  const reason = String(item.reason || "");
+  if (state === "CONTEXT_ONLY") return "CONTEXT_ONLY";
+  if (state === "REFERENCE_BUILDING") return "REFERENCE_NOT_READY";
+  if (reason.includes("OUTSIDE")) return "OUTSIDE_SUPPORTED_RANGE";
+  if (reason.includes("NOT_AUTHORIZED") || reason.includes("INACTIVE")) return "NOT_USED_CURRENT_MODEL";
+  return "NOT_USED_CURRENT_ROUTE";
+}
+
+function traceAxisValue(axis = "", engineInput = {}) {
+  if (axis === "CADENCE") return finite(engineInput.averageCadenceSpm) ? Number(engineInput.averageCadenceSpm) : null;
+  if (axis === "GRADE") return "RECORDED";
+  if (axis === "SURFACE") return engineInput.surfaceComponents || [];
+  if (axis === "FOOT_STRIKE") return engineInput.footStrikeObservation || null;
+  return null;
 }
 
 function resolveCalculationPath(targetExperience = null, region = null) {
@@ -196,8 +215,8 @@ function resolveCalculationPath(targetExperience = null, region = null) {
   const row = region ? regionRow(resultRecord, region.regionId) : null;
   const engineInput = resultRecord?.engine_input_snapshot || null;
   const modelVersion = String(resultRecord?.model_version || "");
-  const primaryRegionId = String(region?.primaryRegionId || row?.primaryRegionId || "");
   const exposure = exposureFacts(resultRecord);
+  const routeTrace = Array.isArray(row?.routeTrace) ? row.routeTrace : [];
 
   const unavailable = (reasonToken) => Object.freeze({
     resolutionStatus: "UNAVAILABLE",
@@ -208,12 +227,15 @@ function resolveCalculationPath(targetExperience = null, region = null) {
     activeInputs: Object.freeze([]),
     conditionalInputs: Object.freeze([]),
     contextOnlyInputs: Object.freeze([]),
+    unsupportedInputs: Object.freeze([]),
+    routeTrace: Object.freeze([]),
     explanationTokens: Object.freeze([reasonToken]),
   });
 
   if (!region || !row || modelVersion !== CURRENT_PRIMARY_MODEL_VERSION) return unavailable("CURRENT_MODEL_RESULT_REQUIRED");
   if (String(row.calculationState || "") !== "CALCULATED" || !finite(row.value)) return unavailable("CALCULATED_REGION_REQUIRED");
   if (!engineInput) return unavailable("ENGINE_INPUT_SNAPSHOT_REQUIRED");
+  if (!routeTrace.length) return unavailable("PERSISTED_ROUTE_TRACE_REQUIRED");
 
   const activeInputs = [];
   if (exposure.type === "RUNNING_PHASE") {
@@ -225,85 +247,64 @@ function resolveCalculationPath(targetExperience = null, region = null) {
   }
   if (finite(exposure.speedMps)) activeInputs.push(inputItem("SPEED", exposure.speedMps, "PRIMARY_NUMERIC_ROUTE", "persisted_result.exposure"));
 
-  const conditionalInputs = [];
+  const usedAxes = new Set();
+  const observedAxes = new Set();
   const contextOnlyInputs = [];
-  const hasCadence = finite(engineInput.averageCadenceSpm);
-  const hasGrade = gradeRecorded(engineInput);
-  const hasSurface = surfaceRecorded(engineInput);
-  const hasFootStrike = Boolean(engineInput.footStrikeObservation);
-
-  if (hasSurface) contextOnlyInputs.push(inputItem("SURFACE", engineInput.surfaceComponents, "CONTEXT_ONLY"));
-  if (hasFootStrike) contextOnlyInputs.push(inputItem("FOOT_STRIKE", engineInput.footStrikeObservation, "CONTEXT_ONLY"));
-
-  if (exposure.type === "SEGMENTED") {
-    if (hasCadence) conditionalInputs.push(inputItem("CADENCE", Number(engineInput.averageCadenceSpm), "CONDITIONAL_NUMERIC_ROUTE"));
-    if (hasGrade) conditionalInputs.push(inputItem("GRADE", "SEGMENT_GRADES", "CONDITIONAL_NUMERIC_ROUTE"));
-    return Object.freeze({
-      resolutionStatus: "PARTIAL",
-      resolutionBasis: "PERSISTED_INPUTS_WITHOUT_SEGMENT_ROUTE_TRACE",
-      resolverVersion: INTERPRETATION_ROUTE_RESOLVER_VERSION,
-      activeRoute: "SECTION_COMPOSED",
-      exposure,
-      activeInputs: frozenArray(activeInputs),
-      conditionalInputs: frozenArray(conditionalInputs),
-      contextOnlyInputs: frozenArray(contextOnlyInputs),
-      explanationTokens: Object.freeze(["SEGMENTED_CALCULATION", "DISTANCE_WEIGHTED_REGION_SUMMARY", "DO_NOT_CLAIM_EXACT_PER_SEGMENT_ROUTE"]),
-    });
+  const unsupportedInputs = [];
+  for (const segment of routeTrace) {
+    for (const component of Array.isArray(segment?.appliedConditions) ? segment.appliedConditions : []) {
+      const axis = String(component?.axis || "").toUpperCase();
+      if (!axis) continue;
+      observedAxes.add(axis);
+      usedAxes.add(axis);
+      if (["CADENCE", "GRADE"].includes(axis)) pushUniqueInput(activeInputs, inputItem(axis, traceAxisValue(axis, engineInput), "USED_IN_CURRENT_ROUTE", "persisted_result.route_trace"));
+    }
+    for (const omitted of Array.isArray(segment?.notAppliedConditions) ? segment.notAppliedConditions : []) {
+      const axis = String(omitted?.axis || "").toUpperCase();
+      if (!axis) continue;
+      observedAxes.add(axis);
+      const reasonCategory = traceReasonCategory(omitted);
+      const item = inputItem(axis, traceAxisValue(axis, engineInput), reasonCategory === "CONTEXT_ONLY" ? "RECORDED_CONTEXT" : "RECORDED_NOT_USED_NUMERIC", "persisted_result.route_trace", { reasonCategory, reasonCode: String(omitted?.reason || "") });
+      if (reasonCategory === "CONTEXT_ONLY") pushUniqueInput(contextOnlyInputs, item);
+      else pushUniqueInput(unsupportedInputs, item);
+    }
   }
 
-  if (SPEED_ONLY_PRIMARY_REGIONS.has(primaryRegionId)) {
-    if (hasCadence) contextOnlyInputs.push(inputItem("CADENCE", Number(engineInput.averageCadenceSpm), "NOT_ACTIVE_FOR_THIS_REGION"));
-    if (hasGrade) contextOnlyInputs.push(inputItem("GRADE", "RECORDED", "NOT_ACTIVE_FOR_THIS_REGION"));
-    return Object.freeze({
-      resolutionStatus: "EXACT",
-      resolutionBasis: "VERSION_LOCKED_REGION_ROUTE",
-      resolverVersion: INTERPRETATION_ROUTE_RESOLVER_VERSION,
-      activeRoute: "SPEED",
-      exposure,
-      activeInputs: frozenArray(activeInputs),
-      conditionalInputs: Object.freeze([]),
-      contextOnlyInputs: frozenArray(contextOnlyInputs),
-      explanationTokens: Object.freeze([exposure.type === "RUNNING_PHASE" ? "RUNNING_PHASE_DERIVES_SPEED" : "DISTANCE_DURATION_DERIVE_SPEED", "SPEED_USED_FOR_REGION"]),
-    });
+  if (finite(engineInput.averageCadenceSpm) && !observedAxes.has("CADENCE")) {
+    pushUniqueInput(unsupportedInputs, inputItem("CADENCE", Number(engineInput.averageCadenceSpm), "RECORDED_NOT_USED_NUMERIC", "persisted_result.route_trace", { reasonCategory: "NOT_USED_CURRENT_ROUTE", reasonCode: "NOT_PRESENT_IN_FINAL_ROUTE_TRACE" }));
+  }
+  if (gradeRecorded(engineInput) && !observedAxes.has("GRADE")) {
+    pushUniqueInput(unsupportedInputs, inputItem("GRADE", "RECORDED", "RECORDED_NOT_USED_NUMERIC", "persisted_result.route_trace", { reasonCategory: "NOT_USED_CURRENT_ROUTE", reasonCode: "NOT_PRESENT_IN_FINAL_ROUTE_TRACE" }));
+  }
+  if (surfaceRecorded(engineInput) && !observedAxes.has("SURFACE")) {
+    pushUniqueInput(contextOnlyInputs, inputItem("SURFACE", engineInput.surfaceComponents, "RECORDED_CONTEXT", "persisted_result.route_trace", { reasonCategory: "CONTEXT_ONLY", reasonCode: "NO_ACTIVE_PRIMARY_NUMERIC_SURFACE_ROUTE" }));
+  }
+  if (engineInput.footStrikeObservation && !observedAxes.has("FOOT_STRIKE")) {
+    pushUniqueInput(contextOnlyInputs, inputItem("FOOT_STRIKE", engineInput.footStrikeObservation, "RECORDED_CONTEXT", "persisted_result.route_trace", { reasonCategory: "CONTEXT_ONLY", reasonCode: "NO_ACTIVE_PRIMARY_NUMERIC_FOOT_STRIKE_ROUTE" }));
   }
 
-  if (!CONDITIONAL_PRIMARY_REGIONS.has(primaryRegionId)) return unavailable("UNKNOWN_REGION_ROUTE");
-
-  if (CADENCE_CAPABLE_PRIMARY_REGIONS.has(primaryRegionId) && hasCadence) {
-    conditionalInputs.push(inputItem("CADENCE", Number(engineInput.averageCadenceSpm), "CONDITIONAL_NUMERIC_ROUTE"));
-  } else if (hasCadence) {
-    contextOnlyInputs.push(inputItem("CADENCE", Number(engineInput.averageCadenceSpm), "NOT_ACTIVE_FOR_THIS_REGION"));
-  }
-  if (GRADE_CAPABLE_PRIMARY_REGIONS.has(primaryRegionId) && hasGrade) {
-    conditionalInputs.push(inputItem("GRADE", "RECORDED", "CONDITIONAL_NUMERIC_ROUTE"));
-  } else if (hasGrade) {
-    contextOnlyInputs.push(inputItem("GRADE", "RECORDED", "NOT_ACTIVE_FOR_THIS_REGION"));
-  }
-
-  if (conditionalInputs.length) {
-    return Object.freeze({
-      resolutionStatus: "PARTIAL",
-      resolutionBasis: "PERSISTED_RESULT_DOES_NOT_RETAIN_FINAL_CONDITIONAL_ROUTE_TRACE",
-      resolverVersion: INTERPRETATION_ROUTE_RESOLVER_VERSION,
-      activeRoute: "SPEED_WITH_CONDITIONAL_INPUTS",
-      exposure,
-      activeInputs: frozenArray(activeInputs),
-      conditionalInputs: frozenArray(conditionalInputs),
-      contextOnlyInputs: frozenArray(contextOnlyInputs),
-      explanationTokens: Object.freeze(["SPEED_IS_BASE_ROUTE", "CONDITIONAL_INPUT_RECORDED", "DO_NOT_CLAIM_CONDITIONAL_INPUT_WAS_APPLIED"]),
-    });
+  if (String(resultRecord?.result?.combinedConditionState || "") === "AXES_PRESERVED_NOT_COMBINED") {
+    for (const axisRow of Array.isArray(row.axisEstimates) ? row.axisEstimates : []) {
+      const axis = String(axisRow?.axis || "").toUpperCase();
+      const alternativeUsed = (axisRow?.routeTrace || []).some((segment) => (segment?.appliedConditions || []).some((component) => String(component?.axis || "").toUpperCase() === axis));
+      if (alternativeUsed && !usedAxes.has(axis)) {
+        pushUniqueInput(unsupportedInputs, inputItem(axis, traceAxisValue(axis, engineInput), "RECORDED_NOT_USED_NUMERIC", "persisted_result.axis_estimate", { reasonCategory: "AXIS_PRESERVED_NOT_COMBINED", reasonCode: "AXES_PRESERVED_NOT_COMBINED" }));
+      }
+    }
   }
 
   return Object.freeze({
     resolutionStatus: "EXACT",
-    resolutionBasis: "VERSION_LOCKED_BASE_ROUTE_NO_CONDITIONAL_INPUT",
+    resolutionBasis: "PERSISTED_CALCULATION_TRACE",
     resolverVersion: INTERPRETATION_ROUTE_RESOLVER_VERSION,
-    activeRoute: "SPEED",
+    activeRoute: "PERSISTED_ROUTE_TRACE",
     exposure,
     activeInputs: frozenArray(activeInputs),
     conditionalInputs: Object.freeze([]),
     contextOnlyInputs: frozenArray(contextOnlyInputs),
-    explanationTokens: Object.freeze([exposure.type === "RUNNING_PHASE" ? "RUNNING_PHASE_DERIVES_SPEED" : "DISTANCE_DURATION_DERIVE_SPEED", "SPEED_USED_FOR_REGION"]),
+    unsupportedInputs: frozenArray(unsupportedInputs),
+    routeTrace: frozenArray(routeTrace),
+    explanationTokens: Object.freeze(["PERSISTED_CALCULATION_TRACE", "USED_AND_NOT_USED_CONDITIONS_SEPARATED"]),
   });
 }
 
@@ -430,6 +431,7 @@ function conditionRelationship(path = {}, differenceId = "") {
   const active = new Set((path?.activeInputs || []).map((item) => String(item.id || "")));
   const conditional = new Set((path?.conditionalInputs || []).map((item) => String(item.id || "")));
   const contextOnly = new Set((path?.contextOnlyInputs || []).map((item) => String(item.id || "")));
+  const unsupported = new Set((path?.unsupportedInputs || []).map((item) => String(item.id || "")));
   const exposureType = String(path?.exposure?.type || "");
   const map = {
     distance: ["DISTANCE"],
@@ -448,6 +450,7 @@ function conditionRelationship(path = {}, differenceId = "") {
   if (ids.some((id) => active.has(id))) return "USED_IN_CURRENT_ROUTE";
   if (ids.some((id) => conditional.has(id))) return "RECORDED_CONDITIONAL";
   if (ids.some((id) => contextOnly.has(id))) return "RECORDED_CONTEXT";
+  if (ids.some((id) => unsupported.has(id))) return "RECORDED_NOT_USED_NUMERIC";
   return "NOT_IDENTIFIED_IN_REGION_ROUTE";
 }
 

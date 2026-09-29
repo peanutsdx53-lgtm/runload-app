@@ -35,6 +35,7 @@ const PRIMARY_REGIONAL_V2_MODEL_VERSION = "runload-primary-regional-reference100
 const PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION = "runload-primary-regional-reference100-output-v3.0";
 const PRIMARY_REGIONAL_V2_AUTHORITY_VERSION = "RunLoad-Calculation-Engine-V1.2Plus-20260916";
 const PRIMARY_REGIONAL_V2_BUILD_ID = BUILD_ID;
+const PRIMARY_REGIONAL_V2_ROUTE_TRACE_VERSION = "primary-regional-route-trace-v1";
 
 const DISPLAY_BY_R = new Map(PRIMARY_REGIONAL_V2_REGION_DEFS.map((d) => [d.id, d]));
 const DEF_BY_R = new Map(REGION_DEFS.map((d) => [d.id, d]));
@@ -46,8 +47,8 @@ const SOURCE_REGISTRY = Object.freeze({
   HAGEN_2023: { label: "Hagen et al. 2023", role: "膝蓋大腿関節の速度・相対cadence応答" },
   VAN_HOOREN_2024: { label: "Van Hooren et al. 2024", role: "脛骨・アキレス腱の速度/条件応答" },
   HO_2010: { label: "Ho et al. 2010", role: "足底ピーク圧の速度/上り応答" },
-  JIN_2018: { label: "Jin 2018", role: "R01/R08 低速側P2 bridge" },
-  LI_2020: { label: "Li 2020", role: "R10-R12 高速側P2 bridge" },
+  JIN_2018: { label: "Jin 2018", role: "股関節部・足関節部の低速側で用いる限定的な資料間接続" },
+  LI_2020: { label: "Li 2020", role: "後足部・足底中部・前足部の高速側で用いる限定的な資料間接続" },
 });
 function clone(v){return v==null?v:JSON.parse(JSON.stringify(v));}
 function sanitize(v){return String(v||"").replace(/[^0-9A-Za-z._-]/g,"_");}
@@ -67,9 +68,10 @@ function axisRows(rawResult={}, rid){
   const axes=rawResult.axisEstimates||{};
   return Object.entries(axes).map(([axis, byRegion])=>{
     const r=byRegion?.[rid]||{};
-    return Object.freeze({axis, value:r.value !== null && r.value !== "" && Number.isFinite(Number(r.value))?Number(r.value):null, valueEnvelope:Array.isArray(r.valueEnvelope)?clone(r.valueEnvelope):null, state:r.state||"UNAVAILABLE", evidenceState:aggregateEvidence(r), unsupportedDistanceKm:Number(r.unsupportedDistanceKm||0)});
+    return Object.freeze({axis, value:r.value !== null && r.value !== "" && Number.isFinite(Number(r.value))?Number(r.value):null, valueEnvelope:Array.isArray(r.valueEnvelope)?clone(r.valueEnvelope):null, state:r.state||"UNAVAILABLE", evidenceState:aggregateEvidence(r), unsupportedDistanceKm:Number(r.unsupportedDistanceKm||0), routeTrace:Object.freeze(clone(r.routeTrace||[]))});
   });
 }
+
 function buildRows(rawResult={}){
   return REGION_DEFS.map((def)=>{
     const display=DISPLAY_BY_R.get(def.id)||{};
@@ -95,6 +97,7 @@ function buildRows(rawResult={}){
       referenceAmountKm:null,
       referenceSpeedMps:def.referenceSpeedMps,
       sourceIds:Object.freeze(sourceIdsForRegion(def.id,rawResult)),
+      routeTrace:Object.freeze(clone(agg.routeTrace||[])),
       axisEstimates:Object.freeze(axes),
       optionalApplied:Object.freeze(axes.filter((x)=>x.value!=null).map((x)=>Object.freeze({axis:x.axis,evidenceState:x.evidenceState,value:x.value,valueEnvelope:x.valueEnvelope}))),
       coverageProportion:Number.isFinite(Number(agg.coverageProportion))?Number(agg.coverageProportion):null,
@@ -110,7 +113,7 @@ function buildPrimaryRegionalV2ComparisonSignature(resultRecord={},rowOrRegionId
 function comparePrimaryRegionalV2Signatures(a,b){const same=Boolean(a&&b&&a.modelVersion===b.modelVersion&&a.outputSemanticVersion===b.outputSemanticVersion&&a.regionId===b.regionId&&a.constructId===b.constructId&&a.referenceId===b.referenceId);return Object.freeze({directDeltaAllowed:same,status:same?"COMPARABLE":"INCOMPATIBLE",reason:same?"SAME_REGION_SEMANTIC":"SEMANTIC_OR_MODEL_MISMATCH"});}
 
 function createPrimaryRegionalV2ResultRecord({record,feedback={},sessionSequence=1,allRecords=[]}={}){
-  const common={id:`primary-reference100-v3-result-${sanitize(record.id)}-${sanitize(revision(record))}`,record_id:record.id,source_record_revision:revision(record),generated_at:new Date().toISOString(),model_version:PRIMARY_REGIONAL_V2_MODEL_VERSION,authority_version:PRIMARY_REGIONAL_V2_AUTHORITY_VERSION,engine_build_version:PRIMARY_REGIONAL_V2_BUILD_ID,output_semantic_version:PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION,source_registry:SOURCE_REGISTRY};
+  const common={id:`primary-reference100-v3-result-${sanitize(record.id)}-${sanitize(revision(record))}`,record_id:record.id,source_record_revision:revision(record),generated_at:new Date().toISOString(),model_version:PRIMARY_REGIONAL_V2_MODEL_VERSION,authority_version:PRIMARY_REGIONAL_V2_AUTHORITY_VERSION,engine_build_version:PRIMARY_REGIONAL_V2_BUILD_ID,output_semantic_version:PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION,route_trace_version:PRIMARY_REGIONAL_V2_ROUTE_TRACE_VERSION,source_registry:SOURCE_REGISTRY};
   if(String(record.activityType||"").toLowerCase()==="rest") return {ok:true,resultRecord:Object.freeze({...common,state:"REST",engine_input_snapshot:null,result:null,body_map_payload:Object.freeze({version:"primary-reference100-v3-bodymap-1.0",regions:Object.freeze([])}),comparison_signatures:Object.freeze({})})};
   const engineInput=adaptCurrentRecordToPrimaryRegionalV2({record,allRecords});
   const raw=calculateRun(engineInput);
@@ -124,12 +127,13 @@ function validatePrimaryRegionalV2ResultRecord(item={}){
   const issues=[];
   if(item.model_version!==PRIMARY_REGIONAL_V2_MODEL_VERSION)issues.push("MODEL_VERSION");
   if(item.output_semantic_version!==PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION)issues.push("OUTPUT_SEMANTIC_VERSION");
+  if(item.route_trace_version!==PRIMARY_REGIONAL_V2_ROUTE_TRACE_VERSION)issues.push("ROUTE_TRACE_VERSION");
   if(!item.id||!item.record_id)issues.push("IDENTITY");
   if(item.state==="REST")return Object.freeze({valid:issues.length===0,issues:Object.freeze(issues)});
   const rows=item.result?.regions;
   if(!Array.isArray(rows)||rows.length!==12)issues.push("REGION_COUNT_12");
   if(!Array.isArray(item.body_map_payload?.regions)||item.body_map_payload.regions.length!==12)issues.push("BODY_MAP_COUNT_12");
-  for(const row of Array.isArray(rows)?rows:[]){if(!row.regionId||!row.constructId||!row.referenceId)issues.push(`REGION_IDENTITY:${row.regionId||"UNKNOWN"}`);if(row.value!=null&&!Number.isFinite(Number(row.value)))issues.push(`NONFINITE_VALUE:${row.regionId}`);}
+  for(const row of Array.isArray(rows)?rows:[]){if(!row.regionId||!row.constructId||!row.referenceId)issues.push(`REGION_IDENTITY:${row.regionId||"UNKNOWN"}`);if(row.value!=null&&!Number.isFinite(Number(row.value)))issues.push(`NONFINITE_VALUE:${row.regionId}`);if(!Array.isArray(row.routeTrace)||!row.routeTrace.length)issues.push(`ROUTE_TRACE:${row.regionId||"UNKNOWN"}`);}
   return Object.freeze({valid:issues.length===0,issues:Object.freeze(issues)});
 }
 function upsertPrimaryRegionalV2ResultRecord(items=[],resultRecord){const next=(Array.isArray(items)?items:[]).filter((x)=>x.id!==resultRecord.id&&!(x.record_id===resultRecord.record_id&&x.source_record_revision===resultRecord.source_record_revision&&x.model_version===PRIMARY_REGIONAL_V2_MODEL_VERSION));next.push(resultRecord);return next.sort((a,b)=>String(a.record_id).localeCompare(String(b.record_id))||String(a.source_record_revision).localeCompare(String(b.source_record_revision))||String(a.id).localeCompare(String(b.id)));}
@@ -137,6 +141,7 @@ moduleExports["PRIMARY_REGIONAL_V2_MODEL_VERSION"] = PRIMARY_REGIONAL_V2_MODEL_V
 moduleExports["PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION"] = PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION;
 moduleExports["PRIMARY_REGIONAL_V2_AUTHORITY_VERSION"] = PRIMARY_REGIONAL_V2_AUTHORITY_VERSION;
 moduleExports["PRIMARY_REGIONAL_V2_BUILD_ID"] = PRIMARY_REGIONAL_V2_BUILD_ID;
+moduleExports["PRIMARY_REGIONAL_V2_ROUTE_TRACE_VERSION"] = PRIMARY_REGIONAL_V2_ROUTE_TRACE_VERSION;
 moduleExports["buildPrimaryRegionalV2ComparisonSignature"] = buildPrimaryRegionalV2ComparisonSignature;
 moduleExports["comparePrimaryRegionalV2Signatures"] = comparePrimaryRegionalV2Signatures;
 moduleExports["createPrimaryRegionalV2ResultRecord"] = createPrimaryRegionalV2ResultRecord;

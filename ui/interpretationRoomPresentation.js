@@ -388,6 +388,7 @@ function relationshipText(value = "") {
   if (value === "DEFINES_EXPOSURE") return "計算する走行区間を決める";
   if (value === "RECORDED_CONDITIONAL") return "計算条件として記録";
   if (value === "RECORDED_CONTEXT") return "関連情報として記録";
+  if (value === "RECORDED_NOT_USED_NUMERIC") return "記録あり・この部位の数値計算には未使用";
   if (value === "NOT_IDENTIFIED_IN_REGION_ROUTE") return "この部位の計算経路では確認せず";
   return "部位を選ぶと関係を確認";
 }
@@ -550,6 +551,13 @@ function inputValue(item = {}, exposure = {}) {
   return finite(item.value) ? number(item.value) : "記録あり";
 }
 
+function unsupportedBucket(item = {}) {
+  if (item.reasonCategory === "OUTSIDE_SUPPORTED_RANGE") return "確認できる資料範囲外・数値には未使用";
+  if (item.reasonCategory === "REFERENCE_NOT_READY") return "比較基準を準備中・数値には未使用";
+  if (item.reasonCategory === "AXIS_PRESERVED_NOT_COMBINED") return "別条件と同時には組み合わせず・数値には未使用";
+  return "現在の計算では数値に未使用";
+}
+
 function renderCalculationDetails(region) {
   if (!region?.calculationPath) return "";
   const path = region.calculationPath;
@@ -558,11 +566,12 @@ function renderCalculationDetails(region) {
   const rows = [
     ...(path.activeInputs || []).map((item) => ({ ...item, bucket: "数値計算に使用" })),
     ...(path.conditionalInputs || []).map((item) => ({ ...item, bucket: "計算条件として記録" })),
-    ...(path.contextOnlyInputs || []).map((item) => ({ ...item, bucket: "関連情報として記録" })),
+    ...(path.contextOnlyInputs || []).map((item) => ({ ...item, bucket: "関連情報として記録（数値には未使用）" })),
+    ...(path.unsupportedInputs || []).map((item) => ({ ...item, bucket: unsupportedBucket(item) })),
   ];
   return `<details class="interpretation-room-calculation"><summary>この部位の数値に使われた情報を確認</summary><div>
     <div class="interpretation-room-calculation-table">${rows.map((item) => `<div><strong>${escapeHtml(inputLabel(item))}</strong><span>${escapeHtml(inputValue(item, exposure))}</span><small>${escapeHtml(item.bucket)}</small></div>`).join("")}</div>
-    <p class="interpretation-room-boundary-line">ここでは、この部位の数値を計算するときに使った記録項目を確認できます。</p>
+    <p class="interpretation-room-boundary-line">数値に使った条件、記録したが数値には使わなかった条件、関連情報を分けて表示します。</p>
   </div></details>`;
 }
 
