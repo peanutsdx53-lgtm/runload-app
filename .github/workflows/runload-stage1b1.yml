@@ -16,13 +16,14 @@ jobs:
       - name: Checkout exact main state
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 3
 
-      - name: Verify exact parent
+      - name: Verify exact ancestry
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "a1068ebb523c4ce7a95fb47ec25af2a10d7272bb"
+          test "$(git rev-parse HEAD^)" = "b3362b86ad3ef5fefad855680cbb186ad81163d3"
+          test "$(git rev-parse HEAD^^)" = "a1068ebb523c4ce7a95fb47ec25af2a10d7272bb"
 
       - name: Remove obsolete hidden current-record fields
         shell: bash
@@ -53,6 +54,7 @@ jobs:
           replace_once('core/internal/applicationDomain.js', '  if (Boolean(feedback.unexpectedSymptom ?? feedback.symptomContext?.hasUnexpectedSymptom)) {\n    reviewReasons.push("unexpected_symptom_reported");\n  }\n', '')
           replace_once('core/internal/applicationDomain.js', '  if (hasSafetyFlag || Boolean(feedback.unexpectedSymptom ?? feedback.symptomContext?.hasUnexpectedSymptom)) {\n', '  if (hasSafetyFlag) {\n')
           replace_once('core/internal/applicationDomain.js', '  const unexpectedSymptom = Boolean(\n    input.unexpectedSymptom ?? input.symptomContext?.hasUnexpectedSymptom,\n  );\n', '')
+          replace_once('core/internal/applicationDomain.js', '    unexpectedSymptom,\n', '')
           replace_once('core/internal/applicationDomain.js', '    unexpectedSymptom,\n', '')
           replace_once('core/internal/applicationDomain.js', '    symptomContext: Object.freeze({\n      timing: normalizeSingleLineText(input.symptomContext?.timing, 40),\n      startedWhen: normalizeSingleLineText(input.symptomContext?.startedWhen, 40),\n      triggers: Object.freeze(\n        Array.from(new Set(Array.isArray(input.symptomContext?.triggers)\n          ? input.symptomContext.triggers.map((value) => normalizeSingleLineText(value, 40)).filter(Boolean)\n          : [])).slice(0, 6),\n      ),\n      note: normalizePlainText(input.symptomContext?.note, 320),\n    }),\n', '')
 
