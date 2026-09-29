@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "14eb299b85952e939f4c734c51c7365f14316b24"
+          test "$(git rev-parse HEAD^)" = "1fb0a11110b02b76a756fab00716c1842a5e542f"
 
       - name: Capture numeric behavior before Stage 4A
         shell: bash
@@ -35,6 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           python .github/scripts/runload-stage4a-patch.py
+          python .github/scripts/runload-stage4a-test-contract.py
 
       - name: Verify numeric behavior is unchanged
         shell: bash
@@ -55,6 +56,7 @@ jobs:
           service-worker.js
           tests/currentOnlyRecordSchema.test.mjs
           tests/interpretationArchitecture.test.mjs
+          tests/interpretationOutputContract.test.mjs
           tests/mobileHomeAtomicDropCoordinator.test.mjs
           tests/mobileHomeInitialLayout.test.mjs
           tests/mobileHomeIosScrollCapacity.test.mjs
@@ -93,6 +95,8 @@ jobs:
           grep -q 'appliedConditions' core/internal/primaryModelEngine.js
           grep -q 'notAppliedConditions' core/internal/primaryModelEngine.js
           grep -q 'resolutionBasis: "PERSISTED_CALCULATION_TRACE"' core/interpretationCore.js
+          grep -q 'PERSISTED_ROUTE_TRACE_REQUIRED' core/interpretationCore.js
+          grep -q 'MISSING-PERSISTED-ROUTE-TRACE-IS-NOT-RECONSTRUCTED' tests/interpretationOutputContract.test.mjs
           ! grep -q -E 'PERSISTED_INPUTS_WITHOUT_SEGMENT_ROUTE_TRACE|PERSISTED_RESULT_DOES_NOT_RETAIN_FINAL_CONDITIONAL_ROUTE_TRACE|VERSION_LOCKED_REGION_ROUTE' core/interpretationCore.js
           ! grep -q 'Reference-100' screens/resultScreen.js
           ! grep -q -E 'P2 bridge|R01/R08|R10-R12' core/internal/primaryModelResults.js
@@ -105,6 +109,6 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add core/internal/primaryModelEngine.js core/internal/primaryModelResults.js core/interpretationCore.js screens/resultScreen.js service-worker.js tests/currentOnlyRecordSchema.test.mjs tests/interpretationArchitecture.test.mjs tests/mobileHomeAtomicDropCoordinator.test.mjs tests/mobileHomeInitialLayout.test.mjs tests/mobileHomeIosScrollCapacity.test.mjs tests/runMeasurementNotifications.test.mjs ui/appVersionStatus.js ui/interpretationRoomPresentation.js
+          git add core/internal/primaryModelEngine.js core/internal/primaryModelResults.js core/interpretationCore.js screens/resultScreen.js service-worker.js tests/currentOnlyRecordSchema.test.mjs tests/interpretationArchitecture.test.mjs tests/interpretationOutputContract.test.mjs tests/mobileHomeAtomicDropCoordinator.test.mjs tests/mobileHomeInitialLayout.test.mjs tests/mobileHomeIosScrollCapacity.test.mjs tests/runMeasurementNotifications.test.mjs ui/appVersionStatus.js ui/interpretationRoomPresentation.js
           git commit -m 'Stage 4A: persist and explain actual calculation routes'
           git push origin HEAD:main
