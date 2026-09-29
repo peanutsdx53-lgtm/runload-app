@@ -1,0 +1,110 @@
+name: RunLoad Stage 4A persisted route trace retry
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage4a-route-trace-retry.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "14eb299b85952e939f4c734c51c7365f14316b24"
+
+      - name: Capture numeric behavior before Stage 4A
+        shell: bash
+        run: |
+          set -euo pipefail
+          node .github/scripts/runload-stage4a-numeric.mjs > /tmp/stage4-before.json
+
+      - name: Apply Stage 4A candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .github/scripts/runload-stage4a-patch.py
+
+      - name: Verify numeric behavior is unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          node .github/scripts/runload-stage4a-numeric.mjs > /tmp/stage4-after.json
+          cmp /tmp/stage4-before.json /tmp/stage4-after.json
+
+      - name: Verify exact candidate change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=$(cat <<'EOF'
+          core/internal/primaryModelEngine.js
+          core/internal/primaryModelResults.js
+          core/interpretationCore.js
+          screens/resultScreen.js
+          service-worker.js
+          tests/currentOnlyRecordSchema.test.mjs
+          tests/interpretationArchitecture.test.mjs
+          tests/mobileHomeAtomicDropCoordinator.test.mjs
+          tests/mobileHomeInitialLayout.test.mjs
+          tests/mobileHomeIosScrollCapacity.test.mjs
+          tests/runMeasurementNotifications.test.mjs
+          ui/appVersionStatus.js
+          ui/interpretationRoomPresentation.js
+          EOF
+          )
+          actual=$(git diff --name-only | sort)
+          test "$actual" = "$(printf '%s\n' "$expected" | sort)"
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do
+            echo "[TEST] $test_file"
+            node "$test_file"
+          done
+
+      - name: Check all JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find . -type f -name '*.js' -not -path './.git/*' | sort)
+          for file in "${files[@]}"; do node --check "$file" >/dev/null; done
+          echo "JS syntax OK: ${#files[@]} files"
+
+      - name: Verify trace invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'route_trace_version:PRIMARY_REGIONAL_V2_ROUTE_TRACE_VERSION' core/internal/primaryModelResults.js
+          grep -q 'appliedConditions' core/internal/primaryModelEngine.js
+          grep -q 'notAppliedConditions' core/internal/primaryModelEngine.js
+          grep -q 'resolutionBasis: "PERSISTED_CALCULATION_TRACE"' core/interpretationCore.js
+          ! grep -q -E 'PERSISTED_INPUTS_WITHOUT_SEGMENT_ROUTE_TRACE|PERSISTED_RESULT_DOES_NOT_RETAIN_FINAL_CONDITIONAL_ROUTE_TRACE|VERSION_LOCKED_REGION_ROUTE' core/interpretationCore.js
+          ! grep -q 'Reference-100' screens/resultScreen.js
+          ! grep -q -E 'P2 bridge|R01/R08|R10-R12' core/internal/primaryModelResults.js
+          grep -q 'APP_VERSION = "2026.09.29.5"' ui/appVersionStatus.js
+          grep -q 'running-record-app-runtime-2026.09.29.5' service-worker.js
+
+      - name: Commit verified Stage 4A
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add core/internal/primaryModelEngine.js core/internal/primaryModelResults.js core/interpretationCore.js screens/resultScreen.js service-worker.js tests/currentOnlyRecordSchema.test.mjs tests/interpretationArchitecture.test.mjs tests/mobileHomeAtomicDropCoordinator.test.mjs tests/mobileHomeInitialLayout.test.mjs tests/mobileHomeIosScrollCapacity.test.mjs tests/runMeasurementNotifications.test.mjs ui/appVersionStatus.js ui/interpretationRoomPresentation.js
+          git commit -m 'Stage 4A: persist and explain actual calculation routes'
+          git push origin HEAD:main
