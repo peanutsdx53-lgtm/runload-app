@@ -8,6 +8,10 @@ const interactions = fs.readFileSync(new URL("../ui/interactions/bodyPartDetailI
 const screenInteractions = fs.readFileSync(new URL("../ui/screenInteractions.js", import.meta.url), "utf8");
 const css = fs.readFileSync(new URL("../styles/mobile.css", import.meta.url), "utf8");
 const version = fs.readFileSync(new URL("../ui/appVersionStatus.js", import.meta.url), "utf8");
+const worker = fs.readFileSync(new URL("../service-worker.js", import.meta.url), "utf8");
+
+function parseVersion(source) { return source.match(/APP_VERSION = "(\d{4}\.\d{2}\.\d{2}\.\d+)"/)?.[1] || ""; }
+function atLeast(current, minimum) { const a=current.split(".").map(Number), b=minimum.split(".").map(Number); if(a.length!==4 || b.length!==4 || !a.every(Number.isFinite) || !b.every(Number.isFinite)) return false; for(let i=0;i<4;i+=1){ if(a[i]!==b[i]) return a[i]>b[i]; } return true; }
 
 test("mobile result makes body-map reference meaning explicit and widens touch targets", () => {
   assert.match(result, /100は「その部位自身の基準」です/);
@@ -28,6 +32,8 @@ test("mobile body-region trend points are interactive", () => {
   assert.match(screenInteractions, /"body-part-detail": bindBodyPartDetail/);
 });
 
-test("phase 5 version is updated", () => {
-  assert.match(version, /2026\.09\.29\.12/);
+test("Phase 5 remains present in the current or later mobile release", () => {
+  const current=parseVersion(version);
+  assert.ok(atLeast(current,"2026.09.30.13"));
+  assert.ok(worker.includes(`running-record-app-runtime-${current}`));
 });

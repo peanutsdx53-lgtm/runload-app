@@ -8,8 +8,10 @@ const css = read("styles/interpretation-room.css");
 const version = read("ui/appVersionStatus.js");
 const worker = read("service-worker.js");
 const results = [];
+function parseVersion(source) { return source.match(/APP_VERSION = "(\d{4}\.\d{2}\.\d{2}\.\d+)"/)?.[1] || ""; }
+function atLeast(current, minimum) { const a=current.split(".").map(Number), b=minimum.split(".").map(Number); return a.length===4 && b.length===4 && a.every(Number.isFinite) && b.every(Number.isFinite) && a.findIndex((v,i)=>v!==b[i])===-1 ? true : a.some((v,i)=>v!==b[i] && v>b[i] && a.slice(0,i).every((x,j)=>x===b[j])); }
 function test(name, fn) { try { fn(); results.push({ name, status: "PASS" }); } catch (error) { results.push({ name, status: "FAIL", message: error.message }); } }
-test("Phase 3 remains present in the current or later mobile release", () => { const current = version.match(/APP_VERSION = "2026\.09\.29\.(\d+)"/)?.[1]; assert.ok(Number(current) >= 10); assert.ok(worker.includes(`running-record-app-runtime-2026.09.29.${current}`)); });
+test("Phase 3 remains present in the current or later mobile release", () => { const current=parseVersion(version); assert.ok(atLeast(current,"2026.09.29.10")); assert.ok(worker.includes(`running-record-app-runtime-${current}`)); });
 test("interpretation screen gates additions to mobile layout", () => { assert.ok(screen.includes("matchesMobileLayout")); assert.ok(screen.includes("mobileLayout: matchesMobileLayout()")); });
 test("mobile interpretation exposes three-step path and one next check", () => { assert.ok(presentation.includes("interpretation-room-mobile-path")); assert.ok(presentation.includes("記録した事実")); assert.ok(presentation.includes("次回確認を1つ残す")); assert.ok(presentation.includes('focus: "next-check"')); });
 test("record input deep link opens stage 4", () => { assert.ok(recordInteractions.includes("applyMobileRecordEntryFocus")); assert.ok(recordInteractions.includes('setActiveMobileRecordStage(form, 4)')); assert.ok(recordInteractions.includes('nextCheckPoint')); });

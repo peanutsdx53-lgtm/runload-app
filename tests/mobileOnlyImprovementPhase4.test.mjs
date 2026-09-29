@@ -7,8 +7,10 @@ const css = read("styles/mobile.css");
 const version = read("ui/appVersionStatus.js");
 const worker = read("service-worker.js");
 const results = [];
+function parseVersion(source) { return source.match(/APP_VERSION = "(\d{4}\.\d{2}\.\d{2}\.\d+)"/)?.[1] || ""; }
+function atLeast(current, minimum) { const a=current.split(".").map(Number), b=minimum.split(".").map(Number); if(a.length!==4 || b.length!==4 || !a.every(Number.isFinite) || !b.every(Number.isFinite)) return false; for(let i=0;i<4;i+=1){ if(a[i]!==b[i]) return a[i]>b[i]; } return true; }
 function test(name, fn) { try { fn(); results.push({ name, status: "PASS" }); } catch (error) { results.push({ name, status: "FAIL", message: error.message }); } }
-test("app version advances for Phase 4", () => { assert.match(version, /APP_VERSION = "2026\.09\.29\.12"/); assert.match(worker, /running-record-app-runtime-2026\.09\.29\.12/); });
+test("Phase 4 remains present in the current or later mobile release", () => { const current=parseVersion(version); assert.ok(atLeast(current,"2026.09.29.11")); assert.ok(worker.includes(`running-record-app-runtime-${current}`)); });
 test("condition comparison exposes a mobile-only one-condition picker", () => { assert.ok(screen.includes("data-mobile-simulation-picker")); for (const tab of ["distance","time","course","format"]) assert.ok(screen.includes(`data-simulation-mobile-tab="${tab}"`)); assert.ok(screen.includes("何を変えて比べる？")); });
 test("desktop keeps all condition sections while mobile narrows to one", () => { assert.ok(interactions.includes("syncMobileSimulationPicker")); assert.ok(interactions.includes("if(!mobile){mobileSections.forEach")); assert.ok(interactions.includes("section.hidden=String(section.dataset.simulationMobileSection")); });
 test("multiple-condition caution is mobile-only", () => { assert.ok(screen.includes("data-simulation-multi-warning")); assert.ok(interactions.includes("changedItems.length>1")); assert.ok(interactions.includes("Boolean(mobileMedia?.matches)")); });

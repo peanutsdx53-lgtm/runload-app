@@ -10,8 +10,10 @@ const mobileHome = read("styles/mobile-home.css");
 const version = read("ui/appVersionStatus.js");
 const worker = read("service-worker.js");
 const results = [];
+function parseVersion(source) { return source.match(/APP_VERSION = "(\d{4}\.\d{2}\.\d{2}\.\d+)"/)?.[1] || ""; }
+function atLeast(current, minimum) { const a=current.split(".").map(Number), b=minimum.split(".").map(Number); return a.length===4 && b.length===4 && a.every(Number.isFinite) && b.every(Number.isFinite) && a.findIndex((v,i)=>v!==b[i])===-1 ? true : a.some((v,i)=>v!==b[i] && v>b[i] && a.slice(0,i).every((x,j)=>x===b[j])); }
 function test(name, fn) { try { fn(); results.push({ name, status: "PASS" }); } catch (error) { results.push({ name, status: "FAIL", message: error.message }); } }
-test("Phase 2 remains present in the current or later mobile release", () => { const current = version.match(/APP_VERSION = "2026\.09\.29\.(\d+)"/)?.[1]; assert.ok(Number(current) >= 9); assert.ok(worker.includes(`running-record-app-runtime-2026.09.29.${current}`)); });
+test("Phase 2 remains present in the current or later mobile release", () => { const current=parseVersion(version); assert.ok(atLeast(current,"2026.09.29.9")); assert.ok(worker.includes(`running-record-app-runtime-${current}`)); });
 test("mobile home Today widget is state-adaptive", () => { for (const state of ["draft", "saved-run", "saved-rest", "history", "first"]) assert.ok(home.includes(`mobile-home-widget--state-${state}`)); assert.ok(home.includes("今回の結果を振り返る")); assert.ok(home.includes("はじめの記録を残す")); });
 test("checkpoint widget carries an explicit source", () => { assert.ok(homeInteractions.includes("mobile-home-widget--checkpoint")); assert.ok(homeInteractions.includes("checkpointSource")); assert.ok(homeInteractions.includes("次回の確認点を残す")); });
 test("record input has a smartphone-only 4-stage navigator", () => { assert.ok(record.includes("data-mobile-record-progress")); for (const stage of [1,2,3,4]) assert.ok(record.includes(`data-record-stage-jump="${stage}"`)); assert.ok(record.includes("mobileLayout ? renderMobileRecordProgress")); assert.ok(recordInteractions.includes("bindMobileRecordStageNavigation")); assert.ok(recordInteractions.includes("setActiveMobileRecordStage")); });

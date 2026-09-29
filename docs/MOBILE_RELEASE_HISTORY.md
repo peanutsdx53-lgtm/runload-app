@@ -1,5 +1,13 @@
 # RunLoad Mobile Release History
 
+## APP v2026.09.30.13 — Mobile Phase 6
+- Smartphone plan: separates editing from the save-review step so the confirmation panel opens only when requested.
+- Smartphone plan: makes run/rest selection larger and easier to distinguish.
+- Smartphone plan: keeps the carried next-run check visible near the top of the flow.
+- Smartphone plan: after saving a run plan, shows a primary action to start GPS measurement with that saved plan.
+- Smartphone plan: rest plans return to Home instead of showing a measurement action.
+- PC presentation and scientific calculation contracts are intentionally unchanged.
+
 ## APP v2026.09.29.12 — Mobile Phase 5
 - Smartphone result: body-map touch targets are widened without changing the visible body-map geometry.
 - Smartphone result: the body-map hint states that 100 is each region's own reference, not a score or ranking.
