@@ -1,0 +1,200 @@
+diff -ruN runload_stage0/core/internal/applicationDomain.js runload_stage1a1/core/internal/applicationDomain.js
+--- runload_stage0/core/internal/applicationDomain.js	2026-09-28 16:50:25.000000000 +0000
++++ runload_stage1a1/core/internal/applicationDomain.js	2026-09-29 01:58:09.753941254 +0000
+@@ -475,8 +475,6 @@
+     && rawSteps != null
+     && Number.isFinite(Number(rawSteps))
+     && Number(rawSteps) > 0;
+-  const rawRpe = source.perceivedExertion;
+-  const hasRpe = rawRpe !== "" && rawRpe != null && Number.isFinite(Number(rawRpe));
+   return Object.freeze({
+     ...cloned,
+     activityType: planType,
+@@ -495,12 +493,6 @@
+         ? String(source.stepsProvenance || "UNKNOWN").toUpperCase()
+         : "UNKNOWN",
+     } : {}),
+-    perceivedExertion: planType === "rest" || !hasRpe
+-      ? null
+-      : Math.min(10, Math.max(0, Number(rawRpe))),
+-    rpeProvenance: planType === "rest" || !hasRpe
+-      ? "NOT_REPORTED"
+-      : String(source.rpeProvenance || "USER_REPORTED"),
+     course: normalizeCourse(source.course),
+   });
+ }
+diff -ruN runload_stage0/core/internal/consultationReport.js runload_stage1a1/core/internal/consultationReport.js
+--- runload_stage0/core/internal/consultationReport.js	2026-09-28 16:50:25.000000000 +0000
++++ runload_stage1a1/core/internal/consultationReport.js	2026-09-29 01:58:09.757037981 +0000
+@@ -8,7 +8,6 @@
+ const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = internalModules.primaryRegionalResultService;
+ const { bodyAreaLateralityLabel } = internalModules.bodyAreaTaxonomy;
+ const { summarizePersonalContext } = internalModules.personalContext;
+-const { reportedRpeValue } = internalModules.rpeProvenance;
+ 
+ 
+ const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
+@@ -60,7 +59,6 @@
+     durationMinutes: record.activityType === "rest" ? null : finiteOrNull(record.durationMinutes),
+     steps: record.activityType === "rest" ? null : finiteOrNull(record.steps),
+     stepsProvenance: String(record.stepsProvenance || ""),
+-    rpe: record.activityType === "rest" ? null : reportedRpeValue(record),
+     runningFormat: String(record.runningFormat || ""),
+     course: record.course && typeof record.course === "object" ? JSON.parse(JSON.stringify(record.course)) : {},
+   });
+@@ -143,19 +141,12 @@
+   const isRest = experience?.record?.activityType === "rest";
+   const total = totalReference(experience);
+   const regional = regionalReference(experience, regionId);
+-  const rpeWasReported = reportedRpeValue(experience?.record || {}) != null;
+-  const internal = experience?.v27ResultRecord?.result?.internal;
+   return Object.freeze({
+     modelVersion: String(experience?.regionalV2ResultRecord?.model_version || experience?.v27ResultRecord?.model_version || ""),
+     primaryRegionalV2: experience?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION,
+     state: isRest ? "REST" : total || regional.state === "SUPPORTED_NUMERIC" ? "RUN" : "NO_NUMERIC_RESULT",
+     total,
+     regional,
+-    internalResponse: isRest ? null : Object.freeze({
+-      state: rpeWasReported ? String(internal?.state || "UNKNOWN") : "UNKNOWN",
+-      srpeAu: rpeWasReported ? finiteOrNull(internal?.srpe_au) : null,
+-      separateFromRunFactModel: internal?.separate_from_objective_model === true,
+-    }),
+   });
+ }
+ 
+@@ -194,7 +185,6 @@
+         regionalValue: compared.directDeltaAllowed ? regional.value : null,
+         regionalDirectComparable: compared.directDeltaAllowed,
+         regionalExclusionReasons: compared.directDeltaAllowed ? [] : [compared.reason || "SEMANTIC_OR_MODEL_MISMATCH"],
+-        rpe: reportedRpeValue(item.record),
+         exactObservations: normalizeExactObservations(item.feedback || {}),
+       });
+     });
+@@ -308,7 +298,6 @@
+     lines.push(regionalText(report.modelReference.regional));
+     lines.push(exposureText(report.modelReference.regional?.exposure));
+     lines.push("部位の目安は、その部位自身の固定基準100と比較します。走行距離は数値へ掛けません。安全値・正常値・初心者平均ではなく、別の部位との大小比較にも使いません。");
+-    if (report.rawFacts.rpe != null) lines.push(`走り全体のきつさ（RPE）：${report.rawFacts.rpe}/10（数値表示とは分けて記載）`);
+   } else if (report.modelReference.state === "REST") {
+     lines.push("数値表示：休養記録のため走行の目安なし");
+   } else {
+@@ -327,8 +316,7 @@
+     const regional = item.regionalDirectComparable && hasFiniteValue(item.regionalValue)
+       ? `${regionLabel}の部位の目安 ${Math.round(item.regionalValue * 10) / 10}`
+       : `${regionLabel}の部位の目安 比較なし`;
+-    const rpe = item.rpe == null ? "" : `／RPE ${item.rpe}`;
+-    return `- ${item.date}：${item.activity}／${total}／${regional}${rpe}`;
++    return `- ${item.date}：${item.activity}／${total}／${regional}`;
+   });
+   return `${standard}\n\n最近の保存記録：\n${recent.join("\n")}\n\n部位の目安の差は、同じ部位・同じ計算方法・同じ基準で比べられる記録だけで扱います。`;
+ }
+diff -ruN runload_stage0/core/internal/inputSupport.js runload_stage1a1/core/internal/inputSupport.js
+--- runload_stage0/core/internal/inputSupport.js	2026-09-28 16:50:25.000000000 +0000
++++ runload_stage1a1/core/internal/inputSupport.js	2026-09-29 01:58:09.755024231 +0000
+@@ -305,7 +305,6 @@
+ const { roundNumber, toFiniteNumber } = internalModules.numberUtilities;
+ const { normalizePlainText, normalizeSingleLineText, INPUT_LIMITS } = internalModules.inputSafety;
+ const { normalizePersonalContext } = internalModules.personalContext;
+-const { normalizeRpeProvenance, RPE_PROVENANCE } = internalModules.rpeProvenance;
+ 
+ function isValidLocalDate(value = "") {
+   const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+@@ -521,16 +520,12 @@
+   const distanceKm = isRest ? 0 : roundNumber(toFiniteNumber(input.distanceKm, 0), 2);
+   const durationMinutes = isRest ? 0 : toFiniteNumber(input.durationMinutes, 0);
+   const steps = isRest ? 0 : Math.round(toFiniteNumber(input.steps, 0));
+-  const rawRpe = input.perceivedExertion;
+-  const hasRpe = !isRest && present(rawRpe) && Number.isFinite(Number(rawRpe));
+-  const perceivedExertion = hasRpe ? Number(rawRpe) : null;
+-  const rpeProvenance = isRest ? RPE_PROVENANCE.notReported : normalizeRpeProvenance(input.rpeProvenance, { hasValue: hasRpe, assumeExplicit: options.assumeExplicitRpe === true });
+   const existingIds = Array.isArray(options.existingIds) ? options.existingIds : [];
+   const id = normalizeSingleLineText(input.id, 100) || createReadableRecordId(date, existingIds);
+   const planOutcomeSource = input.planOutcome && typeof input.planOutcome === "object" ? input.planOutcome : {};
+   const runningFormat = String(input.runningFormat || "UNKNOWN").toUpperCase();
+   return Object.freeze({
+-    id, date, activityType, distanceKm, durationMinutes, steps, perceivedExertion, rpeProvenance,
++    id, date, activityType, distanceKm, durationMinutes, steps,
+     runningFormat: isRest ? "NOT_APPLICABLE" : ["CONTINUOUS_RUN", "RUN_WALK", "UNKNOWN"].includes(runningFormat) ? runningFormat : "UNKNOWN",
+     runWalkRunningDistanceKm: isRest || runningFormat !== "RUN_WALK" ? null : (Number.isFinite(Number(input.runWalkRunningDistanceKm)) && Number(input.runWalkRunningDistanceKm) > 0 ? roundNumber(Number(input.runWalkRunningDistanceKm), 3) : null),
+     runWalkRunningDurationMinutes: isRest || runningFormat !== "RUN_WALK" ? null : (Number.isFinite(Number(input.runWalkRunningDurationMinutes)) && Number(input.runWalkRunningDurationMinutes) > 0 ? Number(input.runWalkRunningDurationMinutes) : null),
+@@ -571,10 +566,6 @@
+     if (!Number.isFinite(record.distanceKm) || record.distanceKm <= 0 || record.distanceKm > INPUT_LIMITS.distanceKm) errors.push({ field: "distanceKm", code: "INVALID_DISTANCE", message: "走行記録では、0より大きい距離が必要です。" });
+     if (!Number.isFinite(record.durationMinutes) || record.durationMinutes <= 0 || record.durationMinutes > INPUT_LIMITS.durationMinutes) errors.push({ field: "durationMinutes", code: "INVALID_DURATION", message: "走行記録では、0より大きい実走時間が必要です。" });
+     if (record.steps < 0 || record.steps > INPUT_LIMITS.steps) errors.push({ field: "steps", code: "INVALID_STEPS", message: "歩数が入力可能な範囲を超えています。" });
+-    if (record.perceivedExertion != null && (!Number.isFinite(record.perceivedExertion) || record.perceivedExertion < 0 || record.perceivedExertion > 10)) errors.push({ field: "perceivedExertion", code: "INVALID_EXERTION", message: "きつさは0〜10で入力してください。" });
+-    if (!Object.values(RPE_PROVENANCE).includes(record.rpeProvenance)) errors.push({ field: "rpeProvenance", code: "INVALID_RPE_PROVENANCE", message: "きつさの入力状態を確認してください。" });
+-    if (record.rpeProvenance === RPE_PROVENANCE.userReported && record.perceivedExertion == null) errors.push({ field: "perceivedExertion", code: "REPORTED_RPE_VALUE_REQUIRED", message: "きつさを入力した状態では0〜10の値が必要です。" });
+-    if (record.rpeProvenance === RPE_PROVENANCE.notReported && record.perceivedExertion != null) errors.push({ field: "rpeProvenance", code: "UNREPORTED_RPE_VALUE_CONTRADICTION", message: "きつさの値と入力状態が一致していません。" });
+     const surfaceSum = SURFACE_FIELDS.reduce((total, { recordKey }) => total + toFiniteNumber(record.course?.[recordKey], 0), 0);
+     if (surfaceSum > 0 && Math.abs(surfaceSum - 100) > 1e-9) errors.push({ field: "course", code: "SURFACE_SUM_NOT_100", message: "路面の合計を100%にしてください。", details: { surfaceSum } });
+     if (hasTreadmillOutdoorSurfaceMixFromCourse(record.course || {})) errors.push({ field: "course", code: "TREADMILL_OUTDOOR_MIX_FORBIDDEN", message: "トレッドミルと屋外路面は、同じ走行の路面割合として混ぜて入力できません。" });
+diff -ruN runload_stage0/core/internal/primaryModelEngine.js runload_stage1a1/core/internal/primaryModelEngine.js
+--- runload_stage0/core/internal/primaryModelEngine.js	2026-09-28 16:50:25.000000000 +0000
++++ runload_stage1a1/core/internal/primaryModelEngine.js	2026-09-29 01:58:09.756020938 +0000
+@@ -415,7 +415,6 @@
+ {
+ const moduleExports = Object.create(null);
+ const { SURFACE_FIELDS } = internalModules.modelConstants;
+-const { reportedRpeValue } = internalModules.rpeProvenance;
+ 
+ const SURFACE_KEY_BY_RECORD_KEY = Object.freeze(Object.fromEntries(
+   SURFACE_FIELDS.map(({ recordKey, modelKey }) => [recordKey, modelKey]),
+@@ -545,7 +544,6 @@
+     steps: record.activityType === "run" && Number(record.steps) > 0 ? Number(record.steps) : null,
+     stepsProvenance: record.stepsProvenance === "ESTIMATED" ? "ESTIMATED" : (record.stepsProvenance || "UNKNOWN"),
+     runningFormat: record.activityType === "run" ? (record.runningFormat || "UNKNOWN") : null,
+-    rpe: reportedRpeValue(record),
+     memo: record.memo || "",
+     course: {
+       courseId: record.course?.id || null,
+diff -ruN runload_stage0/screens/recordInputScreen.js runload_stage1a1/screens/recordInputScreen.js
+--- runload_stage0/screens/recordInputScreen.js	2026-09-28 16:50:25.000000000 +0000
++++ runload_stage1a1/screens/recordInputScreen.js	2026-09-29 01:58:09.752868843 +0000
+@@ -195,7 +195,7 @@
+   const savedDraft = !existingExperience && !selectedPlan && !measurement && !startNew ? services.storage.draft.load() : null;
+   const editing = Boolean(existingExperience);
+   const plannedSession = selectedPlan?.plannedSession || {};
+-  const planUsesModelAssumptions = Boolean(plannedSession?.planModelAssumptions?.steps || plannedSession?.planModelAssumptions?.perceivedExertion);
++  const planUsesModelAssumptions = Boolean(plannedSession?.planModelAssumptions?.steps);
+   const draftRecord = savedDraft?.record || {};
+   const measuredRecord = measurement ? {
+     id: "",
+@@ -204,8 +204,6 @@
+     distanceKm: measurement.distanceKm ?? "",
+     durationMinutes: measurement.durationMinutes ?? "",
+     steps: "",
+-    perceivedExertion: null,
+-    rpeProvenance: "NOT_REPORTED",
+     runningFormat: plannedSession.runningFormat || "UNKNOWN",
+     stepsProvenance: "UNKNOWN",
+     course: plannedSession.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
+@@ -218,8 +216,6 @@
+     distanceKm: plannedSession.distanceKm ?? "",
+     durationMinutes: plannedSession.durationMinutes ?? "",
+     steps: planUsesModelAssumptions ? "" : plannedSession.steps ?? "",
+-    perceivedExertion: null,
+-    rpeProvenance: plannedSession.rpeProvenance || "NOT_REPORTED",
+     runningFormat: plannedSession.runningFormat || "UNKNOWN",
+     stepsProvenance: plannedSession.stepsProvenance || "UNKNOWN",
+     course: plannedSession.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
+@@ -231,8 +227,6 @@
+     distanceKm: draftRecord.distanceKm ?? "",
+     durationMinutes: draftRecord.durationMinutes ?? "",
+     steps: draftRecord.steps ?? "",
+-    perceivedExertion: null,
+-    rpeProvenance: draftRecord.rpeProvenance || "NOT_REPORTED",
+     runningFormat: draftRecord.runningFormat || "UNKNOWN",
+     stepsProvenance: draftRecord.stepsProvenance || "UNKNOWN",
+     course: draftRecord.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
+diff -ruN runload_stage0/ui/interactions/recordInputInteractions.js runload_stage1a1/ui/interactions/recordInputInteractions.js
+--- runload_stage0/ui/interactions/recordInputInteractions.js	2026-09-28 16:50:25.000000000 +0000
++++ runload_stage1a1/ui/interactions/recordInputInteractions.js	2026-09-29 01:58:09.751578016 +0000
+@@ -738,8 +738,6 @@
+     distanceKm,
+     durationMinutes: numberValue(formData, "durationMinutes"),
+     steps: numberValue(formData, "steps"),
+-    perceivedExertion: null,
+-    rpeProvenance: "NOT_REPORTED",
+     runningFormat: String(formData.get("runningFormat") || "UNKNOWN"),
+     runWalkRunningDistanceKm: optionalNumberValue(formData, "runWalkRunningDistanceKm"),
+     runWalkRunningDurationMinutes: optionalNumberValue(formData, "runWalkRunningDurationMinutes"),
