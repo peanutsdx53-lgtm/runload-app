@@ -1,0 +1,137 @@
+name: RunLoad Stage 2B3b gated legacy file removal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage2b3b.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "d1eedd4dff54feb599f245de82777a4813065afd"
+
+      - name: Remove retired V27 implementation files and references
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              s = p.read_text()
+              if old not in s:
+                  raise SystemExit(f'expected text not found: {path}: {old!r}')
+              p.write_text(s.replace(old, new, 1))
+
+          for path in [
+              'core/internal/modelV27.js',
+              'core/internal/v27ApplicationModel.js',
+              'core/internal/v27ApplicationServices.js',
+          ]:
+              p = Path(path)
+              if not p.exists():
+                  raise SystemExit(f'legacy file already missing: {path}')
+              p.unlink()
+
+          for line in [
+              '  "./core/internal/modelV27.js",\n',
+              '  "./core/internal/v27ApplicationModel.js",\n',
+              '  "./core/internal/v27ApplicationServices.js",\n',
+          ]:
+              replace_once('service-worker.js', line, '')
+
+          for line in [
+              '- `internal/modelV27.js`: V2.7 model constants and its stored-result repository.\n',
+              '- `internal/v27ApplicationModel.js`: V2.7 application-level math and model calculation.\n',
+              '- `internal/v27ApplicationServices.js`: V2.7 personal/input adaptation and stored-result services.\n',
+          ]:
+              replace_once('docs/CODEBASE_ARCHITECTURE.md', line, '')
+
+          p = Path('tests/currentOnlyRecordSchema.test.mjs')
+          s = p.read_text()
+          anchor = "test('CURRENT-MODULE-CHAIN-NO-LONGER-DEPENDS-ON-V27', () => {"
+          if anchor not in s:
+              raise SystemExit('current-only V27 test anchor not found')
+          insertion = """test('RETIRED-V27-IMPLEMENTATION-FILES-ARE-ABSENT', () => {
+            for (const path of [
+              'core/internal/modelV27.js',
+              'core/internal/v27ApplicationModel.js',
+              'core/internal/v27ApplicationServices.js',
+            ]) assert.equal(fs.existsSync(path), false, path);
+            assert.ok(!worker.includes('./core/internal/modelV27.js'));
+            assert.ok(!worker.includes('./core/internal/v27ApplicationModel.js'));
+            assert.ok(!worker.includes('./core/internal/v27ApplicationServices.js'));
+          });
+
+          """.replace('          ', '')
+          p.write_text(s.replace(anchor, insertion + anchor, 1))
+          PY
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do
+            echo "[TEST] $test_file"
+            node "$test_file"
+          done
+
+      - name: Check all JavaScript syntax after legacy deletion
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t jsfiles < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          test "${#jsfiles[@]}" -eq 161
+          for file in "${jsfiles[@]}"; do node --check "$file" >/dev/null; done
+
+      - name: Verify no runtime legacy V27 file references remain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e core/internal/modelV27.js
+          test ! -e core/internal/v27ApplicationModel.js
+          test ! -e core/internal/v27ApplicationServices.js
+          ! grep -R -n -E 'modelV27\.js|v27ApplicationModel\.js|v27ApplicationServices\.js' \
+            app.js core screens ui service-worker.js \
+            --exclude-dir=.git
+
+      - name: Verify exact change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          printf '%s\n' \
+            'core/internal/modelV27.js' \
+            'core/internal/v27ApplicationModel.js' \
+            'core/internal/v27ApplicationServices.js' \
+            'docs/CODEBASE_ARCHITECTURE.md' \
+            'service-worker.js' \
+            'tests/currentOnlyRecordSchema.test.mjs' | sort > /tmp/expected.txt
+          git diff --cached --name-only | sort > /tmp/actual.txt
+          diff -u /tmp/expected.txt /tmp/actual.txt
+
+      - name: Commit verified Stage 2B3b
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Stage 2B3b: remove retired V27 implementation files'
+          git push origin HEAD:main
