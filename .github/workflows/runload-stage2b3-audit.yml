@@ -1,0 +1,36 @@
+name: RunLoad Stage 2B3 dependency audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage2b3-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "8e194f8ec08768335c5d92040e658281a93852c6"
+
+      - name: List legacy V27 references
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '=== legacy file imports and symbols ==='
+          grep -R -n -E 'modelV27|v27ApplicationModel|v27ApplicationServices|legacyLoad|V27_' . \
+            --exclude-dir=.git \
+            --exclude='runload-stage2b3-audit.yml' || true
+          echo '=== direct legacy filenames ==='
+          find core tests ui screens -type f \( -name '*V27*' -o -name '*v27*' \) -print | sort
