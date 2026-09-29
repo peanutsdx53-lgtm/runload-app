@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "5026002a10ce988a295c753f92407afaf65bc0e5"
+          test "$(git rev-parse HEAD^)" = "48f26236e63016858c36e35a35b26b5bb3b769f4"
 
       - name: Switch current code away from legacy V27 dependencies
         shell: bash
@@ -38,8 +38,9 @@ jobs:
                   raise SystemExit(f"expected text not found: {path}: {old[:80]!r}")
               p.write_text(s.replace(old, new, 1))
 
-          # Import-chain cleanup: these current modules only needed providers that exist in current modules.
+          # Import-chain cleanup: make each current module declare its real current dependencies.
           replace_once('core/internal/primaryModelEngine.js', 'import "./modelV27.js";', 'import "./modelSupport.js";')
+          replace_once('core/internal/primaryModelResults.js', 'import "./primaryInputProcessing.js";', 'import "./primaryInputProcessing.js";\nimport "./recordRepositories.js";')
           replace_once('core/internal/courseRepository.js', 'import "./v27ApplicationModel.js";', 'import "./recordRepositories.js";')
           replace_once('core/internal/recordWorkflow.js', 'import "./v27ApplicationServices.js";', 'import "./applicationDomain.js";')
 
@@ -141,6 +142,7 @@ jobs:
           
           test('CURRENT-MODULE-CHAIN-NO-LONGER-DEPENDS-ON-V27', () => {
             assert.ok(!primaryModelEngine.includes('modelV27.js'));
+            assert.ok(primaryResults.includes('recordRepositories.js'));
             assert.ok(!courseRepository.includes('v27ApplicationModel.js'));
             assert.ok(!recordWorkflow.includes('v27ApplicationServices.js'));
             assert.ok(!appCore.includes('legacyLoadModelConstants'));
@@ -185,6 +187,7 @@ jobs:
             'core/appCore.js' \
             'core/internal/courseRepository.js' \
             'core/internal/primaryModelEngine.js' \
+            'core/internal/primaryModelResults.js' \
             'core/internal/recordWorkflow.js' \
             'screens/readingScreen.js' \
             'tests/currentOnlyRecordSchema.test.mjs' \
