@@ -1,0 +1,101 @@
+name: RunLoad Stage 2C3 gated legacy naming cleanup retry
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-stage2c3-retry.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "399e09b49dd6fa0859dd136cd2c89ca85cf5388a"
+
+      - name: Apply reviewed Stage 2C3 candidate and repair test declaration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          lines = Path('.github/workflows/runload-stage2c3.yml').read_text().splitlines()
+          start = next(i for i, line in enumerate(lines) if line.strip() == "python - <<'PY'") + 1
+          end = next(i for i in range(start, len(lines)) if lines[i].strip() == 'PY')
+          block = '\n'.join(line[10:] if line.startswith('          ') else line for line in lines[start:end]) + '\n'
+          Path('/tmp/stage2c3_apply.py').write_text(block)
+          PY
+          python /tmp/stage2c3_apply.py
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('tests/currentOnlyRecordSchema.test.mjs')
+          s = p.read_text()
+          anchor = "const readingCatalog = fs.readFileSync('core/internal/readingCatalog.js', 'utf8');\n"
+          declaration = "const applicationDomain = fs.readFileSync('core/internal/applicationDomain.js', 'utf8');\n"
+          if declaration not in s:
+              if anchor not in s:
+                  raise SystemExit('readingCatalog declaration anchor not found')
+              s = s.replace(anchor, declaration + anchor, 1)
+          p.write_text(s)
+          PY
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do
+            echo "[TEST] $test_file"
+            node "$test_file"
+          done
+
+      - name: Check all JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t jsfiles < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          test "${#jsfiles[@]}" -eq 161
+          for file in "${jsfiles[@]}"; do node --check "$file" >/dev/null; done
+
+      - name: Verify retired V27 naming is absent from active paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -R -n -i -E 'v27|v2\.7' core screens ui docs service-worker.js --exclude-dir=.git
+          ! grep -n -E '"RPE"' core/internal/evidenceData.js
+
+      - name: Verify exact change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          printf '%s\n' \
+            'core/internal/applicationDomain.js' \
+            'core/internal/evidenceData.js' \
+            'core/internal/readingCatalog.js' \
+            'docs/CODEBASE_ARCHITECTURE.md' \
+            'screens/readingScreen.js' \
+            'tests/currentOnlyRecordSchema.test.mjs' | sort > /tmp/expected.txt
+          git diff --cached --name-only | sort > /tmp/actual.txt
+          diff -u /tmp/expected.txt /tmp/actual.txt
+
+      - name: Commit verified Stage 2C3
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Stage 2C3: remove retired V27 naming from active paths'
+          git push origin HEAD:main
