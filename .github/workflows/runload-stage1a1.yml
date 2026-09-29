@@ -11,20 +11,20 @@ permissions:
 
 jobs:
   verify-and-apply:
-    if: github.event.head_commit.message == 'Stage 1A1: install gated verifier'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact main state
         uses: actions/checkout@v4
         with:
-          fetch-depth: 3
+          fetch-depth: 4
 
       - name: Verify staged ancestry
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "0e196e98f6ab633571517aae096a0fa542034062"
-          test "$(git rev-parse HEAD^^)" = "57b9162a851ed168b57c92c1d5195c9bbeda88b7"
+          test "$(git rev-parse HEAD^)" = "cc494aa2a95baadc661ab245b29327a6ce986935"
+          test "$(git rev-parse HEAD^^)" = "0e196e98f6ab633571517aae096a0fa542034062"
+          test "$(git rev-parse HEAD^^^)" = "57b9162a851ed168b57c92c1d5195c9bbeda88b7"
 
       - name: Apply reviewed Stage 1A1 patch
         shell: bash
