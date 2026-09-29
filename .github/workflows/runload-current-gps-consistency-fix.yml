@@ -1,0 +1,91 @@
+name: RunLoad Current prep GPS consistency fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runload-current-gps-consistency-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main state
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Verify exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "2482c836cc9337907a44f320de643efd902833fd"
+
+      - name: Apply candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .github/scripts/runload-current-gps-consistency-fix.py
+
+      - name: Verify exact change set
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=$(cat <<'EOF'
+          service-worker.js
+          tests/currentOnlyRecordSchema.test.mjs
+          tests/mobileHomeAtomicDropCoordinator.test.mjs
+          tests/mobileHomeInitialLayout.test.mjs
+          tests/mobileHomeIosScrollCapacity.test.mjs
+          tests/mobileMeasurementAutoRecord.test.mjs
+          tests/runMeasurementNotifications.test.mjs
+          ui/appVersionStatus.js
+          ui/runMeasurementAutoRecord.js
+          EOF
+          )
+          actual=$(git diff --name-only | sort)
+          test "$actual" = "$(printf '%s\n' "$expected" | sort)"
+
+      - name: Run all Node tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(find tests -maxdepth 1 -type f -name '*.mjs' | sort)
+          test "${#tests[@]}" -eq 44
+          for test_file in "${tests[@]}"; do
+            echo "[TEST] $test_file"
+            node "$test_file"
+          done
+
+      - name: Check all JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' | sort)
+          for file in "${files[@]}"; do node --check "$file" >/dev/null; done
+          test "${#files[@]}" -eq 161
+          echo "JS/MJS syntax OK: ${#files[@]} files"
+
+      - name: Verify GPS regression contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'COURSE-ANALYSIS-USES-MEASUREMENT-DISTANCE-INSTEAD-OF-READDING-SMALL-GPS-MOVES' tests/mobileMeasurementAutoRecord.test.mjs
+          grep -q 'IMPLAUSIBLE-GRADE-SEGMENTS-DO-NOT-COUNT-AS-ELEVATION-COVERAGE-OR-FLAT' tests/mobileMeasurementAutoRecord.test.mjs
+          grep -q 'measuredSegmentDistanceMeters' ui/runMeasurementAutoRecord.js
+          grep -q 'gradeEvaluatedM' ui/runMeasurementAutoRecord.js
+          grep -q 'APP_VERSION = "2026.09.29.7"' ui/appVersionStatus.js
+          grep -q 'running-record-app-runtime-2026.09.29.7' service-worker.js
+
+      - name: Commit verified GPS fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add service-worker.js tests/currentOnlyRecordSchema.test.mjs tests/mobileHomeAtomicDropCoordinator.test.mjs tests/mobileHomeInitialLayout.test.mjs tests/mobileHomeIosScrollCapacity.test.mjs tests/mobileMeasurementAutoRecord.test.mjs tests/runMeasurementNotifications.test.mjs ui/appVersionStatus.js ui/runMeasurementAutoRecord.js
+          git commit -m 'Current prep: align GPS course analysis with measured distance'
+          git push origin HEAD:main
