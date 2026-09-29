@@ -255,6 +255,7 @@ export function bindRunMeasurement({ router, services }) {
 
   function syncModeSettings() {
     const mode = selectedMode();
+    root.dataset.measurementMode = mode;
     root.querySelectorAll("[data-measurement-goal]").forEach((section) => {
       section.hidden = section.dataset.measurementGoal !== mode;
     });
@@ -262,6 +263,7 @@ export function bindRunMeasurement({ router, services }) {
 
   function validateGoal() {
     measurementMode = selectedMode();
+    root.dataset.measurementMode = measurementMode;
     targetDurationMinutes = null;
     targetDistanceKm = null;
     if (measurementMode === "time") {

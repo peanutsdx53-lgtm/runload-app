@@ -337,3 +337,50 @@
     margin-top: 10px;
   }
 }
+/* Mobile measurement information-priority pass. */
+@media (max-width: 54.99rem) {
+  .run-measurement[data-measurement-mode="free"] .run-measurement-active__metrics article:first-child {
+    display: none;
+  }
+
+  .run-measurement[data-measurement-mode="free"] .run-measurement-active__metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .run-measurement[data-measurement-mode="free"] .run-measurement-active__metrics article:nth-child(2),
+  .run-measurement[data-measurement-mode="free"] .run-measurement-active__metrics article:nth-child(3),
+  .run-measurement[data-measurement-mode="free"] .run-measurement-active__metrics article:nth-child(4) {
+    border-top: 0;
+  }
+
+  .run-measurement[data-measurement-mode="free"] .run-measurement-active__metrics article:nth-child(3) {
+    border-left: 1px solid var(--color-line);
+  }
+
+  .run-measurement-active .run-measurement-auto-facts > div {
+    padding-block: 8px;
+  }
+
+  .run-measurement-active .run-measurement-auto-facts em {
+    display: none;
+  }
+
+  .run-measurement-post__facts > span:nth-child(-n + 2) {
+    min-height: 86px;
+    display: grid;
+    align-content: center;
+    padding: 12px;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 20%, var(--color-line));
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-accent-soft) 38%, var(--color-surface));
+  }
+
+  .run-measurement-post__facts > span:nth-child(-n + 2) strong {
+    font-size: clamp(24px, 8vw, 32px);
+    line-height: 1.05;
+  }
+
+  .run-measurement-post__facts > span:nth-child(n + 3) {
+    padding: 10px 2px 0;
+  }
+}

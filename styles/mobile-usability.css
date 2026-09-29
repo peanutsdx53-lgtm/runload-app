@@ -252,6 +252,252 @@
   }
 }
 
+
+/* Smartphone-only core-loop refinements. */
+@media (max-width: 54.99rem) {
+  .screen-layout--history .mobile-history-mode {
+    position: sticky;
+    top: calc(var(--mobile-topbar-height, 56px) + 6px);
+    z-index: 14;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin: 4px 0 16px;
+    padding: 4px;
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+    box-shadow: 0 6px 18px rgba(22, 43, 58, .06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .screen-layout--history .chart-wrap .chart-svg--pc {
+    display: none;
+  }
+
+  .screen-layout--history .mobile-history-mode a {
+    min-height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    color: var(--color-muted);
+    font-size: 13px;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .screen-layout--history .mobile-history-mode a.active {
+    background: var(--color-segment-selected-surface);
+    color: var(--color-segment-selected-text);
+    box-shadow: var(--shadow-segment-selected);
+  }
+
+  .screen-layout--history .mobile-history-mode + .history-view {
+    margin-top: 0;
+  }
+
+  .screen-layout--history .mobile-history-empty {
+    display: grid;
+    gap: 12px;
+    padding: 18px 16px;
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    background: var(--color-surface);
+    text-align: left;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .screen-layout--history .mobile-history-empty > small {
+    display: block;
+    color: var(--color-accent-strong);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .12em;
+  }
+
+  .screen-layout--history .mobile-history-empty > strong {
+    display: block;
+    max-width: 18rem;
+    font-size: 20px;
+    line-height: 1.35;
+    letter-spacing: -.025em;
+  }
+
+  .screen-layout--history .mobile-history-empty > p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 12px;
+    line-height: 1.65;
+  }
+
+  .screen-layout--history .mobile-history-empty > a {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    border-radius: 13px;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    font-size: 13px;
+    font-weight: 900;
+    text-decoration: none;
+  }
+
+  .screen-layout--history .mobile-history-empty__preview {
+    display: grid;
+    gap: 8px;
+    margin: 4px 0 2px;
+  }
+
+  .screen-layout--history .mobile-history-empty__preview span {
+    min-height: 46px;
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: var(--color-surface-muted);
+    color: var(--color-ink);
+    font-size: 12px;
+    font-weight: 760;
+  }
+
+  .screen-layout--history .mobile-history-empty__preview b {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+    font-family: var(--font-numeric);
+    font-size: 12px;
+  }
+
+  .screen-layout--result .mobile-result-highlights {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 14px;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 22%, var(--color-line));
+    border-radius: 18px;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--color-accent-soft) 54%, var(--color-surface)), var(--color-surface));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .screen-layout--result .mobile-result-highlights__head small,
+  .screen-layout--result .mobile-result-highlights__head h2 {
+    display: block;
+    margin: 0;
+  }
+
+  .screen-layout--result .mobile-result-highlights__head small {
+    color: var(--color-accent-strong);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .1em;
+  }
+
+  .screen-layout--result .mobile-result-highlights__head h2 {
+    margin-top: 2px;
+    color: var(--color-ink);
+    font-size: 18px;
+    line-height: 1.25;
+    letter-spacing: -.025em;
+  }
+
+  .screen-layout--result .mobile-result-highlights__grid {
+    display: grid;
+    gap: 7px;
+  }
+
+  .screen-layout--result .mobile-result-highlights__grid article {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    align-items: start;
+    gap: 9px;
+    padding: 9px 10px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 78%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  }
+
+  .screen-layout--result .mobile-result-highlights__grid article > span {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+    font-family: var(--font-numeric);
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .screen-layout--result .mobile-result-highlights__grid strong,
+  .screen-layout--result .mobile-result-highlights__grid small {
+    display: block;
+  }
+
+  .screen-layout--result .mobile-result-highlights__grid strong {
+    color: var(--color-ink);
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  .screen-layout--result .mobile-result-highlights__grid small {
+    margin-top: 3px;
+    color: var(--color-muted);
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .screen-layout--result .mobile-result-highlights > p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 9px;
+    line-height: 1.45;
+  }
+
+  .screen-layout--result .mobile-body-map-hint {
+    display: grid;
+    gap: 2px;
+    margin: 10px 0 2px;
+    padding: 9px 10px;
+    border-radius: 11px;
+    background: var(--color-surface-muted);
+  }
+
+  .screen-layout--result .mobile-body-map-hint strong {
+    color: var(--color-ink);
+    font-size: 11px;
+  }
+
+  .screen-layout--result .mobile-body-map-hint span {
+    color: var(--color-muted);
+    font-size: 9px;
+    line-height: 1.45;
+  }
+
+  .screen-layout--result .result-next-actions > a.understanding-link {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  .screen-layout--result .result-next-actions .understanding-link small,
+  .screen-layout--result .result-next-actions .understanding-link strong,
+  .screen-layout--result .result-next-actions .understanding-link i {
+    color: inherit;
+  }
+}
+
 /* Final smartphone state contract. This block intentionally comes last. */
 @media (max-width: 54.99rem) {
   /* Selected segmented controls use one semantic token set across screens. */

@@ -1,5 +1,6 @@
 import { escapeHtml } from "../ui/commonComponents.js";
 import { BODY_AREA_BY_ID, BODY_AREA_TO_PRIMARY_REGIONAL_V2, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/appCore.js";
+import { matchesMobileLayout } from "../ui/deviceLayout.js";
 
 const REGION_BY_ID = new Map(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => [region.displayId, region]));
 const SLOPE_DIRECT_REGION_IDS = new Set(PRIMARY_REGIONAL_V2_REGION_DEFS
@@ -71,9 +72,9 @@ function targetRegionId(context, experience) {
   return BODY_AREA_TO_PRIMARY_REGIONAL_V2[observation?.areaId] || "";
 }
 
-function buildColumnRecommendation(services, experience, allExperiences = [], context = {}) {
+function buildColumnRecommendation(services, experience, allExperiences = [], context = {}, deferredArticleIds = DEFERRED_READING_ARTICLE_IDS) {
   const all = visibleArticles(services.column.list());
-  const find = (id) => { const article = services.column.findById(id); return article && !DEFERRED_READING_ARTICLE_IDS.has(article.id) ? article : all[0] || null; };
+  const find = (id) => { const article = services.column.findById(id); return article && !deferredArticleIds.has(article.id) ? article : all[0] || null; };
   const recommendation = (id, reason) => Object.freeze({ article: find(id), reason });
   if (!experience) {
     return recommendation("regional-three-views", "最初に、12部位の数字の見方を確認できます。");
@@ -407,12 +408,12 @@ function renderReadingDetail(article, items) {
   </article>`;
 }
 
-function renderReadingContent({ services, context }) {
+function renderReadingContent({ services, context, deferredArticleIds }) {
   const available = new Map(visibleArticles(services.column.list()).map((article) => [article.id, article]));
   const items = READING_ITEMS.map((item) => ({ ...item, article: available.get(item.id) })).filter((item) => item.article);
   const allExperiences = services.workflows.records.loadAllExperiences();
   const target = resolveColumnTargetExperience(services, context);
-  const recommendation = buildColumnRecommendation(services, target.experience, allExperiences, context);
+  const recommendation = buildColumnRecommendation(services, target.experience, allExperiences, context, deferredArticleIds);
   const featured = recommendation.article && available.has(recommendation.article.id) ? recommendation.article : available.get("regional-three-views") || items[0]?.article || null;
   const initialArticleId = publicArticleId(context.parameters.get("articleId") || "");
   const origin = context.parameters.get("origin") || "";
@@ -457,5 +458,8 @@ function renderReadingContent({ services, context }) {
 }
 
 export function renderReadingScreen({ services, context }) {
+  if (matchesMobileLayout()) {
+    return renderReadingContent({ services, context, deferredArticleIds: new Set() });
+  }
   return renderReadingContent({ services, context });
 }

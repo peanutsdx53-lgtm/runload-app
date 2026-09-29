@@ -9,6 +9,7 @@ import {
   usedRowCount,
 } from "./homeGridModel.js";
 import { rememberMobileHomeLaunch } from "../mobileHomeReturnTransition.js";
+import { loadMobileQuickTools } from "../mobileQuickToolsStore.js";
 
 const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
@@ -36,7 +37,7 @@ const WIDGET_CATALOG = Object.freeze([
   Object.freeze({ id: "checkpoint", label: "次に確認", description: "前回からの確認事項" }),
 ]);
 const DEFAULT_WIDGET_ORDER = Object.freeze(WIDGET_CATALOG.map((item) => item.id));
-const DEFAULT_WIDGET_VISIBLE = Object.freeze(["today", "plan", "changes"]);
+const DEFAULT_WIDGET_VISIBLE = Object.freeze(["today", "checkpoint", "plan"]);
 const WIDGET_ID_SET = new Set(DEFAULT_WIDGET_ORDER);
 const WIDGET_SIZE_ORDER = Object.freeze(["small", "medium", "large"]);
 const WIDGET_SIZE_SET = new Set(WIDGET_SIZE_ORDER);
@@ -536,16 +537,25 @@ function pageContainers(page) {
 function createCheckpointWidget(services) {
   const experience = services?.workflows?.records?.loadLatestExperience?.() || null;
   const record = experience?.record || null;
-  const checkpoint = String(record?.reflectionContext?.nextCheckPoint || "").trim();
+  const recordCheckpoint = String(record?.reflectionContext?.nextCheckPoint || "").trim();
+  const quickCheckpoint = loadMobileQuickTools().quickNotes
+    .map((item) => String(item?.next || "").trim())
+    .find(Boolean) || "";
+  const checkpoint = recordCheckpoint || quickCheckpoint;
+  const source = recordCheckpoint ? "record" : quickCheckpoint ? "quick" : "none";
   const anchor = document.createElement("a");
   anchor.className = "mobile-home-widget";
-  anchor.href = record?.id ? `#/result?recordId=${encodeURIComponent(record.id)}` : "#/record-input";
+  anchor.href = source === "record" && record?.id
+    ? `#/result?recordId=${encodeURIComponent(record.id)}`
+    : source === "quick"
+      ? "#/quick-note"
+      : "#/record-input";
   const small = document.createElement("small");
   small.textContent = "次に確認";
   const strong = document.createElement("strong");
   strong.textContent = checkpoint || "まだありません";
   const span = document.createElement("span");
-  span.textContent = checkpoint ? "前回の記録から" : "記録で残せます";
+  span.textContent = source === "record" ? "前回の記録から" : source === "quick" ? "1分メモから" : "記録で残せます";
   anchor.append(small, strong, span);
   return anchor;
 }

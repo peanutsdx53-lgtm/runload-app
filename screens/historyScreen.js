@@ -6,6 +6,7 @@ import { addDaysIso, localTodayIso, parseIsoDate } from "../ui/historyPresentati
 import { formatActivitySummary, formatLocalDate, formatLocalTime, formatNumber } from "../ui/recordPresentation.js";
 
 import { BODY_REGION_VIEWS } from "../ui/bodyRegionVisuals.js";
+import { matchesMobileLayout } from "../ui/deviceLayout.js";
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
 const REGION_BY_ID = new Map(REGIONS.map((region) => [region.id, region]));
@@ -36,6 +37,10 @@ function normalizedPeriod(value) {
 
 function normalizedView() {
   return "records";
+}
+
+function normalizedMobileView(value) {
+  return String(value || "") === "trends" ? "trends" : normalizedView();
 }
 
 function normalizedMetric(value) {
@@ -80,7 +85,10 @@ function buildWorkspace(services, context) {
   if (!allExperiences.length) return null;
 
   const period = normalizedPeriod(context.parameters.get("period"));
-  const view = normalizedView(context.parameters.get("view"));
+  const mobileLayout = matchesMobileLayout();
+  const view = mobileLayout
+    ? normalizedMobileView(context.parameters.get("view"))
+    : normalizedView();
   const metric = normalizedMetric(context.parameters.get("metric"));
   const regionId = normalizedRegionId(context.parameters.get("regionId"));
   const regionalDisplay = normalizedRegionalDisplay(context.parameters.get("display"));
@@ -313,8 +321,28 @@ function historyRecordView(workspace,context) {
   const activity=String(context.parameters.get("activityType")||"all"),query=String(context.parameters.get("query")||"").trim().toLocaleLowerCase("ja-JP");const rows=workspace.rows.filter((item)=>activityMatches(item.experience,activity)).filter((item)=>!query||searchText(item).includes(query)).sort((a,b)=>recordChronology(b.experience,a.experience));
   return `<section class="history-view history-view--records"><section class="records-head"><div class="comparison-title comparison-title--plain"><div><small>SAVED RECORDS</small><h2><span class="history-records-title-mobile">保存記録を探す</span><span class="history-records-title-pc">保存記録</span></h2></div></div><span class="record-total">${rows.length}件</span></section><form class="record-filters" id="history-record-filter-form"><input type="hidden" name="view" value="records"><input type="hidden" name="period" value="${workspace.period}"><input type="hidden" name="anchorDate" value="${escapeHtml(workspace.endDate)}"><input type="hidden" name="regionId" value="${escapeHtml(workspace.regionId)}"><label><span>記録内を検索</span><input name="query" type="search" value="${escapeHtml(context.parameters.get("query")||"")}" placeholder="日付、コース、メモ"></label><div class="type-toggle" role="group" aria-label="記録の種類">${[["all","すべて"],["run","走行"],["rest","休養"]].map(([value,label])=>`<button type="button" class="${activity===value?"active":""}" data-history-record-type="${value}" aria-pressed="${activity===value}">${label}</button>`).join("")}</div></form><div class="record-list">${rows.length?rows.map((item)=>{const r=item.experience.record;const recordTime=formatLocalTime(r.createdAt);return`<article class="record-item"><div class="record-item-head"><time class="${weekendClass(r.date)}" datetime="${escapeHtml(r.createdAt||r.date)}"><span>${escapeHtml(formatLocalDate(r.date))}（${escapeHtml(weekdayLabel(r.date))}）</span>${recordTime?`<small class="record-time">記録時刻 ${escapeHtml(recordTime)}</small>`:""}</time><span class="record-kind${r.activityType==="rest"?" rest":""}">${r.activityType==="rest"?"休養":"走行"}</span></div><h3>${escapeHtml(formatActivitySummary(r))}</h3><p>${escapeHtml(r.course?.name||"コース名なし")}${r.memo?`・${escapeHtml(r.memo)}`:""}</p><div class="record-actions"><a href="#/result?recordId=${encodeURIComponent(r.id)}">結果を見る</a><button type="button" data-action="delete-history-record" data-record-id="${escapeHtml(r.id)}" data-record-label="${escapeHtml(`${formatLocalDate(r.date)}${recordTime?` ${recordTime}`:""}の記録`)}">削除</button></div></article>`;}).join(""):'<div class="empty-records empty-records--filtered"><strong>条件に合う記録はありません</strong><p>検索語または記録の種類を変更してください。</p></div>'}</div></section>`;
 }
+function mobileHistoryModeSwitch(workspace) {
+  const recordHref = buildHref({ view: "records", period: workspace.period, anchorDate: workspace.endDate, regionId: workspace.regionId });
+  const trendsHref = buildHref({ view: "trends", metric: "region", period: workspace.period, anchorDate: workspace.endDate, regionId: workspace.regionId, display: workspace.regionalDisplay });
+  return `<nav class="mobile-history-mode" aria-label="履歴の表示"><a class="${workspace.view === "records" ? "active" : ""}" href="${escapeHtml(recordHref)}" aria-current="${workspace.view === "records" ? "page" : "false"}">保存記録</a><a class="${workspace.view === "trends" ? "active" : ""}" href="${escapeHtml(trendsHref)}" aria-current="${workspace.view === "trends" ? "page" : "false"}">部位の推移</a></nav>`;
+}
+
+function mobileHistoryEmpty() {
+  return `<section class="history-view"><div class="empty-records empty-records--initial mobile-history-empty"><small>HISTORY</small><strong>最初の記録を残すと、ここで変化を見返せます</strong><p>保存した記録はそのまま残し、比べられる記録だけを同じ部位でつなぎます。</p><div class="mobile-history-empty__preview" aria-label="記録が増えると確認できること"><span><b>1</b>保存記録を探す</span><span><b>2</b>同じ部位を比べる</span><span><b>3</b>前回との差を見る</span></div><a href="#/record-input">記録を始める</a></div></section>`;
+}
+
+function mobileHistoryContent(workspace, context) {
+  return workspace.view === "trends"
+    ? historyCompareView(workspace)
+    : historyRecordView(workspace, context);
+}
+
 export function renderHistoryScreen({services,context}) {
+  const mobileLayout=matchesMobileLayout();
   const workspace=buildWorkspace(services,context);
-  if(!workspace)return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録を探して内容を確認します。</p></div></section><section class="history-view"><div class="empty-records empty-records--initial"><small>SAVED RECORDS</small><strong>保存した記録はまだありません</strong><p>走行または休養を保存すると、ここから記録を探して確認できます。</p><a href="#/record-input">記録を始める</a></div></section></div>`;
-  return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録を探して内容を確認します。</p></div></section>${historyRecordView(workspace,context)}${services.workflows.history.loadUndoEntry()?'<div class="history-undo" role="status"><p>直前に削除した記録を元に戻せます。</p><button type="button" data-action="undo-history-delete">削除を元に戻す</button></div>':""}</div>`;
+  if(!workspace)return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録を探して内容を確認します。</p></div></section>${mobileLayout ? mobileHistoryEmpty() : '<section class="history-view"><div class="empty-records empty-records--initial"><small>SAVED RECORDS</small><strong>保存した記録はまだありません</strong><p>走行または休養を保存すると、ここから記録を探して確認できます。</p><a href="#/record-input">記録を始める</a></div></section>'}</div>`;
+  const content = mobileLayout
+    ? mobileHistoryContent(workspace, context)
+    : historyRecordView(workspace,context);
+  return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録を探して内容を確認します。</p></div></section>${mobileLayout ? mobileHistoryModeSwitch(workspace) : ""}${content}${services.workflows.history.loadUndoEntry()?'<div class="history-undo" role="status"><p>直前に削除した記録を元に戻せます。</p><button type="button" data-action="undo-history-delete">削除を元に戻す</button></div>':""}</div>`;
 }
