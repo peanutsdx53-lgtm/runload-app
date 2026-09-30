@@ -15,10 +15,12 @@ function test(id, fn) {
 test("INDEX-LOADS-MOBILE-EXTENSION", () => {
   for (const path of [
     "./ui/mobileWalkJogMeasurementWiring.js",
+    "./ui/mobileWalkJogGpsQualityUi.js",
     "./ui/mobileWalkJogCopyGuard.js",
     "./ui/mobileWalkJogRecordStore.js",
     "./ui/mobileWalkJogSaveHistoryLink.js",
     "./ui/mobileWalkJogHistoryUi.js",
+    "./ui/mobileWalkJogGpsQualityHistoryGuard.js",
     "./styles/mobile-walk-jog.css",
     "./styles/mobile-walk-jog-records.css",
     "./styles/mobile-walk-jog-history.css",
@@ -29,10 +31,13 @@ test("SERVICE-WORKER-PRECACHES-MOBILE-EXTENSION", () => {
   for (const path of [
     "./core/internal/mobileWalkJogSpeedModel.js",
     "./ui/mobileWalkJogMeasurementWiring.js",
+    "./ui/mobileWalkJogGpsQuality.js",
+    "./ui/mobileWalkJogGpsQualityUi.js",
     "./ui/mobileWalkJogCopyGuard.js",
     "./ui/mobileWalkJogRecordStore.js",
     "./ui/mobileWalkJogSaveHistoryLink.js",
     "./ui/mobileWalkJogHistoryUi.js",
+    "./ui/mobileWalkJogGpsQualityHistoryGuard.js",
     "./styles/mobile-walk-jog.css",
     "./styles/mobile-walk-jog-records.css",
     "./styles/mobile-walk-jog-history.css",
