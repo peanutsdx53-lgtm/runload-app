@@ -1,0 +1,32 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const editor=fs.readFileSync("screens/courseEditorScreen.js","utf8");
+const library=fs.readFileSync("screens/courseLibraryScreen.js","utf8");
+const gpx=fs.readFileSync("screens/gpxAnalysisScreen.js","utf8");
+const interactions=fs.readFileSync("ui/interactions/courseInteractions.js","utf8");
+const css=fs.readFileSync("styles/mobile-course-v16.css","utf8");
+const index=fs.readFileSync("index.html","utf8");
+const version=fs.readFileSync("ui/appVersionStatus.js","utf8");
+const worker=fs.readFileSync("service-worker.js","utf8");
+const history=fs.readFileSync("docs/MOBILE_RELEASE_HISTORY.md","utf8");
+
+assert.match(editor,/matchesMobileLayout\(\)\?renderMobileCourseEditor/);
+assert.match(editor,/data-course-grade-family="PROFILE"/);
+assert.match(editor,/data-course-grade-method-panel/);
+assert.match(editor,/surface-mix-grid/);
+assert.match(editor,/data-course-summary-name/);
+const mobileEditor=editor.slice(editor.indexOf("function renderMobileCourseEditor"),editor.indexOf("function renderDesktopCourseEditor"));
+assert.ok(!mobileEditor.includes("gpx-inline"),"mobile editor must not duplicate the GPX route");
+assert.match(library,/course-mobile-gpx-link/);
+assert.match(gpx,/GPXから坂道を入力/);
+assert.match(interactions,/function updateMobileSummary/);
+assert.match(interactions,/data-course-grade-family/);
+assert.match(css,/Smartphone course-setting refinement v16/);
+assert.match(css,/surface-mix-item > span:first-child/);
+assert.match(index,/mobile-course-v16\.css/);
+assert.match(version,/APP_VERSION = "2026\.09\.30\.16"/);
+assert.match(worker,/running-record-app-runtime-2026\.09\.30\.16/);
+assert.match(worker,/mobile-course-v16\.css/);
+assert.match(history,/APP v2026\.09\.30\.16 — Screenshot-guided Course Refinement 1/);
+console.log("mobileCourseRefineV16.test.mjs: PASS");

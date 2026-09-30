@@ -1,5 +1,13 @@
 # RunLoad Mobile Release History
 
+## APP v2026.09.30.16 — Screenshot-guided Course Refinement 1
+- Smartphone course editor: removes the duplicate GPX entry route and reduces explanatory text.
+- Smartphone slope input: separates knowledge state (unknown / flat / hills) from input method (simple / sections).
+- Smartphone surface input: compacts percentage entry and increases surface-name readability.
+- Smartphone course summary: updates live while the user edits instead of showing stale initial values.
+- Smartphone course library and GPX input: reduce vertical travel and remove decorative English headings.
+- PC rendering and scientific calculation contracts are intentionally unchanged.
+
 ## APP v2026.09.30.15 — Screenshot-guided Record Refinement 1
 - Smartphone record input: moves the before/after fatigue entry out of the required first card and into the collapsed optional reflection stage.
 - Smartphone record input: keeps the initial path focused on activity type, date, distance, and actual duration.
