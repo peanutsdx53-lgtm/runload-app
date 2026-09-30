@@ -1477,7 +1477,12 @@ export function bindHome(context = {}) {
 
     const navigate = () => {
       launchTimer = null;
-      globalThis.location.hash = href.slice(1);
+      const [targetScreen, rawQuery = ""] = href.slice(2).split("?");
+      if (context.router?.navigateToScreen && targetScreen) {
+        context.router.navigateToScreen(targetScreen, new URLSearchParams(rawQuery));
+        return;
+      }
+      globalThis.location.replace(href);
     };
     const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     if (reduceMotion) {

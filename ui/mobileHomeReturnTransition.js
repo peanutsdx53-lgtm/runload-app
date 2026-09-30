@@ -217,7 +217,7 @@ function runSnapshotReturn(root, state) {
   const visual = createReturnVisual(root);
   if (!visual?.snapshot?.animate) {
     returningHome = false;
-    globalThis.location.hash = HOME_QUERY.slice(1);
+    globalThis.location.replace(HOME_QUERY);
     return;
   }
 
@@ -247,7 +247,7 @@ function runSnapshotReturn(root, state) {
 
   const startReturn = () => {
     animation.play();
-    globalThis.location.hash = HOME_QUERY.slice(1);
+    globalThis.location.replace(HOME_QUERY);
   };
   if (typeof globalThis.requestAnimationFrame === "function") globalThis.requestAnimationFrame(startReturn);
   else globalThis.setTimeout(startReturn, 0);
