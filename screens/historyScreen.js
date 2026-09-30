@@ -7,6 +7,7 @@ import { formatActivitySummary, formatLocalDate, formatLocalTime, formatNumber }
 
 import { BODY_REGION_VIEWS } from "../ui/bodyRegionVisuals.js";
 import { matchesMobileLayout } from "../ui/deviceLayout.js";
+import { renderMobileFatigueTrend } from "../ui/mobileInsights.js";
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
 const REGION_BY_ID = new Map(REGIONS.map((region) => [region.id, region]));
@@ -331,10 +332,11 @@ function mobileHistoryEmpty() {
   return `<section class="history-view"><div class="empty-records empty-records--initial mobile-history-empty"><small>HISTORY</small><strong>最初の記録を残すと、ここで変化を見返せます</strong><p>保存した記録はそのまま残し、比べられる記録だけを同じ部位でつなぎます。</p><div class="mobile-history-empty__preview" aria-label="記録が増えると確認できること"><span><b>1</b>保存記録を探す</span><span><b>2</b>同じ部位を比べる</span><span><b>3</b>前回との差を見る</span></div><a href="#/record-input">記録を始める</a></div></section>`;
 }
 
-function mobileHistoryContent(workspace, context) {
-  return workspace.view === "trends"
-    ? historyCompareView(workspace)
-    : historyRecordView(workspace, context);
+function mobileHistoryContent(workspace, context, services) {
+  if (workspace.view === "trends") {
+    return `${renderMobileFatigueTrend(services)}${historyCompareView(workspace)}`;
+  }
+  return historyRecordView(workspace, context);
 }
 
 export function renderHistoryScreen({services,context}) {
@@ -342,7 +344,7 @@ export function renderHistoryScreen({services,context}) {
   const workspace=buildWorkspace(services,context);
   if(!workspace)return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録を探して内容を確認します。</p></div></section>${mobileLayout ? mobileHistoryEmpty() : '<section class="history-view"><div class="empty-records empty-records--initial"><small>SAVED RECORDS</small><strong>保存した記録はまだありません</strong><p>走行または休養を保存すると、ここから記録を探して確認できます。</p><a href="#/record-input">記録を始める</a></div></section>'}</div>`;
   const content = mobileLayout
-    ? mobileHistoryContent(workspace, context)
+    ? mobileHistoryContent(workspace, context, services)
     : historyRecordView(workspace,context);
   return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録を探して内容を確認します。</p></div></section>${mobileLayout ? mobileHistoryModeSwitch(workspace) : ""}${content}${services.workflows.history.loadUndoEntry()?'<div class="history-undo" role="status"><p>直前に削除した記録を元に戻せます。</p><button type="button" data-action="undo-history-delete">削除を元に戻す</button></div>':""}</div>`;
 }

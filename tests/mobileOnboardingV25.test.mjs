@@ -46,7 +46,7 @@ const more = read("screens/moreScreen.js");
 assert.match(more, /screen: "terms"/);
 
 const version = read("ui/appVersionStatus.js").match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
-assert.equal(version, "2026.09.30.29");
+assert.equal(version, "2026.09.30.30");
 const sw = read("service-worker.js");
 assert.match(sw, new RegExp(`running-record-app-runtime-${version.replaceAll(".", "\\.")}`));
 for (const asset of ["./ui/mobileOnboarding.js", "./screens/termsScreen.js", "./styles/mobile-onboarding.css"]) {

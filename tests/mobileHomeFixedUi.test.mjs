@@ -46,7 +46,7 @@ test('HOME-RETURN-PAINTS-SNAPSHOT-BEFORE-NAVIGATION', () => {
   assert.ok(source.includes('animation.pause()'));
   assert.ok(source.includes('animation.currentTime = 0'));
   assert.ok(source.includes('requestAnimationFrame(startReturn)'));
-  assert.ok(source.indexOf('animation.play();') < source.indexOf('globalThis.location.hash = HOME_QUERY.slice(1);', source.indexOf('const startReturn')));
+  assert.ok(source.indexOf('animation.play();') < source.indexOf('globalThis.location.replace(HOME_QUERY);', source.indexOf('const startReturn')));
 });
 
 test('HOME-PAGE-INDICATOR-REMAINS-VISIBLE-FOR-ONE-PAGE', () => {

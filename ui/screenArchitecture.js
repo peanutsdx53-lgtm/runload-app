@@ -215,6 +215,10 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     return { title: "利用規約", backHref: "#/more", backLabel: "その他" };
   }
 
+  if (screen === "about") {
+    return { title: "このアプリについて", backHref: "#/more", backLabel: "その他" };
+  }
+
   if (screen === "settings") {
     if (parameter("from") === "home") return { title: "設定", backHref: "#/home", backLabel: "ホーム" };
     return { title: "設定", backHref: "#/more", backLabel: "その他" };

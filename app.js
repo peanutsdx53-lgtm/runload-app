@@ -31,6 +31,7 @@ import { renderInterpretationRoomScreen } from "./screens/interpretationRoomScre
 import { renderSupportGuidanceScreen } from "./screens/supportGuidanceScreen.js";
 import { renderPrivacyScreen } from "./screens/privacyScreen.js";
 import { renderTermsScreen } from "./screens/termsScreen.js";
+import { renderAboutScreen } from "./screens/aboutScreen.js";
 import { renderMoreScreen } from "./screens/moreScreen.js";
 import { renderSimulationScreen } from "./screens/simulationScreen.js";
 import { renderGpxAnalysisScreen } from "./screens/gpxAnalysisScreen.js";
@@ -55,6 +56,7 @@ const screenRenderers = {
   "support-guidance": renderSupportGuidanceScreen,
   privacy: renderPrivacyScreen,
   terms: renderTermsScreen,
+  about: renderAboutScreen,
   plan: renderPlanScreen,
   consultation: renderConsultationScreen,
   reading: renderReadingScreen,

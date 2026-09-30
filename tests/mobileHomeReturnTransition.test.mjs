@@ -46,7 +46,8 @@ test('HOME-RETURN-CAPTURES-CURRENT-SCREEN-BEFORE-NAVIGATION', () => {
 test('HOME-RETURN-NAVIGATES-WITHOUT-BLOCKING-ON-HOME-RENDER', () => {
   const source = read('ui/mobileHomeReturnTransition.js');
   assert.ok(source.includes('listenForHomeArrival(state, visual.backdrop);'));
-  assert.ok(source.includes('globalThis.location.hash = HOME_QUERY.slice(1);'));
+  assert.ok(source.includes('globalThis.location.replace(HOME_QUERY);'));
+  assert.equal(source.includes('globalThis.location.hash = HOME_QUERY.slice(1);'), false);
   assert.equal(source.includes('await rendered'), false);
 });
 

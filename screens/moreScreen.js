@@ -41,8 +41,15 @@ function renderRow(item) {
 }
 
 export function renderMoreScreen() {
+  const mobileInfo = Object.freeze({
+    ...BASE_GROUPS[1],
+    items: Object.freeze([
+      Object.freeze({ screen: "about", icon: "ⓘ", title: "このアプリについて", description: "クレジット・バージョン" }),
+      ...BASE_GROUPS[1].items,
+    ]),
+  });
   const groups = matchesMobileLayout()
-    ? [BASE_GROUPS[0], MOBILE_GROUPS[0], BASE_GROUPS[1]]
+    ? [BASE_GROUPS[0], MOBILE_GROUPS[0], mobileInfo]
     : BASE_GROUPS;
   return `<div class="screen screen--more screen-layout screen-layout--more">
     <section class="head"><h1>その他</h1></section>

@@ -81,7 +81,8 @@ await test('MOBILE-HOME-NESTED-LAUNCH-LINK-SUPPRESSES-IOS-LINK-CALLOUT', () => {
   assert.ok(home.includes('role=\"link\" tabindex=\"0\"'));
   assert.ok(!home.includes('<a class=\"mobile-home-app__launch\"'));
   assert.ok(interactions.includes('function openHomeLauncher(launcher)'));
-  assert.ok(interactions.includes('globalThis.location.hash = href.slice(1)'));
+  assert.ok(interactions.includes('globalThis.location.replace(href)'));
+  assert.equal(interactions.includes('globalThis.location.hash = href.slice(1)'), false);
 });
 
 await test('MOBILE-QUICK-TOOLS-HAVE-ROUTES-AND-HOME-BACK-NAVIGATION', () => {

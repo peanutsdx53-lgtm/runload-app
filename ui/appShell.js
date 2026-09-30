@@ -69,6 +69,7 @@ const PRIMARY_SECTION_BY_SCREEN = Object.freeze({
   "support-guidance": "more",
   privacy: "more",
   terms: "more",
+  about: "more",
   settings: "more",
   "location-note": "home",
   "quick-note": "home",

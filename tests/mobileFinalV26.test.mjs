@@ -12,8 +12,8 @@ const achievements = read("screens/achievementsScreen.js");
 const version = read("ui/appVersionStatus.js");
 const sw = read("service-worker.js");
 
-assert.match(version, /APP_VERSION = "2026\.09\.30\.29"/);
-assert.match(sw, /2026\.09\.30\.29/);
+assert.match(version, /APP_VERSION = "2026\.09\.30\.30"/);
+assert.match(sw, /2026\.09\.30\.30/);
 assert.match(app, /achievements: renderAchievementsScreen/);
 assert.doesNotMatch(app, /start: renderStart/);
 assert.match(home, /mobile-home-hub-page--apps/);
