@@ -32,6 +32,7 @@ async function stopProcess(child) {
 }
 
 async function removeTempDir(directory) {
+  if (!directory) return;
   try {
     await fs.rm(directory, {
       recursive: true,
@@ -76,9 +77,12 @@ async function createServer() {
   return server;
 }
 
-async function waitForDevToolsPort(userDataDir, attempts = 100) {
+async function waitForDevToolsPort(userDataDir, chrome, attempts = 300) {
   const file = path.join(userDataDir, "DevToolsActivePort");
   for (let index = 0; index < attempts; index += 1) {
+    if (chrome.exitCode != null || chrome.signalCode != null) {
+      throw new Error(`Chrome exited before DevTools became available (code=${chrome.exitCode}, signal=${chrome.signalCode})`);
+    }
     try {
       const [port] = (await fs.readFile(file, "utf8")).trim().split(/\s+/);
       if (port) return Number(port);
@@ -86,6 +90,39 @@ async function waitForDevToolsPort(userDataDir, attempts = 100) {
     await sleep(50);
   }
   throw new Error("Chrome DevTools port was not created");
+}
+
+async function launchChrome(maxAttempts = 3) {
+  const executable = chromeExecutable();
+  let lastError = null;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), "runload-browser-"));
+    const chrome = spawn(executable, [
+      "--headless=new",
+      "--no-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--remote-debugging-port=0",
+      `--user-data-dir=${userDataDir}`,
+      "about:blank",
+    ], { stdio: "ignore" });
+
+    try {
+      const debugPort = await waitForDevToolsPort(userDataDir, chrome);
+      return { chrome, userDataDir, debugPort };
+    } catch (error) {
+      lastError = error;
+      await stopProcess(chrome);
+      await removeTempDir(userDataDir);
+      if (attempt < maxAttempts) {
+        console.warn(`WARN\tBROWSER-STARTUP-RETRY\t${attempt}/${maxAttempts}\t${error?.message || error}`);
+        await sleep(250 * attempt);
+      }
+    }
+  }
+  throw lastError || new Error("Chrome could not be started");
 }
 
 class CdpClient {
@@ -142,23 +179,11 @@ async function run() {
   const server = await createServer();
   const address = server.address();
   const baseUrl = `http://127.0.0.1:${address.port}`;
-  const userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), "runload-browser-"));
-  const chrome = spawn(chromeExecutable(), [
-    "--headless=new",
-    "--no-sandbox",
-    "--disable-dev-shm-usage",
-    "--disable-gpu",
-    "--no-first-run",
-    "--no-default-browser-check",
-    "--remote-debugging-port=0",
-    `--user-data-dir=${userDataDir}`,
-    "about:blank",
-  ], { stdio: "ignore" });
-
+  let browser = null;
   let socket;
   try {
-    const debugPort = await waitForDevToolsPort(userDataDir);
-    const targets = await fetch(`http://127.0.0.1:${debugPort}/json/list`).then((response) => response.json());
+    browser = await launchChrome();
+    const targets = await fetch(`http://127.0.0.1:${browser.debugPort}/json/list`).then((response) => response.json());
     const target = targets.find((item) => item.type === "page");
     assert.ok(target?.webSocketDebuggerUrl, "page DevTools target was not found");
     socket = new WebSocket(target.webSocketDebuggerUrl);
@@ -259,9 +284,9 @@ async function run() {
     console.log("PASS\tDESKTOP-NON-INTERFERENCE");
   } finally {
     try { socket?.close(); } catch {}
-    await stopProcess(chrome);
+    await stopProcess(browser?.chrome);
     await new Promise((resolve) => server.close(resolve));
-    await removeTempDir(userDataDir);
+    await removeTempDir(browser?.userDataDir);
   }
 }
 
