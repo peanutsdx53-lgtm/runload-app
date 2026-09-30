@@ -110,10 +110,18 @@ export function renderSettingsScreen({ services, context }) {
       </section>
     </form>
 
+    <section class="group"><p class="group-title">APP GUIDE</p>
+      <div class="settings-guide-links">
+        <button type="button" class="settings-guide-link settings-guide-link--mobile" data-action="reopen-onboarding"><span><small>FIRST USE</small><strong>チュートリアルをもう一度見る</strong></span><span aria-hidden="true">›</span></button>
+        <a class="settings-guide-link" href="#/terms?returnTo=%23%2Fsettings"><span><small>TERMS</small><strong>利用規約</strong></span><span aria-hidden="true">›</span></a>
+        <a class="settings-guide-link" href="#/privacy?returnTo=%23%2Fsettings"><span><small>PRIVACY</small><strong>プライバシー</strong></span><span aria-hidden="true">›</span></a>
+      </div>
+    </section>
+
     <section class="group"><p class="group-title">DATA</p>
       <details class="disclosure"${context?.parameters?.get("section") === "data" ? " open" : ""}><summary><span><small>LOCAL DATA</small><strong>バックアップ・復元・削除</strong><span>必要なときだけ開きます</span></span><i>⌄</i></summary><div class="disclosure-body">
         ${renderDataOverview(services)}
-        <p class="note">この端末のアプリデータを対象にします。自分で操作しない限り、バックアップや削除は実行しません。</p>
+        <p class="note">この端末のアプリデータを対象にします。写真メモの画像はバックアップファイルに含みません。</p>
         <div class="action-row"><button type="button" class="primary" data-action="export-backup">バックアップを保存</button><label for="restore-backup-file">バックアップを選択</label><input class="hidden-file" id="restore-backup-file" data-action="restore-backup" type="file" accept="application/json,.json"></div>
         <div class="restore-preview" data-restore-preview-host aria-live="polite"><p class="muted-text">ファイルを選ぶと、内容を確認してから復元できます。</p></div>
         <div class="danger-box"><strong>この端末内のアプリデータを削除</strong><p>記録、結果、予定、保存コース、プロフィール、設定、保存シューズ、下書きなどを削除します。端末へ書き出したバックアップファイルは削除しません。</p><label class="field"><span>確認のため「削除」と入力</span><input id="clear-data-confirmation" autocomplete="off"></label><div class="action-row"><button type="button" class="danger" data-action="clear-all-user-data">すべて削除</button></div></div>

@@ -91,7 +91,7 @@
     width: 100%;
     color: var(--color-muted);
     font-family: var(--font-numeric);
-    font-size: 10px;
+    font-size: var(--type-label);
     line-height: 1;
     text-align: center;
   }
@@ -112,7 +112,7 @@
 
   .run-measurement-fatigue .rof-anchor-guide small {
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 800;
   }
 
@@ -144,7 +144,7 @@
   .run-measurement-auto-note {
     margin: 8px 0 0;
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
     line-height: 1.5;
   }
 
@@ -168,7 +168,7 @@
   .run-measurement-auto-facts small,
   .run-measurement-auto-facts em {
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-style: normal;
     line-height: 1.35;
   }
@@ -183,7 +183,7 @@
   .run-measurement-auto-facts strong b {
     color: var(--color-muted);
     font-family: inherit;
-    font-size: 11px;
+    font-size: var(--type-label);
   }
 
   .run-measurement-energy {
@@ -205,7 +205,7 @@
   .run-measurement-energy small,
   .run-measurement-energy > span {
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     line-height: 1.35;
   }
 
@@ -224,7 +224,7 @@
   .run-measurement-energy strong b {
     color: var(--color-muted);
     font-family: inherit;
-    font-size: 11px;
+    font-size: var(--type-label);
   }
 
   .run-measurement-post__facts {
@@ -240,7 +240,7 @@
   .run-measurement-post__facts em,
   .run-measurement-post__energy em {
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-style: normal;
     line-height: 1.35;
   }
@@ -265,7 +265,7 @@
   .run-measurement-course-analysis span,
   .run-measurement-course-analysis em {
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-style: normal;
     line-height: 1.45;
   }
@@ -280,7 +280,7 @@
   .run-measurement-finish-requirement {
     margin: 0;
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
     font-weight: 750;
     line-height: 1.4;
     text-align: center;
@@ -329,7 +329,7 @@
 
   [data-mobile-measurement-notifications] .measurement-notification-option small {
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
     line-height: 1.4;
   }
 
@@ -399,7 +399,7 @@
     border-radius: 999px;
     background: var(--color-surface-muted);
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 850;
     line-height: 1.2;
     text-align: center;
@@ -468,7 +468,7 @@
   .run-measurement-active__secondary > summary span,
   .run-measurement-post__auto-details > summary b {
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 750;
     line-height: 1.35;
     text-align: right;
@@ -511,7 +511,7 @@
   .run-measurement-post__auto-details > summary > span { display: grid; gap: 2px; }
   .run-measurement-post__auto-details > summary small {
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 800;
   }
   .run-measurement-post__auto-details > summary strong { font-size: 14px; }
@@ -543,7 +543,7 @@
   .run-measurement-post__completion > div { display: grid; gap: 2px; }
   .run-measurement-post__completion > div small {
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 800;
   }
   .run-measurement-post__completion > div strong { font-size: 16px; }

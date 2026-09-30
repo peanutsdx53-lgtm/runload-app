@@ -67,11 +67,12 @@ await test('HELP-CONTEXT-BUTTONS-USE-SCREEN-SPECIFIC-TUTORIALS',()=>{
   assert.match(shell,/アプリ説明/);
 });
 
-await test('HELP-START-SCREEN-USES-SHARED-QUESTION-BUTTON',()=>{
-  const start=read('screens/startScreen.js');
-  assert.match(start,/class="context-help-button app-utility-button"/);
-  assert.match(start,/data-screen-tutorial-start="start"/);
-  assert.match(start,/app-utility-button__question/);
+await test('HELP-LEGACY-START-TUTORIAL-IS-REMOVED',()=>{
+  const shell=read('ui/appShell.js');
+  const tutorial=read('ui/screenTutorial.js');
+  assert.equal(fs.existsSync(path.join(root,'screens/startScreen.js')),false);
+  assert.doesNotMatch(shell,/start:\s*"start"/);
+  assert.doesNotMatch(tutorial,/title:\s*"スタート画面の使い方"/);
 });
 
 await test('HELP-GPS-SCREEN-HAS-OPERATION-GUIDE',()=>{

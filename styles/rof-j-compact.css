@@ -14,7 +14,7 @@
 
 .rof-visual-guide--compact .rof-visual-guide__head small {
   color: var(--color-muted);
-  font-size: 0.66rem;
+  font-size: var(--type-label);
   font-weight: 800;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .rof-visual-guide--compact .rof-visual-axis {
-  font-size: 0.6rem;
+  font-size: var(--type-label);
 }
 
 .rof-about-reference {
@@ -51,7 +51,7 @@
 
 .rof-about-reference > small {
   color: var(--color-muted);
-  font-size: 0.68rem;
+  font-size: var(--type-label);
 }
 
 .rof-about-reference__list {
@@ -65,7 +65,7 @@
   grid-template-columns: 1.8rem minmax(0, 1fr);
   gap: 0.4rem;
   align-items: start;
-  font-size: 0.7rem;
+  font-size: var(--type-label);
   line-height: 1.45;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .screen-layout--record .rof-anchor-guide small {
-  font-size: 0.65rem;
+  font-size: var(--type-label);
 }
 
 .screen-layout--record .rof-about {
@@ -152,7 +152,7 @@
 
   .run-measurement__fatigue-head small {
     color: var(--color-muted);
-    font-size: 0.65rem;
+    font-size: var(--type-label);
     font-weight: 800;
   }
 
@@ -179,7 +179,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     color: var(--color-muted);
-    font-size: 0.62rem;
+    font-size: var(--type-label);
     font-weight: 750;
   }
 
@@ -194,7 +194,7 @@
   .run-measurement__fatigue-status {
     margin: 0;
     color: var(--color-muted);
-    font-size: 0.68rem;
+    font-size: var(--type-label);
     line-height: 1.4;
   }
 }

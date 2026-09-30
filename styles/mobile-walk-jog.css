@@ -7,35 +7,35 @@
   .mobile-gait-selector__grid input{position:absolute;opacity:0;pointer-events:none}
   .mobile-gait-selector__grid span{min-height:76px;display:grid;align-content:center;gap:4px;padding:12px;border:1px solid rgba(68,91,105,.18);border-radius:14px;background:rgba(255,255,255,.76);box-shadow:0 4px 14px rgba(40,65,80,.05)}
   .mobile-gait-selector__grid strong{font-size:14px;line-height:1.25;color:#20323d}
-  .mobile-gait-selector__grid small{font-size:10px;line-height:1.35;color:#667987}
+  .mobile-gait-selector__grid small{font-size:var(--type-label);line-height:1.35;color:#667987}
   .mobile-gait-selector__grid input:checked+span{border-color:#3b7592;background:#eef8fc;box-shadow:inset 0 0 0 1px rgba(59,117,146,.12),0 5px 16px rgba(40,88,112,.10)}
   .mobile-gait-selector__grid input:focus-visible+span{outline:3px solid rgba(58,126,158,.24);outline-offset:2px}
 
   .mobile-gait-segment-control{margin:0 16px 12px;padding:12px;border:1px solid rgba(61,99,117,.18);border-radius:14px;background:rgba(247,252,254,.96)}
-  .mobile-gait-segment-control>small{display:block;margin-bottom:7px;font-size:10px;font-weight:800;color:#607583}
+  .mobile-gait-segment-control>small{display:block;margin-bottom:7px;font-size:var(--type-label);font-weight:800;color:#607583}
   .mobile-gait-segment-control>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
   .mobile-gait-segment-control button{min-height:38px;border:1px solid rgba(53,87,104,.18);border-radius:10px;background:#fff;color:#304653;font-weight:800;font-size:12px}
   .mobile-gait-segment-control button.is-active{background:#315f75;color:#fff;border-color:#315f75}
-  .mobile-gait-segment-control>p{margin:8px 0 0;font-size:10px;line-height:1.45;color:#6c7d87}
+  .mobile-gait-segment-control>p{margin:8px 0 0;font-size:var(--type-label);line-height:1.45;color:#6c7d87}
 
-  .mobile-gait-energy-note{margin:8px 0 0;padding:9px 10px;border-radius:10px;background:rgba(236,244,248,.8);color:#5f707b;font-size:10px;line-height:1.5}
+  .mobile-gait-energy-note{margin:8px 0 0;padding:9px 10px;border-radius:10px;background:rgba(236,244,248,.8);color:#5f707b;font-size:var(--type-label);line-height:1.5}
 
   .mobile-gait-analysis-result{margin:12px 0;padding:14px;border:1px solid rgba(54,91,109,.16);border-radius:16px;background:rgba(247,251,253,.92);display:grid;gap:10px}
   .mobile-gait-analysis-result__head{display:grid;gap:2px}
-  .mobile-gait-analysis-result__head small{font-size:10px;font-weight:800;letter-spacing:.04em;color:#71838d}
+  .mobile-gait-analysis-result__head small{font-size:var(--type-label);font-weight:800;letter-spacing:.04em;color:#71838d}
   .mobile-gait-analysis-result__head strong{font-size:17px;color:#213640}
-  .mobile-gait-analysis-result>p{margin:0;font-size:11px;line-height:1.55;color:#60737f}
+  .mobile-gait-analysis-result>p{margin:0;font-size:var(--type-label);line-height:1.55;color:#60737f}
   .mobile-gait-analysis-result__segments{display:grid;gap:8px}
   .mobile-gait-segment-result{padding:11px;border-radius:12px;background:#fff;border:1px solid rgba(71,100,115,.12)}
   .mobile-gait-segment-result>div{display:flex;align-items:baseline;gap:7px}
-  .mobile-gait-segment-result>div small{font-size:9px;color:#788994}
+  .mobile-gait-segment-result>div small{font-size:var(--type-label);color:#788994}
   .mobile-gait-segment-result>div strong{font-size:13px;color:#294554}
-  .mobile-gait-segment-result>p{margin:5px 0 0;font-size:11px;line-height:1.45;color:#5f737f}
+  .mobile-gait-segment-result>p{margin:5px 0 0;font-size:var(--type-label);line-height:1.45;color:#5f737f}
   .mobile-gait-segment-result details{margin-top:8px}
-  .mobile-gait-segment-result summary{font-size:10px;font-weight:800;color:#476677;cursor:pointer}
+  .mobile-gait-segment-result summary{font-size:var(--type-label);font-weight:800;color:#476677;cursor:pointer}
   .mobile-gait-region-list{margin-top:7px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
   .mobile-gait-region-list span{display:grid;grid-template-columns:auto 1fr;gap:2px 6px;align-items:baseline;padding:7px;border-radius:8px;background:#f4f8fa}
-  .mobile-gait-region-list b{font-size:9px;color:#637985}
+  .mobile-gait-region-list b{font-size:var(--type-label);color:#637985}
   .mobile-gait-region-list strong{font-size:12px;text-align:right;color:#294c5f}
-  .mobile-gait-region-list small{grid-column:1/-1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;color:#80909a}
+  .mobile-gait-region-list small{grid-column:1/-1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--type-label);color:#80909a}
 }

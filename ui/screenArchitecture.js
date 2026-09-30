@@ -193,7 +193,18 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     if (returnTo.startsWith("#/settings")) {
       return { title: "プライバシー", backHref: "#/settings", backLabel: "設定" };
     }
+    if (returnTo.startsWith("#/terms")) {
+      return { title: "プライバシー", backHref: "#/terms", backLabel: "利用規約" };
+    }
     return { title: "プライバシー", backHref: "#/more", backLabel: "その他" };
+  }
+
+  if (screen === "terms") {
+    const returnTo = parameter("returnTo");
+    if (returnTo.startsWith("#/settings")) {
+      return { title: "利用規約", backHref: "#/settings", backLabel: "設定" };
+    }
+    return { title: "利用規約", backHref: "#/more", backLabel: "その他" };
   }
 
   if (screen === "settings") {
@@ -219,6 +230,7 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
       Object.freeze({ screen: "support-guidance", label: "公的な相談先", description: "119・#7119など公式案内を確認" }),
       Object.freeze({ screen: "reading", label: "読みもの", description: "結果を理解する一般情報" }),
       Object.freeze({ screen: "privacy", label: "プライバシー", description: "保存と外部との境界を確認" }),
+      Object.freeze({ screen: "terms", label: "利用規約", description: "利用条件を確認" }),
       Object.freeze({ screen: "settings", label: "設定", description: "表示・プロフィール・データ管理" }),
     ]),
   }),

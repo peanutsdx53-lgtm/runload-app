@@ -11,8 +11,8 @@ import { bindScreenInteractions } from "./ui/screenInteractions.js";
 import { prepareUiMotion } from "./ui/uiMotion.js";
 import { notifyMobileScreenRendered } from "./ui/mobileHomeReturnTransition.js";
 import { bindScreenTutorial } from "./ui/screenTutorial.js";
+import { bindMobileOnboarding, hasAcceptedCurrentTerms, shouldOpenMobileOnboarding, withMobileOnboardingComplete } from "./ui/mobileOnboarding.js";
 import { handleRecordInputRouteChange, resolveRecordInputReturnState } from "./ui/recordInputWorkspace.js";
-import { renderStartScreen } from "./screens/startScreen.js";
 import { renderHomeScreen } from "./screens/homeScreen.js";
 import { renderRunMeasurementScreen } from "./screens/runMeasurementScreen.js";
 import { renderRunRouteScreen } from "./screens/runRouteScreen.js";
@@ -29,15 +29,17 @@ import { renderSettingsScreen } from "./screens/settingsScreen.js";
 import { renderInterpretationRoomScreen } from "./screens/interpretationRoomScreen.js";
 import { renderSupportGuidanceScreen } from "./screens/supportGuidanceScreen.js";
 import { renderPrivacyScreen } from "./screens/privacyScreen.js";
+import { renderTermsScreen } from "./screens/termsScreen.js";
 import { renderMoreScreen } from "./screens/moreScreen.js";
 import { renderSimulationScreen } from "./screens/simulationScreen.js";
 import { renderGpxAnalysisScreen } from "./screens/gpxAnalysisScreen.js";
 import { renderLocationNoteScreen, renderQuickNoteScreen, renderGearNoteScreen, renderDepartureCheckScreen, renderFuelNoteScreen } from "./screens/mobileQuickToolsScreen.js";
 import { renderPhotoMemoScreen } from "./screens/mobilePhotoMemoScreen.js";
 import { renderPaceCalculatorScreen } from "./screens/mobilePaceCalculatorScreen.js";
+import { renderAchievementsScreen } from "./screens/achievementsScreen.js";
+import { initializeAchievementState } from "./ui/mobileAchievements.js";
 
 const screenRenderers = {
-  start: renderStartScreen,
   home: renderHomeScreen,
   "run-measurement": renderRunMeasurementScreen,
   "run-route": renderRunRouteScreen,
@@ -50,6 +52,7 @@ const screenRenderers = {
   "interpretation-room": renderInterpretationRoomScreen,
   "support-guidance": renderSupportGuidanceScreen,
   privacy: renderPrivacyScreen,
+  terms: renderTermsScreen,
   plan: renderPlanScreen,
   consultation: renderConsultationScreen,
   reading: renderReadingScreen,
@@ -64,6 +67,7 @@ const screenRenderers = {
   "fuel-note": renderFuelNoteScreen,
   "photo-note": renderPhotoMemoScreen,
   "pace-tool": renderPaceCalculatorScreen,
+  achievements: renderAchievementsScreen,
 };
 
 const appRoot = document.getElementById("app");
@@ -87,11 +91,14 @@ const applicationServices = Object.freeze({
   fatigue,
   workflows: Object.freeze({ ...baseApplicationServices.workflows, history: linkedHistoryWorkflow }),
 });
+initializeAchievementState(applicationServices);
 const initialSettings = applicationServices.storage.settings.load();
 applyAppSettings(initialSettings);
 const initialScreen = resolveViewportDefaultEntryScreen();
 let currentLocation = Object.freeze({ screen: initialScreen, parameters: new URLSearchParams() });
-let guideOpen = shouldOpenGuide(initialSettings);
+let onboardingOpen = shouldOpenMobileOnboarding(initialSettings, { mobile: matchesMobileLayout() });
+let onboardingReplay = false;
+let guideOpen = onboardingOpen ? false : shouldOpenGuide(initialSettings);
 let guideSection = DEFAULT_GUIDE_SECTION;
 let guideFirstVisit = guideOpen;
 let router;
@@ -105,15 +112,15 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
   applyAppSettings(applicationServices.storage.settings.load());
   const screenName = currentLocation.screen;
   document.body.classList.toggle("course-derived-open", ["course-library", "course-editor", "gpx-analysis"].includes(screenName));
-  document.body.classList.toggle("run-standalone-open", ["start", "run-measurement"].includes(screenName));
-  document.body.classList.toggle("secondary-derived-open", ["plan", "consultation", "support-guidance", "reading", "privacy", "settings", "location-note", "quick-note", "gear-note", "departure-check", "fuel-note", "photo-note", "pace-tool"].includes(screenName));
+  document.body.classList.toggle("run-standalone-open", screenName === "run-measurement");
+  document.body.classList.toggle("secondary-derived-open", ["plan", "consultation", "support-guidance", "reading", "privacy", "terms", "settings", "location-note", "quick-note", "gear-note", "departure-check", "fuel-note", "photo-note", "pace-tool", "achievements"].includes(screenName));
   const recordInputReturnState = screenName === "record-input"
     ? resolveRecordInputReturnState(currentLocation)
     : null;
   const renderSelectedScreen = screenRenderers[screenName] ?? screenRenderers.home;
   const latestExperience = applicationServices.workflows.records.loadLatestExperience();
   if (desktopHeaderRoot) {
-    desktopHeaderRoot.innerHTML = ["interpretation-room", "start", "run-measurement"].includes(screenName)
+    desktopHeaderRoot.innerHTML = ["interpretation-room", "run-measurement"].includes(screenName)
       ? ""
       : renderDesktopHeader({
           currentScreen: screenName,
@@ -132,12 +139,17 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       firstVisit: guideFirstVisit,
       version: APP_GUIDE_VERSION,
     },
+    onboarding: {
+      open: onboardingOpen,
+      replay: onboardingReplay,
+      alreadyAccepted: hasAcceptedCurrentTerms(applicationServices.storage.settings.load()),
+    },
     screenContent: renderSelectedScreen({
       services: applicationServices,
       context: currentLocation,
     }),
   });
-  document.body.classList.toggle("has-open-dialog", guideOpen);
+  document.body.classList.toggle("has-open-dialog", guideOpen || onboardingOpen);
   document.title = `${document.querySelector("#main-content h1")?.textContent ?? "走行記録"} — 走行記録`;
   prepareUiMotion(appRoot, { screenName });
 
@@ -152,13 +164,11 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       saveGuideVersionSeen();
       guideOpen = false;
       guideFirstVisit = false;
-      const focusSelector = currentLocation.screen === "start"
-        ? ".run-launch__top .context-help-button"
-        : currentLocation.screen === "interpretation-room"
-          ? ".interpretation-room-header .context-help-button"
-          : matchesMobileLayout()
-            ? ".mobile-topbar .context-help-button"
-            : "#desktop-header-root .context-help-button";
+      const focusSelector = currentLocation.screen === "interpretation-room"
+        ? ".interpretation-room-header .context-help-button"
+        : matchesMobileLayout()
+          ? ".mobile-topbar .context-help-button"
+          : "#desktop-header-root .context-help-button";
       renderCurrentLocation({ focusHeading: false, focusSelector });
     },
     onSelectGuideSection: (section) => {
@@ -182,6 +192,23 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
   if (desktopHeaderRoot?.firstElementChild) {
     bindScreenTutorial({ root: desktopHeaderRoot, screenName });
   }
+  bindMobileOnboarding({
+    root: appRoot,
+    onComplete: () => {
+      const currentSettings = applicationServices.storage.settings.load();
+      applicationServices.storage.settings.save(withMobileOnboardingComplete(currentSettings));
+      onboardingOpen = false;
+      onboardingReplay = false;
+      guideOpen = false;
+      guideFirstVisit = false;
+      router.navigateToScreen("home");
+    },
+    onClose: () => {
+      onboardingOpen = false;
+      onboardingReplay = false;
+      router.navigateToScreen("home");
+    },
+  });
   notifyMobileScreenRendered(screenName);
 
   window.requestAnimationFrame(() => {
@@ -204,6 +231,25 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
 function renderScreen(location) {
   handleRecordInputRouteChange(currentLocation.screen, location.screen);
   currentLocation = location;
+  const mobileLayout = matchesMobileLayout();
+  const settings = applicationServices.storage.settings.load();
+  const onboardingRequired = shouldOpenMobileOnboarding(settings, { mobile: mobileLayout });
+  const legalPreview = onboardingRequired && ["terms", "privacy"].includes(location.screen);
+  const forceOnboarding = mobileLayout && location.screen === "home" && location.parameters.get("onboarding") === "1";
+  if (legalPreview) {
+    onboardingOpen = false;
+    onboardingReplay = false;
+  } else if (forceOnboarding) {
+    onboardingOpen = true;
+    onboardingReplay = true;
+    guideOpen = false;
+    guideFirstVisit = false;
+  } else if (onboardingRequired) {
+    onboardingOpen = true;
+    onboardingReplay = false;
+    guideOpen = false;
+    guideFirstVisit = false;
+  }
   renderCurrentLocation();
 }
 

@@ -111,3 +111,25 @@ export async function deletePhotoMemo(id) {
     return false;
   }
 }
+
+export async function clearAllPhotoMemos() {
+  if (!globalThis.indexedDB) return true;
+  try {
+    if (databasePromise) {
+      try {
+        const database = await databasePromise;
+        database?.close?.();
+      } catch {}
+    }
+    databasePromise = null;
+    await new Promise((resolve, reject) => {
+      const request = globalThis.indexedDB.deleteDatabase(DB_NAME);
+      request.onsuccess = () => resolve(true);
+      request.onerror = () => reject(request.error || new Error("IndexedDB delete failed"));
+      request.onblocked = () => reject(new Error("IndexedDB delete blocked"));
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}

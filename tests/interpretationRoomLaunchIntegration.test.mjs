@@ -162,10 +162,10 @@ await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
   assert.match(audit,/\.measure-field input[\s\S]*font-size:24px/);
   assert.match(audit,/\.simulation-change-row__copy strong[\s\S]*font-size:13px/);
   assert.match(audit,/\.condition-compare-next-grid strong[\s\S]*font-size:13px/);
-  assert.match(audit,/\.assumption-chips button[\s\S]*font-size:11px/);
+  assert.match(audit,/\.assumption-chips button[\s\S]*font-size:var\(--type-label\)/);
   assert.match(audit,/\.simulation-change-group>summary strong[\s\S]*font-size:13px/);
   assert.match(audit,/\.condition-compare-adjust button,[\s\S]*font-size:12px/);
-  assert.match(audit,/\.simulation-change-row__copy small,[\s\S]*font-size:11px/);
+  assert.match(audit,/\.simulation-change-row__copy small,[\s\S]*font-size:var\(--type-label\)/);
   assert.match(audit,/\.condition-compare-overview-idle[\s\S]*font-size:14px/);
 });
 

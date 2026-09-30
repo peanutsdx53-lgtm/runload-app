@@ -30,7 +30,7 @@
   .mobile-tool-head .eyebrow {
     margin: 0 0 5px;
     color: var(--color-accent-strong);
-    font-size: 9px;
+    font-size: var(--type-label);
     font-weight: 900;
     letter-spacing: .14em;
   }
@@ -75,7 +75,7 @@
   .mobile-tool-card__lead small {
     margin-bottom: 4px;
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 850;
   }
 
@@ -90,7 +90,7 @@
     min-height: 40px;
     padding: 0 12px;
     border-radius: 14px;
-    font-size: 11px;
+    font-size: var(--type-label);
   }
 
   .mobile-tool-location-status,
@@ -98,7 +98,7 @@
     margin: 0;
     min-height: 20px;
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
     line-height: 1.5;
   }
 
@@ -122,7 +122,7 @@
   .mobile-tool-field > span,
   .mobile-tool-choice legend {
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
     font-weight: 850;
   }
 
@@ -182,7 +182,7 @@
     border-radius: 13px;
     background: var(--color-surface);
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
     font-weight: 850;
   }
 
@@ -211,7 +211,7 @@
     display: block;
     margin-bottom: 3px;
     color: var(--color-muted);
-    font-size: 9px;
+    font-size: var(--type-label);
     font-weight: 900;
     letter-spacing: .14em;
   }
@@ -253,7 +253,7 @@
   .mobile-tool-history__item small {
     margin-bottom: 4px;
     color: var(--color-muted);
-    font-size: 9px;
+    font-size: var(--type-label);
     font-weight: 750;
   }
 
@@ -266,7 +266,7 @@
   .mobile-tool-history__item span {
     margin: 5px 0 0;
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
     line-height: 1.45;
     overflow-wrap: anywhere;
   }
@@ -279,7 +279,7 @@
     border-radius: 12px;
     background: var(--color-surface);
     color: var(--color-attention);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 850;
   }
 
@@ -287,7 +287,7 @@
   .mobile-tool-local-note {
     margin: 0;
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
     line-height: 1.55;
   }
 
@@ -355,13 +355,13 @@
   .mobile-photo-memo-preview span {
     margin-top: 5px;
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
   }
 
   .mobile-photo-memo-limit {
     margin: -4px 0 0;
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     line-height: 1.5;
   }
 
@@ -405,7 +405,7 @@
     overflow: hidden;
     background: color-mix(in srgb, var(--color-surface-muted) 70%, var(--color-surface));
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 850;
   }
 
@@ -435,7 +435,7 @@
   .mobile-photo-memo-history__copy small {
     margin-bottom: 4px;
     color: var(--color-muted);
-    font-size: 9px;
+    font-size: var(--type-label);
   }
 
   .mobile-photo-memo-history__copy strong {
@@ -448,7 +448,7 @@
   .mobile-photo-memo-history__copy > span {
     margin-top: 4px;
     color: var(--color-muted);
-    font-size: 9px;
+    font-size: var(--type-label);
   }
 
   .mobile-photo-memo-history__chevron {
@@ -568,7 +568,7 @@
   .mobile-photo-memo-viewer__meta small,
   .mobile-photo-memo-viewer__meta span {
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
   }
 
   .mobile-photo-memo-viewer__meta p {
@@ -624,7 +624,7 @@
   .mobile-home-widget-picker__group-title {
     margin: 4px 2px 7px;
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 900;
     letter-spacing: .08em;
   }

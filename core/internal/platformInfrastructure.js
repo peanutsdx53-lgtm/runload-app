@@ -113,6 +113,11 @@ const STORAGE_KEYS = Object.freeze({
   historyUndo: `${STORAGE_NAMESPACE}-history-undo-v1`,
   rofJ: `${STORAGE_NAMESPACE}-second-pillar-rof-j-v1`,
   rofJLifecycle: `${STORAGE_NAMESPACE}-second-pillar-rof-j-lifecycle-v1`,
+  mobileQuickTools: "running-record-mobile-quick-tools-v1",
+  mobileAchievements: "running-record-mobile-achievements-v1",
+  mobileHomePositions: "running-record-mobile-home-positions-v1",
+  mobileHomeLayout: "running-record-mobile-home-layout-v1",
+  mobileHomeWidgets: "running-record-mobile-home-widgets-v1",
 });
 
 const USER_DATA_STORAGE_KEYS = Object.freeze([
@@ -127,6 +132,11 @@ const USER_DATA_STORAGE_KEYS = Object.freeze([
   STORAGE_KEYS.runMeasurements,
   STORAGE_KEYS.rofJ,
   STORAGE_KEYS.rofJLifecycle,
+  STORAGE_KEYS.mobileQuickTools,
+  STORAGE_KEYS.mobileAchievements,
+  STORAGE_KEYS.mobileHomePositions,
+  STORAGE_KEYS.mobileHomeLayout,
+  STORAGE_KEYS.mobileHomeWidgets,
 ]);
 
 const INTERNAL_RECOVERY_STORAGE_KEYS = Object.freeze([

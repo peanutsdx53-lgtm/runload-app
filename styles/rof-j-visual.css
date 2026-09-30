@@ -25,7 +25,7 @@
 .rof-visual-guide__head small,
 .rof-descriptor-guide__head small {
   color: var(--color-muted);
-  font-size: 0.7rem;
+  font-size: var(--type-label);
   line-height: 1.45;
 }
 
@@ -60,7 +60,7 @@
   align-items: center;
   gap: 0.45rem;
   color: var(--color-muted);
-  font-size: 0.66rem;
+  font-size: var(--type-label);
   font-weight: 800;
 }
 
@@ -114,7 +114,7 @@
 .rof-descriptor-list__item span {
   min-width: 0;
   color: var(--color-ink);
-  font-size: 0.68rem;
+  font-size: var(--type-label);
   line-height: 1.4;
   overflow-wrap: anywhere;
 }
@@ -126,7 +126,7 @@
   padding-top: 0.65rem;
   border-top: 1px solid var(--color-line);
   color: var(--color-muted);
-  font-size: 0.68rem;
+  font-size: var(--type-label);
   line-height: 1.5;
 }
 
@@ -158,7 +158,7 @@
   }
 
   .screen--record-input .rof-descriptor-list__item span {
-    font-size: 0.72rem;
+    font-size: var(--type-label);
   }
 }
 
@@ -200,11 +200,11 @@
   .screen-layout--record .rof-visual-guide__head small,
   .screen-layout--record .rof-descriptor-guide__head small,
   .screen-layout--record .rof-rights-note {
-    font-size: 0.64rem;
+    font-size: var(--type-label);
   }
 
   .screen-layout--record .rof-visual-axis {
-    font-size: 0.61rem;
+    font-size: var(--type-label);
   }
 }
 

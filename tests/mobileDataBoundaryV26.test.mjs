@@ -1,0 +1,14 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+const root = path.resolve(new URL("..", import.meta.url).pathname);
+const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
+const infra = read("core/internal/platformInfrastructure.js");
+const settings = read("ui/interactions/settingsInteractions.js");
+const photo = read("ui/mobilePhotoMemoStore.js");
+assert.match(infra, /running-record-mobile-quick-tools-v1/);
+assert.match(infra, /running-record-mobile-achievements-v1/);
+assert.match(infra, /mobileHomeLayout/);
+assert.match(settings, /clearAllPhotoMemos/);
+assert.match(photo, /deleteDatabase\(DB_NAME\)/);
+console.log("PASS mobile data boundary v26");

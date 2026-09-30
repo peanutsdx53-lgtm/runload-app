@@ -1,0 +1,22 @@
+/* Final mobile quality pass. Keeps the existing launcher/editing model intact. */
+@media (max-width:54.99rem){
+  :root{--mobile-touch-min:48px;--mobile-copy-min:13px}
+  .screen-layout{padding-bottom:max(24px,env(safe-area-inset-bottom))}
+  .screen button,.screen a,.screen input,.screen select,.screen textarea{scroll-margin-top:88px}
+  .screen button,.screen [role="button"],.screen .primary,.screen .secondary,.screen .card-link{min-height:var(--mobile-touch-min)}
+  .screen p,.screen .note,.screen .muted-text{font-size:max(var(--mobile-copy-min),.8125rem)}.screen small{font-size:max(12px,.75rem)}
+  .screen .eyebrow,.screen .group-title{font-size:12px;letter-spacing:.08em}
+  .screen input,.screen select,.screen textarea{font-size:16px}
+  .secondary-derived-head{backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .screen--more .head{padding-bottom:4px}.screen--more .group-title{letter-spacing:.02em;text-transform:none;font-size:13px}.screen--more .row .copy>small:empty{display:none}
+  .screen--more .row{min-height:68px}.screen--more .row .copy strong{font-size:17px}.screen--more .row .copy>span{font-size:13px}
+  .mobile-home-overview-card--achievement strong small{font-size:14px;color:var(--muted);font-weight:700}
+  :where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,white);outline-offset:3px}
+}
+@media (max-width:23rem){
+  .secondary-derived-body,.screen-layout{--mobile-edge:16px}
+  .achievement-card{grid-template-columns:42px minmax(0,1fr);padding:13px}.achievement-card__medal{width:42px;height:42px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}

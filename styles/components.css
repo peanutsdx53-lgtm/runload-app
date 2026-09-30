@@ -150,7 +150,7 @@
 .feature-menu__group-label {
   margin: var(--space-2) var(--space-3) var(--space-1);
   color: var(--color-muted);
-  font-size: 0.72rem;
+  font-size: var(--type-label);
   font-weight: 850;
   letter-spacing: 0.1em;
 }
@@ -163,7 +163,7 @@
 .feature-menu__link.is-disabled small,
 .primary-navigation__link small {
   display: block;
-  font-size: 0.64rem;
+  font-size: var(--type-label);
   font-weight: 700;
   line-height: 1.15;
 }
@@ -235,7 +235,7 @@
 .guide-dialog__header > div > p:first-child {
   margin-bottom: var(--space-1);
   color: var(--color-accent);
-  font-size: 0.72rem;
+  font-size: var(--type-label);
   font-weight: 850;
   letter-spacing: 0.14em;
 }
@@ -362,7 +362,7 @@
   .primary-navigation__link {
     min-height: 3.5rem;
     padding-inline: 0;
-    font-size: 0.7rem;
+    font-size: var(--type-label);
   }
   .guide-dialog {
     --guide-dialog-top-offset: max(5.25rem, calc(env(safe-area-inset-top) + 4.5rem));
@@ -820,7 +820,7 @@ details.ui-motion-details.is-ui-motion-closing > :not(summary) {
   border-radius: 999px;
   background: var(--color-accent-soft);
   color: var(--color-accent-strong);
-  font-size: 0.72rem;
+  font-size: var(--type-label);
   font-weight: 850;
   letter-spacing: 0.1em;
 }
@@ -1068,7 +1068,7 @@ details.ui-motion-details.is-ui-motion-closing > :not(summary) {
     min-height: 3.45rem;
     padding: 0.42rem 0.2rem;
     border-radius: 1rem;
-    font-size: 0.72rem;
+    font-size: var(--type-label);
   }
   .primary-navigation__icon { width: 1.12rem; height: 1.12rem; }
   .primary-navigation__link.is-current::after {
@@ -1187,7 +1187,7 @@ html.rl-appearance-dark .primary-navigation__link.is-current {
   }
   .guide-dialog__header > div > p:first-child {
     margin-bottom: 0.15rem;
-    font-size: 0.64rem;
+    font-size: var(--type-label);
   }
   .guide-dialog__header h2 {
     margin-bottom: 0.25rem;

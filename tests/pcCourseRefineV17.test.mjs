@@ -14,8 +14,9 @@ assert.match(css, /data-course-surface-mixed[\s\S]*repeat\(2/, "surface percenta
 assert.match(css, /screen--course-library[\s\S]*\.list[\s\S]*repeat\(2/, "saved courses must use a two-column desktop browser");
 assert.match(css, /screen--gpx-analysis[\s\S]*\.summary-grid[\s\S]*repeat\(4/, "GPX summary must use four desktop columns");
 assert.match(index, /styles\/pc-course-v17\.css/, "PC stylesheet must be loaded");
-assert.match(version, /APP_VERSION = "2026\.09\.30\.17"/, "visible app version must be v17");
-assert.match(worker, /running-record-app-runtime-2026\.09\.30\.17/, "PWA cache must be v17");
+const currentVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
+assert.match(currentVersion, /^2026\.09\.30\.\d+$/, "visible app version must use the current version format");
+assert.ok(worker.includes(`running-record-app-runtime-${currentVersion}`), "PWA cache must match the current app version");
 assert.match(worker, /\.\/styles\/pc-course-v17\.css/, "PC stylesheet must be precached");
 assert.match(history, /APP v2026\.09\.30\.17 — PC Course Refinement 1/, "release history must record the PC refinement");
 

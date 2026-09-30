@@ -6,6 +6,7 @@ import { downloadJsonText } from "./browserUtilities.js";
 import { showDataMessage, showFormMessages } from "./formUtilities.js";
 import { clearRecordInputWorkspace } from "../recordInputWorkspace.js";
 import { renderRestoreInspection } from "../restorePreviewPresentation.js";
+import { clearAllPhotoMemos } from "../mobilePhotoMemoStore.js";
 
 function readSettingsForm(form) {
   const data = new FormData(form);
@@ -130,7 +131,7 @@ function bindDataManagement({ services, router, rerender }) {
       inspection.canRestore ? "success" : "error",
     );
   });
-  document.querySelector('[data-action="clear-all-user-data"]')?.addEventListener("click", () => {
+  document.querySelector('[data-action="clear-all-user-data"]')?.addEventListener("click", async () => {
     const confirmation = document.getElementById("clear-data-confirmation")?.value || "";
     if (confirmation !== "削除") {
       showDataMessage("確認欄へ「削除」と入力してください。", "error");
@@ -139,6 +140,8 @@ function bindDataManagement({ services, router, rerender }) {
     if (!window.confirm("このアプリの端末内データをすべて削除しますか？")) return;
     const result = services.dataManagement.clearAllUserData();
     if (result.ok) {
+      await clearAllPhotoMemos();
+      try { globalThis.localStorage?.removeItem("running-record-mobile-home-last-launch-v1"); } catch {}
       clearRecordInputWorkspace();
       router.navigateToScreen("home");
     }
@@ -252,6 +255,9 @@ export function bindSettings({ services, router, rerender }) {
       return;
     }
     router.navigateToScreen("settings", { status: "saved" });
+  });
+  document.querySelector('[data-action="reopen-onboarding"]')?.addEventListener("click", () => {
+    router.navigateToScreen("home", { onboarding: "1" });
   });
   bindSavedShoeManagement({ services, router });
   bindDataManagement({ services, router, rerender });

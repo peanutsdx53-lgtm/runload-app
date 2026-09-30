@@ -52,7 +52,7 @@
     display: block;
     margin: 0 0 3px;
     color: var(--color-muted);
-    font-size: 9px;
+    font-size: var(--type-label);
     font-weight: 850;
     letter-spacing: .14em;
   }
@@ -76,7 +76,7 @@
     border-radius: 999px;
     background: color-mix(in srgb, var(--color-surface) 86%, transparent);
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 800;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -120,7 +120,7 @@
   .mobile-home-widget small {
     margin-bottom: auto;
     color: var(--color-muted);
-    font-size: 10px;
+    font-size: var(--type-label);
     font-weight: 850;
   }
 
@@ -135,7 +135,7 @@
   .mobile-home-widget span {
     margin-top: 5px;
     color: var(--color-muted);
-    font-size: 11px;
+    font-size: var(--type-label);
     font-weight: 700;
     line-height: 1.35;
   }
@@ -201,7 +201,7 @@
 
   .mobile-home-app__label {
     margin-top: 7px;
-    font-size: 11px;
+    font-size: var(--type-label);
   }
 
   .mobile-home-tone--blue { color: var(--color-accent-strong); }
@@ -245,7 +245,7 @@
 
   .mobile-home-dock__label {
     margin-top: 4px;
-    font-size: 10px;
+    font-size: var(--type-label);
   }
 
   .mobile-home-app:focus-visible,
@@ -508,4 +508,267 @@
     display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
   }
   .mobile-home-widget--checkpoint.is-empty strong { font-size: 15px; }
+}
+
+/* Mobile Home rebaseline: keep the editable app Home intact and add one adjacent overview page. */
+.mobile-home-hub,
+.mobile-home-overview {
+  display: none;
+}
+
+@media (max-width: 54.99rem) {
+  .mobile-home-hub {
+    display: block;
+    width: 100%;
+    min-height: 100dvh;
+    overflow: clip;
+    background: var(--color-paper);
+  }
+
+  .mobile-home-hub-viewport {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: visible;
+    touch-action: pan-y;
+  }
+
+  .mobile-home-hub-track {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .mobile-home-hub-page {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mobile-home-hub-page[aria-hidden="true"] {
+    visibility: visible;
+  }
+
+  .mobile-home-os__header-actions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .mobile-home-overview-open,
+  .mobile-home-overview__back {
+    appearance: none;
+    min-height: 40px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 76%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+    color: var(--color-accent-strong);
+    font: inherit;
+    font-size: var(--type-label);
+    font-weight: 850;
+    line-height: 1;
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--color-ink) 7%, transparent);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-home-overview-open {
+    padding: 0 12px;
+  }
+
+  .mobile-home-os.is-home-editing .mobile-home-overview-open {
+    display: none;
+  }
+
+  .mobile-home-hub.is-home-overview-active .mobile-home-dock {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .mobile-home-overview {
+    display: block;
+    min-height: 100dvh;
+    padding: calc(18px + env(safe-area-inset-top)) 18px calc(34px + env(safe-area-inset-bottom));
+    color: var(--color-ink);
+    background:
+      radial-gradient(circle at 12% 7%, color-mix(in srgb, var(--color-accent) 18%, transparent) 0, transparent 34%),
+      radial-gradient(circle at 88% 28%, color-mix(in srgb, var(--color-model) 16%, transparent) 0, transparent 30%),
+      linear-gradient(180deg, color-mix(in srgb, var(--color-paper) 94%, var(--color-accent-soft)), var(--color-paper));
+  }
+
+  .mobile-home-overview__header {
+    min-height: 52px;
+    display: grid;
+    grid-template-columns: minmax(72px, 1fr) auto minmax(72px, 1fr);
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .mobile-home-overview__header > div {
+    text-align: center;
+  }
+
+  .mobile-home-overview__header small {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--color-muted);
+    font-size: var(--type-label);
+    font-weight: 850;
+    letter-spacing: .12em;
+  }
+
+  .mobile-home-overview__header h1 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.1;
+    letter-spacing: -.035em;
+  }
+
+  .mobile-home-overview__back {
+    justify-self: start;
+    padding: 0 12px;
+  }
+
+  .mobile-home-overview-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .mobile-home-overview-pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .mobile-home-overview-card {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-line) 64%, transparent);
+    border-radius: 28px;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 18px 38px color-mix(in srgb, var(--color-ink) 10%, transparent);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-home-overview-card--week {
+    min-height: 220px;
+    padding: 22px;
+    color: var(--color-on-accent);
+    background:
+      radial-gradient(circle at 86% 18%, color-mix(in srgb, var(--color-model) 58%, transparent), transparent 35%),
+      linear-gradient(145deg, color-mix(in srgb, var(--color-accent-strong) 88%, var(--color-ink)), color-mix(in srgb, var(--color-ink) 84%, var(--color-accent)));
+  }
+
+  .mobile-home-overview-card--small {
+    min-height: 176px;
+    padding: 18px;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    backdrop-filter: blur(18px) saturate(1.08);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+  }
+
+  .mobile-home-overview-card--wide {
+    min-height: 142px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent-soft) 62%, var(--color-surface)), var(--color-surface));
+  }
+
+  .mobile-home-overview-card__label {
+    color: inherit;
+    opacity: .78;
+    font-size: var(--type-label);
+    font-weight: 850;
+    letter-spacing: .02em;
+  }
+
+  .mobile-home-overview-card > strong {
+    display: block;
+    min-width: 0;
+    color: inherit;
+    font-size: 28px;
+    line-height: 1.02;
+    letter-spacing: -.045em;
+  }
+
+  .mobile-home-overview-card--week > strong {
+    margin-top: auto;
+    font-size: clamp(48px, 15vw, 66px);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mobile-home-overview-card > strong small {
+    font-size: .36em;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  .mobile-home-overview-card__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: var(--type-body);
+    font-weight: 800;
+  }
+
+  .mobile-home-overview-card__metrics span {
+    white-space: nowrap;
+  }
+
+  .mobile-home-overview-card__metrics small {
+    font-size: var(--type-label);
+    opacity: .72;
+  }
+
+  .mobile-home-overview-card__note {
+    color: var(--color-muted);
+    font-size: var(--type-label);
+    font-weight: 750;
+    line-height: 1.35;
+  }
+
+  .mobile-home-overview-card--week .mobile-home-overview-card__note,
+  .mobile-home-overview-card--week .mobile-home-overview-card__metrics {
+    color: inherit;
+  }
+
+  .mobile-home-hub.is-home-hub-swiping,
+  .mobile-home-hub.is-home-hub-swiping * {
+    cursor: grabbing !important;
+    user-select: none !important;
+  }
+}
+
+@media (max-width: 24rem) {
+  .mobile-home-overview {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .mobile-home-overview-card--week {
+    min-height: 204px;
+  }
+
+  .mobile-home-overview-pair {
+    gap: 9px;
+  }
+
+  .mobile-home-overview-card--small {
+    min-height: 164px;
+    padding: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-home-overview-card,
+  .mobile-home-overview-open,
+  .mobile-home-overview__back {
+    transition: none !important;
+  }
 }

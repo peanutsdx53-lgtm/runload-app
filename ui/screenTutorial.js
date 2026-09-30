@@ -1,14 +1,6 @@
 const SCREEN_TUTORIAL_STORAGE_KEY = "running-record.screenTutorial.seen.v1";
 
 const SCREEN_TUTORIALS = Object.freeze({
-  start: Object.freeze({
-    title: "スタート画面の使い方",
-    lead: "目的に合わせて入口を選びます。",
-    steps: Object.freeze([
-      Object.freeze({ title: "アプリを使う", body: "記録の入力、結果、履歴、予定を確認するときに開きます。" }),
-      Object.freeze({ title: "GPSで測定する", body: "スマートフォンで距離・時間・走行軌跡を測定するときに開きます。測定後は記録入力へ進みます。" }),
-    ]),
-  }),
   "run-measurement": Object.freeze({
     title: "GPS測定の使い方",
     lead: "測定開始から記録入力までを確認します。",

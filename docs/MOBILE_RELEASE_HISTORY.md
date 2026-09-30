@@ -1,4 +1,40 @@
+## APP v2026.09.30.26 — Mobile Upgrade Final Candidate
+
+- Preserves the editable/reorderable launcher Home as the primary mobile page.
+- Keeps the single adjacent record-overview page introduced by the design rebaseline.
+- Adds mobile achievements/trophies for records, rest, plans, reflection, distance and supported GPS energy estimates.
+- Adds a one-time result reward card for newly unlocked achievements.
+- Centralizes optional mobile tools under More without removing their Home edit/catalog availability.
+- Applies a final mobile touch-target, focus, reduced-motion and small-screen quality pass.
+- PC/thesis model and numeric research logic remain unchanged.
+
+## APP v2026.09.30.25 — Mobile Design Rebaseline
+
+- Restored the existing smartphone Home as the primary surface; editable app placement, dock, and Home editing remain intact.
+- Removed the Phase 1 candidate persistent five-tab smartphone navigation and restored the Current header-based smartphone navigation policy.
+- Added one adjacent, read-only Home overview page with concrete labels: weekly record, next plan, latest record, and distance change.
+- The overview page does not participate in Home editing and defaults back to the existing app Home.
+- Phase 2 onboarding, terms, and privacy flow remain in place.
+- Phase 4 achievements/trophies are not implemented in this build.
+
+## APP v2026.09.30.23 — Mobile First-Use Experience 2
+- スマホ初回起動を4ステップのオンボーディングへ更新。
+- 利用規約 v1 を追加し、初回同意を端末内設定へ保存。
+- プライバシー導線と利用規約を「その他」「設定」から再確認可能にした。
+- 設定からチュートリアルを再表示可能にした。
+- 既存PC初回ガイド・研究計算ロジックは変更していない。
+
 # RunLoad Mobile Release History
+
+## APP v2026.09.30.22 — Mobile Upgrade Foundation 1
+- Legacy Start screen removed from routing, rendering, help, PWA precache, and screen source files; application entry is Home.
+- Smartphone primary navigation foundation is separated from PC navigation: Home / Record / Measure / History / More.
+- PC primary navigation remains Home / Record / Result / History / More.
+- Shared smartphone typography roles establish a 12 px minimum for mobile/shared UI layers; former micro-type declarations are normalized to the shared label role.
+- Standard PWA shell colors are aligned with the approved blue theme.
+- Achievement semantic color tokens are added for the later trophy phase.
+- A mobile-foundation GitHub Actions regression workflow is added so browser-flow verification can run after publication.
+- Scientific models, Reference-100 calculation contracts, ROF-J handling, and WALK/JOGGING/MIXED numeric boundaries are unchanged.
 
 ## APP v2026.09.30.17 — PC Course Refinement 1
 - PC course editor: uses the available width for a compact two-column slope/surface workspace.

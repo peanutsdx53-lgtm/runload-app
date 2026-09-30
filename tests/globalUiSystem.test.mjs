@@ -456,14 +456,17 @@ await test('UI-SETTINGS-USES-TWO-QUALITY-THEMES-AND-SHARE-PROFILE',()=>{
 });
 
 
-await test('UI-GPS-MEASUREMENT-STAYS-IN-MOBILE-NORMAL-FLOWS',()=>{
-  const start=read('screens/startScreen.js');
+await test('UI-GPS-MEASUREMENT-STAYS-MOBILE-AND-LEGACY-START-IS-REMOVED',()=>{
   const home=read('screens/homeScreen.js');
+  const app=read('app.js');
+  const router=read('ui/appRouter.js');
+  const worker=read('service-worker.js');
   const desktop=read('styles/desktop.css');
 
-  assert.match(start,/matchesMobileLayout/);
-  assert.match(start,/mobile \? `<a class="run-launch__choice run-launch__choice--measure"/);
-  assert.match(start,/mobile && plan/);
+  assert.equal(fs.existsSync(path.join(root,'screens/startScreen.js')),false);
+  assert.doesNotMatch(app,/renderStartScreen|screens\/startScreen/);
+  assert.match(router,/DEFAULT_SCREEN = "home"/);
+  assert.doesNotMatch(worker,/screens\/startScreen/);
 
   const pcStart=home.indexOf('function renderPcFocus');
   const mobileStart=home.indexOf('function renderMobileFocus');
@@ -473,8 +476,7 @@ await test('UI-GPS-MEASUREMENT-STAYS-IN-MOBILE-NORMAL-FLOWS',()=>{
   assert.doesNotMatch(pcBlock,/#\/run-measurement/);
   assert.match(mobileBlock,/#\/run-measurement/);
 
-  const audit=desktop;
-  assert.match(audit,/\.screen--plan \.plan-measure-link[\s\S]*display:none\s*!important/);
+  assert.match(desktop,/\.screen--plan \.plan-measure-link[\s\S]*display:none\s*!important/);
 });
 
 const failed=results.filter((item)=>item.status==='FAIL');

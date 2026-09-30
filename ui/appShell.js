@@ -1,11 +1,11 @@
 import { escapeHtml } from "./commonComponents.js";
 import { renderGuideDialog } from "./guideContent.js";
+import { renderMobileOnboarding } from "./mobileOnboarding.js";
 import { FEATURE_DESTINATION_GROUPS, PRIMARY_DESTINATIONS, resolveScreenContextNavigation } from "./screenArchitecture.js";
 
 const PRIMARY_NAVIGATION = PRIMARY_DESTINATIONS;
 
 const SCREEN_TUTORIAL_BY_SCREEN = Object.freeze({
-  start: "start",
   home: "home",
   "run-measurement": "run-measurement",
   "record-input": "record-input",
@@ -67,6 +67,7 @@ const PRIMARY_SECTION_BY_SCREEN = Object.freeze({
   consultation: "more",
   "support-guidance": "more",
   privacy: "more",
+  terms: "more",
   settings: "more",
   "location-note": "home",
   "quick-note": "home",
@@ -201,8 +202,8 @@ function renderImmersiveHeader(currentScreen, currentLocation, hasResult) {
   return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(title)}</strong><div class="interpretation-room-header__actions" aria-label="画面操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "immersive" })}</div></header>`;
 }
 
-export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {} }) {
-  const standalone = ["start", "run-measurement"].includes(currentScreen);
+export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {}, onboarding = {} }) {
+  const standalone = currentScreen === "run-measurement";
   if (standalone) {
     return `
       <div class="app-shell app-shell--standalone">
@@ -215,6 +216,7 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
           currentScreen,
           firstVisit: Boolean(guide.firstVisit),
         })}
+        ${renderMobileOnboarding({ open: Boolean(onboarding.open), replay: Boolean(onboarding.replay), alreadyAccepted: Boolean(onboarding.alreadyAccepted) })}
       </div>`;
   }
   const immersive = currentScreen === "interpretation-room";
@@ -231,6 +233,7 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
           currentScreen,
           firstVisit: Boolean(guide.firstVisit),
         })}
+        ${renderMobileOnboarding({ open: Boolean(onboarding.open), replay: Boolean(onboarding.replay), alreadyAccepted: Boolean(onboarding.alreadyAccepted) })}
       </div>`;
   }
   return `
@@ -250,6 +253,7 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
         currentScreen,
         firstVisit: Boolean(guide.firstVisit),
       })}
+      ${renderMobileOnboarding({ open: Boolean(onboarding.open), replay: Boolean(onboarding.replay), alreadyAccepted: Boolean(onboarding.alreadyAccepted) })}
     </div>`;
 }
 

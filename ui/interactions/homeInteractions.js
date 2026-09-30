@@ -1,3 +1,4 @@
+import { bindMobileHomeHub } from "../mobileHomeHub.js";
 import {
   HOME_COLUMNS,
   HOME_MAX_ROWS,
@@ -794,6 +795,7 @@ export function bindHome(context = {}) {
   const dockContainer = root.querySelector(".mobile-home-dock");
   const sourceWidgets = root.querySelector(".mobile-home-widgets");
   if (!dockContainer || !sourceWidgets) return null;
+  const cleanupHub = bindMobileHomeHub(root);
 
   prepareWidgets(sourceWidgets, context.services);
   prepareItems(root);
@@ -1753,5 +1755,6 @@ export function bindHome(context = {}) {
     root.removeEventListener("selectstart", handleSelectStart);
     root.removeEventListener("dragstart", handleDragStart);
     document.removeEventListener("keydown", handleKeyDown);
+    if (typeof cleanupHub === "function") cleanupHub();
   };
 }

@@ -9745,13 +9745,6 @@
   .screen--plan .plan-measure-link{
     display:none !important;
   }
-  .run-launch[data-start-device="desktop"] .run-launch__choices{
-    grid-template-columns:minmax(0,32rem) !important;
-    justify-content:center;
-  }
-  .run-launch[data-start-device="desktop"] .run-launch__choice--app{
-    width:100%;
-  }
 }
 
 

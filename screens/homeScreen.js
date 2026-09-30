@@ -1,5 +1,7 @@
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatNumber } from "../ui/recordPresentation.js";
+import { findSavedRunMeasurement } from "../ui/runMeasurementState.js";
+import { achievementSummary } from "../ui/mobileAchievements.js";
 
 function localTodayIso() {
   const now = new Date();
@@ -126,6 +128,93 @@ function renderPlanCard(services) {
   return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong></div><span class="pill">保存済み</span></div><div class="plan"><strong>${escapeHtml(main)}</strong><span>${escapeHtml(details)}</span></div><a class="card-link" href="#/plan?planId=${encodeURIComponent(plan.id)}"><span>予定を開く</span><span>›</span></a></article>`;
 }
 
+
+function parseLocalDate(dateText = "") {
+  const match = String(dateText).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0, 0);
+}
+
+function mondayOfWeek(date = new Date()) {
+  const result = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
+  const day = result.getDay();
+  result.setDate(result.getDate() - (day === 0 ? 6 : day - 1));
+  return result;
+}
+
+function weeklySummary(services) {
+  const start = mondayOfWeek();
+  const end = new Date(start);
+  end.setDate(end.getDate() + 7);
+  const records = services.storage.records.loadAll().filter((record) => {
+    if (record.activityType !== "run") return false;
+    const date = parseLocalDate(record.date);
+    return date && date >= start && date < end;
+  });
+  const totalDistanceKm = records.reduce((sum, record) => sum + Math.max(0, Number(record.distanceKm || 0)), 0);
+  const totalDurationMinutes = records.reduce((sum, record) => sum + Math.max(0, Number(record.durationMinutes || 0)), 0);
+  let estimatedKcal = 0;
+  let kcalCount = 0;
+  records.forEach((record) => {
+    const kcal = Number(findSavedRunMeasurement(record.id)?.energyEstimate?.estimatedKcal);
+    if (!Number.isFinite(kcal) || kcal < 0) return;
+    estimatedKcal += kcal;
+    kcalCount += 1;
+  });
+  return { count: records.length, totalDistanceKm, totalDurationMinutes, estimatedKcal, kcalCount };
+}
+
+function recentDistanceChange(services) {
+  const runs = services.storage.records.loadAll()
+    .filter((record) => record.activityType === "run")
+    .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")) || String(b.id || "").localeCompare(String(a.id || "")));
+  if (runs.length < 2) return null;
+  const latest = runs[0];
+  const previous = runs[1];
+  const delta = Number(latest.distanceKm || 0) - Number(previous.distanceKm || 0);
+  return { latest, previous, delta };
+}
+
+function renderOverviewWeek(services) {
+  const summary = weeklySummary(services);
+  const energy = summary.kcalCount > 0 ? `${Math.round(summary.estimatedKcal)} kcal` : "—";
+  return `<a class="mobile-home-overview-card mobile-home-overview-card--week" href="#/history"><span class="mobile-home-overview-card__label">今週の記録</span><strong>${escapeHtml(formatNumber(summary.totalDistanceKm, 1))}<small> km</small></strong><div class="mobile-home-overview-card__metrics"><span>${summary.count}回</span><span>${escapeHtml(formatNumber(summary.totalDurationMinutes, 0))}分</span><span>推定消費 ${escapeHtml(energy)}</span></div></a>`;
+}
+
+function renderOverviewPlan(services) {
+  const plan = nextPlan(services);
+  if (!plan) return `<a class="mobile-home-overview-card mobile-home-overview-card--small" href="#/plan"><span class="mobile-home-overview-card__label">次の予定</span><strong>未設定</strong><span class="mobile-home-overview-card__note">予定を作る</span></a>`;
+  const planned = plan.plannedSession || {};
+  const rest = plan.planType === "rest" || planned.activityType === "rest";
+  const detail = rest ? "休養" : Number(planned.distanceKm) > 0 ? `${formatNumber(planned.distanceKm, 1)} km` : "走行予定";
+  return `<a class="mobile-home-overview-card mobile-home-overview-card--small" href="#/plan?planId=${encodeURIComponent(plan.id)}"><span class="mobile-home-overview-card__label">次の予定</span><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong><span class="mobile-home-overview-card__note">${escapeHtml(detail)}</span></a>`;
+}
+
+function renderOverviewLatest(experience) {
+  const record = experience?.record || null;
+  if (!record) return `<a class="mobile-home-overview-card mobile-home-overview-card--small" href="#/record-input"><span class="mobile-home-overview-card__label">最新の記録</span><strong>記録なし</strong><span class="mobile-home-overview-card__note">記録する</span></a>`;
+  const detail = record.activityType === "rest" ? "休養" : Number(record.distanceKm) > 0 ? `${formatNumber(record.distanceKm, 1)} km` : "走行";
+  return `<a class="mobile-home-overview-card mobile-home-overview-card--small" href="#/result?recordId=${encodeURIComponent(record.id)}"><span class="mobile-home-overview-card__label">最新の記録</span><strong>${escapeHtml(shortDate(record.date))}</strong><span class="mobile-home-overview-card__note">${escapeHtml(detail)}</span></a>`;
+}
+
+function renderOverviewChange(services) {
+  const change = recentDistanceChange(services);
+  if (!change) return `<a class="mobile-home-overview-card mobile-home-overview-card--wide" href="#/history"><span class="mobile-home-overview-card__label">前回との距離差</span><strong>—</strong><span class="mobile-home-overview-card__note">2回目の走行記録から表示</span></a>`;
+  const sign = change.delta > 0 ? "+" : "";
+  return `<a class="mobile-home-overview-card mobile-home-overview-card--wide" href="#/history"><span class="mobile-home-overview-card__label">前回との距離差</span><strong>${escapeHtml(`${sign}${formatNumber(change.delta, 1)} km`)}</strong><span class="mobile-home-overview-card__note">${escapeHtml(shortDate(change.previous.date))} → ${escapeHtml(shortDate(change.latest.date))}</span></a>`;
+}
+
+
+function renderOverviewAchievements(services) {
+  const summary = achievementSummary(services);
+  const note = summary.latest ? `最新：${summary.latest.title}` : "記録に応じて自動で反映";
+  return `<a class="mobile-home-overview-card mobile-home-overview-card--wide mobile-home-overview-card--achievement" href="#/achievements"><span class="mobile-home-overview-card__label">実績</span><strong>${summary.unlockedCount}<small> / ${summary.totalCount}</small></strong><span class="mobile-home-overview-card__note">${escapeHtml(note)}</span></a>`;
+}
+
+function renderMobileOverviewPage({ services, latestExperience }) {
+  return `<section class="mobile-home-overview" aria-label="記録概要"><header class="mobile-home-overview__header"><button type="button" class="mobile-home-overview__back" data-home-hub-target="0" aria-label="アプリ一覧へ戻る">‹ アプリ</button><div><small>RUNLOAD</small><h1>記録概要</h1></div><span aria-hidden="true"></span></header><div class="mobile-home-overview-grid">${renderOverviewWeek(services)}<div class="mobile-home-overview-pair">${renderOverviewPlan(services)}${renderOverviewLatest(latestExperience)}</div>${renderOverviewChange(services)}${renderOverviewAchievements(services)}</div></section>`;
+}
+
 function renderMobileLauncherItem({ href, label, emoji, tone = "blue", dock = false }) {
   const className = dock ? "mobile-home-dock__item" : "mobile-home-app";
   const iconClass = dock ? "mobile-home-dock__icon" : "mobile-home-app__icon";
@@ -194,7 +283,7 @@ function renderMobileHomeOs({ services, latestExperience, draft }) {
   return `<section class="mobile-home-os" aria-label="スマホホーム">
     <header class="mobile-home-os__header">
       <div><small>RUNNING RECORD</small><h1>走行記録</h1></div>
-      <span class="mobile-home-os__status" aria-label="ホーム">Home</span>
+      <div class="mobile-home-os__header-actions"><button type="button" class="mobile-home-overview-open" data-home-hub-target="1" aria-label="記録概要を開く">概要 ›</button><span class="mobile-home-os__status" aria-label="ホーム">Home</span></div>
     </header>
     <div class="mobile-home-widgets" aria-label="ウィジェット">
       ${renderMobileTodayWidget(latestExperience, draft)}
@@ -218,7 +307,7 @@ export function renderHomeScreen({ services }) {
   const draft = services.storage.draft.load();
   const state = homeState(latestExperience, draft);
   return `<div class="screen screen--home screen-layout screen-layout--home home-state--${escapeHtml(state)}" data-home-state="${escapeHtml(state)}">
-    ${renderMobileHomeOs({ services, latestExperience, draft })}
+    <div class="mobile-home-hub" data-home-hub data-home-hub-page="0"><div class="mobile-home-hub-viewport" data-home-hub-viewport><div class="mobile-home-hub-track"><div class="mobile-home-hub-page mobile-home-hub-page--apps" data-home-hub-page-index="0">${renderMobileHomeOs({ services, latestExperience, draft })}</div><div class="mobile-home-hub-page mobile-home-hub-page--overview" data-home-hub-page-index="1">${renderMobileOverviewPage({ services, latestExperience })}</div></div></div></div>
     <div class="home-desktop-legacy">
       ${renderMobileFocus(latestExperience, draft)}
       ${renderPcFocus(latestExperience, draft)}

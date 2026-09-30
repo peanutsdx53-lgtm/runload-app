@@ -85,7 +85,7 @@
 
 .run-measurement-mode small {
   color: var(--color-muted);
-  font-size: 0.74rem;
+  font-size: var(--type-label);
 }
 
 .run-measurement-mode input:checked + span {
@@ -150,7 +150,7 @@
   padding: 0.35rem;
   color: var(--color-ink);
   font: inherit;
-  font-size: 0.72rem;
+  font-size: var(--type-label);
   font-weight: 750;
   background: var(--color-surface-muted);
   border: 1px solid var(--color-line);
@@ -185,7 +185,7 @@
 .run-measurement-fatigue__head small,
 .run-measurement-fatigue__head > span {
   color: var(--color-muted);
-  font-size: 0.68rem;
+  font-size: var(--type-label);
   font-weight: 800;
 }
 
@@ -258,7 +258,7 @@
 
 .run-measurement-active__header > span {
   color: var(--color-muted);
-  font-size: 0.68rem;
+  font-size: var(--type-label);
   font-weight: 750;
   text-align: right;
 }
@@ -285,7 +285,7 @@
 .run-measurement-active__hero small,
 .run-measurement-active__hero span {
   color: var(--color-muted);
-  font-size: 0.7rem;
+  font-size: var(--type-label);
   font-weight: 750;
 }
 
@@ -417,7 +417,7 @@
 
 .run-measurement-post__summary small {
   color: var(--color-muted);
-  font-size: 0.68rem;
+  font-size: var(--type-label);
 }
 
 .run-measurement-post__summary strong {
@@ -457,6 +457,6 @@
   }
 
   .run-measurement-presets button {
-    font-size: 0.68rem;
+    font-size: var(--type-label);
   }
 }

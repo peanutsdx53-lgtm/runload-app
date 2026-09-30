@@ -23,14 +23,23 @@
   --content-width: 72rem;
 
   /* UI role scale: roles stay consistent across screens and themes. */
-  --type-label: 0.72rem;
-  --type-caption: 0.8rem;
-  --type-body: 0.94rem;
-  --type-control: 0.92rem;
-  --type-control-compact: 0.82rem;
-  --type-subheading: 1.08rem;
-  --type-heading: clamp(1.35rem, 4vw, 1.8rem);
-  --type-display: clamp(1.7rem, 6vw, 2.5rem);
+  --type-label: 0.75rem;
+  --type-caption: 0.8125rem;
+  --type-body: 0.9375rem;
+  --type-control: 1rem;
+  --type-control-compact: 0.8125rem;
+  --type-subheading: 1.125rem;
+  --type-heading: 1.5rem;
+  --type-display: 2rem;
+
+  /* Smartphone role scale. No smartphone text role is smaller than 12px at 16px root size. */
+  --mobile-type-caption: 0.75rem;
+  --mobile-type-label: 0.8125rem;
+  --mobile-type-body: 0.9375rem;
+  --mobile-type-control: 1rem;
+  --mobile-type-section: 1.125rem;
+  --mobile-type-title: 1.5rem;
+  --mobile-type-display: 2rem;
   --line-body: 1.65;
   --line-compact: 1.35;
 
@@ -77,6 +86,8 @@
   --color-danger-border: #a24a36;
   --color-danger-soft: #fbebe6;
   --color-danger-line: #d7a898;
+  --color-achievement: #9a6a16;
+  --color-achievement-soft: #fff4d8;
   --color-surface-warm: #f7fbff;
   --color-surface-warm-strong: #e7f1f8;
   --color-map-silhouette: #dce5eb;
@@ -180,6 +191,8 @@ html.rl-appearance-dark {
   --color-danger-border: #d28a73;
   --color-danger-soft: #3f241e;
   --color-danger-line: #7c4a3d;
+  --color-achievement: #f1c66d;
+  --color-achievement-soft: #3b301d;
   --color-weekend-saturday: #d8a58f;
   --color-weekend-sunday: #d8a58f;
   --color-surface-warm: #211d17;
@@ -230,6 +243,8 @@ html.rl-appearance-dark {
     --color-danger-border: #d28a73;
     --color-danger-soft: #3f241e;
     --color-danger-line: #7c4a3d;
+    --color-achievement: #f1c66d;
+    --color-achievement-soft: #3b301d;
   --color-weekend-saturday: #d8a58f;
   --color-weekend-sunday: #d8a58f;
     --color-surface-warm: #211d17;
