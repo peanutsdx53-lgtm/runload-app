@@ -4,6 +4,7 @@ import {
   createMobileSegmentAnalysis,
   readLatestMobileWalkJogAnalysis,
 } from "./mobileWalkJogMeasurementWiring.js";
+import { suppressRegionalCoverageForGpsQuality } from "./mobileWalkJogGpsQuality.js";
 
 const RECORDS_KEY = "runner-load-app-mobile-walk-jog-records-v1.3";
 const PENDING_MEASUREMENT_KEY = "runner-load-app-flow-session-v1-run-measurement-v1";
@@ -64,15 +65,19 @@ function refineSingleActivityAnalysis(analysis, pending) {
   const distanceKm = Number(pending.distanceKm);
   const durationSeconds = Number(pending.durationMinutes) * 60;
   if (!(distanceKm > 0) || !(durationSeconds > 0)) return null;
+  const computed = createMobileSegmentAnalysis({
+    gaitId: analysis.activityId,
+    startDistanceKm: 0,
+    endDistanceKm: distanceKm,
+    startElapsedSeconds: 0,
+    endElapsedSeconds: durationSeconds,
+  });
+  const segments = analysis.qualityGate?.regionalAnalysisAllowed === false
+    ? suppressRegionalCoverageForGpsQuality([computed], analysis.qualityGate)
+    : [computed];
   return {
     ...analysis,
-    segments: [createMobileSegmentAnalysis({
-      gaitId: analysis.activityId,
-      startDistanceKm: 0,
-      endDistanceKm: distanceKm,
-      startElapsedSeconds: 0,
-      endElapsedSeconds: durationSeconds,
-    })],
+    segments,
     metricSource: "PENDING_MEASUREMENT_SNAPSHOT",
   };
 }
