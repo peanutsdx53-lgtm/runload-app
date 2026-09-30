@@ -19,6 +19,7 @@ on:
       - "tests/mobileWalkJogRecordStore.test.mjs"
       - "tests/mobileWalkJogCopyGuard.test.mjs"
       - "tests/mobileWalkJogHistoryUi.test.mjs"
+      - "tests/mobileWalkJogBrowserFlow.test.mjs"
       - "tests/mobileWalkJogPwa.test.mjs"
       - "index.html"
       - "service-worker.js"
@@ -40,6 +41,7 @@ on:
       - "tests/mobileWalkJogRecordStore.test.mjs"
       - "tests/mobileWalkJogCopyGuard.test.mjs"
       - "tests/mobileWalkJogHistoryUi.test.mjs"
+      - "tests/mobileWalkJogBrowserFlow.test.mjs"
       - "tests/mobileWalkJogPwa.test.mjs"
       - "index.html"
       - "service-worker.js"
@@ -66,6 +68,8 @@ jobs:
         run: node tests/mobileWalkJogCopyGuard.test.mjs
       - name: Mobile activity history isolation regression
         run: node tests/mobileWalkJogHistoryUi.test.mjs
+      - name: Mobile activity browser flow audit
+        run: node tests/mobileWalkJogBrowserFlow.test.mjs
       - name: Mobile activity PWA regression
         run: node tests/mobileWalkJogPwa.test.mjs
       - name: App version/cache consistency
