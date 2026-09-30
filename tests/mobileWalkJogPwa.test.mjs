@@ -13,19 +13,29 @@ function test(id, fn) {
 }
 
 test("INDEX-LOADS-MOBILE-EXTENSION", () => {
-  assert.ok(index.includes("./ui/mobileWalkJogMeasurementWiring.js"));
-  assert.ok(index.includes("./ui/mobileWalkJogRecordStore.js"));
-  assert.ok(index.includes("./styles/mobile-walk-jog.css"));
-  assert.ok(index.includes("./styles/mobile-walk-jog-records.css"));
+  for (const path of [
+    "./ui/mobileWalkJogMeasurementWiring.js",
+    "./ui/mobileWalkJogCopyGuard.js",
+    "./ui/mobileWalkJogRecordStore.js",
+    "./ui/mobileWalkJogSaveHistoryLink.js",
+    "./ui/mobileWalkJogHistoryUi.js",
+    "./styles/mobile-walk-jog.css",
+    "./styles/mobile-walk-jog-records.css",
+    "./styles/mobile-walk-jog-history.css",
+  ]) assert.ok(index.includes(path), `missing ${path}`);
 });
 
 test("SERVICE-WORKER-PRECACHES-MOBILE-EXTENSION", () => {
   for (const path of [
     "./core/internal/mobileWalkJogSpeedModel.js",
     "./ui/mobileWalkJogMeasurementWiring.js",
+    "./ui/mobileWalkJogCopyGuard.js",
     "./ui/mobileWalkJogRecordStore.js",
+    "./ui/mobileWalkJogSaveHistoryLink.js",
+    "./ui/mobileWalkJogHistoryUi.js",
     "./styles/mobile-walk-jog.css",
     "./styles/mobile-walk-jog-records.css",
+    "./styles/mobile-walk-jog-history.css",
   ]) assert.ok(worker.includes(`\"${path}\"`), `missing ${path}`);
 });
 

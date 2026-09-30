@@ -1,0 +1,308 @@
+@media (max-width: 54.99rem) {
+  .mobile-activity-history-shell {
+    display: grid;
+    gap: 14px;
+    margin: 0 16px 18px;
+  }
+
+  .mobile-activity-history-entry,
+  .mobile-activity-history-full {
+    display: grid;
+    gap: 14px;
+    border: 1px solid rgba(47, 83, 105, 0.16);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 8px 24px rgba(39, 67, 84, 0.07);
+  }
+
+  .mobile-activity-history-entry {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    padding: 16px;
+  }
+
+  .mobile-activity-history-entry > div {
+    min-width: 0;
+  }
+
+  .mobile-activity-history-entry small,
+  .mobile-activity-history-head small,
+  .mobile-activity-record-card small,
+  .mobile-activity-segment small {
+    color: #677c89;
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+  }
+
+  .mobile-activity-history-entry strong {
+    display: block;
+    margin-top: 2px;
+    color: #1c3544;
+    font-size: 17px;
+  }
+
+  .mobile-activity-history-entry p,
+  .mobile-activity-history-head p,
+  .mobile-activity-record-card p,
+  .mobile-activity-pointer-note,
+  .mobile-activity-history-footer {
+    margin: 5px 0 0;
+    color: #5c707c;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .mobile-activity-history-count {
+    min-width: 48px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: #e8f2f7;
+    color: #27536a;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .mobile-activity-history-entry > a,
+  .mobile-activity-record-card > a,
+  .mobile-activity-history-empty > a {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+    align-items: center;
+    border-radius: 14px;
+    background: #315f77;
+    color: #fff;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .mobile-activity-history-full {
+    padding: 16px;
+  }
+
+  .mobile-activity-history-head {
+    display: grid;
+    gap: 10px;
+  }
+
+  .mobile-activity-history-head > a {
+    width: fit-content;
+    color: #315f77;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .mobile-activity-history-head h2 {
+    margin: 2px 0 0;
+    color: #1a3342;
+    font-size: 23px;
+    letter-spacing: -0.02em;
+  }
+
+  .mobile-activity-boundary-note {
+    margin: 0;
+    padding: 12px 13px;
+    border-radius: 14px;
+    background: #edf5f8;
+    color: #3e5c6d;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.55;
+  }
+
+  .mobile-activity-record-list,
+  .mobile-activity-segments {
+    display: grid;
+    gap: 12px;
+  }
+
+  .mobile-activity-record-card,
+  .mobile-activity-segment,
+  .mobile-activity-detail-summary {
+    display: grid;
+    gap: 11px;
+    padding: 14px;
+    border: 1px solid #dbe6eb;
+    border-radius: 16px;
+    background: #fbfdfe;
+  }
+
+  .mobile-activity-record-card__head,
+  .mobile-activity-segment > header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .mobile-activity-record-card__head strong,
+  .mobile-activity-segment > header strong {
+    display: block;
+    margin-top: 2px;
+    color: #203b4b;
+    font-size: 16px;
+  }
+
+  .mobile-activity-record-card__head em,
+  .mobile-activity-segment > header em {
+    flex: 0 0 auto;
+    max-width: 46%;
+    color: #57707f;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    text-align: right;
+    line-height: 1.4;
+  }
+
+  .mobile-activity-record-card dl,
+  .mobile-activity-segment dl,
+  .mobile-activity-detail-summary dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0;
+  }
+
+  .mobile-activity-segment dl,
+  .mobile-activity-detail-summary dl {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mobile-activity-record-card dl > div,
+  .mobile-activity-segment dl > div,
+  .mobile-activity-detail-summary dl > div {
+    min-width: 0;
+    padding: 9px;
+    border-radius: 12px;
+    background: #eef5f8;
+  }
+
+  .mobile-activity-record-card dt,
+  .mobile-activity-segment dt,
+  .mobile-activity-detail-summary dt {
+    color: #71838d;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .mobile-activity-record-card dd,
+  .mobile-activity-segment dd,
+  .mobile-activity-detail-summary dd {
+    margin: 3px 0 0;
+    color: #223c4b;
+    font-size: 13px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+  }
+
+  .mobile-activity-record-card > a {
+    min-height: 40px;
+    background: #e6f0f4;
+    color: #2e5b72;
+  }
+
+  .mobile-activity-detail-summary time {
+    color: #526b79;
+    font-size: 12px;
+    font-weight: 750;
+  }
+
+  .mobile-activity-region-details {
+    border-top: 1px solid #e0e9ed;
+    padding-top: 9px;
+  }
+
+  .mobile-activity-region-details summary {
+    cursor: pointer;
+    color: #315f77;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .mobile-activity-region-details > div {
+    display: grid;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .mobile-activity-region-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(92px, auto);
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    padding: 8px 9px;
+    border-radius: 11px;
+    background: #f0f6f8;
+  }
+
+  .mobile-activity-region-row span {
+    min-width: 0;
+  }
+
+  .mobile-activity-region-row span strong {
+    display: block;
+    color: #294554;
+    font-size: 12px;
+  }
+
+  .mobile-activity-region-row span small {
+    display: block;
+    margin-top: 1px;
+    font-size: 9px;
+  }
+
+  .mobile-activity-region-row > b {
+    color: #173e52;
+    font-size: 14px;
+  }
+
+  .mobile-activity-region-row > em {
+    color: #687b86;
+    font-size: 9px;
+    font-style: normal;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .mobile-activity-pointer-note {
+    padding: 10px 11px;
+    border-radius: 12px;
+    background: #f2f4f5;
+  }
+
+  .mobile-activity-history-footer {
+    display: grid;
+    gap: 2px;
+    padding-top: 4px;
+    border-top: 1px solid #e4ebee;
+  }
+
+  .mobile-activity-history-footer small {
+    color: #375b6e;
+    font-weight: 800;
+  }
+
+  .mobile-activity-history-empty {
+    display: grid;
+    gap: 8px;
+    padding: 18px 12px;
+    text-align: center;
+  }
+
+  .mobile-activity-history-empty strong {
+    color: #213b4a;
+  }
+
+  .mobile-activity-history-empty p {
+    margin: 0;
+    color: #657983;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+}
