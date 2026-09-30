@@ -1,0 +1,274 @@
+/* Smartphone-only experimental experience layer: Personal Challenge, Dynamic Widget, Ambient UI. */
+@media (max-width: 54.99rem) {
+  .screen--home.mobile-home-ambient {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    --ambient-a: color-mix(in srgb, var(--color-accent) 17%, transparent);
+    --ambient-b: color-mix(in srgb, var(--color-model) 13%, transparent);
+    --ambient-c: color-mix(in srgb, var(--color-info) 11%, transparent);
+  }
+
+  .screen--home.mobile-home-ambient::before,
+  .screen--home.mobile-home-ambient::after {
+    content: "";
+    position: fixed;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 999px;
+    filter: blur(2px);
+    opacity: .72;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .screen--home.mobile-home-ambient::before {
+    width: 58vw;
+    height: 58vw;
+    top: max(-12vw, -68px);
+    right: -18vw;
+    background: radial-gradient(circle, var(--ambient-a), transparent 68%);
+    animation: runload-ambient-drift-a 12s ease-in-out infinite alternate;
+  }
+
+  .screen--home.mobile-home-ambient::after {
+    width: 72vw;
+    height: 72vw;
+    left: -28vw;
+    bottom: 14vh;
+    background: radial-gradient(circle, var(--ambient-b), transparent 69%);
+    animation: runload-ambient-drift-b 15s ease-in-out infinite alternate;
+  }
+
+  .screen--home.mobile-home-ambient--morning {
+    --ambient-a: color-mix(in srgb, var(--color-attention) 17%, transparent);
+    --ambient-b: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  }
+
+  .screen--home.mobile-home-ambient--day {
+    --ambient-a: color-mix(in srgb, var(--color-info) 16%, transparent);
+    --ambient-b: color-mix(in srgb, var(--color-accent) 13%, transparent);
+  }
+
+  .screen--home.mobile-home-ambient--evening {
+    --ambient-a: color-mix(in srgb, var(--color-model) 19%, transparent);
+    --ambient-b: color-mix(in srgb, var(--color-attention) 12%, transparent);
+  }
+
+  .screen--home.mobile-home-ambient--night {
+    --ambient-a: color-mix(in srgb, var(--color-model) 22%, transparent);
+    --ambient-b: color-mix(in srgb, var(--color-accent-strong) 14%, transparent);
+  }
+
+  .screen--home.mobile-home-ambient--saved {
+    --ambient-c: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+
+  .screen--home.mobile-home-ambient--rest {
+    --ambient-c: color-mix(in srgb, var(--color-info) 17%, transparent);
+  }
+
+  .screen--home.mobile-home-ambient--draft {
+    --ambient-c: color-mix(in srgb, var(--color-attention) 17%, transparent);
+  }
+
+  .mobile-home-ambient .mobile-home-hub {
+    position: relative;
+    z-index: 1;
+    background:
+      radial-gradient(circle at 76% 68%, var(--ambient-c) 0, transparent 31%),
+      color-mix(in srgb, var(--color-paper) 96%, transparent);
+  }
+
+  .mobile-home-ambient .mobile-home-os {
+    position: relative;
+    z-index: 1;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--color-paper) 79%, transparent), color-mix(in srgb, var(--color-paper) 92%, transparent)),
+      radial-gradient(circle at 8% 12%, var(--ambient-a), transparent 34%),
+      radial-gradient(circle at 94% 34%, var(--ambient-b), transparent 31%),
+      var(--color-paper);
+  }
+
+  .mobile-home-ambient .mobile-home-overview {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mobile-home-widget--dynamic {
+    position: relative;
+    justify-content: flex-end;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  .mobile-home-widget--dynamic::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: .72;
+    background: linear-gradient(145deg, color-mix(in srgb, currentColor 7%, transparent), transparent 56%);
+  }
+
+  .mobile-home-widget--dynamic > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mobile-home-widget--tone-plan { color: var(--color-attention); }
+  .mobile-home-widget--tone-blue { color: var(--color-accent-strong); }
+  .mobile-home-widget--tone-violet,
+  .mobile-home-widget--tone-indigo { color: var(--color-model); }
+  .mobile-home-widget--tone-green { color: var(--color-accent); }
+  .mobile-home-widget--tone-cyan,
+  .mobile-home-widget--tone-fatigue { color: var(--color-info); }
+  .mobile-home-widget--tone-orange { color: var(--color-attention); }
+  .mobile-home-widget--tone-achievement { color: var(--color-model); }
+  .mobile-home-widget--tone-latest { color: var(--color-accent-strong); }
+
+  .mobile-home-widget--dynamic small,
+  .mobile-home-widget--dynamic strong,
+  .mobile-home-widget--dynamic > span:not(.mobile-home-dynamic-progress) {
+    color: var(--color-ink);
+  }
+
+  .mobile-home-widget--dynamic small,
+  .mobile-home-widget--dynamic > span:not(.mobile-home-dynamic-progress) {
+    color: var(--color-muted);
+  }
+
+  .mobile-home-dynamic-progress {
+    position: absolute !important;
+    left: 15px;
+    right: 15px;
+    bottom: 10px;
+    height: 4px;
+    margin: 0 !important;
+    overflow: hidden;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 13%, var(--color-surface));
+  }
+
+  .mobile-home-dynamic-progress > i {
+    display: block;
+    width: var(--dynamic-progress, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background: currentColor;
+  }
+
+  .mobile-home-widget--dynamic:has(.mobile-home-dynamic-progress) {
+    padding-bottom: 22px;
+  }
+
+  .mobile-home-overview-card--challenge {
+    color: var(--color-ink);
+    background:
+      radial-gradient(circle at 90% 10%, color-mix(in srgb, currentColor 13%, transparent), transparent 34%),
+      linear-gradient(135deg, color-mix(in srgb, var(--color-surface) 86%, var(--color-accent-soft)), var(--color-surface));
+  }
+
+  .mobile-home-tone-blue { color: var(--color-accent-strong); }
+  .mobile-home-tone-violet,
+  .mobile-home-tone-indigo { color: var(--color-model); }
+  .mobile-home-tone-green { color: var(--color-accent); }
+  .mobile-home-tone-cyan { color: var(--color-info); }
+  .mobile-home-tone-orange { color: var(--color-attention); }
+
+  .mobile-home-overview-card--challenge .mobile-home-overview-card__label,
+  .mobile-home-overview-card--challenge .mobile-home-overview-card__note,
+  .mobile-home-overview-card--challenge .mobile-home-challenge-row strong,
+  .mobile-home-overview-card--challenge .mobile-home-challenge-row span {
+    color: var(--color-ink);
+  }
+
+  .mobile-home-overview-card--challenge .mobile-home-overview-card__label,
+  .mobile-home-overview-card--challenge .mobile-home-overview-card__note {
+    color: var(--color-muted);
+  }
+
+  .mobile-home-challenge-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .mobile-home-challenge-row strong {
+    min-width: 0;
+    font-size: 24px;
+    line-height: 1.12;
+    letter-spacing: -.035em;
+  }
+
+  .mobile-home-challenge-row span {
+    flex: 0 0 auto;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 10%, var(--color-surface));
+    font-size: var(--type-label);
+    font-weight: 900;
+  }
+
+  .mobile-home-challenge-progress {
+    display: block;
+    height: 7px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 12%, var(--color-surface));
+  }
+
+  .mobile-home-challenge-progress > i {
+    display: block;
+    width: var(--challenge-progress, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background: currentColor;
+    transition: width 260ms cubic-bezier(.2, .75, .25, 1);
+  }
+
+  .mobile-home-ambient .mobile-home-widget,
+  .mobile-home-ambient .mobile-home-overview-card,
+  .mobile-home-ambient .mobile-home-dock {
+    box-shadow:
+      0 12px 30px color-mix(in srgb, var(--color-ink) 8%, transparent),
+      inset 0 1px 0 color-mix(in srgb, #fff 70%, transparent);
+  }
+
+  @media (hover: hover) {
+    .mobile-home-widget--dynamic:hover {
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, currentColor 28%, var(--color-line));
+    }
+  }
+
+  @keyframes runload-ambient-drift-a {
+    from { transform: translate3d(-2vw, -1vh, 0) scale(.96); }
+    to { transform: translate3d(4vw, 3vh, 0) scale(1.08); }
+  }
+
+  @keyframes runload-ambient-drift-b {
+    from { transform: translate3d(0, 2vh, 0) scale(1); }
+    to { transform: translate3d(5vw, -2vh, 0) scale(1.06); }
+  }
+}
+
+@media (max-width: 24rem) {
+  .mobile-home-challenge-row strong {
+    font-size: 21px;
+  }
+
+  .mobile-home-challenge-row {
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen--home.mobile-home-ambient::before,
+  .screen--home.mobile-home-ambient::after,
+  .mobile-home-challenge-progress > i,
+  .mobile-home-widget--dynamic {
+    animation: none !important;
+    transition: none !important;
+  }
+}
