@@ -84,6 +84,8 @@ export function bindMobileHomeHub(homeRoot) {
 
   function pointerDown(event) {
     if (homeRoot?.classList?.contains("is-home-editing")) return;
+    if (activePage === 0) return;
+    if (event.target.closest?.("[data-home-page-viewport]")) return;
     if (pointerId != null) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
     if (event.target.closest?.("input, textarea, select, [contenteditable='true']")) return;
@@ -124,7 +126,7 @@ export function bindMobileHomeHub(homeRoot) {
     const velocity = Math.abs(dx) / elapsed;
     let target = activePage;
     if (!cancelled && horizontal && (Math.abs(dx) >= SWIPE_MIN_PX || velocity >= SWIPE_VELOCITY_PX_PER_MS)) {
-      target = dx < 0 ? activePage + 1 : activePage - 1;
+      target = dx > 0 ? 0 : activePage;
     } else if (horizontal) {
       target = Math.round(viewport.scrollLeft / pageWidth());
     }
