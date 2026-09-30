@@ -6,18 +6,24 @@ on:
     paths:
       - "core/internal/mobileWalkJogSpeedModel.js"
       - "ui/mobileWalkJogMeasurementWiring.js"
+      - "ui/mobileWalkJogRecordStore.js"
       - "styles/mobile-walk-jog.css"
+      - "styles/mobile-walk-jog-records.css"
       - "tests/mobileWalkJogSpeedModel.test.mjs"
       - "tests/mobileWalkJogMeasurementWiring.test.mjs"
+      - "tests/mobileWalkJogRecordStore.test.mjs"
       - "index.html"
       - ".github/workflows/mobile-walk-jog-regression.yml"
   pull_request:
     paths:
       - "core/internal/mobileWalkJogSpeedModel.js"
       - "ui/mobileWalkJogMeasurementWiring.js"
+      - "ui/mobileWalkJogRecordStore.js"
       - "styles/mobile-walk-jog.css"
+      - "styles/mobile-walk-jog-records.css"
       - "tests/mobileWalkJogSpeedModel.test.mjs"
       - "tests/mobileWalkJogMeasurementWiring.test.mjs"
+      - "tests/mobileWalkJogRecordStore.test.mjs"
       - "index.html"
       - ".github/workflows/mobile-walk-jog-regression.yml"
 
@@ -36,5 +42,7 @@ jobs:
         run: node tests/mobileWalkJogSpeedModel.test.mjs
       - name: Mobile measurement wiring regression
         run: node tests/mobileWalkJogMeasurementWiring.test.mjs
+      - name: Mobile activity record-store regression
+        run: node tests/mobileWalkJogRecordStore.test.mjs
       - name: App version/cache consistency
         run: node tests/appVersionStatus.test.mjs
