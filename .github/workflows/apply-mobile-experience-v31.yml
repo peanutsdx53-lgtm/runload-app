@@ -1,0 +1,46 @@
+name: Apply RunLoad Mobile Experience v2026.10.01.31
+
+on:
+  push:
+    branches:
+      - deploy/mobile-experience-v31
+    paths:
+      - ".runload-deploy-v31/READY"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Apply audited home patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git apply --check .runload-deploy-v31/homeScreen.patch
+          git apply .runload-deploy-v31/homeScreen.patch
+      - name: Verify smartphone experience syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check screens/homeScreen.js
+          node --check ui/mobileHomeExperience.js
+          grep -q 'buildDynamicHomeCards' screens/homeScreen.js
+          grep -q 'buildPersonalChallenge' screens/homeScreen.js
+          grep -q 'mobile-home-ambient' screens/homeScreen.js
+      - name: Commit renderer change to deployment branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add screens/homeScreen.js
+          git commit -m "Integrate adaptive smartphone home experience"
+          git push origin HEAD:deploy/mobile-experience-v31
