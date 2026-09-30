@@ -114,14 +114,14 @@ function bindRoot(root) {
     }
     if (phase === "post") {
       const activityId = String(root.dataset.mobileActivityId || "RUNNING_CURRENT");
+      const qualityGate = tracker.finish();
       if (EXTENSION_ACTIVITIES.has(activityId)) {
-        const qualityGate = tracker.finish();
-        const analysis = readAnalysis();
-        const gated = applyGpsQualityGateToAnalysis(analysis, qualityGate);
-        writeAnalysis(gated);
-        queueMicrotask(() => applyPanelState(root, qualityGate));
-      } else {
-        tracker.finish();
+        queueMicrotask(() => {
+          const analysis = readAnalysis();
+          const gated = applyGpsQualityGateToAnalysis(analysis, qualityGate);
+          if (gated) writeAnalysis(gated);
+          applyPanelState(root, qualityGate);
+        });
       }
     }
     lastPhase = phase;
