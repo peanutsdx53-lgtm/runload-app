@@ -6,13 +6,19 @@ on:
     paths:
       - "core/internal/mobileWalkJogSpeedModel.js"
       - "ui/mobileWalkJogMeasurementWiring.js"
+      - "ui/mobileWalkJogCopyGuard.js"
       - "ui/mobileWalkJogRecordStore.js"
+      - "ui/mobileWalkJogSaveHistoryLink.js"
+      - "ui/mobileWalkJogHistoryUi.js"
       - "ui/appVersionStatus.js"
       - "styles/mobile-walk-jog.css"
       - "styles/mobile-walk-jog-records.css"
+      - "styles/mobile-walk-jog-history.css"
       - "tests/mobileWalkJogSpeedModel.test.mjs"
       - "tests/mobileWalkJogMeasurementWiring.test.mjs"
       - "tests/mobileWalkJogRecordStore.test.mjs"
+      - "tests/mobileWalkJogCopyGuard.test.mjs"
+      - "tests/mobileWalkJogHistoryUi.test.mjs"
       - "tests/mobileWalkJogPwa.test.mjs"
       - "index.html"
       - "service-worker.js"
@@ -21,13 +27,19 @@ on:
     paths:
       - "core/internal/mobileWalkJogSpeedModel.js"
       - "ui/mobileWalkJogMeasurementWiring.js"
+      - "ui/mobileWalkJogCopyGuard.js"
       - "ui/mobileWalkJogRecordStore.js"
+      - "ui/mobileWalkJogSaveHistoryLink.js"
+      - "ui/mobileWalkJogHistoryUi.js"
       - "ui/appVersionStatus.js"
       - "styles/mobile-walk-jog.css"
       - "styles/mobile-walk-jog-records.css"
+      - "styles/mobile-walk-jog-history.css"
       - "tests/mobileWalkJogSpeedModel.test.mjs"
       - "tests/mobileWalkJogMeasurementWiring.test.mjs"
       - "tests/mobileWalkJogRecordStore.test.mjs"
+      - "tests/mobileWalkJogCopyGuard.test.mjs"
+      - "tests/mobileWalkJogHistoryUi.test.mjs"
       - "tests/mobileWalkJogPwa.test.mjs"
       - "index.html"
       - "service-worker.js"
@@ -50,6 +62,10 @@ jobs:
         run: node tests/mobileWalkJogMeasurementWiring.test.mjs
       - name: Mobile activity record-store regression
         run: node tests/mobileWalkJogRecordStore.test.mjs
+      - name: Mobile activity copy regression
+        run: node tests/mobileWalkJogCopyGuard.test.mjs
+      - name: Mobile activity history isolation regression
+        run: node tests/mobileWalkJogHistoryUi.test.mjs
       - name: Mobile activity PWA regression
         run: node tests/mobileWalkJogPwa.test.mjs
       - name: App version/cache consistency
