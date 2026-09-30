@@ -15,15 +15,20 @@ function selectedMeasurementMode(root) {
 }
 
 function applyMeasurementModeLabel(root, extension) {
-  if (!extension) return;
   const label = root.querySelector("[data-measurement-mode-label]");
   if (!label) return;
   const mode = selectedMeasurementMode(root);
-  const text = mode === "time"
+  const runningText = mode === "time"
+    ? "時間を決めて走る"
+    : mode === "distance"
+      ? "距離を決めて走る"
+      : "自由に走る";
+  const extensionText = mode === "time"
     ? "時間を決めて測る"
     : mode === "distance"
       ? "距離を決めて測る"
       : "自由に測る";
+  const text = extension ? extensionText : runningText;
   if (label.textContent !== text) label.textContent = text;
 }
 
