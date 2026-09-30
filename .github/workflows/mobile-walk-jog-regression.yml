@@ -1,0 +1,40 @@
+name: Mobile Walk Jog Regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "core/internal/mobileWalkJogSpeedModel.js"
+      - "ui/mobileWalkJogMeasurementWiring.js"
+      - "styles/mobile-walk-jog.css"
+      - "tests/mobileWalkJogSpeedModel.test.mjs"
+      - "tests/mobileWalkJogMeasurementWiring.test.mjs"
+      - "index.html"
+      - ".github/workflows/mobile-walk-jog-regression.yml"
+  pull_request:
+    paths:
+      - "core/internal/mobileWalkJogSpeedModel.js"
+      - "ui/mobileWalkJogMeasurementWiring.js"
+      - "styles/mobile-walk-jog.css"
+      - "tests/mobileWalkJogSpeedModel.test.mjs"
+      - "tests/mobileWalkJogMeasurementWiring.test.mjs"
+      - "index.html"
+      - ".github/workflows/mobile-walk-jog-regression.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Walk/Jog model regression
+        run: node tests/mobileWalkJogSpeedModel.test.mjs
+      - name: Mobile measurement wiring regression
+        run: node tests/mobileWalkJogMeasurementWiring.test.mjs
+      - name: App version/cache consistency
+        run: node tests/appVersionStatus.test.mjs
