@@ -16,6 +16,7 @@ import { handleRecordInputRouteChange, resolveRecordInputReturnState } from "./u
 import { renderHomeScreen } from "./screens/homeScreen.js";
 import { renderRunMeasurementScreen } from "./screens/runMeasurementScreen.js";
 import { renderRunRouteScreen } from "./screens/runRouteScreen.js";
+import { renderBodyTimelineScreen } from "./screens/bodyTimelineScreen.js";
 import { renderRecordInputScreen } from "./screens/recordInputScreen.js";
 import { renderCourseLibraryScreen } from "./screens/courseLibraryScreen.js";
 import { renderCourseEditorScreen } from "./screens/courseEditorScreen.js";
@@ -43,6 +44,7 @@ const screenRenderers = {
   home: renderHomeScreen,
   "run-measurement": renderRunMeasurementScreen,
   "run-route": renderRunRouteScreen,
+  "body-timeline": renderBodyTimelineScreen,
   "record-input": renderRecordInputScreen,
   "course-library": renderCourseLibraryScreen,
   "course-editor": renderCourseEditorScreen,

@@ -88,6 +88,14 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     };
   }
 
+  if (screen === "body-timeline") {
+    return {
+      title: "身体の推移",
+      backHref: screenHref("result", { recordId }),
+      backLabel: "結果",
+    };
+  }
+
   if (screen === "body-part-detail") {
     return {
       title: "部位詳細",

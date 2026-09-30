@@ -12,6 +12,7 @@ import { bindSimulation } from "./interactions/simulationInteractions.js";
 import { bindGpxAnalysis } from "./interactions/gpxAnalysisInteractions.js";
 import { bindRunMeasurement } from "./interactions/runMeasurementInteractions.js";
 import { bindRunRoute } from "./interactions/runRouteInteractions.js";
+import { bindBodyTimeline } from "./interactions/bodyTimelineInteractions.js";
 import { bindMobileQuickTool } from "./interactions/mobileQuickToolsInteractions.js";
 import { bindMobilePhotoMemo } from "./interactions/mobilePhotoMemoInteractions.js";
 import { bindMobilePaceCalculator } from "./interactions/mobilePaceCalculatorInteractions.js";
@@ -32,6 +33,7 @@ const SCREEN_INTERACTION_BINDERS = Object.freeze({
   "gpx-analysis": bindGpxAnalysis,
   "run-measurement": bindRunMeasurement,
   "run-route": bindRunRoute,
+  "body-timeline": bindBodyTimeline,
   "location-note": bindMobileQuickTool,
   "quick-note": bindMobileQuickTool,
   "gear-note": bindMobileQuickTool,

@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.30.28";
+const CACHE_NAME = "running-record-app-runtime-2026.09.30.29";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -52,6 +52,7 @@ const PRECACHE_URLS = [
   "./screens/homeScreen.js",
   "./screens/runMeasurementScreen.js",
   "./screens/runRouteScreen.js",
+  "./screens/bodyTimelineScreen.js",
   "./screens/gpxAnalysisScreen.js",
   "./screens/moreScreen.js",
   "./screens/mobileQuickToolsScreen.js",
@@ -93,6 +94,7 @@ const PRECACHE_URLS = [
   "./styles/mobile-onboarding.css",
   "./styles/mobile-achievements.css",
   "./styles/mobile-final-polish.css",
+  "./styles/mobile-run-experiments.css",
   "./styles/pc-course-v17.css",
   "./styles/interpretation-room.css",
   "./styles/desktop-foundation.css",
@@ -100,6 +102,7 @@ const PRECACHE_URLS = [
   "./styles/tokens.css",
   "./styles/run-measurement.css",
   "./ui/mobileAchievements.js",
+  "./ui/runFingerprint.js",
   "./ui/bootRecovery.js",
   "./ui/appVersionStatus.js",
   "./ui/rofJVisualEnhancement.js",
@@ -165,6 +168,7 @@ const PRECACHE_URLS = [
   "./ui/runMeasurementState.js",
   "./ui/interactions/runMeasurementInteractions.js",
   "./ui/interactions/runRouteInteractions.js",
+  "./ui/interactions/bodyTimelineInteractions.js",
   "./ui/recordPresentation.js",
   "./ui/restorePreviewPresentation.js",
   "./ui/screenArchitecture.js",

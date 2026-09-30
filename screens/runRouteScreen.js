@@ -44,6 +44,11 @@ export function renderRunRouteScreen({ services, context }) {
         <div><small>測定時間</small><strong>${escapeHtml(durationLabel(measurement.durationMinutes))}</strong></div>
         <div><small>保存地点</small><strong>${Number(measurement.track.length)}点</strong></div>
       </div>
+      <section class="run-route-replay" data-run-route-replay>
+        <div class="run-route-replay__head"><span><small>RUN REPLAY</small><strong>走行を再生</strong></span><button type="button" data-action="toggle-route-replay" aria-pressed="false">再生</button></div>
+        <input type="range" min="0" max="1000" value="0" step="1" data-route-replay-progress aria-label="走行再生位置">
+        <div class="run-route-replay__facts"><span>経過 <b data-route-replay-time>0:00</b></span><span>距離 <b data-route-replay-distance>0.00 km</b></span></div>
+      </section>
       <p class="run-route-view__note">軌跡はGPS測定時に端末内へ保存した位置情報です。地図表示ではOpenStreetMapの地図画像を取得します。</p>
     </section>
   </div>`;

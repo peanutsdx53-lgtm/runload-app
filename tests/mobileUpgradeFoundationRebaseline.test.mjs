@@ -46,7 +46,7 @@ for (const token of ["--mobile-type-caption: 0.75rem", "--mobile-type-label: 0.8
 }
 
 const currentVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
-assert.equal(currentVersion, "2026.09.30.28");
+assert.equal(currentVersion, "2026.09.30.29");
 assert.ok(worker.includes(`running-record-app-runtime-${currentVersion}`));
 
 console.log("mobileUpgradeFoundationRebaseline.test.mjs: PASS");

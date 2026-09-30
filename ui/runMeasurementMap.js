@@ -49,6 +49,7 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
   const tileNodes = new Map();
   let zoom = clamp(initialZoom, MIN_ZOOM, MAX_ZOOM);
   let center = null;
+  let markerPoint = null;
   let track = [];
 
   function dimensions() {
@@ -122,7 +123,7 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
       routeGroup.insertBefore(polyline, marker);
     }
 
-    const current = project(center);
+    const current = project(markerPoint || center);
     marker.setAttribute("cx", current.x.toFixed(1));
     marker.setAttribute("cy", current.y.toFixed(1));
   }
@@ -135,7 +136,14 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
   function setCenter(point) {
     if (!point || !Number.isFinite(Number(point.lat)) || !Number.isFinite(Number(point.lon))) return;
     center = { lat: Number(point.lat), lon: Number(point.lon) };
+    markerPoint = { ...center };
     render();
+  }
+
+  function setMarker(point) {
+    if (!point || !Number.isFinite(Number(point.lat)) || !Number.isFinite(Number(point.lon))) return;
+    markerPoint = { lat: Number(point.lat), lon: Number(point.lon) };
+    renderOverlay();
   }
 
   function setTrack(points = []) {
@@ -156,6 +164,7 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
     const minLon = Math.min(...rows.map((point) => Number(point.lon)));
     const maxLon = Math.max(...rows.map((point) => Number(point.lon)));
     center = { lat: (minLat + maxLat) / 2, lon: (minLon + maxLon) / 2 };
+    markerPoint = rows.at(-1) ? { lat: Number(rows.at(-1).lat), lon: Number(rows.at(-1).lon) } : center;
     const { width, height } = dimensions();
     const usableWidth = Math.max(64, width - 48);
     const usableHeight = Math.max(64, height - 48);
@@ -198,5 +207,5 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
     container.replaceChildren();
   }
 
-  return Object.freeze({ setCenter, setTrack, fitTrack, setZoom, getZoom, destroy });
+  return Object.freeze({ setCenter, setMarker, setTrack, fitTrack, setZoom, getZoom, destroy });
 }

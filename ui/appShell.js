@@ -60,6 +60,7 @@ const PRIMARY_SECTION_BY_SCREEN = Object.freeze({
   "gpx-analysis": "record-input",
   "body-part-detail": "result",
   "run-route": "result",
+  "body-timeline": "result",
   "interpretation-room": "result",
   simulation: "result",
   plan: "home",
