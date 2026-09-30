@@ -11,6 +11,18 @@
   .screen--more .head{padding-bottom:4px}.screen--more .group-title{letter-spacing:.02em;text-transform:none;font-size:13px}.screen--more .row .copy>small:empty{display:none}
   .screen--more .row{min-height:68px}.screen--more .row .copy strong{font-size:17px}.screen--more .row .copy>span{font-size:13px}
   .mobile-home-overview-card--achievement strong small{font-size:14px;color:var(--muted);font-weight:700}
+
+  /* Keep the editable Home pager in control of horizontal swipes. The overview
+     page blocks native iOS history swipes and uses the in-app return gesture. */
+  .mobile-home-hub-viewport{touch-action:pan-x pan-y}
+  .mobile-home-hub.is-home-overview-active .mobile-home-hub-page--overview{touch-action:pan-y;overscroll-behavior-x:none}
+  .mobile-home-os__header-actions{flex:0 0 auto}
+  .mobile-home-overview-open{flex:0 0 auto;min-width:64px;white-space:nowrap}
+
+  /* Compact Home editing controls must not inherit the global 48px visual height. */
+  .screen :is(.mobile-home-widget-remove,.mobile-home-app-remove,.mobile-home-widget-size,.mobile-home-ios-drag-handle,.mobile-home-page-dot,.mobile-home-page-control){min-height:0}
+  .screen .mobile-home-widget-add{min-height:40px}
+
   :where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,white);outline-offset:3px}
 }
 @media (max-width:23rem){
