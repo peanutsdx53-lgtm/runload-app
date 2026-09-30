@@ -1,5 +1,13 @@
 # RunLoad Mobile Release History
 
+## APP v2026.09.30.17 — PC Course Refinement 1
+- PC course editor: uses the available width for a compact two-column slope/surface workspace.
+- PC course editor: reduces duplicate explanatory copy and demotes GPX to the course-library assist route.
+- PC surface percentage input: shows the eight surface types in a compact two-column grid.
+- PC course library: presents saved courses in a two-column browser with compact actions.
+- PC GPX input: reduces decorative copy and keeps analysis results visually primary.
+- Smartphone course presentation and scientific calculation contracts are intentionally unchanged.
+
 ## APP v2026.09.30.16 — Screenshot-guided Course Refinement 1
 - Smartphone course editor: removes the duplicate GPX entry route and reduces explanatory text.
 - Smartphone slope input: separates knowledge state (unknown / flat / hills) from input method (simple / sections).
