@@ -6,6 +6,9 @@ on:
     paths:
       - "core/internal/mobileWalkJogSpeedModel.js"
       - "ui/mobileWalkJogMeasurementWiring.js"
+      - "ui/mobileWalkJogGpsQuality.js"
+      - "ui/mobileWalkJogGpsQualityUi.js"
+      - "ui/mobileWalkJogGpsQualityHistoryGuard.js"
       - "ui/mobileWalkJogCopyGuard.js"
       - "ui/mobileWalkJogRecordStore.js"
       - "ui/mobileWalkJogSaveHistoryLink.js"
@@ -20,6 +23,7 @@ on:
       - "tests/mobileWalkJogCopyGuard.test.mjs"
       - "tests/mobileWalkJogHistoryUi.test.mjs"
       - "tests/mobileWalkJogEdgeCases.test.mjs"
+      - "tests/mobileWalkJogGpsQuality.test.mjs"
       - "tests/mobileWalkJogBrowserFlow.test.mjs"
       - "tests/mobileWalkJogPwa.test.mjs"
       - "index.html"
@@ -29,6 +33,9 @@ on:
     paths:
       - "core/internal/mobileWalkJogSpeedModel.js"
       - "ui/mobileWalkJogMeasurementWiring.js"
+      - "ui/mobileWalkJogGpsQuality.js"
+      - "ui/mobileWalkJogGpsQualityUi.js"
+      - "ui/mobileWalkJogGpsQualityHistoryGuard.js"
       - "ui/mobileWalkJogCopyGuard.js"
       - "ui/mobileWalkJogRecordStore.js"
       - "ui/mobileWalkJogSaveHistoryLink.js"
@@ -43,6 +50,7 @@ on:
       - "tests/mobileWalkJogCopyGuard.test.mjs"
       - "tests/mobileWalkJogHistoryUi.test.mjs"
       - "tests/mobileWalkJogEdgeCases.test.mjs"
+      - "tests/mobileWalkJogGpsQuality.test.mjs"
       - "tests/mobileWalkJogBrowserFlow.test.mjs"
       - "tests/mobileWalkJogPwa.test.mjs"
       - "index.html"
@@ -68,6 +76,8 @@ jobs:
         run: node tests/mobileWalkJogRecordStore.test.mjs
       - name: Mobile activity edge-case audit
         run: node tests/mobileWalkJogEdgeCases.test.mjs
+      - name: Mobile GPS quality gate regression
+        run: node tests/mobileWalkJogGpsQuality.test.mjs
       - name: Mobile activity copy regression
         run: node tests/mobileWalkJogCopyGuard.test.mjs
       - name: Mobile activity history isolation regression
