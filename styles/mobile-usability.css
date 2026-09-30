@@ -574,3 +574,137 @@
     color: HighlightText;
   }
 }
+
+
+/* Mobile record refinement v15: required-first hierarchy and stronger activity selection. */
+@media (max-width: 54.99rem) {
+  .screen-layout--record .activity-toggle {
+    padding: 5px;
+    gap: 6px;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 20%, var(--color-line));
+    background: color-mix(in srgb, var(--color-accent-soft) 42%, var(--color-surface-muted));
+  }
+
+  .screen-layout--record .activity-toggle label {
+    min-width: 0;
+  }
+
+  .screen-layout--record .activity-toggle span,
+  .screen-layout--record .activity-toggle input:not(:checked) + span {
+    min-height: 48px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 88%, var(--color-ink));
+    background: var(--color-surface);
+    color: var(--color-ink);
+    box-shadow: 0 1px 4px color-mix(in srgb, var(--color-ink) 5%, transparent);
+    font-weight: 850;
+    opacity: 1;
+  }
+
+  .screen-layout--record .activity-toggle input:checked + span {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    box-shadow: 0 7px 18px color-mix(in srgb, var(--color-accent) 24%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, white 18%, transparent);
+  }
+
+  .screen-layout--record .mobile-record-wellbeing {
+    display: grid;
+    gap: 9px;
+    margin: 0 0 16px;
+    padding: 0 0 15px;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-line) 82%, transparent);
+  }
+
+  .screen-layout--record .mobile-record-wellbeing__head {
+    min-width: 0;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing__head > div {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing__head small {
+    color: var(--color-muted);
+    font-size: 8px;
+    font-weight: 850;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing__head strong {
+    color: var(--color-ink);
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing__head > span {
+    color: var(--color-muted);
+    font-size: 9px;
+    font-weight: 750;
+    line-height: 1.35;
+    text-align: right;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing .fatigue-inline {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "label action"
+      "status action"
+      "message message";
+    align-items: center;
+    gap: 4px 10px;
+    margin: 0;
+    padding: 11px 12px;
+    border: 1px solid color-mix(in srgb, var(--color-line) 78%, transparent);
+    border-radius: 14px;
+    background: var(--color-surface-muted);
+    box-shadow: none;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing .fatigue-inline__label {
+    grid-area: label;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing .fatigue-inline__label small,
+  .screen-layout--record .mobile-record-wellbeing .fatigue-inline__status small {
+    display: none;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing .fatigue-inline__label strong {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing .fatigue-inline__status {
+    grid-area: status;
+    min-width: 0;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing .fatigue-inline__status span {
+    color: var(--color-muted);
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing .fatigue-inline > button {
+    grid-area: action;
+    min-width: 96px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 850;
+  }
+
+  .screen-layout--record .mobile-record-wellbeing .fatigue-inline > .form-messages {
+    grid-area: message;
+    margin-top: 4px;
+  }
+}

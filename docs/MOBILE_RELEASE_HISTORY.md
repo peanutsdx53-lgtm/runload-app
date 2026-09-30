@@ -1,5 +1,12 @@
 # RunLoad Mobile Release History
 
+## APP v2026.09.30.15 — Screenshot-guided Record Refinement 1
+- Smartphone record input: moves the before/after fatigue entry out of the required first card and into the collapsed optional reflection stage.
+- Smartphone record input: keeps the initial path focused on activity type, date, distance, and actual duration.
+- Smartphone record input: strengthens the visual distinction between selected and unselected Run / Rest choices.
+- Smartphone fatigue entry: uses a compact optional wellbeing block and hides it for rest records.
+- PC presentation and scientific calculation contracts are intentionally unchanged.
+
 ## APP v2026.09.30.14 — Mobile Phase 7
 - Smartphone GPS active view: keeps one dominant goal metric while moving automatic step/energy estimates into a secondary disclosure.
 - Smartphone GPS active view: adds a collapsible route map and a compact GPS quality badge.

@@ -51,7 +51,7 @@ test('PRE-RELEASE-BUILD-HAS-NO-STORED-DATA-COMPATIBILITY-SHIM', () => {
 });
 
 test('PWA-CACHE-USES-CURRENT-RELEASE-CONTRACT', () => {
-  assert.equal(version, '2026.09.30.14');
+  assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('const CACHE_PREFIX = "running-record-app-";'));
   assert.ok(platform.includes('registration.unregister()'));

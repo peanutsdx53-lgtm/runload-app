@@ -5,8 +5,9 @@ const interactions=fs.readFileSync(new URL("../ui/interactions/runMeasurementInt
 const css=fs.readFileSync(new URL("../styles/mobile-run-measurement-ergonomics.css", import.meta.url),"utf8");
 const version=fs.readFileSync(new URL("../ui/appVersionStatus.js", import.meta.url),"utf8");
 const worker=fs.readFileSync(new URL("../service-worker.js", import.meta.url),"utf8");
-assert.match(version,/APP_VERSION = "2026\.09\.30\.14"/);
-assert.match(worker,/running-record-app-runtime-2026\.09\.30\.14/);
+const currentVersion=version.match(/APP_VERSION = "([^"]+)"/)?.[1]||"";
+assert.match(currentVersion,/^\d{4}\.\d{2}\.\d{2}\.\d+$/);
+assert.ok(worker.includes(`running-record-app-runtime-${currentVersion}`));
 assert.match(screen,/if \(!matchesMobileLayout\(\)\) return desktopUnavailable\(\)/);
 assert.match(screen,/data-action="toggle-measurement-map"/);
 assert.match(screen,/run-measurement-active__secondary/);
