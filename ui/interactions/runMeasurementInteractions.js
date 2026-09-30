@@ -83,9 +83,9 @@ function createFatigueControl(wrapper, onChange = () => {}) {
 }
 
 function modeLabel(mode) {
-  if (mode === "time") return "時間を決めて走る";
-  if (mode === "distance") return "距離を決めて走る";
-  return "自由に走る";
+  if (mode === "time") return "時間を決めて測る";
+  if (mode === "distance") return "距離を決めて測る";
+  return "自由に測る";
 }
 
 function energyStatusText(result) {
@@ -354,7 +354,12 @@ export function bindRunMeasurement({ router, services }) {
     fatigueRunId = "";
   }
 
+  function usesCanonicalFatigue() {
+    return String(root.dataset.mobileActivityId || "RUNNING_CURRENT") === "RUNNING_CURRENT";
+  }
+
   function capturePreFatigue() {
+    if (!usesCanonicalFatigue()) return { ok: true, linked: false };
     if (!beforeFatigue?.hasSelection() || !services?.fatigue) return { ok: true, linked: false };
     const runId = services.fatigue.createRunId?.() || "";
     if (!runId) return { ok: false, code: "ROF_J_RUN_ID_FAILED" };
@@ -407,7 +412,7 @@ export function bindRunMeasurement({ router, services }) {
     }
     primaryLabel.textContent = "経過時間";
     primaryValue.textContent = formatElapsed(elapsed);
-    goalCaption.textContent = "自由に走っています";
+    goalCaption.textContent = "測定中";
   }
 
   function updateMetrics() {
@@ -491,7 +496,7 @@ export function bindRunMeasurement({ router, services }) {
     const fatigueLink = capturePreFatigue();
     if (!fatigueLink.ok) {
       stepEstimator.stop();
-      setMessage(prepStatus, "走る前の疲労感を保存できませんでした。疲労感を未選択に戻すか、もう一度お試しください。", true);
+      setMessage(prepStatus, "運動前の疲労感を保存できませんでした。疲労感を未選択に戻すか、もう一度お試しください。", true);
       return;
     }
 
@@ -529,7 +534,7 @@ export function bindRunMeasurement({ router, services }) {
     if (activeModeLabel) activeModeLabel.textContent = modeLabel(measurementMode);
     if (goalReached) goalReached.hidden = true;
     showPhase("active");
-    setMessage(activeStatus, "GPSを取得しています。この画面を前面に表示したまま走ってください。");
+    setMessage(activeStatus, "GPSを取得しています。この画面を前面に表示したまま測定してください。");
     updateMetrics();
     timerId = window.setInterval(updateMetrics, 500);
     beginWatch();
@@ -569,6 +574,7 @@ export function bindRunMeasurement({ router, services }) {
     const courseAnalysis = analyzeMeasuredCourse({ track, durationMs: elapsed });
     return {
       runId: fatigueRunId,
+      mobileActivityId: String(root.dataset.mobileActivityId || "RUNNING_CURRENT"),
       measurementMode,
       targetDurationMinutes,
       targetDistanceKm,
@@ -643,7 +649,7 @@ export function bindRunMeasurement({ router, services }) {
     stepEstimator.stop();
     afterFatigue?.reset();
     showPhase("post");
-    setMessage(postStatus, fatigueRunId ? "走る前の値と同じ走行として記録できます。" : "疲労感は任意です。そのまま記録入力へ進めます。");
+    setMessage(postStatus, fatigueRunId ? "運動前の値と同じ記録として保存できます。" : "疲労感は任意です。次の操作へ進めます。");
   }
 
   function ensurePostLifecycle() {
@@ -676,13 +682,13 @@ export function bindRunMeasurement({ router, services }) {
     if (!afterFatigue?.hasSelection()) return;
     const lifecycle = ensurePostLifecycle();
     if (!lifecycle.ok) {
-      setMessage(postStatus, "走った後の疲労感を保存できませんでした。記録入力へ進むことはできます。", true);
+      setMessage(postStatus, "運動後の疲労感を保存できませんでした。記録入力へ進むことはできます。", true);
       return;
     }
     const captured = services.fatigue.capturePostDirect?.(fatigueRunId, afterFatigue.value(), new Date().toISOString());
     if (!captured?.ok) {
       if (lifecycle.created) discardFatigueLink();
-      setMessage(postStatus, "走った後の疲労感を保存できませんでした。記録入力へ進むことはできます。", true);
+      setMessage(postStatus, "運動後の疲労感を保存できませんでした。記録入力へ進むことはできます。", true);
       return;
     }
 

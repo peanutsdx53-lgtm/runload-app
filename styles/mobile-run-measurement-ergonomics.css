@@ -595,3 +595,46 @@
     height: auto;
   }
 }
+
+/* 2026-09-30 mobile measurement preparation rebaseline */
+@media (max-width:54.99rem){
+  .run-measurement-prep__body{gap:14px;padding-top:14px}
+  .run-measurement-prep__intro{display:grid;gap:2px}
+  .run-measurement-prep__intro h1{margin:0;font-size:28px;line-height:1.15}
+  .run-measurement-prep__intro .eyebrow{font-size:12px;letter-spacing:.13em}
+  .run-measurement-prep__intro>p:last-child{font-size:13px;line-height:1.45}
+
+  .run-measurement-mode{gap:8px}
+  .run-measurement-mode>legend{padding:0;font-size:14px;font-weight:900;color:var(--color-ink)}
+  .run-measurement-mode__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .run-measurement-mode span{min-height:64px;align-content:center;justify-items:center;gap:3px;padding:9px 6px;text-align:center;border-radius:14px}
+  .run-measurement-mode b{font-size:15px;line-height:1.2}
+  .run-measurement-mode small{font-size:12px;line-height:1.2}
+
+  .run-measurement-goal-settings{padding:12px;gap:8px;border-radius:14px}
+  .run-measurement-goal-settings>label{gap:6px;font-size:13px}
+  .run-measurement-presets button{min-height:38px}
+
+  .run-measurement-fatigue{padding:12px;border-radius:14px}
+  .run-measurement-fatigue__head strong{font-size:16px}
+  .run-measurement-fatigue__question{display:none}
+  .run-measurement-fatigue .rof-about>summary{min-height:36px}
+
+  details.run-measurement-prep__options{display:block;border:1px solid var(--color-line);border-radius:14px;background:var(--color-surface);overflow:hidden}
+  details.run-measurement-prep__options>summary{min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px;cursor:pointer;list-style:none}
+  details.run-measurement-prep__options>summary::-webkit-details-marker{display:none}
+  details.run-measurement-prep__options>summary strong{font-size:15px;color:var(--color-ink)}
+  details.run-measurement-prep__options>summary span{font-size:12px;color:var(--color-muted);font-weight:750}
+  .run-measurement-prep__options-body{display:grid;gap:8px;padding:0 12px 12px}
+  .run-measurement-auto-note{margin:0}
+  .run-measurement-prep__status{margin:0;font-size:12px;text-align:center}
+  .run-measurement-prep__start{min-height:52px;border-radius:16px}
+}
+@media (max-width:54.99rem){
+  details.run-measurement-fatigue{display:block}
+  details.run-measurement-fatigue>summary{list-style:none;cursor:pointer}
+  details.run-measurement-fatigue>summary::-webkit-details-marker{display:none}
+  .run-measurement-fatigue__body{display:grid;gap:10px;padding-top:10px}
+  details.run-measurement-fatigue:not([open]){padding-top:0;padding-bottom:0}
+  details.run-measurement-fatigue:not([open])>.run-measurement-fatigue__head{min-height:56px}
+}

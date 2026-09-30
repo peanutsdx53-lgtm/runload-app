@@ -19,7 +19,7 @@ const ACTIVITY_LABELS = Object.freeze({
   WALK: "ウォーキング",
   JOGGING: "ジョギング",
   RUNNING_CURRENT: "ランニング",
-  MIXED: "歩き＋走り",
+  MIXED: "走り＋歩き",
 });
 
 function finiteNumber(value, fallback = 0) {
@@ -119,14 +119,13 @@ export function readLatestMobileWalkJogAnalysis() {
 
 function activityChoiceMarkup() {
   const choices = [
-    ["WALK", "ウォーキング", "歩行として記録・計算"],
-    ["JOGGING", "ジョギング", "低速の走行として計算"],
-    ["RUNNING_CURRENT", "ランニング", "既存ランニング計算を使用"],
-    ["MIXED", "歩き＋走り", "区間ごとに運動様式を保持"],
+    ["WALK", "ウォーキング", "歩行"],
+    ["JOGGING", "ジョギング", "低速の走行"],
+    ["RUNNING_CURRENT", "ランニング", "走行"],
+    ["MIXED", "走り＋歩き", "区間で切替"],
   ];
   return `<fieldset class="mobile-gait-selector" data-mobile-gait-selector>
     <legend>活動</legend>
-    <p>速度では自動判定せず、実際の動きに合わせて選択します。</p>
     <div class="mobile-gait-selector__grid">
       ${choices.map(([id, label, note]) => `<label><input type="radio" name="mobileActivityIdentity" value="${id}" ${id === "RUNNING_CURRENT" ? "checked" : ""}><span><strong>${label}</strong><small>${note}</small></span></label>`).join("")}
     </div>

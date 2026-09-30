@@ -23,7 +23,7 @@ const REGION_LABELS = Object.freeze({
 const ACTIVITY_LABELS = Object.freeze({
   WALK: "ウォーキング",
   JOGGING: "ジョギング",
-  MIXED: "歩き＋走り",
+  MIXED: "走り＋歩き",
   RUNNING_CURRENT: "ランニング",
 });
 
@@ -167,7 +167,7 @@ function fullList(records) {
   return `<section class="mobile-activity-history-full">
     <header class="mobile-activity-history-head">
       <a href="#/history">‹ 通常の履歴へ</a>
-      <div><small>SMARTPHONE ACTIVITY</small><h2>活動別履歴</h2><p>ウォーキング・ジョギング・歩き＋走りを、ランニング記録とは分けて確認します。</p></div>
+      <div><small>SMARTPHONE ACTIVITY</small><h2>活動別履歴</h2><p>ウォーキング・ジョギング・走り＋歩きを、ランニング記録とは分けて確認します。</p></div>
     </header>
     <p class="mobile-activity-boundary-note">異なる運動様式・異なる構成概念の12部位値は、合算・平均しません。</p>
     <div class="mobile-activity-record-list">${records.length
@@ -179,7 +179,7 @@ function fullList(records) {
 function compactEntry(records) {
   const latest = records[0] || null;
   return `<section class="mobile-activity-history-entry">
-    <div><small>SMARTPHONE ACTIVITY</small><strong>活動別記録</strong><p>ウォーキング・ジョギング・歩き＋走りは、既存ランニング履歴と分けて保存しています。</p></div>
+    <div><small>SMARTPHONE ACTIVITY</small><strong>活動別記録</strong><p>ウォーキング・ジョギング・走り＋歩きは、既存ランニング履歴と分けて保存しています。</p></div>
     <span class="mobile-activity-history-count">${records.length}件</span>
     ${latest ? `<small>最新：${escapeHtml(activityLabel(latest.activityId))}・${escapeHtml(formatDateTime(latest.createdAt))}</small>` : ""}
     <a href="#/history?mobileActivity=1">活動別履歴を開く</a>

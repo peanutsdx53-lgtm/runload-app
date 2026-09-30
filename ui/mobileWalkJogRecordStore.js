@@ -87,7 +87,7 @@ function validMixedSegments(segments) {
   return segments.every((segment) => MIXED_SEGMENT_GAITS.includes(String(segment?.gaitId || "")));
 }
 
-export function normalizeMobileExtensionRecord({ analysis, pending, id = newRecordId(), createdAt = new Date().toISOString() } = {}) {
+export function normalizeMobileExtensionRecord({ analysis, pending, fatigue = null, id = newRecordId(), createdAt = new Date().toISOString() } = {}) {
   if (!analysis || !pending) return null;
   if (![MOBILE_ACTIVITY_IDS.WALK, MOBILE_ACTIVITY_IDS.JOGGING, MOBILE_ACTIVITY_IDS.MIXED].includes(analysis.activityId)) return null;
 
@@ -116,6 +116,7 @@ export function normalizeMobileExtensionRecord({ analysis, pending, id = newReco
     track: pending.saveRoute === false ? [] : clone(Array.isArray(pending.track) ? pending.track : []),
     acceptedPointCount: Number(pending.acceptedPointCount || 0),
     rejectedPointCount: Number(pending.rejectedPointCount || 0),
+    fatigue: clone(fatigue || { pre: null, post: null, scale: "ROF-J" }),
     analysis: clone(refined),
     authority: Object.freeze({
       scope: "SMARTPHONE_EXTENSION_ONLY",
@@ -137,8 +138,8 @@ export function findMobileExtensionRecord(recordId, storage = safeStorage("local
   return listMobileExtensionRecords(storage).find((record) => record.id === id) || null;
 }
 
-export function saveMobileExtensionRecord({ analysis, pending, storage = safeStorage("local") } = {}) {
-  const record = normalizeMobileExtensionRecord({ analysis, pending });
+export function saveMobileExtensionRecord({ analysis, pending, fatigue = null, storage = safeStorage("local") } = {}) {
+  const record = normalizeMobileExtensionRecord({ analysis, pending, fatigue });
   if (!record) return { ok: false, code: "MOBILE_ACTIVITY_RECORD_INVALID" };
   const current = listMobileExtensionRecords(storage);
   const next = [record, ...current.filter((item) => item.id !== record.id)].slice(0, MAX_RECORDS);
@@ -149,29 +150,41 @@ export function saveMobileExtensionRecord({ analysis, pending, storage = safeSto
 function activityLabel(activityId) {
   if (activityId === "WALK") return "ウォーキング";
   if (activityId === "JOGGING") return "ジョギング";
-  if (activityId === "MIXED") return "歩き＋走り";
+  if (activityId === "MIXED") return "走り＋歩き";
   return "ランニング";
 }
 
 function savePanelMarkup(activityId) {
   return `<section class="mobile-extension-save" data-mobile-extension-save>
-    <div><small>SMARTPHONE EXTENSION</small><strong>${activityLabel(activityId)}の記録</strong></div>
-    <p>この活動は既存ランニングCurrentとは分離して保存します。12部位の異なる指標は合算しません。</p>
-    <button type="button" data-mobile-extension-save-button>活動別記録を端末に保存</button>
+    <div><small>活動記録</small><strong>${activityLabel(activityId)}を保存</strong></div>
+    <p>スマホ版の活動記録として保存します。</p>
+    <button type="button" data-mobile-extension-save-button>この記録を保存</button>
     <a href="#/home" data-mobile-extension-home-link hidden>ホームへ戻る</a>
     <span data-mobile-extension-save-status role="status" aria-live="polite"></span>
   </section>`;
 }
 
 function canonicalPostActions(root, hidden) {
+  const completion = root.querySelector(".run-measurement-post__completion");
+  if (completion) completion.hidden = Boolean(hidden);
   root.querySelectorAll('[data-action="record-post-fatigue"], [data-action="skip-post-fatigue"]').forEach((button) => {
     button.hidden = Boolean(hidden);
   });
 }
 
-function fatigueVisibility(root, hidden) {
-  root.querySelectorAll('[data-measurement-fatigue-phase="before"], [data-measurement-fatigue-phase="after"]').forEach((section) => {
-    section.hidden = Boolean(hidden);
+function readFatigueValue(root, phase) {
+  const section = root.querySelector(`[data-measurement-fatigue-phase="${phase}"]`);
+  const slider = section?.querySelector("[data-record-rof-slider]");
+  if (!slider || slider.classList.contains("is-untouched")) return null;
+  const value = Number(slider.value);
+  return Number.isInteger(value) && value >= 0 && value <= 10 ? value : null;
+}
+
+function readExtensionFatigue(root) {
+  return Object.freeze({
+    pre: readFatigueValue(root, "before"),
+    post: readFatigueValue(root, "after"),
+    scale: "ROF-J",
   });
 }
 
@@ -193,10 +206,13 @@ function applyPlanGuard(root) {
 function applyActivityState(root) {
   const activityId = String(root.dataset.mobileActivityId || MOBILE_ACTIVITY_IDS.RUNNING_CURRENT);
   const extension = activityId !== MOBILE_ACTIVITY_IDS.RUNNING_CURRENT;
-  fatigueVisibility(root, extension);
   if (root.dataset.measurementPhase === "post") {
     canonicalPostActions(root, extension);
-    if (extension) ensureSavePanel(root, activityId);
+    if (extension) {
+      const status = root.querySelector("[data-measurement-post-status]");
+      if (status) status.textContent = "運動後の疲労感は任意です。確認後に保存できます。";
+      ensureSavePanel(root, activityId);
+    }
   }
 }
 
@@ -210,7 +226,7 @@ function ensureSavePanel(root, activityId) {
   button?.addEventListener("click", () => {
     const analysis = readLatestMobileWalkJogAnalysis();
     const pending = readPendingMeasurementSnapshot();
-    const saved = saveMobileExtensionRecord({ analysis, pending });
+    const saved = saveMobileExtensionRecord({ analysis, pending, fatigue: readExtensionFatigue(root) });
     if (!saved.ok) {
       if (status) status.textContent = "保存できませんでした。端末の保存容量を確認してください。";
       return;

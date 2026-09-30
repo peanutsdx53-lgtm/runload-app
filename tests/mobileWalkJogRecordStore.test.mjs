@@ -76,6 +76,14 @@ test("MIXED-SEGMENTS-ARE-PRESERVED-NOT-RECOMPUTED-AS-ONE", () => {
   assert.equal(record.authority.regionalAggregation, "NO_CROSS_GAIT_OR_CROSS_CONSTRUCT_AGGREGATION");
 });
 
+
+test("EXTENSION-FATIGUE-IS-STORED-SEPARATELY", () => {
+  const fatigue = { pre: 3, post: 6, scale: "ROF-J" };
+  const record = normalizeMobileExtensionRecord({ analysis: analysis("WALK"), pending: pending(), fatigue, id: "x", createdAt: "now" });
+  assert.deepEqual(record.fatigue, fatigue);
+  assert.equal(record.authority.runningCurrentInvoked, false);
+});
+
 test("RUNNING-CURRENT-CANNOT-BE-SAVED-IN-EXTENSION-STORE", () => {
   assert.equal(normalizeMobileExtensionRecord({ analysis: analysis("RUNNING_CURRENT"), pending: pending() }), null);
 });

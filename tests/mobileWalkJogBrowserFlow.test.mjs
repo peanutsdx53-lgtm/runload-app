@@ -204,15 +204,16 @@ async function run() {
     await navigate(client, `${baseUrl}/#/run-measurement`);
     await waitFor(client, 'document.querySelector("[name=mobileActivityIdentity][value=WALK]")', "mobile activity selector did not render");
 
+    assert.equal(await client.evaluate('document.querySelector(".run-measurement-prep__intro h1")?.textContent'), "活動と測定方法");
     await client.evaluate('document.querySelector("[name=mobileActivityIdentity][value=WALK]").click()');
-    await waitFor(client, 'document.querySelector(".run-measurement-prep__intro h1")?.textContent === "今日はどう動きますか"', "WALK copy did not switch");
     assert.equal(await client.evaluate('document.querySelector("[data-measurement-mode-label]")?.textContent'), "自由に測る");
-    assert.equal(await client.evaluate('document.querySelector(".run-measurement-active__map-toolbar strong")?.textContent'), "移動地図");
+    assert.equal(await client.evaluate('document.querySelector(".run-measurement-active__map-toolbar strong")?.textContent'), "地図");
+    assert.equal(await client.evaluate('document.querySelector("[data-measurement-fatigue-phase=before]")?.hidden'), false);
 
     await client.evaluate('document.querySelector("[name=mobileActivityIdentity][value=RUNNING_CURRENT]").click()');
-    await waitFor(client, 'document.querySelector(".run-measurement-prep__intro h1")?.textContent === "今日はどう走りますか"', "RUNNING copy did not restore");
-    assert.equal(await client.evaluate('document.querySelector("[data-measurement-mode-label]")?.textContent'), "自由に走る");
-    assert.equal(await client.evaluate('document.querySelector(".run-measurement-active__map-toolbar strong")?.textContent'), "走行地図");
+    assert.equal(await client.evaluate('document.querySelector(".run-measurement-prep__intro h1")?.textContent'), "活動と測定方法");
+    assert.equal(await client.evaluate('document.querySelector("[data-measurement-mode-label]")?.textContent'), "自由に測る");
+    assert.equal(await client.evaluate('document.querySelector(".run-measurement-active__map-toolbar strong")?.textContent'), "地図");
 
     const extensionRecord = {
       version: 1,
@@ -257,7 +258,7 @@ async function run() {
     await client.evaluate(`localStorage.setItem("runner-load-app-mobile-walk-jog-records-v1.3", JSON.stringify([${JSON.stringify(extensionRecord)}])); location.hash = "#/history?mobileActivity=1"`);
     await waitFor(client, 'document.querySelector(".mobile-activity-history-full")', "isolated activity history did not render");
     assert.equal(await client.evaluate('document.querySelectorAll(".mobile-activity-record-card").length'), 1);
-    assert.equal(await client.evaluate('document.querySelector(".mobile-activity-record-card strong")?.textContent'), "歩き＋走り");
+    assert.equal(await client.evaluate('document.querySelector(".mobile-activity-record-card strong")?.textContent'), "走り＋歩き");
     assert.equal(await client.evaluate('Array.from(document.querySelector(".screen-layout--history").children).filter((node) => !node.classList.contains("page-head") && !node.matches("[data-mobile-activity-history]")).every((node) => node.hidden)'), true);
 
     await client.evaluate('location.hash = "#/history?mobileActivity=1&mobileActivityRecordId=mobile-activity-browser-audit"');

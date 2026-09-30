@@ -2,6 +2,7 @@ import fs from "node:fs";
 import assert from "node:assert/strict";
 
 const source = fs.readFileSync("ui/mobileWalkJogCopyGuard.js", "utf8");
+const screen = fs.readFileSync("screens/runMeasurementScreen.js", "utf8");
 const results = [];
 
 function test(id, fn) {
@@ -10,30 +11,24 @@ function test(id, fn) {
 }
 
 test("COPY-GUARD-IS-MOBILE-ONLY", () => {
-  assert.ok(source.includes('matchesMobileLayout'));
+  assert.ok(source.includes("matchesMobileLayout"));
   assert.ok(source.includes('if (BOUND_ROOTS.has(root) || !matchesMobileLayout()) return;'));
 });
 
-test("EXTENSION-COPY-REMOVES-RUNNING-ONLY-WORDING", () => {
-  for (const text of [
-    "今日はどう動きますか",
-    "自由に測る",
-    "時間を決めて測る",
-    "距離を決めて測る",
-    "移動地図",
-    "活動を測定しました",
-  ]) assert.ok(source.includes(text), `missing ${text}`);
+test("MEASUREMENT-MODE-COPY-IS-ACTIVITY-NEUTRAL", () => {
+  for (const text of ["自由に測る", "時間を決めて測る", "距離を決めて測る"]) {
+    assert.ok(source.includes(text), `missing ${text}`);
+  }
+  for (const text of ["自由に走る", "時間を決めて走る", "距離を決めて走る"]) {
+    assert.ok(!source.includes(text), `legacy activity-specific copy remains: ${text}`);
+  }
 });
 
-test("RUNNING-COPY-REMAINS-RESTORABLE", () => {
-  for (const text of [
-    "今日はどう走りますか",
-    "自由に走る",
-    "時間を決めて走る",
-    "距離を決めて走る",
-    "走行地図",
-    "走行を測定しました",
-  ]) assert.ok(source.includes(text), `missing ${text}`);
+test("PREP-SCREEN-USES-UNIVERSAL-COPY", () => {
+  for (const text of ["活動と測定方法", "活動と測定方法を選びます。", "運動前の疲労感", "測定が完了しました"]) {
+    assert.ok(screen.includes(text), `missing ${text}`);
+  }
+  assert.ok(!screen.includes("今日はどう走りますか"));
 });
 
 test("COPY-GUARD-DOES-NOT-IMPORT-PRIMARY-ENGINE", () => {
