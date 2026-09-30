@@ -1,0 +1,13 @@
+@media (max-width:54.99rem){
+  .mobile-extension-save{margin:14px 0 4px;padding:14px;border:1px solid rgba(55,94,113,.18);border-radius:16px;background:#f7fbfd;display:grid;gap:10px}
+  .mobile-extension-save>div{display:grid;gap:2px}
+  .mobile-extension-save>div small{font-size:9px;font-weight:900;letter-spacing:.06em;color:#728691}
+  .mobile-extension-save>div strong{font-size:16px;color:#213b48}
+  .mobile-extension-save>p{margin:0;font-size:11px;line-height:1.55;color:#607580}
+  .mobile-extension-save>button,.mobile-extension-save>a{min-height:44px;display:grid;place-items:center;border-radius:12px;font-size:13px;font-weight:900;text-decoration:none}
+  .mobile-extension-save>button{border:0;background:#315f75;color:#fff}
+  .mobile-extension-save>button:disabled{opacity:.65}
+  .mobile-extension-save>a{border:1px solid rgba(49,95,117,.28);background:#fff;color:#315f75}
+  .mobile-extension-save>span{min-height:1.4em;font-size:10px;line-height:1.4;color:#647983;overflow-wrap:anywhere}
+  .mobile-gait-plan-guard{margin:2px 0 0;padding:8px 9px;border-radius:9px;background:#f4f6f7;color:#657781;font-size:10px!important;line-height:1.45!important}
+}
