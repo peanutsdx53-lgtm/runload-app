@@ -9,6 +9,11 @@ const RECORDS_KEY = "runner-load-app-mobile-walk-jog-records-v1.3";
 const PENDING_MEASUREMENT_KEY = "runner-load-app-flow-session-v1-run-measurement-v1";
 const MAX_RECORDS = 100;
 const BOUND_ROOTS = new WeakSet();
+const MIXED_SEGMENT_GAITS = Object.freeze([
+  MOBILE_ACTIVITY_IDS.WALK,
+  MOBILE_ACTIVITY_IDS.JOGGING,
+  MOBILE_ACTIVITY_IDS.RUNNING_CURRENT,
+]);
 
 function clone(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -32,8 +37,9 @@ function readJson(storage, key, fallback) {
 }
 
 function writeJson(storage, key, value) {
+  if (!storage || typeof storage.setItem !== "function") return false;
   try {
-    storage?.setItem?.(key, JSON.stringify(value));
+    storage.setItem(key, JSON.stringify(value));
     return true;
   } catch {
     return false;
@@ -57,7 +63,7 @@ function refineSingleActivityAnalysis(analysis, pending) {
   if (![MOBILE_ACTIVITY_IDS.WALK, MOBILE_ACTIVITY_IDS.JOGGING].includes(analysis.activityId)) return analysis;
   const distanceKm = Number(pending.distanceKm);
   const durationSeconds = Number(pending.durationMinutes) * 60;
-  if (!(distanceKm > 0) || !(durationSeconds > 0)) return analysis;
+  if (!(distanceKm > 0) || !(durationSeconds > 0)) return null;
   return {
     ...analysis,
     segments: [createMobileSegmentAnalysis({
@@ -71,18 +77,32 @@ function refineSingleActivityAnalysis(analysis, pending) {
   };
 }
 
+function validMixedSegments(segments) {
+  if (!Array.isArray(segments) || !segments.length) return false;
+  return segments.every((segment) => MIXED_SEGMENT_GAITS.includes(String(segment?.gaitId || "")));
+}
+
 export function normalizeMobileExtensionRecord({ analysis, pending, id = newRecordId(), createdAt = new Date().toISOString() } = {}) {
   if (!analysis || !pending) return null;
   if (![MOBILE_ACTIVITY_IDS.WALK, MOBILE_ACTIVITY_IDS.JOGGING, MOBILE_ACTIVITY_IDS.MIXED].includes(analysis.activityId)) return null;
+
+  const distanceKm = Number(pending.distanceKm);
+  const durationMinutes = Number(pending.durationMinutes);
+  if (!Number.isFinite(distanceKm) || !(distanceKm > 0)) return null;
+  if (!Number.isFinite(durationMinutes) || !(durationMinutes > 0)) return null;
+
   const refined = refineSingleActivityAnalysis(analysis, pending);
+  if (!refined || !Array.isArray(refined.segments) || !refined.segments.length) return null;
+  if (refined.activityId === MOBILE_ACTIVITY_IDS.MIXED && !validMixedSegments(refined.segments)) return null;
+
   return Object.freeze({
     version: 1,
     modelVersion: String(refined.modelVersion || "2026-09-30.v1.3"),
     id: String(id),
     createdAt: String(createdAt),
     activityId: refined.activityId,
-    distanceKm: Number(pending.distanceKm || 0),
-    durationMinutes: Number(pending.durationMinutes || 0),
+    distanceKm,
+    durationMinutes,
     startedAt: String(pending.startedAt || ""),
     endedAt: String(pending.endedAt || ""),
     stepEstimate: clone(pending.stepEstimate || null),
