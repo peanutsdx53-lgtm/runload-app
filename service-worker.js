@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.09.30.17";
+const CACHE_NAME = "running-record-app-runtime-2026.09.30.18";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -10,6 +10,7 @@ const PRECACHE_URLS = [
   "./core/internal/modules.js",
   "./core/internal/platformInfrastructure.js",
   "./core/internal/modelSupport.js",
+  "./core/internal/mobileWalkJogSpeedModel.js",
   "./core/internal/inputSupport.js",
   "./core/internal/recordRepositories.js",
   "./core/internal/primaryModelEngine.js",
@@ -79,6 +80,8 @@ const PRECACHE_URLS = [
   "./styles/rof-j-compact.css",
   "./styles/mobile-run-measurement.css",
   "./styles/mobile-run-measurement-ergonomics.css",
+  "./styles/mobile-walk-jog.css",
+  "./styles/mobile-walk-jog-records.css",
   "./styles/mobile-app-screens.css",
   "./styles/mobile-quick-tools.css",
   "./styles/mobile-pace-calculator.css",
@@ -95,6 +98,8 @@ const PRECACHE_URLS = [
   "./ui/appVersionStatus.js",
   "./ui/rofJVisualEnhancement.js",
   "./ui/mobileMeasurementRecordAutofill.js",
+  "./ui/mobileWalkJogMeasurementWiring.js",
+  "./ui/mobileWalkJogRecordStore.js",
   "./ui/appRouter.js",
   "./ui/deviceLayout.js",
   "./ui/appSettings.js",
