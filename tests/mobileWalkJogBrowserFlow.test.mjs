@@ -21,6 +21,29 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+async function stopProcess(child) {
+  if (!child || child.exitCode != null || child.signalCode != null) return;
+  const exited = new Promise((resolve) => {
+    child.once("exit", resolve);
+    child.once("error", resolve);
+  });
+  try { child.kill("SIGKILL"); } catch {}
+  await Promise.race([exited, sleep(1500)]);
+}
+
+async function removeTempDir(directory) {
+  try {
+    await fs.rm(directory, {
+      recursive: true,
+      force: true,
+      maxRetries: 5,
+      retryDelay: 100,
+    });
+  } catch (error) {
+    console.warn(`WARN\tBROWSER-CLEANUP\t${error?.message || error}`);
+  }
+}
+
 function chromeExecutable() {
   for (const name of ["google-chrome", "google-chrome-stable", "chromium", "chromium-browser"]) {
     const found = spawnSync("which", [name], { encoding: "utf8" });
@@ -236,9 +259,9 @@ async function run() {
     console.log("PASS\tDESKTOP-NON-INTERFERENCE");
   } finally {
     try { socket?.close(); } catch {}
-    chrome.kill("SIGKILL");
-    server.close();
-    await fs.rm(userDataDir, { recursive: true, force: true });
+    await stopProcess(chrome);
+    await new Promise((resolve) => server.close(resolve));
+    await removeTempDir(userDataDir);
   }
 }
 
