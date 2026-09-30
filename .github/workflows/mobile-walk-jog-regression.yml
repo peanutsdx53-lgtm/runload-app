@@ -19,6 +19,7 @@ on:
       - "tests/mobileWalkJogRecordStore.test.mjs"
       - "tests/mobileWalkJogCopyGuard.test.mjs"
       - "tests/mobileWalkJogHistoryUi.test.mjs"
+      - "tests/mobileWalkJogEdgeCases.test.mjs"
       - "tests/mobileWalkJogBrowserFlow.test.mjs"
       - "tests/mobileWalkJogPwa.test.mjs"
       - "index.html"
@@ -41,6 +42,7 @@ on:
       - "tests/mobileWalkJogRecordStore.test.mjs"
       - "tests/mobileWalkJogCopyGuard.test.mjs"
       - "tests/mobileWalkJogHistoryUi.test.mjs"
+      - "tests/mobileWalkJogEdgeCases.test.mjs"
       - "tests/mobileWalkJogBrowserFlow.test.mjs"
       - "tests/mobileWalkJogPwa.test.mjs"
       - "index.html"
@@ -64,6 +66,8 @@ jobs:
         run: node tests/mobileWalkJogMeasurementWiring.test.mjs
       - name: Mobile activity record-store regression
         run: node tests/mobileWalkJogRecordStore.test.mjs
+      - name: Mobile activity edge-case audit
+        run: node tests/mobileWalkJogEdgeCases.test.mjs
       - name: Mobile activity copy regression
         run: node tests/mobileWalkJogCopyGuard.test.mjs
       - name: Mobile activity history isolation regression
