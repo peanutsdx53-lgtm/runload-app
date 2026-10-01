@@ -18,7 +18,7 @@ permissions:
 jobs:
   capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -83,21 +83,26 @@ jobs:
           routes=(
             home
             record-input
+            result
             history
+            interpretation-room
+            body-part-detail
+            body-timeline
+            simulation
             plan
             consultation
+            course-library
+            course-editor
+            gpx-analysis
+            run-measurement
+            run-route
             reading
+            support-guidance
             settings
             more
             terms
             privacy
             about
-            support-guidance
-            course-library
-            course-editor
-            gpx-analysis
-            body-timeline
-            simulation
           )
           appearances=(light dark)
           themes=(standard natural)
