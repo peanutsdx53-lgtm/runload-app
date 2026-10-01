@@ -13,6 +13,7 @@ const BASE_GROUPS = Object.freeze([
   Object.freeze({
     label: "情報",
     items: Object.freeze([
+      Object.freeze({ screen: "about", icon: "ⓘ", title: "このアプリについて", description: "クレジット・バージョン" }),
       Object.freeze({ screen: "privacy", icon: "◫", title: "プライバシー", description: "データの扱い" }),
       Object.freeze({ screen: "terms", icon: "§", title: "利用規約", description: "利用条件" }),
       Object.freeze({ screen: "reading", icon: "≡", title: "読みもの", description: "結果の背景を確認" }),
@@ -43,7 +44,7 @@ function renderMobileMoreScreen() {
 export function renderMoreScreen() {
   if (matchesMobileLayout()) return renderMobileMoreScreen();
   return `<div class="screen screen--more screen-layout screen-layout--more">
-    <section class="head"><h1>その他</h1></section>
+    <section class="head"><p class="eyebrow">MORE</p><h1>その他</h1><p>設定、共有、サポート、アプリ情報をまとめています。</p></section>
     ${BASE_GROUPS.map((group) => `<section class="group"><p class="group-title">${escapeHtml(group.label)}</p><div class="list">${group.items.map(renderRow).join("")}</div></section>`).join("")}
   </div>`;
 }
