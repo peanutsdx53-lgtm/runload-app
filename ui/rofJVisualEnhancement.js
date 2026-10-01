@@ -21,6 +21,11 @@ const ORIGINAL_ROF_VISUALS = Object.freeze({
 
 let enhancementQueued = false;
 
+function setTextIfChanged(node, value) {
+  if (!node || node.textContent === value) return;
+  node.textContent = value;
+}
+
 function createAnchorRow(anchor) {
   const row = document.createElement("div");
   row.className = "rof-author-anchor";
@@ -129,14 +134,14 @@ function syncAuthorConfirmedPresentation(panel) {
   if (!slider || !descriptor || !anchor) return;
 
   if (selectionIsUntouched(panel, slider)) {
-    descriptor.textContent = "数値を選択";
-    anchor.textContent = rofJGuidanceForSelection(null);
+    setTextIfChanged(descriptor, "数値を選択");
+    setTextIfChanged(anchor, rofJGuidanceForSelection(null));
     return;
   }
 
   const value = Number(slider.value);
-  descriptor.textContent = rofJSelectionDescriptor(value);
-  anchor.textContent = rofJGuidanceForSelection(value);
+  setTextIfChanged(descriptor, rofJSelectionDescriptor(value));
+  setTextIfChanged(anchor, rofJGuidanceForSelection(value));
 }
 
 function bindPresentationSync(panel) {
@@ -162,7 +167,7 @@ function enhanceRofScale(panel) {
 
     const anchorGuide = panel.querySelector(".rof-anchor-guide");
     const anchorLabel = anchorGuide?.querySelector("small");
-    if (anchorLabel) anchorLabel.textContent = "ROF-Jの目安";
+    if (anchorLabel) setTextIfChanged(anchorLabel, "ROF-Jの目安");
 
     const context = panel.closest("[data-rof-context], .rof-sheet");
     const aboutBody = context?.querySelector(".rof-about > div");
@@ -201,7 +206,7 @@ function updateMobileResultFatigue(section) {
       card.append(note);
     }
     note.dataset.rofResultGuidance = "";
-    note.textContent = `走った後のROF-J目安：${rofJGuidanceForSelection(postValue)}`;
+    setTextIfChanged(note, `走った後のROF-J目安：${rofJGuidanceForSelection(postValue)}`);
   }
 
   section.querySelectorAll("dl.visually-hidden > div").forEach((row) => {
@@ -210,7 +215,7 @@ function updateMobileResultFatigue(section) {
     const description = row.querySelector("dd");
     const value = displayedRofValue(description);
     if (!description || value == null) return;
-    description.textContent = `${value} / 10。${rofJGuidanceForSelection(value)}`;
+    setTextIfChanged(description, `${value} / 10。${rofJGuidanceForSelection(value)}`);
   });
 }
 
@@ -219,7 +224,7 @@ function updatePcResultFatigue(section) {
   section.dataset.rofPresentationVersion = ROF_J_PRESENTATION_VERSION;
   section.setAttribute("aria-label", "運動前後の疲労感（ROF-J）");
   const heading = section.querySelector("header h3");
-  if (heading) heading.textContent = "運動前後の疲労感（ROF-J）";
+  if (heading) setTextIfChanged(heading, "運動前後の疲労感（ROF-J）");
 
   const postValue = displayedRofValue(section.querySelector(".pc-fatigue-node.is-post strong"));
   if (postValue == null) return;
@@ -230,7 +235,7 @@ function updatePcResultFatigue(section) {
     if (!legacyNote) section.append(note);
   }
   note.dataset.rofResultGuidance = "";
-  note.textContent = `運動後のROF-J目安：${rofJGuidanceForSelection(postValue)}`;
+  setTextIfChanged(note, `運動後のROF-J目安：${rofJGuidanceForSelection(postValue)}`);
 }
 
 function enhanceResultFatigue() {
