@@ -37,7 +37,9 @@ await test('PACE-TOOL-HAS-ROUTE-BINDER-AND-HOME-NAVIGATION', () => {
   assert.ok(binders.includes('bindMobilePaceCalculator'));
   assert.ok(binders.includes('"pace-tool": bindMobilePaceCalculator'));
   assert.ok(architecture.includes('screen === "pace-tool"'));
-  assert.ok(architecture.includes('title: "ペース換算", backHref: "#/home", backLabel: "ホーム"'));
+  assert.ok(architecture.includes('function mobileUtilityReturn()'));
+  assert.ok(architecture.includes('return { backHref: "#/home", backLabel: "ホーム" };'));
+  assert.ok(architecture.includes('if (screen === "pace-tool") return { title: "ペース換算", ...mobileUtilityReturn() };'));
 });
 
 await test('PACE-TOOL-5KM-35MIN-CALCULATION-IS-EXACT', () => {
