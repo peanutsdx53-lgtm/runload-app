@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.01.37";
+const CACHE_NAME = "running-record-app-runtime-2026.10.01.38";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -100,6 +100,7 @@ const PRECACHE_URLS = [
   "./styles/mobile-insights-v30.css",
   "./styles/mobile-experience-v31.css",
   "./styles/pc-course-v17.css",
+  "./styles/desktop-refresh-v38.css",
   "./styles/interpretation-room.css",
   "./styles/desktop-foundation.css",
   "./styles/desktop.css",
@@ -184,6 +185,8 @@ const PRECACHE_URLS = [
   "./ui/shellInteractions.js",
   "./ui/subjectivePresentation.js",
   "./ui/uiMotion.js",
+  "./ui/desktopFirstUse.js",
+  "./ui/desktopHomeEnhancement.js",
 ];
 
 self.addEventListener("install", (event) => {
