@@ -9,11 +9,11 @@ const home = read("ui/desktopHomeEnhancement.js");
 const css = read("styles/desktop-refresh-v38.css");
 const version = read("ui/appVersionStatus.js").match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 
-assert.equal(version, "2026.10.01.38");
+assert.equal(version, "2026.10.01.39");
 assert.match(index, /desktop-refresh-v38\.css/);
 assert.match(index, /desktopFirstUse\.js/);
 assert.match(index, /desktopHomeEnhancement\.js/);
-assert.match(worker, /running-record-app-runtime-2026\.10\.01\.38/);
+assert.match(worker, /running-record-app-runtime-2026\.10\.01\.39/);
 for (const asset of ["./styles/desktop-refresh-v38.css", "./ui/desktopFirstUse.js", "./ui/desktopHomeEnhancement.js"]) {
   assert.ok(worker.includes(`"${asset}"`), `service worker must precache ${asset}`);
 }
