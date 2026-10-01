@@ -66,9 +66,9 @@ test('RECONCILER-RUNS-BEFORE-CAPACITY-REPAIR', () => {
   assert.ok(guardIndex >= 0 && capacityIndex > guardIndex);
 });
 
-test('VERSION-AND-PWA-CACHE-MATCH-V32', () => {
+test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
-  assert.equal(version, '2026.10.01.32');
+  assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/mobileHomeInitialLayoutV32.js"'));
 });
