@@ -20,51 +20,30 @@ const BASE_GROUPS = Object.freeze([
   }),
 ]);
 
-const MOBILE_GROUPS = Object.freeze([
-  Object.freeze({
-    label: "スマホ機能",
-    items: Object.freeze([
-      Object.freeze({ screen: "achievements", icon: "🏆", title: "実績", description: "記録・予定・休養の達成状況" }),
-      Object.freeze({ screen: "location-note", icon: "📍", title: "地点メモ", description: "場所を記録" }),
-      Object.freeze({ screen: "quick-note", icon: "📝", title: "1分メモ", description: "短い振り返り" }),
-      Object.freeze({ screen: "gear-note", icon: "🎒", title: "装備メモ", description: "装備を記録" }),
-      Object.freeze({ screen: "departure-check", icon: "✓", title: "出発チェック", description: "走る前の確認" }),
-      Object.freeze({ screen: "fuel-note", icon: "💧", title: "補給メモ", description: "水分・補給を記録" }),
-      Object.freeze({ screen: "photo-note", icon: "📷", title: "写真メモ", description: "写真を端末内で管理" }),
-      Object.freeze({ screen: "pace-tool", icon: "⌚", title: "ペース換算", description: "距離と時間を換算" }),
-    ]),
-  }),
-]);
-
-const MORE_ORIGIN_SCREENS = new Set([
-  "achievements",
-  "location-note",
-  "quick-note",
-  "gear-note",
-  "departure-check",
-  "fuel-note",
-  "photo-note",
-  "pace-tool",
+const MOBILE_INFO_ITEMS = Object.freeze([
+  Object.freeze({ screen: "about", icon: "ⓘ", title: "このアプリについて", description: "クレジット・バージョン" }),
+  Object.freeze({ screen: "terms", icon: "§", title: "利用規約", description: "利用条件" }),
+  Object.freeze({ screen: "privacy", icon: "◫", title: "プライバシー", description: "データの扱い" }),
 ]);
 
 function renderRow(item) {
-  const href = `#/${item.screen}${MORE_ORIGIN_SCREENS.has(item.screen) ? "?from=more" : ""}`;
-  return `<a class="row${item.primary ? " primary" : ""}" href="${escapeHtml(href)}"><span class="icon" aria-hidden="true">${escapeHtml(item.icon)}</span><span class="copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.description)}</span></span><span class="arrow" aria-hidden="true">›</span></a>`;
+  return `<a class="row${item.primary ? " primary" : ""}" href="#/${escapeHtml(item.screen)}"><span class="icon" aria-hidden="true">${escapeHtml(item.icon)}</span><span class="copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.description)}</span></span><span class="arrow" aria-hidden="true">›</span></a>`;
+}
+
+function renderMobileMoreScreen() {
+  return `<div class="screen screen--more screen-layout screen-layout--more">
+    <section class="head"><h1>その他</h1><p>スマホ版の機能は、ホームのアイコンまたは関連する画面から利用します。</p></section>
+    <section class="group"><p class="group-title">HOME</p><div class="list">
+      <a class="row primary" href="#/home"><span class="icon" aria-hidden="true">＋</span><span class="copy"><strong>ホームに機能を追加</strong><span>ホームで「編集」→「＋」から選択</span></span><span class="arrow" aria-hidden="true">›</span></a>
+    </div></section>
+    <section class="group"><p class="group-title">APP INFO</p><div class="list">${MOBILE_INFO_ITEMS.map(renderRow).join("")}</div></section>
+  </div>`;
 }
 
 export function renderMoreScreen() {
-  const mobileInfo = Object.freeze({
-    ...BASE_GROUPS[1],
-    items: Object.freeze([
-      Object.freeze({ screen: "about", icon: "ⓘ", title: "このアプリについて", description: "クレジット・バージョン" }),
-      ...BASE_GROUPS[1].items,
-    ]),
-  });
-  const groups = matchesMobileLayout()
-    ? [BASE_GROUPS[0], MOBILE_GROUPS[0], mobileInfo]
-    : BASE_GROUPS;
+  if (matchesMobileLayout()) return renderMobileMoreScreen();
   return `<div class="screen screen--more screen-layout screen-layout--more">
     <section class="head"><h1>その他</h1></section>
-    ${groups.map((group) => `<section class="group"><p class="group-title">${escapeHtml(group.label)}</p><div class="list">${group.items.map(renderRow).join("")}</div></section>`).join("")}
+    ${BASE_GROUPS.map((group) => `<section class="group"><p class="group-title">${escapeHtml(group.label)}</p><div class="list">${group.items.map(renderRow).join("")}</div></section>`).join("")}
   </div>`;
 }
