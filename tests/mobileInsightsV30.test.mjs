@@ -99,7 +99,7 @@ const about = renderAboutScreen();
 assert.match(about, /このアプリについて/);
 assert.match(about, /OpenStreetMap contributors/);
 assert.match(about, /GitHub/);
-assert.match(about, /v2026\.09\.30\.30/);
+assert.match(about, /v2026\.10\.01\.31/);
 
 const achievementHtml = renderAchievementsScreen({ services });
 assert.match(achievementHtml, /NEXT/);
@@ -116,7 +116,7 @@ assert.match(resultSource, /renderSameCourseComparison/);
 const historySource = fs.readFileSync(new URL("../screens/historyScreen.js", import.meta.url), "utf8");
 assert.match(historySource, /renderMobileFatigueTrend/);
 const sw = fs.readFileSync(new URL("../service-worker.js", import.meta.url), "utf8");
-assert.match(sw, /2026\.09\.30\.30/);
+assert.match(sw, /2026\.10\.01\.31/);
 assert.match(sw, /mobile-insights-v30\.css/);
 assert.match(sw, /ui\/mobileInsights\.js/);
 assert.match(sw, /screens\/aboutScreen\.js/);
