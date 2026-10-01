@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat > /tmp/runload-populated-audit.cjs <<'NODE'
+          cat > .desktop-populated-audit.cjs <<'NODE'
           const fs = require('node:fs');
           const path = require('node:path');
           const { chromium } = require('playwright');
@@ -103,8 +103,6 @@ jobs:
 
                 const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
                 await context.addInitScript(({ SETTINGS_KEY, configured }) => {
-                  localStorage.clear();
-                  sessionStorage.clear();
                   localStorage.setItem(SETTINGS_KEY, JSON.stringify(configured));
                 }, { SETTINGS_KEY, configured: settings(appearanceMode, colorTheme) });
 
@@ -137,7 +135,7 @@ jobs:
                   throw new Error(`[${combo}] record save did not reach result. ${message || error.message}`);
                 }
 
-                let recordId = recordIdFromUrl(page.url());
+                const recordId = recordIdFromUrl(page.url());
                 if (!recordId) throw new Error(`[${combo}] recordId missing after save: ${page.url()}`);
 
                 const firstTime = Date.parse('2026-09-28T08:00:00.000Z');
@@ -205,14 +203,14 @@ jobs:
             files.sort();
             fs.writeFileSync('visual-audit-populated/manifest.txt', files.join('\n') + '\n');
             if (files.filter((file) => file.endsWith('.png')).length !== 12) {
-              throw new Error(`Expected 12 populated screenshots, got ${files.length}`);
+              throw new Error(`Expected 12 populated screenshots, got ${files.filter((file) => file.endsWith('.png')).length}`);
             }
           })().catch((error) => {
             console.error(error);
             process.exit(1);
           });
           NODE
-          node /tmp/runload-populated-audit.cjs
+          node .desktop-populated-audit.cjs
       - name: Upload populated desktop screenshots
         uses: actions/upload-artifact@v4
         with:
