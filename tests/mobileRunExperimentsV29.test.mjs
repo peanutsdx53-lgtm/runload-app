@@ -59,7 +59,7 @@ assert.match(mapSource, /setCenter, setMarker, setTrack/);
 const appSource = fs.readFileSync(new URL("../app.js", import.meta.url), "utf8");
 assert.match(appSource, /"body-timeline": renderBodyTimelineScreen/);
 const sw = fs.readFileSync(new URL("../service-worker.js", import.meta.url), "utf8");
-assert.match(sw, /2026\.09\.30\.(29|30)/);
+assert.match(sw, /2026\.10\.01\.31/);
 assert.match(sw, /screens\/bodyTimelineScreen\.js/);
 assert.match(sw, /ui\/runFingerprint\.js/);
 assert.match(sw, /styles\/mobile-run-experiments\.css/);
