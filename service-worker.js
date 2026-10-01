@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.01.31";
+const CACHE_NAME = "running-record-app-runtime-2026.10.01.32";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -112,6 +112,7 @@ const PRECACHE_URLS = [
   "./ui/appVersionStatus.js",
   "./ui/rofJVisualEnhancement.js",
   "./ui/mobileMeasurementRecordAutofill.js",
+  "./ui/mobileHomeInitialLayoutV32.js",
   "./ui/mobileWalkJogMeasurementWiring.js",
   "./ui/mobileWalkJogGpsQuality.js",
   "./ui/mobileWalkJogGpsQualityUi.js",

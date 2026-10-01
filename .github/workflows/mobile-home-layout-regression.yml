@@ -1,0 +1,78 @@
+name: Mobile Home Layout Regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "screens/homeScreen.js"
+      - "ui/mobileHomeExperience.js"
+      - "ui/mobileHomeInitialLayoutV32.js"
+      - "ui/mobileHomePageCapacity.js"
+      - "ui/interactions/homeInteractions.js"
+      - "ui/interactions/homeGridModel.js"
+      - "styles/mobile-home*.css"
+      - "styles/mobile-experience-v31.css"
+      - "tests/mobileHome*.test.mjs"
+      - "index.html"
+      - "service-worker.js"
+      - "ui/appVersionStatus.js"
+      - ".github/workflows/mobile-home-layout-regression.yml"
+  pull_request:
+    paths:
+      - "screens/homeScreen.js"
+      - "ui/mobileHomeExperience.js"
+      - "ui/mobileHomeInitialLayoutV32.js"
+      - "ui/mobileHomePageCapacity.js"
+      - "ui/interactions/homeInteractions.js"
+      - "ui/interactions/homeGridModel.js"
+      - "styles/mobile-home*.css"
+      - "styles/mobile-experience-v31.css"
+      - "tests/mobileHome*.test.mjs"
+      - "index.html"
+      - "service-worker.js"
+      - "ui/appVersionStatus.js"
+      - ".github/workflows/mobile-home-layout-regression.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            node --check "$file" >/dev/null
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0)
+      - name: Initial Home three-row contract
+        run: node tests/mobileHomeInitialLayout.test.mjs
+      - name: Focused Home regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/mobileHomeGridModel.test.mjs
+          node tests/mobileHomeFixedUi.test.mjs
+          node tests/mobileHomeReturnTransition.test.mjs
+          node tests/mobileHomeIosScrollCapacity.test.mjs
+          node tests/mobileQuickTools.test.mjs
+          node tests/appVersionStatus.test.mjs
+      - name: All non-browser regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          pass=0
+          for test_file in tests/*.test.mjs; do
+            if [[ "$test_file" == *mobileWalkJogBrowserFlow.test.mjs ]]; then
+              continue
+            fi
+            node "$test_file" >/tmp/runload-one-test.log 2>&1 || { cat /tmp/runload-one-test.log; exit 1; }
+            pass=$((pass+1))
+          done
+          echo "non-browser tests passed: $pass"

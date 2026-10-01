@@ -95,11 +95,16 @@ assert.match(capsule, /5\.00/);
 assert.match(capsule, /312 kcal/);
 assert.match(capsule, /2 → 4/);
 
+const versionSource = fs.readFileSync(new URL("../ui/appVersionStatus.js", import.meta.url), "utf8");
+const currentVersion = versionSource.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
+assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
+const escapedVersion = currentVersion.replaceAll(".", "\\.");
+
 const about = renderAboutScreen();
 assert.match(about, /このアプリについて/);
 assert.match(about, /OpenStreetMap contributors/);
 assert.match(about, /GitHub/);
-assert.match(about, /v2026\.10\.01\.31/);
+assert.match(about, new RegExp(`v${escapedVersion}`));
 
 const achievementHtml = renderAchievementsScreen({ services });
 assert.match(achievementHtml, /NEXT/);
@@ -116,7 +121,7 @@ assert.match(resultSource, /renderSameCourseComparison/);
 const historySource = fs.readFileSync(new URL("../screens/historyScreen.js", import.meta.url), "utf8");
 assert.match(historySource, /renderMobileFatigueTrend/);
 const sw = fs.readFileSync(new URL("../service-worker.js", import.meta.url), "utf8");
-assert.match(sw, /2026\.10\.01\.31/);
+assert.match(sw, new RegExp(`running-record-app-runtime-${escapedVersion}`));
 assert.match(sw, /mobile-insights-v30\.css/);
 assert.match(sw, /ui\/mobileInsights\.js/);
 assert.match(sw, /screens\/aboutScreen\.js/);
