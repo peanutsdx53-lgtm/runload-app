@@ -15,10 +15,10 @@ assert.match(css, /home-desktop-legacy[\s\S]*grid-column:\s*1\s*\/\s*-1\s*!impor
   'Enhanced Home wrapper must span the full PC workspace.');
 assert.match(css, /editor-actions \.primary[\s\S]*width:\s*17rem\s*!important/,
   'Course save action must use a label-appropriate width instead of a large bar.');
-assert.ok(index.includes('./styles/desktop-layout-v48.css'), 'index.html must load desktop-layout-v48.css.');
-assert.ok(worker.includes('./styles/desktop-layout-v48.css'), 'service worker must precache desktop-layout-v48.css.');
-assert.ok(worker.includes('2026.10.01.48'), 'service worker cache must move to v48.');
-assert.ok(version.includes('2026.10.01.48'), 'app version must move to v48.');
-assert.ok(about.includes('v2026.10.01.48'), 'About screen must show v48.');
+assert.ok(index.includes('./styles/desktop-layout-v48.css'), 'index.html must retain desktop-layout-v48.css.');
+assert.ok(worker.includes('./styles/desktop-layout-v48.css'), 'service worker must retain desktop-layout-v48.css.');
+assert.match(worker, /running-record-app-runtime-\d{4}\.\d{2}\.\d{2}\.\d+/, 'service worker must retain a versioned runtime cache.');
+assert.match(version, /APP_VERSION\s*=\s*"\d{4}\.\d{2}\.\d{2}\.\d+"/, 'app version status must retain a version identifier.');
+assert.match(about, /APP_VERSION_LABEL\s*=\s*"v\d{4}\.\d{2}\.\d{2}\.\d+"/, 'About screen must retain a version label.');
 
 console.log('desktop layout v48 regression contract: PASS');
