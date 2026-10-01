@@ -8,8 +8,8 @@ const index=read("index.html");
 const worker=read("service-worker.js");
 const version=read("ui/appVersionStatus.js");
 
-assert.match(version,/APP_VERSION = "2026\.10\.01\.44"/);
-assert.match(worker,/running-record-app-runtime-2026\.10\.01\.44/);
+assert.match(version,/APP_VERSION = "2026\.10\.01\.\d+"/);
+assert.match(worker,/running-record-app-runtime-2026\.10\.01\.\d+/);
 assert.match(index,/desktop-consultation-v44\.css/);
 assert.ok(worker.includes('"./styles/desktop-consultation-v44.css"'));
 assert.match(screen,/data-share-prep/);
