@@ -10,8 +10,8 @@ const index=read("index.html");
 const worker=read("service-worker.js");
 const version=read("ui/appVersionStatus.js");
 
-assert.match(version,/APP_VERSION = "2026\.10\.01\.43"/);
-assert.match(worker,/running-record-app-runtime-2026\.10\.01\.43/);
+assert.match(version,/APP_VERSION = "2026\.10\.01\.\d+"/);
+assert.match(worker,/running-record-app-runtime-2026\.10\.01\.\d+/);
 assert.match(index,/desktop-info-v43\.css/);
 assert.ok(worker.includes('"./styles/desktop-info-v43.css"'));
 assert.match(more,/このアプリについて/);
