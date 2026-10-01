@@ -1,6 +1,7 @@
 import {
   ROF_J_AUTHOR_CONFIRMED_ANCHORS,
   ROF_J_PRESENTATION_VERSION,
+  isValidRofJSelection,
   rofJGuidanceForSelection,
   rofJSelectionDescriptor,
 } from "../core/rofJAuthorConfirmedScale.js";
@@ -179,9 +180,68 @@ function enhanceRofScale(panel) {
   syncAuthorConfirmedPresentation(panel);
 }
 
+function displayedRofValue(node) {
+  const match = String(node?.textContent || "").match(/(?:^|\s)(\d{1,2})(?:\s|$|\/)/);
+  if (!match) return null;
+  const value = Number(match[1]);
+  return isValidRofJSelection(value) ? value : null;
+}
+
+function updateMobileResultFatigue(section) {
+  if (!(section instanceof HTMLElement)) return;
+  section.dataset.rofPresentationVersion = ROF_J_PRESENTATION_VERSION;
+
+  const postValue = displayedRofValue(section.querySelector(".fatigue-values .post strong"));
+  const card = section.querySelector(".fatigue-card");
+  if (postValue != null && card) {
+    let note = card.querySelector("[data-rof-result-guidance]") || card.querySelector(".candidate-note");
+    if (!note) {
+      note = document.createElement("p");
+      note.className = "candidate-note";
+      card.append(note);
+    }
+    note.dataset.rofResultGuidance = "";
+    note.textContent = `走った後のROF-J目安：${rofJGuidanceForSelection(postValue)}`;
+  }
+
+  section.querySelectorAll("dl.visually-hidden > div").forEach((row) => {
+    const term = row.querySelector("dt")?.textContent?.trim();
+    if (!["走る前", "走った後"].includes(term)) return;
+    const description = row.querySelector("dd");
+    const value = displayedRofValue(description);
+    if (!description || value == null) return;
+    description.textContent = `${value} / 10。${rofJGuidanceForSelection(value)}`;
+  });
+}
+
+function updatePcResultFatigue(section) {
+  if (!(section instanceof HTMLElement)) return;
+  section.dataset.rofPresentationVersion = ROF_J_PRESENTATION_VERSION;
+  section.setAttribute("aria-label", "運動前後の疲労感（ROF-J）");
+  const heading = section.querySelector("header h3");
+  if (heading) heading.textContent = "運動前後の疲労感（ROF-J）";
+
+  const postValue = displayedRofValue(section.querySelector(".pc-fatigue-node.is-post strong"));
+  if (postValue == null) return;
+  let note = section.querySelector("[data-rof-result-guidance]");
+  if (!note) {
+    const legacyNote = [...section.children].find((element) => element.tagName === "P");
+    note = legacyNote || document.createElement("p");
+    if (!legacyNote) section.append(note);
+  }
+  note.dataset.rofResultGuidance = "";
+  note.textContent = `運動後のROF-J目安：${rofJGuidanceForSelection(postValue)}`;
+}
+
+function enhanceResultFatigue() {
+  document.querySelectorAll(".fatigue-section").forEach(updateMobileResultFatigue);
+  document.querySelectorAll(".pc-result-fatigue").forEach(updatePcResultFatigue);
+}
+
 function enhanceAll() {
   enhancementQueued = false;
   document.querySelectorAll(".rof-scale-panel").forEach(enhanceRofScale);
+  enhanceResultFatigue();
 }
 
 function queueEnhancement() {
