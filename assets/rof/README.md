@@ -9,12 +9,24 @@ The five PNG files in this directory are cropped from Appendix A of:
 Changes made for RunLoad:
 
 - each of the five original diagram components was cropped from the published ROF scale;
-- the five crops are presented horizontally from the lower-fatigue side to the higher-fatigue side;
-- no new numerical value is assigned to an individual diagram in RunLoad.
+- the diagram itself is not redrawn or altered;
+- each crop is displayed at the corresponding original ROF anchor position.
 
-The Japanese ROF-J descriptor wording displayed beside this visual guide is not stored in these image files. RunLoad uses the controlled Japanese wording from Suzuki K, Arai T. *Validation of the Japanese Version of the Rating of Fatigue Scale*. Sports Medicine - Open. 2026;12:134 and its Additional file 1, without rewriting the descriptor wording.
+The Japanese ROF-J wording comes from Suzuki K, Arai T. *Validation of the Japanese Version of the Rating of Fatigue Scale*. Sports Medicine - Open. 2026;12:134.
 
 - ROF-J source: https://link.springer.com/article/10.1186/s40798-026-01108-8
 - ROF-J license: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0): https://creativecommons.org/licenses/by-nc-nd/4.0/
 
-RunLoad treats ROF-J as a separate optional subjective-fatigue record. The visual guide does not change the ROF-J scoring semantics and is not combined with the application's body-region Reference-100 values.
+## Author-confirmed anchor placement
+
+On 2026-10-01, the ROF-J corresponding author confirmed to the RunLoad researcher that the numeric placement shown in the published Additional file 1 is not the intended placement and that ROF-J should use the same anchor placement as the original ROF scale:
+
+- 10 — 完全な疲労困憊（何も残っていない状態）
+- between 7 and 8 — とても疲れている
+- 5 — 中程度に疲れている
+- between 2 and 3 — 少し疲れている
+- 0 — まったく疲れていない
+
+The midpoint anchor positions are presentation anchors, not additional selectable scores. RunLoad continues to record ROF-J as an integer from 0 through 10.
+
+RunLoad treats ROF-J as a separate optional subjective-fatigue record. Pre-exercise and post-exercise values are stored separately, and their difference is shown only when both values are available. ROF-J is not combined with the application's body-region Reference-100 values and is not used as a diagnostic or safety classification by itself.
