@@ -155,7 +155,10 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "departure-check") return { title: "出発チェック", ...mobileUtilityReturn(parameter) };
   if (screen === "fuel-note") return { title: "補給メモ", ...mobileUtilityReturn(parameter) };
   if (screen === "photo-note") return { title: "写真メモ", ...mobileUtilityReturn(parameter) };
-  if (screen === "pace-tool") return { title: "ペース換算", ...mobileUtilityReturn(parameter) };
+  if (screen === "pace-tool") {
+    if (parameter("from") === "more") return { title: "ペース換算", backHref: "#/more", backLabel: "その他" };
+    return { title: "ペース換算", backHref: "#/home", backLabel: "ホーム" };
+  }
 
   if (screen === "plan") {
     const interpretationReturn = interpretationReturnContext(parameter, recordId || parameter("sourceRecordId"));
