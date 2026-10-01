@@ -54,18 +54,19 @@ await test('MOBILE-MORE-KEEPS-ONLY-APP-INFORMATION', () => {
   assert.ok(!more.includes('MORE_ORIGIN_SCREENS'));
 });
 
-await test('VERSION-AND-PWA-CACHE-MATCH-V36', () => {
-  const version = read('ui/appVersionStatus.js');
+await test('VERSION-AND-PWA-CACHE-MATCH', () => {
+  const versionText = read('ui/appVersionStatus.js');
   const sw = read('service-worker.js');
   const about = read('screens/aboutScreen.js');
-  assert.ok(version.includes('APP_VERSION = "2026.10.01.36"'));
-  assert.ok(sw.includes('running-record-app-runtime-2026.10.01.36'));
-  assert.ok(about.includes('v2026.10.01.36'));
+  const version = versionText.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
+  assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
+  assert.ok(sw.includes(`running-record-app-runtime-${version}`));
+  assert.ok(about.includes(`v${version}`));
 });
 
 const failed = results.filter((item) => item.status === 'FAIL');
 console.log(JSON.stringify({
-  suite: 'Mobile More Architecture v36',
+  suite: 'Mobile More Architecture',
   total: results.length,
   passed: results.length - failed.length,
   failed: failed.length,
