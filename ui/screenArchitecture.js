@@ -148,7 +148,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     };
   }
 
-  if (screen === "achievements") return { title: "実績", backHref: "#/more", backLabel: "その他" };
+  if (screen === "achievements") return { title: "実績", backHref: "#/home", backLabel: "ホーム" };
   if (screen === "location-note") return { title: "地点メモ", ...mobileUtilityReturn(parameter) };
   if (screen === "quick-note") return { title: "1分メモ", ...mobileUtilityReturn(parameter) };
   if (screen === "gear-note") return { title: "装備メモ", ...mobileUtilityReturn(parameter) };
@@ -177,7 +177,6 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     }
     return { title: "共有用にまとめる", backHref: "#/more", backLabel: "その他" };
   }
-
   if (screen === "support-guidance") {
     const returnTo = parameter("returnTo");
     if (returnTo.startsWith("#/record-input")) {
