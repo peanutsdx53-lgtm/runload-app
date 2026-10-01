@@ -11,6 +11,16 @@ const DEFAULT_WIDGET_ORDER = Object.freeze(["today", "plan", "changes", "checkpo
 const DEFAULT_WIDGET_SIZES = Object.freeze({ today: "medium", plan: "small", changes: "small", checkpoint: "small" });
 const LEGACY_VISIBLE_WIDGETS = Object.freeze(["today", "checkpoint", "plan"]);
 const CURRENT_VISIBLE_WIDGETS = Object.freeze(["today", "plan", "changes"]);
+const CANONICAL_POSITIONS = Object.freeze({
+  "widget:today": Object.freeze({ row: 1, col: 1 }),
+  "widget:plan": Object.freeze({ row: 2, col: 1 }),
+  "widget:changes": Object.freeze({ row: 2, col: 3 }),
+  "widget:checkpoint": Object.freeze({ row: 1, col: 1 }),
+  "app:simulation": Object.freeze({ row: 3, col: 1 }),
+  "app:plan": Object.freeze({ row: 3, col: 2 }),
+  "app:reading": Object.freeze({ row: 3, col: 3 }),
+  "app:settings": Object.freeze({ row: 3, col: 4 }),
+});
 
 let queued = false;
 let reconciling = false;
@@ -41,6 +51,12 @@ function sameSet(left, right) {
   return a.length === b.length && a.every((value, index) => value === b[index]);
 }
 
+function sameOrder(left, right) {
+  const a = Array.isArray(left) ? left.map(String) : [];
+  const b = Array.isArray(right) ? right.map(String) : [];
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
 function layoutAppIds(layout) {
   if (!layout || !Array.isArray(layout.pages)) return [];
   return layout.pages.flatMap((page) => Array.isArray(page) ? page : []).flatMap((token) => {
@@ -62,13 +78,33 @@ function widgetStateLooksDefault(widgetLayout) {
   return DEFAULT_WIDGET_ORDER.every((id) => !sizes[id] || String(sizes[id]) === DEFAULT_WIDGET_SIZES[id]);
 }
 
+function positionStateLooksGeneratedDefault(positionLayout) {
+  if (!positionLayout || !Array.isArray(positionLayout.pages)) return true;
+  let sawKnownPlacement = false;
+  for (let pageIndex = 0; pageIndex < positionLayout.pages.length; pageIndex += 1) {
+    const page = positionLayout.pages[pageIndex];
+    if (!Array.isArray(page)) continue;
+    for (const entry of page) {
+      const token = String(entry?.token || "");
+      const expected = CANONICAL_POSITIONS[token];
+      if (!expected) continue;
+      sawKnownPlacement = true;
+      if (pageIndex !== 0) return false;
+      if (Number(entry?.row) !== expected.row || Number(entry?.col) !== expected.col) return false;
+    }
+  }
+  return !sawKnownPlacement || true;
+}
+
 function storedStateLooksLikeGeneratedDefault() {
   const layout = readJson(LAYOUT_KEY);
   const widgets = readJson(WIDGET_KEY);
-  if (!layout && !widgets) return true;
+  const positions = readJson(POSITION_KEY);
+  if (!layout && !widgets && !positions) return true;
   if (!widgetStateLooksDefault(widgets)) return false;
+  if (!positionStateLooksGeneratedDefault(positions)) return false;
   if (!layout || typeof layout !== "object") return true;
-  if (!sameSet(layoutDockIds(layout), DEFAULT_DOCK)) return false;
+  if (!sameOrder(layoutDockIds(layout), DEFAULT_DOCK)) return false;
   const apps = layoutAppIds(layout);
   return sameSet(apps, LEGACY_HOME_APPS) || sameSet(apps, DEFAULT_HOME_APPS);
 }
