@@ -12,8 +12,8 @@ function location(query = '') {
 const achievements = resolveScreenContextNavigation('achievements', location('from=more'));
 assert.deepEqual(achievements, {
   title: '実績',
-  backHref: '#/more',
-  backLabel: 'その他',
+  backHref: '#/home',
+  backLabel: 'ホーム',
 });
 
 const mobileTools = [
@@ -27,20 +27,18 @@ const mobileTools = [
 ];
 
 for (const [screen, title] of mobileTools) {
-  assert.deepEqual(resolveScreenContextNavigation(screen, location('from=more')), {
-    title,
-    backHref: '#/more',
-    backLabel: 'その他',
-  });
-  assert.deepEqual(resolveScreenContextNavigation(screen, location()), {
+  const expected = {
     title,
     backHref: '#/home',
     backLabel: 'ホーム',
-  });
+  };
+  assert.deepEqual(resolveScreenContextNavigation(screen, location('from=more')), expected);
+  assert.deepEqual(resolveScreenContextNavigation(screen, location()), expected);
 }
 
-assert.match(more, /MORE_ORIGIN_SCREENS/);
-assert.match(more, /\?from=more/);
+assert.doesNotMatch(more, /MORE_ORIGIN_SCREENS/);
+assert.doesNotMatch(more, /\?from=more/);
+assert.match(more, /ホームに機能を追加/);
 assert.match(navigationCss, /\.screen--achievements > \.secondary-derived-head/);
 assert.match(navigationCss, /\.screen--about > \.secondary-derived-head/);
 assert.match(navigationCss, /display:\s*none !important/);
