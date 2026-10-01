@@ -50,6 +50,12 @@ test('LEGACY-GENERATED-DEFAULT-IS-MIGRATED-WITHOUT-RESETTING-CUSTOM-LAYOUTS', ()
   assert.match(guard, /storedStateLooksLikeGeneratedDefault/);
   assert.match(guard, /sameSet\(apps, LEGACY_HOME_APPS\) \|\| sameSet\(apps, DEFAULT_HOME_APPS\)/);
   assert.match(guard, /widgetStateLooksDefault/);
+  assert.match(guard, /positionStateLooksGeneratedDefault/);
+  assert.match(guard, /CANONICAL_POSITIONS/);
+  assert.match(guard, /pageIndex !== 0/);
+  assert.match(guard, /Number\(entry\?\.row\) !== expected\.row/);
+  assert.match(guard, /Number\(entry\?\.col\) !== expected\.col/);
+  assert.match(guard, /sameOrder\(layoutDockIds\(layout\), DEFAULT_DOCK\)/);
   assert.match(guard, /if \(storedStateLooksLikeGeneratedDefault\(\)\)/);
 });
 
