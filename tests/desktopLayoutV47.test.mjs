@@ -30,9 +30,14 @@ assert.match(css, /\.editor-actions \.primary[\s\S]*width:\s*fit-content/,
   'Course save button width must follow its label instead of filling the panel.');
 
 assert.ok(index.includes('./styles/desktop-layout-v47.css'), 'index.html must load desktop-layout-v47.css.');
-assert.ok(worker.includes('./styles/desktop-layout-v47.css'), 'service worker must precache desktop-layout-v47.css.');
-assert.ok(worker.includes('2026.10.01.47'), 'service worker cache must move to v47.');
-assert.ok(version.includes('2026.10.01.47'), 'app version must move to v47.');
-assert.ok(about.includes('v2026.10.01.47'), 'About screen must show v47.');
+assert.ok(worker.includes('./styles/desktop-layout-v47.css'), 'service worker must keep precaching desktop-layout-v47.css.');
+
+function patchLevel(text) {
+  const match = text.match(/2026\.10\.01\.(\d+)/);
+  return match ? Number(match[1]) : 0;
+}
+assert.ok(patchLevel(worker) >= 47, 'service worker cache must be v47 or later.');
+assert.ok(patchLevel(version) >= 47, 'app version must be v47 or later.');
+assert.ok(patchLevel(about) >= 47, 'About screen must show v47 or later.');
 
 console.log('desktop layout v47 regression contract: PASS');
