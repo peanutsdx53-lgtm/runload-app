@@ -1,0 +1,190 @@
+/* Desktop empty-state polish v46.
+ * Only affects PC presentation; populated result/detail/route layouts are unchanged.
+ */
+@media (min-width: 55rem) {
+  /* Result: empty state only. */
+  .screen--result.screen-layout--result > .intro:has(> p + a) {
+    width: min(100%, 54rem) !important;
+    min-height: 24rem;
+    margin: clamp(2.5rem, 8vh, 5.5rem) auto 0 !important;
+    padding: clamp(2rem, 4vw, 3.2rem) !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 19rem) !important;
+    grid-template-rows: auto auto !important;
+    gap: 1rem 2.5rem !important;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: 1.5rem;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .screen--result.screen-layout--result > .intro:has(> p + a) .intro-heading {
+    grid-column: 1;
+    grid-row: 1;
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  .screen--result.screen-layout--result > .intro:has(> p + a) .intro-heading h1 {
+    margin-top: 0.35rem !important;
+    font-size: clamp(2rem, 3.2vw, 3.15rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  .screen--result.screen-layout--result > .intro:has(> p + a) > p {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: 34rem;
+    margin: 0 !important;
+    color: var(--color-muted);
+    font-size: 0.95rem !important;
+    line-height: 1.65 !important;
+  }
+
+  .screen--result.screen-layout--result > .intro:has(> p + a) > a {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    width: 100% !important;
+    min-height: 8.5rem;
+    margin: 0 !important;
+    padding: 1.25rem 1.35rem !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 58%, var(--color-line));
+    border-radius: 1rem;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+    text-decoration: none;
+  }
+
+  .screen--result.screen-layout--result > .intro:has(> p + a) > a strong {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 1.08rem;
+  }
+
+  .screen--result.screen-layout--result > .intro:has(> p + a) > a small {
+    color: var(--color-muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .screen--result.screen-layout--result > .intro:has(> p + a) > a i {
+    font-size: 1.5rem;
+    font-style: normal;
+  }
+
+  /* Body-part detail: only the unavailable state contains compact-boundary. */
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) {
+    width: min(100%, 54rem) !important;
+    min-height: 21rem;
+    margin: 2rem auto 0 !important;
+    padding: clamp(2rem, 4vw, 3.1rem) !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 20rem);
+    gap: 1.5rem 2.4rem;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: 1.5rem;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) .detail-title {
+    margin: 0 !important;
+  }
+
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) .detail-title h1 {
+    margin-top: 0.35rem !important;
+    font-size: clamp(2rem, 3vw, 3rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) .detail-title p:last-child {
+    margin-top: 0.7rem !important;
+    color: var(--color-muted);
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) > .compact-boundary {
+    margin: 0 !important;
+    padding: 1.2rem 1.3rem !important;
+    border: 1px solid color-mix(in srgb, var(--color-line) 88%, var(--color-accent));
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--color-neutral-soft) 72%, var(--color-surface));
+    color: var(--color-muted);
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Saved route: empty state only. */
+  .screen--run-route.screen-layout--result .run-route-view--empty {
+    width: min(100%, 54rem) !important;
+    min-height: 22rem;
+    margin: clamp(2.5rem, 8vh, 5.5rem) auto 0 !important;
+    padding: clamp(2rem, 4vw, 3.2rem) !important;
+    display: grid !important;
+    align-content: center;
+    justify-items: start;
+    gap: 0.8rem;
+    border: 1px solid var(--color-line);
+    border-radius: 1.5rem;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .screen--run-route.screen-layout--result .run-route-view--empty h1 {
+    margin: 0.2rem 0 0 !important;
+    font-size: clamp(2rem, 3vw, 3rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  .screen--run-route.screen-layout--result .run-route-view--empty > p:not(.eyebrow) {
+    max-width: 34rem;
+    margin: 0 !important;
+    color: var(--color-muted);
+    font-size: 0.95rem !important;
+    line-height: 1.65 !important;
+  }
+
+  .screen--run-route.screen-layout--result .run-route-view--empty > a {
+    min-height: 2.9rem;
+    margin-top: 0.65rem;
+    padding: 0.75rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 58%, var(--color-line));
+    border-radius: 0.8rem;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  /* In dark themes, non-selected navigation stays subdued but readable. */
+  html.rl-appearance-dark .primary-navigation__link:not(.is-current) {
+    opacity: 0.86 !important;
+    color: color-mix(in srgb, var(--color-muted) 88%, var(--color-ink)) !important;
+  }
+
+  html.rl-appearance-dark .primary-navigation__link:not(.is-current) :is(.primary-navigation__icon, .primary-navigation__label) {
+    opacity: 1 !important;
+  }
+}
+
+@media (min-width: 55rem) and (max-width: 72rem) {
+  .screen--result.screen-layout--result > .intro:has(> p + a),
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) {
+    grid-template-columns: 1fr !important;
+  }
+
+  .screen--result.screen-layout--result > .intro:has(> p + a) > a {
+    grid-column: 1;
+    grid-row: auto;
+    min-height: 5rem;
+  }
+}
