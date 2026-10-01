@@ -1,0 +1,49 @@
+/* PC layout correction v48.
+ * Resolves remaining legacy-grid inheritance on Home and tightens long action sizing.
+ */
+@media (min-width: 55rem) {
+  /* The current Home is rendered inside one enhanced wrapper. The old desktop
+     foundation still split the screen itself into two columns, which trapped
+     that wrapper in the left column. Let the enhanced dashboard own the columns. */
+  .app-shell:not(.app-shell--immersive) .screen--home.screen-layout--home {
+    display: block !important;
+    grid-template-columns: none !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .screen--home.screen-layout--home > .home-desktop-legacy {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .screen--home .pc-home-dashboard,
+  .screen--home .pc-home-overview {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* A long label is not a reason to turn a single action into a panel-width bar. */
+  .screen--course-editor .editor-actions {
+    justify-content: flex-end !important;
+  }
+
+  .screen--course-editor .editor-actions .primary {
+    width: 17rem !important;
+    min-width: 0 !important;
+    max-width: min(100%, 17rem) !important;
+    padding-inline: 1rem !important;
+  }
+}
+
+@media (min-width: 80rem) {
+  .screen--home .pc-home-dashboard {
+    grid-template-columns: minmax(0, 1.55fr) minmax(22rem, 0.72fr) !important;
+    gap: 1.35rem !important;
+  }
+
+  .screen--home .pc-home-overview {
+    margin-top: 1.15rem !important;
+  }
+}
