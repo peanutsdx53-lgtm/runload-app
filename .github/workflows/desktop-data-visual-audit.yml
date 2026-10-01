@@ -1,0 +1,222 @@
+name: Desktop Populated Visual Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/desktop-data-visual-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Playwright and Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start local app server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 > /tmp/runload-populated-visual-server.log 2>&1 &
+          echo $! > /tmp/runload-populated-visual-server.pid
+          for attempt in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173/index.html >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/runload-populated-visual-server.log
+          exit 1
+      - name: Capture populated desktop states
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/runload-populated-audit.cjs <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const { chromium } = require('playwright');
+
+          const BASE = 'http://127.0.0.1:4173';
+          const SETTINGS_KEY = 'runner-load-app-new-v1-settings-v1';
+          const MEASUREMENT_KEY = 'runner-load-app-new-v1-run-measurements-v1';
+          const combinations = [
+            ['light', 'standard'],
+            ['light', 'natural'],
+            ['dark', 'standard'],
+            ['dark', 'natural'],
+          ];
+
+          function settings(appearanceMode, colorTheme) {
+            return {
+              appearanceMode,
+              colorTheme,
+              textSize: 'standard',
+              resultDisplayMode: 'standard',
+              selectedRegionalView: 'WITHIN_RUN_REGIONAL_EMPHASIS',
+              regionalResultInitialView: 'all',
+              regionalResultLastView: 'all',
+              showRegionalPreviousComparison: true,
+              measurementSoundEnabled: true,
+              measurementVibrationEnabled: true,
+              termsAcceptedVersion: 'terms-20260930-v1',
+              termsAcceptedAt: '2026-10-01T00:00:00.000Z',
+              guideVersionSeen: 'guide-context-help-20260923-v2',
+            };
+          }
+
+          async function setFormValue(page, name, value) {
+            await page.evaluate(({ name, value }) => {
+              const form = document.querySelector('#record-input-form');
+              const control = form?.elements?.namedItem?.(name) || form?.querySelector?.(`[name="${name}"]`);
+              if (!control) return;
+              control.value = String(value);
+              control.dispatchEvent(new Event('input', { bubbles: true }));
+              control.dispatchEvent(new Event('change', { bubbles: true }));
+            }, { name, value });
+          }
+
+          function recordIdFromUrl(url) {
+            const match = String(url).match(/[?&]recordId=([^&]+)/);
+            return match ? decodeURIComponent(match[1]) : '';
+          }
+
+          (async () => {
+            fs.mkdirSync('visual-audit-populated', { recursive: true });
+            const browser = await chromium.launch({ headless: true });
+            try {
+              for (const [appearanceMode, colorTheme] of combinations) {
+                const combo = `${appearanceMode}-${colorTheme}`;
+                const outputDir = path.join('visual-audit-populated', combo);
+                fs.mkdirSync(outputDir, { recursive: true });
+
+                const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+                await context.addInitScript(({ SETTINGS_KEY, configured }) => {
+                  localStorage.clear();
+                  sessionStorage.clear();
+                  localStorage.setItem(SETTINGS_KEY, JSON.stringify(configured));
+                }, { SETTINGS_KEY, configured: settings(appearanceMode, colorTheme) });
+
+                const page = await context.newPage();
+                page.on('console', (message) => {
+                  if (message.type() === 'error') console.error(`[${combo}] browser console:`, message.text());
+                });
+
+                await page.goto(`${BASE}/index.html#/record-input`, { waitUntil: 'domcontentloaded' });
+                await page.locator('#record-input-form').waitFor({ state: 'visible' });
+
+                await setFormValue(page, 'date', '2026-09-28');
+                await setFormValue(page, 'distanceKm', '5.20');
+                await setFormValue(page, 'durationMinutes', '34.5');
+                await setFormValue(page, 'steps', '6200');
+                await setFormValue(page, 'stepsProvenance', 'MEASURED');
+                await setFormValue(page, 'runningFormat', 'CONTINUOUS_RUN');
+                await setFormValue(page, 'gradeInputMode', 'FLAT');
+                await setFormValue(page, 'surfaceInputMode', 'PERCENT');
+                await setFormValue(page, 'pavedPercent', '100');
+
+                const saveButton = page.locator('#record-input-form button.primary-save[type="submit"]').first();
+                await saveButton.waitFor({ state: 'visible' });
+                await saveButton.click();
+
+                try {
+                  await page.waitForURL(/#\/result\?recordId=/, { timeout: 10000 });
+                } catch (error) {
+                  const message = await page.locator('[data-form-messages]').textContent().catch(() => '');
+                  throw new Error(`[${combo}] record save did not reach result. ${message || error.message}`);
+                }
+
+                let recordId = recordIdFromUrl(page.url());
+                if (!recordId) throw new Error(`[${combo}] recordId missing after save: ${page.url()}`);
+
+                const firstTime = Date.parse('2026-09-28T08:00:00.000Z');
+                const track = [
+                  { lat: 35.68120, lon: 139.76710, timestamp: firstTime },
+                  { lat: 35.68175, lon: 139.76765, timestamp: firstTime + 420000 },
+                  { lat: 35.68215, lon: 139.76835, timestamp: firstTime + 840000 },
+                  { lat: 35.68170, lon: 139.76905, timestamp: firstTime + 1260000 },
+                  { lat: 35.68095, lon: 139.76870, timestamp: firstTime + 1680000 },
+                  { lat: 35.68055, lon: 139.76785, timestamp: firstTime + 2070000 },
+                ];
+                await page.evaluate(({ MEASUREMENT_KEY, recordId, track }) => {
+                  localStorage.setItem(MEASUREMENT_KEY, JSON.stringify([{
+                    version: 1,
+                    id: `measurement-${recordId}`,
+                    recordId,
+                    runId: 'audit-synthetic-run',
+                    measurementMode: 'free',
+                    targetDurationMinutes: null,
+                    targetDistanceKm: null,
+                    capturedAt: '2026-09-28T08:35:00.000Z',
+                    startedAt: '2026-09-28T08:00:00.000Z',
+                    endedAt: '2026-09-28T08:34:30.000Z',
+                    distanceKm: 5.20,
+                    durationMinutes: 34.5,
+                    energyEstimate: null,
+                    stepEstimate: null,
+                    courseAnalysis: null,
+                    planId: '',
+                    acceptedPointCount: track.length,
+                    rejectedPointCount: 0,
+                    track,
+                  }]));
+                }, { MEASUREMENT_KEY, recordId, track });
+
+                await page.reload({ waitUntil: 'domcontentloaded' });
+                await page.locator('.screen--result').waitFor({ state: 'visible' });
+                await page.waitForTimeout(800);
+                await page.screenshot({ path: path.join(outputDir, 'result-data.png'), fullPage: true });
+
+                const regionLink = page.locator('.region-link').first();
+                const regionHref = await regionLink.getAttribute('href');
+                if (!regionHref) throw new Error(`[${combo}] no body region link on populated result`);
+                await page.goto(`${BASE}/index.html${regionHref}`, { waitUntil: 'domcontentloaded' });
+                await page.locator('.screen--body-part-detail').waitFor({ state: 'visible' });
+                await page.waitForTimeout(600);
+                await page.screenshot({ path: path.join(outputDir, 'body-part-detail-data.png'), fullPage: true });
+
+                await page.goto(`${BASE}/index.html#/run-route?recordId=${encodeURIComponent(recordId)}`, { waitUntil: 'domcontentloaded' });
+                await page.locator('[data-run-route]').waitFor({ state: 'visible' });
+                await page.waitForTimeout(2200);
+                await page.screenshot({ path: path.join(outputDir, 'run-route-data.png'), fullPage: true });
+
+                await context.close();
+              }
+            } finally {
+              await browser.close();
+            }
+
+            const files = [];
+            for (const combo of fs.readdirSync('visual-audit-populated')) {
+              const dir = path.join('visual-audit-populated', combo);
+              for (const file of fs.readdirSync(dir)) files.push(path.join(dir, file));
+            }
+            files.sort();
+            fs.writeFileSync('visual-audit-populated/manifest.txt', files.join('\n') + '\n');
+            if (files.filter((file) => file.endsWith('.png')).length !== 12) {
+              throw new Error(`Expected 12 populated screenshots, got ${files.length}`);
+            }
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+          node /tmp/runload-populated-audit.cjs
+      - name: Upload populated desktop screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-populated-visual-audit-${{ github.sha }}
+          path: visual-audit-populated/
+          if-no-files-found: error
+          retention-days: 14
