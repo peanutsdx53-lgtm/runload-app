@@ -11,9 +11,11 @@ const more = read("screens/moreScreen.js");
 const achievements = read("screens/achievementsScreen.js");
 const version = read("ui/appVersionStatus.js");
 const sw = read("service-worker.js");
+const versionMatch = version.match(/APP_VERSION = "([^"]+)"/);
+const appVersion = versionMatch?.[1] || "";
 
-assert.match(version, /APP_VERSION = "2026\.09\.30\.30"/);
-assert.match(sw, /2026\.09\.30\.30/);
+assert.match(appVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
+assert.ok(sw.includes(`running-record-app-runtime-${appVersion}`));
 assert.match(app, /achievements: renderAchievementsScreen/);
 assert.doesNotMatch(app, /start: renderStart/);
 assert.match(home, /mobile-home-hub-page--apps/);
