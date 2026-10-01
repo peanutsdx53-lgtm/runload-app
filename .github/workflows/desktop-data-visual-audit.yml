@@ -4,6 +4,13 @@ on:
   push:
     branches: [main]
     paths:
+      - "styles/desktop*.css"
+      - "styles/pc-*.css"
+      - "screens/interpretationRoomScreen.js"
+      - "screens/courseEditorScreen.js"
+      - "ui/interpretationRoomPresentation.js"
+      - "ui/interactions/courseInteractions.js"
+      - "index.html"
       - ".github/workflows/desktop-data-visual-audit.yml"
   workflow_dispatch:
 
@@ -13,7 +20,7 @@ permissions:
 jobs:
   capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -90,6 +97,28 @@ jobs:
           function recordIdFromUrl(url) {
             const match = String(url).match(/[?&]recordId=([^&]+)/);
             return match ? decodeURIComponent(match[1]) : '';
+          }
+
+          async function assertRegionLabelsReadable(page, combo) {
+            const state = await page.locator('.region-chip__copy strong').evaluateAll((nodes) => nodes.map((node) => {
+              const rect = node.getBoundingClientRect();
+              return {
+                text: node.textContent?.trim() || '',
+                width: rect.width,
+                height: rect.height,
+                scrollWidth: node.scrollWidth,
+                scrollHeight: node.scrollHeight,
+                clientWidth: node.clientWidth,
+                clientHeight: node.clientHeight,
+              };
+            }));
+            if (!state.length) throw new Error(`[${combo}] interpretation room has no region labels`);
+            const clipped = state.filter((item) => item.scrollWidth > item.clientWidth + 1 || item.scrollHeight > item.clientHeight + 1 || item.width < 60);
+            if (clipped.length) throw new Error(`[${combo}] clipped interpretation region labels: ${JSON.stringify(clipped)}`);
+          }
+
+          async function visibleCourseSectionCount(page) {
+            return page.locator('[data-course-section-row]:visible').count();
           }
 
           (async () => {
@@ -176,6 +205,14 @@ jobs:
                 await page.waitForTimeout(800);
                 await page.screenshot({ path: path.join(outputDir, 'result-data.png'), fullPage: true });
 
+                await page.goto(`${BASE}/index.html#/interpretation-room?recordId=${encodeURIComponent(recordId)}&origin=result`, { waitUntil: 'domcontentloaded' });
+                await page.locator('.screen--interpretation-room').waitFor({ state: 'visible' });
+                await page.waitForTimeout(700);
+                await assertRegionLabelsReadable(page, combo);
+                await page.screenshot({ path: path.join(outputDir, 'interpretation-room-data.png'), fullPage: true });
+
+                await page.goto(`${BASE}/index.html#/result?recordId=${encodeURIComponent(recordId)}`, { waitUntil: 'domcontentloaded' });
+                await page.locator('.screen--result').waitFor({ state: 'visible' });
                 const regionLink = page.locator('.region-link').first();
                 const regionHref = await regionLink.getAttribute('href');
                 if (!regionHref) throw new Error(`[${combo}] no body region link on populated result`);
@@ -188,6 +225,26 @@ jobs:
                 await page.locator('[data-run-route]').waitFor({ state: 'visible' });
                 await page.waitForTimeout(2200);
                 await page.screenshot({ path: path.join(outputDir, 'run-route-data.png'), fullPage: true });
+
+                await page.goto(`${BASE}/index.html#/course-editor?returnTo=${encodeURIComponent('#/record-input')}`, { waitUntil: 'domcontentloaded' });
+                await page.locator('#course-editor-form').waitFor({ state: 'visible' });
+                await page.locator('[data-course-grade-mode="SECTIONS"]').click();
+                await page.locator('[data-course-grade-sections]').waitFor({ state: 'visible' });
+                await page.waitForTimeout(250);
+                const initialSections = await visibleCourseSectionCount(page);
+                if (initialSections !== 1) throw new Error(`[${combo}] detailed course entry must start with 1 visible section, got ${initialSections}`);
+                await page.screenshot({ path: path.join(outputDir, 'course-sections-one.png'), fullPage: true });
+
+                await page.locator('[data-action="add-course-section"]').click();
+                await page.waitForTimeout(150);
+                const addedSections = await visibleCourseSectionCount(page);
+                if (addedSections !== 2) throw new Error(`[${combo}] add-section must reveal exactly one more section, got ${addedSections}`);
+                await page.screenshot({ path: path.join(outputDir, 'course-sections-two.png'), fullPage: true });
+
+                await page.locator('[data-course-surface-mode="MIXED"]').click();
+                await page.locator('[data-course-surface-mixed]').waitFor({ state: 'visible' });
+                await page.waitForTimeout(250);
+                await page.screenshot({ path: path.join(outputDir, 'course-surface-mixed.png'), fullPage: true });
 
                 await context.close();
               }
@@ -202,8 +259,9 @@ jobs:
             }
             files.sort();
             fs.writeFileSync('visual-audit-populated/manifest.txt', files.join('\n') + '\n');
-            if (files.filter((file) => file.endsWith('.png')).length !== 12) {
-              throw new Error(`Expected 12 populated screenshots, got ${files.filter((file) => file.endsWith('.png')).length}`);
+            const screenshots = files.filter((file) => file.endsWith('.png'));
+            if (screenshots.length !== 28) {
+              throw new Error(`Expected 28 populated/stateful screenshots, got ${screenshots.length}`);
             }
           })().catch((error) => {
             console.error(error);
