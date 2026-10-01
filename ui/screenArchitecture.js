@@ -8,7 +8,6 @@ export const PRIMARY_DESTINATIONS = Object.freeze([
   Object.freeze({ screen: "more", label: "その他", description: "設定・共有・読みもの", icon: "more" }),
 ]);
 
-
 const PRIMARY_SCREEN_IDS = new Set(PRIMARY_DESTINATIONS.map((item) => item.screen));
 
 function locationParameter(currentLocation, name) {
@@ -34,6 +33,12 @@ function workflowReturnLabel(href = "") {
   if (href.startsWith("#/plan")) return "予定";
   if (href.startsWith("#/simulation")) return "条件比較";
   return "記録";
+}
+
+function mobileUtilityReturn(parameter) {
+  return parameter("from") === "more"
+    ? { backHref: "#/more", backLabel: "その他" }
+    : { backHref: "#/home", backLabel: "ホーム" };
 }
 
 function interpretationReturnContext(parameter, recordId = "") {
@@ -143,13 +148,17 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     };
   }
 
-  if (screen === "location-note") return { title: "地点メモ", backHref: "#/home", backLabel: "ホーム" };
-  if (screen === "quick-note") return { title: "1分メモ", backHref: "#/home", backLabel: "ホーム" };
-  if (screen === "gear-note") return { title: "装備メモ", backHref: "#/home", backLabel: "ホーム" };
-  if (screen === "departure-check") return { title: "出発チェック", backHref: "#/home", backLabel: "ホーム" };
-  if (screen === "fuel-note") return { title: "補給メモ", backHref: "#/home", backLabel: "ホーム" };
-  if (screen === "photo-note") return { title: "写真メモ", backHref: "#/home", backLabel: "ホーム" };
-  if (screen === "pace-tool") return { title: "ペース換算", backHref: "#/home", backLabel: "ホーム" };
+  if (screen === "achievements") return { title: "実績", backHref: "#/more", backLabel: "その他" };
+  if (screen === "location-note") return { title: "地点メモ", ...mobileUtilityReturn(parameter) };
+  if (screen === "quick-note") return { title: "1分メモ", ...mobileUtilityReturn(parameter) };
+  if (screen === "gear-note") return { title: "装備メモ", ...mobileUtilityReturn(parameter) };
+  if (screen === "departure-check") return { title: "出発チェック", ...mobileUtilityReturn(parameter) };
+  if (screen === "fuel-note") return { title: "補給メモ", ...mobileUtilityReturn(parameter) };
+  if (screen === "photo-note") return { title: "写真メモ", ...mobileUtilityReturn(parameter) };
+  if (screen === "pace-tool") {
+    if (parameter("from") === "more") return { title: "ペース換算", backHref: "#/more", backLabel: "その他" };
+    return { title: "ペース換算", backHref: "#/home", backLabel: "ホーム" };
+  }
 
   if (screen === "plan") {
     const interpretationReturn = interpretationReturnContext(parameter, recordId || parameter("sourceRecordId"));
@@ -259,4 +268,3 @@ function route(screen, values = {}) {
 function workspaceLink({ href, label, description, current = false }) {
   return `<a class="workspace-navigation__link${current ? " is-current" : ""}" href="${escapeHtml(href)}"${current ? ' aria-current="page"' : ""}><strong>${escapeHtml(label)}</strong><small>${escapeHtml(description)}</small></a>`;
 }
-

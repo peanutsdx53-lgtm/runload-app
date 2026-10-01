@@ -56,6 +56,12 @@
     justify-self: end;
   }
 
+  /* Added smartphone screens use the app-shell contextual header as the single header. */
+  .screen--achievements > .secondary-derived-head,
+  .screen--about > .secondary-derived-head {
+    display: none !important;
+  }
+
   /* Home is the app-level hub. Non-home screens return there from their header only. */
   .app-shell:has(.screen-layout:not(.screen-layout--home)) > .primary-navigation {
     display: none !important;
