@@ -122,6 +122,15 @@ test('ATTRIBUTION-AND-LICENSE-ARE-EXPLICIT-BUT-NOT-PRIMARY-INPUT-CONTENT', () =>
   assert.ok(moduleText.includes('図自体は変更していません'));
 });
 
+test('RESULT-SCREENS-USE-AUTHOR-CONFIRMED-GUIDANCE', () => {
+  assert.ok(moduleText.includes('updateMobileResultFatigue'));
+  assert.ok(moduleText.includes('updatePcResultFatigue'));
+  assert.ok(moduleText.includes('走った後のROF-J目安'));
+  assert.ok(moduleText.includes('運動後のROF-J目安'));
+  assert.ok(moduleText.includes('dl.visually-hidden > div'));
+  assert.ok(moduleText.includes('enhanceResultFatigue()'));
+});
+
 test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
   assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
