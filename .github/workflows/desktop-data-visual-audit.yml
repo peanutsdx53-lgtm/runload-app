@@ -99,6 +99,43 @@ jobs:
             return match ? decodeURIComponent(match[1]) : '';
           }
 
+          async function writeMeasurement(page, recordId, track) {
+            let lastError = null;
+            for (let attempt = 0; attempt < 5; attempt += 1) {
+              try {
+                await page.evaluate(({ MEASUREMENT_KEY, recordId, track }) => {
+                  localStorage.setItem(MEASUREMENT_KEY, JSON.stringify([{
+                    version: 1,
+                    id: `measurement-${recordId}`,
+                    recordId,
+                    runId: 'audit-synthetic-run',
+                    measurementMode: 'free',
+                    targetDurationMinutes: null,
+                    targetDistanceKm: null,
+                    capturedAt: '2026-09-28T08:35:00.000Z',
+                    startedAt: '2026-09-28T08:00:00.000Z',
+                    endedAt: '2026-09-28T08:34:30.000Z',
+                    distanceKm: 5.20,
+                    durationMinutes: 34.5,
+                    energyEstimate: null,
+                    stepEstimate: null,
+                    courseAnalysis: null,
+                    planId: '',
+                    acceptedPointCount: track.length,
+                    rejectedPointCount: 0,
+                    track,
+                  }]));
+                }, { MEASUREMENT_KEY, recordId, track });
+                return;
+              } catch (error) {
+                lastError = error;
+                if (!String(error?.message || error).includes('Execution context was destroyed')) throw error;
+                await page.waitForTimeout(250);
+              }
+            }
+            throw lastError || new Error('measurement write failed');
+          }
+
           async function assertRegionLabelsReadable(page, combo) {
             const state = await page.locator('.region-chip__copy strong').evaluateAll((nodes) => nodes.map((node) => {
               const rect = node.getBoundingClientRect();
@@ -159,9 +196,11 @@ jobs:
 
                 try {
                   await page.waitForURL(/#\/result\?recordId=/, { timeout: 10000 });
+                  await page.locator('.screen--result').waitFor({ state: 'visible', timeout: 10000 });
+                  await page.waitForTimeout(250);
                 } catch (error) {
                   const message = await page.locator('[data-form-messages]').textContent().catch(() => '');
-                  throw new Error(`[${combo}] record save did not reach result. ${message || error.message}`);
+                  throw new Error(`[${combo}] record save did not reach stable result. ${message || error.message}`);
                 }
 
                 const recordId = recordIdFromUrl(page.url());
@@ -176,29 +215,7 @@ jobs:
                   { lat: 35.68095, lon: 139.76870, timestamp: firstTime + 1680000 },
                   { lat: 35.68055, lon: 139.76785, timestamp: firstTime + 2070000 },
                 ];
-                await page.evaluate(({ MEASUREMENT_KEY, recordId, track }) => {
-                  localStorage.setItem(MEASUREMENT_KEY, JSON.stringify([{
-                    version: 1,
-                    id: `measurement-${recordId}`,
-                    recordId,
-                    runId: 'audit-synthetic-run',
-                    measurementMode: 'free',
-                    targetDurationMinutes: null,
-                    targetDistanceKm: null,
-                    capturedAt: '2026-09-28T08:35:00.000Z',
-                    startedAt: '2026-09-28T08:00:00.000Z',
-                    endedAt: '2026-09-28T08:34:30.000Z',
-                    distanceKm: 5.20,
-                    durationMinutes: 34.5,
-                    energyEstimate: null,
-                    stepEstimate: null,
-                    courseAnalysis: null,
-                    planId: '',
-                    acceptedPointCount: track.length,
-                    rejectedPointCount: 0,
-                    track,
-                  }]));
-                }, { MEASUREMENT_KEY, recordId, track });
+                await writeMeasurement(page, recordId, track);
 
                 await page.reload({ waitUntil: 'domcontentloaded' });
                 await page.locator('.screen--result').waitFor({ state: 'visible' });
