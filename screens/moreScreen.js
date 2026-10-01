@@ -36,8 +36,20 @@ const MOBILE_GROUPS = Object.freeze([
   }),
 ]);
 
+const MORE_ORIGIN_SCREENS = new Set([
+  "achievements",
+  "location-note",
+  "quick-note",
+  "gear-note",
+  "departure-check",
+  "fuel-note",
+  "photo-note",
+  "pace-tool",
+]);
+
 function renderRow(item) {
-  return `<a class="row${item.primary ? " primary" : ""}" href="#/${escapeHtml(item.screen)}"><span class="icon" aria-hidden="true">${escapeHtml(item.icon)}</span><span class="copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.description)}</span></span><span class="arrow" aria-hidden="true">›</span></a>`;
+  const href = `#/${item.screen}${MORE_ORIGIN_SCREENS.has(item.screen) ? "?from=more" : ""}`;
+  return `<a class="row${item.primary ? " primary" : ""}" href="${escapeHtml(href)}"><span class="icon" aria-hidden="true">${escapeHtml(item.icon)}</span><span class="copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.description)}</span></span><span class="arrow" aria-hidden="true">›</span></a>`;
 }
 
 export function renderMoreScreen() {
