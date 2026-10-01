@@ -229,7 +229,7 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (min-width: 55rem) and (prefers-reduced-motion: reduce) {
   .interpretation-room-next-rail {
     scroll-behavior: auto;
   }
