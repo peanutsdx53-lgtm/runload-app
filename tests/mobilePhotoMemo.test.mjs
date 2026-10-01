@@ -27,7 +27,7 @@ await test('PHOTO-MEMO-HOME-ENTRY-USES-EMOJI', () => {
   assert.ok(interactions.includes('["#/photo-note", "photo-note"]'));
 });
 
-await test('PHOTO-MEMO-HAS-ROUTE-BINDER-AND-CONTEXTUAL-RETURN', () => {
+await test('PHOTO-MEMO-HAS-ROUTE-BINDER-AND-HOME-RETURN', () => {
   const app = read('app.js');
   const binders = read('ui/screenInteractions.js');
   const architecture = read('ui/screenArchitecture.js');
@@ -36,9 +36,8 @@ await test('PHOTO-MEMO-HAS-ROUTE-BINDER-AND-CONTEXTUAL-RETURN', () => {
   assert.ok(binders.includes('bindMobilePhotoMemo'));
   assert.ok(binders.includes('"photo-note": bindMobilePhotoMemo'));
   assert.ok(architecture.includes('screen === "photo-note"'));
-  assert.ok(architecture.includes('title: "写真メモ", ...mobileUtilityReturn(parameter)'));
-  assert.ok(architecture.includes('backHref: "#/home", backLabel: "ホーム"'));
-  assert.ok(architecture.includes('backHref: "#/more", backLabel: "その他"'));
+  assert.ok(architecture.includes('title: "写真メモ", ...mobileUtilityReturn()'));
+  assert.ok(architecture.includes('return { backHref: "#/home", backLabel: "ホーム" };'));
 });
 
 await test('PHOTO-MEMO-USES-LOCAL-INDEXEDDB-WITH-CONSERVATIVE-LIMITS', () => {
