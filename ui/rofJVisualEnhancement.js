@@ -1,55 +1,76 @@
-import { ROF_J_DESCRIPTOR_MAP } from "../core/rofJCore.js";
+import {
+  ROF_J_AUTHOR_CONFIRMED_ANCHORS,
+  ROF_J_PRESENTATION_VERSION,
+  isValidRofJSelection,
+  rofJGuidanceForSelection,
+  rofJSelectionDescriptor,
+} from "../core/rofJAuthorConfirmedScale.js";
 
 const ORIGINAL_ROF_ARTICLE_URL = "https://link.springer.com/article/10.1007/s40279-017-0711-5";
 const ORIGINAL_ROF_LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/";
 const ROF_J_ARTICLE_URL = "https://link.springer.com/article/10.1186/s40798-026-01108-8";
 const ROF_J_LICENSE_URL = "https://creativecommons.org/licenses/by-nc-nd/4.0/";
 
-const ORIGINAL_ROF_VISUALS = Object.freeze([
-  Object.freeze({ src: "./assets/rof/rof-visual-lowest.png", position: 1 }),
-  Object.freeze({ src: "./assets/rof/rof-visual-low.png", position: 2 }),
-  Object.freeze({ src: "./assets/rof/rof-visual-moderate.png", position: 3 }),
-  Object.freeze({ src: "./assets/rof/rof-visual-high.png", position: 4 }),
-  Object.freeze({ src: "./assets/rof/rof-visual-highest.png", position: 5 }),
-]);
-const OFFICIAL_DESCRIPTOR_VALUES = Object.freeze([2, 4, 6, 8, 10]);
+const ORIGINAL_ROF_VISUALS = Object.freeze({
+  lowest: "./assets/rof/rof-visual-lowest.png",
+  low: "./assets/rof/rof-visual-low.png",
+  moderate: "./assets/rof/rof-visual-moderate.png",
+  high: "./assets/rof/rof-visual-high.png",
+  highest: "./assets/rof/rof-visual-highest.png",
+});
 
 let enhancementQueued = false;
 
+function setTextIfChanged(node, value) {
+  if (!node || node.textContent === value) return;
+  node.textContent = value;
+}
+
+function createAnchorRow(anchor) {
+  const row = document.createElement("div");
+  row.className = "rof-author-anchor";
+  row.dataset.rofAnchorPosition = String(anchor.position);
+
+  const position = document.createElement("b");
+  position.className = "rof-author-anchor__position";
+  position.textContent = anchor.positionLabel;
+
+  const descriptor = document.createElement("span");
+  descriptor.className = "rof-author-anchor__descriptor";
+  descriptor.textContent = anchor.descriptor;
+
+  const visual = document.createElement("span");
+  visual.className = "rof-author-anchor__visual";
+  const image = document.createElement("img");
+  image.src = ORIGINAL_ROF_VISUALS[anchor.visualKey];
+  image.alt = "";
+  image.setAttribute("aria-hidden", "true");
+  image.loading = "eager";
+  image.decoding = "async";
+  visual.append(image);
+
+  row.append(position, descriptor, visual);
+  return row;
+}
+
 function createVisualGuide() {
   const section = document.createElement("section");
-  section.className = "rof-visual-guide rof-visual-guide--compact";
+  section.className = "rof-visual-guide rof-visual-guide--compact rof-visual-guide--author-confirmed";
   section.dataset.rofVisualGuide = "";
-  section.setAttribute("aria-label", "疲労感の視覚的な目安");
+  section.setAttribute(
+    "aria-label",
+    "ROF-Jの目安。10は完全な疲労困憊、7と8の間はとても疲れている、5は中程度に疲れている、2と3の間は少し疲れている、0はまったく疲れていない。",
+  );
 
   const heading = document.createElement("div");
   heading.className = "rof-visual-guide__head";
-  heading.innerHTML = "<small>疲労感の目安</small>";
+  heading.innerHTML = "<small>ROF-Jの目安</small><span>数値は0〜10の整数から選択します。</span>";
 
-  const strip = document.createElement("div");
-  strip.className = "rof-visual-strip";
-  strip.setAttribute("role", "img");
-  strip.setAttribute("aria-label", "ROF原版の5つの図。左から右へ疲労感が低い側から高い側を示す視覚的な目安。個々の図に新しい数値対応は設定していない。");
-  ORIGINAL_ROF_VISUALS.forEach(({ src, position }) => {
-    const figure = document.createElement("span");
-    figure.className = "rof-visual-strip__item";
-    figure.dataset.rofVisualPosition = String(position);
-    const image = document.createElement("img");
-    image.src = src;
-    image.alt = "";
-    image.setAttribute("aria-hidden", "true");
-    image.loading = "eager";
-    image.decoding = "async";
-    figure.append(image);
-    strip.append(figure);
-  });
+  const anchors = document.createElement("div");
+  anchors.className = "rof-author-anchor-list";
+  ROF_J_AUTHOR_CONFIRMED_ANCHORS.forEach((anchor) => anchors.append(createAnchorRow(anchor)));
 
-  const axis = document.createElement("div");
-  axis.className = "rof-visual-axis";
-  axis.setAttribute("aria-hidden", "true");
-  axis.innerHTML = "<span>低い</span><i></i><span>高い</span>";
-
-  section.append(heading, strip, axis);
+  section.append(heading, anchors);
   return section;
 }
 
@@ -57,16 +78,25 @@ function createReferenceGuide() {
   const section = document.createElement("section");
   section.className = "rof-about-reference";
   section.dataset.rofReferenceGuide = "";
-  section.innerHTML = "<strong>ROF-Jの正式な言葉</strong><small>補足資料の日本語表現を改変せず表示しています。</small>";
+
+  const title = document.createElement("strong");
+  title.textContent = "ROF-Jの尺度配置";
+  const note = document.createElement("small");
+  note.textContent = "公開補足資料の数値位置について、責任著者への確認に基づき原版ROFと同じ配置を採用しています。2.5・7.5を新しい選択値として追加するものではありません。";
 
   const list = document.createElement("div");
   list.className = "rof-about-reference__list";
-  OFFICIAL_DESCRIPTOR_VALUES.forEach((value) => {
+  ROF_J_AUTHOR_CONFIRMED_ANCHORS.forEach((anchor) => {
     const row = document.createElement("p");
-    row.innerHTML = `<b>${value}</b><span>${ROF_J_DESCRIPTOR_MAP[value]}</span>`;
+    const position = document.createElement("b");
+    position.textContent = anchor.positionLabel;
+    const descriptor = document.createElement("span");
+    descriptor.textContent = anchor.descriptor;
+    row.append(position, descriptor);
     list.append(row);
   });
-  section.append(list);
+
+  section.append(title, note, list);
   return section;
 }
 
@@ -76,12 +106,12 @@ function createRightsNote() {
   wrapper.dataset.rofRightsNote = "";
   wrapper.innerHTML = `
     <p><strong>出典・ライセンス</strong></p>
-    <p>日本語の尺度文言：Suzuki &amp; Arai (2026)。文言は改変していません。<a href="${ROF_J_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">ROF-J原典</a>・<a href="${ROF_J_LICENSE_URL}" target="_blank" rel="noopener noreferrer">CC BY-NC-ND 4.0</a></p>
-    <p>図：Micklewright et al. (2017)。原版から図部分を切り出し、低い側から高い側への横並びに変更しています。個々の図に新しい数値対応は設定していません。<a href="${ORIGINAL_ROF_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">ROF原典</a>・<a href="${ORIGINAL_ROF_LICENSE_URL}" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></p>`;
+    <p>ROF-J：Suzuki &amp; Arai (2026)。日本語表現は改変せず、尺度上の配置は責任著者への確認に基づき原版ROFと同じ位置で表示しています。<a href="${ROF_J_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">ROF-J原典</a>・<a href="${ROF_J_LICENSE_URL}" target="_blank" rel="noopener noreferrer">CC BY-NC-ND 4.0</a></p>
+    <p>図：Micklewright et al. (2017)。原版ROFの図部分を切り出し、各図を原版と同じ尺度位置に対応させて表示しています。図自体は変更していません。<a href="${ORIGINAL_ROF_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">ROF原典</a>・<a href="${ORIGINAL_ROF_LICENSE_URL}" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></p>`;
   return wrapper;
 }
 
-function makeInitialFiveSelectable(panel) {
+function makeInitialSliderValueSelectable(panel) {
   const slider = panel.querySelector("[data-record-rof-slider]");
   if (!slider || slider.dataset.rofPointerSelectBound === "true") return;
   slider.dataset.rofPointerSelectBound = "true";
@@ -90,34 +120,133 @@ function makeInitialFiveSelectable(panel) {
   });
 }
 
+function selectionIsUntouched(panel, slider) {
+  if (!slider) return true;
+  if (slider.classList.contains("is-untouched")) return true;
+  const output = panel.querySelector("[data-record-rof-value]");
+  return output?.textContent?.trim() === "—";
+}
+
+function syncAuthorConfirmedPresentation(panel) {
+  const slider = panel.querySelector("[data-record-rof-slider]");
+  const descriptor = panel.querySelector("[data-record-rof-descriptor]");
+  const anchor = panel.querySelector("[data-record-rof-anchor]");
+  if (!slider || !descriptor || !anchor) return;
+
+  if (selectionIsUntouched(panel, slider)) {
+    setTextIfChanged(descriptor, "数値を選択");
+    setTextIfChanged(anchor, rofJGuidanceForSelection(null));
+    return;
+  }
+
+  const value = Number(slider.value);
+  setTextIfChanged(descriptor, rofJSelectionDescriptor(value));
+  setTextIfChanged(anchor, rofJGuidanceForSelection(value));
+}
+
+function bindPresentationSync(panel) {
+  const slider = panel.querySelector("[data-record-rof-slider]");
+  if (!slider || slider.dataset.rofAuthorConfirmedBound === "true") return;
+  slider.dataset.rofAuthorConfirmedBound = "true";
+  const schedule = () => queueMicrotask(() => syncAuthorConfirmedPresentation(panel));
+  slider.addEventListener("input", schedule);
+  slider.addEventListener("change", schedule);
+  schedule();
+}
+
 function enhanceRofScale(panel) {
-  if (!(panel instanceof HTMLElement) || panel.dataset.rofVisualEnhanced === "true") return;
-  panel.dataset.rofVisualEnhanced = "true";
+  if (!(panel instanceof HTMLElement)) return;
+  panel.dataset.rofPresentationVersion = ROF_J_PRESENTATION_VERSION;
 
-  const sliderWrap = panel.querySelector("[data-rof-slider-wrap]");
-  if (sliderWrap && !panel.querySelector("[data-rof-visual-guide]")) {
-    sliderWrap.before(createVisualGuide());
+  if (panel.dataset.rofVisualEnhanced !== "true") {
+    panel.dataset.rofVisualEnhanced = "true";
+    const sliderWrap = panel.querySelector("[data-rof-slider-wrap]");
+    if (sliderWrap && !panel.querySelector("[data-rof-visual-guide]")) {
+      sliderWrap.before(createVisualGuide());
+    }
+
+    const anchorGuide = panel.querySelector(".rof-anchor-guide");
+    const anchorLabel = anchorGuide?.querySelector("small");
+    if (anchorLabel) setTextIfChanged(anchorLabel, "ROF-Jの目安");
+
+    const context = panel.closest("[data-rof-context], .rof-sheet");
+    const aboutBody = context?.querySelector(".rof-about > div");
+    if (aboutBody && !aboutBody.querySelector("[data-rof-reference-guide]")) {
+      aboutBody.append(createReferenceGuide());
+    }
+    if (aboutBody && !aboutBody.querySelector("[data-rof-rights-note]")) {
+      aboutBody.append(createRightsNote());
+    }
+
+    makeInitialSliderValueSelectable(panel);
   }
 
-  const anchorGuide = panel.querySelector(".rof-anchor-guide");
-  const anchorLabel = anchorGuide?.querySelector("small");
-  if (anchorLabel) anchorLabel.textContent = "選択の目安";
+  bindPresentationSync(panel);
+  syncAuthorConfirmedPresentation(panel);
+}
 
-  const context = panel.closest("[data-rof-context], .rof-sheet");
-  const aboutBody = context?.querySelector(".rof-about > div");
-  if (aboutBody && !aboutBody.querySelector("[data-rof-reference-guide]")) {
-    aboutBody.append(createReferenceGuide());
-  }
-  if (aboutBody && !aboutBody.querySelector("[data-rof-rights-note]")) {
-    aboutBody.append(createRightsNote());
+function displayedRofValue(node) {
+  const match = String(node?.textContent || "").match(/(?:^|\s)(\d{1,2})(?:\s|$|\/)/);
+  if (!match) return null;
+  const value = Number(match[1]);
+  return isValidRofJSelection(value) ? value : null;
+}
+
+function updateMobileResultFatigue(section) {
+  if (!(section instanceof HTMLElement)) return;
+  section.dataset.rofPresentationVersion = ROF_J_PRESENTATION_VERSION;
+
+  const postValue = displayedRofValue(section.querySelector(".fatigue-values .post strong"));
+  const card = section.querySelector(".fatigue-card");
+  if (postValue != null && card) {
+    let note = card.querySelector("[data-rof-result-guidance]") || card.querySelector(".candidate-note");
+    if (!note) {
+      note = document.createElement("p");
+      note.className = "candidate-note";
+      card.append(note);
+    }
+    note.dataset.rofResultGuidance = "";
+    setTextIfChanged(note, `走った後のROF-J目安：${rofJGuidanceForSelection(postValue)}`);
   }
 
-  makeInitialFiveSelectable(panel);
+  section.querySelectorAll("dl.visually-hidden > div").forEach((row) => {
+    const term = row.querySelector("dt")?.textContent?.trim();
+    if (!["走る前", "走った後"].includes(term)) return;
+    const description = row.querySelector("dd");
+    const value = displayedRofValue(description);
+    if (!description || value == null) return;
+    setTextIfChanged(description, `${value} / 10。${rofJGuidanceForSelection(value)}`);
+  });
+}
+
+function updatePcResultFatigue(section) {
+  if (!(section instanceof HTMLElement)) return;
+  section.dataset.rofPresentationVersion = ROF_J_PRESENTATION_VERSION;
+  section.setAttribute("aria-label", "運動前後の疲労感（ROF-J）");
+  const heading = section.querySelector("header h3");
+  if (heading) setTextIfChanged(heading, "運動前後の疲労感（ROF-J）");
+
+  const postValue = displayedRofValue(section.querySelector(".pc-fatigue-node.is-post strong"));
+  if (postValue == null) return;
+  let note = section.querySelector("[data-rof-result-guidance]");
+  if (!note) {
+    const legacyNote = [...section.children].find((element) => element.tagName === "P");
+    note = legacyNote || document.createElement("p");
+    if (!legacyNote) section.append(note);
+  }
+  note.dataset.rofResultGuidance = "";
+  setTextIfChanged(note, `運動後のROF-J目安：${rofJGuidanceForSelection(postValue)}`);
+}
+
+function enhanceResultFatigue() {
+  document.querySelectorAll(".fatigue-section").forEach(updateMobileResultFatigue);
+  document.querySelectorAll(".pc-result-fatigue").forEach(updatePcResultFatigue);
 }
 
 function enhanceAll() {
   enhancementQueued = false;
   document.querySelectorAll(".rof-scale-panel").forEach(enhanceRofScale);
+  enhanceResultFatigue();
 }
 
 function queueEnhancement() {
