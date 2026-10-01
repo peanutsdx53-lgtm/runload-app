@@ -1,0 +1,90 @@
+/* Desktop theme audit v45.
+ * PC-only palette refinement. Smartphone theme tokens stay unchanged.
+ */
+@media (min-width: 55rem) {
+  html.rl-appearance-dark.rl-color-standard {
+    color-scheme: dark;
+    --color-paper: #0b1218;
+    --color-surface: #151f27;
+    --color-ink: #eef4f7;
+    --color-muted: #b5c4cd;
+    --color-line: #546c7a;
+    --color-accent: #86bad8;
+    --color-accent-strong: #c7e5f5;
+    --color-accent-soft: #1e3442;
+    --color-on-accent: #0b1922;
+    --color-on-ink: #0b1218;
+    --color-neutral-soft: #1d2a34;
+    --color-surface-warm: #121c24;
+    --color-surface-warm-strong: #1a2934;
+    --color-map-silhouette: #1d2b35;
+    --color-map-line: #526a78;
+    --color-map-low: #203746;
+    --color-map-middle: #5f91ad;
+    --color-map-high: #a7d7ef;
+    --color-meter-track: #293b47;
+    --color-rest: #8dbdc4;
+    --color-focus: #9ed2ff;
+    --shadow-card: 0 12px 30px rgba(0, 0, 0, 0.38);
+    --shadow-dialog: 0 24px 70px rgba(0, 0, 0, 0.60);
+    --overlay-dialog: rgba(0, 0, 0, 0.70);
+  }
+
+  html.rl-appearance-dark.rl-color-natural {
+    color-scheme: dark;
+    --color-paper: #11130f;
+    --color-surface: #1d221c;
+    --color-ink: #f3f1e9;
+    --color-muted: #c2c4b9;
+    --color-line: #697066;
+    --color-accent: #9bc5a9;
+    --color-accent-strong: #d6eadc;
+    --color-accent-soft: #27382c;
+    --color-on-accent: #112017;
+    --color-on-ink: #11130f;
+    --color-neutral-soft: #282d26;
+    --color-surface-warm: #211f18;
+    --color-surface-warm-strong: #2d291f;
+    --color-map-silhouette: #293029;
+    --color-map-line: #657066;
+    --color-map-low: #26392e;
+    --color-map-middle: #668f77;
+    --color-map-high: #a8d4b5;
+    --color-meter-track: #303a31;
+    --color-rest: #a6c7a9;
+    --color-focus: #a8d7c0;
+    --shadow-card: 0 12px 30px rgba(0, 0, 0, 0.36);
+    --shadow-dialog: 0 24px 70px rgba(0, 0, 0, 0.58);
+    --overlay-dialog: rgba(0, 0, 0, 0.70);
+  }
+
+  /* Keep non-selected navigation and secondary controls distinct from dark surfaces. */
+  html.rl-appearance-dark .primary-navigation__link:not(.is-current) {
+    color: var(--color-muted);
+  }
+
+  html.rl-appearance-dark .button--secondary,
+  html.rl-appearance-dark .button--text {
+    border-color: color-mix(in srgb, var(--color-line) 84%, var(--color-ink));
+  }
+
+  html.rl-appearance-dark :is(
+    .card,
+    .group,
+    .boundary,
+    .result-card,
+    .history-item,
+    .saved-plan,
+    .plan-candidate,
+    .form-section,
+    .form-disclosure,
+    .evidence-disclosure,
+    .filter-panel,
+    .share-report,
+    .related-article,
+    .article-card,
+    .empty-state
+  ) {
+    border-color: color-mix(in srgb, var(--color-line) 88%, transparent);
+  }
+}
