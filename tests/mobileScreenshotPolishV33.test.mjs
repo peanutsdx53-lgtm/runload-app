@@ -33,6 +33,9 @@ test("RESULT-REMOVES-DUPLICATE-ORIENTATION-CARD", () => {
 });
 
 test("REGION-SHEET-PREVENTS-AWKWARD-WRAPS", () => {
+  assert.ok(css.includes(".region-copy-pc"));
+  assert.ok(css.includes(".region-metric-pc"));
+  assert.ok(css.includes("display: none !important"));
   assert.ok(css.includes(".region-copy-mobile"));
   assert.ok(css.includes("white-space: nowrap"));
   assert.ok(css.includes('button[data-action="close-result-region-sheet"]'));
