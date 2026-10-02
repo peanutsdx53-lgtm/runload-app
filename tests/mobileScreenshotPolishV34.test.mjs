@@ -14,4 +14,6 @@ assert.ok(css.includes('white-space: nowrap'));
 assert.ok(css.includes('.mobile-detail-reference'));
 assert.ok(css.includes('.mobile-home-overview-card--small'));
 assert.ok(css.includes('.mobile-home-overview-card--wide'));
+assert.ok(css.includes('var(--color-accent-soft)'));
+assert.ok(!css.includes('--color-acccent-soft'));
 console.log('mobileScreenshotPolishV34.test.mjs: PASS');
