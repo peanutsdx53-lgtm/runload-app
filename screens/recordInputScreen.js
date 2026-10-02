@@ -8,6 +8,7 @@ import { peekPendingRunMeasurement } from "../ui/runMeasurementState.js";
 import { matchesMobileLayout } from "../ui/deviceLayout.js";
 
 import { ROF_J_DESCRIPTOR_MAP } from "../core/rofJCore.js";
+import { selfUnderstandingThreadTitle } from "../core/selfUnderstandingCore.js";
 import { renderEmbeddedPersonalSubflow, renderEmbeddedSubjectiveSubflow } from "../ui/recordEmbeddedSubflows.js";
 
 function renderRofJInlineAndOverlay({ services, linkedRunId = "", editing = false }) {
@@ -138,6 +139,17 @@ function renderRunObservationMemo(record = {}, { isRest = false } = {}) {
     <input type="hidden" name="nextCheckPoint" value="${escapeHtml(nextCheckPoint)}">
     ${hasLegacy ? `<details class="legacy-reflection-note"><summary>以前の振り返り記録を確認</summary><div>${perceivedDifference.trim() ? `<p><small>いつもとの違い</small><strong>${escapeHtml(perceivedDifference)}</strong></p>` : ""}${nextCheckPoint.trim() ? `<p><small>次回確認したいこと</small><strong>${escapeHtml(nextCheckPoint)}</strong></p>` : ""}<span>以前の内容はそのまま保存します。自動で新しい意味に読み替えません。</span></div></details>` : ""}
   </div>`;
+}
+
+
+function renderCarryFocus(services, { editing = false, isRest = false } = {}) {
+  if (editing || isRest) return "";
+  const threads = services?.storage?.selfUnderstandingThreads?.loadAll?.() || [];
+  const active = threads.find((thread) => thread?.userState === "WATCHING") || null;
+  if (!active) return "";
+  const experiences = services?.workflows?.records?.loadAllExperiences?.() || [];
+  const title = selfUnderstandingThreadTitle(active, experiences);
+  return `<div class="record-interpretation-carry" data-run-fields><span>⚑</span><small>前回から</small><strong>${escapeHtml(title)}</strong></div>`;
 }
 
 function optionalInputStatus(hasInput) {
@@ -281,6 +293,7 @@ export function renderRecordInputScreen({ services, context }) {
     .sort((left, right) => recentCourseTimestamp(right) - recentCourseTimestamp(left))
     .slice(0, 3);
   const settings = services.storage.settings.load();
+  const carryFocus = renderCarryFocus(services, { editing, isRest });
 
   return `<div class="screen screen--record-input screen-layout screen-layout--record">
     ${editing ? `<p class="parity-record-banner">保存済みの${escapeHtml(formatLocalDate(record.date))}の記録を更新します。</p>` : measurement ? `<p class="parity-record-banner">GPS測定結果から距離と時間を転記しています。必要なら保存前に修正できます。</p>` : selectedPlan ? `<p class="parity-record-banner">保存した予定から今回の記録へ転記しています。</p>` : savedDraft ? `<p class="parity-record-banner">入力途中の下書きから再開しています。</p>` : ""}
@@ -301,7 +314,7 @@ export function renderRecordInputScreen({ services, context }) {
 
         <details class="stage-card" data-record-stage="3" data-run-fields${isRest ? " hidden" : ""}><summary><span class="stage-icon">3</span><span class="summary-copy"><small>任意</small><strong>比較しやすくする情報</strong><em data-optional-status="compare">${optionalInputStatus(hasComparisonInfo(record))}</em></span><i>⌄</i></summary><div class="stage-body"><div class="two-fields"><label class="field"><span>歩数</span><input name="steps" type="number" inputmode="numeric" min="0" max="10000000" step="1" value="${escapeHtml(record.steps || "")}" placeholder="例：6000"></label><label class="field"><span>歩数の取得方法</span><select name="stepsProvenance"><option value="UNKNOWN"${selected(record.stepsProvenance, "UNKNOWN")}>不明・未設定</option><option value="DEVICE_MEASURED"${selected(record.stepsProvenance, "DEVICE_MEASURED")}>端末・時計で計測</option><option value="ESTIMATED"${selected(record.stepsProvenance, "ESTIMATED")}>手入力・おおよそ</option></select></label></div><label class="field field--running-format"><span>${mobileLayout ? "走行形式" : "走り方"}</span><select name="runningFormat"><option value="UNKNOWN"${selected(record.runningFormat, "UNKNOWN")}>${mobileLayout ? "未設定" : "覚えていない・未設定"}</option><option value="CONTINUOUS_RUN"${selected(record.runningFormat, "CONTINUOUS_RUN")}>${mobileLayout ? "走り続けた" : "途中で歩かず走った"}</option><option value="RUN_WALK"${selected(record.runningFormat, "RUN_WALK")}>${mobileLayout ? "走り＋歩き" : "走りと歩きを混ぜた"}</option></select></label><div class="nested-panel" data-run-walk-container${String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK" ? "" : " hidden"}>${renderRunWalkDetails(record, { mobileLayout })}</div>${renderEnvironmentContext(record)}</div></details>
 
-        <details class="stage-card" data-record-stage="4"><summary><span class="stage-icon">4</span><span class="summary-copy"><small>任意</small><strong>${isRest ? "身体・休養時の記録" : "身体・走ったときの記録"}</strong><em data-optional-status="reflection">${optionalInputStatus(hasReflectionInfo(record, feedback))}</em></span><i>⌄</i></summary><div class="stage-body">${mobileLayout ? `<section class="mobile-record-wellbeing" data-mobile-record-wellbeing data-run-fields${isRest ? " hidden" : ""}><div class="mobile-record-wellbeing__head"><div><small>任意</small><strong>体調・感覚</strong></div><span>走る前後の疲労感</span></div>${renderRofJInlineAndOverlay({ services, linkedRunId, editing })}</section>` : ""}<div class="linked-records"><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="subjective"><span class="linked-icon">＋</span><span><small>身体の記録</small><strong>今回の身体記録</strong><em data-subjective-summary-status>${escapeHtml(subjectiveSummaryFromFields(subjectiveFieldsFromFeedback(feedback)).label)}</em></span><i>›</i></button><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="personal"><span class="linked-icon">＋</span><span><small>使用したもの</small><strong>今回のシューズ</strong><em data-personal-summary-status>${escapeHtml(personalContextSummary(record).hasInput ? personalContextSummary(record).description : "未選択")}</em></span><i>›</i></button></div>${renderRunObservationMemo(record, { isRest })}<input type="hidden" name="memo" value=""></div></details>
+        <details class="stage-card" data-record-stage="4"><summary><span class="stage-icon">4</span><span class="summary-copy"><small>任意</small><strong>${isRest ? "身体・休養時の記録" : "身体・走ったときの記録"}</strong><em data-optional-status="reflection">${optionalInputStatus(hasReflectionInfo(record, feedback))}</em></span><i>⌄</i></summary><div class="stage-body">${carryFocus}${mobileLayout ? `<section class="mobile-record-wellbeing" data-mobile-record-wellbeing data-run-fields${isRest ? " hidden" : ""}><div class="mobile-record-wellbeing__head"><div><small>任意</small><strong>体調・感覚</strong></div><span>走る前後の疲労感</span></div>${renderRofJInlineAndOverlay({ services, linkedRunId, editing })}</section>` : ""}<div class="linked-records"><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="subjective"><span class="linked-icon">＋</span><span><small>身体の記録</small><strong>今回の身体記録</strong><em data-subjective-summary-status>${escapeHtml(subjectiveSummaryFromFields(subjectiveFieldsFromFeedback(feedback)).label)}</em></span><i>›</i></button><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="personal"><span class="linked-icon">＋</span><span><small>使用したもの</small><strong>今回のシューズ</strong><em data-personal-summary-status>${escapeHtml(personalContextSummary(record).hasInput ? personalContextSummary(record).description : "未選択")}</em></span><i>›</i></button></div>${renderRunObservationMemo(record, { isRest })}<input type="hidden" name="memo" value=""></div></details>
       </section>
 
       ${renderEmbeddedSubjectiveSubflow(feedback)}${renderEmbeddedPersonalSubflow(record, settings)}

@@ -70,8 +70,9 @@ check("THEME-CREATION-REQUIRES-EXPLICIT-UI-ACTION", () => {
   const viewBuilder = core.slice(core.indexOf("export function buildSelfUnderstandingView"));
   assert.doesNotMatch(viewBuilder, /createOrResume\(/);
   const presentation = read("ui/interpretationRoomPresentation.js");
-  assert.match(presentation, /この点を次も見る/);
-  assert.match(presentation, /無理にテーマを作る必要はありません/);
+  assert.match(presentation, /次回も確認する/);
+  assert.match(presentation, /次回見ること/);
+  assert.doesNotMatch(presentation, /確認テーマ/);
 });
 
 check("PLAN-CARRIES-THEME-WITHOUT-PRESCRIPTION", () => {
@@ -89,9 +90,9 @@ check("PLAN-CARRIES-THEME-WITHOUT-PRESCRIPTION", () => {
 
 check("CONSULTATION-THEME-SHARE-IS-EXPLICIT-AND-BOUNDED", () => {
   const screen = read("screens/consultationScreen.js");
-  assert.match(screen, /共有する確認テーマ/);
-  assert.match(screen, /個人的な追加メモは自動では含めません/);
-  assert.match(screen, /RunLoadが傾向や原因を確定したものではありません/);
+  assert.match(screen, /共有する内容/);
+  assert.match(screen, /個人的な追加メモは含めません/);
+  assert.match(screen, /label: "次回見ること"/);
   assert.doesNotMatch(screen, /reviewEvents\s*\./);
 });
 
@@ -126,7 +127,7 @@ check("NO-SCIENTIFIC-VALUE-DUPLICATION-IN-PERSISTENT-SCHEMA", () => {
 
 check("NEW-ASSETS-ARE-PWA-PRECACHED", () => {
   const worker = read("service-worker.js");
-  for (const item of ["./core/selfUnderstandingCore.js", "./styles/self-understanding.css", "./ui/interactions/interpretationRoomInteractions.js"]) {
+  for (const item of ["./core/selfUnderstandingCore.js", "./styles/self-understanding.css", "./styles/interpretation-room-v50.css", "./ui/interactions/interpretationRoomInteractions.js"]) {
     assert.ok(worker.includes(`"${item}"`), `missing from service worker: ${item}`);
   }
 });

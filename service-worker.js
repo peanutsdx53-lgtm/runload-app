@@ -1,10 +1,11 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.02.1";
+const CACHE_NAME = "running-record-app-runtime-2026.10.02.6";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",
   "./core/interpretationBase.js",
   "./core/interpretationCore.js",
   "./core/selfUnderstandingCore.js",
+  "./core/selfInterpretationCore.js",
   "./core/appCore.js",
   "./core/rofJConstants.js",
   "./core/rofJAuthorConfirmedScale.js",
@@ -103,6 +104,9 @@ const PRECACHE_URLS = [
   "./styles/pc-course-v17.css",
   "./styles/interpretation-room.css",
   "./styles/self-understanding.css",
+  "./styles/interpretation-room-v50.css",
+  "./styles/interpretation-loop-v52.css",
+  "./styles/interpretation-loop-v53.css",
   "./styles/desktop-foundation.css",
   "./styles/desktop.css",
   "./styles/desktop-refresh-v38.css",
@@ -147,6 +151,7 @@ const PRECACHE_URLS = [
   "./ui/guideContent.js",
   "./ui/historyPresentation.js",
   "./ui/interpretationRoomPresentation.js",
+  "./ui/interpretationReferenceKnowledge.js",
   "./ui/bodyRegionVisuals.js",
   "./ui/interactions/browserUtilities.js",
   "./ui/interactions/consultationInteractions.js",

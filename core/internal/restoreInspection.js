@@ -8,6 +8,7 @@ import {
   isSupportedRofJLifecycleSchema,
 } from "../rofJConstants.js";
 import { normalizeSelfUnderstandingThread } from "../selfUnderstandingCore.js";
+import { normalizeSelfInterpretation } from "../selfInterpretationCore.js";
 
 // ===== core/storage/restoreInspection.js =====
 {
@@ -213,6 +214,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   const rofJData = collection(snapshot, STORAGE_KEYS.rofJ, null);
   const rofJLifecycleData = collection(snapshot, STORAGE_KEYS.rofJLifecycle, null);
   const selfUnderstandingThreads = collection(snapshot, STORAGE_KEYS.selfUnderstandingThreads, []);
+  const selfInterpretations = collection(snapshot, STORAGE_KEYS.selfInterpretations, []);
 
   if (rofJData != null) {
     const validEnvelope = isObject(rofJData)
@@ -278,7 +280,8 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
     [plans, "plans", "予定"],
     [courses, "courses", "保存したコース"],
     [runMeasurements, "runMeasurements", "GPS走行軌跡"],
-    [selfUnderstandingThreads, "selfUnderstandingThreads", "確認テーマ"],
+    [selfUnderstandingThreads, "selfUnderstandingThreads", "次回見る内容"],
+    [selfInterpretations, "selfInterpretations", "今回の解釈"],
   ];
   expectedArrays.forEach(([value, area, label]) => {
     if (!Array.isArray(value)) issues.push(issue("BLOCKING", "COLLECTION_SHAPE_INVALID", area, `${label}が一覧形式ではありません。`));
@@ -293,7 +296,8 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   const plansWithinLimit = withinCollectionLimit(plans, INPUT_LIMITS.portablePlans, "plans", "予定", issues);
   const coursesWithinLimit = withinCollectionLimit(courses, INPUT_LIMITS.portableCourses, "courses", "保存したコース", issues);
   const measurementsWithinLimit = withinCollectionLimit(runMeasurements, INPUT_LIMITS.portableRecords, "runMeasurements", "GPS走行軌跡", issues);
-  const threadsWithinLimit = withinCollectionLimit(selfUnderstandingThreads, INPUT_LIMITS.portableRecords, "selfUnderstandingThreads", "確認テーマ", issues);
+  const threadsWithinLimit = withinCollectionLimit(selfUnderstandingThreads, INPUT_LIMITS.portableRecords, "selfUnderstandingThreads", "次回見る内容", issues);
+  const interpretationsWithinLimit = withinCollectionLimit(selfInterpretations, INPUT_LIMITS.portableRecords, "selfInterpretations", "今回の解釈", issues);
 
   if (recordsWithinLimit) inspectRecords(records, issues);
   const recordIds = new Set(recordsWithinLimit ? records.map((item) => String(item?.id || "")).filter(Boolean) : []);
@@ -337,7 +341,16 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
     selfUnderstandingThreads.forEach((thread, index) => {
       const normalized = normalizeSelfUnderstandingThread(thread);
       if (!normalized) {
-        issues.push(issue("BLOCKING", "SELF_UNDERSTANDING_THREAD_INVALID", "selfUnderstandingThreads", "確認テーマの形式を確認できません。", String(thread?.id || index)));
+        issues.push(issue("BLOCKING", "SELF_UNDERSTANDING_THREAD_INVALID", "selfUnderstandingThreads", "次回見る内容の形式を確認できません。", String(thread?.id || index)));
+      }
+    });
+  }
+
+  if (interpretationsWithinLimit) {
+    selfInterpretations.forEach((interpretation, index) => {
+      const normalized = normalizeSelfInterpretation(interpretation);
+      if (!normalized) {
+        issues.push(issue("BLOCKING", "SELF_INTERPRETATION_INVALID", "selfInterpretations", "今回の解釈の形式を確認できません。", String(interpretation?.id || index)));
       }
     });
   }
@@ -367,6 +380,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
     courses: Array.isArray(courses) ? courses.length : 0,
     runMeasurements: Array.isArray(runMeasurements) ? runMeasurements.length : 0,
     selfUnderstandingThreads: Array.isArray(selfUnderstandingThreads) ? selfUnderstandingThreads.length : 0,
+    selfInterpretations: Array.isArray(selfInterpretations) ? selfInterpretations.length : 0,
     profile: profile == null ? 0 : 1,
     settings: settings == null ? 0 : 1,
     draft: draft == null ? 0 : 1,

@@ -71,6 +71,7 @@ function createHistoryWorkflow({
   planRepository,
   rofJRepository = null,
   rofJLifecycleRepository = null,
+  selfInterpretationsRepository = null,
 }) {
   function readCollectionForMutation(repository, sourceName) {
     const result = repository?.loadAllResult?.();
@@ -175,8 +176,14 @@ function createHistoryWorkflow({
     }
     const runMeasurements = runMeasurementsRead.value;
     const removedRunMeasurement = cloneValue(runMeasurements.find((item) => item?.recordId === recordId) || null);
+    const interpretationsRead = selfInterpretationsRepository
+      ? readCollectionForMutation(selfInterpretationsRepository, "selfInterpretations")
+      : { ok: true, items: [] };
+    if (!interpretationsRead.ok) return interpretationsRead;
+    const removedSelfInterpretation = cloneValue(interpretationsRead.items.find((item) => item.recordId === recordId) || null);
+    const nextSelfInterpretations = interpretationsRead.items.filter((item) => item.recordId !== recordId);
     const undoEntry = {
-      version: 8,
+      version: 9,
       deletedAt: new Date().toISOString(),
       record,
       feedback: removedFeedback,
@@ -184,6 +191,7 @@ function createHistoryWorkflow({
       rofJ: removedRofJ,
       rofJLifecycle: removedRofJLifecycle,
       runMeasurement: removedRunMeasurement,
+      selfInterpretation: removedSelfInterpretation,
       affectedPlans,
     };
     const operations = [
@@ -192,6 +200,7 @@ function createHistoryWorkflow({
       { key: STORAGE_KEYS.modelResultsRegionalV2, value: regionalV2Items.filter((item) => item.record_id !== recordId) },
       { key: STORAGE_KEYS.plans, value: nextPlans },
       { key: STORAGE_KEYS.runMeasurements, value: runMeasurements.filter((item) => item?.recordId !== recordId) },
+      ...(selfInterpretationsRepository ? [{ key: STORAGE_KEYS.selfInterpretations, value: nextSelfInterpretations }] : []),
       { key: STORAGE_KEYS.historyUndo, value: undoEntry },
     ];
     if (rofJRepository) operations.push({
@@ -285,12 +294,20 @@ function createHistoryWorkflow({
     const nextRunMeasurements = runMeasurementsRead.value.filter((item) => item?.recordId !== recordId);
     if (entry.runMeasurement) nextRunMeasurements.push(cloneValue(entry.runMeasurement));
 
+    const interpretationsRead = selfInterpretationsRepository
+      ? readCollectionForMutation(selfInterpretationsRepository, "selfInterpretations")
+      : { ok: true, items: [] };
+    if (!interpretationsRead.ok) return interpretationsRead;
+    const nextSelfInterpretations = interpretationsRead.items.filter((item) => item.recordId !== recordId);
+    if (entry.selfInterpretation) nextSelfInterpretations.push(cloneValue(entry.selfInterpretation));
+
     const operations = [
       { key: STORAGE_KEYS.records, value: records },
       { key: STORAGE_KEYS.subjectiveFeedback, value: feedbackItems },
       { key: STORAGE_KEYS.modelResultsRegionalV2, value: regionalV2Items },
       { key: STORAGE_KEYS.plans, value: nextPlans },
       { key: STORAGE_KEYS.runMeasurements, value: nextRunMeasurements },
+      ...(selfInterpretationsRepository ? [{ key: STORAGE_KEYS.selfInterpretations, value: nextSelfInterpretations }] : []),
       { key: STORAGE_KEYS.historyUndo, remove: true },
     ];
     if (rofJRepository && hasRofJUndo) operations.push({

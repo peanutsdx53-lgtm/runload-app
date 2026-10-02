@@ -1,5 +1,12 @@
 import { escapeHtml } from "./commonComponents.js";
 import { formatLocalDate } from "./recordPresentation.js";
+import {
+  buildInterpretationContextCandidate,
+  getInterpretationReferenceKnowledgeById,
+  normalizeInterpretationConditionId,
+  referenceReadingHref,
+  selectInterpretationReferenceKnowledge,
+} from "./interpretationReferenceKnowledge.js";
 
 function finite(value) {
   return value !== null && value !== "" && Number.isFinite(Number(value));
@@ -209,35 +216,32 @@ function historyChart(region, currentDate = "") {
   </svg>`;
 }
 
-function selectedRegionInterpretation(region = {}) {
-  const reference = region.referenceComparison || {}, previous = region.previousComparison || {};
-  if (previous.available && finite(previous.difference)) return `今回の値は${referenceText(reference.direction)}にあり、比較できる前回から${signed(previous.difference)}の差があります。基準100、前回、最近の推移の順に確認します。`;
-  return `今回の値を、この部位自身の基準100との位置から確認します。次回以降の比較点として保存記録を重ねると、前回差と推移を確認できます。`;
-}
 function renderSelectedRegion(output) {
   const region = output?.selectedRegion;
   if (!region) return "";
   const reference = region.referenceComparison || {}, previous = region.previousComparison || {};
   const currentDate = output?.target?.date || "";
   const current = finite(region.value) ? number(region.value) : "—";
-  const previousValue = previous.available ? number(previous.previousValue) : "—";
   const previousDelta = previous.available && finite(previous.difference) ? signed(previous.difference) : "—";
-  return `<section class="interpretation-room-region-detail interpretation-room-region-detail--selected" aria-labelledby="interpretation-region-title">
-    <div class="interpretation-room-region-detail__summary"><small>この部位の位置と推移</small><h2 id="interpretation-region-title">今回をどう読むか</h2><p>${escapeHtml(selectedRegionInterpretation(region))}</p></div>
-    <div class="interpretation-room-region-reading-order"><div><span>1</span><strong>基準100</strong><small>${escapeHtml(referenceText(reference.direction))}</small></div><i aria-hidden="true">→</i><div><span>2</span><strong>前回</strong><small>${previous.available ? `差 ${escapeHtml(previousDelta)}` : "比較記録なし"}</small></div><i aria-hidden="true">→</i><div><span>3</span><strong>推移</strong><small>比較記録 ${escapeHtml(String(Number(region?.personalHistory?.comparableCount || 0)))}件</small></div></div>
-    <div class="interpretation-room-region-stats"><article class="interpretation-room-region-stat is-current" data-direction="${escapeHtml(directionKey(reference.direction))}"><span class="metric-icon">${interpretationIcon("reference")}</span><small>今回</small><strong>${escapeHtml(current)}</strong><span>基準との差 ${escapeHtml(signed(reference.difference))}</span></article><article class="interpretation-room-region-stat"><span class="metric-icon">${interpretationIcon("compare")}</span><small>前回</small><strong>${escapeHtml(previousValue)}</strong><span>${previous.available ? `${escapeHtml(previous.date ? formatLocalDate(previous.date) : "前回")} → 今回 ${escapeHtml(previousDelta)}` : "比較できる過去記録なし"}</span></article><article class="interpretation-room-region-stat"><span class="metric-icon">${interpretationIcon("history")}</span><small>比較できる過去</small><strong>${escapeHtml(String(Number(region?.personalHistory?.comparableCount || 0)))}</strong><span>同じ部位・同じ計算基準の保存記録</span></article></div>
-    <div class="interpretation-room-history-panel"><header><strong>この部位の最近の推移</strong><small>破線は、この部位自身の基準100です</small></header>${historyChart(region, currentDate)}</div>
+  const historyCount = Number(region?.personalHistory?.comparableCount || 0);
+  return `<section class="interpretation-room-region-detail interpretation-room-region-detail--selected interpretation-room-region-detail--compact" aria-labelledby="interpretation-region-title">
+    <div class="interpretation-room-region-primary">
+      <div><small>今回</small><strong id="interpretation-region-title">${escapeHtml(current)}</strong><span>${escapeHtml(referenceText(reference.direction))}</span></div>
+      <dl><div><dt>前回差</dt><dd>${escapeHtml(previousDelta)}</dd></div><div><dt>比較記録</dt><dd>${escapeHtml(String(historyCount))}件</dd></div></dl>
+    </div>
+    ${historyCount ? `<details class="interpretation-room-history-panel interpretation-room-history-panel--compact"><summary>最近の推移 <span>${escapeHtml(String(historyCount))}件</span></summary>${historyChart(region, currentDate)}</details>` : ""}
   </section>`;
 }
 function conditionLabel(id = "") {
-  if (id === "distance") return "距離";
-  if (id === "duration") return "時間";
-  if (id === "pace") return "走る速さ";
-  if (id === "running-format") return "走り方";
-  if (id === "course") return "コース";
-  if (id === "grade") return "坂";
-  if (id === "surface") return "路面";
-  if (id === "cadence") return "ピッチ";
+  const key = normalizeInterpretationConditionId(id);
+  if (key === "distance") return "距離";
+  if (key === "duration") return "時間";
+  if (key === "pace") return "走る速さ";
+  if (key === "running-format") return "走り方";
+  if (key === "course") return "コース";
+  if (key === "grade") return "坂";
+  if (key === "surface") return "路面";
+  if (key === "cadence") return "ピッチ";
   return id || "条件";
 }
 
@@ -257,33 +261,36 @@ function surfaceValue(value) {
 }
 
 function conditionValue(itemId, value) {
-  if (itemId === "distance" && finite(value)) return `${number(value, 2)} km`;
-  if (itemId === "duration" && finite(value)) return `${number(value, 1)} 分`;
-  if (itemId === "pace" && finite(value)) return paceFromSeconds(value);
-  if (itemId === "cadence" && finite(value)) return `${number(value, 0)} spm`;
-  if (itemId === "grade") return gradeValue(value);
-  if (itemId === "surface") return surfaceValue(value);
-  if (itemId === "running-format") return String(value || "") === "RUN_WALK" ? "走りと歩きを混ぜる" : "途中で歩かず走る";
-  if (itemId === "course") return String(value || "未選択");
+  const key = normalizeInterpretationConditionId(itemId);
+  if (key === "distance" && finite(value)) return `${number(value, 2)} km`;
+  if (key === "duration" && finite(value)) return `${number(value, 1)} 分`;
+  if (key === "pace" && finite(value)) return paceFromSeconds(value);
+  if (key === "cadence" && finite(value)) return `${number(value, 0)} spm`;
+  if (key === "grade") return gradeValue(value);
+  if (key === "surface") return surfaceValue(value);
+  if (key === "running-format") return String(value || "") === "RUN_WALK" ? "走りと歩きを混ぜる" : "途中で歩かず走る";
+  if (key === "course") return String(value || "未選択");
   return finite(value) ? number(value) : String(value || "—");
 }
 
 function conditionIconName(id = "") {
-  if (id === "distance" || id === "course") return "conditions";
-  if (id === "duration" || id === "pace" || id === "cadence") return "history";
-  if (id === "running-format") return "trend";
-  if (id === "grade" || id === "surface") return "reference";
+  const key = normalizeInterpretationConditionId(id);
+  if (key === "distance" || key === "course") return "conditions";
+  if (key === "duration" || key === "pace" || key === "cadence") return "history";
+  if (key === "running-format") return "trend";
+  if (key === "grade" || key === "surface") return "reference";
   return "conditions";
 }
 function conditionDeltaText(item = {}) {
-  if (["distance", "duration", "cadence"].includes(item.id) && finite(item.previous) && finite(item.current)) {
+  const key = normalizeInterpretationConditionId(item.id || item.labelToken || "");
+  if (["distance", "duration", "cadence"].includes(key) && finite(item.previous) && finite(item.current)) {
     const delta = Number(item.current) - Number(item.previous);
     if (Math.abs(delta) < 0.001) return "変更なし";
-    if (item.id === "distance") return `${signed(delta, 2)} km`;
-    if (item.id === "duration") return `${signed(delta, 1)} 分`;
+    if (key === "distance") return `${signed(delta, 2)} km`;
+    if (key === "duration") return `${signed(delta, 1)} 分`;
     return `${signed(delta, 0)} spm`;
   }
-  if (item.id === "pace" && finite(item.previous) && finite(item.current)) {
+  if (key === "pace" && finite(item.previous) && finite(item.current)) {
     const delta = Math.round(Number(item.current) - Number(item.previous));
     if (!delta) return "変更なし";
     return `${Math.abs(delta)}秒/km${delta < 0 ? "速い" : "遅い"}`;
@@ -329,7 +336,6 @@ function renderSubjective(output) {
 
 function overviewHeadline(output) {
   const counts = output?.overview?.attention?.counts || {};
-  const available = Number(counts.available || 0);
   const repeated = Number(counts.repeated || 0);
   const changed = Number(counts.previousChanged || 0);
   if (available > 0 && repeated === available) return `${available}部位すべてで、同じ方向が複数回確認されています`;
@@ -378,23 +384,19 @@ function renderOverviewInsight(output, date) {
   const counts = output?.overview?.attention?.counts || {};
   const subjective = output?.subjectiveContext || {};
   const pair = Boolean(subjective?.difference?.eligible);
-  const fatigue = pair ? signed(subjective.difference.value, 0) : "—";
-  const available = Number(counts.available || 0);
   const repeated = Number(counts.repeated || 0);
   const changed = Number(counts.previousChanged || 0);
   const conditionCount = Number(counts.conditionDifferences || 0);
-  return `<section class="interpretation-room-insight" aria-labelledby="interpretation-insight-title">
-    <div class="interpretation-room-insight__copy">
-      <p class="interpretation-room-insight__date">${escapeHtml(date)}</p>
-      <div class="interpretation-room-kicker">今回の整理</div>
-      <h1 id="interpretation-insight-title">${escapeHtml(overviewHeadline(output))}</h1>
-      <p class="interpretation-room-insight__lead">${escapeHtml(overviewExplanation(output))}</p>
-      <div class="interpretation-room-insight__hint"><span>${interpretationIcon("flag")}</span><div><small>次回も比べて見るなら</small><strong>${escapeHtml(comparisonHint(output))}</strong></div></div>
-    </div>
-    <div class="interpretation-room-insight__signals" aria-label="今回の要点">
-      <article><span>${interpretationIcon("repeat")}</span><div><small>過去にも同じ側</small><strong>${repeated}<em>/ ${available || 12}</em></strong><p>過去にも同じ方向が確認された部位</p></div></article>
-      <article><span>${interpretationIcon("compare")}</span><div><small>前回との差</small><strong>${changed}<em>部位</em></strong><p>1ポイント以上の差がある部位</p></div></article>
-      <article><span>${interpretationIcon(pair ? "person" : "conditions")}</span><div><small>今回の背景</small><strong class="is-text">${pair ? `条件 ${conditionCount}・疲労 ${fatigue}` : `条件 ${conditionCount}項目`}</strong><p>${pair ? "走行条件と本人の感覚を別々に確認" : "前回から変わった走行条件"}</p></div></article>
+  return `<section class="interpretation-room-insight interpretation-room-insight--compact" aria-labelledby="interpretation-insight-title">
+    <header class="interpretation-room-compact-head">
+      <p>${escapeHtml(date)}</p>
+      <h1 id="interpretation-insight-title">今回の比較</h1>
+    </header>
+    <div class="interpretation-room-quick-facts" aria-label="今回の比較要点">
+      <span><small>前回差</small><strong>${changed}</strong><em>部位</em></span>
+      <span><small>同じ側</small><strong>${repeated}</strong><em>部位</em></span>
+      <span><small>条件差</small><strong>${conditionCount}</strong><em>項目</em></span>
+      ${pair ? `<span><small>疲労感</small><strong>${escapeHtml(number(subjective.pre.value,0))}→${escapeHtml(number(subjective.post.value,0))}</strong><em>/10</em></span>` : ""}
     </div>
   </section>`;
 }
@@ -402,36 +404,30 @@ function renderOverviewInsight(output, date) {
 function renderPatternBoard(output) {
   const groups = output?.overview?.attention?.groups || [];
   if (!groups.length) return "";
-  return `<section class="interpretation-room-patterns" aria-labelledby="interpretation-attention-title">
-    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>部位のパターン</small><h2 id="interpretation-attention-title">比較して見える部位</h2></div><p>順位ではなく確認理由でまとめます。部位を選ぶと、その部位の基準100・前回差・推移を確認できます。</p></div>
-    <div class="interpretation-room-pattern-groups">${groups.map((group) => {
+  return `<section class="interpretation-room-patterns interpretation-room-patterns--compact" aria-labelledby="interpretation-attention-title">
+    <div class="interpretation-room-compact-section-head"><h2 id="interpretation-attention-title">比較できる部位</h2></div>
+    <div class="interpretation-room-pattern-groups interpretation-room-pattern-groups--disclosure">${groups.map((group) => {
       const copy = REASON_COPY[group.code] || { title: group.code, note: "", icon: "interpretation", tone: "neutral" };
-      return `<article class="interpretation-room-pattern-group" data-tone="${escapeHtml(copy.tone)}">
-        <header><span>${interpretationIcon(copy.icon)}</span><div><strong>${escapeHtml(copy.title)}</strong><small>${escapeHtml(copy.note)}</small></div><b>${group.regions.length}部位</b></header>
+      return `<details class="interpretation-room-pattern-group interpretation-room-pattern-group--compact" data-tone="${escapeHtml(copy.tone)}">
+        <summary><span>${interpretationIcon(copy.icon)}</span><strong>${escapeHtml(copy.title)}</strong><b>${group.regions.length}部位</b><i aria-hidden="true">›</i></summary>
         <div class="interpretation-room-region-chips">${group.regions.map((region) => `<a href="${escapeHtml(regionHref(output, region.regionId))}" data-direction="${escapeHtml(directionKey(region.referenceDirection))}"><span class="region-chip__marker">${interpretationIcon(directionIconName(region.referenceDirection))}</span><span class="region-chip__copy"><strong>${escapeHtml(region.label)}</strong><small>${escapeHtml(reasonRegionMeta(region))}</small></span><b>${escapeHtml(number(region.value))}</b><i aria-hidden="true">›</i></a>`).join("")}</div>
-      </article>`;
+      </details>`;
     }).join("")}</div>
   </section>`;
 }
 
-function renderContextBoard(output, selfUnderstanding = null) {
+function renderContextBoard(output) {
   const rows = Array.isArray(output?.conditions?.differences) ? output.conditions.differences : [];
   const context = output?.subjectiveContext || {};
   const pre = context.pre || {}, post = context.post || {};
   const pair = Boolean(context?.difference?.eligible);
   if (!rows.length && context.state === "NONE") return "";
-  const contextLead = rows.length && context.state !== "NONE"
-    ? "次回の比較で部位の変化と読み分けるため、変わった条件と本人の感覚を分けて残します。"
-    : rows.length
-      ? "次回の比較で部位の変化と読み分けるため、前回から変わった条件を残します。"
-      : "次回の比較で部位数値と読み分けるため、本人が記録した感覚を別に残します。";
-  return `<section class="interpretation-room-context" aria-labelledby="interpretation-context-title">
-    <div class="interpretation-room-section-title interpretation-room-section-title--dense"><div><small>今回の背景</small><h2 id="interpretation-context-title">比較の背景</h2></div><p>${escapeHtml(contextLead)}</p></div>
-    <div class="interpretation-room-context-grid">
-      ${rows.length ? `<article class="interpretation-room-context-card interpretation-room-context-card--conditions"><header><span>${interpretationIcon("conditions")}</span><div><strong>前回から変わった条件</strong><small>${rows.length}項目</small></div></header><div class="interpretation-room-context-rows">${rows.map((item) => `<div><span><small>${escapeHtml(conditionLabel(item.id))}</small><strong>${escapeHtml(conditionDeltaText(item))}</strong></span><span class="context-values">${escapeHtml(conditionValue(item.id, item.previous))}<i>→</i>${escapeHtml(conditionValue(item.id, item.current))}</span></div>`).join("")}</div></article>` : ""}
-      ${context.state !== "NONE" ? `<article class="interpretation-room-context-card interpretation-room-context-card--subjective"><header><span>${interpretationIcon("person")}</span><div><strong>本人の感覚</strong><small>疲労感</small></div></header><div class="interpretation-room-context-fatigue"><span><small>走る前</small><strong>${escapeHtml(pre.available ? number(pre.value,0) : "—")}<em>/10</em></strong></span><i>→</i><span><small>走った後</small><strong>${escapeHtml(post.available ? number(post.value,0) : "—")}<em>/10</em></strong></span><b>${escapeHtml(pair ? signed(context.difference.value,0) : "—")}</b></div><p>${escapeHtml(pair ? "同じ日の本人記録です。部位数値とは別の情報として、過去の記録と並べて確認できます。" : "記録できている側だけを、本人の感覚として残します。")}</p></article>` : ""}
+  return `<section class="interpretation-room-context interpretation-room-context--compact" aria-labelledby="interpretation-context-title">
+    <div class="interpretation-room-compact-section-head"><h2 id="interpretation-context-title">条件・疲労</h2></div>
+    <div class="interpretation-room-context-lines">
+      ${rows.length ? `<details><summary><span>${interpretationIcon("conditions")}</span><strong>条件差</strong><b>${rows.length}項目</b><i aria-hidden="true">›</i></summary><div class="interpretation-room-context-rows">${rows.map((item) => `<div><span><small>${escapeHtml(conditionLabel(item.id))}</small><strong>${escapeHtml(conditionDeltaText(item))}</strong></span><span class="context-values">${escapeHtml(conditionValue(item.id, item.previous))}<i>→</i>${escapeHtml(conditionValue(item.id, item.current))}</span></div>`).join("")}</div></details>` : ""}
+      ${context.state !== "NONE" ? `<details><summary><span>${interpretationIcon("person")}</span><strong>疲労感</strong><b>${escapeHtml(pre.available ? number(pre.value,0) : "—")} → ${escapeHtml(post.available ? number(post.value,0) : "—")}</b><i aria-hidden="true">›</i></summary><div class="interpretation-room-fatigue-inline"><span>走る前 <b>${escapeHtml(pre.available ? number(pre.value,0) : "—")}/10</b></span><i>→</i><span>走った後 <b>${escapeHtml(post.available ? number(post.value,0) : "—")}/10</b></span>${pair ? `<strong>${escapeHtml(signed(context.difference.value,0))}</strong>` : ""}</div></details>` : ""}
     </div>
-    ${sameCourseRofAction(output, selfUnderstanding)}
   </section>`;
 }
 
@@ -522,6 +518,7 @@ function timingLabel(value = "") {
   if (key === "BEFORE") return "走る前";
   if (key === "DURING") return "走行中";
   if (key === "IMMEDIATELY_AFTER") return "走った直後";
+  if (key === "AFTER") return "走ったあと";
   if (key === "LATER") return "走ったあと";
   return "記録時点未設定";
 }
@@ -530,51 +527,54 @@ function candidateRegionValue(candidate = {}) {
   return finite(candidate?.row?.value) ? number(candidate.row.value) : "—";
 }
 
+function candidateRegionLabel(candidate = {}) {
+  return candidate?.row?.regionName || candidate?.row?.regionId || "この部位";
+}
+
+function compactThreadTitle(thread = {}) {
+  if (thread.title) return thread.title;
+  const episode = thread.newEpisodes?.[0] || thread.sourceEpisode || null;
+  const region = episode?.row?.regionName || "";
+  if (["REGION_OBSERVATION_PAIR", "REGION_WATCH"].includes(thread.type) && region) return `${region}を続けて確認`;
+  if (thread.type === "SAME_COURSE_ROF_POST") return `${thread.subject?.courseName || "同じコース"}の疲労感を続けて確認`;
+  return thread.title || "次回見ること";
+}
+
 function renderBodyObservationCandidate(candidate = {}) {
   if (candidate?.kind !== "BODY_OBSERVATION_PAIR") return "";
   const observation = candidate.observation || {};
   const row = candidate.row || {};
-  const regionLabel = row.regionName || row.regionId || "選択部位";
-  const direction = finite(row.value) ? referenceText(Number(row.value) > 101 ? "ABOVE_REFERENCE" : Number(row.value) < 99 ? "BELOW_REFERENCE" : "REFERENCE_VICINITY") : "表示なし";
-  return `<div class="self-understanding-candidate" data-su-candidate="body-region-pair">
-    <div class="self-understanding-candidate__eyebrow">比較ポイント</div>
-    <h3>2つの情報を見比べられます</h3>
-    <div class="self-understanding-candidate__layers">
-      <article data-layer="subjective"><small>あなたの記録</small><strong>${escapeHtml(observation.label || regionLabel)}・${escapeHtml(sensationLabel(observation.sensationType))}</strong><span>${escapeHtml(timingLabel(observation.noticedTiming))}${finite(observation.intensity) ? `・強さ ${escapeHtml(String(observation.intensity))}/5` : ""}</span></article>
+  const regionLabel = candidateRegionLabel(candidate);
+  return `<div class="self-understanding-candidate self-understanding-candidate--compact" data-su-candidate="body-region-pair">
+    <strong class="self-understanding-next-title">${escapeHtml(regionLabel)}</strong>
+    <div class="self-understanding-pair-line" aria-label="今回見比べられる2つの情報">
+      <span><small>本人の記録</small><b>${escapeHtml(observation.label || regionLabel)}・${escapeHtml(sensationLabel(observation.sensationType))}</b></span>
       <i aria-hidden="true">↔</i>
-      <article data-layer="model"><small>部位表示</small><strong>${escapeHtml(regionLabel)} ${escapeHtml(candidateRegionValue(candidate))}</strong><span>${escapeHtml(direction)}</span></article>
+      <span><small>部位表示</small><b>${escapeHtml(candidateRegionValue(candidate))}</b></span>
     </div>
-    <p>本人が記録した感覚と、文献由来の部位表示は別の情報です。原因関係や一致度は判定しません。${Number(candidate.otherObservationCount || 0) > 0 ? ` ほかに身体の記録が${escapeHtml(String(candidate.otherObservationCount))}件あります。` : ""}</p>
-    <button type="button" class="self-understanding-primary" data-action="create-self-understanding-thread" data-thread-type="REGION_OBSERVATION_PAIR" data-region-id="${escapeHtml(row.regionId || candidate.subject?.regionId || "")}" data-body-area-id="${escapeHtml(candidate.subject?.bodyAreaId || observation.areaId || "")}">この点を次も見る</button>
+    <button type="button" class="self-understanding-primary" data-action="create-self-understanding-thread" data-thread-type="REGION_OBSERVATION_PAIR" data-region-id="${escapeHtml(row.regionId || candidate.subject?.regionId || "")}" data-body-area-id="${escapeHtml(candidate.subject?.bodyAreaId || observation.areaId || "")}">次回も確認する</button>
+    <details class="self-understanding-boundary"><summary>この比較の見方</summary><p>本人の感覚と部位表示は別の情報です。原因関係や一致度は判定しません。</p></details>
   </div>`;
 }
 
 function threadStateLabel(thread = {}) {
   if (thread.userState === "PAUSED") return "一時停止中";
   if (thread.userState === "CLOSED") return "終了";
-  return thread.hasNewEligibleData ? "新しい記録あり" : "確認中";
+  return thread.hasNewEligibleData ? "新しい記録" : "確認中";
 }
 
 function renderActiveThread(thread = {}, output = {}) {
   const currentEpisode = (thread.newEpisodes || []).find((episode) => episode.recordId === output?.target?.recordId) || thread.newEpisodes?.[0] || null;
   const episodeDetail = currentEpisode?.row && finite(currentEpisode.row.value)
-    ? `${currentEpisode.row.regionName || "部位"} ${number(currentEpisode.row.value)}・${referenceText(Number(currentEpisode.row.value) > 101 ? "ABOVE_REFERENCE" : Number(currentEpisode.row.value) < 99 ? "BELOW_REFERENCE" : "REFERENCE_VICINITY")}`
+    ? `${currentEpisode.row.regionName || "部位"} ${number(currentEpisode.row.value)}`
     : finite(currentEpisode?.postRofJ)
-      ? `走行後の疲労感 ${number(currentEpisode.postRofJ, 0)}/10`
-      : currentEpisode ? `${formatLocalDate(currentEpisode.date)}の記録` : "新しい比較材料があります";
-  return `<div class="self-understanding-thread self-understanding-thread--active" data-thread-id="${escapeHtml(thread.id || "")}">
-    <div class="self-understanding-thread__head"><span>${interpretationIcon("flag")}</span><div><small>確認中のテーマ</small><h3>${escapeHtml(thread.title || "確認テーマ")}</h3></div><b>${escapeHtml(threadStateLabel(thread))}</b></div>
-    <div class="self-understanding-thread__new"><small>今回追加できる材料</small><strong>${escapeHtml(episodeDetail)}</strong><span>比較できる記録 ${escapeHtml(String(thread.eligibleCount || 0))}件</span></div>
-    <p>このテーマはあなたが続けて見ると決めたものです。RunLoadが「傾向を確定」したものではありません。</p>
-    <div class="self-understanding-thread__actions">
-      <button type="button" class="self-understanding-primary" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id || "")}" data-thread-decision="KEEP_WATCHING">今回の追加を確認して続ける</button>
-      <button type="button" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id || "")}" data-thread-decision="PAUSE">一時停止</button>
-      <button type="button" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id || "")}" data-thread-decision="CLOSE">終了</button>
-    </div>
-    <div class="self-understanding-thread__links">
-      <a class="self-understanding-thread__share" href="#/plan?sourceRecordId=${encodeURIComponent(output?.target?.recordId || currentEpisode?.recordId || thread.createdFromRecordId || "")}&threadId=${encodeURIComponent(thread.id || "")}&from=interpretation-room">次の予定に覚えておく</a>
-      <a class="self-understanding-thread__share" href="#/consultation?recordId=${encodeURIComponent(output?.target?.recordId || currentEpisode?.recordId || thread.createdFromRecordId || "")}&threadId=${encodeURIComponent(thread.id || "")}&from=interpretation-room&roomOrigin=${encodeURIComponent(output?.target?.origin || "result")}">共有用に整理</a>
-    </div>
+      ? `走行後 ${number(currentEpisode.postRofJ, 0)}/10`
+      : currentEpisode ? formatLocalDate(currentEpisode.date) : "新しい記録";
+  return `<div class="self-understanding-thread self-understanding-thread--active self-understanding-thread--compact" data-thread-id="${escapeHtml(thread.id || "")}">
+    <div class="self-understanding-next-status"><small>${escapeHtml(threadStateLabel(thread))}</small><strong>${escapeHtml(compactThreadTitle(thread))}</strong></div>
+    <div class="self-understanding-new-line"><span>今回</span><strong>${escapeHtml(episodeDetail)}</strong><em>比較 ${escapeHtml(String(thread.eligibleCount || 0))}件</em></div>
+    <button type="button" class="self-understanding-primary" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id || "")}" data-thread-decision="KEEP_WATCHING">今回を追加</button>
+    <details class="self-understanding-thread-manage"><summary>管理</summary><div><button type="button" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id || "")}" data-thread-decision="PAUSE">一時停止</button><button type="button" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id || "")}" data-thread-decision="CLOSE">終了</button></div></details>
   </div>`;
 }
 
@@ -582,8 +582,8 @@ function selectedRegionWatchAction(output = {}, selfUnderstanding = {}) {
   const region = output?.selectedRegion || null;
   if (!region?.regionId) return "";
   const existing = (selfUnderstanding?.threads || []).some((thread) => thread.userState !== "CLOSED" && ["REGION_WATCH", "REGION_OBSERVATION_PAIR"].includes(thread.type) && thread.subject?.regionId === region.regionId);
-  if (existing) return `<p class="self-understanding-already">この部位に関する確認テーマはすでに保存されています。</p>`;
-  return `<button type="button" class="self-understanding-secondary" data-action="create-self-understanding-thread" data-thread-type="REGION_WATCH" data-region-id="${escapeHtml(region.regionId)}">この部位を次も見る</button>`;
+  if (existing) return `<div class="self-understanding-inline-state"><strong>${escapeHtml(region.label)}は確認中です</strong></div>`;
+  return `<div class="self-understanding-simple-choice"><strong>${escapeHtml(region.label)}</strong><button type="button" class="self-understanding-primary" data-action="create-self-understanding-thread" data-thread-type="REGION_WATCH" data-region-id="${escapeHtml(region.regionId)}">次回も確認する</button></div>`;
 }
 
 function legacyCarryAction(output = {}, selfUnderstanding = {}) {
@@ -591,7 +591,7 @@ function legacyCarryAction(output = {}, selfUnderstanding = {}) {
   if (!legacy) return "";
   const already = (selfUnderstanding?.threads || []).some((thread) => thread.type === "USER_DEFINED_LEGACY" && thread.legacyOrigin?.sourceRecordId === output?.target?.recordId && thread.userState !== "CLOSED");
   if (already) return "";
-  return `<div class="self-understanding-legacy"><small>以前に自分で残した確認</small><strong>${escapeHtml(legacy)}</strong><button type="button" data-action="create-self-understanding-thread" data-thread-type="USER_DEFINED_LEGACY">確認テーマとして引き継ぐ</button></div>`;
+  return `<div class="self-understanding-simple-choice"><small>以前に残した内容</small><strong>${escapeHtml(legacy)}</strong><button type="button" class="self-understanding-primary" data-action="create-self-understanding-thread" data-thread-type="USER_DEFINED_LEGACY">次回も確認する</button></div>`;
 }
 
 function sameCourseRofAction(output = {}, selfUnderstanding = {}) {
@@ -600,24 +600,14 @@ function sameCourseRofAction(output = {}, selfUnderstanding = {}) {
   if (!course.id || !finite(context.postRofJ)) return "";
   const existing = (selfUnderstanding?.threads || []).some((thread) => thread.userState !== "CLOSED" && thread.type === "SAME_COURSE_ROF_POST" && thread.subject?.courseId === course.id);
   if (existing) return "";
-  return `<button type="button" class="self-understanding-context-action" data-action="create-self-understanding-thread" data-thread-type="SAME_COURSE_ROF_POST"><span>${interpretationIcon("person")}</span><span><small>自分で選ぶ確認テーマ</small><strong>同じコースで走行後の疲労感を見る</strong></span><i aria-hidden="true">›</i></button>`;
+  return `<div class="self-understanding-simple-choice"><strong>${escapeHtml(course.name || "同じコース")}の疲労感</strong><button type="button" class="self-understanding-secondary" data-action="create-self-understanding-thread" data-thread-type="SAME_COURSE_ROF_POST">次回も確認する</button></div>`;
 }
 
 function renderThreadArchiveLink(selfUnderstanding = {}) {
   const watching = Number(selfUnderstanding?.counts?.watching || 0);
   const paused = Number(selfUnderstanding?.counts?.paused || 0);
   if (!watching && !paused) return "";
-  return `<a class="self-understanding-archive-link" href="#/history?view=checks"><span>${interpretationIcon("history")}</span><span><small>これまで</small><strong>確認中のことを見る</strong></span><b>${watching + paused}</b><i aria-hidden="true">›</i></a>`;
-}
-
-function renderMobileInterpretationPath() {
-  return `<nav class="interpretation-room-mobile-path" aria-label="結果整理の流れ">
-    <span><b>1</b><strong>記録した事実</strong></span>
-    <i aria-hidden="true">›</i>
-    <span><b>2</b><strong>今回を見る</strong></span>
-    <i aria-hidden="true">›</i>
-    <span><b>3</b><strong>確認テーマ</strong></span>
-  </nav>`;
+  return `<a class="self-understanding-archive-link self-understanding-archive-link--compact" href="#/history?view=checks"><span>${interpretationIcon("history")}</span><strong>確認中</strong><b>${watching + paused}</b><i aria-hidden="true">›</i></a>`;
 }
 
 function renderNextRail(output, { mobileLayout = false, selfUnderstanding = null } = {}) {
@@ -626,24 +616,645 @@ function renderNextRail(output, { mobileLayout = false, selfUnderstanding = null
   const active = selfUnderstanding?.activeThread || null;
   const candidate = selfUnderstanding?.primaryCandidate || null;
   const selected = Boolean(output?.selectedRegion);
+  const legacy = !active && !candidate && !selected ? legacyCarryAction(output, selfUnderstanding) : "";
+  const course = !active && !candidate && !selected && !legacy ? sameCourseRofAction(output, selfUnderstanding) : "";
+  const hasRegions = Array.isArray(output?.overview?.attention?.groups) && output.overview.attention.groups.some((group) => Array.isArray(group?.regions) && group.regions.length);
   const content = active
     ? renderActiveThread(active, output)
     : candidate
       ? renderBodyObservationCandidate(candidate)
-      : `<div class="self-understanding-zero"><span>${interpretationIcon("flag")}</span><div><small>確認テーマ</small><strong>${selected ? "この部位を続けて見るか選べます" : "今回は新しい確認テーマはありません"}</strong><p>${selected ? "部位表示は事実として確認できます。続けて見るかどうかは自分で決めます。" : "結果と記録は履歴からいつでも見返せます。無理にテーマを作る必要はありません。"}</p></div></div>`;
-  return `<aside class="interpretation-room-next-rail self-understanding-rail" aria-labelledby="interpretation-next-title">
-    <div class="interpretation-room-next-rail__head"><span>${interpretationIcon("flag")}</span><div><small>次へつなぐ</small><h2 id="interpretation-next-title">確認テーマ</h2></div></div>
+      : selected
+        ? selectedRegionWatchAction(output, selfUnderstanding)
+        : legacy || course || `<div class="self-understanding-zero self-understanding-zero--compact"><strong>未設定</strong>${hasRegions ? `<a class="self-understanding-jump" href="#interpretation-attention-title">部位から選ぶ</a>` : ""}</div>`;
+  return `<aside class="interpretation-room-next-rail self-understanding-rail self-understanding-rail--compact" aria-labelledby="interpretation-next-title">
+    <div class="interpretation-room-next-rail__head interpretation-room-next-rail__head--compact"><span>${interpretationIcon("flag")}</span><h2 id="interpretation-next-title">次回見ること</h2></div>
     ${content}
-    ${active && Number(selfUnderstanding?.counts?.newThreadCount || 0) > 1 ? `<a class="self-understanding-more-new" href="#/history?view=checks"><strong>ほかに新しい記録がある確認 ${escapeHtml(String(Number(selfUnderstanding.counts.newThreadCount) - 1))}件</strong><span>確認中のことから見られます</span></a>` : ""}
-    ${!active && !candidate && selected ? selectedRegionWatchAction(output, selfUnderstanding) : ""}
-    ${!active ? legacyCarryAction(output, selfUnderstanding) : ""}
+    ${active && Number(selfUnderstanding?.counts?.newThreadCount || 0) > 1 ? `<a class="self-understanding-more-new" href="#/history?view=checks"><strong>ほかに新しい記録 ${escapeHtml(String(Number(selfUnderstanding.counts.newThreadCount) - 1))}件</strong></a>` : ""}
     ${renderThreadArchiveLink(selfUnderstanding)}
-    <details class="self-understanding-other-actions"><summary>ほかにできること</summary><div>${actions.map((action) => renderAction(action, output)).join("")}</div></details>
+    <details class="self-understanding-other-actions"><summary>ほかの操作</summary><div>${actions.map((action) => renderAction(action, output)).join("")}</div></details>
   </aside>`;
 }
 
-function renderNext(output, selfUnderstanding = null) {
-  return `<section class="interpretation-room-next interpretation-room-next--actions"><div class="interpretation-room-section-title"><div><small>次へつなぐ</small><h2>確認テーマ</h2></div><p>続けて見たいことがある場合だけ、自分で確認テーマを残します。</p></div>${renderNextRail(output, { selfUnderstanding })}</section>`;
+
+function desktopRegionRows(output = {}) {
+  const groups = Array.isArray(output?.overview?.attention?.groups) ? output.overview.attention.groups : [];
+  const rows = [];
+  const seen = new Set();
+  groups.forEach((group) => {
+    (Array.isArray(group?.regions) ? group.regions : []).forEach((region) => {
+      if (!region?.regionId || seen.has(region.regionId)) return;
+      seen.add(region.regionId);
+      rows.push({ ...region, groupCode: group.code });
+    });
+  });
+  return rows;
+}
+
+function desktopRegionGroupLabel(code = "") {
+  if (code === "PREVIOUS_CHANGE") return "前回差";
+  if (code === "REPEATED_DIRECTION") return "継続";
+  if (code === "REFERENCE_POSITION") return "基準差";
+  if (code === "REFERENCE_NEAR") return "基準付近";
+  return "部位";
+}
+
+function renderDesktopRegionNavigator(output = {}) {
+  const rows = desktopRegionRows(output);
+  const selectedId = String(output?.selectedRegion?.regionId || "");
+  if (!rows.length) return `<section class="interpretation-pc-regions"><header><h2>12部位</h2><span>表示なし</span></header></section>`;
+  const groups = [];
+  for (const row of rows) {
+    let group = groups.find((item) => item.code === row.groupCode);
+    if (!group) { group = { code: row.groupCode, rows: [] }; groups.push(group); }
+    group.rows.push(row);
+  }
+  return `<section class="interpretation-pc-regions" aria-label="部位を選ぶ">
+    <header><div><small>12 REGIONS</small><h2>部位を選ぶ</h2></div><span>${rows.length}部位</span></header>
+    <div class="interpretation-pc-region-groups">${groups.map((group) => `<div class="interpretation-pc-region-group"><div class="interpretation-pc-region-group__label"><strong>${escapeHtml(desktopRegionGroupLabel(group.code))}</strong><span>${group.rows.length}</span></div>${group.rows.map((region) => `<a class="interpretation-pc-region-row${selectedId === region.regionId ? " is-selected" : ""}" href="${escapeHtml(regionHref(output, region.regionId))}" data-direction="${escapeHtml(directionKey(region.referenceDirection))}"><span class="interpretation-pc-region-state">${interpretationIcon(directionIconName(region.referenceDirection))}</span><span class="interpretation-pc-region-name"><strong>${escapeHtml(region.label)}</strong><small>${escapeHtml(reasonRegionMeta(region))}</small></span><b>${escapeHtml(number(region.value))}</b></a>`).join("")}</div>`).join("")}</div>
+  </section>`;
+}
+
+function renderDesktopObservationComparison(selfUnderstanding = null, selectedRegionId = "") {
+  const candidate = selfUnderstanding?.primaryCandidate || null;
+  if (!candidate || candidate.kind !== "BODY_OBSERVATION_PAIR" || String(candidate.subject?.regionId || "") !== String(selectedRegionId || "")) return "";
+  const observation = candidate.observation || {};
+  return `<section class="interpretation-pc-observation" aria-label="本人の記録と部位表示">
+    <div><small>本人の記録</small><strong>${escapeHtml(observation.label || candidateRegionLabel(candidate))}</strong><span>${escapeHtml(sensationLabel(observation.sensationType))}${finite(observation.intensity) ? ` ${escapeHtml(String(observation.intensity))}/5` : ""}${observation.noticedTiming ? `・${escapeHtml(timingLabel(observation.noticedTiming))}` : ""}</span></div>
+    <i aria-hidden="true">↔</i>
+    <div><small>部位表示</small><strong>${escapeHtml(candidateRegionLabel(candidate))}</strong><span>${escapeHtml(candidateRegionValue(candidate))}</span></div>
+  </section>`;
+}
+
+function renderDesktopFocus(output = {}, selfUnderstanding = null) {
+  const region = output?.selectedRegion || null;
+  if (!region) return `<section class="interpretation-pc-focus"><div class="interpretation-pc-empty"><strong>部位を選んで確認</strong></div></section>`;
+  const reference = region.referenceComparison || {};
+  const previous = region.previousComparison || {};
+  const current = finite(region.value) ? number(region.value) : "—";
+  const delta = previous.available && finite(previous.difference) ? signed(previous.difference) : "—";
+  const historyCount = Number(region?.personalHistory?.comparableCount || 0);
+  const rows = Array.isArray(output?.conditions?.differences) ? output.conditions.differences : [];
+  const subjective = output?.subjectiveContext || {};
+  const pre = subjective?.pre || {}, post = subjective?.post || {};
+  return `<section class="interpretation-pc-focus" aria-labelledby="interpretation-pc-focus-title">
+    <header class="interpretation-pc-focus-head">
+      <div><small>SELECTED REGION</small><h1 id="interpretation-pc-focus-title">${escapeHtml(region.label)}</h1></div>
+      <div class="interpretation-pc-focus-values"><span><small>今回</small><strong>${escapeHtml(current)}</strong></span><span><small>前回差</small><strong>${escapeHtml(delta)}</strong></span><span><small>比較</small><strong>${escapeHtml(String(historyCount))}<em>件</em></strong></span></div>
+    </header>
+    <div class="interpretation-pc-reference-line"><span data-direction="${escapeHtml(directionKey(reference.direction))}">${interpretationIcon(directionIconName(reference.direction))}</span><strong>${escapeHtml(referenceText(reference.direction))}</strong></div>
+    ${renderDesktopObservationComparison(selfUnderstanding, region.regionId)}
+    <div class="interpretation-pc-trend"><div class="interpretation-pc-subhead"><strong>推移</strong><span>${historyCount ? `${historyCount}件` : "今回から"}</span></div>${historyCount ? historyChart(region, output?.target?.date || "") : `<div class="interpretation-pc-trend-empty">今回を比較点として保存</div>`}</div>
+    <div class="interpretation-pc-context-strip">
+      <div><small>条件差</small><strong>${rows.length}</strong><span>項目</span></div>
+      <div><small>疲労感</small><strong>${escapeHtml(pre.available ? number(pre.value,0) : "—")}<i>→</i>${escapeHtml(post.available ? number(post.value,0) : "—")}</strong><span>/10</span></div>
+      ${rows.slice(0, 3).map((item) => `<div class="is-context"><small>${escapeHtml(conditionLabel(item.id))}</small><strong>${escapeHtml(conditionDeltaText(item))}</strong></div>`).join("")}
+    </div>
+  </section>`;
+}
+
+function desktopNextChecklist(output = {}, selfUnderstanding = null) {
+  const activeRaw = selfUnderstanding?.activeThread || null;
+  const candidateRaw = selfUnderstanding?.primaryCandidate || null;
+  const region = output?.selectedRegion || null;
+  const active = activeRaw && (!["REGION_WATCH", "REGION_OBSERVATION_PAIR"].includes(activeRaw.type) || !region?.regionId || activeRaw.subject?.regionId === region.regionId) ? activeRaw : null;
+  const candidate = candidateRaw && (!region?.regionId || candidateRaw.subject?.regionId === region.regionId) ? candidateRaw : null;
+  if (active) {
+    if (active.type === "REGION_OBSERVATION_PAIR") return [`身体記録：${active.title || region?.label || "同じ部位"}`, "部位表示：自動"];
+    if (active.type === "SAME_COURSE_ROF_POST") return [`コース：${active.subject?.courseName || "同じコース"}`, "走行後の疲労感"];
+    if (active.type === "REGION_WATCH") return [`部位：${region?.label || active.title || "選択部位"}`, "部位表示：自動"];
+    if (active.type === "USER_DEFINED_LEGACY") return [active.subject?.prompt || active.title || "以前の確認"];
+  }
+  if (candidate?.kind === "BODY_OBSERVATION_PAIR") return [`身体記録：${candidate.observation?.label || candidateRegionLabel(candidate)}`, "部位表示：自動"];
+  if (region) return [`部位：${region.label}`, "部位表示：自動"];
+  return [];
+}
+
+function renderDesktopAlternativeChecks(output = {}, selfUnderstanding = null, active = null) {
+  if (active) return "";
+  const options = [];
+  const context = selfUnderstanding?.targetContext || {};
+  const course = context.course || {};
+  const sameCourseExists = (selfUnderstanding?.threads || []).some((thread) => thread.userState !== "CLOSED" && thread.type === "SAME_COURSE_ROF_POST" && thread.subject?.courseId === course.id);
+  if (course.id && finite(context.postRofJ) && !sameCourseExists) {
+    options.push(`<button type="button" data-action="create-self-understanding-thread" data-thread-type="SAME_COURSE_ROF_POST"><span>同じコース</span><strong>疲労感を見る</strong></button>`);
+  }
+  const legacy = String(output?.runFacts?.nextCheckPoint || "").trim();
+  const legacyExists = legacy && (selfUnderstanding?.threads || []).some((thread) => thread.type === "USER_DEFINED_LEGACY" && thread.legacyOrigin?.sourceRecordId === output?.target?.recordId && thread.userState !== "CLOSED");
+  if (legacy && !legacyExists) {
+    options.push(`<button type="button" data-action="create-self-understanding-thread" data-thread-type="USER_DEFINED_LEGACY" title="${escapeHtml(legacy)}"><span>以前のメモ</span><strong>${escapeHtml(legacy)}</strong></button>`);
+  }
+  if (!options.length) return "";
+  return `<details class="interpretation-pc-next-alternatives"><summary>別の確認</summary><div>${options.join("")}</div></details>`;
+}
+
+function renderDesktopDecision(output = {}, selfUnderstanding = null) {
+  const activeRaw = selfUnderstanding?.activeThread || null;
+  const candidateRaw = selfUnderstanding?.primaryCandidate || null;
+  const region = output?.selectedRegion || null;
+  const active = activeRaw && (!["REGION_WATCH", "REGION_OBSERVATION_PAIR"].includes(activeRaw.type) || !region?.regionId || activeRaw.subject?.regionId === region.regionId) ? activeRaw : null;
+  const candidate = candidateRaw && (!region?.regionId || candidateRaw.subject?.regionId === region.regionId) ? candidateRaw : null;
+  const next = output?.next || {};
+  const actions = [next.primaryAction, ...(next.otherActions || [])].filter((action) => action && action.enabled !== false);
+  let main = "";
+  if (active) {
+    const currentEpisode = (active.newEpisodes || []).find((episode) => episode.recordId === output?.target?.recordId) || active.newEpisodes?.[0] || null;
+    const episodeDetail = currentEpisode?.row && finite(currentEpisode.row.value)
+      ? `${currentEpisode.row.regionName || "部位"} ${number(currentEpisode.row.value)}`
+      : finite(currentEpisode?.postRofJ) ? `走行後 ${number(currentEpisode.postRofJ, 0)}/10` : "今回の記録";
+    main = `<div class="interpretation-pc-next-main"><small>${escapeHtml(threadStateLabel(active))}</small><h2>${escapeHtml(compactThreadTitle(active))}</h2><div class="interpretation-pc-next-current"><span>今回</span><strong>${escapeHtml(episodeDetail)}</strong></div><button type="button" class="self-understanding-primary" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(active.id || "")}" data-thread-decision="KEEP_WATCHING">今回を追加</button></div>`;
+  } else if (candidate?.kind === "BODY_OBSERVATION_PAIR") {
+    main = `<div class="interpretation-pc-next-main"><small>今回から</small><h2>${escapeHtml(candidateRegionLabel(candidate))}</h2><button type="button" class="self-understanding-primary" data-action="create-self-understanding-thread" data-thread-type="REGION_OBSERVATION_PAIR" data-region-id="${escapeHtml(candidate.subject?.regionId || "")}" data-body-area-id="${escapeHtml(candidate.subject?.bodyAreaId || candidate.observation?.areaId || "")}">次回も同じ部位を記録</button></div>`;
+  } else if (region) {
+    const existing = (selfUnderstanding?.threads || []).some((thread) => thread.userState !== "CLOSED" && ["REGION_WATCH", "REGION_OBSERVATION_PAIR"].includes(thread.type) && thread.subject?.regionId === region.regionId);
+    main = existing
+      ? `<div class="interpretation-pc-next-main"><small>確認中</small><h2>${escapeHtml(region.label)}</h2><a class="interpretation-pc-inline-link" href="#/history?view=checks">確認中の記録を見る</a></div>`
+      : `<div class="interpretation-pc-next-main"><small>次回へ</small><h2>${escapeHtml(region.label)}</h2><button type="button" class="self-understanding-primary" data-action="create-self-understanding-thread" data-thread-type="REGION_WATCH" data-region-id="${escapeHtml(region.regionId)}">この部位を次回も見る</button></div>`;
+  } else {
+    main = `<div class="interpretation-pc-next-main"><small>次回へ</small><h2>未設定</h2></div>`;
+  }
+  const checklist = desktopNextChecklist(output, selfUnderstanding);
+  return `<aside class="interpretation-pc-next" aria-label="次回の確認">
+    <header><span>${interpretationIcon("flag")}</span><strong>次回見ること</strong></header>
+    ${main}
+    ${checklist.length ? `<div class="interpretation-pc-next-checklist">${checklist.map((item) => `<span>${interpretationIcon("record")}<b>${escapeHtml(item)}</b></span>`).join("")}</div>` : ""}
+    ${renderDesktopAlternativeChecks(output, selfUnderstanding, active)}
+    <nav class="interpretation-pc-next-links" aria-label="次の操作">
+      <a href="#/history?view=checks"><span>${interpretationIcon("history")}</span><strong>確認中</strong><b>${escapeHtml(String(Number(selfUnderstanding?.counts?.watching || 0) + Number(selfUnderstanding?.counts?.paused || 0)))}</b></a>
+      ${actions.filter((action) => ["plan","share","simulation"].includes(action.actionId)).slice(0,3).map((action) => { const copy = actionCopy(action); return `<a href="${escapeHtml(actionHref(action, output))}"><span>${interpretationIcon(copy.icon)}</span><strong>${escapeHtml(copy.title.replace("次の記録条件を整理する","次の予定").replace("共有用に整理する","共有").replace("条件を変えて比較する","条件を試す"))}</strong></a>`; }).join("")}
+    </nav>
+    ${active ? `<details class="interpretation-pc-next-manage"><summary>管理</summary><div><button type="button" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(active.id || "")}" data-thread-decision="PAUSE">一時停止</button><button type="button" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(active.id || "")}" data-thread-decision="CLOSE">終了</button></div></details>` : ""}
+  </aside>`;
+}
+
+function renderDesktopInterpretationWorkspace(output = {}, selfUnderstanding = null) {
+  const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
+  const counts = output?.overview?.attention?.counts || {};
+  const subjective = output?.subjectiveContext || {};
+  const pair = Boolean(subjective?.difference?.eligible);
+  return `<div class="interpretation-room interpretation-room--pc-studio" data-interpretation-room-state="desktop-studio">
+    <header class="interpretation-pc-toolbar">
+      <div><small>${escapeHtml(date)}</small><h1>今回から次回へ</h1></div>
+      <div class="interpretation-pc-toolbar-facts" aria-label="今回の要点"><span><small>前回差</small><strong>${escapeHtml(String(Number(counts.previousChanged || 0)))}</strong><em>部位</em></span><span><small>条件差</small><strong>${escapeHtml(String(Number(counts.conditionDifferences || 0)))}</strong><em>項目</em></span>${pair ? `<span><small>疲労感</small><strong>${escapeHtml(number(subjective.pre.value,0))}→${escapeHtml(number(subjective.post.value,0))}</strong><em>/10</em></span>` : ""}</div>
+    </header>
+    <div class="interpretation-pc-studio-grid">
+      ${renderDesktopRegionNavigator(output)}
+      ${renderDesktopFocus(output, selfUnderstanding)}
+      ${renderDesktopDecision(output, selfUnderstanding)}
+    </div>
+    <footer class="interpretation-pc-footer"><details><summary>条件・計算・根拠</summary><div class="interpretation-pc-footer-grid">${renderContextBoard(output)}<div class="interpretation-room-selected-advanced-stack">${renderAdvanced(output, output?.selectedRegion)}</div></div></details></footer>
+  </div>`;
+}
+
+
+function firstInterpretationRegion(output = {}) {
+  if (output?.selectedRegion?.regionId) return output.selectedRegion;
+  const groups = Array.isArray(output?.overview?.attention?.groups) ? output.overview.attention.groups : [];
+  const order = ["PREVIOUS_CHANGE", "REPEATED_DIRECTION", "REFERENCE_POSITION", "REFERENCE_NEAR"];
+  for (const code of order) {
+    const group = groups.find((item) => item?.code === code);
+    if (group?.regions?.[0]) return group.regions[0];
+  }
+  return groups.find((group) => Array.isArray(group?.regions) && group.regions.length)?.regions?.[0] || null;
+}
+
+function proposalHref(output = {}, proposal = {}) {
+  const query = new URLSearchParams();
+  if (output?.target?.recordId) query.set("recordId", output.target.recordId);
+  if (output?.target?.origin) query.set("origin", output.target.origin);
+  if (proposal.regionId) query.set("regionId", proposal.regionId);
+  else if (output?.target?.selectedRegionId) query.set("regionId", output.target.selectedRegionId);
+  if (proposal.id) query.set("focus", proposal.id);
+  return `#/interpretation-room?${query.toString()}`;
+}
+
+function activeEpisodeDetail(thread = {}, output = {}) {
+  const episode = (thread.newEpisodes || []).find((item) => item.recordId === output?.target?.recordId) || thread.newEpisodes?.[0] || null;
+  if (episode?.row && finite(episode.row.value)) return `${episode.row.regionName || "部位"} ${number(episode.row.value)}`;
+  if (finite(episode?.postRofJ)) return `走行後 ${number(episode.postRofJ, 0)}/10`;
+  return episode ? formatLocalDate(episode.date) : "今回の記録";
+}
+
+function proposalNextLabel(type = "", proposal = {}) {
+  if (type === "REGION_OBSERVATION_PAIR") return `${proposal.observationLabel || proposal.regionLabel || "同じ部位"}を次回も記録`;
+  if (type === "REGION_WATCH") return `${proposal.regionLabel || "同じ部位"}を次回も確認`;
+  if (type === "SAME_COURSE_ROF_POST") return `${proposal.courseName || "同じコース"}で走行後の疲労感を記録`;
+  if (type === "USER_DEFINED_LEGACY") return "同じ内容を次回も確認";
+  return "次回も確認";
+}
+
+function proposalRegionDirection(region = {}) {
+  if (region.referenceDirection) return region.referenceDirection;
+  if (!finite(region.value)) return "UNAVAILABLE";
+  const value = Number(region.value);
+  return value > 101 ? "ABOVE_REFERENCE" : value < 99 ? "BELOW_REFERENCE" : "REFERENCE_VICINITY";
+}
+
+function buildInterpretationProposals(output = {}, selfUnderstanding = null) {
+  const proposals = [];
+  const active = selfUnderstanding?.activeThread || null;
+  if (active) {
+    const regionLabel = active.newEpisodes?.[0]?.row?.regionName || active.sourceEpisode?.row?.regionName || "";
+    const base = { regionLabel, courseName: active.subject?.courseName || "" };
+    proposals.push(Object.freeze({
+      id: `active-${active.id}`,
+      findingCode: "FOLLOW_UP",
+      label: `前回から見ている「${compactThreadTitle(active)}」に今回の記録が加わりました`,
+      evidence: Object.freeze([{ label: "今回", value: activeEpisodeDetail(active, output) }]),
+      threadId: active.id,
+      threadType: active.type,
+      regionId: active.subject?.regionId || "",
+      bodyAreaId: active.subject?.bodyAreaId || "",
+      canContinue: true,
+      active: true,
+      nextLabel: active.title || proposalNextLabel(active.type, base),
+    }));
+  }
+
+  const candidate = selfUnderstanding?.primaryCandidate || null;
+  if (candidate?.kind === "BODY_OBSERVATION_PAIR") {
+    const regionLabel = candidateRegionLabel(candidate);
+    const observationLabel = candidate.observation?.label || regionLabel;
+    proposals.push(Object.freeze({
+      id: "body-region",
+      findingCode: "BODY_REGION_PAIR",
+      label: `${regionLabel}には、身体の記録と部位表示の両方があります`,
+      evidence: Object.freeze([
+        { label: "身体の記録", value: `${observationLabel}・${sensationLabel(candidate.observation?.sensationType)}` },
+        { label: "部位表示", value: candidateRegionValue(candidate) },
+      ]),
+      threadType: "REGION_OBSERVATION_PAIR",
+      regionId: candidate.subject?.regionId || "",
+      bodyAreaId: candidate.subject?.bodyAreaId || candidate.observation?.areaId || "",
+      canContinue: true,
+      nextLabel: proposalNextLabel("REGION_OBSERVATION_PAIR", { regionLabel, observationLabel }),
+    }));
+  }
+
+  const region = firstInterpretationRegion(output);
+  if (region?.regionId && !proposals.some((item) => item.regionId === region.regionId && item.threadType === "REGION_OBSERVATION_PAIR")) {
+    const previous = region.previousComparison || {};
+    const repeatedCount = Number(region.pastMatchingDirectionCount || 0);
+    const evidence = [{ label: "部位表示", value: `${number(region.value)}・${referenceText(proposalRegionDirection(region))}` }];
+    if (previous.available && finite(previous.difference)) evidence.push({ label: "前回差", value: signed(previous.difference) });
+    else if (repeatedCount) evidence.push({ label: "過去", value: `同じ側 ${repeatedCount}回` });
+    const regionDirection = proposalRegionDirection(region);
+    const regionFinding = previous.available && finite(previous.difference)
+      ? `${region.label}の部位表示は前回から${signed(previous.difference)}変わりました`
+      : repeatedCount
+        ? `${region.label}は、過去にも今回と同じ基準側でした`
+        : `${region.label}は今回${referenceText(regionDirection)}です`;
+    proposals.push(Object.freeze({
+      id: `region-${region.regionId}`,
+      findingCode: "REGION_COMPARE",
+      label: regionFinding,
+      evidence: Object.freeze(evidence),
+      threadType: "REGION_WATCH",
+      regionId: region.regionId,
+      canContinue: true,
+      nextLabel: proposalNextLabel("REGION_WATCH", { regionLabel: region.label }),
+    }));
+  }
+
+  const course = selfUnderstanding?.targetContext?.course || {};
+  const postRofJ = selfUnderstanding?.targetContext?.postRofJ;
+  const sameCourseExists = (selfUnderstanding?.threads || []).some((thread) => thread.userState !== "CLOSED" && thread.type === "SAME_COURSE_ROF_POST" && thread.subject?.courseId === course.id);
+  if (course.id && finite(postRofJ) && !sameCourseExists) {
+    proposals.push(Object.freeze({
+      id: "course-rof",
+      findingCode: "COURSE_ROF",
+      label: `${course.name || "今回のコース"}で、走行後の疲労感は${number(postRofJ, 0)}/10でした`,
+      evidence: Object.freeze([{ label: "走行後", value: `${number(postRofJ, 0)}/10` }]),
+      threadType: "SAME_COURSE_ROF_POST",
+      courseName: course.name || "同じコース",
+      canContinue: true,
+      nextLabel: proposalNextLabel("SAME_COURSE_ROF_POST", { courseName: course.name || "同じコース" }),
+    }));
+  }
+
+  const legacy = String(output?.runFacts?.nextCheckPoint || "").trim();
+  const legacyExists = legacy && (selfUnderstanding?.threads || []).some((thread) => thread.type === "USER_DEFINED_LEGACY" && thread.legacyOrigin?.sourceRecordId === output?.target?.recordId && thread.userState !== "CLOSED");
+  if (legacy && !legacyExists) {
+    proposals.push(Object.freeze({
+      id: "legacy",
+      findingCode: "PREVIOUS_NOTE",
+      label: `以前に「${legacy}」を次回確認として残していました`,
+      evidence: Object.freeze([]),
+      threadType: "USER_DEFINED_LEGACY",
+      canContinue: true,
+      nextLabel: proposalNextLabel("USER_DEFINED_LEGACY"),
+    }));
+  }
+
+  const counts = output?.overview?.attention?.counts || {};
+  const conditionCount = Number(counts.conditionDifferences || 0);
+  const changed = Number(counts.previousChanged || 0);
+  const overviewEvidence = [];
+  if (changed) overviewEvidence.push({ label: "前回差", value: `${changed}部位` });
+  if (conditionCount) overviewEvidence.push({ label: "条件差", value: `${conditionCount}項目` });
+  const subjective = output?.subjectiveContext || {};
+  if (subjective?.post?.available) overviewEvidence.push({ label: "走行後の疲労感", value: `${number(subjective.post.value, 0)}/10` });
+  proposals.push(Object.freeze({
+    id: "overview",
+    findingCode: "OVERVIEW",
+    label: overviewEvidence.length ? "今回には、前回との差や条件差を確認できる材料があります" : "今回の記録を次回比較の基準として残せます",
+    evidence: Object.freeze(overviewEvidence.slice(0, 3)),
+    canContinue: false,
+    nextLabel: "",
+  }));
+
+  const seen = new Set();
+  return proposals.filter((proposal) => {
+    const key = `${proposal.findingCode}:${proposal.regionId || ""}:${proposal.threadId || ""}:${proposal.id}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function selectedInterpretationProposal(proposals = [], focus = "") {
+  const requested = String(focus || "");
+  return proposals.find((proposal) => proposal.id === requested) || proposals[0] || null;
+}
+
+function renderProposalEvidence(proposal = {}) {
+  const rows = Array.isArray(proposal.evidence) ? proposal.evidence : [];
+  if (!rows.length) return "";
+  return `<div class="interpretation-loop-evidence">${rows.map((row) => `<span><small>${escapeHtml(row.label)}</small><strong>${escapeHtml(row.value)}</strong></span>`).join("")}</div>`;
+}
+
+function renderMaterialRows(output = {}, selfUnderstanding = null) {
+  const rows = [];
+  const memo = String(output?.runFacts?.postRunReflection || "").trim();
+  if (memo) rows.push({ icon: "record", label: "走行体験", value: memo });
+  const candidate = selfUnderstanding?.primaryCandidate || null;
+  if (candidate?.kind === "BODY_OBSERVATION_PAIR") {
+    const observation = candidate.observation || {};
+    rows.push({ icon: "person", label: "身体の記録", value: `${observation.label || candidateRegionLabel(candidate)}・${sensationLabel(observation.sensationType)}` });
+  }
+  const conditionCount = Number(output?.overview?.attention?.counts?.conditionDifferences || 0);
+  if (conditionCount) rows.push({ icon: "conditions", label: "条件差", value: `${conditionCount}項目` });
+  const subjective = output?.subjectiveContext || {};
+  if (subjective?.pre?.available || subjective?.post?.available) {
+    rows.push({ icon: "person", label: "疲労感", value: `${subjective?.pre?.available ? number(subjective.pre.value,0) : "—"} → ${subjective?.post?.available ? number(subjective.post.value,0) : "—"} /10` });
+  }
+  const region = firstInterpretationRegion(output);
+  if (region?.regionId) rows.push({ icon: "reference", label: region.label, value: number(region.value) });
+  return rows.slice(0, 5);
+}
+
+function renderInterpretationMaterialPanel(output = {}, selfUnderstanding = null, { compact = false } = {}) {
+  const rows = renderMaterialRows(output, selfUnderstanding);
+  if (!rows.length) return "";
+  const body = `<div class="interpretation-loop-material-list">${rows.map((row) => `<div><span>${interpretationIcon(row.icon)}</span><small>${escapeHtml(row.label)}</small><strong>${escapeHtml(row.value)}</strong></div>`).join("")}</div>`;
+  if (compact) return `<details class="interpretation-loop-material-mobile"><summary>材料を見る <b>${rows.length}</b></summary>${body}</details>`;
+  return `<section class="interpretation-loop-material" aria-labelledby="interpretation-loop-material-title"><header><small>MATERIAL</small><h2 id="interpretation-loop-material-title">今回の材料</h2></header>${body}</section>`;
+}
+
+function renderProposalAlternatives(output = {}, proposals = [], selected = null, { mobile = false } = {}) {
+  const alternatives = proposals.filter((proposal) => proposal.id !== selected?.id).slice(0, 4);
+  if (!alternatives.length) return "";
+  const links = alternatives.map((proposal) => `<a href="${escapeHtml(proposalHref(output, proposal))}"><span>${proposal.threadType ? interpretationIcon("flag") : interpretationIcon("interpretation")}</span><strong>${escapeHtml(proposal.label)}</strong></a>`).join("");
+  if (mobile) return `<details class="interpretation-loop-alternatives"><summary>別の見方 <b>${alternatives.length}</b></summary><div>${links}</div></details>`;
+  return `<nav class="interpretation-loop-alternatives-pc" aria-label="別の見方"><small>別の見方</small>${links}</nav>`;
+}
+
+
+function renderV54ReferenceKnowledge(reference = null, output = {}, { compact = false } = {}) {
+  if (!reference) return "";
+  const kinds = [...new Set(Array.isArray(reference.sourceKinds) ? reference.sourceKinds.filter(Boolean) : [])];
+  const kindLabel = kinds.length ? kinds.slice(0, 3).join("・") : "確認済み資料";
+  const sourceLabel = reference.sourceCount ? `${kindLabel} / ${reference.sourceCount}件` : kindLabel;
+  return `<aside class="v54-reference${compact ? " v54-reference--compact" : ""}" data-v53-reveal="compare" aria-label="参考情報">
+    <div class="v54-reference__icon">${interpretationIcon("book")}</div>
+    <div class="v54-reference__copy"><small>参考情報・あなたへの判定ではありません</small><strong>${escapeHtml(reference.title)}</strong><p>${escapeHtml(reference.summary || reference.lead || "")}</p><span>${escapeHtml(reference.matchReason || "今回の記録に関連する一般情報です")}・${escapeHtml(sourceLabel)}</span></div>
+    <a href="${escapeHtml(referenceReadingHref(reference, output))}">根拠と全文を見る</a>
+  </aside>`;
+}
+
+function v54RunContextLine(context = {}, postRofJ = null) {
+  const parts = [];
+  if (finite(context?.distanceKm)) parts.push(`${number(context.distanceKm, 2)} km`);
+  if (finite(context?.durationMinutes)) parts.push(`${number(context.durationMinutes, 1)} 分`);
+  if (context?.course?.name) parts.push(context.course.name);
+  if (finite(context?.environment?.temperatureC)) parts.push(`気温 ${number(context.environment.temperatureC, 1)} ℃`);
+  if (finite(postRofJ)) parts.push(`疲労感 ${number(postRofJ, 0)}/10`);
+  return parts.slice(0, 5).join("・");
+}
+
+function renderV54ContextFocus(candidate = {}, output = {}) {
+  return `<section class="v54-context-focus" aria-label="今回の自分の記録">
+    <article class="v53-source-card v53-source-card--user" data-v53-focus-card><header><span class="v53-source-mark">自</span><div><small>${escapeHtml(candidate.focusLabel || "今回の記録")}</small><strong>自分の記録から始めます</strong></div></header><div class="v54-context-focus__value">${escapeHtml(candidate.focusValue || "今回の記録があります")}</div></article>
+    ${renderV54ReferenceKnowledge(candidate.reference, output, { compact: false })}
+  </section>`;
+}
+
+function v53QuestionForCandidate(candidate = {}) {
+  if (candidate?.kind !== "BODY_OBSERVATION_PAIR") return "次の走行でも同じ点を確かめる";
+  const observation = candidate.observation || {};
+  const observationLabel = observation.label || candidateRegionLabel(candidate);
+  return `次の走行では、${observationLabel}を自分がどう感じたか確認する`;
+}
+
+function v53CandidateMeta(candidate = {}) {
+  const observation = candidate?.observation || {};
+  const row = candidate?.row || {};
+  const observationLabel = observation.label || candidateRegionLabel(candidate);
+  return Object.freeze({
+    observationLabel,
+    sensation: sensationLabel(observation.sensationType),
+    timing: timingLabel(observation.noticedTiming),
+    intensity: Number.isFinite(Number(observation.intensity)) ? Number(observation.intensity) : null,
+    regionLabel: candidateRegionLabel(candidate),
+    regionId: String(row.regionId || candidate?.subject?.regionId || ""),
+    bodyAreaId: String(candidate?.subject?.bodyAreaId || observation.areaId || ""),
+    value: candidateRegionValue(candidate),
+    direction: referenceText(proposalRegionDirection(row)),
+    question: v53QuestionForCandidate(candidate),
+  });
+}
+
+function renderV53StageGuide() {
+  return `<nav class="v53-stage-guide" aria-label="この画面の流れ"><span data-v53-step="focus"><i>1</i>記録</span><b aria-hidden="true">→</b><span data-v53-step="compare"><i>2</i>見比べる</span><b aria-hidden="true">→</b><span data-v53-step="decision"><i>3</i>次へ</span></nav>`;
+}
+
+function renderV53BodyPair(candidate = {}, { active = false } = {}) {
+  const meta = v53CandidateMeta(candidate);
+  return `<section class="v53-pair" aria-label="今回見比べられる2つの情報">
+    <article class="v53-source-card v53-source-card--user" data-v53-focus-card>
+      <header><span class="v53-source-mark">自</span><div><small>あなたの身体の記録</small><strong>${escapeHtml(meta.observationLabel)}</strong></div></header>
+      <div class="v53-source-value">${escapeHtml(meta.sensation)}</div>
+      <p>${escapeHtml(meta.timing)}${meta.intensity != null ? `・強さ ${escapeHtml(String(meta.intensity))} / 5` : ""}</p>
+    </article>
+    <div class="v53-relation" data-v53-reveal="compare"><span></span><b>同じ部位</b><span></span></div>
+    <article class="v53-source-card v53-source-card--model v54-model-secondary" data-v53-reveal="compare">
+      <header><span class="v53-source-mark">R</span><div><small>考える材料・RunLoadの部位表示</small><strong>${escapeHtml(meta.regionLabel)}</strong></div></header>
+      <div class="v54-model-value"><span>部位内の比較</span><strong>${escapeHtml(meta.value)}</strong></div>
+      <p>${escapeHtml(meta.direction)}。この値は身体の感覚そのものではありません。</p>
+    </article>
+    <div class="v53-boundary" data-v53-reveal="compare"><span aria-hidden="true">i</span><p><strong>2つは別の情報です。</strong> 部位表示が身体の感覚の原因だという意味ではありません。高いほど良い・悪いという意味でもありません。</p></div>
+  </section>`;
+}
+
+function renderV53FirstRail(candidate = {}) {
+  const meta = v53CandidateMeta(candidate);
+  return `<aside class="v53-rail" aria-label="今回の操作">
+    <section class="v53-rail-step" data-v53-only-stage="focus">
+      <small>最初にすること</small><h2>自分の記録から見ます</h2><p>まず今回、自分で記録した内容を選びます。次にRunLoad側の同じ部位の情報を表示します。</p>
+      <button type="button" class="v53-primary" data-action="v53-flow-stage" data-next-stage="compare">対応する情報を見る</button>
+    </section>
+    <section class="v53-rail-step" data-v53-only-stage="compare">
+      <small>見比べる</small><h2>自分の体験を中心に見ます</h2><p>部位表示や参考情報は、自分がどう感じたかを考える材料です。一致や原因を決める必要はありません。</p>
+      <p class="v53-candidate-reason"><strong>表示理由</strong> 身体の記録と同じ部位に、今回の部位表示があるためです。</p>
+      <button type="button" class="v53-primary" data-action="v53-flow-stage" data-next-stage="decision">次にどうするか決める</button>
+      <button type="button" class="v53-text-button" data-action="v53-flow-stage" data-next-stage="focus">自分の記録に戻る</button>
+    </section>
+    <section class="v53-rail-step" data-v53-only-stage="decision">
+      <small>自分で選ぶ</small><h2>次に自分で確かめること</h2><div class="v53-question"><span aria-hidden="true">?</span><strong>${escapeHtml(meta.question)}</strong></div>
+      <p>RunLoadは答えを決めません。次回は自分の感じ方を中心に、同じ部位の表示や走行条件を補助材料として確認できます。</p>
+      <details class="v53-note"><summary>今回のメモを残す（任意）</summary><textarea data-self-understanding-note maxlength="500" rows="2" placeholder="自分の言葉で残したいことだけ"></textarea></details>
+      <div class="v53-decision-actions">
+        <button type="button" class="v53-primary" data-action="create-self-understanding-thread" data-thread-type="REGION_OBSERVATION_PAIR" data-region-id="${escapeHtml(meta.regionId)}" data-body-area-id="${escapeHtml(meta.bodyAreaId)}" data-next-label="${escapeHtml(meta.question)}">この問いを次も確かめる</button>
+        <button type="button" class="v53-secondary" data-action="v53-finish-this-time" data-v53-done-kind="this-time">今回はここまで</button>
+        <button type="button" class="v53-text-button" data-action="v53-finish-this-time" data-v53-done-kind="undecided">まだ決めない</button>
+      </div>
+      <button type="button" class="v53-text-button" data-action="v53-flow-stage" data-next-stage="compare">見比べる画面に戻る</button>
+    </section>
+    <section class="v53-rail-step" data-v53-only-stage="done">
+      <div data-v53-completion-only="saved"><small>次回へ</small><h2>確認する問いとして残しました</h2><p class="v53-saved-question">${escapeHtml(meta.question)}</p><p>保存したのは、この問いを次も見るというあなたの選択です。数値の意味や原因を確定したものではありません。</p><button type="button" class="v53-text-button" data-action="v53-undo-created-thread">確認中から外す</button><a class="v53-secondary v53-link-button" href="#/history?view=checks">確認してきたことを見る</a></div>
+      <div data-v53-completion-only="this-time"><small>今回</small><h2>今回はここまで</h2><p>新しい問いは保存していません。今回の結果は履歴からいつでも見直せます。</p><a class="v53-secondary v53-link-button" href="#/history">履歴を見る</a></div>
+      <div data-v53-completion-only="undecided"><small>今回</small><h2>まだ決めていません</h2><p>確認する問いは追加していません。必要になったときに今回の結果からもう一度見比べられます。</p><a class="v53-secondary v53-link-button" href="#/history">履歴を見る</a></div>
+      <div data-v53-completion-only="undone"><small>変更しました</small><h2>確認中から外しました</h2><p>今回の結果そのものは残っています。必要なら履歴から再び確認できます。</p><a class="v53-secondary v53-link-button" href="#/history">履歴を見る</a></div>
+    </section>
+  </aside>`;
+}
+
+function renderV54ContextRail(candidate = {}) {
+  return `<aside class="v53-rail" aria-label="今回の操作">
+    <section class="v53-rail-step" data-v53-only-stage="focus">
+      <small>最初にすること</small><h2>自分の記録から見ます</h2><p>身体の部位記録がなくても、疲労感・走行条件・自分のメモから振り返れます。</p>
+      <button type="button" class="v53-primary" data-action="v53-flow-stage" data-next-stage="compare">考える材料を見る</button>
+    </section>
+    <section class="v53-rail-step" data-v53-only-stage="compare">
+      <small>参考情報</small><h2>一般情報は答えではありません</h2><p>今回の記録に関連する一般的な情報を一つだけ示します。あなたの原因・状態・安全性を判定するものではありません。</p>
+      <button type="button" class="v53-primary" data-action="v53-flow-stage" data-next-stage="decision">次に自分で確かめることを見る</button>
+      <button type="button" class="v53-text-button" data-action="v53-flow-stage" data-next-stage="focus">自分の記録に戻る</button>
+    </section>
+    <section class="v53-rail-step" data-v53-only-stage="decision">
+      <small>自分で選ぶ</small><h2>次に自分で確かめること</h2><div class="v53-question"><span aria-hidden="true">?</span><strong>${escapeHtml(candidate.question)}</strong></div>
+      <p>参考情報は問いを考える補助です。次回も確認したい場合だけ、この問いを残します。</p>
+      <details class="v53-note"><summary>今回のメモを残す（任意）</summary><textarea data-self-understanding-note maxlength="500" rows="2" placeholder="自分の言葉で残したいことだけ"></textarea></details>
+      <div class="v53-decision-actions">
+        <button type="button" class="v53-primary" data-action="create-self-understanding-thread" data-thread-type="CONTEXT_QUESTION" data-context-key="${escapeHtml(candidate.focusKey)}" data-context-prompt="${escapeHtml(candidate.question)}" data-article-id="${escapeHtml(candidate.reference?.id || "")}" data-next-label="${escapeHtml(candidate.question)}">この問いを次も確かめる</button>
+        <button type="button" class="v53-secondary" data-action="v53-finish-this-time" data-v53-done-kind="this-time">今回はここまで</button>
+        <button type="button" class="v53-text-button" data-action="v53-finish-this-time" data-v53-done-kind="undecided">まだ決めない</button>
+      </div>
+      <button type="button" class="v53-text-button" data-action="v53-flow-stage" data-next-stage="compare">参考情報に戻る</button>
+    </section>
+    <section class="v53-rail-step" data-v53-only-stage="done">
+      <div data-v53-completion-only="saved"><small>次回へ</small><h2>確認する問いとして残しました</h2><p class="v53-saved-question">${escapeHtml(candidate.question)}</p><p>保存したのは、次回も自分で確かめるという選択だけです。一般情報をあなた個人の結論として保存していません。</p><button type="button" class="v53-text-button" data-action="v53-undo-created-thread">確認中から外す</button><a class="v53-secondary v53-link-button" href="#/history?view=checks">確認してきたことを見る</a></div>
+      <div data-v53-completion-only="this-time"><small>今回</small><h2>今回はここまで</h2><p>新しい問いは保存していません。今回の記録は履歴から見直せます。</p><a class="v53-secondary v53-link-button" href="#/history">履歴を見る</a></div>
+      <div data-v53-completion-only="undecided"><small>今回</small><h2>まだ決めていません</h2><p>確認する問いは追加していません。必要になったときに今回の記録から再び確認できます。</p><a class="v53-secondary v53-link-button" href="#/history">履歴を見る</a></div>
+      <div data-v53-completion-only="undone"><small>変更しました</small><h2>確認中から外しました</h2><p>今回の記録そのものは残っています。</p><a class="v53-secondary v53-link-button" href="#/history">履歴を見る</a></div>
+    </section>
+  </aside>`;
+}
+
+function renderV54ContextFirst(output = {}, selfUnderstanding = null, candidate = {}, { mobile = false } = {}) {
+  const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
+  const materials = renderMaterialRows(output, selfUnderstanding);
+  return `<div class="interpretation-room v53-room v54-room v54-room--context ${mobile ? "v53-room--mobile" : "v53-room--pc"}" data-interpretation-room-state="v54-context-first" data-v53-stage="focus">
+    <header class="v53-head"><div><small>${escapeHtml(date)}</small><h1>今回の自分を見ていく</h1><p>身体の部位記録がなくても、自分が残した疲労感・条件・メモから振り返れます。</p></div>${renderV53StageGuide()}</header>
+    <div class="v53-layout"><main class="v53-canvas"><div class="v53-canvas-kicker" data-v53-title-focus><small>今回、まず見るところ</small><h2>${escapeHtml(candidate.focusLabel)}</h2><p>最初は自分で残した記録だけを見ます。</p></div><div class="v53-canvas-kicker" data-v53-title-compare><small>考える材料を追加</small><h2>今回の記録に関係する一般情報</h2><p>自分の記録を理解するための背景として使います。個人への判定には使いません。</p></div>${renderV54ContextFocus(candidate, output)}${materials.length ? `<details class="v53-more-materials v54-secondary-materials" data-v53-reveal="compare"><summary>補足の材料を見る <b>${materials.length}</b></summary>${renderInterpretationMaterialPanel(output, selfUnderstanding)}</details>` : ""}</main>${renderV54ContextRail(candidate)}</div>
+    ${renderInterpretationLoopDetails(output, { mobile })}
+  </div>`;
+}
+
+function renderV53First(output = {}, selfUnderstanding = null, { mobile = false } = {}) {
+  const candidate = selfUnderstanding?.primaryCandidate || null;
+  if (!candidate || candidate.kind !== "BODY_OBSERVATION_PAIR") {
+    const contextCandidate = buildInterpretationContextCandidate(output);
+    return contextCandidate ? renderV54ContextFirst(output, selfUnderstanding, contextCandidate, { mobile }) : renderV53Empty(output, selfUnderstanding, { mobile });
+  }
+  const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
+  const meta = v53CandidateMeta(candidate);
+  const materials = renderMaterialRows(output, selfUnderstanding);
+  const reference = selectInterpretationReferenceKnowledge(output, { bodyPair: true });
+  return `<div class="interpretation-room v53-room v54-room ${mobile ? "v53-room--mobile" : "v53-room--pc"}" data-interpretation-room-state="v54-first" data-v53-stage="focus">
+    <header class="v53-head"><div><small>${escapeHtml(date)}</small><h1>今回の自分を見ていく</h1><p>自分の体験を主役にして、RunLoadの情報と参考情報を必要な順に確認します。</p></div>${renderV53StageGuide()}</header>
+    <div class="v53-layout"><main class="v53-canvas"><div class="v53-canvas-kicker" data-v53-title-focus><small>今回、まず見るところ</small><h2>${escapeHtml(meta.observationLabel)}</h2><p>最初は自分で記録した内容だけを見ます。</p></div><div class="v53-canvas-kicker" data-v53-title-compare><small>考える材料を追加</small><h2>${escapeHtml(meta.observationLabel)}について別の情報も確認できます</h2><p>自分の感覚を中心に、別の情報を補助材料として並べます。</p></div>${renderV53BodyPair(candidate)}${renderV54ReferenceKnowledge(reference, output)}${materials.length ? `<details class="v53-more-materials v54-secondary-materials" data-v53-reveal="compare"><summary>補足の材料を見る <b>${materials.length}</b></summary>${renderInterpretationMaterialPanel(output, selfUnderstanding)}</details>` : ""}</main>${renderV53FirstRail(candidate)}</div>
+    ${renderInterpretationLoopDetails(output, { mobile })}
+  </div>`;
+}
+
+function activeEpisodeForTarget(thread = {}, output = {}) {
+  return (thread.newEpisodes || []).find((episode) => String(episode.recordId || "") === String(output?.target?.recordId || "")) || thread.newEpisodes?.[0] || null;
+}
+
+function renderV53ActiveEpisodeCard(episode = {}, label = "今回") {
+  if (!episode) return "";
+  const contextLine = v54RunContextLine(episode.runContext || {}, episode.postRofJ);
+  if (episode.row && finite(episode.row.value)) {
+    const observation = episode.observation || null;
+    return `<article class="v53-episode v54-episode"><time>${escapeHtml(episode.date ? formatLocalDate(episode.date) : label)}</time><div>${observation ? `<span class="v54-episode-user"><small>自分の記録</small><strong>${escapeHtml(sensationLabel(observation.sensationType))}${Number.isFinite(Number(observation.intensity)) ? ` ${escapeHtml(String(Number(observation.intensity)))} / 5` : ""}</strong></span>` : ""}<span class="v54-episode-model"><small>補助：部位表示</small><strong>${escapeHtml(number(episode.row.value))}</strong></span></div>${contextLine ? `<p class="v54-episode-context"><small>その日の条件</small>${escapeHtml(contextLine)}</p>` : ""}</article>`;
+  }
+  if (episode.kind === "CONTEXT_QUESTION") {
+    return `<article class="v53-episode v54-episode"><time>${escapeHtml(episode.date ? formatLocalDate(episode.date) : label)}</time><div><span class="v54-episode-user"><small>走行記録</small><strong>${escapeHtml(contextLine || "今回の走行記録があります")}</strong></span></div></article>`;
+  }
+  if (finite(episode.postRofJ)) return `<article class="v53-episode v54-episode"><time>${escapeHtml(episode.date ? formatLocalDate(episode.date) : label)}</time><div><span class="v54-episode-user"><small>走行後の疲労感</small><strong>${escapeHtml(number(episode.postRofJ, 0))} / 10</strong></span></div>${contextLine ? `<p class="v54-episode-context"><small>その日の条件</small>${escapeHtml(contextLine)}</p>` : ""}</article>`;
+  return `<article class="v53-episode v54-episode"><time>${escapeHtml(episode.date ? formatLocalDate(episode.date) : label)}</time><div><span><small>記録</small><strong>今回の記録があります</strong></span></div>${contextLine ? `<p class="v54-episode-context"><small>その日の条件</small>${escapeHtml(contextLine)}</p>` : ""}</article>`;
+}
+
+function renderV53ActiveRail(thread = {}) {
+  return `<aside class="v53-rail" aria-label="確認中の問いの操作">
+    <section class="v53-rail-step" data-v53-only-stage="focus"><small>前回から</small><h2>今回の新しい記録を見ます</h2><p>以前、自分で続けると決めた問いに、今回の比較材料が加わりました。</p><button type="button" class="v53-primary" data-action="v53-flow-stage" data-next-stage="compare">これまでと見比べる</button></section>
+    <section class="v53-rail-step" data-v53-only-stage="compare"><small>見比べる</small><h2>結論を決める必要はありません</h2><p>並びは事実として確認します。改善・悪化・原因・安全性は判定しません。</p><button type="button" class="v53-primary" data-action="v53-flow-stage" data-next-stage="decision">この問いをどうするか決める</button><button type="button" class="v53-text-button" data-action="v53-flow-stage" data-next-stage="focus">今回の記録に戻る</button></section>
+    <section class="v53-rail-step" data-v53-only-stage="decision"><small>自分で選ぶ</small><h2>この問いを続けますか？</h2><div class="v53-question"><span aria-hidden="true">?</span><strong>${escapeHtml(thread.title || compactThreadTitle(thread))}</strong></div><details class="v53-note"><summary>今回のメモを残す（任意）</summary><textarea data-self-understanding-note maxlength="500" rows="2" placeholder="自分の言葉で残したいことだけ"></textarea></details><div class="v53-decision-actions"><button type="button" class="v53-primary" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="KEEP_WATCHING">このまま続ける</button><button type="button" class="v53-secondary" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="CLOSE">ここで終える</button><button type="button" class="v53-text-button" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="PAUSE">いったん休止する</button></div></section>
+    <section class="v53-rail-step" data-v53-only-stage="done"><small>更新しました</small><h2>今回の確認を残しました</h2><p>選んだ状態だけを記録しました。RunLoadが傾向や結論を確定したわけではありません。</p><a class="v53-secondary v53-link-button" href="#/history?view=checks">確認してきたことを見る</a></section>
+  </aside>`;
+}
+
+function renderV53Active(output = {}, selfUnderstanding = null, { mobile = false } = {}) {
+  const thread = selfUnderstanding?.activeThread || null;
+  if (!thread) return renderV53First(output, selfUnderstanding, { mobile });
+  const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
+  const current = activeEpisodeForTarget(thread, output);
+  const previous = [thread.sourceEpisode, ...(thread.eligibleEpisodes || [])].filter(Boolean).filter((episode) => String(episode.recordId || "") !== String(current?.recordId || ""));
+  const isContextQuestion = thread.type === "CONTEXT_QUESTION";
+  const reference = isContextQuestion
+    ? getInterpretationReferenceKnowledgeById(thread.subject?.articleId || "")
+    : selectInterpretationReferenceKnowledge(output, { bodyPair: thread.type === "REGION_OBSERVATION_PAIR" });
+  const historyLabel = isContextQuestion ? "これまで確認した走行" : "比較できる記録";
+  return `<div class="interpretation-room v53-room v54-room ${mobile ? "v53-room--mobile" : "v53-room--pc"}" data-interpretation-room-state="v54-active" data-v53-stage="focus">
+    <header class="v53-head"><div><small>${escapeHtml(date)}</small><h1>前回から見ていたこと</h1><p>${escapeHtml(thread.title || compactThreadTitle(thread))}</p></div>${renderV53StageGuide()}</header>
+    <div class="v53-layout"><main class="v53-canvas"><div class="v53-canvas-kicker"><small>今回、新しい材料があります</small><h2>今回の自分の記録から確認します</h2><p>数値だけでなく、その日の距離・時間・疲労感などの文脈も一緒に見ます。</p></div><div class="v53-active-current">${renderV53ActiveEpisodeCard(current, "今回")}</div><section class="v53-previous" data-v53-reveal="compare"><header><small>これまで</small><h3>${escapeHtml(historyLabel)} ${escapeHtml(String(Number(thread.eligibleCount || previous.length + 1)))}件</h3></header><div>${previous.slice(-4).map((episode) => renderV53ActiveEpisodeCard(episode)).join("")}</div><p>記録の並びと背景は一緒に確認しますが、傾向の確定・原因推定・良し悪しの判定は行いません。</p></section>${renderV54ReferenceKnowledge(reference, output, { compact: true })}</main>${renderV53ActiveRail(thread)}</div>
+    ${renderInterpretationLoopDetails(output, { mobile })}
+  </div>`;
+}
+
+function renderV53Empty(output = {}, selfUnderstanding = null, { mobile = false } = {}) {
+  const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
+  const materials = renderMaterialRows(output, selfUnderstanding);
+  return `<div class="interpretation-room v53-room v53-room--empty ${mobile ? "v53-room--mobile" : "v53-room--pc"}" data-interpretation-room-state="v53-empty" data-v53-stage="done"><header class="v53-head"><div><small>${escapeHtml(date)}</small><h1>今回を見比べる</h1><p>必要な材料がないときは、無理に意味や問いを作りません。</p></div></header><section class="v53-empty-card"><span aria-hidden="true">—</span><h2>今回は、続けて確かめる問いはまだありません</h2><p>今回の走行結果はそのまま確認できます。身体の記録と対応する情報、または以前から確認中の問いに新しい材料ができたときに、ここで見比べられます。</p><a class="v53-primary v53-link-button" href="#/result?recordId=${encodeURIComponent(output?.target?.recordId || "")}">結果に戻る</a>${materials.length ? `<details class="v53-more-materials"><summary>今回の材料を見る <b>${materials.length}</b></summary>${renderInterpretationMaterialPanel(output, selfUnderstanding)}</details>` : ""}</section></div>`;
+}
+
+function renderInterpretationLoopDetails(output = {}, { mobile = false } = {}) {
+  const next = output?.next || {};
+  const actions = [next.primaryAction, ...(next.otherActions || [])].filter((action) => action && action.enabled !== false);
+  const actionLinks = actions.length
+    ? `<nav class="interpretation-loop-secondary-actions" aria-label="ほかの操作">${actions.map((action) => { const copy = actionCopy(action); return `<a href="${escapeHtml(actionHref(action, output))}"><span>${interpretationIcon(copy.icon)}</span><strong>${escapeHtml(copy.title)}</strong></a>`; }).join("")}</nav>`
+    : "";
+  const detail = `${renderPatternBoard(output)}${renderContextBoard(output)}${output?.selectedRegion ? `<div class="interpretation-room-selected-advanced-stack">${renderAdvanced(output, output.selectedRegion)}</div>` : ""}${actionLinks}`;
+  return `<details class="v53-technical-more interpretation-loop-more${mobile ? " interpretation-loop-more--mobile" : ""}"><summary>計算・条件・根拠を詳しく見る</summary><div>${detail}</div></details>`;
+}
+
+function renderMobileInterpretationLoop(output = {}, selfUnderstanding = null) {
+  if (selfUnderstanding?.activeThread) return renderV53Active(output, selfUnderstanding, { mobile: true });
+  return renderV53First(output, selfUnderstanding, { mobile: true });
+}
+
+function renderDesktopInterpretationLoop(output = {}, selfUnderstanding = null) {
+  if (selfUnderstanding?.activeThread) return renderV53Active(output, selfUnderstanding, { mobile: false });
+  return renderV53First(output, selfUnderstanding, { mobile: false });
 }
 
 function publicConstructText(value = "") {
@@ -676,38 +1287,13 @@ function renderAdvanced(output, region) {
   const sources = Array.isArray(evidence.sources) ? evidence.sources : [];
   return `${renderCalculationDetails(region)}<details class="interpretation-room-advanced"><summary>計算の考え方と根拠を詳しく見る</summary><div>${evidence.construct ? `<p><strong>この数値が表す内容</strong><br>${escapeHtml(publicConstructText(evidence.construct))}</p>` : ""}${sources.length ? `<p><strong>この計算の背景資料</strong></p><ul>${sources.map((source) => `<li>${escapeHtml(source.label || "参考資料")}${source.role ? ` — ${escapeHtml(publicSourceRoleText(source.role))}` : ""}</li>`).join("")}</ul>` : ""}<p class="interpretation-room-boundary-line">ここでは、選択した部位の計算に関係する情報を確認できます。</p></div></details>`;
 }
-export function renderInterpretationRoom({ output, selfUnderstanding = null, mobileLayout = false } = {}) {
+export function renderInterpretationRoom({ output, selfUnderstanding = null, savedInterpretation = null, interpretationFocus = "", mobileLayout = false } = {}) {
   if (!output?.state?.targetAvailable) {
-    return `<div class="interpretation-room interpretation-room--empty" data-interpretation-room-state="empty"><header class="interpretation-room-hero"><p>結果を整理する</p><h1>対象の保存記録がありません</h1><p>保存した走行記録から、今回確認できることを整理します。</p></header><a class="interpretation-room-action interpretation-room-action--primary" href="#/record-input"><span class="interpretation-room-action__icon">${interpretationIcon("record")}</span><span class="interpretation-room-action__copy"><strong>記録を始める</strong><small>新しい走行記録を入力します。</small></span><i aria-hidden="true">›</i></a></div>`;
+    return `<div class="interpretation-room interpretation-room--empty" data-interpretation-room-state="empty"><header class="interpretation-room-hero"><p>結果を整理する</p><h1>対象の保存記録がありません</h1></header><a class="interpretation-room-action interpretation-room-action--primary" href="#/record-input"><span class="interpretation-room-action__icon">${interpretationIcon("record")}</span><span class="interpretation-room-action__copy"><strong>記録を始める</strong></span><i aria-hidden="true">›</i></a></div>`;
   }
   if (output?.state?.support && output.state.support !== "NORMAL") return renderSupportPriority(output);
   if (output?.state?.regional === "REST") return renderRest(output);
 
-  const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回の記録";
-  const selected = Boolean(output?.selectedRegion);
-  if (!selected) {
-    return `<div class="interpretation-room interpretation-room--overview interpretation-room--dashboard" data-interpretation-room-state="overview">
-      ${mobileLayout ? renderMobileInterpretationPath() : ""}
-      <div class="interpretation-room-dashboard">
-        ${renderOverviewInsight(output, date)}
-        ${renderNextRail(output, { mobileLayout, selfUnderstanding })}
-        ${renderPatternBoard(output)}
-        ${renderContextBoard(output, selfUnderstanding)}
-      </div>
-    </div>`;
-  }
-  return `<div class="interpretation-room interpretation-room--selected interpretation-room--selected-detail" data-interpretation-room-state="selected">
-    <header class="interpretation-room-selected-head"><div><p>${escapeHtml(date)}</p><h1>${escapeHtml(output.selectedRegion.label)}</h1><span>基準100・前回差・最近の推移から、この部位だけを整理します。</span></div><a href="${escapeHtml(regionHref(output, ""))}">12部位の整理へ戻る</a></header>
-    <div class="interpretation-room-selected-workspace">
-      <div class="interpretation-room-selected-main">
-        ${renderSelectedRegion(output)}
-        ${renderConditions(output)}
-        <div class="interpretation-room-selected-advanced-stack">${renderAdvanced(output, output?.selectedRegion)}</div>
-      </div>
-      <div class="interpretation-room-selected-side">
-        ${renderNextRail(output, { mobileLayout, selfUnderstanding })}
-        ${renderSubjective(output)}
-      </div>
-    </div>
-  </div>`;
+  if (!mobileLayout) return renderDesktopInterpretationLoop(output, selfUnderstanding, savedInterpretation, interpretationFocus);
+  return renderMobileInterpretationLoop(output, selfUnderstanding, savedInterpretation, interpretationFocus);
 }

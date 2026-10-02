@@ -7,6 +7,7 @@ export const SELF_UNDERSTANDING_TYPES = Object.freeze({
   regionObservationPair: "REGION_OBSERVATION_PAIR",
   regionWatch: "REGION_WATCH",
   sameCourseRofPost: "SAME_COURSE_ROF_POST",
+  contextQuestion: "CONTEXT_QUESTION",
   userDefinedLegacy: "USER_DEFINED_LEGACY",
 });
 export const SELF_UNDERSTANDING_STATES = Object.freeze({
@@ -104,6 +105,13 @@ function normalizeSubject(type, source = {}) {
     if (!courseId) return null;
     return Object.freeze({ courseId, courseName });
   }
+  if (type === SELF_UNDERSTANDING_TYPES.contextQuestion) {
+    const prompt = text(subject.prompt, 500).trim();
+    const focusKey = oneLine(subject.focusKey, 120);
+    const articleId = oneLine(subject.articleId, 160);
+    if (!prompt || !focusKey) return null;
+    return Object.freeze({ prompt, focusKey, articleId });
+  }
   if (type === SELF_UNDERSTANDING_TYPES.userDefinedLegacy) {
     const prompt = text(subject.prompt, 500).trim();
     if (!prompt) return null;
@@ -116,6 +124,7 @@ function subjectKey(type, subject = {}) {
   if (type === SELF_UNDERSTANDING_TYPES.regionObservationPair) return `pair:${subject.regionId}:${subject.bodyAreaId}`;
   if (type === SELF_UNDERSTANDING_TYPES.regionWatch) return `region:${subject.regionId}`;
   if (type === SELF_UNDERSTANDING_TYPES.sameCourseRofPost) return `course-rof-post:${subject.courseId}`;
+  if (type === SELF_UNDERSTANDING_TYPES.contextQuestion) return `context:${subject.focusKey}:${subject.prompt}`;
   if (type === SELF_UNDERSTANDING_TYPES.userDefinedLegacy) return `legacy:${subject.prompt}`;
   return "";
 }
@@ -302,6 +311,34 @@ function rofPost(rofSummariesByRecordId, recordId) {
   return Number.isFinite(Number(summary?.post)) ? Number(summary.post) : null;
 }
 
+function runContextFromRecord(record = {}) {
+  const distanceKm = Number.isFinite(Number(record.distanceKm)) ? Number(record.distanceKm) : null;
+  const durationMinutes = Number.isFinite(Number(record.durationMinutes)) ? Number(record.durationMinutes) : null;
+  const runningFormat = oneLine(record.runningFormat, 60);
+  const course = courseIdentity(record);
+  const gradeKnowledge = oneLine(record?.course?.gradeKnowledge || record?.gradeKnowledge, 60);
+  const reflection = text(record?.reflectionContext?.postRunReflection, 500).trim();
+  const temperatureC = Number.isFinite(Number(record?.environmentContext?.temperatureC)) ? Number(record.environmentContext.temperatureC) : null;
+  const environmentNote = text(record?.environmentContext?.environmentNote, 500).trim();
+  return Object.freeze({ distanceKm, durationMinutes, runningFormat, course, gradeKnowledge, reflection, environment: Object.freeze({ temperatureC, environmentNote }) });
+}
+
+function contextQuestionEligible(thread, runContext, postRofJ) {
+  const focusKey = String(thread?.subject?.focusKey || "");
+  const hasPace = Number(runContext?.distanceKm) > 0 && Number(runContext?.durationMinutes) > 0;
+  const hasVolume = Number(runContext?.distanceKm) > 0 || Number(runContext?.durationMinutes) > 0;
+  const hasCourse = Boolean(runContext?.course?.id || runContext?.course?.name || runContext?.gradeKnowledge);
+  const hasEnvironment = runContext?.environment?.temperatureC != null || Boolean(runContext?.environment?.environmentNote);
+  if (focusKey === "POST_RUN_FATIGUE_ENVIRONMENT_CONTEXT") return postRofJ != null && hasEnvironment;
+  if (focusKey === "POST_RUN_FATIGUE_CONTEXT") return postRofJ != null;
+  if (["PACE_CONTEXT", "PACE_AND_FEEL"].includes(focusKey)) return hasPace;
+  if (["VOLUME_CONTEXT", "VOLUME_AND_FEEL"].includes(focusKey)) return hasVolume;
+  if (["COURSE_CONTEXT", "COURSE_CONTEXT_AND_FEEL"].includes(focusKey)) return hasCourse;
+  if (focusKey === "ENVIRONMENT_CONTEXT") return hasEnvironment;
+  if (focusKey === "RUN_REFLECTION") return Boolean(runContext?.reflection);
+  return Boolean(hasVolume || hasCourse || hasEnvironment || postRofJ != null || runContext?.reflection);
+}
+
 function episodeEvidence(thread, experience, rofSummariesByRecordId) {
   const record = experience?.record || null;
   if (!record || String(record.activityType || "").toLowerCase() !== "run") return null;
@@ -314,14 +351,14 @@ function episodeEvidence(thread, experience, rofSummariesByRecordId) {
     if (!row || !Number.isFinite(Number(row.value)) || !signaturesCompatible(thread.semanticConstraints.regionSignature, currentSignature)) return null;
     const observation = bodyObservationForSubject(experience, thread.subject);
     if (!observation) return null;
-    return Object.freeze({ kind: thread.type, recordId: record.id, stableRecordKey: stableKey, date: record.date, row: clone(row), observation: clone(observation) });
+    return Object.freeze({ kind: thread.type, recordId: record.id, stableRecordKey: stableKey, date: record.date, row: clone(row), observation: clone(observation), runContext: runContextFromRecord(record), postRofJ: rofPost(rofSummariesByRecordId, record.id) });
   }
 
   if (thread.type === SELF_UNDERSTANDING_TYPES.regionWatch) {
     const row = resultRow(experience, thread.subject.regionId);
     const currentSignature = signatureFor(experience, thread.subject.regionId);
     if (!row || !Number.isFinite(Number(row.value)) || !signaturesCompatible(thread.semanticConstraints.regionSignature, currentSignature)) return null;
-    return Object.freeze({ kind: thread.type, recordId: record.id, stableRecordKey: stableKey, date: record.date, row: clone(row) });
+    return Object.freeze({ kind: thread.type, recordId: record.id, stableRecordKey: stableKey, date: record.date, row: clone(row), runContext: runContextFromRecord(record), postRofJ: rofPost(rofSummariesByRecordId, record.id) });
   }
 
   if (thread.type === SELF_UNDERSTANDING_TYPES.sameCourseRofPost) {
@@ -329,6 +366,20 @@ function episodeEvidence(thread, experience, rofSummariesByRecordId) {
     const post = rofPost(rofSummariesByRecordId, record.id);
     if (!identity.id || identity.id !== thread.subject.courseId || post == null) return null;
     return Object.freeze({ kind: thread.type, recordId: record.id, stableRecordKey: stableKey, date: record.date, postRofJ: post, course: identity });
+  }
+
+  if (thread.type === SELF_UNDERSTANDING_TYPES.contextQuestion) {
+    const runContext = runContextFromRecord(record);
+    const postRofJ = rofPost(rofSummariesByRecordId, record.id);
+    if (!contextQuestionEligible(thread, runContext, postRofJ)) return null;
+    return Object.freeze({
+      kind: thread.type,
+      recordId: record.id,
+      stableRecordKey: stableKey,
+      date: record.date,
+      runContext,
+      postRofJ,
+    });
   }
 
   if (thread.type === SELF_UNDERSTANDING_TYPES.userDefinedLegacy) {
@@ -354,8 +405,9 @@ function threadTitle(thread = {}, regionLabels = new Map()) {
   if (thread.type === SELF_UNDERSTANDING_TYPES.sameCourseRofPost) {
     return `${thread.subject.courseName || "同じコース"}で走行後の疲労感を見る`;
   }
+  if (thread.type === SELF_UNDERSTANDING_TYPES.contextQuestion) return thread.subject.prompt;
   if (thread.type === SELF_UNDERSTANDING_TYPES.userDefinedLegacy) return thread.subject.prompt;
-  return "確認テーマ";
+  return "次回見ること";
 }
 
 function currentPairCandidate(targetExperience) {

@@ -36,7 +36,7 @@ const WIDGET_CATALOG = Object.freeze([
   Object.freeze({ id: "today", label: "今日", description: "今日の記録" }),
   Object.freeze({ id: "plan", label: "次の予定", description: "保存した予定" }),
   Object.freeze({ id: "changes", label: "最近の変化", description: "履歴と推移" }),
-  Object.freeze({ id: "checkpoint", label: "確認テーマ", description: "自分で続けて見ること" }),
+  Object.freeze({ id: "checkpoint", label: "次回見ること", description: "自分で続けて見ること" }),
 ]);
 const DEFAULT_WIDGET_ORDER = Object.freeze(WIDGET_CATALOG.map((item) => item.id));
 const DEFAULT_WIDGET_VISIBLE = Object.freeze(["today", "plan"]);
@@ -554,7 +554,7 @@ function createCheckpointWidget(services) {
   const small = document.createElement("small");
   small.textContent = "確認中";
   const strong = document.createElement("strong");
-  strong.textContent = checkpoint || "確認テーマはありません";
+  strong.textContent = checkpoint || "未設定";
   const span = document.createElement("span");
   span.textContent = source === "theme" ? (theme.hasNewEligibleData ? `新しい記録 ${theme.newCount}件` : `比較できる記録 ${theme.eligibleCount}件`) : source === "quick" ? "1分メモの内容" : "結果を整理して、続けて見る点だけを残せます";
   anchor.append(small, strong, span);

@@ -105,7 +105,7 @@ function renderMobileFocus(experience, draft) {
   const record = experience?.record || null;
   const hasCarry = Boolean(String(record?.reflectionContext?.nextCheckPoint || "").trim());
   const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
-  const sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "結果を整理すると、続けて見たい点だけを確認テーマにできます";
+  const sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "今回を見比べて、気になる問いだけ次回へ残せます";
   return `<section class="focus home-focus--mobile"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${hasCarry ? "以前の確認" : "今日の確認"}</small><h2>次のランで確認したいこと</h2><p class="focus-text">${escapeHtml(carryText(experience))}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">次回へ</span></div><div class="focus-actions"><a class="primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a><a class="secondary home-measure-link" href="#/run-measurement">GPSで測定</a></div></section>`;
 }
 
@@ -118,17 +118,17 @@ function renderLatestRecord(experience) {
   if (record.activityType === "rest") {
     return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">REST</span></div><div class="plan"><strong>休養</strong></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>記録を開く</span><span>›</span></a></article>`;
   }
-  return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実際に走った時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><div class="card-actions"><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を見る</span><span>›</span></a><a class="card-link card-link--understanding" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=home"><span>結果を整理する</span><span>›</span></a></div></article>`;
+  return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実際に走った時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><div class="card-actions"><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を見る</span><span>›</span></a><a class="card-link card-link--understanding" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=home"><span>今回を見比べる</span><span>›</span></a></div></article>`;
 }
 
 function renderPcConfirmationCard(theme) {
   if (!theme?.hasNewEligibleData) return "";
-  return `<article class="card self-understanding-home-card"><div class="card-head"><div><small>確認中のテーマ</small><strong>新しい記録があります</strong></div><span class="pill">${escapeHtml(String(theme.newCount || 1))}件</span></div><div class="plan"><strong>${escapeHtml(theme.title || "確認テーマ")}</strong><span>あなたが続けて見ると決めた内容です</span></div><a class="card-link" href="#/history?view=checks"><span>確認中のことを見る</span><span>›</span></a></article>`;
+  return `<article class="card self-understanding-home-card"><div class="card-head"><div><small>次回見ること</small><strong>新しい記録があります</strong></div><span class="pill">${escapeHtml(String(theme.newCount || 1))}件</span></div><div class="plan"><strong>${escapeHtml(theme.title || "次回見ること")}</strong><span>あなたが続けて見ると決めた内容です</span></div><a class="card-link" href="#/history?view=checks"><span>確認の続きを見る</span><span>›</span></a></article>`;
 }
 
 function renderMobileConfirmationBanner(theme) {
   if (!theme?.hasNewEligibleData) return "";
-  return `<a class="mobile-home-confirmation-banner" data-mobile-confirmation-banner href="#/history?view=checks"><span aria-hidden="true">⚑</span><span><small>確認中のテーマに新しい記録</small><strong>${escapeHtml(theme.title || "確認テーマ")}</strong><em>新しく比較できる記録 ${escapeHtml(String(theme.newCount || 1))}件</em></span><i aria-hidden="true">›</i></a>`;
+  return `<a class="mobile-home-confirmation-banner" data-mobile-confirmation-banner href="#/history?view=checks"><span aria-hidden="true">⚑</span><span><small>次回見ることに新しい記録</small><strong>${escapeHtml(theme.title || "次回見ること")}</strong><em>新しく比較できる記録 ${escapeHtml(String(theme.newCount || 1))}件</em></span><i aria-hidden="true">›</i></a>`;
 }
 
 function nextPlan(services) {

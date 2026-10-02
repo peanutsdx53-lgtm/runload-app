@@ -30,10 +30,10 @@ await test('GLOBAL-FEATURE-MENU-DOES-NOT-DUPLICATE-UNDERSTANDING-ENTRY',()=>{
 });
 
 await test('CONTEXTUAL-UNDERSTANDING-ENTRIES-REMAIN',()=>{
-  assert.match(read('screens/homeScreen.js'),/結果を整理する/);
-  assert.match(read('screens/resultScreen.js'),/結果を整理/);
-  assert.match(read('screens/historyScreen.js'),/この記録の結果を整理する/);
-  assert.match(read('screens/bodyPartDetailScreen.js'),/この部位の結果を整理する/);
+  assert.match(read('screens/homeScreen.js'),/今回を見比べる/);
+  assert.match(read('screens/resultScreen.js'),/今回を見比べる/);
+  assert.match(read('screens/historyScreen.js'),/この記録を見比べる/);
+  assert.match(read('screens/bodyPartDetailScreen.js'),/この部位から見比べる/);
 });
 
 await test('PWA-DROPS-RETIRED-SCREEN',()=>{
@@ -63,8 +63,9 @@ await test('PWA-CACHE-NAME-MATCHES-CURRENT-APP-VERSION',()=>{
 
 await test('RESULT-ORGANIZATION-LABEL-IS-USED-INSIDE-THE-WORKSPACE',()=>{
   const room=read('ui/interpretationRoomPresentation.js');
-  assert.match(room,/今回の整理/);
-  assert.match(room,/確認テーマ/);
+  assert.match(room,/今回を見比べる/);
+  assert.match(room,/次に自分で確かめること/);
+  assert.doesNotMatch(room,/確認テーマ/);
   const outside=[
     'ui/screenArchitecture.js',
     'ui/appShell.js',

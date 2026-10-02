@@ -9821,7 +9821,7 @@
   }
 
   .app-shell--immersive .interpretation-room-header{
-    padding-inline:max(2rem,calc((100vw - 96rem)/2 + 1rem)) !important;
+    padding-inline:max(2rem,calc((100vw - 112rem)/2 + 1rem)) !important;
   }
 
   .app-shell--immersive .app-main{

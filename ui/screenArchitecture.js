@@ -110,7 +110,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "interpretation-room") {
     const origin = parameter("origin");
     const regionId = parameter("regionId");
-    const interpretationTitle = "結果を整理する";
+    const interpretationTitle = "今回を見比べる";
     if (origin === "history") {
       return { title: interpretationTitle, backHref: screenHref("history", { recordId }), backLabel: "履歴" };
     }

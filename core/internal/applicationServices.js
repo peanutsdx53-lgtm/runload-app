@@ -1,4 +1,5 @@
 import { createSelfUnderstandingRepository } from "../selfUnderstandingCore.js";
+import { createSelfInterpretationRepository } from "../selfInterpretationCore.js";
 import "./publicHelpGuidance.js";
 import "./deterministicConsultation.js";
 import { internalModules } from "./modules.js";
@@ -52,6 +53,7 @@ function createApplicationServices(options = {}) {
   const plans = createPlanRepository(gateway);
   const profile = createProfileRepository(gateway);
   const selfUnderstandingThreads = createSelfUnderstandingRepository(gateway, STORAGE_KEYS.selfUnderstandingThreads);
+  const selfInterpretations = createSelfInterpretationRepository(gateway, STORAGE_KEYS.selfInterpretations);
   const recordWorkflow = createRecordWorkflow({
     gateway,
     recordsRepository: records,
@@ -85,6 +87,7 @@ function createApplicationServices(options = {}) {
       draft: createDraftRepository(gateway),
       courses: createCourseRepository(gateway),
       selfUnderstandingThreads,
+      selfInterpretations,
       backup: createBackupService(gateway),
     }),
     workflows: {},
@@ -107,6 +110,7 @@ function createApplicationServices(options = {}) {
     modelResultRegionalV2Repository: modelResultsRegionalV2,
     subjectiveFeedbackRepository: subjectiveFeedback,
     planRepository: plans,
+    selfInterpretationsRepository: selfInterpretations,
   });
   services.workflows.plans = createPlanWorkflow({ services, planRepository: plans });
   services.workflows = Object.freeze(services.workflows);

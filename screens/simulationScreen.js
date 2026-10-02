@@ -166,7 +166,7 @@ export function renderSimulationScreen({ services, context }) {
     <section class="condition-compare-next" aria-labelledby="simulationNextTitle">
       <div class="condition-compare-section-head"><div><small>比較を次へつなぐ</small><h2 id="simulationNextTitle">この比較から確かめること</h2></div><p>比較結果を確認した後の操作を選べます。</p></div>
       <div class="condition-compare-next-grid">
-        <a href="${escapeHtml(roomBack)}"><span>${simulationScreenIcon("compare")}</span><div><strong>元の結果整理へ戻る</strong><small>今回の解釈と条件比較を並べて確認します。</small></div><i>›</i></a>
+        <a href="${escapeHtml(roomBack)}"><span>${simulationScreenIcon("compare")}</span><div><strong>元の結果整理へ戻る</strong><small>今回の整理と条件比較を並べて確認します。</small></div><i>›</i></a>
         <button type="reset" form="simulation-form"><span>${simulationScreenIcon("conditions")}</span><div><strong>元の条件で再確認</strong><small>変更をすべて戻して、元の表示を確認します。</small></div><i>›</i></button>
         <a href="#/record-input"><span>${simulationScreenIcon("record")}</span><div><strong>この条件を見ながら記録を始める</strong><small>比較した条件を参考に、新しい記録へ進みます。</small></div><i>›</i></a>
         ${recordId?`<a href="${escapeHtml(shareHref)}"><span>${simulationScreenIcon("share")}</span><div><strong>共有用に整理する</strong><small>元の記録と今回の整理内容を共有画面で確認します。</small></div><i>›</i></a>`:""}

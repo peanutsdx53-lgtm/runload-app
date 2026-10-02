@@ -101,7 +101,7 @@ export function bindHistory({ services, router, rerender }) {
         { decision: String(button.dataset.threadDecision || "VIEWED") },
       );
       if (result?.ok) rerender();
-      else window.alert("確認テーマを更新できませんでした。");
+      else window.alert("確認中の内容を更新できませんでした。");
     });
   });
 }

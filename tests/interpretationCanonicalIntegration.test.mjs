@@ -42,7 +42,7 @@ await test('SIMULATION-USES-CANONICAL-ROOM-RETURN',()=>{
 
 await test('SCREEN-ARCHITECTURE-HAS-NO-VERSION-BRANCH',()=>{
   const s=read('ui/screenArchitecture.js');
-  assert.match(s,/const interpretationTitle = "結果を整理する"/);
+  assert.match(s,/const interpretationTitle = "今回を見比べる"/);
   assert.doesNotMatch(s,/roomExperience|experience === "v3"|view: "next"|intent: "condition"|from === "activation"/);
 });
 

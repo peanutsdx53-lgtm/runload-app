@@ -14,8 +14,7 @@ await test('RESULT-LAUNCHES-CANONICAL-INTERPRETATION',()=>{
   const s=read('screens/resultScreen.js');
   assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=result/);
   assert.doesNotMatch(s,/experience=v3/);
-  assert.match(s,/結果を整理/);
-  assert.match(s,/基準・過去と一緒に見る/);
+  assert.match(s,/今回を見比べる/);
 });
 
 await test('HOME-LATEST-RECORD-SEPARATES-RESULT-AND-ORGANIZATION',()=>{
@@ -23,21 +22,21 @@ await test('HOME-LATEST-RECORD-SEPARATES-RESULT-AND-ORGANIZATION',()=>{
   assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=home/);
   assert.doesNotMatch(s,/experience=v3/);
   assert.match(s,/結果を見る/);
-  assert.match(s,/結果を整理する/);
+  assert.match(s,/今回を見比べる/);
 });
 
 await test('BODY-DETAIL-HAS-CONTEXTUAL-LAUNCH',()=>{
   const s=read('screens/bodyPartDetailScreen.js');
   assert.match(s,/origin=body-part-detail&regionId=\$\{encodeURIComponent\(regionId\)\}/);
   assert.doesNotMatch(s,/experience=v3/);
-  assert.match(s,/この部位の結果を整理する/);
+  assert.match(s,/この部位から見比べる/);
 });
 
 await test('HISTORY-SELECTED-RECORD-HAS-CONTEXTUAL-LAUNCH',()=>{
   const s=read('screens/historyScreen.js');
   assert.match(s,/origin=history&regionId=\$\{encodeURIComponent\(workspace\.regionId\)\}/);
   assert.doesNotMatch(s,/experience=v3/);
-  assert.match(s,/この記録の結果を整理する/);
+  assert.match(s,/この記録を見比べる/);
 });
 
 await test('LEGACY-ACTIVATION-ROUTE-IS-REMOVED',()=>{
@@ -200,7 +199,7 @@ await test('SCREEN-ARCHITECTURE-RETURNS-SIMULATION-TO-CANONICAL-ROOM',()=>{
 
 await test('APP-SHELL-USES-CANONICAL-INTERPRETATION-WORDING',()=>{
   const s=read('ui/appShell.js');
-  assert.match(s,/title: "結果を整理する"/);
+  assert.match(s,/title: "今回を見比べる"/);
   assert.doesNotMatch(s,/結果を理解する/);
 });
 

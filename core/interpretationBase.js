@@ -130,6 +130,11 @@ function currentFacts(record = {}) {
     gradeSummary: gradeSummary(record),
     surfaceSummary: surfaceSummary(record),
     averageCadenceSpm: finite(record.averageCadenceSpm) ? Number(record.averageCadenceSpm) : null,
+    environment: Object.freeze({
+      temperatureC: finite(record.environmentContext?.temperatureC) ? Number(record.environmentContext.temperatureC) : null,
+      environmentNote: String(record.environmentContext?.environmentNote || ""),
+    }),
+    postRunReflection: String(record.reflectionContext?.postRunReflection || ""),
     nextCheckPoint: String(record.reflectionContext?.nextCheckPoint || ""),
   });
 }

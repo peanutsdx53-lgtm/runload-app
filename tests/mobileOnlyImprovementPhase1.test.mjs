@@ -35,7 +35,7 @@ test('mobile-only phase 1 improvements stay explicitly gated from desktop contra
   assert.match(home, /loadMobileQuickTools/);
   assert.match(home, /\["today", "plan"\]/);
   assert.match(home, /1分メモの内容/);
-  assert.match(home, /確認テーマはありません/);
+  assert.match(home, /checkpoint \|\| "未設定"/);
 
   assert.match(measurement, /root\.dataset\.measurementMode = mode/);
   assert.match(measurement, /root\.dataset\.measurementMode = measurementMode/);

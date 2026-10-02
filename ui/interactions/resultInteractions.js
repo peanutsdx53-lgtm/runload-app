@@ -65,6 +65,13 @@ function bindPcResultConsole() {
       panel.hidden = !active;
       panel.classList.toggle("is-active", active);
     });
+    const nextLink = consoleRoot.querySelector("[data-result-next-interpretation]");
+    if (nextLink) {
+      const url = new URL(nextLink.getAttribute("href"), window.location.href);
+      const hash = new URLSearchParams((url.hash.split("?")[1] || ""));
+      hash.set("regionId", regionId);
+      nextLink.setAttribute("href", `#/interpretation-room?${hash.toString()}`);
+    }
   };
 
   const setSummaryMode = (mode) => {

@@ -30,6 +30,7 @@ export function renderInterpretationRoomScreen({ services, context }) {
   const requestedRecordId = String(parameters.get("recordId") || "");
   const origin = safeOrigin(parameters);
   const regionId = String(parameters.get("regionId") || "").slice(0, 80);
+  const interpretationFocus = String(parameters.get("focus") || "").slice(0, 80);
 
   const targetExperience = requestedRecordId
     ? services.workflows.records.loadExperience(requestedRecordId)
@@ -37,7 +38,7 @@ export function renderInterpretationRoomScreen({ services, context }) {
   const recordId = targetExperience?.record?.id || requestedRecordId;
   const rof = rofContext(services, recordId);
   const allExperiences = services.workflows.records.loadAllExperiences();
-  const output = buildInterpretation({
+  let output = buildInterpretation({
     targetExperience,
     allExperiences,
     rofSummary: rof.summary,
@@ -59,5 +60,30 @@ export function renderInterpretationRoomScreen({ services, context }) {
     supportDecision: targetExperience?.supportDecision || null,
   });
 
-  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, selfUnderstanding, mobileLayout: matchesMobileLayout() })}</section>`;
+  const mobileLayout = matchesMobileLayout();
+  if (!mobileLayout && !regionId && output?.state?.regional === "AVAILABLE") {
+    const candidateRegionId = String(selfUnderstanding?.primaryCandidate?.subject?.regionId || "");
+    const activeRegionId = ["REGION_WATCH", "REGION_OBSERVATION_PAIR"].includes(String(selfUnderstanding?.activeThread?.type || ""))
+      ? String(selfUnderstanding.activeThread?.subject?.regionId || "")
+      : "";
+    const groups = Array.isArray(output?.overview?.attention?.groups) ? output.overview.attention.groups : [];
+    const changedRegionId = String(groups.find((group) => group?.code === "PREVIOUS_CHANGE")?.regions?.[0]?.regionId || "");
+    const repeatedRegionId = String(groups.find((group) => group?.code === "REPEATED_DIRECTION")?.regions?.[0]?.regionId || "");
+    const firstRegionId = String(groups.find((group) => Array.isArray(group?.regions) && group.regions.length)?.regions?.[0]?.regionId || "");
+    const desktopRegionId = candidateRegionId || activeRegionId || changedRegionId || repeatedRegionId || firstRegionId;
+    if (desktopRegionId) {
+      output = buildInterpretation({
+        targetExperience,
+        allExperiences,
+        rofSummary: rof.summary,
+        rofRecentReferences: rof.recentReferences,
+        origin,
+        selectedRegionId: desktopRegionId,
+        supportDecision: targetExperience?.supportDecision || null,
+      });
+    }
+  }
+
+  const savedInterpretation = services?.storage?.selfInterpretations?.findByRecordId?.(recordId) || null;
+  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, selfUnderstanding, savedInterpretation, interpretationFocus, mobileLayout })}</section>`;
 }

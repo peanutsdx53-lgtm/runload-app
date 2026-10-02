@@ -63,8 +63,11 @@ await testCase('INITIALIZATION-NORMALIZES-HIDDEN-CONSULTATION-FACTS',()=>{
 
 await testCase('RESULT-ORGANIZATION-SEMANTICS-STAY-BOUNDED',()=>{
   const room=read('ui/interpretationRoomPresentation.js');
-  assert.match(room,/今回の整理/);
-  assert.match(room,/確認テーマ/);
+  assert.match(room,/今回を見比べる/);
+  assert.match(room,/2つは別の情報です/);
+  assert.match(room,/次に自分で確かめること/);
+  assert.match(room,/まだ決めない/);
+  assert.doesNotMatch(room,/確認テーマ/);
   assert.doesNotMatch(room,/気づきを入力/);
   const outside=[
     'ui/screenArchitecture.js',
@@ -74,7 +77,7 @@ await testCase('RESULT-ORGANIZATION-SEMANTICS-STAY-BOUNDED',()=>{
     'screens/simulationScreen.js',
   ].map(read).join('\n');
   assert.doesNotMatch(outside,/今回の結果の解釈|RESULT INTERPRETATION|解釈エンジン/);
-  assert.match(outside,/結果を整理する/);
+  assert.match(outside,/今回を見比べる|この部位から見比べる|この記録を見比べる/);
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
