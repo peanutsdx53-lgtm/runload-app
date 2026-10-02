@@ -1,3 +1,4 @@
+import { createSelfUnderstandingRepository } from "../selfUnderstandingCore.js";
 import "./publicHelpGuidance.js";
 import "./deterministicConsultation.js";
 import { internalModules } from "./modules.js";
@@ -21,6 +22,7 @@ internalModules.dataManagementService = moduleExports;
 {
 const moduleExports = Object.create(null);
 const { createStorageGateway } = internalModules.storageGateway;
+const { STORAGE_KEYS } = internalModules.storageKeys;
 const { createRecordRepository } = internalModules.recordRepository;
 const { createModelResultRegionalV2Repository } = internalModules.primaryRegionalResultRepository;
 const { createSubjectiveFeedbackRepository } = internalModules.subjectiveFeedbackRepository;
@@ -49,6 +51,7 @@ function createApplicationServices(options = {}) {
   const subjectiveFeedback = createSubjectiveFeedbackRepository(gateway);
   const plans = createPlanRepository(gateway);
   const profile = createProfileRepository(gateway);
+  const selfUnderstandingThreads = createSelfUnderstandingRepository(gateway, STORAGE_KEYS.selfUnderstandingThreads);
   const recordWorkflow = createRecordWorkflow({
     gateway,
     recordsRepository: records,
@@ -81,6 +84,7 @@ function createApplicationServices(options = {}) {
       settings: createSettingsRepository(gateway),
       draft: createDraftRepository(gateway),
       courses: createCourseRepository(gateway),
+      selfUnderstandingThreads,
       backup: createBackupService(gateway),
     }),
     workflows: {},

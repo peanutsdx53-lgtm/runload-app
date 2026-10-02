@@ -32,12 +32,21 @@ assert.match(css, /\.editor-actions \.primary[\s\S]*width:\s*fit-content/,
 assert.ok(index.includes('./styles/desktop-layout-v47.css'), 'index.html must load desktop-layout-v47.css.');
 assert.ok(worker.includes('./styles/desktop-layout-v47.css'), 'service worker must keep precaching desktop-layout-v47.css.');
 
-function patchLevel(text) {
-  const match = text.match(/2026\.10\.01\.(\d+)/);
-  return match ? Number(match[1]) : 0;
+function explicitRelease(text) {
+  const match = text.match(/(20\d{2})\.(\d{2})\.(\d{2})\.(\d+)/);
+  return match ? match.slice(1).map(Number) : null;
 }
-assert.ok(patchLevel(worker) >= 47, 'service worker cache must be v47 or later.');
-assert.ok(patchLevel(version) >= 47, 'app version must be v47 or later.');
-assert.ok(patchLevel(about) >= 47, 'About screen must show v47 or later.');
+function atLeast(actual, minimum) {
+  if (!actual) return false;
+  for (let index = 0; index < minimum.length; index += 1) {
+    if (actual[index] > minimum[index]) return true;
+    if (actual[index] < minimum[index]) return false;
+  }
+  return true;
+}
+const minimumV47 = [2026, 10, 1, 47];
+assert.ok(atLeast(explicitRelease(worker), minimumV47), 'service worker cache must be v2026.10.01.47 or later.');
+assert.ok(atLeast(explicitRelease(version), minimumV47), 'app version must be v2026.10.01.47 or later.');
+assert.ok(atLeast(explicitRelease(about), minimumV47), 'About screen must show v2026.10.01.47 or later.');
 
 console.log('desktop layout v47 regression contract: PASS');

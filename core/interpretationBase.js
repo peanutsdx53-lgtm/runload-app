@@ -583,7 +583,7 @@ export function buildMeaningFrame({ targetExperience = null, currentRegions = []
   } else if (!resolvedAvailability.regional) {
     primaryCode = "LIMITED_RESULT";
   } else if (repeated) {
-    primaryCode = "REPEATED_OBSERVATION";
+    primaryCode = "REPEATED_REGIONAL_POSITION";
   } else if (hasRegionalDifference && hasConditionDifference) {
     primaryCode = "CONDITION_AND_RESULT_CHANGED";
   } else if (hasRegionalDifference && hasRofDifference) {
@@ -595,7 +595,7 @@ export function buildMeaningFrame({ targetExperience = null, currentRegions = []
   }
 
   const secondaryCodes = [];
-  if (primaryCode !== "REPEATED_OBSERVATION" && repeated) secondaryCodes.push("REPEATED_OBSERVATION");
+  if (primaryCode !== "REPEATED_REGIONAL_POSITION" && repeated) secondaryCodes.push("REPEATED_REGIONAL_POSITION");
   if (primaryCode !== "CONDITION_AND_RESULT_CHANGED" && hasRegionalDifference && hasConditionDifference) secondaryCodes.push("CONDITION_AND_RESULT_CHANGED");
   if (primaryCode !== "MULTI_LAYER_CHANGE" && hasRegionalDifference && hasRofDifference) secondaryCodes.push("MULTI_LAYER_CHANGE");
   if (primaryCode !== "CURRENT_SHIFT_WITH_HISTORY" && hasRegionalDifference) secondaryCodes.push("CURRENT_SHIFT_WITH_HISTORY");

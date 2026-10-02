@@ -138,7 +138,7 @@ function applyMobileRecordEntryFocus(form, context) {
   if (context?.parameters?.get?.("focus") !== "next-check") return;
   setActiveMobileRecordStage(form, 4);
   globalThis.requestAnimationFrame?.(() => {
-    const target = form.elements.namedItem("nextCheckPoint");
+    const target = form.elements.namedItem("postRunReflection");
     target?.scrollIntoView?.({ block: "center" });
     target?.focus?.({ preventScroll: true });
   });

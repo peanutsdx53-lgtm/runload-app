@@ -41,7 +41,7 @@ export function bindPlan({ services, router, rerender }) {
     form.addEventListener("submit",(event)=>{
       event.preventDefault();const data=new FormData(form);const planType=String(data.get("planType")||"run");const course=courseFromForm(data);
       const plannedSession=normalizePlanFactSession({activityType:planType,distanceKm:number(data,"distanceKm"),durationMinutes:number(data,"durationMinutes"),runningFormat:String(data.get("runningFormat")||"UNKNOWN"),course});
-      const result=services.workflows.plans.savePlan({id:String(data.get("planId")||""),scheduledDate:String(data.get("scheduledDate")||""),planType,title:planType==="rest"?"休養予定":"走行予定",memo:String(data.get("memo")||""),sourceCandidateId:"user-entered",plannedSession});
+      const result=services.workflows.plans.savePlan({id:String(data.get("planId")||""),scheduledDate:String(data.get("scheduledDate")||""),planType,title:planType==="rest"?"休養予定":"走行予定",memo:String(data.get("memo")||""),sourceCandidateId:"user-entered",selfUnderstandingThreadId:planType==="run"?String(data.get("selfUnderstandingThreadId")||""):"",plannedSession});
       if(!result.ok){showFormMessages(form,[result.message||"予定を保存できませんでした。"]);return;}
       consumeCourseSelection("plan");router.navigateToScreen("plan",{planId:result.item.id,saved:"1"});
     });

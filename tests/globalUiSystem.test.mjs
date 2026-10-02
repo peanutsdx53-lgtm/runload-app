@@ -128,7 +128,9 @@ await test('UI-INTERPRETATION-HAS-SYNTHESIS-FIRST-WORKSPACE',()=>{
   assert.ok(css.includes('.interpretation-room-next-rail'));
   assert.ok(presentation.includes('overviewHeadline'));
   assert.ok(presentation.includes('comparisonHint'));
-  assert.ok(presentation.includes('継続して確認された部位'));
+  assert.ok(presentation.includes('過去にも同じ側'));
+  assert.ok(presentation.includes('確認テーマ'));
+  assert.ok(presentation.includes('無理にテーマを作る必要はありません'));
   assert.ok(presentation.includes('比較の背景'));
   assert.ok(!presentation.includes('12部位から選ぶ'));
 });
@@ -405,22 +407,21 @@ await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
 });
 
 
-await test('UI-HISTORY-IS-RECORD-BROWSING-ONLY',()=>{
+await test('UI-HISTORY-SEPARATES-RECORDS-AND-USER-SELECTED-CHECKS',()=>{
   const screen=read('screens/historyScreen.js');
-  const css=read('styles/desktop.css');
+  const selfCss=read('styles/self-understanding.css');
   const renderStart=screen.indexOf('export function renderHistoryScreen');
   assert.ok(renderStart>=0,'history render function');
   const render=screen.slice(renderStart);
-  assert.match(screen,/function normalizedView\(\)\s*\{\s*return "records";\s*\}/);
+  assert.match(screen,/function normalizedView\(value\)/);
+  assert.match(screen,/"checks" \? "checks" : "records"/);
   assert.ok(render.includes('historyRecordView(workspace,context)'));
-  assert.ok(!render.includes('historyCompareView('));
-  assert.ok(!render.includes('history-mode'));
-  assert.ok(!render.includes('部位を比較'));
-  assert.ok(!render.includes('同じ部位の変化を見る'));
-  assert.match(render,/過去の記録を探して内容を確認します。/);
-
-  const audit=css;
-  assert.match(audit,/\.history-view[\s\S]*margin-top:\s*0\s*!important/);
+  assert.ok(render.includes('selfUnderstandingHistoryView(services, context)'));
+  assert.ok(screen.includes('確認中のこと'));
+  assert.ok(screen.includes('RunLoadが傾向を確定したものではありません'));
+  assert.ok(selfCss.includes('.desktop-history-mode'));
+  assert.ok(selfCss.includes('.self-understanding-history-list'));
+  assert.ok(selfCss.includes('.self-understanding-history-chart'));
 });
 
 

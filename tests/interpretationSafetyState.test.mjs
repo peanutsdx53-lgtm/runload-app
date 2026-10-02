@@ -61,9 +61,11 @@ await testCase('INITIALIZATION-NORMALIZES-HIDDEN-CONSULTATION-FACTS',()=>{
   assert.match(bind,/normalizeEmbeddedBodyStatus\(form\);/);
 });
 
-await testCase('INTERPRETATION-LABEL-STAYS-INSIDE-ITS-WORKSPACE',()=>{
+await testCase('RESULT-ORGANIZATION-SEMANTICS-STAY-BOUNDED',()=>{
   const room=read('ui/interpretationRoomPresentation.js');
-  assert.match(room,/今回の結果の解釈/);
+  assert.match(room,/今回の整理/);
+  assert.match(room,/確認テーマ/);
+  assert.doesNotMatch(room,/気づきを入力/);
   const outside=[
     'ui/screenArchitecture.js',
     'ui/appShell.js',

@@ -473,29 +473,15 @@ function conditionProjection(base = {}, selectedRegion = null) {
 }
 
 function nextCheckProjection(base = {}, selectedRegionId = "", attention = null) {
-  const comparison = selectedRegionId ? base?.comparison?.regionalById?.[selectedRegionId] || {} : {};
   const conditions = Array.isArray(base?.comparison?.conditionDifferences) ? base.comparison.conditionDifferences : [];
-  const changedCount = Number(attention?.counts?.previousChanged || 0);
-  const direction = selectedRegionId
-    ? String((base?.current?.regions || []).find((region) => region.regionId === selectedRegionId)?.referenceDirection || "")
-    : "";
-  const key = directionCountKey(direction);
-  const sameDirectionCount = Number(comparison?.historyReferenceDirectionCounts?.[key] || 0);
-
   const userRecorded = String(base?.current?.facts?.nextCheckPoint || "");
-  if (selectedRegionId && comparison.historyComparableCount === 0) {
-    return Object.freeze({ code: "ADD_COMPARABLE_RECORD", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))), userRecorded });
-  }
-  if (selectedRegionId && sameDirectionCount >= 2 && ["ABOVE_REFERENCE", "BELOW_REFERENCE"].includes(direction)) {
-    return Object.freeze({ code: "RECHECK_REPEATED_DIRECTION", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))), userRecorded });
-  }
-  if (conditions.length) {
-    return Object.freeze({ code: "KEEP_CONDITIONS_VISIBLE", regionId: selectedRegionId, conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))), userRecorded });
-  }
-  if (changedCount > 0) {
-    return Object.freeze({ code: "RECORD_NEXT_COMPARABLE_RUN", regionId: selectedRegionId, conditionIds: Object.freeze([]), userRecorded });
-  }
-  return Object.freeze({ code: "CONTINUE_COMPARABLE_RECORDS", regionId: selectedRegionId, conditionIds: Object.freeze([]), userRecorded });
+  return Object.freeze({
+    code: "DESCRIPTIVE_ONLY",
+    regionId: selectedRegionId,
+    conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))),
+    userRecorded,
+    boundaryCodes: Object.freeze(["NO_AUTOMATIC_CONFIRMATION_THEME", "USER_CHOICE_REQUIRED"]),
+  });
 }
 
 function nextProjection(base = {}, selectedRegionId = "") {

@@ -25,7 +25,7 @@ assert.match(home, /renderOverviewAchievements/);
 assert.match(more, /matchesMobileLayout/);
 assert.match(more, /ホームに機能を追加/);
 assert.doesNotMatch(more, /label: "スマホ機能"/);
-assert.match(achievements, /速さだけでなく、記録・予定・休養・振り返りも対象/);
+assert.match(achievements, /記録・予定・休養など、保存された事実を対象/);
 assert.doesNotMatch(home, /今日のRunLoad/);
 assert.doesNotMatch(read("ui/mobileOnboarding.js"), /ホーム\s*\|\s*記録\s*\|\s*測定\s*\|\s*履歴\s*\|\s*その他/);
 

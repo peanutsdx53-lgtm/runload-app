@@ -2,6 +2,7 @@ import { escapeHtml } from "../ui/commonComponents.js";
 import { formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
 import { bodyRegionFormalName, PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
 import { buildReportPresentation } from "../ui/consultationPresentation.js";
+import { selfUnderstandingThreadTitle } from "../core/selfUnderstandingCore.js";
 
 function localDateKey() {
   const now = new Date();
@@ -139,9 +140,10 @@ function consultationProfileSummary(profile = {}) {
   };
 }
 
-function consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan, profile }) {
+function consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan, profile, confirmationTheme = "" }) {
   const hasPlan = Boolean(plan && plan !== "未設定");
   return [
+    ...(confirmationTheme ? [{ key: "confirmation", label: "確認テーマ", value: confirmationTheme, note: "本人が続けて見ると決めた内容。傾向や診断ではありません", checked: true, available: true }] : []),
     { key: "profile", label: "共有用プロフィール", value: profile.value, note: "設定に保存した任意プロフィール・共有時だけ選択", checked: false, available: profile.available },
     { key: "body", label: "身体の記録", value: bodyRecord, note: "本人が入力した部位・程度", checked: bodyRecord !== "未記録", available: bodyRecord !== "未記録" },
     { key: "run", label: "今回の走行", value: facts, note: "距離・時間・コース", checked: true, available: true },
@@ -198,7 +200,7 @@ function consultationDocumentBlocks(items) {
   }).join("");
 }
 
-function renderConsultationContent({ services, experience, plan, regionId = "", backHref = "#/more", backLabel = "その他へ戻る", selfHref = "#/consultation" }) {
+function renderConsultationContent({ services, experience, plan, regionId = "", confirmationThread = null, backHref = "#/more", backLabel = "その他へ戻る", selfHref = "#/consultation" }) {
   if (!experience?.record) {
     return `<div class="screen screen--consultation screen-layout screen-layout--consultation secondary-derived-screen"><header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>共有用にまとめる</strong><span aria-hidden="true"></span></header><div class="secondary-derived-body"><section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel consultation-empty-state"><div class="consultation-empty-state__copy"><small>RECORD</small><strong>共有できる記録はまだありません</strong><p>走行または休養を保存すると、共有する内容をここで整理できます。</p></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div></div>`;
   }
@@ -221,9 +223,10 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
   const planValue = plan
     ? `${plan.scheduledDate ? formatLocalDate(plan.scheduledDate) : "日付未設定"}・${planSummary(plan)}`
     : "未設定";
-  const items = consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan: planValue, profile });
+  const confirmationTheme = confirmationThread ? selfUnderstandingThreadTitle(confirmationThread, allExperiences) : "";
+  const items = consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan: planValue, profile, confirmationTheme });
   const regionOptions = consultationRegionOptions({ services, experience, allExperiences, decision });
-  const initialQuestion = "";
+  const initialQuestion = confirmationTheme;
   const previewCards = consultationShareCards(items, "preview");
   const viewerCards = consultationShareCards(items, "viewer");
   const selector = consultationShareSelector(items);
@@ -235,6 +238,8 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
     <section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録から、指導者などに見せる内容を整理します。このアプリから相手へ自動送信はしません。</p></section>
 
     <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果を確認</a></section>
+
+    ${confirmationTheme ? `<section class="consultation-confirmation-theme"><small>共有する確認テーマ</small><strong>${escapeHtml(confirmationTheme)}</strong><span>本人が続けて見ると決めた内容です。RunLoadが傾向や原因を確定したものではありません。個人的な追加メモは自動では含めません。</span></section>` : ""}
 
     <section class="section share-step share-purpose-step"><div class="section-head"><small>STEP 1</small><h2>共有の目的</h2></div>
       <label class="field"><span>確認内容（任意）</span><textarea maxlength="400" placeholder="確認してほしい内容を入力" data-consult-question>${escapeHtml(initialQuestion)}</textarea></label>
@@ -292,11 +297,14 @@ export function renderConsultationScreen({ services, context }) {
   const plans = services.storage.plans.loadAll();
   const plan = latestPlan(plans);
   const regionId = context.parameters.get("regionId") || "";
+  const threadId = context.parameters.get("threadId") || "";
+  const confirmationThread = threadId ? services.storage.selfUnderstandingThreads?.findById?.(threadId) : null;
   const from = context.parameters.get("from") || "";
   const roomOrigin = context.parameters.get("roomOrigin") || "result";
   const selfQuery = new URLSearchParams();
   if (requestedRecordId) selfQuery.set("recordId", requestedRecordId);
   if (regionId) selfQuery.set("regionId", regionId);
+  if (confirmationThread?.id) selfQuery.set("threadId", confirmationThread.id);
   if (from) selfQuery.set("from", from);
   if (from === "interpretation-room") {
     selfQuery.set("roomOrigin", roomOrigin);
@@ -312,5 +320,5 @@ export function renderConsultationScreen({ services, context }) {
     backHref = `#/interpretation-room?${roomQuery.toString()}`;
     backLabel = "結果の整理へ戻る";
   }
-  return renderConsultationContent({ services, experience, plan, regionId, backHref, backLabel, selfHref });
+  return renderConsultationContent({ services, experience, plan, regionId, confirmationThread, backHref, backLabel, selfHref });
 }

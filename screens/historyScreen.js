@@ -1,5 +1,6 @@
 
 import { PRIMARY_REGIONAL_V2_REGION_DEFS, bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } from "../core/appCore.js";
+import { buildSelfUnderstandingView } from "../core/selfUnderstandingCore.js";
 
 import { escapeHtml } from "../ui/commonComponents.js";
 import { addDaysIso, localTodayIso, parseIsoDate } from "../ui/historyPresentation.js";
@@ -36,12 +37,15 @@ function normalizedPeriod(value) {
   return [7, 28, 90, 180].includes(Number(value)) ? Number(value) : 28;
 }
 
-function normalizedView() {
-  return "records";
+function normalizedView(value) {
+  return String(value || "") === "checks" ? "checks" : "records";
 }
 
 function normalizedMobileView(value) {
-  return String(value || "") === "trends" ? "trends" : normalizedView();
+  const normalized = String(value || "");
+  if (normalized === "trends") return "trends";
+  if (normalized === "checks") return "checks";
+  return "records";
 }
 
 function normalizedMetric(value) {
@@ -89,7 +93,7 @@ function buildWorkspace(services, context) {
   const mobileLayout = matchesMobileLayout();
   const view = mobileLayout
     ? normalizedMobileView(context.parameters.get("view"))
-    : normalizedView();
+    : normalizedView(context.parameters.get("view"));
   const metric = normalizedMetric(context.parameters.get("metric"));
   const regionId = normalizedRegionId(context.parameters.get("regionId"));
   const regionalDisplay = normalizedRegionalDisplay(context.parameters.get("display"));
@@ -322,10 +326,74 @@ function historyRecordView(workspace,context) {
   const activity=String(context.parameters.get("activityType")||"all"),query=String(context.parameters.get("query")||"").trim().toLocaleLowerCase("ja-JP");const rows=workspace.rows.filter((item)=>activityMatches(item.experience,activity)).filter((item)=>!query||searchText(item).includes(query)).sort((a,b)=>recordChronology(b.experience,a.experience));
   return `<section class="history-view history-view--records"><section class="records-head"><div class="comparison-title comparison-title--plain"><div><small>SAVED RECORDS</small><h2><span class="history-records-title-mobile">保存記録を探す</span><span class="history-records-title-pc">保存記録</span></h2></div></div><span class="record-total">${rows.length}件</span></section><form class="record-filters" id="history-record-filter-form"><input type="hidden" name="view" value="records"><input type="hidden" name="period" value="${workspace.period}"><input type="hidden" name="anchorDate" value="${escapeHtml(workspace.endDate)}"><input type="hidden" name="regionId" value="${escapeHtml(workspace.regionId)}"><label><span>記録内を検索</span><input name="query" type="search" value="${escapeHtml(context.parameters.get("query")||"")}" placeholder="日付、コース、メモ"></label><div class="type-toggle" role="group" aria-label="記録の種類">${[["all","すべて"],["run","走行"],["rest","休養"]].map(([value,label])=>`<button type="button" class="${activity===value?"active":""}" data-history-record-type="${value}" aria-pressed="${activity===value}">${label}</button>`).join("")}</div></form><div class="record-list">${rows.length?rows.map((item)=>{const r=item.experience.record;const recordTime=formatLocalTime(r.createdAt);return`<article class="record-item"><div class="record-item-head"><time class="${weekendClass(r.date)}" datetime="${escapeHtml(r.createdAt||r.date)}"><span>${escapeHtml(formatLocalDate(r.date))}（${escapeHtml(weekdayLabel(r.date))}）</span>${recordTime?`<small class="record-time">記録時刻 ${escapeHtml(recordTime)}</small>`:""}</time><span class="record-kind${r.activityType==="rest"?" rest":""}">${r.activityType==="rest"?"休養":"走行"}</span></div><h3>${escapeHtml(formatActivitySummary(r))}</h3><p>${escapeHtml(r.course?.name||"コース名なし")}${r.memo?`・${escapeHtml(r.memo)}`:""}</p><div class="record-actions"><a href="#/result?recordId=${encodeURIComponent(r.id)}">結果を見る</a><button type="button" data-action="delete-history-record" data-record-id="${escapeHtml(r.id)}" data-record-label="${escapeHtml(`${formatLocalDate(r.date)}${recordTime?` ${recordTime}`:""}の記録`)}">削除</button></div></article>`;}).join(""):'<div class="empty-records empty-records--filtered"><strong>条件に合う記録はありません</strong><p>検索語または記録の種類を変更してください。</p></div>'}</div></section>`;
 }
+
+function rofSummariesForHistory(services, experiences = []) {
+  return new Map(experiences.filter((experience) => experience?.record?.activityType === "run")
+    .map((experience) => [experience.record.id, services?.fatigue?.summarizeRun?.(experience.record.id) || null]));
+}
+
+function selfUnderstandingHistoryView(services, context) {
+  const experiences = services.workflows.records.loadAllExperiences().filter(Boolean).sort(recordChronology);
+  const rofMap = rofSummariesForHistory(services, experiences);
+  const view = buildSelfUnderstandingView({
+    allExperiences: experiences,
+    threads: services?.storage?.selfUnderstandingThreads?.loadAll?.() || [],
+    rofSummariesByRecordId: rofMap,
+  });
+  const requestedState = String(context?.parameters?.get("checkState") || "watching");
+  const collection = requestedState === "paused" ? view.paused : requestedState === "closed" ? view.closed : view.watching;
+  const chart = (thread) => {
+    if (["REGION_WATCH", "REGION_OBSERVATION_PAIR"].includes(thread.type)) {
+      const points = [];
+      const sourceEpisode = thread.sourceEpisode;
+      if (finite(sourceEpisode?.row?.value)) points.push({ date: sourceEpisode.date, value: Number(sourceEpisode.row.value), recordId: sourceEpisode.recordId });
+      (thread.eligibleEpisodes || []).forEach((episode) => { if (finite(episode?.row?.value)) points.push({ date: episode.date, value: Number(episode.row.value), recordId: episode.recordId }); });
+      if (!points.length) return "";
+      const min = Math.min(90, ...points.map((point) => point.value)) - 4;
+      const max = Math.max(110, ...points.map((point) => point.value)) + 4;
+      const x = (index) => points.length <= 1 ? 160 : 28 + (264 * index) / (points.length - 1);
+      const y = (value) => 18 + ((max - value) / Math.max(1, max - min)) * 94;
+      const baselineY = y(100);
+      const lines = points.slice(1).map((point, index) => `<line x1="${x(index)}" y1="${y(points[index].value)}" x2="${x(index + 1)}" y2="${y(point.value)}"></line>`).join("");
+      const dots = points.map((point, index) => `<a href="#/interpretation-room?recordId=${encodeURIComponent(point.recordId)}&origin=history&regionId=${encodeURIComponent(thread.subject.regionId)}"><circle cx="${x(index)}" cy="${y(point.value)}" r="5"><title>${escapeHtml(`${formatLocalDate(point.date)} ${formatNumber(point.value, 1)}`)}</title></circle></a>`).join("");
+      const values = points.map((point) => `<li><a href="#/interpretation-room?recordId=${encodeURIComponent(point.recordId)}&origin=history&regionId=${encodeURIComponent(thread.subject.regionId)}"><time>${escapeHtml(formatLocalDate(point.date))}</time><strong>${escapeHtml(formatNumber(point.value, 1))}</strong></a></li>`).join("");
+      return `<div class="self-understanding-history-chart"><div class="self-understanding-history-chart__head"><strong>部位表示</strong><span>各記録は同じ意味の基準で比較できるものだけ</span></div><svg viewBox="0 0 320 132" role="img" aria-label="確認テーマの部位表示の履歴"><line class="is-baseline" x1="24" y1="${baselineY}" x2="304" y2="${baselineY}"></line><text x="25" y="${Math.max(12, baselineY - 4)}">基準100</text><g class="is-series">${lines}</g><g class="is-points">${dots}</g></svg><ul class="self-understanding-history-values" aria-label="部位表示の記録一覧">${values}</ul><p>高いほど良い・悪いという意味ではありません。</p></div>`;
+    }
+    if (thread.type === "SAME_COURSE_ROF_POST") {
+      const points = [];
+      const sourceEpisode = thread.sourceEpisode;
+      if (finite(sourceEpisode?.postRofJ)) points.push({ date: sourceEpisode.date, value: Number(sourceEpisode.postRofJ), recordId: sourceEpisode.recordId });
+      (thread.eligibleEpisodes || []).forEach((episode) => { if (finite(episode.postRofJ)) points.push({ date: episode.date, value: Number(episode.postRofJ), recordId: episode.recordId }); });
+      if (!points.length) return "";
+      const x = (index) => points.length <= 1 ? 160 : 28 + (264 * index) / (points.length - 1);
+      const y = (value) => 18 + ((10 - value) / 10) * 94;
+      const lines = points.slice(1).map((point, index) => `<line x1="${x(index)}" y1="${y(points[index].value)}" x2="${x(index + 1)}" y2="${y(point.value)}"></line>`).join("");
+      const dots = points.map((point, index) => `<a href="#/interpretation-room?recordId=${encodeURIComponent(point.recordId)}&origin=history"><circle cx="${x(index)}" cy="${y(point.value)}" r="5"><title>${escapeHtml(`${formatLocalDate(point.date)} ${point.value}/10`)}</title></circle></a>`).join("");
+      const values = points.map((point) => `<li><a href="#/interpretation-room?recordId=${encodeURIComponent(point.recordId)}&origin=history"><time>${escapeHtml(formatLocalDate(point.date))}</time><strong>${escapeHtml(String(point.value))}/10</strong></a></li>`).join("");
+      return `<div class="self-understanding-history-chart"><div class="self-understanding-history-chart__head"><strong>走行後の疲労感</strong><span>ROF-J 0–10</span></div><svg viewBox="0 0 320 132" role="img" aria-label="確認テーマの走行後疲労感の履歴"><g class="is-grid"><line x1="24" y1="18" x2="304" y2="18"></line><line x1="24" y1="65" x2="304" y2="65"></line><line x1="24" y1="112" x2="304" y2="112"></line><text x="5" y="22">10</text><text x="12" y="69">5</text><text x="12" y="116">0</text></g><g class="is-series">${lines}</g><g class="is-points">${dots}</g></svg><ul class="self-understanding-history-values" aria-label="走行後疲労感の記録一覧">${values}</ul><p>走行条件が同じとは限りません。回復・準備状態・安全性は判定しません。</p></div>`;
+    }
+    return "";
+  };
+  const item = (thread) => {
+    const shareRecordId = thread.eligibleEpisodes?.at?.(-1)?.recordId || thread.sourceEpisode?.recordId || "";
+    const share = shareRecordId ? `<a class="self-understanding-history-share" href="#/consultation?recordId=${encodeURIComponent(shareRecordId)}&threadId=${encodeURIComponent(thread.id)}">この確認テーマを共有用に整理</a>` : "";
+    return `<article class="self-understanding-history-item" data-state="${escapeHtml(thread.userState)}"><header><div><small>${thread.userState === "PAUSED" ? "一時停止中" : thread.userState === "CLOSED" ? "終了" : thread.hasNewEligibleData ? "新しい記録あり" : "確認中"}</small><h3>${escapeHtml(thread.title)}</h3></div><span>${escapeHtml(String(thread.eligibleCount || 0))}件</span></header><p>${thread.type === "USER_DEFINED_LEGACY" ? "以前に自分で残した確認です。内容を自動で解釈していません。" : "あなたが続けて見ると決めた確認テーマです。RunLoadが傾向を確定したものではありません。"}</p>${chart(thread)}<div class="self-understanding-history-item__actions">${thread.userState === "WATCHING" ? `<button type="button" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="PAUSE">一時停止</button><button type="button" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="CLOSE">終了</button>` : thread.userState === "PAUSED" ? `<button type="button" class="primary" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="KEEP_WATCHING">確認を再開</button><button type="button" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="CLOSE">終了</button>` : ""}</div>${share}</article>`;
+  };
+  const filterHref = (state) => buildHref({ view: "checks", checkState: state });
+  return `<section class="history-view history-view--checks"><section class="records-head"><div class="comparison-title comparison-title--plain"><div><small>CHECKING</small><h2>確認中のこと</h2></div></div><span class="record-total">${collection.length}件</span></section><p class="self-understanding-history-lead">以前のメモを覚えていなくても、続けて見ると決めた内容をここに残します。数値の意味を変えたり、傾向を確定したりはしません。</p><nav class="self-understanding-history-filter" aria-label="確認テーマの状態"><a class="${requestedState === "watching" ? "active" : ""}" href="${escapeHtml(filterHref("watching"))}">確認中 <span>${view.watching.length}</span></a><a class="${requestedState === "paused" ? "active" : ""}" href="${escapeHtml(filterHref("paused"))}">一時停止 <span>${view.paused.length}</span></a><a class="${requestedState === "closed" ? "active" : ""}" href="${escapeHtml(filterHref("closed"))}">終了 <span>${view.closed.length}</span></a></nav><div class="self-understanding-history-list">${collection.length ? collection.map(item).join("") : `<div class="empty-records"><strong>${requestedState === "watching" ? "確認中のテーマはありません" : requestedState === "paused" ? "一時停止中のテーマはありません" : "終了したテーマはありません"}</strong><p>結果を整理する画面で、続けて見たい具体的な点だけを自分で選べます。</p></div>`}</div></section>`;
+}
+
 function mobileHistoryModeSwitch(workspace) {
   const recordHref = buildHref({ view: "records", period: workspace.period, anchorDate: workspace.endDate, regionId: workspace.regionId });
   const trendsHref = buildHref({ view: "trends", metric: "region", period: workspace.period, anchorDate: workspace.endDate, regionId: workspace.regionId, display: workspace.regionalDisplay });
-  return `<nav class="mobile-history-mode" aria-label="履歴の表示"><a class="${workspace.view === "records" ? "active" : ""}" href="${escapeHtml(recordHref)}" aria-current="${workspace.view === "records" ? "page" : "false"}">保存記録</a><a class="${workspace.view === "trends" ? "active" : ""}" href="${escapeHtml(trendsHref)}" aria-current="${workspace.view === "trends" ? "page" : "false"}">部位の推移</a></nav>`;
+  const checksHref = buildHref({ view: "checks", checkState: "watching" });
+  return `<nav class="mobile-history-mode" aria-label="履歴の表示"><a class="${workspace.view === "records" ? "active" : ""}" href="${escapeHtml(recordHref)}" aria-current="${workspace.view === "records" ? "page" : "false"}">記録</a><a class="${workspace.view === "trends" ? "active" : ""}" href="${escapeHtml(trendsHref)}" aria-current="${workspace.view === "trends" ? "page" : "false"}">推移</a><a class="${workspace.view === "checks" ? "active" : ""}" href="${escapeHtml(checksHref)}" aria-current="${workspace.view === "checks" ? "page" : "false"}">確認中</a></nav>`;
+}
+
+function desktopHistoryModeSwitch(workspace) {
+  const recordHref = buildHref({ view: "records", period: workspace.period, anchorDate: workspace.endDate, regionId: workspace.regionId });
+  const checksHref = buildHref({ view: "checks", checkState: "watching" });
+  return `<nav class="desktop-history-mode" aria-label="履歴の表示"><a class="${workspace.view === "records" ? "active" : ""}" href="${escapeHtml(recordHref)}">保存記録</a><a class="${workspace.view === "checks" ? "active" : ""}" href="${escapeHtml(checksHref)}">確認中のこと</a></nav>`;
 }
 
 function mobileHistoryEmpty() {
@@ -333,6 +401,7 @@ function mobileHistoryEmpty() {
 }
 
 function mobileHistoryContent(workspace, context, services) {
+  if (workspace.view === "checks") return selfUnderstandingHistoryView(services, context);
   if (workspace.view === "trends") {
     return `${renderMobileFatigueTrend(services)}${historyCompareView(workspace)}`;
   }
@@ -342,9 +411,13 @@ function mobileHistoryContent(workspace, context, services) {
 export function renderHistoryScreen({services,context}) {
   const mobileLayout=matchesMobileLayout();
   const workspace=buildWorkspace(services,context);
-  if(!workspace)return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録を探して内容を確認します。</p></div></section>${mobileLayout ? mobileHistoryEmpty() : '<section class="history-view"><div class="empty-records empty-records--initial"><small>SAVED RECORDS</small><strong>保存した記録はまだありません</strong><p>走行または休養を保存すると、ここから記録を探して確認できます。</p><a href="#/record-input">記録を始める</a></div></section>'}</div>`;
+  if(!workspace){
+    const wantsChecks = String(context?.parameters?.get("view") || "") === "checks";
+    const checks = wantsChecks ? selfUnderstandingHistoryView(services, context) : "";
+    return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録と、自分で選んだ確認テーマを見返します。</p></div></section>${checks || (mobileLayout ? mobileHistoryEmpty() : '<section class="history-view"><div class="empty-records empty-records--initial"><small>SAVED RECORDS</small><strong>保存した記録はまだありません</strong><p>走行または休養を保存すると、ここから記録を探して確認できます。</p><a href="#/record-input">記録を始める</a></div></section>')}</div>`;
+  }
   const content = mobileLayout
     ? mobileHistoryContent(workspace, context, services)
-    : historyRecordView(workspace,context);
-  return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録を探して内容を確認します。</p></div></section>${mobileLayout ? mobileHistoryModeSwitch(workspace) : ""}${content}${services.workflows.history.loadUndoEntry()?'<div class="history-undo" role="status"><p>直前に削除した記録を元に戻せます。</p><button type="button" data-action="undo-history-delete">削除を元に戻す</button></div>':""}</div>`;
+    : workspace.view === "checks" ? selfUnderstandingHistoryView(services, context) : historyRecordView(workspace,context);
+  return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録と、自分で選んだ確認テーマを見返します。</p></div></section>${mobileLayout ? mobileHistoryModeSwitch(workspace) : desktopHistoryModeSwitch(workspace)}${content}${services.workflows.history.loadUndoEntry()?'<div class="history-undo" role="status"><p>直前に削除した記録を元に戻せます。</p><button type="button" data-action="undo-history-delete">削除を元に戻す</button></div>':""}</div>`;
 }

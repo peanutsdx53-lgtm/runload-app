@@ -21,7 +21,8 @@ test('mobile-only phase 1 improvements stay explicitly gated from desktop contra
   assert.match(reading, /deferredArticleIds: new Set\(\)/);
   assert.match(reading, /return renderReadingContent\(\{ services, context \}\);/);
 
-  assert.match(history, /function normalizedView\(\) \{\s*return "records";\s*\}/);
+  assert.match(history, /function normalizedView\(value\)/);
+  assert.match(history, /normalized === "checks"|=== "checks" \? "checks" : "records"/);
   assert.match(history, /function normalizedMobileView\(value\)/);
   assert.match(history, /const view = mobileLayout\s*\? normalizedMobileView/);
   assert.match(history, /const content = mobileLayout\s*\? mobileHistoryContent/);
@@ -32,8 +33,9 @@ test('mobile-only phase 1 improvements stay explicitly gated from desktop contra
   assert.match(result, /\{ mobileLayout \}/);
 
   assert.match(home, /loadMobileQuickTools/);
-  assert.match(home, /\["today", "checkpoint", "plan"\]/);
-  assert.match(home, /1分メモから/);
+  assert.match(home, /\["today", "plan"\]/);
+  assert.match(home, /1分メモの内容/);
+  assert.match(home, /確認テーマはありません/);
 
   assert.match(measurement, /root\.dataset\.measurementMode = mode/);
   assert.match(measurement, /root\.dataset\.measurementMode = measurementMode/);

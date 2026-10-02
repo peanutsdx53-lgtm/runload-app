@@ -61,10 +61,10 @@ await test('PWA-CACHE-NAME-MATCHES-CURRENT-APP-VERSION',()=>{
   assert.doesNotMatch(read('service-worker.js'),/desktop-final-visual-audit|20260922-37/);
 });
 
-await test('INTERPRETATION-LABEL-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-WORKSPACE',()=>{
+await test('RESULT-ORGANIZATION-LABEL-IS-USED-INSIDE-THE-WORKSPACE',()=>{
   const room=read('ui/interpretationRoomPresentation.js');
-  assert.match(room,/今回の結果の解釈/);
-  assert.match(room,/RESULT INTERPRETATION/);
+  assert.match(room,/今回の整理/);
+  assert.match(room,/確認テーマ/);
   const outside=[
     'ui/screenArchitecture.js',
     'ui/appShell.js',
@@ -75,6 +75,7 @@ await test('INTERPRETATION-LABEL-IS-USED-ONLY-INSIDE-THE-INTERPRETATION-WORKSPAC
     'screens/simulationScreen.js',
   ].map(read).join('\n');
   assert.doesNotMatch(outside,/今回の結果の解釈|RESULT INTERPRETATION|解釈エンジン/);
+  assert.doesNotMatch(outside,/気づきを入力/);
 });
 
 

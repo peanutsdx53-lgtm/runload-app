@@ -93,4 +93,15 @@ export function bindHistory({ services, router, rerender }) {
     if (result.ok) rerender();
     else window.alert("削除した記録を元に戻せませんでした。端末の保存状態を確認してください。");
   });
+
+  document.querySelectorAll('[data-action="history-self-understanding-state"]').forEach((button) => {
+    button.addEventListener("click", () => {
+      const result = services?.storage?.selfUnderstandingThreads?.review?.(
+        String(button.dataset.threadId || ""),
+        { decision: String(button.dataset.threadDecision || "VIEWED") },
+      );
+      if (result?.ok) rerender();
+      else window.alert("確認テーマを更新できませんでした。");
+    });
+  });
 }

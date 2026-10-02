@@ -97,7 +97,7 @@ function baseOutput({selected=false}={}){
 await test('OVERVIEW-LEADS-WITH-SYNTHESIS-NOT-INPUT-RECAP',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/interpretation-room--dashboard/);
-  assert.match(html,/今回の解釈/);
+  assert.match(html,/今回の整理/);
   assert.match(html,/前回から4部位に差があります/);
   assert.match(html,/走行条件が2項目変わり/);
   assert.match(html,/疲労感も4→8（\+4）/);
@@ -109,17 +109,17 @@ await test('OVERVIEW-LEADS-WITH-SYNTHESIS-NOT-INPUT-RECAP',()=>{
 
 await test('OVERVIEW-USES-COMPACT-SIGNALS-AND-ACTIONABLE-NEXT-COMPARISON',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/継続して確認/);
+  assert.match(html,/過去にも同じ側/);
   assert.match(html,/前回との差/);
   assert.match(html,/今回の背景/);
   assert.match(html,/条件 2・疲労 \+4/);
-  assert.match(html,/次の比較を読みやすくするには/);
-  assert.match(html,/比較したい条件を意識し/);
+  assert.match(html,/次回も比べて見るなら/);
+  assert.match(html,/条件差を並べて確認できます/);
 });
 
 await test('REGION-PATTERNS-ARE-COMPACT-AND-NOT-RANKED',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
-  assert.match(html,/継続して確認された部位/);
+  assert.match(html,/比較して見える部位/);
   assert.match(html,/同じ方向が続いている/);
   assert.match(html,/前回から変化している/);
   assert.ok((html.match(/region-chip__copy/g)||[]).length>=2);
@@ -143,7 +143,7 @@ await test('OVERVIEW-CONTEXT-COMBINES-CONDITIONS-AND-SUBJECTIVE-WITHOUT-MAKING-T
 await test('OVERVIEW-NEXT-ACTIONS-ARE-COMPACT-RAIL',()=>{
   const html=renderInterpretationRoom({output:baseOutput()});
   assert.match(html,/interpretation-room-next-rail/);
-  assert.match(html,/次に確かめる/);
+  assert.match(html,/確認テーマ/);
   assert.match(html,/条件を変えて比較する/);
   assert.match(html,/次の記録条件を整理する/);
   assert.match(html,/関連する読みものを確認する/);

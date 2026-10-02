@@ -9,7 +9,7 @@ const guard = read("ui/readingRuntimeGuard.js");
 const reading = read("screens/readingScreen.js");
 const version = read("ui/appVersionStatus.js").match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 
-assert.match(version, /^2026\.10\.01\.\d+$/);
+assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 assert.match(css, /html\.rl-appearance-dark\.rl-color-standard/);
 assert.match(css, /html\.rl-appearance-dark\.rl-color-natural/);
 assert.match(css, /--color-paper: #0b1218/);

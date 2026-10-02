@@ -118,6 +118,7 @@ const STORAGE_KEYS = Object.freeze({
   mobileHomePositions: "running-record-mobile-home-positions-v1",
   mobileHomeLayout: "running-record-mobile-home-layout-v1",
   mobileHomeWidgets: "running-record-mobile-home-widgets-v1",
+  selfUnderstandingThreads: `${STORAGE_NAMESPACE}-self-understanding-threads-v2`,
 });
 
 const USER_DATA_STORAGE_KEYS = Object.freeze([
@@ -137,6 +138,7 @@ const USER_DATA_STORAGE_KEYS = Object.freeze([
   STORAGE_KEYS.mobileHomePositions,
   STORAGE_KEYS.mobileHomeLayout,
   STORAGE_KEYS.mobileHomeWidgets,
+  STORAGE_KEYS.selfUnderstandingThreads,
 ]);
 
 const INTERNAL_RECOVERY_STORAGE_KEYS = Object.freeze([

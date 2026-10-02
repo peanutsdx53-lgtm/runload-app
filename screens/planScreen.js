@@ -2,6 +2,7 @@ import { escapeHtml } from "../ui/commonComponents.js";
 import { peekCourseSelection } from "../ui/flowSessionState.js";
 import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
+import { SELF_UNDERSTANDING_STATES, selfUnderstandingThreadTitle } from "../core/selfUnderstandingCore.js";
 
 function localTodayIso() { const d = new Date(); const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,"0"); const day=String(d.getDate()).padStart(2,"0"); return `${y}-${m}-${day}`; }
 function courseFromPlan(plan) { return plan?.plannedSession?.course || { name:"", gradeKnowledge:"UNKNOWN", modelSurfaceClass:"UNKNOWN" }; }
@@ -55,6 +56,11 @@ export function renderPlanScreen({ services, context }) {
   if(sourceRecordId)simulationQuery.set("recordId",sourceRecordId);
   const simulationHref=`#/simulation?${simulationQuery.toString()}`;
   const plans=services.storage.plans.loadAll().sort((a,b)=>String(a.scheduledDate||"").localeCompare(String(b.scheduledDate||"")));
+  const confirmationThemes=services.storage.selfUnderstandingThreads?.loadAll?.()
+    .filter((thread)=>thread.userState===SELF_UNDERSTANDING_STATES.watching)
+    .sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||""))) || [];
+  const confirmationExperiences=services.workflows?.records?.loadAllExperiences?.() || [];
+  const selectedThreadId=String(editing?.selfUnderstandingThreadId||context?.parameters?.get("threadId")||"");
   const scheduledDate=editing?.scheduledDate||localTodayIso();
   const nextCheck=recent?.reflectionContext?.nextCheckPoint || recent?.reflectionContext?.nextCheck || "";
   const distance=session.distanceKm ?? ""; const duration=session.durationMinutes ?? "";
@@ -63,7 +69,8 @@ export function renderPlanScreen({ services, context }) {
     <div class="secondary-derived-body">
     <section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">${escapeHtml(formatLocalDate(scheduledDate))}</span></section><p class="visually-hidden">予定条件は利用者が入力した事実であり、数値スコアではなく入力した予定事実として扱います。おすすめ・安全判断・自動処方ではありません。</p>
     ${justSaved?`<section class="plan-mobile-saved-success plan-mobile-only" aria-live="polite"><div class="plan-mobile-saved-success__mark" aria-hidden="true">✓</div><div><small>保存完了</small><strong>${planType==="rest"?"休養予定を保存しました":"走行予定を保存しました"}</strong><span>${escapeHtml(formatLocalDate(scheduledDate))}${planType==="rest"?"・休養予定":`・${escapeHtml(planTitle(editing))}`}</span></div>${planType==="rest"?`<a href="#/home">Homeへ戻る</a>`:`<a href="#/run-measurement?planId=${encodeURIComponent(editing?.id||"")}">この予定で測定を始める</a>`}</section>`:""}
-    ${nextCheck?`<section class="carry"><i></i><div><small>${escapeHtml(carryLabel)}</small><strong>次のランで確認したいこと</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
+    ${selectedThreadId&&planType==="run"?(()=>{const thread=confirmationThemes.find((item)=>item.id===selectedThreadId)||services.storage.selfUnderstandingThreads?.findById?.(selectedThreadId);return thread?`<section class="carry self-understanding-plan-carry"><i></i><div><small>確認中のテーマ</small><strong>${escapeHtml(selfUnderstandingThreadTitle(thread, confirmationExperiences))}</strong><span>この予定に覚えておくテーマです。走行条件を自動で変更するものではありません。</span></div></section>`:"";})():""}
+    ${nextCheck?`<section class="carry"><i></i><div><small>${escapeHtml(carryLabel)}・旧仕様</small><strong>以前に残した確認メモ</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
     <form id="plan-form" class="layout" novalidate>
       <input type="hidden" name="planId" value="${escapeHtml(editing?.id||"")}"><input type="hidden" name="courseJson" value="${escapeHtml(JSON.stringify(course))}"><input type="hidden" name="routePattern" value="${escapeHtml(course.routePattern||"UNKNOWN")}">
       <input class="visually-hidden" type="radio" name="planType" value="run"${planType==="run"?" checked":""}><input class="visually-hidden" type="radio" name="planType" value="rest"${planType==="rest"?" checked":""}>
@@ -75,6 +82,7 @@ export function renderPlanScreen({ services, context }) {
           <div class="course-choice"><div><small>コース・任意</small><strong data-plan-course-name>${escapeHtml(course.name||"未選択")}</strong><span>${escapeHtml(courseSummary(course))}</span></div><a href="#/course-library?returnTo=${encodeURIComponent(selfHref)}">選ぶ・作る</a></div>
           ${recent?`<details class="details"><summary><div><strong>${escapeHtml(sourceLabel)}の距離・時間を使う</strong><span>${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分を入力</span></div><i>⌄</i></summary><div class="details-body"><div class="quick quick--single"><button type="button" data-action="use-previous-facts" data-distance="${escapeHtml(recent.distanceKm||"")}" data-duration="${escapeHtml(recent.durationMinutes||"")}"><small>${escapeHtml(sourceLabel)}</small><strong>${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分を入力</strong></button></div><p class="note">入力後に変更できます。自動提案ではありません。</p></div></details>`:""}
           <details class="details"><summary><div><strong>走る／歩くの予定</strong><span>途中で歩く場合だけ選択</span></div><i>⌄</i></summary><div class="details-body"><label class="field"><span>予定の走り方 <b>任意</b></span><select name="runningFormat"><option value="UNKNOWN"${!session.runningFormat||session.runningFormat==="UNKNOWN"?" selected":""}>未設定</option><option value="CONTINUOUS_RUN"${session.runningFormat==="CONTINUOUS_RUN"?" selected":""}>途中で歩かず走る予定</option><option value="RUN_WALK"${session.runningFormat==="RUN_WALK"?" selected":""}>走りと歩きを混ぜる予定</option></select></label></div></details>
+          ${confirmationThemes.length?`<details class="details self-understanding-plan-theme"><summary><div><strong>確認中のテーマ</strong><span>次回も覚えておきたいことがある場合だけ選択</span></div><i>⌄</i></summary><div class="details-body"><label class="field"><span>この予定に覚えておくテーマ <b>任意</b></span><select name="selfUnderstandingThreadId"><option value="">設定しない</option>${confirmationThemes.map((thread)=>`<option value="${escapeHtml(thread.id)}"${thread.id===selectedThreadId?" selected":""}>${escapeHtml(selfUnderstandingThreadTitle(thread, confirmationExperiences))}</option>`).join("")}</select><small>テーマは確認のためのメモです。距離・時間・コースのおすすめや処方には使いません。</small></label></div></details>`:`<input type="hidden" name="selfUnderstandingThreadId" value="${escapeHtml(selectedThreadId)}">`}
           <a class="assist-link" href="${escapeHtml(simulationHref)}"><div><small>任意</small><strong>${escapeHtml(sourceRecordId?"この記録を基準に条件を比べる":"前回と条件を比べる")}</strong><span>条件を変えたときの12部位表示を確認</span></div><i>›</i></a>
         </div>
         <div data-plan-rest-fields${planType==="rest"?"":" hidden"}><div class="summary-card plan-rest-summary"><small>休養予定</small><strong>走行条件は入力しません</strong><span>予定日だけを確認して保存します。</span></div></div>

@@ -11,6 +11,7 @@ import {
 } from "./homeGridModel.js";
 import { rememberMobileHomeLaunch } from "../mobileHomeReturnTransition.js";
 import { loadMobileQuickTools } from "../mobileQuickToolsStore.js";
+import { buildSelfUnderstandingView } from "../../core/selfUnderstandingCore.js";
 
 const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
@@ -35,10 +36,10 @@ const WIDGET_CATALOG = Object.freeze([
   Object.freeze({ id: "today", label: "今日", description: "今日の記録" }),
   Object.freeze({ id: "plan", label: "次の予定", description: "保存した予定" }),
   Object.freeze({ id: "changes", label: "最近の変化", description: "履歴と推移" }),
-  Object.freeze({ id: "checkpoint", label: "次に確認", description: "前回からの確認事項" }),
+  Object.freeze({ id: "checkpoint", label: "確認テーマ", description: "自分で続けて見ること" }),
 ]);
 const DEFAULT_WIDGET_ORDER = Object.freeze(WIDGET_CATALOG.map((item) => item.id));
-const DEFAULT_WIDGET_VISIBLE = Object.freeze(["today", "checkpoint", "plan"]);
+const DEFAULT_WIDGET_VISIBLE = Object.freeze(["today", "plan"]);
 const WIDGET_ID_SET = new Set(DEFAULT_WIDGET_ORDER);
 const WIDGET_SIZE_ORDER = Object.freeze(["small", "medium", "large"]);
 const WIDGET_SIZE_SET = new Set(WIDGET_SIZE_ORDER);
@@ -536,28 +537,26 @@ function pageContainers(page) {
 }
 
 function createCheckpointWidget(services) {
-  const experience = services?.workflows?.records?.loadLatestExperience?.() || null;
-  const record = experience?.record || null;
-  const recordCheckpoint = String(record?.reflectionContext?.nextCheckPoint || "").trim();
+  const experiences = services?.workflows?.records?.loadAllExperiences?.() || [];
+  const rofMap = new Map(experiences.filter((experience) => experience?.record?.activityType === "run").map((experience) => [experience.record.id, services?.fatigue?.summarizeRun?.(experience.record.id) || null]));
+  const view = buildSelfUnderstandingView({ allExperiences: experiences, threads: services?.storage?.selfUnderstandingThreads?.loadAll?.() || [], rofSummariesByRecordId: rofMap });
+  const themeWithNew = view.watching.find((item) => item.hasNewEligibleData) || null;
+  const theme = themeWithNew || view.watching[0] || null;
   const quickCheckpoint = loadMobileQuickTools().quickNotes
     .map((item) => String(item?.next || "").trim())
     .find(Boolean) || "";
-  const checkpoint = recordCheckpoint || quickCheckpoint;
-  const source = recordCheckpoint ? "record" : quickCheckpoint ? "quick" : "none";
+  const checkpoint = theme?.title || quickCheckpoint;
+  const source = theme ? "theme" : quickCheckpoint ? "quick" : "none";
   const anchor = document.createElement("a");
   anchor.className = `mobile-home-widget mobile-home-widget--checkpoint${checkpoint ? " has-checkpoint" : " is-empty"}`;
   anchor.dataset.checkpointSource = source;
-  anchor.href = source === "record" && record?.id
-    ? `#/result?recordId=${encodeURIComponent(record.id)}`
-    : source === "quick"
-      ? "#/quick-note"
-      : "#/record-input";
+  anchor.href = source === "theme" ? "#/history?view=checks" : source === "quick" ? "#/quick-note" : "#/history?view=checks";
   const small = document.createElement("small");
-  small.textContent = "次に確認";
+  small.textContent = "確認中";
   const strong = document.createElement("strong");
-  strong.textContent = checkpoint || "次回の確認点を残す";
+  strong.textContent = checkpoint || "確認テーマはありません";
   const span = document.createElement("span");
-  span.textContent = source === "record" ? "前回の記録から引き継ぎ" : source === "quick" ? "1分メモから引き継ぎ" : "記録や1分メモから設定できます";
+  span.textContent = source === "theme" ? (theme.hasNewEligibleData ? `新しい記録 ${theme.newCount}件` : `比較できる記録 ${theme.eligibleCount}件`) : source === "quick" ? "1分メモの内容" : "結果を整理して、続けて見る点だけを残せます";
   anchor.append(small, strong, span);
   return anchor;
 }
@@ -807,6 +806,7 @@ export function bindHome(context = {}) {
   ensurePageCount(root, appLayout.pages.length);
   let activePage = applyLayout(root, dockContainer, appLayout);
   applyWidgetLayout(root, widgetLayout);
+  syncConfirmationBanner();
   applyPositionLayout(root, readPositionLayout(root));
   refreshPageSlots(root, false);
   ensureWidgetPicker(root);
@@ -830,6 +830,13 @@ export function bindHome(context = {}) {
   let suppressClickUntil = 0;
   let launchTimer = null;
   let edgeTimer = null;
+
+  function syncConfirmationBanner() {
+    const banner = root.querySelector("[data-mobile-confirmation-banner]");
+    if (!banner) return;
+    const checkpoint = root.querySelector('[data-home-widget-id="checkpoint"]');
+    banner.hidden = Boolean(checkpoint && !checkpoint.hidden);
+  }
   let edgeTargetPage = -1;
   let scrollFrame = null;
   let pageAnimationFrame = null;
@@ -1342,6 +1349,7 @@ export function bindHome(context = {}) {
     const widget = root.querySelector(`[data-home-widget-id="${id}"]`);
     if (!widget) return;
     widget.hidden = true;
+    syncConfirmationBanner();
     persistHomeLayout();
     refreshWidgetPicker(root);
     updatePageIndicator();
@@ -1358,6 +1366,7 @@ export function bindHome(context = {}) {
     widget.hidden = false;
     widget.removeAttribute("hidden");
     widget.style.removeProperty("display");
+    syncConfirmationBanner();
     const page = currentPageElement();
     const grid = pageContainers(page).grid;
     grid?.append(widget);

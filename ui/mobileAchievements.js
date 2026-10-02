@@ -12,7 +12,7 @@ const DEFINITIONS = Object.freeze([
   Object.freeze({ id: "distance-100", tier: "gold", title: "累計100 km", short: "走行距離の累計100 km", kind: "distance", target: 100 }),
   Object.freeze({ id: "rest-1", tier: "bronze", title: "休養も記録", short: "休養記録を1件保存", kind: "rests", target: 1 }),
   Object.freeze({ id: "plan-1", tier: "bronze", title: "次の予定", short: "予定を1件保存", kind: "plans", target: 1 }),
-  Object.freeze({ id: "reflection-3", tier: "silver", title: "振り返り3回", short: "次に確認することを3回記録", kind: "reflections", target: 3 }),
+  Object.freeze({ id: "reflection-3", tier: "silver", title: "振り返り3回（旧仕様）", short: "以前の仕様で取得した実績", kind: "reflections", target: 3, legacyOnly: true }),
   Object.freeze({ id: "course-3", tier: "silver", title: "3つのコース", short: "コースを3件保存", kind: "courses", target: 3 }),
   Object.freeze({ id: "energy-500", tier: "silver", title: "推定500 kcal", short: "対応するGPS走行の推定消費500 kcal", kind: "energy", target: 500 }),
   Object.freeze({ id: "weeks-3", tier: "gold", title: "3週の記録", short: "3つの週で走行を記録", kind: "activeWeeks", target: 3 }),
@@ -123,7 +123,7 @@ export function syncAchievements(services, { initializeAnnouncements = false } =
   const evaluated = evaluateAchievements(services);
   const stamp = nowIso();
   evaluated.forEach((achievement) => {
-    if (!achievement.unlocked || state.unlocked[achievement.id]) return;
+    if (achievement.legacyOnly || !achievement.unlocked || state.unlocked[achievement.id]) return;
     state.unlocked[achievement.id] = stamp;
   });
   if (!previous && initializeAnnouncements) {
@@ -132,6 +132,8 @@ export function syncAchievements(services, { initializeAnnouncements = false } =
   writeState(state);
   return evaluated.map((achievement) => Object.freeze({
     ...achievement,
+    unlocked: achievement.legacyOnly ? Boolean(state.unlocked[achievement.id]) : achievement.unlocked,
+    progress: achievement.legacyOnly && !state.unlocked[achievement.id] ? 0 : achievement.progress,
     unlockedAt: state.unlocked[achievement.id] || "",
     announcedAt: state.announced[achievement.id] || "",
   }));

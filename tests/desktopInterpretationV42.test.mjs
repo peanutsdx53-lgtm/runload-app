@@ -9,8 +9,8 @@ const screen = read("screens/interpretationRoomScreen.js");
 const presentation = read("ui/interpretationRoomPresentation.js");
 const version = read("ui/appVersionStatus.js");
 
-assert.match(version, /APP_VERSION = "2026\.10\.01\.\d+"/);
-assert.match(worker, /running-record-app-runtime-2026\.10\.01\.\d+/);
+assert.match(version, /APP_VERSION = "\d{4}\.\d{2}\.\d{2}\.\d+"/);
+assert.match(worker, /running-record-app-runtime-\d{4}\.\d{2}\.\d{2}\.\d+/);
 assert.match(index, /desktop-interpretation-v42\.css/);
 assert.ok(worker.includes('"./styles/desktop-interpretation-v42.css"'));
 assert.match(screen, /renderInterpretationRoom/);

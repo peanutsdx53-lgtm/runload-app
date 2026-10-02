@@ -1,4 +1,5 @@
 import { buildInterpretation } from "../core/interpretationCore.js";
+import { buildSelfUnderstandingView } from "../core/selfUnderstandingCore.js";
 import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
 import { matchesMobileLayout } from "../ui/deviceLayout.js";
 
@@ -35,15 +36,28 @@ export function renderInterpretationRoomScreen({ services, context }) {
     : services.workflows.records.loadLatestExperience();
   const recordId = targetExperience?.record?.id || requestedRecordId;
   const rof = rofContext(services, recordId);
+  const allExperiences = services.workflows.records.loadAllExperiences();
   const output = buildInterpretation({
     targetExperience,
-    allExperiences: services.workflows.records.loadAllExperiences(),
+    allExperiences,
     rofSummary: rof.summary,
     rofRecentReferences: rof.recentReferences,
     origin,
     selectedRegionId: regionId,
     supportDecision: targetExperience?.supportDecision || null,
   });
+  const rofSummariesByRecordId = new Map(
+    allExperiences
+      .filter((experience) => experience?.record?.activityType === "run")
+      .map((experience) => [experience.record.id, services?.fatigue?.summarizeRun?.(experience.record.id) || null]),
+  );
+  const selfUnderstanding = buildSelfUnderstandingView({
+    targetExperience,
+    allExperiences,
+    threads: services?.storage?.selfUnderstandingThreads?.loadAll?.() || [],
+    rofSummariesByRecordId,
+    supportDecision: targetExperience?.supportDecision || null,
+  });
 
-  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, mobileLayout: matchesMobileLayout() })}</section>`;
+  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, selfUnderstanding, mobileLayout: matchesMobileLayout() })}</section>`;
 }

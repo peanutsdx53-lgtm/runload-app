@@ -50,13 +50,13 @@ await test('SUPPORT-PRIORITY-OVERRIDES-ORDINARY-MEANING',()=>{
 });
 
 
-await test('REPEATED-OBSERVATION-HAS-HIGHEST-ORDINARY-PRIORITY',()=>{
+await test('REPEATED-REGIONAL-POSITION-HAS-HIGHEST-ORDINARY-PRIORITY',()=>{
   const out=buildMeaningFrame(args({
     regionalById:{R1:comparison({prev:true,delta:4,direction:'UP',history:4,above:3,near:1})},
     conditionSummary:{differences:[{labelToken:'GRADE'}],previousRecordId:'p1',previousDate:'2026-09-19'},
     rof:{pre:3,post:6,delta:3,direction:'UP'},
   }));
-  assert.equal(out.primaryCode,'REPEATED_OBSERVATION');
+  assert.equal(out.primaryCode,'REPEATED_REGIONAL_POSITION');
   const repeated=out.factsUsed.find(x=>x.type==='REGION_REPEATED_DIRECTION');
   assert.equal(repeated.pastMatchingCount,3);
   assert.equal(repeated.pastComparableCount,4);

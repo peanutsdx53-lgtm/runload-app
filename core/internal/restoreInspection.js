@@ -7,6 +7,7 @@ import {
   isSupportedRofJStorageSchema,
   isSupportedRofJLifecycleSchema,
 } from "../rofJConstants.js";
+import { normalizeSelfUnderstandingThread } from "../selfUnderstandingCore.js";
 
 // ===== core/storage/restoreInspection.js =====
 {
@@ -211,6 +212,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   const runMeasurements = collection(snapshot, STORAGE_KEYS.runMeasurements, []);
   const rofJData = collection(snapshot, STORAGE_KEYS.rofJ, null);
   const rofJLifecycleData = collection(snapshot, STORAGE_KEYS.rofJLifecycle, null);
+  const selfUnderstandingThreads = collection(snapshot, STORAGE_KEYS.selfUnderstandingThreads, []);
 
   if (rofJData != null) {
     const validEnvelope = isObject(rofJData)
@@ -276,6 +278,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
     [plans, "plans", "予定"],
     [courses, "courses", "保存したコース"],
     [runMeasurements, "runMeasurements", "GPS走行軌跡"],
+    [selfUnderstandingThreads, "selfUnderstandingThreads", "確認テーマ"],
   ];
   expectedArrays.forEach(([value, area, label]) => {
     if (!Array.isArray(value)) issues.push(issue("BLOCKING", "COLLECTION_SHAPE_INVALID", area, `${label}が一覧形式ではありません。`));
@@ -290,6 +293,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   const plansWithinLimit = withinCollectionLimit(plans, INPUT_LIMITS.portablePlans, "plans", "予定", issues);
   const coursesWithinLimit = withinCollectionLimit(courses, INPUT_LIMITS.portableCourses, "courses", "保存したコース", issues);
   const measurementsWithinLimit = withinCollectionLimit(runMeasurements, INPUT_LIMITS.portableRecords, "runMeasurements", "GPS走行軌跡", issues);
+  const threadsWithinLimit = withinCollectionLimit(selfUnderstandingThreads, INPUT_LIMITS.portableRecords, "selfUnderstandingThreads", "確認テーマ", issues);
 
   if (recordsWithinLimit) inspectRecords(records, issues);
   const recordIds = new Set(recordsWithinLimit ? records.map((item) => String(item?.id || "")).filter(Boolean) : []);
@@ -329,6 +333,15 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
     });
   }
 
+  if (threadsWithinLimit) {
+    selfUnderstandingThreads.forEach((thread, index) => {
+      const normalized = normalizeSelfUnderstandingThread(thread);
+      if (!normalized) {
+        issues.push(issue("BLOCKING", "SELF_UNDERSTANDING_THREAD_INVALID", "selfUnderstandingThreads", "確認テーマの形式を確認できません。", String(thread?.id || index)));
+      }
+    });
+  }
+
   if (profile != null) {
     const version = Number(profile.schemaVersion || 0);
     if (!Number.isFinite(version) || version !== PERSONAL_PROFILE_SCHEMA_VERSION) {
@@ -353,6 +366,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
     plans: Array.isArray(plans) ? plans.length : 0,
     courses: Array.isArray(courses) ? courses.length : 0,
     runMeasurements: Array.isArray(runMeasurements) ? runMeasurements.length : 0,
+    selfUnderstandingThreads: Array.isArray(selfUnderstandingThreads) ? selfUnderstandingThreads.length : 0,
     profile: profile == null ? 0 : 1,
     settings: settings == null ? 0 : 1,
     draft: draft == null ? 0 : 1,

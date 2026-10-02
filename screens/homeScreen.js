@@ -3,6 +3,7 @@ import { formatNumber } from "../ui/recordPresentation.js";
 import { findSavedRunMeasurement } from "../ui/runMeasurementState.js";
 import { achievementSummary } from "../ui/mobileAchievements.js";
 import { buildDynamicHomeCards, buildPersonalChallenge, resolveAmbientProfile } from "../ui/mobileHomeExperience.js";
+import { buildSelfUnderstandingView } from "../core/selfUnderstandingCore.js";
 
 function localTodayIso() {
   const now = new Date();
@@ -30,6 +31,13 @@ function paceLabel(record = {}) {
 
 function activityPill(record = {}) {
   return record.activityType === "rest" ? "REST" : "RUN";
+}
+
+function homeConfirmationTheme(services) {
+  const experiences = services?.workflows?.records?.loadAllExperiences?.() || [];
+  const rof = new Map(experiences.filter((experience) => experience?.record?.activityType === "run").map((experience) => [experience.record.id, services?.fatigue?.summarizeRun?.(experience.record.id) || null]));
+  const view = buildSelfUnderstandingView({ allExperiences: experiences, threads: services?.storage?.selfUnderstandingThreads?.loadAll?.() || [], rofSummariesByRecordId: rof });
+  return view.watching.find((thread) => thread.hasNewEligibleData) || null;
 }
 
 function carryText(experience) {
@@ -97,9 +105,10 @@ function renderMobileFocus(experience, draft) {
   const record = experience?.record || null;
   const hasCarry = Boolean(String(record?.reflectionContext?.nextCheckPoint || "").trim());
   const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
-  const sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "次回に確認したいことを記録できます";
-  return `<section class="focus home-focus--mobile"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${hasCarry ? "前回から引き継いだ内容" : "今日の確認"}</small><h2>次のランで確認したいこと</h2><p class="focus-text">${escapeHtml(carryText(experience))}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">次回へ引継ぎ</span></div><div class="focus-actions"><a class="primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a><a class="secondary home-measure-link" href="#/run-measurement">GPSで測定</a></div></section>`;
+  const sourceText = hasCarry ? `${sourceDate}の記録で自分が残した内容` : "結果を整理すると、続けて見たい点だけを確認テーマにできます";
+  return `<section class="focus home-focus--mobile"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${hasCarry ? "以前の確認" : "今日の確認"}</small><h2>次のランで確認したいこと</h2><p class="focus-text">${escapeHtml(carryText(experience))}</p><p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p></div><span class="carry">次回へ</span></div><div class="focus-actions"><a class="primary" href="#/record-input">${draft ? "入力を再開する" : "今日の記録を始める"}</a><a class="secondary home-measure-link" href="#/run-measurement">GPSで測定</a></div></section>`;
 }
+
 
 function renderLatestRecord(experience) {
   if (!experience?.record) {
@@ -110,6 +119,16 @@ function renderLatestRecord(experience) {
     return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">REST</span></div><div class="plan"><strong>休養</strong></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>記録を開く</span><span>›</span></a></article>`;
   }
   return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実際に走った時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><div class="card-actions"><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を見る</span><span>›</span></a><a class="card-link card-link--understanding" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=home"><span>結果を整理する</span><span>›</span></a></div></article>`;
+}
+
+function renderPcConfirmationCard(theme) {
+  if (!theme?.hasNewEligibleData) return "";
+  return `<article class="card self-understanding-home-card"><div class="card-head"><div><small>確認中のテーマ</small><strong>新しい記録があります</strong></div><span class="pill">${escapeHtml(String(theme.newCount || 1))}件</span></div><div class="plan"><strong>${escapeHtml(theme.title || "確認テーマ")}</strong><span>あなたが続けて見ると決めた内容です</span></div><a class="card-link" href="#/history?view=checks"><span>確認中のことを見る</span><span>›</span></a></article>`;
+}
+
+function renderMobileConfirmationBanner(theme) {
+  if (!theme?.hasNewEligibleData) return "";
+  return `<a class="mobile-home-confirmation-banner" data-mobile-confirmation-banner href="#/history?view=checks"><span aria-hidden="true">⚑</span><span><small>確認中のテーマに新しい記録</small><strong>${escapeHtml(theme.title || "確認テーマ")}</strong><em>新しく比較できる記録 ${escapeHtml(String(theme.newCount || 1))}件</em></span><i aria-hidden="true">›</i></a>`;
 }
 
 function nextPlan(services) {
@@ -277,7 +296,7 @@ function renderDynamicHomeWidgets(services, latestExperience) {
   return cards.map(renderDynamicHomeWidget).join("");
 }
 
-function renderMobileHomeOs({ services, latestExperience, draft }) {
+function renderMobileHomeOs({ services, latestExperience, draft, confirmationTheme = null }) {
   const apps = [
     { href: "#/simulation?from=home", label: "条件比較", emoji: "⚖️", tone: "violet" },
     { href: "#/plan", label: "予定", emoji: "📅", tone: "orange" },
@@ -305,6 +324,7 @@ function renderMobileHomeOs({ services, latestExperience, draft }) {
       <div><small>RUNNING RECORD</small><h1>走行記録</h1></div>
       <div class="mobile-home-os__header-actions"><button type="button" class="mobile-home-overview-open" data-home-hub-target="1" aria-label="記録概要を開く">概要 ›</button><span class="mobile-home-os__status" aria-label="ホーム">Home</span></div>
     </header>
+    ${renderMobileConfirmationBanner(confirmationTheme)}
     <div class="mobile-home-widgets" aria-label="ウィジェット">
       ${renderMobileTodayWidget(latestExperience, draft)}
       ${renderDynamicHomeWidgets(services, latestExperience)}
@@ -327,12 +347,13 @@ export function renderHomeScreen({ services }) {
   const state = homeState(latestExperience, draft);
   const challenge = buildPersonalChallenge(services);
   const ambient = resolveAmbientProfile({ latestExperience, draft, challenge });
+  const confirmationTheme = homeConfirmationTheme(services);
   return `<div class="screen screen--home screen-layout screen-layout--home home-state--${escapeHtml(state)} mobile-home-ambient mobile-home-ambient--${escapeHtml(ambient.period)} mobile-home-ambient--${escapeHtml(ambient.signal)}" data-home-state="${escapeHtml(state)}" data-ambient-period="${escapeHtml(ambient.period)}" data-ambient-signal="${escapeHtml(ambient.signal)}" style="--ambient-challenge:${ambient.challengeProgress}%">
-    <div class="mobile-home-hub" data-home-hub data-home-hub-page="0"><div class="mobile-home-hub-viewport" data-home-hub-viewport><div class="mobile-home-hub-track"><div class="mobile-home-hub-page mobile-home-hub-page--apps" data-home-hub-page-index="0">${renderMobileHomeOs({ services, latestExperience, draft })}</div><div class="mobile-home-hub-page mobile-home-hub-page--overview" data-home-hub-page-index="1">${renderMobileOverviewPage({ services, latestExperience })}</div></div></div></div>
+    <div class="mobile-home-hub" data-home-hub data-home-hub-page="0"><div class="mobile-home-hub-viewport" data-home-hub-viewport><div class="mobile-home-hub-track"><div class="mobile-home-hub-page mobile-home-hub-page--apps" data-home-hub-page-index="0">${renderMobileHomeOs({ services, latestExperience, draft, confirmationTheme })}</div><div class="mobile-home-hub-page mobile-home-hub-page--overview" data-home-hub-page-index="1">${renderMobileOverviewPage({ services, latestExperience })}</div></div></div></div>
     <div class="home-desktop-legacy">
       ${renderMobileFocus(latestExperience, draft)}
       ${renderPcFocus(latestExperience, draft)}
-      <section class="section"><div class="section-head"><div><h2>記録と予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPlanCard(services)}</div></section>
+      <section class="section"><div class="section-head"><div><h2>記録と予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPcConfirmationCard(confirmationTheme)}${renderPlanCard(services)}</div></section>
     </div>
   </div>`;
 }

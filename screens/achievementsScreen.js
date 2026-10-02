@@ -51,7 +51,7 @@ export function renderAchievementsScreen({ services }) {
     <div class="secondary-derived-body">
       <section class="achievement-hero"><div><small>ACHIEVEMENTS</small><h1>実績</h1></div><strong>${unlocked.length}<span> / ${achievements.length}</span></strong></section>
       ${renderNextAchievement(next)}
-      <p class="achievement-policy">速さだけでなく、記録・予定・休養・振り返りも対象です。</p>
+      <p class="achievement-policy">記録・予定・休養など、保存された事実を対象にします。</p>
       ${inProgress.length ? `<section class="achievement-section"><header><strong>進行中</strong><span>${inProgress.length}</span></header><div class="achievement-list">${inProgress.map(renderAchievement).join("")}</div></section>` : ""}
       <section class="achievement-section"><header><strong>達成済み</strong><span>${unlocked.length}</span></header><div class="achievement-list">${unlocked.length ? unlocked.map(renderAchievement).join("") : '<div class="achievement-empty"><strong>取得済み実績はありません</strong><span>記録を保存すると自動で反映します。</span></div>'}</div></section>
       ${notStarted.length ? `<details class="achievement-locked"><summary>未着手の実績 <span>${notStarted.length}</span></summary><div class="achievement-list">${notStarted.map(renderAchievement).join("")}</div></details>` : ""}

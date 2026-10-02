@@ -332,7 +332,9 @@ await test('NEXT-CHECK-PRESERVES-USER-RECORDED-NEXT-POINT',()=>{
 
 await test('NEXT-CHECK-IS-STRUCTURED-AND-NON-DIAGNOSTIC',()=>{
   const out=build({selectedRegionId:'BA-DISP-014'});
-  assert.equal(out.nextCheck.code,'ADD_COMPARABLE_RECORD');
+  assert.equal(out.nextCheck.code,'DESCRIPTIVE_ONLY');
+  assert.ok(out.nextCheck.boundaryCodes.includes('NO_AUTOMATIC_CONFIRMATION_THEME'));
+  assert.ok(out.nextCheck.boundaryCodes.includes('USER_CHOICE_REQUIRED'));
   assert.equal(out.nextCheck.regionId,'BA-DISP-014');
   assert.equal(typeof out.nextCheck.code,'string');
 });

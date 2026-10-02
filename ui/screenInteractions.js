@@ -16,6 +16,7 @@ import { bindBodyTimeline } from "./interactions/bodyTimelineInteractions.js";
 import { bindMobileQuickTool } from "./interactions/mobileQuickToolsInteractions.js";
 import { bindMobilePhotoMemo } from "./interactions/mobilePhotoMemoInteractions.js";
 import { bindMobilePaceCalculator } from "./interactions/mobilePaceCalculatorInteractions.js";
+import { bindInterpretationRoom } from "./interactions/interpretationRoomInteractions.js";
 
 const SCREEN_INTERACTION_BINDERS = Object.freeze({
   home: bindHome,
@@ -25,6 +26,7 @@ const SCREEN_INTERACTION_BINDERS = Object.freeze({
   result: bindResult,
   "body-part-detail": bindBodyPartDetail,
   history: bindHistory,
+  "interpretation-room": bindInterpretationRoom,
   plan: bindPlan,
   consultation: bindConsultation,
   reading: bindReading,

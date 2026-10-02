@@ -165,6 +165,7 @@ function createPlanWorkflow({ services, planRepository }) {
       memo: normalizePlainText(input.memo, 500),
       plannedSession,
       sourceCandidateId: normalizeSingleLineText(input.sourceCandidateId, 80) || "custom",
+      selfUnderstandingThreadId: normalizeSingleLineText(input.selfUnderstandingThreadId, 140),
       previewSnapshot: clonePlanFactPreview(previewResult),
       previewGeneratedAt: now,
       createdAt: existing?.createdAt || input.createdAt || now,

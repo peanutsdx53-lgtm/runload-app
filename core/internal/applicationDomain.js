@@ -494,6 +494,7 @@ function normalizePlan(plan = {}) {
     plannedSession: normalizeSession(plan.plannedSession, planType),
     sourceRecordId: normalizeSingleLineText(plan.sourceRecordId, 100),
     sourceCandidateId: normalizeSingleLineText(plan.sourceCandidateId, 80) || "custom",
+    selfUnderstandingThreadId: normalizeSingleLineText(plan.selfUnderstandingThreadId, 140),
     previewSnapshot: plan.previewSnapshot && typeof plan.previewSnapshot === "object"
       ? clone(plan.previewSnapshot)
       : null,

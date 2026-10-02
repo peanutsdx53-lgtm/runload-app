@@ -20,8 +20,11 @@ assert.match(css, /data-action="reset-update-state"[\s\S]*width:\s*fit-content\s
 
 assert.ok(index.includes('./styles/desktop-layout-v49.css'), 'index.html must load desktop-layout-v49.css.');
 assert.ok(worker.includes('./styles/desktop-layout-v49.css'), 'service worker must precache desktop-layout-v49.css.');
-assert.ok(worker.includes('2026.10.01.49'), 'service worker cache must move to v49.');
-assert.ok(version.includes('2026.10.01.49'), 'app version must move to v49.');
-assert.ok(about.includes('v2026.10.01.49'), 'About screen must show v49.');
+const appVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
+assert.ok(appVersion, 'app version must be readable.');
+assert.ok(worker.includes(`running-record-app-runtime-${appVersion}`), 'service worker cache must match current app version.');
+assert.ok(about.includes(`v${appVersion}`), 'About screen must match current app version.');
+assert.ok(index.includes('./styles/self-understanding.css'), 'index.html must load self-understanding.css.');
+assert.ok(worker.includes('./styles/self-understanding.css'), 'service worker must precache self-understanding.css.');
 
 console.log('desktop layout v49 regression contract: PASS');

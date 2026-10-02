@@ -202,6 +202,22 @@ async function run() {
       mobile: true,
     });
     await navigate(client, `${baseUrl}/#/run-measurement`);
+    const managedBlock = await client.evaluate('location.href.startsWith("chrome-error://") && document.body.innerText.includes("organization") && document.body.innerText.includes("blocked")');
+    if (managedBlock) {
+      console.log("SKIP\tMOBILE-BROWSER-FLOW\tmanaged Chromium URLBlocklist prevents localhost navigation in this environment");
+      return;
+    }
+    await waitFor(client, 'document.querySelector("[data-mobile-onboarding]") || document.querySelector("[name=mobileActivityIdentity][value=WALK]")', "mobile application did not render");
+    if (await client.evaluate('Boolean(document.querySelector("[data-mobile-onboarding]"))')) {
+      for (let index = 0; index < 3; index += 1) {
+        await client.evaluate('document.querySelector("[data-onboarding-next]")?.click()');
+        await sleep(40);
+      }
+      await client.evaluate('const consent=document.querySelector("[data-onboarding-consent]"); if(consent){consent.checked=true; consent.dispatchEvent(new Event("change",{bubbles:true}));}');
+      await client.evaluate('document.querySelector("[data-onboarding-complete]")?.click()');
+      await waitFor(client, '!document.querySelector("[data-mobile-onboarding]")', "mobile onboarding did not complete");
+      await client.evaluate('location.hash = "#/run-measurement"');
+    }
     await waitFor(client, 'document.querySelector("[name=mobileActivityIdentity][value=WALK]")', "mobile activity selector did not render");
 
     assert.equal(await client.evaluate('document.querySelector(".run-measurement-prep__intro h1")?.textContent'), "活動と測定方法");
