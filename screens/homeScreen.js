@@ -128,7 +128,7 @@ function renderPcConfirmationCard(theme) {
 
 function renderMobileConfirmationBanner(theme) {
   if (!theme?.hasNewEligibleData) return "";
-  return `<a class="mobile-home-confirmation-banner" data-mobile-confirmation-banner href="#/history?view=checks"><span aria-hidden="true">⚑</span><span><small>次回見ることに新しい記録</small><strong>${escapeHtml(theme.title || "次回見ること")}</strong><em>新しく比較できる記録 ${escapeHtml(String(theme.newCount || 1))}件</em></span><i aria-hidden="true">›</i></a>`;
+  return `<a class="mobile-home-confirmation-banner" data-mobile-confirmation-banner href="#/history?view=checks" aria-label="次回見ることに新しい記録 ${escapeHtml(String(theme.newCount || 1))}件。確認の続きを見る"><span aria-hidden="true">⚑</span><span><small>次回見ること</small><strong>新しい記録 ${escapeHtml(String(theme.newCount || 1))}件</strong></span><i aria-hidden="true">›</i></a>`;
 }
 
 function nextPlan(services) {
@@ -322,7 +322,7 @@ function renderMobileHomeOs({ services, latestExperience, draft, confirmationThe
   return `<section class="mobile-home-os" aria-label="スマホホーム">
     <header class="mobile-home-os__header">
       <div><small>RUNNING RECORD</small><h1>走行記録</h1></div>
-      <div class="mobile-home-os__header-actions"><button type="button" class="mobile-home-overview-open" data-home-hub-target="1" aria-label="記録概要を開く">概要 ›</button><span class="mobile-home-os__status" aria-label="ホーム">Home</span></div>
+      <div class="mobile-home-os__header-actions"><button type="button" class="mobile-home-overview-open" data-home-hub-target="1" aria-label="記録概要を開く">概要</button><span class="mobile-home-os__status" aria-label="ホーム">Home</span></div>
     </header>
     ${renderMobileConfirmationBanner(confirmationTheme)}
     <div class="mobile-home-widgets" aria-label="ウィジェット">

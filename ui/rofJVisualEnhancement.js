@@ -26,18 +26,11 @@ function setTextIfChanged(node, value) {
   node.textContent = value;
 }
 
-function createAnchorRow(anchor) {
-  const row = document.createElement("div");
-  row.className = "rof-author-anchor";
-  row.dataset.rofAnchorPosition = String(anchor.position);
-
-  const position = document.createElement("b");
-  position.className = "rof-author-anchor__position";
-  position.textContent = anchor.positionLabel;
-
-  const descriptor = document.createElement("span");
-  descriptor.className = "rof-author-anchor__descriptor";
-  descriptor.textContent = anchor.descriptor;
+function createAnchorPoint(anchor) {
+  const point = document.createElement("div");
+  point.className = "rof-author-anchor";
+  point.dataset.rofAnchorPosition = String(anchor.position);
+  point.setAttribute("aria-label", `${anchor.positionLabel}、${anchor.descriptor}`);
 
   const visual = document.createElement("span");
   visual.className = "rof-author-anchor__visual";
@@ -49,8 +42,12 @@ function createAnchorRow(anchor) {
   image.decoding = "async";
   visual.append(image);
 
-  row.append(position, descriptor, visual);
-  return row;
+  const position = document.createElement("b");
+  position.className = "rof-author-anchor__position";
+  position.textContent = anchor.positionLabel;
+
+  point.append(visual, position);
+  return point;
 }
 
 function createVisualGuide() {
@@ -59,16 +56,18 @@ function createVisualGuide() {
   section.dataset.rofVisualGuide = "";
   section.setAttribute(
     "aria-label",
-    "ROF-Jの目安。10は完全な疲労困憊、7と8の間はとても疲れている、5は中程度に疲れている、2と3の間は少し疲れている、0はまったく疲れていない。",
+    "疲労感の目安。0はまったく疲れていない、2と3の間は少し疲れている、5は中程度に疲れている、7と8の間はとても疲れている、10は完全な疲労困憊。",
   );
 
   const heading = document.createElement("div");
   heading.className = "rof-visual-guide__head";
-  heading.innerHTML = "<small>ROF-Jの目安</small><span>数値は0〜10の整数から選択します。</span>";
+  heading.innerHTML = "<small>疲労感の目安</small><span>左の0から右の10へ、横軸と同じ向きで確認できます。</span>";
 
   const anchors = document.createElement("div");
   anchors.className = "rof-author-anchor-list";
-  ROF_J_AUTHOR_CONFIRMED_ANCHORS.forEach((anchor) => anchors.append(createAnchorRow(anchor)));
+  [...ROF_J_AUTHOR_CONFIRMED_ANCHORS]
+    .sort((left, right) => Number(left.position) - Number(right.position))
+    .forEach((anchor) => anchors.append(createAnchorPoint(anchor)));
 
   section.append(heading, anchors);
   return section;
@@ -80,7 +79,7 @@ function createReferenceGuide() {
   section.dataset.rofReferenceGuide = "";
 
   const title = document.createElement("strong");
-  title.textContent = "ROF-Jの尺度配置";
+  title.textContent = "正式な尺度配置";
   const note = document.createElement("small");
   note.textContent = "公開補足資料の数値位置について、責任著者への確認に基づき原版ROFと同じ配置を採用しています。2.5・7.5を新しい選択値として追加するものではありません。";
 
@@ -131,17 +130,17 @@ function syncAuthorConfirmedPresentation(panel) {
   const slider = panel.querySelector("[data-record-rof-slider]");
   const descriptor = panel.querySelector("[data-record-rof-descriptor]");
   const anchor = panel.querySelector("[data-record-rof-anchor]");
-  if (!slider || !descriptor || !anchor) return;
+  if (!slider || !descriptor) return;
 
   if (selectionIsUntouched(panel, slider)) {
     setTextIfChanged(descriptor, "数値を選択");
-    setTextIfChanged(anchor, rofJGuidanceForSelection(null));
+    if (anchor) setTextIfChanged(anchor, rofJGuidanceForSelection(null));
     return;
   }
 
   const value = Number(slider.value);
   setTextIfChanged(descriptor, rofJSelectionDescriptor(value));
-  setTextIfChanged(anchor, rofJGuidanceForSelection(value));
+  if (anchor) setTextIfChanged(anchor, rofJGuidanceForSelection(value));
 }
 
 function bindPresentationSync(panel) {
@@ -164,10 +163,6 @@ function enhanceRofScale(panel) {
     if (sliderWrap && !panel.querySelector("[data-rof-visual-guide]")) {
       sliderWrap.before(createVisualGuide());
     }
-
-    const anchorGuide = panel.querySelector(".rof-anchor-guide");
-    const anchorLabel = anchorGuide?.querySelector("small");
-    if (anchorLabel) setTextIfChanged(anchorLabel, "ROF-Jの目安");
 
     const context = panel.closest("[data-rof-context], .rof-sheet");
     const aboutBody = context?.querySelector(".rof-about > div");
@@ -206,7 +201,7 @@ function updateMobileResultFatigue(section) {
       card.append(note);
     }
     note.dataset.rofResultGuidance = "";
-    setTextIfChanged(note, `走った後のROF-J目安：${rofJGuidanceForSelection(postValue)}`);
+    setTextIfChanged(note, `走った後の疲労感の目安：${rofJGuidanceForSelection(postValue)}`);
   }
 
   section.querySelectorAll("dl.visually-hidden > div").forEach((row) => {
@@ -222,9 +217,9 @@ function updateMobileResultFatigue(section) {
 function updatePcResultFatigue(section) {
   if (!(section instanceof HTMLElement)) return;
   section.dataset.rofPresentationVersion = ROF_J_PRESENTATION_VERSION;
-  section.setAttribute("aria-label", "運動前後の疲労感（ROF-J）");
+  section.setAttribute("aria-label", "運動前後の疲労感");
   const heading = section.querySelector("header h3");
-  if (heading) setTextIfChanged(heading, "運動前後の疲労感（ROF-J）");
+  if (heading) setTextIfChanged(heading, "運動前後の疲労感");
 
   const postValue = displayedRofValue(section.querySelector(".pc-fatigue-node.is-post strong"));
   if (postValue == null) return;
@@ -235,7 +230,7 @@ function updatePcResultFatigue(section) {
     if (!legacyNote) section.append(note);
   }
   note.dataset.rofResultGuidance = "";
-  setTextIfChanged(note, `運動後のROF-J目安：${rofJGuidanceForSelection(postValue)}`);
+  setTextIfChanged(note, `運動後の疲労感の目安：${rofJGuidanceForSelection(postValue)}`);
 }
 
 function enhanceResultFatigue() {

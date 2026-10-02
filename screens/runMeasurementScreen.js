@@ -1,4 +1,3 @@
-import { ROF_J_DESCRIPTOR_MAP } from "../core/rofJCore.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { matchesMobileLayout } from "../ui/deviceLayout.js";
 import { formatPace, plannedPaceSecondsPerKm } from "../ui/runMeasurementCore.js";
@@ -21,9 +20,9 @@ function fatigueScaleMarkup(phase) {
       <div class="rof-scale-panel">
         <div class="rof-current"><span>選択値</span><strong data-record-rof-value>—</strong><em data-record-rof-descriptor>数値を選択</em></div>
         <div class="rof-slider-wrap" data-rof-slider-wrap><input type="range" min="0" max="10" step="1" value="5" data-record-rof-slider aria-label="${label} 0から10"><div class="rof-ticks" aria-hidden="true">${Array.from({ length: 11 }, (_, value) => `<span>${value}</span>`).join("")}</div></div>
-        <div class="rof-anchor-guide"><small>選択の目安</small><div data-record-rof-anchor>2・${escapeHtml(ROF_J_DESCRIPTOR_MAP[2])} ／ 4・${escapeHtml(ROF_J_DESCRIPTOR_MAP[4])}</div></div>
+        <span data-record-rof-anchor hidden></span>
       </div>
-      <details class="rof-about"><summary>尺度について</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p><small>使用尺度：ROF-J</small></div></details>
+      <details class="rof-about"><summary>尺度の出典・正式表現</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p><small>正式名称：ROF-J</small></div></details>
     </div>
   </details>`;
 }

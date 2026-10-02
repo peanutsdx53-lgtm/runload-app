@@ -49,11 +49,12 @@ test('SELECTABLE-SCORES-REMAIN-INTEGER-ZERO-THROUGH-TEN', () => {
   assert.ok(core.includes('Number.isInteger(value) && value >= 0 && value <= 10'));
 });
 
-test('DAILY-USE-VIEW-SHOWS-CORRECTED-VERTICAL-ANCHOR-GUIDE', () => {
-  assert.ok(moduleText.includes('ROF-Jの目安'));
+test('DAILY-USE-VIEW-SHOWS-CORRECTED-HORIZONTAL-ANCHOR-GUIDE', () => {
+  assert.ok(moduleText.includes('疲労感の目安'));
+  assert.ok(moduleText.includes('横軸と同じ向き'));
   assert.ok(moduleText.includes('rof-author-anchor-list'));
-  assert.ok(moduleText.includes('ROF_J_AUTHOR_CONFIRMED_ANCHORS.forEach'));
-  assert.ok(visualCss.includes('.rof-author-anchor-list'));
+  assert.ok(moduleText.includes('.sort((left, right) => Number(left.position) - Number(right.position))'));
+  assert.ok(visualCss.includes('grid-template-columns: repeat(5, minmax(0, 1fr))'));
   assert.ok(visualCss.includes('.rof-author-anchor__position'));
   assert.ok(visualCss.includes('.rof-author-anchor__visual'));
   assert.ok(compactCss.includes('.rof-visual-guide--compact'));
@@ -71,7 +72,7 @@ test('FULL-ANCHOR-DETAILS-AND-RIGHTS-ARE-IN-ABOUT-DETAILS', () => {
   assert.ok(moduleText.includes('createReferenceGuide'));
   assert.ok(moduleText.includes('aboutBody.append(createReferenceGuide())'));
   assert.ok(moduleText.includes('aboutBody.append(createRightsNote())'));
-  assert.ok(moduleText.includes('ROF-Jの尺度配置'));
+  assert.ok(moduleText.includes('正式な尺度配置'));
   assert.ok(moduleText.includes('責任著者への確認に基づき原版ROFと同じ配置'));
   assert.ok(moduleText.includes('出典・ライセンス'));
 });
@@ -120,13 +121,15 @@ test('ATTRIBUTION-AND-LICENSE-ARE-EXPLICIT-BUT-NOT-PRIMARY-INPUT-CONTENT', () =>
   assert.ok(moduleText.includes('creativecommons.org/licenses/by-nc-nd/4.0/'));
   assert.ok(moduleText.includes('日本語表現は改変せず'));
   assert.ok(moduleText.includes('図自体は変更していません'));
+  assert.ok(moduleText.includes('ROF-J：Suzuki'));
+  assert.ok(!moduleText.includes('heading.innerHTML = "<small>ROF-J'));
 });
 
 test('RESULT-SCREENS-USE-AUTHOR-CONFIRMED-GUIDANCE', () => {
   assert.ok(moduleText.includes('updateMobileResultFatigue'));
   assert.ok(moduleText.includes('updatePcResultFatigue'));
-  assert.ok(moduleText.includes('走った後のROF-J目安'));
-  assert.ok(moduleText.includes('運動後のROF-J目安'));
+  assert.ok(moduleText.includes('走った後の疲労感の目安'));
+  assert.ok(moduleText.includes('運動後の疲労感の目安'));
   assert.ok(moduleText.includes('dl.visually-hidden > div'));
   assert.ok(moduleText.includes('enhanceResultFatigue()'));
 });

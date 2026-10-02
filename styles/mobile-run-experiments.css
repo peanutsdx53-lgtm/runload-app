@@ -46,3 +46,86 @@
 @media (prefers-reduced-motion:reduce){
   .body-timeline-rail{scroll-behavior:auto}.body-timeline-map__region{transition:none}
 }
+
+
+/* Screenshot polish: Run Lab is optional exploration, collapsed by default on Results. */
+@media (max-width:54.99rem){
+  details.mobile-run-lab {
+    margin: 14px 16px 20px;
+    display: block;
+    border: 1px solid color-mix(in srgb,var(--accent-strong) 20%,transparent);
+    border-radius: 22px;
+    background: color-mix(in srgb,var(--surface) 94%,#d8eaf4);
+    box-shadow: 0 8px 22px rgba(43,78,99,.08);
+    overflow: hidden;
+  }
+
+  details.mobile-run-lab > .mobile-run-lab__head {
+    min-height: 72px;
+    margin: 0;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  details.mobile-run-lab > .mobile-run-lab__head::-webkit-details-marker {
+    display: none;
+  }
+
+  details.mobile-run-lab > .mobile-run-lab__head div {
+    min-width: 0;
+    display: grid;
+    gap: 3px;
+  }
+
+  details.mobile-run-lab > .mobile-run-lab__head small {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .14em;
+  }
+
+  details.mobile-run-lab > .mobile-run-lab__head strong {
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.25;
+    letter-spacing: -.03em;
+  }
+
+  details.mobile-run-lab > .mobile-run-lab__head > span {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+  }
+
+  details.mobile-run-lab > .mobile-run-lab__head em {
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 800;
+  }
+
+  details.mobile-run-lab > .mobile-run-lab__head i {
+    color: var(--accent-strong);
+    font-size: 18px;
+    font-style: normal;
+    transition: transform .16s ease;
+  }
+
+  details.mobile-run-lab[open] > .mobile-run-lab__head i {
+    transform: rotate(180deg);
+  }
+
+  details.mobile-run-lab > .mobile-run-lab__grid {
+    padding: 0 12px 14px;
+  }
+}
+
+@media (max-width:360px){
+  details.mobile-run-lab { margin-inline:12px; }
+}

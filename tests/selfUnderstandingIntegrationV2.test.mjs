@@ -141,7 +141,7 @@ check("SEMANTIC-COLOR-ROLES-AVOID-GOOD-BAD-MAPPING", () => {
 
 check("ROF-AND-REGION-CHARTS-REMAIN-SEPARATE", () => {
   const history = read("screens/historyScreen.js");
-  assert.match(history, /ROF-J 0–10/);
+  assert.match(history, /疲労感 0–10/);
   assert.match(history, /基準100/);
   assert.doesNotMatch(history, /dual-axis|secondaryAxis|y2Axis/i);
 });
