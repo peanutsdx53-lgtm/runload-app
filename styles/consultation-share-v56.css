@@ -1,0 +1,25 @@
+/* Print pagination repair for browsers that reserve physical page header/footer space. */
+@media print {
+  .screen--consultation[data-share-prep] .share-sheet-page {
+    min-height: 252mm !important;
+    height: auto !important;
+    padding: 9mm 14mm 7mm !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-footer {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin-top: auto !important;
+    padding-top: 2mm !important;
+    flex: 0 0 auto !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-page[hidden] {
+    display: none !important;
+  }
+}

@@ -58,7 +58,7 @@ test("release loads and caches consultation share V54", () => {
   assert.ok(worker.includes('./styles/consultation-share-v55.css'));
   assert.ok(worker.includes('./styles/consultation-share-v54.css'));
   assert.ok(worker.includes('./styles/mobile-home-shift-v38.css'));
-  assert.ok(worker.includes('running-record-app-runtime-2026.10.03.4'));
-  assert.ok(version.includes('APP_VERSION = "2026.10.03.4"'));
-  assert.ok(about.includes('v2026.10.03.4'));
+  assert.ok(worker.includes('running-record-app-runtime-2026.10.03.5'));
+  assert.ok(version.includes('APP_VERSION = "2026.10.03.5"'));
+  assert.ok(about.includes('v2026.10.03.5'));
 });
