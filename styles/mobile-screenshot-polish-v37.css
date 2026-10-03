@@ -1,0 +1,35 @@
+/* Final mobile correction for history state labels and Home vertical balance. */
+@media (max-width: 54.99rem) {
+  /* Keep confirmation-state labels on one line at narrow phone widths. */
+  .screen-layout--history .self-understanding-history-filter {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .screen-layout--history .self-understanding-history-filter a {
+    min-width: 0;
+    padding: .55rem .22rem;
+    gap: .2rem;
+    justify-content: center;
+    white-space: nowrap;
+    font-size: clamp(.7rem, 3vw, .82rem);
+    letter-spacing: -.025em;
+  }
+
+  .screen-layout--history .self-understanding-history-filter span {
+    flex: 0 0 auto;
+    font-size: .68rem;
+  }
+
+  /* Move the launcher down only as far as the free space above the page dots allows. */
+  .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    padding-top: clamp(8px, calc(100dvh - 712px), 140px);
+  }
+}
+
+@media (max-width: 54.99rem) and (max-height: 42rem) {
+  .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    padding-top: 8px;
+  }
+}
