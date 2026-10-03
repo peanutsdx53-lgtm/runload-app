@@ -1,0 +1,12 @@
+/* Direct Home launcher shift requested from real-device screenshot review. */
+@media (max-width: 54.99rem) {
+  .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    transform: translateY(72px);
+  }
+}
+
+@media (max-width: 54.99rem) and (max-height: 42rem) {
+  .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    transform: translateY(48px);
+  }
+}
