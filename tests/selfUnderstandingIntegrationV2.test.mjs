@@ -92,7 +92,7 @@ check("CONSULTATION-THEME-SHARE-IS-EXPLICIT-AND-BOUNDED", () => {
   const screen = read("screens/consultationScreen.js");
   assert.match(screen, /共有する内容/);
   assert.match(screen, /個人的な追加メモは含めません/);
-  assert.match(screen, /label: "次回見ること"/);
+  assert.match(screen, /次回見ること：/);
   assert.doesNotMatch(screen, /reviewEvents\s*\./);
 });
 

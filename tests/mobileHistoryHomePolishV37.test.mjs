@@ -11,8 +11,8 @@ assert.ok(index.indexOf('mobile-screenshot-polish-v36.css') < index.indexOf('mob
 assert.ok(worker.includes('styles/mobile-screenshot-polish-v35.css'));
 assert.ok(worker.includes('styles/mobile-screenshot-polish-v36.css'));
 assert.ok(worker.includes('styles/mobile-screenshot-polish-v37.css'));
-assert.ok(worker.includes('running-record-app-runtime-2026.10.03.2'));
-assert.ok(version.includes('APP_VERSION = "2026.10.03.2"'));
+assert.ok(worker.includes('running-record-app-runtime-2026.10.03.3'));
+assert.ok(version.includes('APP_VERSION = "2026.10.03.3"'));
 assert.match(css, /self-understanding-history-filter a\s*\{[\s\S]*white-space:\s*nowrap;/);
 assert.match(css, /grid-template-columns:\s*repeat\(3,/);
 assert.match(css, /padding-top:\s*clamp\(8px,\s*calc\(100dvh - 712px\),\s*140px\)/);

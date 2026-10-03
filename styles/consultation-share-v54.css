@@ -1,0 +1,1337 @@
+/* Consultation share sheet V54: advisor-first information design and A4 output. */
+.screen--consultation[data-share-prep] {
+  --share-ink: #1d2c36;
+  --share-navy: #163247;
+  --share-blue: #2f6385;
+  --share-blue-deep: #234f6b;
+  --share-blue-soft: #eef5f8;
+  --share-blue-softer: #f6fafc;
+  --share-line: #c9d8e0;
+  --share-muted: #61727e;
+  --share-paper: #ffffff;
+}
+
+.screen--consultation[data-share-prep] .share-step {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--share-line) 86%, transparent);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--color-surface) 94%, var(--share-blue-softer));
+  box-shadow: 0 10px 28px rgba(25, 43, 60, .055);
+}
+
+.screen--consultation[data-share-prep] .share-step .section-head {
+  margin-bottom: 14px;
+}
+
+.screen--consultation[data-share-prep] .share-step .section-head small {
+  color: var(--share-blue);
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.screen--consultation[data-share-prep] .share-step .section-head h2 {
+  margin: 3px 0 0;
+  color: var(--share-navy);
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+
+.screen--consultation[data-share-prep] .share-step .section-head p {
+  margin: 5px 0 0;
+  color: var(--share-muted);
+  font-size: .82rem;
+  line-height: 1.55;
+}
+
+.screen--consultation[data-share-prep] .share-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.screen--consultation[data-share-prep] .share-choice {
+  position: relative;
+  min-width: 0;
+}
+
+.screen--consultation[data-share-prep] .share-choice input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.screen--consultation[data-share-prep] .share-choice span {
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid var(--share-line);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--share-paper);
+  color: var(--share-ink);
+  font-size: .8rem;
+  font-weight: 760;
+  line-height: 1.3;
+  text-align: center;
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+
+.screen--consultation[data-share-prep] .share-choice input:checked + span {
+  border-color: var(--share-blue);
+  background: var(--share-blue-soft);
+  color: var(--share-blue-deep);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--share-blue) 24%, transparent);
+}
+
+.screen--consultation[data-share-prep] .share-choice input:focus-visible + span {
+  outline: 3px solid color-mix(in srgb, var(--share-blue) 25%, transparent);
+  outline-offset: 2px;
+}
+
+.screen--consultation[data-share-prep] .share-question-field {
+  margin-top: 14px;
+}
+
+.screen--consultation[data-share-prep] .share-question-field > span b {
+  margin-left: 5px;
+  color: var(--share-blue-deep);
+  font-size: .7rem;
+}
+
+.screen--consultation[data-share-prep] .share-question-field textarea,
+.screen--consultation[data-share-prep] .share-context-card textarea {
+  width: 100%;
+  min-height: 92px;
+  padding: 11px 12px;
+  border: 1px solid var(--share-line);
+  border-radius: 13px;
+  background: var(--share-paper);
+  color: var(--share-ink);
+  font: inherit;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.screen--consultation[data-share-prep] .share-context-card textarea {
+  min-height: 70px;
+}
+
+.screen--consultation[data-share-prep] textarea[aria-invalid="true"] {
+  border-color: #8a4c4c;
+  box-shadow: 0 0 0 3px rgba(138, 76, 76, .11);
+}
+
+.screen--consultation[data-share-prep] .share-required-status {
+  min-height: 1.2em;
+  margin: 7px 0 0;
+  color: #784242;
+  font-size: .76rem;
+  font-weight: 760;
+}
+
+.screen--consultation[data-share-prep] .share-context-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.screen--consultation[data-share-prep] .share-context-card {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--share-line);
+  border-radius: 16px;
+  background: var(--share-paper);
+}
+
+.screen--consultation[data-share-prep] .share-context-card > small,
+.screen--consultation[data-share-prep] .share-context-card > strong {
+  display: block;
+}
+
+.screen--consultation[data-share-prep] .share-context-card > small {
+  color: var(--share-blue);
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.screen--consultation[data-share-prep] .share-context-card > strong {
+  margin-top: 3px;
+  color: var(--share-navy);
+  font-size: .88rem;
+}
+
+.screen--consultation[data-share-prep] .share-context-card > ul {
+  margin: 10px 0 0;
+  padding-left: 1.2rem;
+  color: var(--share-ink);
+  font-size: .8rem;
+  line-height: 1.55;
+}
+
+.screen--consultation[data-share-prep] .share-context-card > p {
+  margin: 8px 0 0;
+  color: var(--share-muted);
+  font-size: .72rem;
+  line-height: 1.5;
+}
+
+.screen--consultation[data-share-prep] .share-context-card .field {
+  margin-top: 10px;
+}
+
+.screen--consultation[data-share-prep] .share-choice-grid--compact {
+  margin-top: 10px;
+}
+
+.screen--consultation[data-share-prep] .share-choice-grid--compact .share-choice span {
+  min-height: 40px;
+  font-size: .76rem;
+}
+
+.screen--consultation[data-share-prep] .share-region-field {
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 1px solid var(--share-line);
+  border-radius: 14px;
+  background: var(--share-blue-softer);
+}
+
+.screen--consultation[data-share-prep] .share-region-field select {
+  margin-top: 6px;
+}
+
+.screen--consultation[data-share-prep] .share-source-list {
+  margin-top: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.screen--consultation[data-share-prep] .share-source {
+  min-height: 76px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  background: var(--share-paper);
+}
+
+.screen--consultation[data-share-prep] .share-source strong {
+  color: var(--share-navy);
+}
+
+.screen--consultation[data-share-prep] .share-source em {
+  color: var(--share-ink);
+}
+
+.screen--consultation[data-share-prep] .share-document-step {
+  padding-bottom: 16px;
+}
+
+.screen--consultation[data-share-prep] .share-document-stage {
+  position: relative;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #c7d3da;
+  border-radius: 18px;
+  background: #dfe7eb;
+  overflow: hidden;
+}
+
+.screen--consultation[data-share-prep] .share-document-toolbar {
+  margin: -2px 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #324957;
+}
+
+.screen--consultation[data-share-prep] .share-document-toolbar strong {
+  font-size: .78rem;
+  letter-spacing: .03em;
+}
+
+.screen--consultation[data-share-prep] .share-document-toolbar button {
+  display: none;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid #bdcbd3;
+  border-radius: 50%;
+  background: #fff;
+  color: #263945;
+  font-size: 1.25rem;
+}
+
+.screen--consultation[data-share-prep] .share-print-document {
+  width: 100%;
+  max-width: 794px;
+  margin: 0 auto;
+  display: grid !important;
+  gap: 18px;
+  color: var(--share-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-page {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  padding: 22px 22px 52px;
+  border: 1px solid #c6d0d6;
+  background: var(--share-paper);
+  box-shadow: 0 14px 34px rgba(27, 45, 58, .13);
+  overflow: hidden;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-page[hidden] {
+  display: none !important;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head {
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--share-navy);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head > div > small {
+  display: block;
+  color: var(--share-blue);
+  font-size: .62rem;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head h1 {
+  margin: 2px 0 0 !important;
+  color: var(--share-navy) !important;
+  font-size: 1.42rem !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.025em !important;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 12px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head dl div {
+  min-width: 0;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head dt {
+  color: var(--share-muted);
+  font-size: .58rem;
+  font-weight: 800;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head dd {
+  margin: 2px 0 0;
+  color: var(--share-ink);
+  font-size: .68rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-block {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-focus,
+.screen--consultation[data-share-prep] .share-sheet-section,
+.screen--consultation[data-share-prep] .share-sheet-two-column {
+  margin-top: 12px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-focus {
+  padding: 15px 16px;
+  border: 1px solid #b8ceda;
+  border-left: 5px solid var(--share-blue);
+  background: var(--share-blue-soft);
+}
+
+.screen--consultation[data-share-prep] .share-sheet-section {
+  padding: 13px 14px;
+  border: 1px solid var(--share-line);
+  background: #fff;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-section-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-section-title > span {
+  min-width: 27px;
+  height: 27px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--share-navy);
+  color: #fff;
+  font-size: .62rem;
+  font-weight: 900;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-section-title small {
+  display: block;
+  color: var(--share-muted);
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-section-title h2,
+.screen--consultation[data-share-prep] .share-sheet-subsection h2 {
+  margin: 1px 0 0;
+  color: var(--share-navy);
+  font-size: .92rem;
+  line-height: 1.25;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-purpose-tags {
+  margin: 10px 0 0;
+  color: var(--share-blue-deep);
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-question {
+  display: block;
+  margin-top: 6px;
+  color: var(--share-ink);
+  font-size: .95rem;
+  line-height: 1.55;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-metrics {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-metrics > div {
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid #d5e0e6;
+  background: var(--share-blue-softer);
+}
+
+.screen--consultation[data-share-prep] .share-sheet-metrics small,
+.screen--consultation[data-share-prep] .share-sheet-metrics strong {
+  display: block;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-metrics small {
+  color: var(--share-muted);
+  font-size: .58rem;
+  font-weight: 800;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-metrics strong {
+  margin-top: 3px;
+  color: var(--share-navy);
+  font-size: .78rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-run-rest {
+  margin-top: 10px;
+  padding: 9px 10px;
+  background: var(--share-blue-softer);
+}
+
+.screen--consultation[data-share-prep] .share-sheet-run-rest strong,
+.screen--consultation[data-share-prep] .share-sheet-run-rest span {
+  display: block;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-run-rest span {
+  margin-top: 3px;
+  color: var(--share-muted);
+  font-size: .68rem;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-fatigue {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: auto auto 22px auto auto;
+  align-items: center;
+  justify-content: start;
+  gap: 8px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-fatigue span {
+  color: var(--share-muted);
+  font-size: .66rem;
+  font-weight: 800;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-fatigue strong {
+  min-width: 34px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: var(--share-blue-soft);
+  color: var(--share-navy);
+  font-size: .88rem;
+  text-align: center;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-fatigue i {
+  color: var(--share-muted);
+  font-style: normal;
+  text-align: center;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-body-list,
+.screen--consultation[data-share-prep] .share-sheet-fact-list {
+  margin: 9px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 5px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-body-list li {
+  display: grid;
+  grid-template-columns: minmax(90px, .42fr) minmax(0, 1fr);
+  gap: 10px;
+  padding: 7px 8px;
+  border-top: 1px solid #dde6ea;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-body-list li:first-child {
+  border-top: 0;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-body-list strong {
+  color: var(--share-navy);
+  font-size: .68rem;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-body-list span {
+  color: var(--share-ink);
+  font-size: .68rem;
+  line-height: 1.45;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-more,
+.screen--consultation[data-share-prep] .share-sheet-empty {
+  margin: 8px 0 0;
+  color: var(--share-muted);
+  font-size: .64rem;
+  line-height: 1.45;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-subsection {
+  min-width: 0;
+  padding: 12px 13px;
+  border: 1px solid var(--share-line);
+  background: #fff;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-subsection > small {
+  color: var(--share-blue);
+  font-size: .58rem;
+  font-weight: 900;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-auto-change {
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--share-blue-softer);
+}
+
+.screen--consultation[data-share-prep] .share-sheet-auto-change > b {
+  display: block;
+  color: var(--share-muted);
+  font-size: .58rem;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-fact-list {
+  gap: 3px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-fact-list li {
+  color: var(--share-ink);
+  font-size: .64rem;
+  line-height: 1.4;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-fact-list li::before {
+  content: "・";
+}
+
+.screen--consultation[data-share-prep] .share-sheet-user-note {
+  margin: 8px 0 0;
+  color: var(--share-ink);
+  font-size: .67rem;
+  line-height: 1.45;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-next > strong,
+.screen--consultation[data-share-prep] .share-sheet-plan > strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--share-ink);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-table-wrap {
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-history-table,
+.screen--consultation[data-share-prep] .share-sheet-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-history-table th,
+.screen--consultation[data-share-prep] .share-sheet-history-table td,
+.screen--consultation[data-share-prep] .share-sheet-detail-table th,
+.screen--consultation[data-share-prep] .share-sheet-detail-table td {
+  padding: 7px 7px;
+  border: 1px solid #d5e0e6;
+  vertical-align: top;
+  text-align: left;
+  font-size: .62rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-history-table th,
+.screen--consultation[data-share-prep] .share-sheet-detail-table th {
+  background: var(--share-blue-soft);
+  color: var(--share-navy);
+  font-weight: 900;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-history-table th:nth-child(1) { width: 13%; }
+.screen--consultation[data-share-prep] .share-sheet-history-table th:nth-child(2) { width: 30%; }
+.screen--consultation[data-share-prep] .share-sheet-history-table th:nth-child(3) { width: 17%; }
+.screen--consultation[data-share-prep] .share-sheet-history-table th:nth-child(4) { width: 40%; }
+
+.screen--consultation[data-share-prep] .share-sheet-history-table tr.is-current td {
+  background: #f4f9fb;
+  font-weight: 760;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-history-table td small {
+  display: block;
+  margin-top: 2px;
+  color: var(--share-blue);
+  font-size: .54rem;
+  font-weight: 900;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-region-summary {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: .8fr 1fr 1.35fr;
+  gap: 7px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-region-summary > div {
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid #d5e0e6;
+  background: var(--share-blue-softer);
+}
+
+.screen--consultation[data-share-prep] .share-sheet-region-summary small,
+.screen--consultation[data-share-prep] .share-sheet-region-summary strong {
+  display: block;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-region-summary small {
+  color: var(--share-muted);
+  font-size: .56rem;
+  font-weight: 800;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-region-summary strong {
+  margin-top: 3px;
+  color: var(--share-navy);
+  font-size: .68rem;
+  line-height: 1.4;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-region-relation {
+  margin: 8px 0 0;
+  color: var(--share-blue-deep);
+  font-size: .66rem;
+  font-weight: 850;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-region-visual-grid {
+  margin-top: 9px;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-body-map {
+  height: 138px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d5e0e6;
+  background: #fbfdfe;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-body-map svg {
+  width: 72px;
+  height: 126px;
+}
+
+.screen--consultation[data-share-prep] .share-body-silhouette {
+  fill: #e6ecef;
+  stroke: #a9bbc5;
+  stroke-width: 2.5;
+}
+
+.screen--consultation[data-share-prep] .share-body-region {
+  fill: #6f96ad;
+  stroke: #234f6b;
+  stroke-width: 3;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-trend > small {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--share-muted);
+  font-size: .58rem;
+  font-weight: 800;
+}
+
+.screen--consultation[data-share-prep] .share-trend-chart {
+  width: 100%;
+  max-height: 138px;
+  display: block;
+}
+
+.screen--consultation[data-share-prep] .share-trend-chart polyline {
+  fill: none;
+  stroke: var(--share-blue);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.screen--consultation[data-share-prep] .share-trend-chart circle {
+  fill: #fff;
+  stroke: var(--share-blue-deep);
+  stroke-width: 2.5;
+}
+
+.screen--consultation[data-share-prep] .share-trend-chart text {
+  fill: var(--share-navy);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.screen--consultation[data-share-prep] .share-trend-chart .share-trend-date {
+  fill: var(--share-muted);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.screen--consultation[data-share-prep] .share-trend-baseline {
+  stroke: #a8bac4;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+.screen--consultation[data-share-prep] .share-trend-baseline-label {
+  fill: var(--share-muted) !important;
+  font-size: 9px !important;
+}
+
+.screen--consultation[data-share-prep] .share-trend-empty {
+  min-height: 108px;
+  padding: 12px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed #c8d6dd;
+  color: var(--share-muted);
+  font-size: .64rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-boundary {
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid #d8e1e6;
+  color: var(--share-muted);
+  font-size: .58rem;
+  line-height: 1.5;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-detail-table {
+  margin-top: 10px;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-detail-table th:first-child { width: 30%; }
+
+.screen--consultation[data-share-prep] .share-sheet-footer {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 15px;
+  padding-top: 7px;
+  border-top: 1px solid #d5e0e6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--share-muted);
+  font-size: .55rem;
+  line-height: 1.4;
+}
+
+.screen--consultation[data-share-prep] .share-output-actions {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.screen--consultation[data-share-prep] .share-output-actions .output {
+  min-height: 62px;
+}
+
+html.consult-viewer-open,
+html.consult-viewer-open body {
+  overflow: hidden !important;
+}
+
+.screen--consultation[data-share-prep] .share-document-stage.is-expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  margin: 0;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  border: 0;
+  border-radius: 0;
+  background: #dce5ea;
+  overflow: auto;
+}
+
+.screen--consultation[data-share-prep] .share-document-stage.is-expanded .share-document-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  max-width: 794px;
+  margin: 0 auto 10px;
+  padding: 8px 10px;
+  border: 1px solid #c4d1d8;
+  border-radius: 13px;
+  background: rgba(255,255,255,.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.screen--consultation[data-share-prep] .share-document-stage.is-expanded .share-document-toolbar button {
+  display: grid;
+  place-items: center;
+}
+
+@media (min-width: 48rem) {
+  .screen--consultation[data-share-prep] .share-choice-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .screen--consultation[data-share-prep] .share-choice-grid--compact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .screen--consultation[data-share-prep] .share-context-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .screen--consultation[data-share-prep] .share-context-card:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .screen--consultation[data-share-prep] .share-source-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .screen--consultation[data-share-prep] .share-output-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-page {
+    min-height: 1120px;
+    padding: 34px 38px 70px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-footer {
+    left: 38px;
+    right: 38px;
+    bottom: 22px;
+  }
+}
+
+@media (max-width: 35rem) {
+  .screen--consultation[data-share-prep] .share-step {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .screen--consultation[data-share-prep] .share-choice-grid,
+  .screen--consultation[data-share-prep] .share-choice-grid--compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-page {
+    padding: 16px 14px 46px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head h1 {
+    font-size: 1.1rem !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dl {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dl div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dd {
+    margin: 0;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-two-column {
+    grid-template-columns: 1fr;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-region-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-region-visual-grid {
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-body-map {
+    height: 112px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-body-map svg {
+    width: 58px;
+    height: 100px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-history-table th,
+  .screen--consultation[data-share-prep] .share-sheet-history-table td {
+    font-size: .57rem;
+    padding: 5px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-footer {
+    left: 14px;
+    right: 14px;
+    bottom: 12px;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html,
+  body {
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  body > * {
+    visibility: hidden !important;
+  }
+
+  .app-shell,
+  .app-main,
+  .screen--consultation.screen-layout--consultation,
+  .screen--consultation.screen-layout--consultation > .secondary-derived-body,
+  .screen--consultation.screen-layout--consultation .share-document-step,
+  .screen--consultation.screen-layout--consultation .share-document-stage,
+  .screen--consultation.screen-layout--consultation .share-print-document {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  .screen--consultation.screen-layout--consultation {
+    width: 210mm !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  .screen--consultation.screen-layout--consultation > *:not(.secondary-derived-body),
+  .screen--consultation.screen-layout--consultation .secondary-derived-body > *:not(.share-document-step),
+  .screen--consultation.screen-layout--consultation .share-document-step > .section-head,
+  .screen--consultation.screen-layout--consultation .share-output-actions,
+  .screen--consultation.screen-layout--consultation .share-document-toolbar {
+    display: none !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .secondary-derived-body,
+  .screen--consultation.screen-layout--consultation .share-document-step,
+  .screen--consultation.screen-layout--consultation .share-document-stage,
+  .screen--consultation.screen-layout--consultation .share-print-document,
+  .screen--consultation.screen-layout--consultation .share-print-document * {
+    visibility: visible !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-document-step,
+  .screen--consultation[data-share-prep] .share-document-stage,
+  .screen--consultation[data-share-prep] .share-print-document {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-print-document {
+    width: 210mm !important;
+    max-width: none !important;
+    gap: 0 !important;
+    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Arial, sans-serif !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-page {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 14mm 15mm 14mm !important;
+    padding-bottom: 19mm !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    break-after: page;
+    page-break-after: always;
+    box-sizing: border-box;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-page[hidden] {
+    display: none !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-block,
+  .screen--consultation[data-share-prep] .share-sheet-section,
+  .screen--consultation[data-share-prep] .share-sheet-focus,
+  .screen--consultation[data-share-prep] .share-sheet-subsection,
+  .screen--consultation[data-share-prep] .share-sheet-region-visual-grid,
+  .screen--consultation[data-share-prep] .share-sheet-history-table tr,
+  .screen--consultation[data-share-prep] .share-sheet-detail-table tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-history-table thead,
+  .screen--consultation[data-share-prep] .share-sheet-detail-table thead {
+    display: table-header-group;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head h1 {
+    font-size: 19pt !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head > div > small {
+    font-size: 7pt !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dt,
+  .screen--consultation[data-share-prep] .share-sheet-section-title small,
+  .screen--consultation[data-share-prep] .share-sheet-subsection > small,
+  .screen--consultation[data-share-prep] .share-sheet-metrics small,
+  .screen--consultation[data-share-prep] .share-sheet-region-summary small,
+  .screen--consultation[data-share-prep] .share-sheet-footer,
+  .screen--consultation[data-share-prep] .share-sheet-boundary {
+    font-size: 7.4pt !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dd,
+  .screen--consultation[data-share-prep] .share-sheet-purpose-tags,
+  .screen--consultation[data-share-prep] .share-sheet-body-list strong,
+  .screen--consultation[data-share-prep] .share-sheet-body-list span,
+  .screen--consultation[data-share-prep] .share-sheet-user-note,
+  .screen--consultation[data-share-prep] .share-sheet-next > strong,
+  .screen--consultation[data-share-prep] .share-sheet-plan > strong,
+  .screen--consultation[data-share-prep] .share-sheet-region-summary strong,
+  .screen--consultation[data-share-prep] .share-sheet-region-relation,
+  .screen--consultation[data-share-prep] .share-sheet-history-table th,
+  .screen--consultation[data-share-prep] .share-sheet-history-table td,
+  .screen--consultation[data-share-prep] .share-sheet-detail-table th,
+  .screen--consultation[data-share-prep] .share-sheet-detail-table td {
+    font-size: 8.3pt !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-section-title h2,
+  .screen--consultation[data-share-prep] .share-sheet-subsection h2 {
+    font-size: 11.5pt !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-question {
+    font-size: 11.5pt !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-metrics strong,
+  .screen--consultation[data-share-prep] .share-sheet-fatigue strong {
+    font-size: 10pt !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-footer {
+    left: 15mm !important;
+    right: 15mm !important;
+    bottom: 8mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-table-wrap {
+    overflow: visible !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-body-map,
+  .screen--consultation[data-share-prep] .share-sheet-metrics > div,
+  .screen--consultation[data-share-prep] .share-sheet-region-summary > div,
+  .screen--consultation[data-share-prep] .share-sheet-section,
+  .screen--consultation[data-share-prep] .share-sheet-subsection,
+  .screen--consultation[data-share-prep] .share-sheet-focus {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Neutralize the legacy V44 desktop grid: V54 owns the new four-step flow. */
+@media (min-width: 69rem) {
+  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body {
+    display: block !important;
+    grid-template-columns: none !important;
+    grid-template-areas: none !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body > .share-step {
+    position: static !important;
+    grid-area: auto !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    margin-top: 16px !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-output-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+.screen--consultation[data-share-prep] .consultation-confirmation-theme {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--share-line);
+  border-left: 4px solid var(--share-blue);
+  border-radius: 14px;
+  background: var(--share-blue-softer);
+}
+
+.screen--consultation[data-share-prep] .consultation-confirmation-theme small,
+.screen--consultation[data-share-prep] .consultation-confirmation-theme strong,
+.screen--consultation[data-share-prep] .consultation-confirmation-theme span {
+  display: block;
+}
+
+.screen--consultation[data-share-prep] .consultation-confirmation-theme small {
+  color: var(--share-blue);
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+.screen--consultation[data-share-prep] .consultation-confirmation-theme strong {
+  margin-top: 3px;
+  color: var(--share-navy);
+  font-size: .88rem;
+  line-height: 1.4;
+}
+
+.screen--consultation[data-share-prep] .consultation-confirmation-theme span {
+  margin-top: 4px;
+  color: var(--share-muted);
+  font-size: .74rem;
+  line-height: 1.5;
+}
+
+/* Print refinement after pagination review. */
+.screen--consultation[data-share-prep] .share-sheet-head > div:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head h1 {
+  white-space: nowrap;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head dl {
+  flex: 0 0 min(48%, 290px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: min(48%, 290px);
+}
+
+.screen--consultation[data-share-prep] .share-sheet-head dd {
+  overflow-wrap: anywhere;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-next-plan .share-sheet-subsection > strong {
+  display: block;
+  margin-top: 7px;
+  color: var(--share-ink);
+  font-size: .72rem;
+  line-height: 1.45;
+}
+
+.screen--consultation[data-share-prep] .share-body-silhouette circle,
+.screen--consultation[data-share-prep] .share-body-silhouette path {
+  fill: #e6ecef !important;
+  stroke: #a9bbc5 !important;
+  stroke-width: 2.5 !important;
+}
+
+.screen--consultation[data-share-prep] .share-body-region {
+  fill: #6f96ad !important;
+  stroke: #234f6b !important;
+}
+
+.screen--consultation[data-share-prep] .share-trend-chart polyline {
+  stroke: #2f6385 !important;
+}
+
+.screen--consultation[data-share-prep] .share-trend-chart circle {
+  fill: #ffffff !important;
+  stroke: #234f6b !important;
+}
+
+.screen--consultation[data-share-prep] .share-trend-baseline {
+  stroke: #a8bac4 !important;
+}
+
+@media print {
+  .screen--consultation[data-share-prep] .share-sheet-head dl {
+    flex-basis: 76mm !important;
+    width: 76mm !important;
+    gap: 4mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dd {
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-next-plan .share-sheet-subsection > strong {
+    font-size: 8.3pt !important;
+  }
+}
+
+@media print {
+  /* Keep both standard pages comfortably inside the printable sheet. */
+  .screen--consultation[data-share-prep] .share-sheet-page {
+    padding: 11mm 14mm 16mm !important;
+    padding-bottom: 16mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-focus,
+  .screen--consultation[data-share-prep] .share-sheet-section,
+  .screen--consultation[data-share-prep] .share-sheet-two-column {
+    margin-top: 2.2mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-focus {
+    padding: 3mm 3.4mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-section,
+  .screen--consultation[data-share-prep] .share-sheet-subsection {
+    padding: 2.6mm 3mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-body-list li {
+    padding: 1.4mm 1.8mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-history-table th,
+  .screen--consultation[data-share-prep] .share-sheet-history-table td,
+  .screen--consultation[data-share-prep] .share-sheet-detail-table th,
+  .screen--consultation[data-share-prep] .share-sheet-detail-table td {
+    padding: 1.45mm 1.7mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-region-visual-grid {
+    margin-top: 2mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-body-map {
+    height: 30mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-body-map svg {
+    width: 17mm !important;
+    height: 28mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-trend-chart {
+    max-height: 30mm !important;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-footer {
+    left: 14mm !important;
+    right: 14mm !important;
+    bottom: 6mm !important;
+  }
+}
