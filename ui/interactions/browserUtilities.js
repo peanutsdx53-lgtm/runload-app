@@ -1,15 +1,25 @@
 
 export async function copyText(text) {
   if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    return;
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch {
+      // iOS/PWA environments can expose Clipboard API but reject writes.
+      // Fall back to a user-gesture compatible textarea copy below.
+    }
   }
   const fallbackTextarea = document.createElement("textarea");
   fallbackTextarea.value = text;
+  fallbackTextarea.setAttribute("readonly", "");
+  fallbackTextarea.style.position = "fixed";
+  fallbackTextarea.style.opacity = "0";
   document.body.appendChild(fallbackTextarea);
   fallbackTextarea.select();
-  document.execCommand("copy");
+  fallbackTextarea.setSelectionRange(0, fallbackTextarea.value.length);
+  const copied = document.execCommand("copy");
   fallbackTextarea.remove();
+  if (!copied) throw new Error("copy failed");
 }
 
 function downloadText(filename, text, mimeType = "text/plain;charset=utf-8") {

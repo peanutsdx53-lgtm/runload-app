@@ -16,6 +16,7 @@ test("consultation share workflow is advisor-first", () => {
   assert.ok(screen.includes("STEP 3</small><h2>共有する情報を選ぶ"));
   assert.ok(screen.includes("STEP 4</small><h2>完成資料を確認"));
   assert.ok(screen.includes("特に聞きたいこと <b>必須</b>"));
+  assert.ok(interactions.includes('questionRequirement.textContent = "推奨"'));
   assert.ok(screen.includes("すでに行った対応"));
   assert.ok(screen.includes("最近の経過"));
   assert.ok(screen.includes("RunLoad参考情報"));
@@ -46,14 +47,18 @@ test("document preview and dynamic pages stay synchronized", () => {
   assert.ok(interactions.includes('data-consult-conditional-page="body-details"'));
   assert.ok(interactions.includes("updateRegionalItem"));
   assert.ok(interactions.includes("data-consult-region-visual-template"));
-  assert.ok(interactions.includes("ensureQuestion"));
+  assert.ok(interactions.includes("updateQuestionGuidance"));
+  assert.ok(!interactions.includes("const document = root.querySelector"));
+  assert.ok(!interactions.includes("if (!ensureQuestion()) return"));
 });
 
 test("release loads and caches consultation share V54", () => {
   assert.ok(index.includes('./styles/consultation-share-v54.css'));
+  assert.ok(index.includes('./styles/consultation-share-v55.css'));
+  assert.ok(worker.includes('./styles/consultation-share-v55.css'));
   assert.ok(worker.includes('./styles/consultation-share-v54.css'));
   assert.ok(worker.includes('./styles/mobile-home-shift-v38.css'));
-  assert.ok(worker.includes('running-record-app-runtime-2026.10.03.3'));
-  assert.ok(version.includes('APP_VERSION = "2026.10.03.3"'));
-  assert.ok(about.includes('v2026.10.03.3'));
+  assert.ok(worker.includes('running-record-app-runtime-2026.10.03.4'));
+  assert.ok(version.includes('APP_VERSION = "2026.10.03.4"'));
+  assert.ok(about.includes('v2026.10.03.4'));
 });

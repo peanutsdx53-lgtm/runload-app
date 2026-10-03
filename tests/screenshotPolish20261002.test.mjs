@@ -72,7 +72,7 @@ test("RESULT-LEGEND-AND-REGION-SHEET-ARE-COMPACT", () => {
 
 test("VERSION-AND-CACHE-MATCH", () => {
   const appVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
-  assert.equal(appVersion, "2026.10.03.3");
+  assert.equal(appVersion, "2026.10.03.4");
   assert.ok(worker.includes(`running-record-app-runtime-${appVersion}`));
 });
 

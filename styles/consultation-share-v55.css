@@ -1,0 +1,51 @@
+/* Consultation interaction/mobile preview repair: 2026-10-03. */
+@media (max-width: 35rem) {
+  .screen--consultation[data-share-prep] .share-sheet-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 9px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head > div:first-child {
+    width: 100%;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head h1 {
+    white-space: normal;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dl {
+    width: 100%;
+    max-width: none;
+    flex: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dl div {
+    display: block;
+    min-width: 0;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dt {
+    font-size: .5rem;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dd {
+    margin-top: 2px;
+    overflow-wrap: normal;
+    white-space: nowrap;
+    font-size: .58rem;
+  }
+
+  .screen--consultation[data-share-prep] .share-required-status:not(:empty) {
+    margin-top: 8px;
+    padding: 8px 10px;
+    border-left: 3px solid var(--share-blue);
+    background: var(--share-blue-softer);
+    color: var(--share-muted);
+    font-size: .72rem;
+    line-height: 1.45;
+  }
+}

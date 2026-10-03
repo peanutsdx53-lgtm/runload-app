@@ -54,8 +54,11 @@ export function bindConsultation() {
   const copySource = root.querySelector("#consultation-report-text");
   const regionSelector = root.querySelector("[data-consult-region-selector]");
   const documentStage = root.querySelector("[data-consult-document-stage]");
-  const document = root.querySelector("[data-consult-share-document]");
+  const shareDocument = root.querySelector("[data-consult-share-document]");
   const requiredStatus = root.querySelector("[data-consult-required-status]");
+  const questionRequirement = question?.closest(".share-question-field")?.querySelector("span b");
+  if (questionRequirement) questionRequirement.textContent = "推奨";
+  question?.removeAttribute("required");
 
   const writeText = (selector, value) => {
     root.querySelectorAll(selector).forEach((element) => { element.textContent = value; });
@@ -151,21 +154,18 @@ export function bindConsultation() {
     if (copySource) copySource.value = lines.join("\n");
   };
 
-  const ensureQuestion = () => {
+  const updateQuestionGuidance = () => {
     if (question?.value.trim()) {
       question.removeAttribute("aria-invalid");
       if (requiredStatus) requiredStatus.textContent = "";
-      return true;
+      return;
     }
-    question?.setAttribute("aria-invalid", "true");
-    if (requiredStatus) requiredStatus.textContent = "「特に聞きたいこと」を入力してから共有してください。";
-    question?.focus();
-    question?.scrollIntoView({ behavior: "smooth", block: "center" });
-    return false;
+    question?.removeAttribute("aria-invalid");
+    if (requiredStatus) requiredStatus.textContent = "未入力のままでも共有できます。助言を受けやすくするには入力を推奨します。";
   };
 
   const closeViewer = () => {
-    document.documentElement.classList.remove("consult-viewer-open");
+    globalThis.document.documentElement.classList.remove("consult-viewer-open");
     documentStage?.classList.remove("is-expanded");
   };
 
@@ -190,20 +190,20 @@ export function bindConsultation() {
 
   root.querySelector('[data-action="open-consult-viewer"]')?.addEventListener("click", () => {
     rebuild();
-    if (!ensureQuestion()) return;
-    document.documentElement.classList.add("consult-viewer-open");
+    updateQuestionGuidance();
+    globalThis.document.documentElement.classList.add("consult-viewer-open");
     documentStage?.classList.add("is-expanded");
     documentStage?.querySelector('[data-action="close-consult-viewer"]')?.focus();
   });
   root.querySelector('[data-action="close-consult-viewer"]')?.addEventListener("click", closeViewer);
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && document.documentElement.classList.contains("consult-viewer-open")) closeViewer();
+  globalThis.document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && globalThis.document.documentElement.classList.contains("consult-viewer-open")) closeViewer();
   });
 
   root.querySelector('[data-action="copy-consultation-report"]')?.addEventListener("click", async (event) => {
     rebuild();
-    if (!ensureQuestion()) return;
+    updateQuestionGuidance();
     const text = reportText();
     if (!text.trim()) {
       event.currentTarget.querySelector("strong")?.replaceChildren("共有する内容を選んでください");
@@ -219,7 +219,7 @@ export function bindConsultation() {
 
   root.querySelector('[data-action="print-consultation-report"]')?.addEventListener("click", () => {
     rebuild();
-    if (!ensureQuestion()) return;
+    updateQuestionGuidance();
     window.print();
   });
 
@@ -229,4 +229,5 @@ export function bindConsultation() {
   const initialOption = regionSelector?.selectedOptions?.[0];
   if (initialOption) updateRegionalItem(initialOption);
   rebuild();
+  updateQuestionGuidance();
 }
