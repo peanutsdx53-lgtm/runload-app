@@ -1,4 +1,4 @@
-export const APP_VERSION = "2026.10.03.1";
+export const APP_VERSION = "2026.10.03.2";
 export const APP_VERSION_LABEL = `v${APP_VERSION}`;
 
 const APP_CACHE_PREFIXES = Object.freeze([
