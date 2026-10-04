@@ -44,4 +44,4 @@ const state = JSON.parse(memory.get("running-record-mobile-achievements-v1"));
 assert.ok(state.unlocked["first-record"]);
 assert.ok(state.announced["first-record"]);
 
-console.log("PASS mobile achievements v26");
+console.log("PASS mobile achievements");

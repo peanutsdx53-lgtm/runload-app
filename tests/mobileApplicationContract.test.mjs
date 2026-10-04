@@ -29,4 +29,4 @@ assert.match(achievements, /記録・予定・休養など、保存された事�
 assert.doesNotMatch(home, /今日のRunLoad/);
 assert.doesNotMatch(read("ui/mobileOnboarding.js"), /ホーム\s*\|\s*記録\s*\|\s*測定\s*\|\s*履歴\s*\|\s*その他/);
 
-console.log("PASS mobile final v26");
+console.log("PASS mobile application contract");

@@ -11,4 +11,4 @@ assert.match(infra, /running-record-mobile-achievements-v1/);
 assert.match(infra, /mobileHomeLayout/);
 assert.match(settings, /clearAllPhotoMemos/);
 assert.match(photo, /deleteDatabase\(DB_NAME\)/);
-console.log("PASS mobile data boundary v26");
+console.log("PASS mobile data boundary");
