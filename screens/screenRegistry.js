@@ -17,7 +17,7 @@ import { renderSettingsScreen } from "./settingsScreen.js";
 import { renderInterpretationRoomScreen } from "./interpretationRoomScreen.js";
 import { renderSupportGuidanceScreen } from "./shared/supportGuidanceScreen.js";
 import { renderPrivacyScreen } from "./privacyScreen.js";
-import { renderTermsScreen } from "./termsScreen.js";
+import { renderTermsScreen } from "./shared/termsScreen.js";
 import { renderAboutScreen } from "./aboutScreen.js";
 import { renderMoreScreen as renderDesktopMoreScreen } from "./desktop/moreScreen.js";
 import { renderSimulationScreen } from "./simulationScreen.js";
