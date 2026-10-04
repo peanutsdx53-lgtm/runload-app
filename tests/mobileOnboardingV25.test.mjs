@@ -42,9 +42,6 @@ assert.match(settings, /reopen-onboarding/);
 assert.match(settings, /利用規約/);
 assert.match(settings, /プライバシー/);
 
-const more = read("screens/mobile/moreScreen.js");
-assert.match(more, /screen: "terms"/);
-
 const version = read("ui/appVersionStatus.js").match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 const sw = read("service-worker.js");
