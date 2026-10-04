@@ -1,0 +1,21 @@
+@media (max-width: 54.99rem) {
+  .screen--body-part-detail .detail-value {
+    min-width: 0;
+  }
+
+  .screen--body-part-detail .mobile-detail-reference {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    max-width: 100%;
+    white-space: nowrap;
+    font-size: clamp(11.5px, 3.2vw, 13px);
+    letter-spacing: -.02em;
+  }
+
+  .screen--body-part-detail .mobile-detail-reference {
+    white-space: nowrap;
+    font-size: clamp(10px, 2.8vw, 12px) !important;
+    letter-spacing: -.015em;
+  }
+}
