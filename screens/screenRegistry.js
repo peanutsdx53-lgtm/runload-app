@@ -19,7 +19,6 @@ import { renderPrivacyScreen } from "./privacyScreen.js";
 import { renderTermsScreen } from "./termsScreen.js";
 import { renderAboutScreen } from "./aboutScreen.js";
 import { renderMoreScreen as renderDesktopMoreScreen } from "./desktop/moreScreen.js";
-import { renderMoreScreen as renderMobileMoreScreen } from "./mobile/moreScreen.js";
 import { renderSimulationScreen } from "./simulationScreen.js";
 import { renderGpxAnalysisScreen as renderDesktopGpxAnalysisScreen } from "./desktop/gpxAnalysisScreen.js";
 import { renderGpxAnalysisScreen as renderMobileGpxAnalysisScreen } from "./mobile/gpxAnalysisScreen.js";
@@ -63,7 +62,6 @@ export const DESKTOP_SCREEN_RENDERERS = Object.freeze({
 
 export const MOBILE_SCREEN_RENDERERS = Object.freeze({
   "course-library": renderMobileCourseLibraryScreen,
-  more: renderMobileMoreScreen,
   "gpx-analysis": renderMobileGpxAnalysisScreen,
   "run-measurement": renderRunMeasurementScreen,
   "location-note": renderLocationNoteScreen,
