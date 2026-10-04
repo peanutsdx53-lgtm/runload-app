@@ -3,7 +3,6 @@
  * Desktop only: smartphone layout and interaction remain unchanged.
  */
 @media (min-width: 55rem) {
-  /* Technical disclosure: make the relationship to the comparison content obvious. */
   .screen--interpretation-room .v53-technical-more.interpretation-loop-more {
     margin-top: 1rem !important;
     overflow: hidden;
@@ -41,7 +40,6 @@
     color: var(--color-accent-strong);
     font-size: .92rem;
     font-weight: 900;
-    font-style: normal;
   }
 
   .screen--interpretation-room .v53-technical-more.interpretation-loop-more > summary::after {
@@ -70,7 +68,6 @@
     color: var(--color-on-accent);
   }
 
-  /* Place region comparison and context side by side on PC. */
   .screen--interpretation-room .v53-technical-more.interpretation-loop-more > div {
     margin: 0 !important;
     padding: 1rem !important;
@@ -81,8 +78,14 @@
     background: var(--color-surface-muted);
   }
 
+  .screen--interpretation-room .interpretation-room-selected-advanced-stack,
+  .screen--interpretation-room .interpretation-loop-secondary-actions {
+    grid-column: 1 / -1;
+  }
+
   .screen--interpretation-room .interpretation-room-patterns--compact,
   .screen--interpretation-room .interpretation-room-context--compact {
+    min-width: 0;
     margin: 0 !important;
     padding: 1rem !important;
     border-radius: .9rem !important;
@@ -101,13 +104,13 @@
     letter-spacing: -.015em;
   }
 
-  /* Region reason groups: larger labels, clearer count, less vertical stacking. */
   .screen--interpretation-room .interpretation-room-pattern-groups--disclosure {
     grid-template-columns: minmax(0, 1fr) !important;
     column-gap: 0 !important;
   }
 
   .screen--interpretation-room .interpretation-room-pattern-group--compact {
+    min-width: 0;
     padding: 0 !important;
     border-left: 0 !important;
   }
@@ -137,18 +140,19 @@
   }
 
   .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips {
+    min-width: 0;
     margin: .1rem 0 .75rem !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: .5rem !important;
   }
 
+  /* Flex inside each card prevents long Japanese labels from collapsing to zero width. */
   .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a {
     min-width: 0 !important;
     min-height: 4.15rem !important;
     padding: .65rem .72rem !important;
-    display: grid !important;
-    grid-template-columns: 2.15rem minmax(0, 1fr) auto 1rem !important;
+    display: flex !important;
     align-items: center !important;
     gap: .6rem !important;
     border: 1px solid var(--color-line) !important;
@@ -164,22 +168,28 @@
   }
 
   .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__marker {
+    flex: 0 0 2.15rem;
     width: 2.15rem !important;
     height: 2.15rem !important;
     border-radius: .65rem !important;
   }
 
   .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__copy {
-    min-width: 0;
+    flex: 1 1 8rem;
+    width: auto !important;
+    min-width: 8rem !important;
+    max-width: none !important;
   }
 
   .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__copy strong {
     display: block !important;
+    min-width: 0 !important;
     font-size: .94rem !important;
     line-height: 1.3 !important;
     white-space: normal !important;
     overflow: visible !important;
     text-overflow: clip !important;
+    overflow-wrap: anywhere;
   }
 
   .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__copy small {
@@ -189,17 +199,22 @@
     font-size: .76rem !important;
     line-height: 1.3 !important;
     white-space: normal !important;
+    overflow-wrap: anywhere;
   }
 
   .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a > b {
-    min-width: 3.3rem;
+    flex: 0 0 auto;
+    min-width: 2.9rem;
     text-align: right;
     color: var(--color-ink);
     font-size: 1rem !important;
     font-variant-numeric: tabular-nums;
   }
 
-  /* Context and fatigue: promote changes into readable comparison rows. */
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a > i {
+    flex: 0 0 auto;
+  }
+
   .screen--interpretation-room .interpretation-room-context-lines {
     border-top: 0 !important;
     gap: .55rem !important;
@@ -246,14 +261,8 @@
     background: var(--color-surface) !important;
   }
 
-  .screen--interpretation-room .interpretation-room-context-rows small {
-    font-size: .76rem !important;
-  }
-
-  .screen--interpretation-room .interpretation-room-context-rows strong {
-    font-size: .92rem !important;
-  }
-
+  .screen--interpretation-room .interpretation-room-context-rows small { font-size: .76rem !important; }
+  .screen--interpretation-room .interpretation-room-context-rows strong { font-size: .92rem !important; }
   .screen--interpretation-room .context-values {
     font-size: .84rem !important;
     font-variant-numeric: tabular-nums;
@@ -310,29 +319,24 @@
   }
 }
 
-/* At the narrow edge of PC mode, keep both sections compact without clipping. */
-@media (min-width: 55rem) and (max-width: 64rem) {
+/* At narrower PC widths, use the full width for each information family.
+   Region cards remain two-column, so the page is still much shorter than before. */
+@media (min-width: 55rem) and (max-width: 68rem) {
   .screen--interpretation-room .v53-technical-more.interpretation-loop-more > div {
-    grid-template-columns: minmax(0, 1.35fr) minmax(16.5rem, .75fr);
-    gap: .75rem;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: .75rem !important;
   }
 
   .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
-  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a {
-    grid-template-columns: 1.9rem minmax(0, 1fr) auto !important;
-    gap: .45rem !important;
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__copy {
+    min-width: 6.5rem !important;
   }
 
   .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a > i {
     display: none !important;
-  }
-
-  .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__marker {
-    width: 1.9rem !important;
-    height: 1.9rem !important;
   }
 }
 
