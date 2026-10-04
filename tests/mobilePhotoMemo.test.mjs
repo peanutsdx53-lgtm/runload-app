@@ -53,7 +53,7 @@ await test('PHOTO-MEMO-USES-LOCAL-INDEXEDDB-WITH-CONSERVATIVE-LIMITS', () => {
 });
 
 await test('PHOTO-MEMO-SCREEN-ACCEPTS-USER-SELECTED-IMAGES-ONLY', () => {
-  const screen = read('screens/mobilePhotoMemoScreen.js');
+  const screen = read('screens/mobile/photoMemoScreen.js');
   assert.ok(screen.includes('type="file"'));
   assert.ok(screen.includes('accept="image/*"'));
   assert.ok(screen.includes('写真とメモは、この端末のブラウザ内にのみ保存します。自動送信はしません。'));
@@ -108,7 +108,7 @@ await test('PHOTO-MEMO-STORES-BYTES-AND-DISPLAYS-VIA-DATA-URL', () => {
 await test('PHOTO-MEMO-PWA-ASSETS-ARE-PRECACHED', () => {
   const sw = read('service-worker.js');
   for (const asset of [
-    './screens/mobilePhotoMemoScreen.js',
+    './screens/mobile/photoMemoScreen.js',
     './ui/interactions/mobilePhotoMemoInteractions.js',
     './ui/mobilePhotoMemoStore.js',
   ]) assert.ok(sw.includes(asset));

@@ -27,7 +27,7 @@ import {
   renderDepartureCheckScreen,
   renderFuelNoteScreen,
 } from "./mobileQuickToolsScreen.js";
-import { renderPhotoMemoScreen } from "./mobilePhotoMemoScreen.js";
+import { renderPhotoMemoScreen } from "./mobile/photoMemoScreen.js";
 import { renderPaceCalculatorScreen } from "./mobile/paceCalculatorScreen.js";
 import { renderAchievementsScreen } from "./achievementsScreen.js";
 
