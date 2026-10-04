@@ -104,7 +104,7 @@ const PRECACHE_URLS = [
   "./styles/mobile-final-polish.css",
   "./styles/mobile-run-experiments.css",
   "./styles/mobile-insights-v30.css",
-  "./styles/mobile-experience-v31.css",
+  "./styles/mobile-home-experience.css",
   "./styles/mobile-home-responsive.css",
   "./styles/mobile-result-region-sheet.css",
   "./styles/mobile-body-part-detail.css",
