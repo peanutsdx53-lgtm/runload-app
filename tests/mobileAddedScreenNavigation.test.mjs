@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { resolveScreenContextNavigation } from '../ui/screenArchitecture.js';
 
-const more = fs.readFileSync('screens/mobile/moreScreen.js', 'utf8');
+const repair = fs.readFileSync('ui/mobileSettingsHomeRepairV57.js', 'utf8');
 const navigationCss = fs.readFileSync('styles/mobile-navigation-unification.css', 'utf8');
 
 function location(query = '') {
@@ -36,9 +36,8 @@ for (const [screen, title] of mobileTools) {
   assert.deepEqual(resolveScreenContextNavigation(screen, location()), expected);
 }
 
-assert.doesNotMatch(more, /MORE_ORIGIN_SCREENS/);
-assert.doesNotMatch(more, /\?from=more/);
-assert.match(more, /ホームに機能を追加/);
+assert.match(repair, /startsWith\("#\/more"\)/);
+assert.match(repair, /globalThis\.location\.hash = "#\/home"/);
 assert.match(navigationCss, /\.screen--achievements > \.secondary-derived-head/);
 assert.match(navigationCss, /\.screen--about > \.secondary-derived-head/);
 assert.match(navigationCss, /display:\s*none !important/);
