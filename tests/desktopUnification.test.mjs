@@ -7,7 +7,7 @@ const index = read("index.html");
 const serviceWorker = read("service-worker.js");
 const homeWorkspace = read("ui/desktopHomeWorkspace.js");
 const appVersion = read("ui/appVersionStatus.js");
-const about = read("screens/aboutScreen.js");
+const about = read("screens/shared/aboutScreen.js");
 const unificationCss = read("styles/desktop-unification.css");
 const rofCompactCss = read("styles/rof-j-compact.css");
 const currentVersion = appVersion.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
