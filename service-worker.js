@@ -110,7 +110,6 @@ const PRECACHE_URLS = [
   "./styles/mobile-screenshot-polish-v35.css",
   "./styles/mobile-screenshot-polish-v36.css",
   "./styles/mobile-screenshot-polish-v37.css",
-  "./styles/mobile-home-shift-v38.css",
   "./styles/consultation-share-v54.css",
   "./styles/consultation-share-v55.css",
   "./styles/consultation-share-v56.css",
