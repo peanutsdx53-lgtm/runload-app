@@ -1,6 +1,4 @@
-/* Desktop theme audit v45.
- * PC-only palette refinement. Smartphone theme tokens stay unchanged.
- */
+/* Desktop-only palette and dark-theme presentation. */
 @media (min-width: 55rem) {
   html.rl-appearance-dark.rl-color-standard {
     color-scheme: dark;
@@ -58,9 +56,13 @@
     --overlay-dialog: rgba(0, 0, 0, 0.70);
   }
 
-  /* Keep non-selected navigation and secondary controls distinct from dark surfaces. */
   html.rl-appearance-dark .primary-navigation__link:not(.is-current) {
-    color: var(--color-muted);
+    opacity: 0.86 !important;
+    color: color-mix(in srgb, var(--color-muted) 88%, var(--color-ink)) !important;
+  }
+
+  html.rl-appearance-dark .primary-navigation__link:not(.is-current) :is(.primary-navigation__icon, .primary-navigation__label) {
+    opacity: 1 !important;
   }
 
   html.rl-appearance-dark .button--secondary,
