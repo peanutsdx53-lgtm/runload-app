@@ -72,5 +72,5 @@ test('RETURN-INDICATOR-NEVER-CHANGES-POSITION', () => {
 });
 
 const failed = results.filter((item) => item.status === 'FAIL');
-console.log(JSON.stringify({ suite: 'Mobile Home Page Gesture V2', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
+console.log(JSON.stringify({ suite: 'Mobile Home Gesture Coordination', total: results.length, passed: results.length - failed.length, failed: failed.length, status: failed.length ? 'FAIL' : 'PASS', results }, null, 2));
 if (failed.length) process.exitCode = 1;
