@@ -1,0 +1,130 @@
+name: Desktop Interpretation V60 Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "styles/desktop-interpretation-v60.css"
+      - "ui/interpretationRoomPresentation.js"
+      - "tests/fixtures/v54_snapshot_pc_compare.html"
+      - ".github/workflows/desktop-interpretation-v60-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start local app server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 > /tmp/runload-interpretation-v60.log 2>&1 &
+          for attempt in {1..30}; do
+            curl -fsS http://127.0.0.1:4173/index.html >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/runload-interpretation-v60.log
+          exit 1
+      - name: Audit opened interpretation details
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .desktop-interpretation-v60-audit.cjs <<'NODE'
+          const fs = require('node:fs');
+          const { chromium } = require('playwright');
+          const BASE = 'http://127.0.0.1:4173';
+
+          function assert(condition, message) {
+            if (!condition) throw new Error(message);
+          }
+
+          async function auditViewport(browser, width, height, name) {
+            const page = await browser.newPage({ viewport: { width, height } });
+            await page.goto(`${BASE}/tests/fixtures/v54_snapshot_pc_compare.html`, { waitUntil: 'domcontentloaded' });
+            await page.addStyleTag({ url: `${BASE}/styles/desktop-interpretation-v60.css` });
+            const details = page.locator('.v53-technical-more.interpretation-loop-more').first();
+            await details.evaluate((node) => { node.open = true; });
+            await page.waitForTimeout(200);
+
+            const summary = await details.locator(':scope > summary').evaluate((node) => {
+              const rect = node.getBoundingClientRect();
+              const style = getComputedStyle(node);
+              return { height: rect.height, fontSize: parseFloat(style.fontSize || '0') };
+            });
+            assert(summary.height >= 56, `${name}: technical disclosure is too small: ${JSON.stringify(summary)}`);
+            assert(summary.fontSize >= 16, `${name}: technical disclosure text is too small: ${JSON.stringify(summary)}`);
+
+            const labels = await page.locator('.interpretation-room-region-chips .region-chip__copy strong').evaluateAll((nodes) => nodes.map((node) => {
+              const rect = node.getBoundingClientRect();
+              return {
+                text: node.textContent?.trim() || '',
+                width: rect.width,
+                height: rect.height,
+                clientWidth: node.clientWidth,
+                scrollWidth: node.scrollWidth,
+                clientHeight: node.clientHeight,
+                scrollHeight: node.scrollHeight,
+              };
+            }));
+            assert(labels.length >= 8, `${name}: expected populated region cards`);
+            const clipped = labels.filter((item) => item.width < 90 || item.scrollWidth > item.clientWidth + 1 || item.scrollHeight > item.clientHeight + 1);
+            assert(clipped.length === 0, `${name}: clipped region labels: ${JSON.stringify(clipped)}`);
+
+            const regions = page.locator('.interpretation-room-region-chips').first();
+            const cards = regions.locator(':scope > a');
+            assert(await cards.count() >= 4, `${name}: too few region cards`);
+            const cardPositions = await cards.evaluateAll((nodes) => nodes.slice(0, 4).map((node) => {
+              const r = node.getBoundingClientRect();
+              return { x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width) };
+            }));
+            assert(cardPositions[0].y === cardPositions[1].y, `${name}: region cards are not two-column: ${JSON.stringify(cardPositions)}`);
+            assert(cardPositions[0].x !== cardPositions[1].x, `${name}: region cards share one column: ${JSON.stringify(cardPositions)}`);
+
+            const overflow = await page.evaluate(() => ({
+              body: document.body.scrollWidth,
+              viewport: window.innerWidth,
+              details: document.querySelector('.v53-technical-more.interpretation-loop-more')?.scrollWidth || 0,
+              detailsClient: document.querySelector('.v53-technical-more.interpretation-loop-more')?.clientWidth || 0,
+            }));
+            assert(overflow.body <= overflow.viewport + 1, `${name}: page horizontal overflow: ${JSON.stringify(overflow)}`);
+            assert(overflow.details <= overflow.detailsClient + 1, `${name}: details horizontal overflow: ${JSON.stringify(overflow)}`);
+
+            fs.mkdirSync('interpretation-v60-audit', { recursive: true });
+            await page.screenshot({ path: `interpretation-v60-audit/${name}.png`, fullPage: true });
+            await page.close();
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            try {
+              await auditViewport(browser, 1440, 900, 'desktop-1440-open');
+              await auditViewport(browser, 1024, 900, 'desktop-1024-open');
+            } finally {
+              await browser.close();
+            }
+            console.log('Desktop Interpretation V60 Audit: PASS');
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+          node .desktop-interpretation-v60-audit.cjs
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-interpretation-v60-${{ github.sha }}
+          path: interpretation-v60-audit/
+          if-no-files-found: error
+          retention-days: 14
