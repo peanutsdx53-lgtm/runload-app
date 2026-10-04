@@ -1,0 +1,59 @@
+/* Desktop Home workspace layout. */
+@media (min-width: 55rem) {
+  .app-shell:not(.app-shell--immersive) .screen--home.screen-layout--home {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+    justify-self: stretch !important;
+    display: block !important;
+    grid-template-columns: none !important;
+  }
+
+  .screen--home .home-desktop-legacy {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+  }
+
+  .screen--home.screen-layout--home > .home-desktop-legacy {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .screen--home .pc-home-heading,
+  .screen--home .pc-home-dashboard,
+  .screen--home .pc-home-overview {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .screen--home .pc-home-heading__action {
+    width: fit-content !important;
+    min-width: 9.5rem !important;
+    max-width: 16rem !important;
+    flex: 0 0 auto;
+  }
+
+  .screen--home .pc-home-dashboard {
+    grid-template-columns: minmax(0, 1.6fr) minmax(20rem, 0.78fr) !important;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .focus-actions .primary {
+    width: fit-content !important;
+    min-width: 14rem !important;
+    max-width: 20rem !important;
+    padding-inline: 1.35rem !important;
+  }
+}
+
+@media (min-width: 80rem) {
+  .screen--home .pc-home-dashboard {
+    grid-template-columns: minmax(0, 1.55fr) minmax(22rem, 0.72fr) !important;
+    gap: 1.35rem !important;
+  }
+
+  .screen--home .pc-home-overview {
+    margin-top: 1.15rem !important;
+  }
+}
