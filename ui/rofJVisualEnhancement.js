@@ -238,10 +238,18 @@ function enhanceResultFatigue() {
   document.querySelectorAll(".pc-result-fatigue").forEach(updatePcResultFatigue);
 }
 
+function enforceDormantRecordOverlay() {
+  if (document.body.classList.contains("record-overlay-open")) return;
+  document.querySelectorAll("[data-record-rof-overlay]").forEach((overlay) => {
+    if (!overlay.hidden) overlay.hidden = true;
+  });
+}
+
 function enhanceAll() {
   enhancementQueued = false;
   document.querySelectorAll(".rof-scale-panel").forEach(enhanceRofScale);
   enhanceResultFatigue();
+  enforceDormantRecordOverlay();
 }
 
 function queueEnhancement() {
