@@ -42,7 +42,7 @@ assert.match(settings, /reopen-onboarding/);
 assert.match(settings, /利用規約/);
 assert.match(settings, /プライバシー/);
 
-const more = read("screens/moreScreen.js");
+const more = read("screens/mobile/moreScreen.js");
 assert.match(more, /screen: "terms"/);
 
 const version = read("ui/appVersionStatus.js").match(/APP_VERSION = "([^"]+)"/)?.[1] || "";

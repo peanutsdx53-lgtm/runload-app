@@ -5,7 +5,7 @@ const read = (path) => fs.readFileSync(new URL(`../${path}`, import.meta.url), "
 
 const followupCss = read("styles/consultation-share-v56.css");
 const historyScreen = read("screens/historyScreen.js");
-const moreScreen = read("screens/moreScreen.js");
+const moreScreen = read("screens/desktop/moreScreen.js");
 
 assert.match(historyScreen, /desktop-history-mode[\s\S]*workspace\.view === "records" \? "active"/);
 assert.match(historyScreen, /self-understanding-history-filter[\s\S]*requestedState === "watching" \? "active"/);

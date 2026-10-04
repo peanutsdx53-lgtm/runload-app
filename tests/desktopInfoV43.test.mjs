@@ -3,7 +3,7 @@ import fs from "node:fs";
 
 const read=(path)=>fs.readFileSync(path,"utf8");
 const css=read("styles/desktop-info-v43.css");
-const more=read("screens/moreScreen.js");
+const more=read("screens/desktop/moreScreen.js");
 const terms=read("screens/termsScreen.js");
 const privacy=read("screens/privacyScreen.js");
 const index=read("index.html");
@@ -16,7 +16,7 @@ assert.match(index,/desktop-info-v43\.css/);
 assert.ok(worker.includes('"./styles/desktop-info-v43.css"'));
 assert.match(more,/このアプリについて/);
 assert.match(more,/設定、共有、サポート、アプリ情報をまとめています。/);
-assert.match(more,/if \(matchesMobileLayout\(\)\) return renderMobileMoreScreen\(\)/);
+assert.doesNotMatch(more,/matchesMobileLayout/);
 assert.match(terms,/terms-section/);
 assert.match(privacy,/screen--privacy/);
 assert.match(css,/@media \(min-width: 55rem\)/);

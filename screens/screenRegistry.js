@@ -17,7 +17,8 @@ import { renderSupportGuidanceScreen } from "./supportGuidanceScreen.js";
 import { renderPrivacyScreen } from "./privacyScreen.js";
 import { renderTermsScreen } from "./termsScreen.js";
 import { renderAboutScreen } from "./aboutScreen.js";
-import { renderMoreScreen } from "./moreScreen.js";
+import { renderMoreScreen as renderDesktopMoreScreen } from "./desktop/moreScreen.js";
+import { renderMoreScreen as renderMobileMoreScreen } from "./mobile/moreScreen.js";
 import { renderSimulationScreen } from "./simulationScreen.js";
 import { renderGpxAnalysisScreen } from "./gpxAnalysisScreen.js";
 import {
@@ -49,13 +50,17 @@ export const SHARED_SCREEN_RENDERERS = Object.freeze({
   plan: renderPlanScreen,
   consultation: renderConsultationScreen,
   reading: renderReadingScreen,
-  more: renderMoreScreen,
   simulation: renderSimulationScreen,
   "gpx-analysis": renderGpxAnalysisScreen,
   settings: renderSettingsScreen,
 });
 
+export const DESKTOP_SCREEN_RENDERERS = Object.freeze({
+  more: renderDesktopMoreScreen,
+});
+
 export const MOBILE_SCREEN_RENDERERS = Object.freeze({
+  more: renderMobileMoreScreen,
   "run-measurement": renderRunMeasurementScreen,
   "location-note": renderLocationNoteScreen,
   "quick-note": renderQuickNoteScreen,
@@ -70,6 +75,6 @@ export const MOBILE_SCREEN_RENDERERS = Object.freeze({
 export function createScreenRenderers({ mobile = false } = {}) {
   return Object.freeze({
     ...SHARED_SCREEN_RENDERERS,
-    ...(mobile ? MOBILE_SCREEN_RENDERERS : {}),
+    ...(mobile ? MOBILE_SCREEN_RENDERERS : DESKTOP_SCREEN_RENDERERS),
   });
 }

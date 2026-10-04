@@ -18,7 +18,7 @@ async function test(id, fn) {
 }
 
 await test('MOBILE-MORE-IS-NOT-A-FEATURE-LAUNCHER', () => {
-  const more = read('screens/moreScreen.js');
+  const more = read('screens/mobile/moreScreen.js');
   assert.ok(more.includes('スマホ版の機能は、ホームのアイコンまたは関連する画面から利用します。'));
   assert.ok(more.includes('ホームに機能を追加'));
   assert.ok(more.includes('ホームで「編集」→「＋」から選択'));
@@ -48,7 +48,7 @@ await test('ACHIEVEMENTS-RETURN-TO-HOME', () => {
 });
 
 await test('MOBILE-MORE-KEEPS-ONLY-APP-INFORMATION', () => {
-  const more = read('screens/moreScreen.js');
+  const more = read('screens/mobile/moreScreen.js');
   for (const route of ['about', 'terms', 'privacy']) assert.ok(more.includes(`screen: "${route}"`));
   assert.ok(!more.includes('const MOBILE_GROUPS'));
   assert.ok(!more.includes('MORE_ORIGIN_SCREENS'));

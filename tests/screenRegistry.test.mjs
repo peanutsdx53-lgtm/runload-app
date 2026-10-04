@@ -18,11 +18,12 @@ const mobileOnly = [
 ];
 
 assert.match(source, /export const SHARED_SCREEN_RENDERERS/);
+assert.match(source, /export const DESKTOP_SCREEN_RENDERERS/);
 assert.match(source, /export const MOBILE_SCREEN_RENDERERS/);
 for (const screen of mobileOnly) {
   assert.ok(source.includes(`\"${screen}\"`) || source.includes(`${screen}:`), `mobile-only screen missing: ${screen}`);
 }
-assert.match(source, /\.\.\.\(mobile \? MOBILE_SCREEN_RENDERERS : \{\}\)/);
+assert.match(source, /\.\.\.\(mobile \? MOBILE_SCREEN_RENDERERS : DESKTOP_SCREEN_RENDERERS\)/);
 assert.match(app, /createScreenRenderers\(\{ mobile: matchesMobileLayout\(\) \}\)/);
 assert.doesNotMatch(app, /renderRunMeasurementScreen|renderLocationNoteScreen|renderAchievementsScreen/);
 assert.ok(worker.includes('"./screens/screenRegistry.js"'));
