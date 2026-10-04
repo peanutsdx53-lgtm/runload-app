@@ -1,0 +1,15 @@
+@media (max-width: 54.99rem) {
+  .screen-layout--history .mobile-history-mode {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .screen-layout--history .selected-action-zone {
+    display: grid;
+    gap: 12px;
+  }
+
+  .screen-layout--history .selected-action-zone > .button--text {
+    margin: 0;
+    justify-self: start;
+  }
+}
