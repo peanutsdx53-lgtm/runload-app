@@ -6,7 +6,7 @@ const worker = fs.readFileSync("service-worker.js", "utf8");
 const css = fs.readFileSync("styles/consultation-share-v56.css", "utf8");
 
 assert.ok(index.includes('./styles/consultation-share-v56.css'));
-assert.ok(index.indexOf('consultation-share-v55.css') < index.indexOf('consultation-share-v56.css'));
+assert.ok(index.indexOf('consultation-share-mobile.css') < index.indexOf('consultation-share-v56.css'));
 assert.ok(worker.includes('./styles/consultation-share-v56.css'));
 assert.match(css, /@media print/);
 assert.match(css, /share-sheet-page[\s\S]*min-height:\s*252mm\s*!important/);
