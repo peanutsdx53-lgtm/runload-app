@@ -3,7 +3,7 @@ import fs from "node:fs";
 
 const editor=fs.readFileSync("screens/courseEditorScreen.js","utf8");
 const library=fs.readFileSync("screens/courseLibraryScreen.js","utf8");
-const gpx=fs.readFileSync("screens/gpxAnalysisScreen.js","utf8");
+const gpx=fs.readFileSync("screens/mobile/gpxAnalysisScreen.js","utf8");
 const interactions=fs.readFileSync("ui/interactions/courseInteractions.js","utf8");
 const css=fs.readFileSync("styles/mobile-course-v16.css","utf8");
 const index=fs.readFileSync("index.html","utf8");
