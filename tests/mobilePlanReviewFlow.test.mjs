@@ -13,7 +13,6 @@ assert.match(plan,/確認中のテーマ/);
 assert.match(plan,/以前に残した確認メモ/);
 assert.match(interactions,/setMobileReview/);
 assert.match(interactions,/scrollIntoView/);
-assert.match(css,/Mobile-only Phase 6/);
 assert.match(css,/\[data-plan-mobile-confirm\]\.is-mobile-review/);
 assert.match(css,/\.plan-mobile-only \{ display: none; \}/);
-console.log("mobileOnlyImprovementPhase6.test.mjs: PASS");
+console.log("mobilePlanReviewFlow.test.mjs: PASS");

@@ -4,7 +4,7 @@ import test from 'node:test';
 
 const read = (path) => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
-test('mobile-only phase 1 improvements stay explicitly gated from desktop contracts', () => {
+test('mobile-only behavior stays explicitly gated from desktop contracts', () => {
   const record = read('screens/recordInputScreen.js');
   const reading = read('screens/readingScreen.js');
   const history = read('screens/historyScreen.js');
