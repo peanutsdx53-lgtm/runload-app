@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { resolveScreenContextNavigation } from '../ui/screenArchitecture.js';
 
-const repair = fs.readFileSync('ui/mobileSettingsHomeRepairV57.js', 'utf8');
+const repair = fs.readFileSync('ui/mobileNavigationPolicy.js', 'utf8');
 const navigationCss = fs.readFileSync('styles/mobile-navigation-unification.css', 'utf8');
 
 function location(query = '') {
