@@ -22,6 +22,11 @@ assert.match(source, /export const DESKTOP_SCREEN_RENDERERS/);
 assert.match(source, /export const MOBILE_SCREEN_RENDERERS/);
 assert.match(source, /"gpx-analysis": renderDesktopGpxAnalysisScreen/);
 assert.match(source, /"gpx-analysis": renderMobileGpxAnalysisScreen/);
+assert.match(source, /"course-library": renderDesktopCourseLibraryScreen/);
+assert.match(source, /"course-library": renderMobileCourseLibraryScreen/);
+assert.ok(worker.includes('"./screens/shared/courseLibraryContext.js"'));
+assert.ok(worker.includes('"./screens/desktop/courseLibraryScreen.js"'));
+assert.ok(worker.includes('"./screens/mobile/courseLibraryScreen.js"'));
 assert.ok(worker.includes('"./screens/desktop/gpxAnalysisScreen.js"'));
 assert.ok(worker.includes('"./screens/mobile/gpxAnalysisScreen.js"'));
 for (const screen of mobileOnly) {
