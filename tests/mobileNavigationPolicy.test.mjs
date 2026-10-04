@@ -58,9 +58,8 @@ function runPolicy({ about = false } = {}) {
   return { location, backTop, backInner, moreNav, guideLinks };
 }
 
-assert.ok(index.includes('mobileHomeInitialLayoutV32.js'));
+assert.ok(!index.includes('mobileHomeInitialLayoutV32.js'));
 assert.ok(index.includes('mobileNavigationPolicy.js'));
-assert.ok(index.indexOf('mobileHomeInitialLayoutV32.js') < index.indexOf('mobileNavigationPolicy.js'));
 assert.ok(index.indexOf('mobileNavigationPolicy.js') < index.indexOf('./app.js'));
 assert.doesNotMatch(script, /localStorage|MIGRATION_KEY|OLD_DEFAULT_APP_SETS|migrateGeneratedHomeLayout/);
 
