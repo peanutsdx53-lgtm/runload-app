@@ -4,7 +4,7 @@ import fs from "node:fs";
 const read=(path)=>fs.readFileSync(path,"utf8");
 const css=read("styles/desktop-information.css");
 const more=read("screens/desktop/moreScreen.js");
-const terms=read("screens/termsScreen.js");
+const terms=read("screens/shared/termsScreen.js");
 const privacy=read("screens/privacyScreen.js");
 const index=read("index.html");
 const worker=read("service-worker.js");
