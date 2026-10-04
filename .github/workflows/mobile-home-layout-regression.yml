@@ -6,6 +6,7 @@ on:
     paths:
       - "screens/homeScreen.js"
       - "ui/mobileHomeExperience.js"
+      - "ui/mobileHomeDefaultLayout.js"
       - "ui/mobileHomePageCapacity.js"
       - "ui/interactions/homeInteractions.js"
       - "ui/interactions/homeGridModel.js"
@@ -20,6 +21,7 @@ on:
     paths:
       - "screens/homeScreen.js"
       - "ui/mobileHomeExperience.js"
+      - "ui/mobileHomeDefaultLayout.js"
       - "ui/mobileHomePageCapacity.js"
       - "ui/interactions/homeInteractions.js"
       - "ui/interactions/homeGridModel.js"
