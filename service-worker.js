@@ -70,6 +70,7 @@ const PRECACHE_URLS = [
   "./screens/recordInputScreen.js",
   "./screens/resultScreen.js",
   "./screens/settingsScreen.js",
+  "./screens/screenRegistry.js",
   "./screens/supportGuidanceScreen.js",
   "./styles/base.css",
   "./styles/components.css",

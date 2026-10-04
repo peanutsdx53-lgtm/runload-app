@@ -28,11 +28,11 @@ await test('PHOTO-MEMO-HOME-ENTRY-USES-EMOJI', () => {
 });
 
 await test('PHOTO-MEMO-HAS-ROUTE-BINDER-AND-HOME-RETURN', () => {
-  const app = read('app.js');
+  const registry = read('screens/screenRegistry.js');
   const binders = read('ui/screenInteractions.js');
   const architecture = read('ui/screenArchitecture.js');
-  assert.ok(app.includes('renderPhotoMemoScreen'));
-  assert.ok(app.includes('"photo-note": renderPhotoMemoScreen'));
+  assert.ok(registry.includes('renderPhotoMemoScreen'));
+  assert.ok(registry.includes('"photo-note": renderPhotoMemoScreen'));
   assert.ok(binders.includes('bindMobilePhotoMemo'));
   assert.ok(binders.includes('"photo-note": bindMobilePhotoMemo'));
   assert.ok(architecture.includes('screen === "photo-note"'));

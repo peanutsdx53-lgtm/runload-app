@@ -86,11 +86,11 @@ await test('MOBILE-HOME-NESTED-LAUNCH-LINK-SUPPRESSES-IOS-LINK-CALLOUT', () => {
 });
 
 await test('MOBILE-QUICK-TOOLS-HAVE-ROUTES-AND-HOME-BACK-NAVIGATION', () => {
-  const app = read('app.js');
+  const registry = read('screens/screenRegistry.js');
   const architecture = read('ui/screenArchitecture.js');
   const binders = read('ui/screenInteractions.js');
   for (const route of ['location-note', 'quick-note', 'gear-note', 'departure-check', 'fuel-note']) {
-    assert.ok(app.includes(`"${route}":`));
+    assert.ok(registry.includes(`"${route}":`));
     assert.ok(binders.includes(`"${route}": bindMobileQuickTool`));
     assert.ok(architecture.includes(`screen === "${route}"`));
   }

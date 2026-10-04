@@ -13,66 +13,10 @@ import { notifyMobileScreenRendered } from "./ui/mobileHomeReturnTransition.js";
 import { bindScreenTutorial } from "./ui/screenTutorial.js";
 import { bindMobileOnboarding, hasAcceptedCurrentTerms, shouldOpenMobileOnboarding, withMobileOnboardingComplete } from "./ui/mobileOnboarding.js";
 import { handleRecordInputRouteChange, resolveRecordInputReturnState } from "./ui/recordInputWorkspace.js";
-import { renderHomeScreen } from "./screens/homeScreen.js";
-import { renderRunMeasurementScreen } from "./screens/runMeasurementScreen.js";
-import { renderRunRouteScreen } from "./screens/runRouteScreen.js";
-import { renderBodyTimelineScreen } from "./screens/bodyTimelineScreen.js";
-import { renderRecordInputScreen } from "./screens/recordInputScreen.js";
-import { renderCourseLibraryScreen } from "./screens/courseLibraryScreen.js";
-import { renderCourseEditorScreen } from "./screens/courseEditorScreen.js";
-import { renderResultScreen } from "./screens/resultScreen.js";
-import { renderBodyPartDetailScreen } from "./screens/bodyPartDetailScreen.js";
-import { renderHistoryScreen } from "./screens/historyScreen.js";
-import { renderPlanScreen } from "./screens/planScreen.js";
-import { renderConsultationScreen } from "./screens/consultationScreen.js";
-import { renderReadingScreen } from "./screens/readingScreen.js";
-import { renderSettingsScreen } from "./screens/settingsScreen.js";
-import { renderInterpretationRoomScreen } from "./screens/interpretationRoomScreen.js";
-import { renderSupportGuidanceScreen } from "./screens/supportGuidanceScreen.js";
-import { renderPrivacyScreen } from "./screens/privacyScreen.js";
-import { renderTermsScreen } from "./screens/termsScreen.js";
-import { renderAboutScreen } from "./screens/aboutScreen.js";
-import { renderMoreScreen } from "./screens/moreScreen.js";
-import { renderSimulationScreen } from "./screens/simulationScreen.js";
-import { renderGpxAnalysisScreen } from "./screens/gpxAnalysisScreen.js";
-import { renderLocationNoteScreen, renderQuickNoteScreen, renderGearNoteScreen, renderDepartureCheckScreen, renderFuelNoteScreen } from "./screens/mobileQuickToolsScreen.js";
-import { renderPhotoMemoScreen } from "./screens/mobilePhotoMemoScreen.js";
-import { renderPaceCalculatorScreen } from "./screens/mobilePaceCalculatorScreen.js";
-import { renderAchievementsScreen } from "./screens/achievementsScreen.js";
+import { createScreenRenderers } from "./screens/screenRegistry.js";
 import { initializeAchievementState } from "./ui/mobileAchievements.js";
 
-const screenRenderers = {
-  home: renderHomeScreen,
-  "run-measurement": renderRunMeasurementScreen,
-  "run-route": renderRunRouteScreen,
-  "body-timeline": renderBodyTimelineScreen,
-  "record-input": renderRecordInputScreen,
-  "course-library": renderCourseLibraryScreen,
-  "course-editor": renderCourseEditorScreen,
-  result: renderResultScreen,
-  "body-part-detail": renderBodyPartDetailScreen,
-  history: renderHistoryScreen,
-  "interpretation-room": renderInterpretationRoomScreen,
-  "support-guidance": renderSupportGuidanceScreen,
-  privacy: renderPrivacyScreen,
-  terms: renderTermsScreen,
-  about: renderAboutScreen,
-  plan: renderPlanScreen,
-  consultation: renderConsultationScreen,
-  reading: renderReadingScreen,
-  more: renderMoreScreen,
-  simulation: renderSimulationScreen,
-  "gpx-analysis": renderGpxAnalysisScreen,
-  settings: renderSettingsScreen,
-  "location-note": renderLocationNoteScreen,
-  "quick-note": renderQuickNoteScreen,
-  "gear-note": renderGearNoteScreen,
-  "departure-check": renderDepartureCheckScreen,
-  "fuel-note": renderFuelNoteScreen,
-  "photo-note": renderPhotoMemoScreen,
-  "pace-tool": renderPaceCalculatorScreen,
-  achievements: renderAchievementsScreen,
-};
+const screenRenderers = createScreenRenderers({ mobile: matchesMobileLayout() });
 
 const appRoot = document.getElementById("app");
 const desktopHeaderRoot = document.getElementById("desktop-header-root");

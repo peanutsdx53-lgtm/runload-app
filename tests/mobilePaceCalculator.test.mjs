@@ -29,11 +29,11 @@ await test('PACE-TOOL-IS-OPTIONAL-EMOJI-HOME-APP', () => {
 });
 
 await test('PACE-TOOL-HAS-ROUTE-BINDER-AND-HOME-NAVIGATION', () => {
-  const app = read('app.js');
+  const registry = read('screens/screenRegistry.js');
   const binders = read('ui/screenInteractions.js');
   const architecture = read('ui/screenArchitecture.js');
-  assert.ok(app.includes('renderPaceCalculatorScreen'));
-  assert.ok(app.includes('"pace-tool": renderPaceCalculatorScreen'));
+  assert.ok(registry.includes('renderPaceCalculatorScreen'));
+  assert.ok(registry.includes('"pace-tool": renderPaceCalculatorScreen'));
   assert.ok(binders.includes('bindMobilePaceCalculator'));
   assert.ok(binders.includes('"pace-tool": bindMobilePaceCalculator'));
   assert.ok(architecture.includes('screen === "pace-tool"'));

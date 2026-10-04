@@ -111,8 +111,8 @@ assert.match(achievementHtml, /NEXT/);
 assert.match(achievementHtml, /進行中|未着手/);
 assert.match(achievementHtml, /達成済み/);
 
-const appSource = fs.readFileSync(new URL("../app.js", import.meta.url), "utf8");
-assert.match(appSource, /about: renderAboutScreen/);
+const screenRegistrySource = fs.readFileSync(new URL("../screens/screenRegistry.js", import.meta.url), "utf8");
+assert.match(screenRegistrySource, /about: renderAboutScreen/);
 const moreSource = fs.readFileSync(new URL("../screens/moreScreen.js", import.meta.url), "utf8");
 assert.match(moreSource, /このアプリについて/);
 const resultSource = fs.readFileSync(new URL("../screens/resultScreen.js", import.meta.url), "utf8");

@@ -6,6 +6,7 @@ const root = path.resolve(new URL("..", import.meta.url).pathname);
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 
 const app = read("app.js");
+const screenRegistry = read("screens/screenRegistry.js");
 const home = read("screens/homeScreen.js");
 const more = read("screens/moreScreen.js");
 const achievements = read("screens/achievementsScreen.js");
@@ -16,7 +17,7 @@ const appVersion = versionMatch?.[1] || "";
 
 assert.match(appVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 assert.ok(sw.includes(`running-record-app-runtime-${appVersion}`));
-assert.match(app, /achievements: renderAchievementsScreen/);
+assert.match(screenRegistry, /achievements: renderAchievementsScreen/);
 assert.doesNotMatch(app, /start: renderStart/);
 assert.match(home, /mobile-home-hub-page--apps/);
 assert.match(home, /mobile-home-hub-page--overview/);

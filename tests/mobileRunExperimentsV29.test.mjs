@@ -56,8 +56,8 @@ const mapSource = fs.readFileSync(new URL("../ui/runMeasurementMap.js", import.m
 assert.match(mapSource, /function setMarker\(point\)/);
 assert.match(mapSource, /setCenter, setMarker, setTrack/);
 
-const appSource = fs.readFileSync(new URL("../app.js", import.meta.url), "utf8");
-assert.match(appSource, /"body-timeline": renderBodyTimelineScreen/);
+const screenRegistrySource = fs.readFileSync(new URL("../screens/screenRegistry.js", import.meta.url), "utf8");
+assert.match(screenRegistrySource, /"body-timeline": renderBodyTimelineScreen/);
 const versionSource = fs.readFileSync(new URL("../ui/appVersionStatus.js", import.meta.url), "utf8");
 const currentVersion = versionSource.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
