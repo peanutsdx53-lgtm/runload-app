@@ -36,3 +36,10 @@ test("narrow A4 preview stacks header metadata without overlap", () => {
   assert.match(css, /share-sheet-head dl\s*\{[\s\S]*width:\s*100%/);
   assert.match(css, /grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/);
 });
+
+test("compact consultation preview follows its own container width", () => {
+  assert.match(css, /container-type:\s*inline-size/);
+  assert.match(css, /@container \(max-width: 32rem\)/);
+  assert.match(css, /share-sheet-head\s*\{[\s\S]*grid-template-columns: minmax\(0, 1fr\)/);
+  assert.match(css, /share-sheet-head dl\s*\{[\s\S]*repeat\(3, minmax\(0, 1fr\)\)/);
+});
