@@ -3,7 +3,7 @@ import fs from "node:fs";
 
 const read = (path) => fs.readFileSync(path, "utf8");
 const css = read("styles/desktop-home-layout.css");
-const home = read("ui/desktopHomeEnhancement.js");
+const home = read("ui/desktopHomeWorkspace.js");
 const screen = read("screens/homeScreen.js");
 const index = read("index.html");
 const worker = read("service-worker.js");
@@ -23,7 +23,7 @@ assert.match(home, /matchesMobileLayout/);
 assert.match(screen, /記録と予定/);
 assert.ok(index.includes('./styles/desktop-home-layout.css'));
 assert.ok(worker.includes('./styles/desktop-home-layout.css'));
-assert.ok(index.includes('./ui/desktopHomeEnhancement.js'));
-assert.ok(worker.includes('./ui/desktopHomeEnhancement.js'));
+assert.ok(index.includes('./ui/desktopHomeWorkspace.js'));
+assert.ok(worker.includes('./ui/desktopHomeWorkspace.js'));
 
 console.log("desktopHomeLayout.test.mjs: PASS");
