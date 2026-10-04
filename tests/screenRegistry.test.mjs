@@ -20,6 +20,8 @@ const mobileOnly = [
 assert.match(source, /export const SHARED_SCREEN_RENDERERS/);
 assert.match(source, /export const DESKTOP_SCREEN_RENDERERS/);
 assert.match(source, /export const MOBILE_SCREEN_RENDERERS/);
+assert.match(source, /more: renderDesktopMoreScreen/);
+assert.doesNotMatch(source, /renderMobileMoreScreen/);
 assert.match(source, /"gpx-analysis": renderDesktopGpxAnalysisScreen/);
 assert.match(source, /"gpx-analysis": renderMobileGpxAnalysisScreen/);
 assert.match(source, /"course-library": renderDesktopCourseLibraryScreen/);
