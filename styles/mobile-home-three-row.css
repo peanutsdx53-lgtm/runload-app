@@ -141,3 +141,16 @@
     user-select: none;
   }
 }
+
+/* Keep the launcher grid below the fixed mobile Home chrome. */
+@media (max-width: 54.99rem) {
+  .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    transform: translateY(72px);
+  }
+}
+
+@media (max-width: 54.99rem) and (max-height: 42rem) {
+  .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    transform: translateY(48px);
+  }
+}
