@@ -22,7 +22,7 @@ assert.ok(
 const escapedVersion = currentVersion.replaceAll(".", "\\.");
 assert.match(serviceWorker, new RegExp(`running-record-app-runtime-${escapedVersion}`));
 assert.match(serviceWorker, /\.\/styles\/desktop-unification-v58\.css/);
-assert.match(serviceWorker, /\.\/ui\/mobileSettingsHomeRepairV57\.js/);
+assert.match(serviceWorker, /\.\/ui\/mobileNavigationPolicy\.js/);
 assert.match(serviceWorker, /fetch\(new Request\(request, \{ cache: "no-store" \}\)\)/);
 
 assert.match(homeEnhancement, /pc-home-accessible-title/);
