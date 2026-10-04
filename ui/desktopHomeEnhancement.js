@@ -10,7 +10,7 @@ function shortcut(href, title, note) {
 function createHeading() {
   const section = document.createElement("section");
   section.className = "pc-home-heading";
-  section.innerHTML = `<div><p class="eyebrow">RUNLOAD</p><h1>ホーム</h1><p>記録、結果、予定を一画面で確認し、次に見る内容を整理します。</p></div><a class="pc-home-heading__action" href="#/record-input">記録を開く <span aria-hidden="true">→</span></a>`;
+  section.innerHTML = `<div><p class="eyebrow">RUNLOAD</p><h1 class="visually-hidden">ホーム</h1><p>記録、結果、予定を一画面で確認し、次に見る内容を整理します。</p></div><a class="pc-home-heading__action" href="#/record-input">記録を開く <span aria-hidden="true">→</span></a>`;
   return section;
 }
 

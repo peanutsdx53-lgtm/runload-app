@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.03.5";
+const CACHE_NAME = "running-record-app-runtime-2026.10.04.1";
 const CACHE_PREFIX = "running-record-app-";
 const PRECACHE_URLS = [
   "./app.js",
@@ -130,6 +130,7 @@ const PRECACHE_URLS = [
   "./styles/desktop-layout-v47.css",
   "./styles/desktop-layout-v48.css",
   "./styles/desktop-layout-v49.css",
+  "./styles/desktop-unification-v58.css",
   "./styles/tokens.css",
   "./styles/run-measurement.css",
   "./ui/mobileAchievements.js",
@@ -142,6 +143,7 @@ const PRECACHE_URLS = [
   "./ui/rofJVisualEnhancement.js",
   "./ui/mobileMeasurementRecordAutofill.js",
   "./ui/mobileHomeInitialLayoutV32.js",
+  "./ui/mobileSettingsHomeRepairV57.js",
   "./ui/mobileWalkJogMeasurementWiring.js",
   "./ui/mobileWalkJogGpsQuality.js",
   "./ui/mobileWalkJogGpsQualityUi.js",
@@ -257,23 +259,15 @@ self.addEventListener("fetch", (event) => {
   if (!PRECACHE_PATHS.has(url.pathname)) return;
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
-      const cached = await cache.match(request, { ignoreSearch: true });
-      const refresh = fetch(new Request(request, { cache: "no-store" }))
-        .then((response) => {
-          if (response.ok && response.type === "basic") {
-            event.waitUntil(cache.put(request, response.clone()));
-          }
-          return response;
-        })
-        .catch(() => null);
-
-      if (cached) {
-        event.waitUntil(refresh);
-        return cached;
+      try {
+        const response = await fetch(new Request(request, { cache: "no-store" }));
+        if (response.ok && response.type === "basic") {
+          event.waitUntil(cache.put(request, response.clone()));
+        }
+        return response;
+      } catch {
+        return (await cache.match(request, { ignoreSearch: true })) || Response.error();
       }
-
-      const response = await refresh;
-      return response || Response.error();
     })
   );
 });
