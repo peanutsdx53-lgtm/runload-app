@@ -54,6 +54,7 @@ jobs:
             const page = await browser.newPage({ viewport: { width, height } });
             await page.goto(`${BASE}/tests/fixtures/v54_snapshot_pc_compare.html`, { waitUntil: 'domcontentloaded' });
             await page.addStyleTag({ url: `${BASE}/styles/desktop-interpretation-v60.css` });
+            await page.evaluate(() => document.body.classList.add('screen--interpretation-room'));
             const details = page.locator('.v53-technical-more.interpretation-loop-more').first();
             await details.evaluate((node) => { node.open = true; });
             await page.waitForTimeout(200);
