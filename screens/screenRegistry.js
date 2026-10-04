@@ -5,7 +5,8 @@ import { renderBodyTimelineScreen } from "./bodyTimelineScreen.js";
 import { renderRecordInputScreen } from "./recordInputScreen.js";
 import { renderCourseLibraryScreen as renderDesktopCourseLibraryScreen } from "./desktop/courseLibraryScreen.js";
 import { renderCourseLibraryScreen as renderMobileCourseLibraryScreen } from "./mobile/courseLibraryScreen.js";
-import { renderCourseEditorScreen } from "./courseEditorScreen.js";
+import { renderCourseEditorScreen as renderDesktopCourseEditorScreen } from "./desktop/courseEditorScreen.js";
+import { renderCourseEditorScreen as renderMobileCourseEditorScreen } from "./mobile/courseEditorScreen.js";
 import { renderResultScreen } from "./resultScreen.js";
 import { renderBodyPartDetailScreen } from "./bodyPartDetailScreen.js";
 import { renderHistoryScreen } from "./historyScreen.js";
@@ -38,7 +39,6 @@ export const SHARED_SCREEN_RENDERERS = Object.freeze({
   "run-route": renderRunRouteScreen,
   "body-timeline": renderBodyTimelineScreen,
   "record-input": renderRecordInputScreen,
-  "course-editor": renderCourseEditorScreen,
   result: renderResultScreen,
   "body-part-detail": renderBodyPartDetailScreen,
   history: renderHistoryScreen,
@@ -56,12 +56,14 @@ export const SHARED_SCREEN_RENDERERS = Object.freeze({
 
 export const DESKTOP_SCREEN_RENDERERS = Object.freeze({
   "course-library": renderDesktopCourseLibraryScreen,
+  "course-editor": renderDesktopCourseEditorScreen,
   more: renderDesktopMoreScreen,
   "gpx-analysis": renderDesktopGpxAnalysisScreen,
 });
 
 export const MOBILE_SCREEN_RENDERERS = Object.freeze({
   "course-library": renderMobileCourseLibraryScreen,
+  "course-editor": renderMobileCourseEditorScreen,
   "gpx-analysis": renderMobileGpxAnalysisScreen,
   "run-measurement": renderRunMeasurementScreen,
   "location-note": renderLocationNoteScreen,
