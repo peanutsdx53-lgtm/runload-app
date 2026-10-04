@@ -24,7 +24,7 @@ assert.match(home, /記録概要/);
 assert.match(home, /renderOverviewAchievements/);
 assert.doesNotMatch(screenRegistry, /renderMobileMoreScreen/);
 assert.equal(fs.existsSync(path.join(root, "screens/mobile/moreScreen.js")), false);
-assert.match(read("ui/mobileSettingsHomeRepairV57.js"), /startsWith\("#\/more"\)/);
+assert.match(read("ui/mobileNavigationPolicy.js"), /startsWith\("#\/more"\)/);
 assert.match(achievements, /記録・予定・休養など、保存された事実を対象/);
 assert.doesNotMatch(home, /今日のRunLoad/);
 assert.doesNotMatch(read("ui/mobileOnboarding.js"), /ホーム\s*\|\s*記録\s*\|\s*測定\s*\|\s*履歴\s*\|\s*その他/);
