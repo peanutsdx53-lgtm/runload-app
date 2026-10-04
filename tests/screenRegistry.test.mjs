@@ -20,6 +20,10 @@ const mobileOnly = [
 assert.match(source, /export const SHARED_SCREEN_RENDERERS/);
 assert.match(source, /export const DESKTOP_SCREEN_RENDERERS/);
 assert.match(source, /export const MOBILE_SCREEN_RENDERERS/);
+assert.match(source, /"gpx-analysis": renderDesktopGpxAnalysisScreen/);
+assert.match(source, /"gpx-analysis": renderMobileGpxAnalysisScreen/);
+assert.ok(worker.includes('"./screens/desktop/gpxAnalysisScreen.js"'));
+assert.ok(worker.includes('"./screens/mobile/gpxAnalysisScreen.js"'));
 for (const screen of mobileOnly) {
   assert.ok(source.includes(`\"${screen}\"`) || source.includes(`${screen}:`), `mobile-only screen missing: ${screen}`);
 }
