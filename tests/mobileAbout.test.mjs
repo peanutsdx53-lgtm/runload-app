@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { renderAboutScreen } from "../screens/aboutScreen.js";
+import { renderAboutScreen } from "../screens/shared/aboutScreen.js";
 
 const read = (path) => fs.readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -27,6 +27,6 @@ const index = read("../index.html");
 assert.match(index, /styles\/mobile-about\.css/);
 const sw = read("../service-worker.js");
 assert.match(sw, /mobile-about\.css/);
-assert.match(sw, /screens\/aboutScreen\.js/);
+assert.match(sw, /screens\/shared\/aboutScreen\.js/);
 
 console.log("mobileAbout.test.mjs: PASS");
