@@ -5,14 +5,15 @@ const index = fs.readFileSync("index.html", "utf8");
 const css = fs.readFileSync("styles/mobile-screenshot-polish-v37.css", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
 const version = fs.readFileSync("ui/appVersionStatus.js", "utf8");
+const appVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 
 assert.ok(index.includes('styles/mobile-screenshot-polish-v37.css'));
 assert.ok(index.indexOf('mobile-screenshot-polish-v36.css') < index.indexOf('mobile-screenshot-polish-v37.css'));
 assert.ok(worker.includes('styles/mobile-screenshot-polish-v35.css'));
 assert.ok(worker.includes('styles/mobile-screenshot-polish-v36.css'));
 assert.ok(worker.includes('styles/mobile-screenshot-polish-v37.css'));
-assert.ok(worker.includes('running-record-app-runtime-2026.10.03.5'));
-assert.ok(version.includes('APP_VERSION = "2026.10.03.5"'));
+assert.match(appVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
+assert.ok(worker.includes(`running-record-app-runtime-${appVersion}`));
 assert.match(css, /self-understanding-history-filter a\s*\{[\s\S]*white-space:\s*nowrap;/);
 assert.match(css, /grid-template-columns:\s*repeat\(3,/);
 assert.match(css, /padding-top:\s*clamp\(8px,\s*calc\(100dvh - 712px\),\s*140px\)/);

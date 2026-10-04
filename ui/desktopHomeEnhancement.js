@@ -7,10 +7,17 @@ function shortcut(href, title, note) {
   return `<a href="${href}"><strong>${title}</strong><span>${note}</span><i aria-hidden="true">›</i></a>`;
 }
 
+function createAccessibleTitle() {
+  const title = document.createElement("h1");
+  title.className = "visually-hidden pc-home-accessible-title";
+  title.textContent = "ホーム";
+  return title;
+}
+
 function createHeading() {
   const section = document.createElement("section");
   section.className = "pc-home-heading";
-  section.innerHTML = `<div><p class="eyebrow">RUNLOAD</p><h1 class="visually-hidden">ホーム</h1><p>記録、結果、予定を一画面で確認し、次に見る内容を整理します。</p></div><a class="pc-home-heading__action" href="#/record-input">記録を開く <span aria-hidden="true">→</span></a>`;
+  section.innerHTML = `<div><p class="eyebrow">RUNLOAD</p><p>記録、結果、予定を一画面で確認し、次に見る内容を整理します。</p></div><a class="pc-home-heading__action" href="#/record-input">記録を開く <span aria-hidden="true">→</span></a>`;
   return section;
 }
 
@@ -34,7 +41,7 @@ function enhanceHome() {
 
   host.dataset.pcHomeEnhanced = "true";
   mobileFocus?.remove();
-  host.prepend(createHeading());
+  host.prepend(createAccessibleTitle(), createHeading());
 
   const dashboard = document.createElement("div");
   dashboard.className = "pc-home-dashboard";
