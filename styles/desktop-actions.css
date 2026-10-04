@@ -1,0 +1,6 @@
+/* Desktop shared action sizing. */
+@media (min-width: 55rem) {
+  .screen :is(.screen-actions, .action-row, .editor-actions) > :is(button, .button) {
+    flex: 0 1 auto;
+  }
+}
