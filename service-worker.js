@@ -140,7 +140,7 @@ const PRECACHE_URLS = [
   "./styles/desktop-actions.css",
   "./styles/desktop-about.css",
   "./styles/desktop-settings.css",
-  "./styles/desktop-unification-v58.css",
+  "./styles/desktop-unification.css",
   "./styles/desktop-interpretation-details.css",
   "./styles/tokens.css",
   "./styles/run-measurement.css",
