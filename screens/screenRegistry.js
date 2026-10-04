@@ -20,7 +20,8 @@ import { renderAboutScreen } from "./aboutScreen.js";
 import { renderMoreScreen as renderDesktopMoreScreen } from "./desktop/moreScreen.js";
 import { renderMoreScreen as renderMobileMoreScreen } from "./mobile/moreScreen.js";
 import { renderSimulationScreen } from "./simulationScreen.js";
-import { renderGpxAnalysisScreen } from "./gpxAnalysisScreen.js";
+import { renderGpxAnalysisScreen as renderDesktopGpxAnalysisScreen } from "./desktop/gpxAnalysisScreen.js";
+import { renderGpxAnalysisScreen as renderMobileGpxAnalysisScreen } from "./mobile/gpxAnalysisScreen.js";
 import {
   renderLocationNoteScreen,
   renderQuickNoteScreen,
@@ -51,16 +52,17 @@ export const SHARED_SCREEN_RENDERERS = Object.freeze({
   consultation: renderConsultationScreen,
   reading: renderReadingScreen,
   simulation: renderSimulationScreen,
-  "gpx-analysis": renderGpxAnalysisScreen,
   settings: renderSettingsScreen,
 });
 
 export const DESKTOP_SCREEN_RENDERERS = Object.freeze({
   more: renderDesktopMoreScreen,
+  "gpx-analysis": renderDesktopGpxAnalysisScreen,
 });
 
 export const MOBILE_SCREEN_RENDERERS = Object.freeze({
   more: renderMobileMoreScreen,
+  "gpx-analysis": renderMobileGpxAnalysisScreen,
   "run-measurement": renderRunMeasurementScreen,
   "location-note": renderLocationNoteScreen,
   "quick-note": renderQuickNoteScreen,
