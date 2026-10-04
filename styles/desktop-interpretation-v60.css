@@ -1,0 +1,343 @@
+/* Desktop interpretation refinement v60.
+ * Improves scanability and reduces vertical length on the PC "今回を見比べる" screen.
+ * Desktop only: smartphone layout and interaction remain unchanged.
+ */
+@media (min-width: 55rem) {
+  /* Technical disclosure: make the relationship to the comparison content obvious. */
+  .screen--interpretation-room .v53-technical-more.interpretation-loop-more {
+    margin-top: 1rem !important;
+    overflow: hidden;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-soft) !important;
+  }
+
+  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > summary {
+    min-height: 4rem;
+    padding: .85rem 1.05rem !important;
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) 2rem;
+    align-items: center;
+    gap: .75rem;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: var(--color-surface) !important;
+    color: var(--color-ink) !important;
+    font-size: 1rem !important;
+    font-weight: 850 !important;
+    line-height: 1.35;
+    list-style: none;
+  }
+
+  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > summary::before {
+    content: "i";
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border-radius: .7rem;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+    font-size: .92rem;
+    font-weight: 900;
+    font-style: normal;
+  }
+
+  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > summary::after {
+    content: "+";
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    justify-self: end;
+    border-radius: 50%;
+    background: var(--color-surface-muted);
+    color: var(--color-accent-strong);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .screen--interpretation-room .v53-technical-more.interpretation-loop-more[open] > summary {
+    background: var(--color-selection-surface) !important;
+    box-shadow: inset 0 -1px 0 var(--color-line);
+  }
+
+  .screen--interpretation-room .v53-technical-more.interpretation-loop-more[open] > summary::after {
+    content: "−";
+    background: var(--color-accent-strong);
+    color: var(--color-on-accent);
+  }
+
+  /* Place region comparison and context side by side on PC. */
+  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > div {
+    margin: 0 !important;
+    padding: 1rem !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(18rem, .72fr);
+    gap: 1rem;
+    align-items: start;
+    background: var(--color-surface-muted);
+  }
+
+  .screen--interpretation-room .interpretation-room-patterns--compact,
+  .screen--interpretation-room .interpretation-room-context--compact {
+    margin: 0 !important;
+    padding: 1rem !important;
+    border-radius: .9rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: none !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-compact-section-head {
+    min-height: 2.5rem;
+    margin-bottom: .55rem;
+  }
+
+  .screen--interpretation-room .interpretation-room-compact-section-head h2 {
+    font-size: 1.2rem !important;
+    line-height: 1.25 !important;
+    letter-spacing: -.015em;
+  }
+
+  /* Region reason groups: larger labels, clearer count, less vertical stacking. */
+  .screen--interpretation-room .interpretation-room-pattern-groups--disclosure {
+    grid-template-columns: minmax(0, 1fr) !important;
+    column-gap: 0 !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact {
+    padding: 0 !important;
+    border-left: 0 !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact > summary {
+    min-height: 3.65rem !important;
+    padding: .65rem .1rem !important;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto 1.5rem !important;
+    gap: .7rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact > summary > span {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact > summary strong {
+    font-size: 1rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact > summary b {
+    padding: .28rem .55rem;
+    border-radius: 999px;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong) !important;
+    font-size: .78rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips {
+    margin: .1rem 0 .75rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .5rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a {
+    min-width: 0 !important;
+    min-height: 4.15rem !important;
+    padding: .65rem .72rem !important;
+    display: grid !important;
+    grid-template-columns: 2.15rem minmax(0, 1fr) auto 1rem !important;
+    align-items: center !important;
+    gap: .6rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .8rem !important;
+    background: var(--color-surface-muted) !important;
+    transition: border-color .14s ease, background-color .14s ease, transform .14s ease;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a:hover {
+    border-color: var(--color-selection-border) !important;
+    background: var(--color-selection-surface) !important;
+    transform: translateY(-1px);
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__marker {
+    width: 2.15rem !important;
+    height: 2.15rem !important;
+    border-radius: .65rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__copy {
+    min-width: 0;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__copy strong {
+    display: block !important;
+    font-size: .94rem !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__copy small {
+    display: block !important;
+    margin-top: .16rem;
+    color: var(--color-muted) !important;
+    font-size: .76rem !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a > b {
+    min-width: 3.3rem;
+    text-align: right;
+    color: var(--color-ink);
+    font-size: 1rem !important;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Context and fatigue: promote changes into readable comparison rows. */
+  .screen--interpretation-room .interpretation-room-context-lines {
+    border-top: 0 !important;
+    gap: .55rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-context-lines > details {
+    overflow: hidden !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .8rem !important;
+    background: var(--color-surface-muted) !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-context-lines > details > summary {
+    min-height: 3.6rem !important;
+    padding: .62rem .7rem !important;
+    grid-template-columns: 2.15rem minmax(0, 1fr) auto 1rem !important;
+    gap: .6rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-context-lines > details > summary > span {
+    width: 2.15rem !important;
+    height: 2.15rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-context-lines > details > summary strong {
+    font-size: .98rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-context-lines > details > summary b {
+    color: var(--color-accent-strong) !important;
+    font-size: .82rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-context-rows {
+    margin: 0 !important;
+    padding: 0 .65rem .65rem !important;
+    gap: .45rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-context-rows > div {
+    min-height: 3.4rem !important;
+    padding: .55rem .65rem !important;
+    border: 1px solid var(--color-border-subtle);
+    background: var(--color-surface) !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-context-rows small {
+    font-size: .76rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-context-rows strong {
+    font-size: .92rem !important;
+  }
+
+  .screen--interpretation-room .context-values {
+    font-size: .84rem !important;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .screen--interpretation-room .interpretation-room-fatigue-inline {
+    margin: 0 !important;
+    padding: .7rem !important;
+    min-height: 4rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+    gap: .55rem !important;
+    align-items: center;
+    border-radius: 0 !important;
+    border-top: 1px solid var(--color-line);
+    background: var(--color-surface) !important;
+    color: var(--color-muted);
+    font-size: .8rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-fatigue-inline > span {
+    min-height: 2.7rem;
+    padding: .5rem .58rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    border-radius: .65rem;
+    background: var(--color-surface-muted);
+  }
+
+  .screen--interpretation-room .interpretation-room-fatigue-inline b {
+    color: var(--color-ink);
+    font-size: .95rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .screen--interpretation-room .interpretation-room-fatigue-inline > i {
+    color: var(--color-muted);
+    font-size: 1rem;
+    font-style: normal;
+  }
+
+  .screen--interpretation-room .interpretation-room-fatigue-inline > strong {
+    min-width: 3rem;
+    margin-left: 0 !important;
+    padding: .42rem .55rem;
+    border-radius: .6rem;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong) !important;
+    text-align: center;
+    font-size: .9rem;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* At the narrow edge of PC mode, keep both sections compact without clipping. */
+@media (min-width: 55rem) and (max-width: 64rem) {
+  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > div {
+    grid-template-columns: minmax(0, 1.35fr) minmax(16.5rem, .75fr);
+    gap: .75rem;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a {
+    grid-template-columns: 1.9rem minmax(0, 1fr) auto !important;
+    gap: .45rem !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a > i {
+    display: none !important;
+  }
+
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .region-chip__marker {
+    width: 1.9rem !important;
+    height: 1.9rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen--interpretation-room .interpretation-room-pattern-group--compact .interpretation-room-region-chips > a {
+    transition: none !important;
+  }
+}
