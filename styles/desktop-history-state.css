@@ -1,0 +1,14 @@
+@media (min-width: 55rem) {
+  .screen--history .desktop-history-mode a.active,
+  .screen--history .self-understanding-history-filter a.active {
+    border-color: var(--color-accent-strong) !important;
+    background: var(--color-accent-strong) !important;
+    color: var(--color-on-accent) !important;
+    box-shadow: 0 .16rem .5rem color-mix(in srgb, var(--color-ink) 10%, transparent) !important;
+  }
+
+  .screen--history .self-understanding-history-filter a.active span {
+    background: color-mix(in srgb, var(--color-on-accent) 18%, transparent) !important;
+    color: var(--color-on-accent) !important;
+  }
+}
