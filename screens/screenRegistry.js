@@ -18,7 +18,7 @@ import { renderInterpretationRoomScreen } from "./interpretationRoomScreen.js";
 import { renderSupportGuidanceScreen } from "./shared/supportGuidanceScreen.js";
 import { renderPrivacyScreen } from "./shared/privacyScreen.js";
 import { renderTermsScreen } from "./shared/termsScreen.js";
-import { renderAboutScreen } from "./aboutScreen.js";
+import { renderAboutScreen } from "./shared/aboutScreen.js";
 import { renderMoreScreen as renderDesktopMoreScreen } from "./desktop/moreScreen.js";
 import { renderSimulationScreen } from "./simulationScreen.js";
 import { renderGpxAnalysisScreen as renderDesktopGpxAnalysisScreen } from "./desktop/gpxAnalysisScreen.js";
