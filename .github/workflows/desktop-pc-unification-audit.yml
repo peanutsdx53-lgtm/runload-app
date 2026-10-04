@@ -14,7 +14,7 @@ on:
       - "screens/consultationScreen.js"
       - "screens/privacyScreen.js"
       - "screens/termsScreen.js"
-      - "tests/desktopUnificationV59.test.mjs"
+      - "tests/desktopUnification.test.mjs"
       - ".github/workflows/desktop-pc-unification-audit.yml"
   workflow_dispatch:
 
@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: "22"
       - name: Static wiring regression
-        run: node tests/desktopUnificationV59.test.mjs
+        run: node tests/desktopUnification.test.mjs
       - name: Install Playwright and Chromium
         run: |
           npm install --no-save playwright@1.55.0
