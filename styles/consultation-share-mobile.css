@@ -49,3 +49,42 @@
     line-height: 1.45;
   }
 }
+
+.screen--consultation[data-share-prep] .share-sheet-page {
+  container-type: inline-size;
+}
+
+@container (max-width: 32rem) {
+  .screen--consultation[data-share-prep] .share-sheet-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 9px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head > div:first-child {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head h1 {
+    white-space: normal;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dl {
+    width: 100%;
+    max-width: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dl div {
+    min-width: 0;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dd {
+    overflow-wrap: normal;
+    white-space: nowrap;
+    font-size: .6rem;
+  }
+}
