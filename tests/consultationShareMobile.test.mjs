@@ -30,7 +30,7 @@ test("clipboard falls back when Clipboard API rejects", () => {
 });
 
 test("narrow A4 preview stacks header metadata without overlap", () => {
-  assert.ok(index.indexOf("consultation-share-v54.css") < index.indexOf("consultation-share-mobile.css"));
+  assert.ok(index.indexOf("consultation-share.css") < index.indexOf("consultation-share-mobile.css"));
   assert.match(css, /max-width:\s*35rem/);
   assert.match(css, /share-sheet-head\s*\{[\s\S]*display:\s*grid/);
   assert.match(css, /share-sheet-head dl\s*\{[\s\S]*width:\s*100%/);
