@@ -8,7 +8,7 @@ const recordCss = fs.readFileSync("styles/mobile-usability.css", "utf8");
 const rof = fs.readFileSync("ui/rofJPresentation.js", "utf8");
 const rofCss = fs.readFileSync("styles/rof-j-visual.css", "utf8");
 const result = fs.readFileSync("screens/resultScreen.js", "utf8");
-const runLabCss = fs.readFileSync("styles/mobile-run-experiments.css", "utf8");
+const runLabCss = fs.readFileSync("styles/mobile-run-lab.css", "utf8");
 const version = fs.readFileSync("ui/appVersionStatus.js", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
 
@@ -56,7 +56,8 @@ test("FATIGUE-GUIDE-MATCHES-HORIZONTAL-SLIDER-AND-HIDES-FORMAL-NAME-BY-DEFAULT",
 test("RESULT-REMOVES-DUPLICATE-MOBILE-INTRO-AND-COLLAPSES-RUN-LAB", () => {
   assert.ok(result.includes('${capsule ? "" : `<section class="intro">'));
   assert.ok(result.includes('<details class="mobile-run-lab">'));
-  assert.ok(runLabCss.includes("collapsed by default"));
+  assert.ok(runLabCss.includes("details.mobile-run-lab"));
+  assert.ok(runLabCss.includes("details.mobile-run-lab[open]"));
   assert.ok(result.indexOf('renderRegional(regionalV2ResultRecord') < result.lastIndexOf('${runLab}${routeLink}'));
   assert.ok(result.includes("見るポイント"));
 });
