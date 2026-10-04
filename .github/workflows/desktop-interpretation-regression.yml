@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "styles/desktop-interpretation-v60.css"
+      - "styles/desktop-interpretation-details.css"
       - "ui/interpretationRoomPresentation.js"
       - "tests/fixtures/desktop-interpretation-compare.html"
       - ".github/workflows/desktop-interpretation-regression.yml"
@@ -53,7 +53,7 @@ jobs:
           async function auditViewport(browser, width, height, name) {
             const page = await browser.newPage({ viewport: { width, height } });
             await page.goto(`${BASE}/tests/fixtures/desktop-interpretation-compare.html`, { waitUntil: 'domcontentloaded' });
-            await page.addStyleTag({ url: `${BASE}/styles/desktop-interpretation-v60.css` });
+            await page.addStyleTag({ url: `${BASE}/styles/desktop-interpretation-details.css` });
             await page.evaluate(() => document.body.classList.add('screen--interpretation-room'));
             const details = page.locator('.v53-technical-more.interpretation-loop-more').first();
             await details.evaluate((node) => { node.open = true; });
