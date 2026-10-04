@@ -301,7 +301,35 @@ function renderPcFatigue(snapshot) {
   return `<section class="pc-result-fatigue" aria-label="運動前後の疲労度"><header><div><small>FATIGUE</small><h3>運動前後の疲労度</h3></div></header><div class="pc-fatigue-journey"><div class="pc-fatigue-node is-pre"><small>運動前</small><strong>${finite(snapshot.pre) ? escapeHtml(fmt(snapshot.pre,0)) : "—"}</strong></div><div class="pc-fatigue-bridge"><span></span><div><small>変化</small><strong>${finite(snapshot.delta) ? escapeHtml(signed(snapshot.delta,0)) : "—"}</strong></div><i>→</i></div><div class="pc-fatigue-node is-post"><small>運動後</small><strong>${finite(snapshot.post) ? escapeHtml(fmt(snapshot.post,0)) : "—"}</strong></div></div><div class="pc-fatigue-scale"><span class="pc-fatigue-scale__range" style="--pre:${prePos}%;--post:${postPos}%"></span>${finite(snapshot.pre) ? `<i class="pc-fatigue-scale__point is-pre" style="left:${prePos}%"><b>前</b></i>` : ""}${finite(snapshot.post) ? `<i class="pc-fatigue-scale__point is-post" style="left:${postPos}%"><b>後</b></i>` : ""}</div><div class="pc-fatigue-scale__axis"><span>0</span><span>5</span><span>10</span></div>${descriptor ? `<p>${escapeHtml(descriptor)}</p>` : ""}</section>`;
 }
 
+function renderPcRestResultConsole({ record, feedback = null }) {
+  const recordTime = formatLocalTime(record.createdAt);
+  const memo = String(record?.reflectionContext?.postRunReflection || "").trim();
+  const observations = Array.isArray(feedback?.bodyAreaObservations)
+    ? feedback.bodyAreaObservations.filter((item) => Number(item?.intensity || 0) >= 1)
+    : [];
+  const observationLabel = observations.length ? `${observations.length}件` : "なし";
+  return `<section class="pc-result-console pc-result-console--rest" aria-label="休養記録の結果">
+    <header class="pc-result-summary pc-result-summary--rail pc-rest-result-summary">
+      <div class="pc-result-session">
+        <div class="pc-result-date"><small>記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong>${recordTime ? `<span>記録時刻 ${escapeHtml(recordTime)}</span>` : ""}</div>
+        <div class="pc-result-run-facts"><span class="pc-rest-result-tag"><b>REST</b> 休養</span></div>
+      </div>
+    </header>
+    <section class="pc-rest-result-card">
+      <div class="pc-rest-result-card__main"><small>REST RECORD</small><h2>休養日の記録</h2><p>${memo ? escapeHtml(memo) : "メモなし"}</p></div>
+      <dl class="pc-rest-result-facts">
+        <div><dt>身体の記録</dt><dd>${escapeHtml(observationLabel)}</dd></div>
+      </dl>
+    </section>
+    <nav class="pc-result-next" aria-label="休養記録から次へ">
+      <a class="pc-result-next__primary" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=result"><span><small>NEXT</small><strong>今回を見比べる</strong></span><i>›</i></a>
+      <a href="#/history?view=records&recordId=${encodeURIComponent(record.id)}"><span><small>HISTORY</small><strong>履歴を見る</strong></span><i>›</i></a>
+    </nav>
+  </section>`;
+}
+
 function renderPcResultConsole({ services, record, resultRecord, allExperiences, feedback = null, savedInterpretation = null }) {
+  if (record.activityType === "rest") return renderPcRestResultConsole({ record, feedback });
   if (!modelCurrent(resultRecord) || record.activityType !== "run") return "";
   const infos = regionRows(resultRecord).map((row, index) => rowInfo(resultRecord, allExperiences, row, index));
   const availableCount = infos.filter((info) => finite(info.row.value)).length;

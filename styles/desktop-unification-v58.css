@@ -1,0 +1,1069 @@
+/* PC-only consolidation pass. Smartphone presentation remains untouched. */
+@media (min-width: 55rem) {
+  /* Global desktop header: one screen title, one back control, one utility area. */
+  #desktop-header-root > .app-header--desktop {
+    display: grid !important;
+    grid-template-columns: minmax(10rem, 1fr) auto minmax(10rem, 1fr) !important;
+    align-items: center !important;
+    gap: 1rem !important;
+  }
+
+  #desktop-header-root .app-header__leading {
+    min-width: 0;
+    justify-self: start;
+    display: flex;
+    align-items: center;
+  }
+
+  #desktop-header-root .app-header__brand {
+    justify-self: center;
+    margin: 0 !important;
+    white-space: nowrap;
+  }
+
+  #desktop-header-root .app-header__actions {
+    justify-self: end;
+    margin-left: 0 !important;
+  }
+
+  #desktop-header-root .pc-global-back {
+    width: fit-content;
+    min-width: 0;
+    min-height: 2.65rem;
+    padding: 0 .85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    border: 1px solid var(--color-line);
+    border-radius: .78rem;
+    background: var(--color-surface);
+    color: var(--color-accent-strong);
+    font-size: .84rem;
+    font-weight: 850;
+    line-height: 1;
+    text-decoration: none;
+    box-shadow: 0 .18rem .6rem color-mix(in srgb, var(--color-ink) 5%, transparent);
+  }
+
+  #desktop-header-root .pc-global-back:hover,
+  #desktop-header-root .pc-global-back:focus-visible {
+    border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-line));
+    background: var(--color-selection-surface);
+  }
+
+  #desktop-header-root .app-header__back-placeholder { width: 1px; height: 1px; }
+
+  /* The global header already names the screen. Remove duplicate screen titles/intros on PC. */
+  .screen--history > .page-head > div,
+  .screen--plan .secondary-derived-body > .page-head > div,
+  .secondary-derived-body > .head,
+  .screen--course-library .course-derived-body > .head.clean-head > div,
+  .screen--gpx-analysis .course-derived-body > .compact-intro,
+  .screen--course-editor .course-derived-body > .eyebrow,
+  .screen--course-editor .course-derived-body > h1,
+  .screen--course-editor .course-derived-body > h1 + p,
+  .screen--more.screen-layout--more > .head {
+    display: none !important;
+  }
+
+  /* Course library keeps its creation action while removing the repeated title copy. */
+  .screen--course-library .course-derived-body > .head.clean-head {
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  /* One derived-screen frame. The page behind remains visible, blurred and never clips a side. */
+  body.secondary-derived-open::before,
+  body.course-derived-open::before {
+    content: "";
+    position: fixed;
+    inset: 4.75rem 0 0;
+    z-index: 60;
+    background: color-mix(in srgb, var(--color-paper) 28%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+  }
+
+  .secondary-derived-screen {
+    top: 5.65rem !important;
+    right: auto !important;
+    bottom: 1rem !important;
+    left: 50% !important;
+    width: min(72rem, calc(100vw - 3rem)) !important;
+    max-width: min(72rem, calc(100vw - 3rem)) !important;
+    height: auto !important;
+    max-height: calc(100dvh - 6.65rem) !important;
+    margin: 0 !important;
+    transform: translateX(-50%) !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1.2rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-dialog) !important;
+  }
+
+  .secondary-derived-head {
+    display: none !important;
+  }
+
+  .secondary-derived-body {
+    min-height: 0 !important;
+    padding: 1.15rem 1.3rem 1.4rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .course-derived-screen {
+    position: fixed !important;
+    inset: 4.75rem 0 0 !important;
+    z-index: 70 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: calc(100dvh - 4.75rem) !important;
+    margin: 0 !important;
+    padding: .9rem 1.5rem 1rem !important;
+    display: grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
+    transform: none !important;
+    background: transparent !important;
+  }
+
+  .course-derived-frame {
+    width: min(74rem, calc(100vw - 3rem)) !important;
+    max-width: min(74rem, calc(100vw - 3rem)) !important;
+    height: min(100%, 48rem) !important;
+    max-height: calc(100dvh - 6.65rem) !important;
+    margin: 0 auto !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1.2rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-dialog) !important;
+  }
+
+  .course-derived-head { display: none !important; }
+
+  .course-derived-body {
+    min-height: 0 !important;
+    padding: 1.2rem 1.35rem 1.45rem !important;
+  }
+
+  /* Shared control grammar. */
+  :is(
+    .button,
+    .primary,
+    .secondary,
+    .save,
+    .primary-action,
+    .route-button,
+    .file-button,
+    .screen-actions > a,
+    .screen-actions > button,
+    .action-row > a,
+    .action-row > button,
+    .action-row > label
+  ) {
+    min-height: 2.65rem !important;
+    padding: .58rem .9rem !important;
+    border-radius: .78rem !important;
+    font-size: .86rem !important;
+    font-weight: 850 !important;
+    line-height: 1.2 !important;
+  }
+
+  :is(.primary, .save, .primary-action, .button--primary) {
+    border: 1px solid var(--color-accent-strong) !important;
+    background: var(--color-accent-strong) !important;
+    color: var(--color-on-accent) !important;
+  }
+
+  :is(.secondary, .button--secondary, .button--text) {
+    border: 1px solid var(--color-line) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-accent-strong) !important;
+  }
+
+  /* Shared segmented-selection grammar: Run/Rest and equivalent selectors. */
+  :is(
+    .activity-toggle,
+    .seg,
+    .type-toggle,
+    .display-toggle,
+    .view-toggle,
+    .sheet-tabs,
+    .mode,
+    .segment,
+    .pc-summary-controls > div
+  ) {
+    gap: .35rem !important;
+    padding: .3rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .85rem !important;
+    background: var(--color-surface-muted) !important;
+  }
+
+  :is(
+    .seg button,
+    .type-toggle button,
+    .display-toggle button,
+    .view-toggle button,
+    .sheet-tabs button,
+    .mode button,
+    .segment button,
+    .pc-summary-controls button
+  ),
+  .activity-toggle span {
+    min-height: 2.5rem !important;
+    padding: .5rem .8rem !important;
+    border: 1px solid transparent !important;
+    border-radius: .62rem !important;
+    background: transparent !important;
+    color: var(--color-muted) !important;
+    font-size: .84rem !important;
+    font-weight: 850 !important;
+    box-shadow: none !important;
+  }
+
+  :is(
+    .seg button.active,
+    .type-toggle button.active,
+    .display-toggle button.active,
+    .view-toggle button.active,
+    .sheet-tabs button.active,
+    .mode button.active,
+    .segment button.active,
+    .pc-summary-controls button.is-active
+  ),
+  .activity-toggle input:checked + span {
+    border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-line)) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-accent-strong) !important;
+    box-shadow: 0 .16rem .5rem color-mix(in srgb, var(--color-ink) 6%, transparent) !important;
+  }
+
+  /* Compact low-information blocks instead of stretching them across the canvas. */
+  :is(.rest-note, .compact-boundary, .notice, .warning) {
+    min-height: 0 !important;
+    padding: .7rem .85rem !important;
+    border-radius: .8rem !important;
+  }
+
+  .screen--record-input .rest-note span { display: none !important; }
+  .screen--course-library .boundary { display: none !important; }
+  .screen--plan .details-body > .note { display: none !important; }
+  .screen--settings .disclosure-body .boundary + .fields small { display: none !important; }
+
+  .screen--history .empty-records,
+  .screen--consultation .consultation-empty-state,
+  .screen--settings .settings-empty-state {
+    min-height: 0 !important;
+  }
+
+  /* Rest result: real PC content instead of an empty result page. */
+  .screen--result .pc-result-console--rest {
+    width: min(100%, 72rem) !important;
+    gap: .9rem !important;
+  }
+
+  .pc-rest-result-summary {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+  }
+
+  .pc-rest-result-tag b { color: var(--color-accent-strong) !important; }
+
+  .pc-rest-result-status {
+    min-width: 13rem;
+    padding: .65rem .85rem;
+    display: grid;
+    gap: .2rem;
+    border: 1px solid var(--color-line);
+    border-radius: .8rem;
+    background: var(--color-surface);
+  }
+
+  .pc-rest-result-status small,
+  .pc-rest-result-card__main > small {
+    color: var(--color-accent);
+    font-size: .72rem;
+    font-weight: 900;
+    letter-spacing: .1em;
+  }
+
+  .pc-rest-result-status strong { font-size: .9rem; }
+
+  .pc-rest-result-card {
+    min-height: 17rem;
+    padding: 1.4rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(18rem, .75fr);
+    gap: 1.3rem;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: 1.1rem;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .pc-rest-result-card__main h2 {
+    margin: .25rem 0 .55rem;
+    font-size: 1.55rem;
+  }
+
+  .pc-rest-result-card__main p {
+    max-width: 42rem;
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.65;
+  }
+
+  .pc-rest-result-facts {
+    margin: 0;
+    display: grid;
+    gap: .55rem;
+  }
+
+  .pc-rest-result-facts > div {
+    min-height: 3.5rem;
+    padding: .72rem .85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: .8rem;
+    background: var(--color-surface-muted);
+  }
+
+  .pc-rest-result-facts dt { color: var(--color-muted); font-size: .78rem; font-weight: 800; }
+  .pc-rest-result-facts dd { margin: 0; color: var(--color-ink); font-weight: 900; }
+}
+
+@media (min-width: 55rem) and (max-width: 79.99rem) {
+  .secondary-derived-screen { width: min(66rem, calc(100vw - 2rem)) !important; }
+  .course-derived-frame { width: min(66rem, calc(100vw - 2rem)) !important; }
+}
+
+/* V58 audit corrections: compact sparse areas and make the global header authoritative. */
+@media (min-width: 55rem) {
+  /* PC no longer needs a duplicate "More" primary destination; its functions live in the header menu. */
+  .primary-navigation__link[data-navigation-screen="more"] {
+    display: none !important;
+  }
+
+  /* Empty/new-user home state should occupy only the space its content needs. */
+  .screen--home .pc-home-dashboard {
+    align-items: start !important;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc,
+  .screen--home .pc-home-rail {
+    min-height: 20rem !important;
+    height: 20rem !important;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .marker {
+    min-height: 7rem !important;
+  }
+
+  /* Higher-specificity legacy course rules otherwise re-show the duplicate internal top bar. */
+  .screen--course-library.screen-layout--course .course-derived-head,
+  .screen--gpx-analysis.screen-layout--gpx .course-derived-head,
+  .screen--course-editor.screen-layout--course .course-derived-head,
+  .screen--course-editor.screen-layout--course .editor-head.course-derived-head {
+    display: none !important;
+  }
+
+  /* Meta implementation copy is not part of the PC interface. */
+  .screen--more.screen-layout--more > .head,
+  .run-launch__lead,
+  .run-launch__choice--app > :is(small, span) {
+    display: none !important;
+  }
+}
+
+@media (min-width: 55rem) {
+  /* Derived panels use the viewport center rather than the desktop rail as their visual anchor. */
+  .secondary-derived-screen {
+    top: calc(4.75rem + (100dvh - 4.75rem) / 2) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: 50% !important;
+    height: auto !important;
+    max-height: calc(100dvh - 6.65rem) !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .course-derived-frame {
+    height: auto !important;
+    max-height: calc(100dvh - 6.65rem) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .course-derived-body {
+    flex: 0 1 auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  /* Rest mode already has a clear state chip; remove the duplicated explanatory block. */
+  .screen--record-input .rest-note {
+    display: none !important;
+  }
+
+  /* Version/reset actions stay visible; implementation-detail explanation is secondary clutter on PC. */
+  .screen--settings [data-app-update-panel] .boundary > span,
+  .screen--settings [data-app-update-panel] > .note {
+    display: none !important;
+  }
+}
+
+@media (min-width: 55rem) {
+  /* Course subflows use the same centered, single-panel chrome as other derived screens. */
+  .screen--course-library.screen-layout--course.course-derived-screen,
+  .screen--course-editor.screen-layout--course.course-derived-screen,
+  .screen--gpx-analysis.screen-layout--gpx.course-derived-screen {
+    place-items: center !important;
+  }
+
+  .screen--course-library.screen-layout--course .course-derived-frame--library,
+  .screen--course-editor.screen-layout--course .course-derived-frame,
+  .screen--gpx-analysis.screen-layout--gpx .course-derived-frame {
+    width: min(74rem, calc(100vw - 3rem)) !important;
+    max-width: min(74rem, calc(100vw - 3rem)) !important;
+    height: auto !important;
+    max-height: calc(100dvh - 6.65rem) !important;
+    align-self: center !important;
+    display: block !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .screen--course-library.screen-layout--course .course-derived-body,
+  .screen--course-editor.screen-layout--course .course-derived-body,
+  .screen--gpx-analysis.screen-layout--gpx .course-derived-body {
+    width: 100% !important;
+    max-height: calc(100dvh - 6.65rem) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1.2rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-dialog) !important;
+  }
+}
+
+@media (min-width: 55rem) {
+  .secondary-derived-screen {
+    position: fixed !important;
+    z-index: 70 !important;
+  }
+
+  .screen--course-editor.screen-layout--course .editor.course-derived-frame {
+    position: relative !important;
+    inset: auto !important;
+    width: min(74rem, calc(100vw - 3rem)) !important;
+    max-width: min(74rem, calc(100vw - 3rem)) !important;
+    height: auto !important;
+    max-height: calc(100dvh - 6.65rem) !important;
+    min-height: 0 !important;
+    align-self: center !important;
+    display: block !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+}
+
+/* V58 continuation: remove remaining PC-only duplication without touching smartphone layout. */
+@media (min-width: 55rem) {
+  /* Context navigation belongs to the global header on PC. */
+  .screen--body-part-detail .detail-topbar,
+  .screen--simulation > .back-link {
+    display: none !important;
+  }
+
+  /* The header already owns screen naming. Keep only task-specific content inside the page. */
+  .screen--run-route .run-route-view__heading > div,
+  .screen--run-route .run-route-view--empty > .eyebrow,
+  .screen--run-route .run-route-view--empty > h1,
+  .screen--body-timeline .body-timeline-hero,
+  .screen--simulation > .condition-compare-hero {
+    display: none !important;
+  }
+
+  /* In the interpretation room, retain the useful stage guide but remove the repeated screen intro. */
+  .v53-room--pc .v53-head > div:first-child {
+    display: none !important;
+  }
+
+  .v53-room--pc .v53-head {
+    justify-content: flex-end !important;
+    margin-bottom: .8rem !important;
+  }
+
+  .v53-room--pc.v53-room--empty .v53-head {
+    display: none !important;
+  }
+
+  /* Keep only explanations that change the user's next action. */
+  .screen--run-route .run-route-view__note,
+  .screen--body-part-detail .trend-card > p,
+  .screen--simulation .condition-compare-section-head > p,
+  .screen--simulation .condition-compare-condition__lead {
+    display: none !important;
+  }
+
+  /* Sparse content should not force card-like areas to remain tall. */
+  .screen--home .pc-home-dashboard > .home-focus--pc,
+  .screen--home .pc-home-rail {
+    min-height: 17rem !important;
+    height: 17rem !important;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .marker {
+    min-height: 5.8rem !important;
+  }
+
+  .pc-rest-result-card {
+    min-height: 13.5rem !important;
+  }
+
+  /* Course selectors use the same segmented-control grammar as run/rest. */
+  .screen--course-editor .mode {
+    gap: .35rem !important;
+    padding: .3rem !important;
+    overflow: visible !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .85rem !important;
+    background: var(--color-surface-muted) !important;
+  }
+
+  .screen--course-editor .mode button,
+  .screen--course-editor .mode button:last-child {
+    min-height: 2.5rem !important;
+    padding: .5rem .8rem !important;
+    border: 1px solid transparent !important;
+    border-radius: .62rem !important;
+    background: transparent !important;
+    color: var(--color-muted) !important;
+    font-size: .84rem !important;
+    font-weight: 850 !important;
+    box-shadow: none !important;
+  }
+
+  .screen--course-editor .mode button.active,
+  .screen--course-editor .mode button[aria-pressed="true"] {
+    border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-line)) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-accent-strong) !important;
+    box-shadow: 0 .16rem .5rem color-mix(in srgb, var(--color-ink) 6%, transparent) !important;
+  }
+
+  /* Remaining true buttons follow the same size/radius hierarchy. */
+  :is(
+    .secondary-action,
+    .v53-primary,
+    .v53-secondary,
+    .v53-text-button,
+    .condition-compare-reset,
+    .add-section,
+    .run-route-replay__head button
+  ) {
+    min-height: 2.65rem !important;
+    padding: .58rem .9rem !important;
+    border-radius: .78rem !important;
+    font-size: .86rem !important;
+    font-weight: 850 !important;
+    line-height: 1.2 !important;
+  }
+
+  :is(.v53-primary) {
+    border: 1px solid var(--color-accent-strong) !important;
+    background: var(--color-accent-strong) !important;
+    color: var(--color-on-accent) !important;
+  }
+
+  :is(.v53-secondary, .v53-text-button, .secondary-action, .condition-compare-reset) {
+    border: 1px solid var(--color-line) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-accent-strong) !important;
+  }
+
+  /* The immersive PC header uses the same back-button visual as every other PC screen. */
+  .interpretation-room-header__back {
+    width: fit-content !important;
+    min-height: 2.65rem !important;
+    padding: 0 .85rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: .45rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .78rem !important;
+    background: var(--color-surface) !important;
+    color: var(--color-accent-strong) !important;
+    font-size: .84rem !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    text-decoration: none !important;
+    box-shadow: 0 .18rem .6rem color-mix(in srgb, var(--color-ink) 5%, transparent) !important;
+  }
+
+  /* Centered derived panels must always fit completely within the viewport. */
+  .secondary-derived-screen,
+  .course-derived-screen,
+  .course-derived-frame,
+  .screen--course-library.screen-layout--course .course-derived-body,
+  .screen--course-editor.screen-layout--course .course-derived-body,
+  .screen--gpx-analysis.screen-layout--gpx .course-derived-body {
+    box-sizing: border-box !important;
+  }
+}
+
+/* PC rest mode: hidden run-only controls must not be revived by desktop layout rules. */
+@media (min-width: 55rem) {
+  .screen--record-input.screen-layout--record .fatigue-inline[hidden],
+  .screen--record-input.screen-layout--record [data-record-rof-overlay][hidden] {
+    display: none !important;
+  }
+}
+
+@media (min-width: 55rem) {
+  /* Draft-resume state is preserved functionally, but the PC screen does not need a persistent meta banner. */
+  .screen--record-input .parity-record-banner {
+    display: none !important;
+  }
+}
+
+/* V58 final cleanup pass: PC-only information density and caution-copy reduction. */
+@media (min-width: 55rem) {
+  /* Low-information rest result uses only the space required by its content. */
+  .screen--result .pc-result-console--rest {
+    gap: .75rem !important;
+  }
+
+  .pc-rest-result-summary {
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-height: 0 !important;
+    padding-block: .8rem !important;
+  }
+
+  .pc-rest-result-card {
+    min-height: 0 !important;
+    padding: 1rem 1.1rem !important;
+    grid-template-columns: minmax(0, 1fr) 15rem !important;
+    gap: 1rem !important;
+  }
+
+  .pc-rest-result-card__main h2 {
+    margin: .15rem 0 .35rem !important;
+    font-size: 1.35rem !important;
+  }
+
+  .pc-rest-result-facts > div {
+    min-height: 2.9rem !important;
+    padding: .55rem .7rem !important;
+  }
+
+  /* Remove secondary prose when the control/section title already communicates the action. */
+  .screen--plan .panel-head > p,
+  .screen--settings .disclosure > summary > span > span,
+  .screen--settings .subdetails > summary small,
+  .screen--settings .disclosure-body .fields small,
+  .screen--privacy .warning,
+  .screen--support-guidance .notice,
+  .screen--consultation .share-step > .section-head > p,
+  .screen--consultation .share-question-field > small,
+  .screen--consultation .share-context-card > p,
+  .screen--consultation > .secondary-derived-body > .boundary {
+    display: none !important;
+  }
+
+  /* Derived screens keep a visible margin on both sides even when feature CSS requests a wider canvas. */
+  .screen.secondary-derived-screen {
+    width: min(72rem, calc(100vw - 3rem)) !important;
+    max-width: min(72rem, calc(100vw - 3rem)) !important;
+    margin-inline: 0 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation,
+  .screen--reading.screen-layout--reading {
+    width: min(72rem, calc(100vw - 3rem)) !important;
+    max-width: min(72rem, calc(100vw - 3rem)) !important;
+    margin-inline: 0 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation .secondary-derived-body > :is(
+    .source,
+    .share-step,
+    .support-link,
+    .consultation-confirmation-theme
+  ) {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+/* Consultation has older high-specificity desktop width rules; override them in the unified PC layer. */
+@media (min-width: 55rem) {
+  .screen--consultation.screen-layout--consultation.secondary-derived-screen {
+    width: min(72rem, calc(100vw - 3rem)) !important;
+    max-width: min(72rem, calc(100vw - 3rem)) !important;
+    margin-inline: 0 !important;
+  }
+
+  .screen--consultation .share-required-status {
+    display: none !important;
+  }
+}
+
+/* Self-audit correction: Home cards size to their content and must never overlap the next section. */
+@media (min-width: 55rem) {
+  .screen--home .pc-home-dashboard {
+    align-items: start !important;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc {
+    height: auto !important;
+    min-height: 17rem !important;
+  }
+
+  .screen--home .pc-home-rail {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .screen--home .pc-home-rail__cards {
+    height: auto !important;
+    grid-template-rows: none !important;
+    grid-auto-rows: auto !important;
+  }
+
+  .screen--home .pc-home-rail__cards > .card {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+}
+
+@media (min-width: 55rem) {
+  .screen--home .pc-home-rail {
+    grid-template-rows: auto auto !important;
+  }
+}
+
+/* V58 self-audit correction: the desktop header is also authoritative in empty timeline state. */
+@media (min-width: 55rem) {
+  .screen--body-timeline .body-timeline-empty > .eyebrow,
+  .screen--body-timeline .body-timeline-empty > h1 {
+    display: none !important;
+  }
+}
+
+/* Sparse rest results use a narrower reading width than full run-result analysis. */
+@media (min-width: 55rem) {
+  .screen--result .pc-result-console--rest {
+    width: min(100%, 62rem) !important;
+    margin-inline: auto !important;
+  }
+}
+
+/* V58.1 PC selection-state unification: one visual language for single-choice segmented controls. */
+@media (min-width: 55rem) {
+  /* Containers */
+  .screen--record-input.screen-layout--record .activity-toggle,
+  .screen--plan.screen-layout--plan .seg,
+  .screen--history.screen-layout--history .period-control > div,
+  .screen--history.screen-layout--history .display-toggle,
+  .screen--history.screen-layout--history .type-toggle,
+  .screen--result.screen-layout--result .pc-summary-controls > div,
+  .screen--course-editor.screen-layout--course .mode,
+  .screen--reading.screen-layout--reading .filters,
+  .screen--history .history-desktop-workspace__period > div,
+  .guide-tabs {
+    gap: .3rem !important;
+    padding: .3rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .85rem !important;
+    background: var(--color-surface-muted) !important;
+    box-shadow: none !important;
+  }
+
+  /* Unselected options */
+  .screen--record-input.screen-layout--record .activity-toggle span,
+  .screen--plan.screen-layout--plan .seg button,
+  .screen--history.screen-layout--history .period-control button,
+  .screen--history.screen-layout--history .display-toggle button,
+  .screen--history.screen-layout--history .type-toggle button,
+  .screen--result.screen-layout--result .pc-summary-controls button,
+  .screen--course-editor.screen-layout--course .mode button,
+  .screen--reading.screen-layout--reading .filters button,
+  .screen--history .history-desktop-workspace__period a,
+  .guide-tabs .guide-tab {
+    min-height: 2.5rem !important;
+    padding: .5rem .8rem !important;
+    border: 1px solid transparent !important;
+    border-radius: .62rem !important;
+    background: transparent !important;
+    color: var(--color-muted) !important;
+    font-size: .84rem !important;
+    font-weight: 850 !important;
+    line-height: 1.2 !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    transform: none !important;
+  }
+
+  /* Selected option: always accent fill + on-accent text. */
+  .screen--record-input.screen-layout--record .activity-toggle input:checked + span,
+  .screen--plan.screen-layout--plan .seg button.active,
+  .screen--history.screen-layout--history .period-control button.active,
+  .screen--history.screen-layout--history .display-toggle button.active,
+  .screen--history.screen-layout--history .type-toggle button.active,
+  .screen--history.screen-layout--history .type-toggle button[aria-pressed="true"],
+  .screen--result.screen-layout--result .pc-summary-controls button.is-active,
+  .screen--result.screen-layout--result .pc-summary-controls button[aria-pressed="true"],
+  .screen--course-editor.screen-layout--course .mode button.active,
+  .screen--course-editor.screen-layout--course .mode button[aria-pressed="true"],
+  .screen--reading.screen-layout--reading .filters button.active,
+  .screen--reading.screen-layout--reading .filters button[aria-pressed="true"],
+  .screen--history .history-desktop-workspace__period a.active,
+  .screen--history .history-desktop-workspace__period a[aria-current="page"],
+  .guide-tabs .guide-tab.is-current,
+  .guide-tabs .guide-tab[aria-selected="true"] {
+    border-color: var(--color-segment-selected-border) !important;
+    background: var(--color-segment-selected-surface) !important;
+    color: var(--color-segment-selected-text) !important;
+    box-shadow: var(--shadow-segment-selected) !important;
+  }
+
+  /* Hover/focus is visible on inactive options but never changes the selected-state color. */
+  .screen--record-input.screen-layout--record .activity-toggle label:hover span,
+  .screen--plan.screen-layout--plan .seg button:not(.active):hover,
+  .screen--history.screen-layout--history .period-control button:not(.active):hover,
+  .screen--history.screen-layout--history .display-toggle button:not(.active):hover,
+  .screen--history.screen-layout--history .type-toggle button:not(.active):hover,
+  .screen--result.screen-layout--result .pc-summary-controls button:not(.is-active):hover,
+  .screen--course-editor.screen-layout--course .mode button:not(.active):hover,
+  .screen--reading.screen-layout--reading .filters button:not(.active):hover,
+  .screen--history .history-desktop-workspace__period a:not(.active):hover,
+  .guide-tabs .guide-tab:not(.is-current):hover {
+    border-color: color-mix(in srgb, var(--color-accent) 38%, var(--color-line)) !important;
+    background: color-mix(in srgb, var(--color-accent-soft) 70%, var(--color-surface)) !important;
+    color: var(--color-accent-strong) !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle label:has(input:checked):hover span,
+  .screen--plan.screen-layout--plan .seg button.active:hover,
+  .screen--history.screen-layout--history .period-control button.active:hover,
+  .screen--history.screen-layout--history .display-toggle button.active:hover,
+  .screen--history.screen-layout--history .type-toggle button.active:hover,
+  .screen--result.screen-layout--result .pc-summary-controls button.is-active:hover,
+  .screen--course-editor.screen-layout--course .mode button.active:hover,
+  .screen--reading.screen-layout--reading .filters button.active:hover,
+  .screen--history .history-desktop-workspace__period a.active:hover,
+  .guide-tabs .guide-tab.is-current:hover {
+    border-color: var(--color-segment-selected-border) !important;
+    background: var(--color-segment-selected-surface) !important;
+    color: var(--color-segment-selected-text) !important;
+  }
+
+  /* Small counters remain legible inside a selected segment. */
+  .screen--reading.screen-layout--reading .filters button.active .filter-count,
+  .screen--reading.screen-layout--reading .filters button[aria-pressed="true"] .filter-count {
+    background: color-mix(in srgb, var(--color-on-accent) 18%, transparent) !important;
+    color: var(--color-on-accent) !important;
+  }
+}
+
+@media (min-width: 55rem) {
+  /* Record's legacy split-button edges are retired so it matches the shared segmented control. */
+  .screen--record-input.screen-layout--record .activity-toggle label,
+  .screen--record-input.screen-layout--record .activity-toggle label + label {
+    border: 0 !important;
+  }
+
+  .screen--record-input.screen-layout--record .activity-toggle label:first-of-type span,
+  .screen--record-input.screen-layout--record .activity-toggle label:last-of-type span {
+    border-radius: .62rem !important;
+  }
+}
+
+/* V58.2 approved PC refinement pass: workspace density, motion, and route-context polish. */
+@media (min-width: 69rem) {
+  /* Settings uses the available desktop width instead of leaving an unused right half. */
+  .screen--settings.screen-layout--settings .secondary-derived-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.45fr) minmax(19rem, .72fr) !important;
+    gap: .9rem 1rem !important;
+    align-items: start !important;
+  }
+
+  .screen--settings.screen-layout--settings .secondary-derived-body > :is(.head, .parity-save-message, [data-app-update-panel]) {
+    grid-column: 1 / -1 !important;
+  }
+
+  .screen--settings.screen-layout--settings #app-settings-form {
+    grid-column: 1 !important;
+    grid-row: span 2 !important;
+    min-width: 0 !important;
+  }
+
+  .screen--settings.screen-layout--settings .secondary-derived-body > section.group {
+    grid-column: 2 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .screen--settings.screen-layout--settings .settings-guide-links,
+  .screen--settings.screen-layout--settings .secondary-derived-body > section.group > .disclosure {
+    width: 100% !important;
+  }
+
+  /* Share preparation: input on the left, finished document/actions remain visible on the right. */
+  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.35fr) minmax(22rem, .78fr) !important;
+    grid-template-areas:
+      "source source"
+      "confirmation confirmation"
+      "purpose document"
+      "context document"
+      "sources document"
+      "support support" !important;
+    gap: .85rem 1rem !important;
+    align-items: start !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .source { grid-area: source !important; }
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .consultation-confirmation-theme { grid-area: confirmation !important; }
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .share-purpose-step { grid-area: purpose !important; }
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .share-context-step { grid-area: context !important; }
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .share-source-step { grid-area: sources !important; }
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .share-document-step {
+    grid-area: document !important;
+    position: sticky !important;
+    top: 0 !important;
+    max-height: calc(100dvh - 9rem) !important;
+    overflow: auto !important;
+    overscroll-behavior: contain !important;
+  }
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .support-link { grid-area: support !important; }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-document-stage {
+    transform-origin: top center;
+  }
+}
+
+@media (min-width: 55rem) {
+  /* Sparse course/file-assist states do not consume more height than their content. */
+  .screen--course-library .empty-course-card {
+    min-height: 0 !important;
+    padding: .8rem .9rem !important;
+  }
+
+  .screen--course-library .empty-course-card .card-main {
+    min-height: 0 !important;
+  }
+
+  .screen--gpx-analysis #gpx-result-area[hidden] ~ * { min-height: 0 !important; }
+  .screen--gpx-analysis .priority-import {
+    min-height: 0 !important;
+    padding: 1rem 1.1rem !important;
+  }
+  .screen--gpx-analysis .priority-import .import-meta {
+    display: none !important;
+  }
+
+  /* Compact, non-blocking confirmation for settings changes. */
+  .screen--settings .parity-save-message {
+    width: fit-content !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: .55rem .75rem !important;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 35%, var(--color-line)) !important;
+    border-radius: .7rem !important;
+    background: var(--color-selection-surface) !important;
+    color: var(--color-accent-strong) !important;
+    font-size: .8rem !important;
+    font-weight: 850 !important;
+    animation: pc-save-status 3.2s ease forwards;
+  }
+
+  /* A restrained common interaction rhythm across desktop controls. */
+  :is(
+    a,
+    button,
+    .activity-toggle span,
+    .display-setting,
+    .disclosure,
+    .record-item,
+    .pc-region-tile,
+    .share-source,
+    .settings-guide-link
+  ) {
+    transition-duration: 140ms !important;
+    transition-timing-function: ease !important;
+  }
+
+  .secondary-derived-screen {
+    animation: pc-derived-enter 160ms ease-out both;
+  }
+
+  .course-derived-screen .course-derived-body {
+    animation: pc-course-derived-enter 160ms ease-out both;
+  }
+
+  .screen--result [data-pc-summary-view]:not([hidden]),
+  .screen--result [data-pc-detail-region]:not([hidden]),
+  .screen--history .history-view,
+  .screen--consultation .share-document-stage {
+    animation: pc-content-fade 140ms ease-out both;
+  }
+
+  @keyframes pc-derived-enter {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(.992); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  @keyframes pc-course-derived-enter {
+    from { opacity: 0; transform: scale(.992); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes pc-content-fade {
+    from { opacity: .35; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pc-save-status {
+    0%, 72% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-.2rem); visibility: hidden; }
+  }
+}
+
+@media (min-width: 55rem) and (prefers-reduced-motion: reduce) {
+  .secondary-derived-screen,
+  .course-derived-screen .course-derived-body,
+  .screen--result [data-pc-summary-view]:not([hidden]),
+  .screen--result [data-pc-detail-region]:not([hidden]),
+  .screen--history .history-view,
+  .screen--consultation .share-document-stage,
+  .screen--settings .parity-save-message {
+    animation: none !important;
+  }
+
+  :is(a, button, .activity-toggle span, .display-setting, .disclosure, .record-item, .pc-region-tile, .share-source, .settings-guide-link) {
+    transition: none !important;
+  }
+}

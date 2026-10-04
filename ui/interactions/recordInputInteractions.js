@@ -15,7 +15,16 @@ function updateInputFormVisibility(form) {
   const runningFormat = String(form.elements.namedItem("runningFormat")?.value || "UNKNOWN").toUpperCase();
   const runWalk = activityType === "run" && runningFormat === "RUN_WALK";
   form.querySelectorAll("[data-run-fields], [data-run-optional], [data-record-stage-run-only]").forEach((element) => setHidden(element, activityType === "rest"));
+  form.querySelectorAll(".fatigue-inline, [data-record-rof-overlay]").forEach((element) => setHidden(element, activityType === "rest"));
   form.querySelectorAll("[data-rest-fields]").forEach((element) => setHidden(element, activityType !== "rest"));
+  const desktopLayout = Boolean(globalThis.matchMedia?.("(min-width: 55rem)")?.matches);
+  if (desktopLayout) {
+    const coreTitle = form.querySelector("[data-record-core-title]");
+    if (coreTitle) coreTitle.textContent = activityType === "rest" ? "今日の休養" : "今日の走行";
+    form.querySelectorAll("[data-record-reflection-label]").forEach((element) => {
+      element.textContent = activityType === "rest" ? "身体・休養時の記録" : "身体・走ったときの記録";
+    });
+  }
   form.querySelectorAll("[data-run-walk-fields], [data-run-walk-container]").forEach((element) => setHidden(element, !runWalk));
   form.querySelectorAll("[data-run-walk-required]").forEach((element) => { element.required = runWalk; });
 }

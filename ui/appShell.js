@@ -88,6 +88,7 @@ function resolveCurrentPrimaryScreen(currentScreen, currentLocation = null) {
     if (returnTo.startsWith("#/simulation")) return "result";
     return "record-input";
   }
+  if (currentScreen === "body-timeline" && parameter("from") === "history") return "history";
   if (currentScreen === "simulation") {
     const from = parameter("from");
     if (from === "history") return "history";
@@ -170,11 +171,20 @@ function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix
 }
 
 export function renderDesktopHeader({ currentScreen, currentLocation, hasResult = false }) {
-  const primary = ["course-library", "course-editor", "gpx-analysis"].includes(currentScreen)
-    ? resolveCurrentPrimaryScreen(currentScreen, currentLocation)
-    : currentScreen;
-  const title = PRIMARY_HEADER_TITLES[primary] || resolveHeaderTitle(currentScreen, currentLocation);
+  const primary = resolveCurrentPrimaryScreen(currentScreen, currentLocation);
+  const primaryTitle = PRIMARY_HEADER_TITLES[primary] || resolveHeaderTitle(currentScreen, currentLocation);
+  const context = resolveScreenContextNavigation(currentScreen, currentLocation);
+  const title = context?.title || primaryTitle;
+  const desktopContext = context?.backHref === "#/more"
+    ? { ...context, backHref: "#/home", backLabel: "ホーム" }
+    : context;
+  const fallback = currentScreen !== "home" ? { backHref: "#/home", backLabel: "ホーム" } : null;
+  const back = desktopContext || fallback;
+  const backControl = back
+    ? `<a class="app-header__back pc-global-back" href="${escapeHtml(back.backHref)}" aria-label="${escapeHtml(back.backLabel)}へ戻る"><span aria-hidden="true">←</span><span>${escapeHtml(back.backLabel)}</span></a>`
+    : `<span class="app-header__back-placeholder" aria-hidden="true"></span>`;
   return `<header class="app-header app-header--desktop app-header--viewport-fixed">
+    <div class="app-header__leading">${backControl}</div>
     <strong class="app-header__brand app-header__screen-title">${escapeHtml(title)}</strong>
     <div class="app-header__actions" aria-label="画面操作">
       ${renderContextHelpButton(currentScreen)}
