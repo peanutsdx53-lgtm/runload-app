@@ -76,13 +76,32 @@ jobs:
       - name: Shared non-browser regressions
         shell: bash
         run: |
-          set -euo pipefail
-          pass=0
+          set -uo pipefail
+          report=/tmp/shared-regression-report.txt
+          : > "$report"
+          count=0
+          failed=0
           for test_file in tests/*.test.mjs; do
             if [[ "$test_file" == *mobileWalkJogBrowserFlow.test.mjs ]]; then
               continue
             fi
-            node "$test_file" >/tmp/runload-one-test.log 2>&1 || { cat /tmp/runload-one-test.log; exit 1; }
-            pass=$((pass+1))
+            echo "=== $test_file ===" >> "$report"
+            if node "$test_file" >> "$report" 2>&1; then
+              echo "PASS $test_file" >> "$report"
+            else
+              echo "FAIL $test_file" >> "$report"
+              failed=1
+            fi
+            count=$((count+1))
           done
-          echo "non-browser tests passed: $pass"
+          echo "non-browser tests checked: $count" >> "$report"
+          cat "$report"
+          exit "$failed"
+      - name: Upload shared regression report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-regression-report
+          path: /tmp/shared-regression-report.txt
+          if-no-files-found: ignore
+          retention-days: 1
