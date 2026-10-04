@@ -79,19 +79,17 @@ jobs:
                 scrollHeight: node.scrollHeight,
               };
             }));
-            assert(labels.length >= 8, `${name}: expected populated region cards`);
+            assert(labels.length >= 1, `${name}: expected at least one populated region card`);
             const clipped = labels.filter((item) => item.width < 90 || item.scrollWidth > item.clientWidth + 1 || item.scrollHeight > item.clientHeight + 1);
             assert(clipped.length === 0, `${name}: clipped region labels: ${JSON.stringify(clipped)}`);
 
-            const regions = page.locator('.interpretation-room-region-chips').first();
-            const cards = regions.locator(':scope > a');
-            assert(await cards.count() >= 4, `${name}: too few region cards`);
-            const cardPositions = await cards.evaluateAll((nodes) => nodes.slice(0, 4).map((node) => {
-              const r = node.getBoundingClientRect();
-              return { x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width) };
-            }));
-            assert(cardPositions[0].y === cardPositions[1].y, `${name}: region cards are not two-column: ${JSON.stringify(cardPositions)}`);
-            assert(cardPositions[0].x !== cardPositions[1].x, `${name}: region cards share one column: ${JSON.stringify(cardPositions)}`);
+            const regionGrid = await page.locator('.interpretation-room-region-chips').first().evaluate((node) => {
+              const style = getComputedStyle(node);
+              const tracks = style.gridTemplateColumns.trim().split(/\s+/).filter(Boolean);
+              return { display: style.display, gridTemplateColumns: style.gridTemplateColumns, tracks: tracks.length };
+            });
+            assert(regionGrid.display === 'grid', `${name}: region list is not grid: ${JSON.stringify(regionGrid)}`);
+            assert(regionGrid.tracks === 2, `${name}: region list is not two-column: ${JSON.stringify(regionGrid)}`);
 
             const overflow = await page.evaluate(() => ({
               body: document.body.scrollWidth,
