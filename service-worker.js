@@ -10,6 +10,7 @@ const PRECACHE_URLS = [
   "./core/rofJConstants.js",
   "./core/rofJAuthorConfirmedScale.js",
   "./core/rofJCore.js",
+  "./core/internal/modules.js",
   "./core/internal/platformInfrastructure.js",
   "./core/internal/modelSupport.js",
   "./core/internal/mobileWalkJogSpeedModel.js",
