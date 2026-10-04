@@ -117,7 +117,7 @@ await test('UI-RESULT-REMOVES-PERSISTENT-EXPLANATION-CLUTTER',()=>{
 });
 
 await test('UI-INTERPRETATION-HAS-RUNLOAD-USER-FINAL-LOOP',()=>{
-  const css=read('styles/interpretation-loop-v53.css');
+  const css=read('styles/interpretation-technical-details.css');
   const presentation=read('ui/interpretationRoomPresentation.js');
   assert.ok(css.includes('.v53-layout'));
   assert.ok(css.includes('[data-v53-only-stage]'));
