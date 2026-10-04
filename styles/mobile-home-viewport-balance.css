@@ -1,0 +1,11 @@
+@media (max-width: 54.99rem) {
+  .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    padding-top: clamp(8px, calc(100dvh - 712px), 140px);
+  }
+}
+
+@media (max-width: 54.99rem) and (max-height: 42rem) {
+  .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    padding-top: 8px;
+  }
+}
