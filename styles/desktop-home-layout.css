@@ -1,5 +1,279 @@
 /* Desktop Home workspace layout. */
 @media (min-width: 55rem) {
+  .screen--home.screen-layout--home {
+    width: min(100%, 88rem) !important;
+    margin-inline: auto;
+    font-family: var(--font-sans);
+  }
+
+  .screen--home .home-desktop-legacy {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .screen--home .pc-home-heading {
+    min-height: 5rem;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .screen--home .pc-home-heading .eyebrow {
+    margin: 0 0 .25rem;
+    color: var(--color-accent-strong);
+    font-size: var(--pc-type-eyebrow);
+    font-weight: 850;
+    letter-spacing: .13em;
+  }
+
+  .screen--home .pc-home-heading h1 {
+    margin: 0;
+    font-size: var(--pc-type-title);
+    line-height: 1.05;
+    letter-spacing: -.04em;
+  }
+
+  .screen--home .pc-home-heading p:last-child {
+    max-width: 44rem;
+    margin: .5rem 0 0;
+    color: var(--color-muted);
+    font-size: var(--pc-type-body);
+    line-height: 1.6;
+  }
+
+  .screen--home .pc-home-heading__action {
+    min-width: 10.5rem;
+    min-height: 3rem;
+    padding: .65rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    border: 1px solid var(--color-accent);
+    border-radius: .9rem;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    font-size: .88rem;
+    font-weight: 850;
+    text-decoration: none;
+    box-shadow: 0 .55rem 1.35rem color-mix(in srgb, var(--color-accent) 16%, transparent);
+    transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+  }
+
+  .screen--home .pc-home-heading__action:hover,
+  .screen--home .pc-home-heading__action:focus-visible {
+    background: var(--color-accent-strong);
+    transform: translateY(-1px);
+    box-shadow: 0 .75rem 1.6rem color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+
+  .screen--home .pc-home-dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(20rem, .75fr);
+    gap: 1.15rem;
+    align-items: stretch;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc {
+    min-height: 27rem;
+    height: 100%;
+    margin: 0;
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) auto;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 28%, var(--color-line));
+    border-radius: 1.45rem;
+    background:
+      radial-gradient(circle at 88% 14%, color-mix(in srgb, var(--color-accent-soft) 75%, transparent) 0, transparent 36%),
+      linear-gradient(145deg, color-mix(in srgb, var(--color-surface) 88%, var(--color-accent-soft)), var(--color-surface) 62%);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .focus-top {
+    padding: clamp(1.45rem, 2.2vw, 2.2rem);
+    grid-template-columns: 3rem minmax(0, 1fr) auto;
+    gap: 1rem;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .marker {
+    width: 3rem;
+    min-height: 11.5rem;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .focus-copy small {
+    font-size: var(--pc-type-caption);
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .focus-copy h2 {
+    margin-top: .4rem;
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .focus-text {
+    max-width: 43rem;
+    margin-top: 1.15rem;
+    font-size: clamp(1.65rem, 2.15vw, 2.35rem);
+    line-height: 1.42;
+    letter-spacing: -.025em;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .source {
+    margin-top: 1.15rem;
+    font-size: .8rem;
+    line-height: 1.5;
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .carry {
+    align-self: start;
+    font-size: var(--pc-type-caption);
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .focus-actions {
+    padding: 1rem 1.25rem 1.2rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-line) 76%, transparent);
+  }
+
+  .screen--home .pc-home-dashboard > .home-focus--pc .focus-actions .primary {
+    width: min(100%, 18rem);
+    min-height: 3.1rem;
+  }
+
+  .screen--home .pc-home-rail {
+    min-width: 0;
+    min-height: 27rem;
+    margin: 0 !important;
+    padding: var(--pc-panel-padding);
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: .8rem;
+    border: 1px solid var(--color-line);
+    border-radius: 1.45rem;
+    background: color-mix(in srgb, var(--color-surface) 94%, var(--color-paper));
+    box-shadow: var(--shadow-card);
+  }
+
+  .screen--home .pc-home-rail .section-head,
+  .screen--home .pc-home-overview .section-head {
+    margin: 0;
+  }
+
+  .screen--home .pc-home-rail .section-head small,
+  .screen--home .pc-home-overview .section-head small {
+    color: var(--color-muted);
+    font-size: var(--pc-type-eyebrow);
+    font-weight: 850;
+    letter-spacing: .11em;
+  }
+
+  .screen--home .pc-home-rail .section-head h2,
+  .screen--home .pc-home-overview .section-head h2 {
+    margin-top: .18rem;
+    font-size: var(--pc-type-section);
+    line-height: 1.25;
+  }
+
+  .screen--home .pc-home-rail__cards {
+    min-height: 0;
+    height: 100%;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: .8rem !important;
+  }
+
+  .screen--home .pc-home-rail__cards > .card {
+    min-height: 0;
+    height: 100%;
+    margin: 0;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 1rem;
+    box-shadow: none !important;
+  }
+
+  .screen--home .pc-home-rail__cards .card-actions,
+  .screen--home .pc-home-rail__cards > .card > .card-link {
+    margin-top: auto;
+  }
+
+  .screen--home .pc-home-overview {
+    padding: var(--pc-panel-padding);
+    display: grid;
+    gap: .8rem;
+    border: 1px solid color-mix(in srgb, var(--color-line) 84%, transparent);
+    border-radius: 1.45rem;
+    background: color-mix(in srgb, var(--color-surface) 78%, transparent);
+  }
+
+  .screen--home .pc-home-overview .section-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .screen--home .pc-home-overview .section-head p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: .78rem;
+  }
+
+  .screen--home .pc-home-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .7rem;
+  }
+
+  .screen--home .pc-home-shortcuts a {
+    min-width: 0;
+    min-height: 4.8rem;
+    padding: .85rem .9rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    align-content: center;
+    gap: .18rem .5rem;
+    border: 1px solid var(--color-line);
+    border-radius: .9rem;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+  }
+
+  .screen--home .pc-home-shortcuts a:hover,
+  .screen--home .pc-home-shortcuts a:focus-visible {
+    transform: translateY(-1px);
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+
+  .screen--home .pc-home-shortcuts strong {
+    min-width: 0;
+    font-size: .88rem;
+    line-height: 1.35;
+  }
+
+  .screen--home .pc-home-shortcuts span {
+    min-width: 0;
+    color: var(--color-muted);
+    font-size: .74rem;
+    line-height: 1.4;
+  }
+
+  .screen--home .pc-home-shortcuts i {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+    color: var(--color-accent-strong);
+    font-size: 1.15rem;
+    font-style: normal;
+  }
+
+  /* Current layout corrections. */
   .app-shell:not(.app-shell--immersive) .screen--home.screen-layout--home {
     width: 100% !important;
     max-width: none !important;
@@ -47,6 +321,16 @@
   }
 }
 
+@media (min-width: 55rem) and (max-width: 71.99rem) {
+  .screen--home .pc-home-dashboard {
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, .78fr);
+  }
+
+  .screen--home .pc-home-shortcuts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 80rem) {
   .screen--home .pc-home-dashboard {
     grid-template-columns: minmax(0, 1.55fr) minmax(22rem, 0.72fr) !important;
@@ -55,5 +339,12 @@
 
   .screen--home .pc-home-overview {
     margin-top: 1.15rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen--home .pc-home-heading__action,
+  .screen--home .pc-home-shortcuts a {
+    transition: none;
   }
 }
