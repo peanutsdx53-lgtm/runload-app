@@ -130,7 +130,7 @@ const PRECACHE_URLS = [
   "./styles/desktop-interpretation-layout.css",
   "./styles/desktop-information.css",
   "./styles/desktop-consultation.css",
-  "./styles/desktop-theme-v45.css",
+  "./styles/desktop-theme.css",
   "./styles/desktop-empty-states-v46.css",
   "./styles/desktop-layout-v47.css",
   "./styles/desktop-layout-v48.css",
