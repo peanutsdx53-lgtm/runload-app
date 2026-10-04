@@ -1,8 +1,8 @@
-import { SURFACE_FIELDS } from "../core/appCore.js";
-import { escapeHtml } from "../ui/commonComponents.js";
-import { matchesMobileLayout } from "../ui/deviceLayout.js";
-import { peekGpxCandidate } from "../ui/flowSessionState.js";
-import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js";
+import { SURFACE_FIELDS } from "../../core/appCore.js";
+import { escapeHtml } from "../../ui/commonComponents.js";
+import { matchesMobileLayout } from "../../ui/deviceLayout.js";
+import { peekGpxCandidate } from "../../ui/flowSessionState.js";
+import { primarySurfaceSummary, slopeSummary } from "../../ui/coursePresentation.js";
 
 function safeReturnTo(context){const v=String(context?.parameters?.get("returnTo")||"#/record-input");return["#/record-input","#/plan","#/simulation"].some((p)=>v.startsWith(p))?v:"#/record-input";}
 function returnLabel(returnTo=""){if(returnTo.startsWith("#/plan"))return"予定へ戻る";if(returnTo.startsWith("#/simulation"))return"シミュレーションへ戻る";return"今日の記録へ戻る";}
