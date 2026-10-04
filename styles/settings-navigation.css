@@ -1,0 +1,10 @@
+.screen--settings .settings-guide-link[href^="#/terms"],
+.screen--settings .settings-guide-link[href^="#/privacy"] {
+  display: none !important;
+}
+
+@media (min-width: 55rem) {
+  .screen--settings .group:has(.settings-guide-links) {
+    display: none !important;
+  }
+}
