@@ -114,7 +114,7 @@ await test('REST-STATE-DOES-NOT-FABRICATE-REGIONAL-RESULTS',()=>{
 });
 
 await test('CSS-HAS-RESPONSIVE-STAGED-INTERACTION-AND-REDUCED-MOTION',()=>{
-  const css=fs.readFileSync(path.join(root,'styles/interpretation-loop-v53.css'),'utf8');
+  const css=fs.readFileSync(path.join(root,'styles/interpretation-technical-details.css'),'utf8');
   assert.match(css,/grid-template-columns:\s*minmax\(0, 1fr\) minmax\(19rem, 34%\)/);
   assert.match(css,/\.v53-room\[data-v53-stage="focus"\] \[data-v53-reveal="compare"\] \{ display: none; \}/);
   assert.match(css,/@media \(max-width: 820px\)/);
@@ -130,5 +130,5 @@ await test('PRESENTATION-DOES-NOT-USE-GOOD-BAD-DIAGNOSTIC-OR-RISK-LABELS',()=>{
 });
 
 const failed=results.filter(x=>x.status==='FAIL');
-console.log(JSON.stringify({suite:'Interpretation Presentation V53',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
+console.log(JSON.stringify({suite:'Interpretation Presentation',total:results.length,passed:results.length-failed.length,failed:failed.length,status:failed.length?'FAIL':'PASS',results},null,2));
 if(failed.length)process.exitCode=1;
