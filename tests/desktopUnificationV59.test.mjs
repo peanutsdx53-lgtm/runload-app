@@ -10,14 +10,17 @@ const appVersion = read("ui/appVersionStatus.js");
 const about = read("screens/aboutScreen.js");
 const unificationCss = read("styles/desktop-unification-v58.css");
 const rofCompactCss = read("styles/rof-j-compact.css");
+const currentVersion = appVersion.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 
+assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 assert.match(index, /styles\/desktop-unification-v58\.css/);
 assert.ok(
   index.indexOf("styles/desktop-unification-v58.css") > index.indexOf("styles/consultation-share-v56.css"),
   "desktop unification CSS must be loaded after older desktop/share layers",
 );
 
-assert.match(serviceWorker, /running-record-app-runtime-2026\.10\.04\.1/);
+const escapedVersion = currentVersion.replaceAll(".", "\\.");
+assert.match(serviceWorker, new RegExp(`running-record-app-runtime-${escapedVersion}`));
 assert.match(serviceWorker, /\.\/styles\/desktop-unification-v58\.css/);
 assert.match(serviceWorker, /\.\/ui\/mobileSettingsHomeRepairV57\.js/);
 assert.match(serviceWorker, /fetch\(new Request\(request, \{ cache: "no-store" \}\)\)/);
@@ -27,8 +30,8 @@ assert.ok(!homeEnhancement.includes('<h1>ホーム</h1>'), "desktop home must no
 assert.ok(!homeEnhancement.includes('<h1 class="visually-hidden">ホーム</h1>'), "desktop visual heading must not own the hidden h1 either");
 assert.match(rofCompactCss, /body:not\(\.record-overlay-open\)[\s\S]*data-record-rof-overlay/);
 
-assert.match(appVersion, /APP_VERSION = "2026\.10\.04\.1"/);
-assert.match(about, /v2026\.10\.04\.1/);
+assert.ok(appVersion.includes(`APP_VERSION = "${currentVersion}"`));
+assert.ok(about.includes(`v${currentVersion}`), "About screen must match current app version.");
 
 for (const required of [
   ".pc-global-back",
