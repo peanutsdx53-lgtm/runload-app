@@ -15,7 +15,7 @@ const currentVersion = appVersion.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 assert.match(index, /styles\/desktop-unification-v58\.css/);
 assert.ok(
-  index.indexOf("styles/desktop-unification-v58.css") > index.indexOf("styles/consultation-share-v56.css"),
+  index.indexOf("styles/desktop-unification-v58.css") > index.indexOf("styles/desktop-history-state.css"),
   "desktop unification CSS must be loaded after older desktop/share layers",
 );
 
