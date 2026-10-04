@@ -77,5 +77,5 @@ test("VERSION-AND-CACHE-MATCH", () => {
 });
 
 const failed = checks.filter((item) => item.status !== "PASS");
-console.log(JSON.stringify({ suite: "Screenshot Polish 2026-10-02", total: checks.length, passed: checks.length - failed.length, failed: failed.length, status: failed.length ? "FAIL" : "PASS", checks }, null, 2));
+console.log(JSON.stringify({ suite: "Mobile Core Screen Visual Contract", total: checks.length, passed: checks.length - failed.length, failed: failed.length, status: failed.length ? "FAIL" : "PASS", checks }, null, 2));
 if (failed.length) process.exit(1);
