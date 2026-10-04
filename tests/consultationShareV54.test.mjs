@@ -10,6 +10,8 @@ const worker = fs.readFileSync("service-worker.js", "utf8");
 const version = fs.readFileSync("ui/appVersionStatus.js", "utf8");
 const about = fs.readFileSync("screens/aboutScreen.js", "utf8");
 
+const appVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
+
 test("consultation share workflow is advisor-first", () => {
   assert.ok(screen.includes("STEP 1</small><h2>何を見てほしいか"));
   assert.ok(screen.includes("STEP 2</small><h2>今回の状況を補足"));
@@ -58,7 +60,7 @@ test("release loads and caches consultation share V54", () => {
   assert.ok(worker.includes('./styles/consultation-share-v55.css'));
   assert.ok(worker.includes('./styles/consultation-share-v54.css'));
   assert.ok(worker.includes('./styles/mobile-home-shift-v38.css'));
-  assert.ok(worker.includes('running-record-app-runtime-2026.10.03.5'));
-  assert.ok(version.includes('APP_VERSION = "2026.10.03.5"'));
-  assert.ok(about.includes('v2026.10.03.5'));
+  assert.match(appVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
+  assert.ok(worker.includes(`running-record-app-runtime-${appVersion}`));
+  assert.ok(about.includes(`v${appVersion}`));
 });
