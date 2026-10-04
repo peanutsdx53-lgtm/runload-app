@@ -32,7 +32,7 @@ function createSettingsUpdatePanel() {
       <button type="button" class="primary" data-action="reset-update-state">更新状態を初期化</button>
     </div>
     <p class="note">アプリのキャッシュを削除して最新版を再読み込みします。記録、予定、保存コース、プロフィール、設定は削除しません。</p>
-    <p class="visually-hidden" data-update-reset-status role="status" aria-live="polite></p>`;
+    <p class="visually-hidden" data-update-reset-status role="status" aria-live="polite"></p>`;
   return section;
 }
 
