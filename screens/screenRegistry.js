@@ -28,7 +28,7 @@ import {
   renderFuelNoteScreen,
 } from "./mobileQuickToolsScreen.js";
 import { renderPhotoMemoScreen } from "./mobilePhotoMemoScreen.js";
-import { renderPaceCalculatorScreen } from "./mobilePaceCalculatorScreen.js";
+import { renderPaceCalculatorScreen } from "./mobile/paceCalculatorScreen.js";
 import { renderAchievementsScreen } from "./achievementsScreen.js";
 
 export const SHARED_SCREEN_RENDERERS = Object.freeze({
