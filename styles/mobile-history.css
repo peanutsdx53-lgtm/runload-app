@@ -13,3 +13,26 @@
     justify-self: start;
   }
 }
+
+@media (max-width: 54.99rem) {
+  .screen-layout--history .self-understanding-history-filter {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .screen-layout--history .self-understanding-history-filter a {
+    min-width: 0;
+    padding: .55rem .22rem;
+    gap: .2rem;
+    justify-content: center;
+    white-space: nowrap;
+    font-size: clamp(.7rem, 3vw, .82rem);
+    letter-spacing: -.025em;
+  }
+
+  .screen-layout--history .self-understanding-history-filter span {
+    flex: 0 0 auto;
+    font-size: .68rem;
+  }
+}
