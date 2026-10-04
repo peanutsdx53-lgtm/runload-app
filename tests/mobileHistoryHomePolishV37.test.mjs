@@ -8,9 +8,10 @@ const version = fs.readFileSync("ui/appVersionStatus.js", "utf8");
 const appVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 
 assert.ok(index.includes('styles/mobile-screenshot-polish-v37.css'));
-assert.ok(index.indexOf('mobile-screenshot-polish-v36.css') < index.indexOf('mobile-screenshot-polish-v37.css'));
+assert.ok(!index.includes('mobile-screenshot-polish-v36.css'));
+assert.ok(index.indexOf('mobile-screenshot-polish-v35.css') < index.indexOf('mobile-screenshot-polish-v37.css'));
 assert.ok(worker.includes('styles/mobile-screenshot-polish-v35.css'));
-assert.ok(worker.includes('styles/mobile-screenshot-polish-v36.css'));
+assert.ok(!worker.includes('styles/mobile-screenshot-polish-v36.css'));
 assert.ok(worker.includes('styles/mobile-screenshot-polish-v37.css'));
 assert.match(appVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 assert.ok(worker.includes(`running-record-app-runtime-${appVersion}`));
