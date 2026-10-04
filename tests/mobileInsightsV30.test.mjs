@@ -8,7 +8,7 @@ import {
   renderSameCourseComparison,
 } from "../ui/mobileInsights.js";
 import { renderAboutScreen } from "../screens/aboutScreen.js";
-import { renderAchievementsScreen } from "../screens/achievementsScreen.js";
+import { renderAchievementsScreen } from "../screens/mobile/achievementsScreen.js";
 
 const memory = new Map();
 globalThis.localStorage = {

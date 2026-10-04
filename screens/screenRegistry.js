@@ -29,7 +29,7 @@ import {
 } from "./mobileQuickToolsScreen.js";
 import { renderPhotoMemoScreen } from "./mobile/photoMemoScreen.js";
 import { renderPaceCalculatorScreen } from "./mobile/paceCalculatorScreen.js";
-import { renderAchievementsScreen } from "./achievementsScreen.js";
+import { renderAchievementsScreen } from "./mobile/achievementsScreen.js";
 
 export const SHARED_SCREEN_RENDERERS = Object.freeze({
   home: renderHomeScreen,

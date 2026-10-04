@@ -45,7 +45,7 @@ const PRECACHE_URLS = [
   "./assets/rof/rof-visual-highest.png",
   "./index.html",
   "./manifest.webmanifest",
-  "./screens/achievementsScreen.js",
+  "./screens/mobile/achievementsScreen.js",
   "./screens/aboutScreen.js",
   "./screens/bodyPartDetailScreen.js",
   "./screens/consultationScreen.js",

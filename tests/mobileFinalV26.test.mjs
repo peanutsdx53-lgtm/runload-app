@@ -9,7 +9,7 @@ const app = read("app.js");
 const screenRegistry = read("screens/screenRegistry.js");
 const home = read("screens/homeScreen.js");
 const more = read("screens/moreScreen.js");
-const achievements = read("screens/achievementsScreen.js");
+const achievements = read("screens/mobile/achievementsScreen.js");
 const version = read("ui/appVersionStatus.js");
 const sw = read("service-worker.js");
 const versionMatch = version.match(/APP_VERSION = "([^"]+)"/);
