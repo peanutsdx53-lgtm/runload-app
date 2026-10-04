@@ -67,4 +67,4 @@ assert.match(sw, /screens\/bodyTimelineScreen\.js/);
 assert.match(sw, /ui\/runFingerprint\.js/);
 assert.match(sw, /styles\/mobile-run-experiments\.css/);
 
-console.log("mobileRunExperimentsV29: ok");
+console.log("mobileRunExperience: ok");

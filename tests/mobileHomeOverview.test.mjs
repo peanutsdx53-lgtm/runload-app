@@ -33,4 +33,4 @@ assert.match(finalCss, /\.mobile-home-overview-open\{flex:0 0 auto;min-width:64p
 assert.match(finalCss, /mobile-home-ios-drag-handle/);
 assert.match(finalCss, /mobile-home-page-dot/);
 
-console.log("mobileHomeOverviewV25.test.mjs: PASS");
+console.log("mobileHomeOverview.test.mjs: PASS");

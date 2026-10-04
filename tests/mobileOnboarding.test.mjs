@@ -50,4 +50,4 @@ for (const asset of ["./ui/mobileOnboarding.js", "./screens/termsScreen.js", "./
   assert.ok(sw.includes(`"${asset}"`), `service worker must precache ${asset}`);
 }
 
-console.log("mobileOnboardingV25.test.mjs: PASS");
+console.log("mobileOnboarding.test.mjs: PASS");
