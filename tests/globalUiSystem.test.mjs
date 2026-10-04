@@ -272,7 +272,7 @@ await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
 
 
 await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
-  const screen=read('screens/courseLibraryScreen.js');
+  const screen=read('screens/desktop/courseLibraryScreen.js');
   const shared=read('styles/screens.css');
   const css=read('styles/desktop.css');
   const audit=css;
@@ -317,7 +317,7 @@ await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
 
 
 await test('UI-PC-COURSE-DERIVED-MATCHES-RECORD-SUBFLOW-CHROME',()=>{
-  const screen=read('screens/courseLibraryScreen.js');
+  const screen=read('screens/desktop/courseLibraryScreen.js');
   const shell=read('ui/appShell.js');
   const css=read('styles/desktop.css');
   const audit=css;
