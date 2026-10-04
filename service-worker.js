@@ -51,6 +51,7 @@ const PRECACHE_URLS = [
   "./screens/consultationScreen.js",
   "./screens/desktop/courseEditorScreen.js",
   "./screens/mobile/courseEditorScreen.js",
+  "./screens/shared/courseEditorScreen.js",
   "./screens/shared/courseLibraryContext.js",
   "./screens/desktop/courseLibraryScreen.js",
   "./screens/mobile/courseLibraryScreen.js",
