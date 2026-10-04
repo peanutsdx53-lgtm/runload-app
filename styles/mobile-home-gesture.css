@@ -1,0 +1,10 @@
+@media (max-width:54.99rem){
+  .mobile-home-hub-viewport{touch-action:pan-x pan-y}
+  .mobile-home-hub.is-home-overview-active .mobile-home-hub-page--overview{touch-action:pan-y;overscroll-behavior-x:none}
+  .mobile-home-os__header-actions{flex:0 0 auto}
+  .mobile-home-overview-open{flex:0 0 auto;min-width:64px;white-space:nowrap}
+  .screen :is(.mobile-home-widget-remove,.mobile-home-app-remove,.mobile-home-widget-size,.mobile-home-ios-drag-handle,.mobile-home-page-dot,.mobile-home-page-control){min-height:0}
+  .screen .mobile-home-widget-add{min-height:40px}
+  html,body{overscroll-behavior-x:none}
+  .mobile-home-hub,.mobile-home-page-viewport{overscroll-behavior-x:contain}
+}
