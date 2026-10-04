@@ -16,6 +16,9 @@ assert.match(css, /--color-paper: #0b1218/);
 assert.match(css, /--color-paper: #11130f/);
 assert.match(css, /--color-accent: #86bad8/);
 assert.match(css, /--color-accent: #9bc5a9/);
+assert.match(css, /primary-navigation__link:not\(\.is-current\)/);
+assert.match(css, /opacity: 0\.86 !important/);
+assert.match(css, /primary-navigation__icon, \.primary-navigation__label/);
 assert.match(css, /@media \(min-width: 55rem\)/);
 
 assert.match(index, /desktop-theme\.css/);
