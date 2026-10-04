@@ -15,7 +15,7 @@ import {
 
 const stateText = fs.readFileSync('ui/runMeasurementState.js', 'utf8');
 const interactionText = fs.readFileSync('ui/interactions/runMeasurementInteractions.js', 'utf8');
-const screenText = fs.readFileSync('screens/runMeasurementScreen.js', 'utf8');
+const screenText = fs.readFileSync('screens/mobile/runMeasurementScreen.js', 'utf8');
 const autofillText = fs.readFileSync('ui/mobileMeasurementRecordAutofill.js', 'utf8');
 const coreText = fs.readFileSync('ui/runMeasurementCore.js', 'utf8');
 const indexText = fs.readFileSync('index.html', 'utf8');

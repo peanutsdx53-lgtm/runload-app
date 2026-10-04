@@ -1,5 +1,5 @@
 import { renderHomeScreen } from "./homeScreen.js";
-import { renderRunMeasurementScreen } from "./runMeasurementScreen.js";
+import { renderRunMeasurementScreen } from "./mobile/runMeasurementScreen.js";
 import { renderRunRouteScreen } from "./runRouteScreen.js";
 import { renderBodyTimelineScreen } from "./bodyTimelineScreen.js";
 import { renderRecordInputScreen } from "./recordInputScreen.js";

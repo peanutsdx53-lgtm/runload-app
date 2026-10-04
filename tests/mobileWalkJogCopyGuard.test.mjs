@@ -2,7 +2,7 @@ import fs from "node:fs";
 import assert from "node:assert/strict";
 
 const source = fs.readFileSync("ui/mobileWalkJogCopyGuard.js", "utf8");
-const screen = fs.readFileSync("screens/runMeasurementScreen.js", "utf8");
+const screen = fs.readFileSync("screens/mobile/runMeasurementScreen.js", "utf8");
 const results = [];
 
 function test(id, fn) {

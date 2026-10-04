@@ -34,7 +34,7 @@ await test('DEVICE-ENTRY-FALLBACK-WIDTH-MATCHES-LAYOUT-BOUNDARY',()=>{
 
 await test('MOBILE-GPS-RETURNS-TO-HOME-NOT-LEGACY-START',async()=>{
   const [screen, interactions] = await Promise.all([
-    readFile(new URL('../screens/runMeasurementScreen.js', import.meta.url),'utf8'),
+    readFile(new URL('../screens/mobile/runMeasurementScreen.js', import.meta.url),'utf8'),
     readFile(new URL('../ui/interactions/runMeasurementInteractions.js', import.meta.url),'utf8'),
   ]);
   assert.match(screen,/href="#\/home" class="run-measurement__back"/);

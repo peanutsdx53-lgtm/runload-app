@@ -76,7 +76,7 @@ await test('HELP-LEGACY-START-TUTORIAL-IS-REMOVED',()=>{
 });
 
 await test('HELP-GPS-SCREEN-HAS-OPERATION-GUIDE',()=>{
-  const screen=read('screens/runMeasurementScreen.js');
+  const screen=read('screens/mobile/runMeasurementScreen.js');
   const tutorial=read('ui/screenTutorial.js');
   assert.match(screen,/class="context-help-button app-utility-button context-help-button--measurement"/);
   assert.match(screen,/data-screen-tutorial-start="run-measurement"/);

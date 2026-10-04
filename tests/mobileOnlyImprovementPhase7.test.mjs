@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-const screen=fs.readFileSync(new URL("../screens/runMeasurementScreen.js", import.meta.url),"utf8");
+const screen=fs.readFileSync(new URL("../screens/mobile/runMeasurementScreen.js", import.meta.url),"utf8");
 const interactions=fs.readFileSync(new URL("../ui/interactions/runMeasurementInteractions.js", import.meta.url),"utf8");
 const css=fs.readFileSync(new URL("../styles/mobile-run-measurement-ergonomics.css", import.meta.url),"utf8");
 const version=fs.readFileSync(new URL("../ui/appVersionStatus.js", import.meta.url),"utf8");
