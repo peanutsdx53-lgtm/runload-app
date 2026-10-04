@@ -47,13 +47,32 @@ jobs:
       - name: Desktop regressions
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          report=/tmp/desktop-regression-report.txt
+          : > "$report"
           count=0
+          failed=0
           for test_file in tests/desktop*.test.mjs; do
-            node "$test_file"
+            echo "=== $test_file ===" >> "$report"
+            if node "$test_file" >> "$report" 2>&1; then
+              echo "PASS $test_file" >> "$report"
+            else
+              echo "FAIL $test_file" >> "$report"
+              failed=1
+            fi
             count=$((count+1))
           done
-          echo "desktop tests passed: $count"
+          echo "desktop tests checked: $count" >> "$report"
+          cat "$report"
+          exit "$failed"
+      - name: Upload desktop regression report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-regression-report
+          path: /tmp/desktop-regression-report.txt
+          if-no-files-found: ignore
+          retention-days: 1
       - name: Shared non-browser regressions
         shell: bash
         run: |
