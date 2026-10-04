@@ -106,7 +106,7 @@ await test('MOBILE-QUICK-TOOLS-STORE-IS-LOCAL-ONLY', () => {
 });
 
 await test('MOBILE-QUICK-TOOLS-SCREENS-COVER-THREE-TOOLS', () => {
-  const screens = read('screens/mobileQuickToolsScreen.js');
+  const screens = read('screens/mobile/quickToolsScreen.js');
   assert.ok(screens.includes('export function renderLocationNoteScreen'));
   assert.ok(screens.includes('export function renderQuickNoteScreen'));
   assert.ok(screens.includes('export function renderGearNoteScreen'));
@@ -118,7 +118,7 @@ await test('MOBILE-QUICK-TOOLS-SCREENS-COVER-THREE-TOOLS', () => {
 await test('MOBILE-QUICK-TOOLS-PWA-ASSETS-ARE-PRECACHED', () => {
   const sw = read('service-worker.js');
   for (const asset of [
-    './screens/mobileQuickToolsScreen.js',
+    './screens/mobile/quickToolsScreen.js',
     './styles/mobile-quick-tools.css',
     './ui/interactions/mobileQuickToolsInteractions.js',
     './ui/mobileQuickToolsStore.js',
