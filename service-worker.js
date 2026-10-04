@@ -119,7 +119,7 @@ const PRECACHE_URLS = [
   "./styles/pc-course-v17.css",
   "./styles/interpretation-room.css",
   "./styles/self-understanding.css",
-  "./styles/interpretation-room-v50.css",
+  "./styles/interpretation-room-compact.css",
   "./styles/interpretation-loop-v52.css",
   "./styles/interpretation-loop-v53.css",
   "./styles/desktop-foundation.css",
