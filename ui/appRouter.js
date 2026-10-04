@@ -1,20 +1,7 @@
 const DEFAULT_SCREEN = "home";
 const MOBILE_LAYOUT_QUERY = "(max-width: 54.99rem)";
 
-function applyAlias(rawScreen, parameters, aliases) {
-  const alias = aliases?.[rawScreen];
-  if (!alias) return null;
-  if (typeof alias === "function") return alias(new URLSearchParams(parameters));
-  const nextParameters = new URLSearchParams(parameters);
-  Object.entries(alias.parameters || {}).forEach(([key, value]) => {
-    if (!nextParameters.has(key) && value !== undefined && value !== null && value !== "") {
-      nextParameters.set(key, String(value));
-    }
-  });
-  return Object.freeze({ screen: alias.screen, parameters: nextParameters });
-}
-
-function parseHashLocation(validScreens, aliases, defaultScreen = DEFAULT_SCREEN) {
+function parseHashLocation(validScreens, defaultScreen = DEFAULT_SCREEN) {
   const rawHash = window.location.hash.replace(/^#\/?/, "");
   const [rawScreen = "", rawQuery = ""] = rawHash.split("?");
   const requestedScreen = rawScreen.trim();
@@ -22,8 +9,6 @@ function parseHashLocation(validScreens, aliases, defaultScreen = DEFAULT_SCREEN
   if (validScreens.has(requestedScreen)) {
     return Object.freeze({ screen: requestedScreen, parameters });
   }
-  const aliased = applyAlias(requestedScreen, parameters, aliases);
-  if (aliased && validScreens.has(aliased.screen)) return aliased;
   return Object.freeze({ screen: defaultScreen, parameters: new URLSearchParams() });
 }
 
@@ -41,7 +26,6 @@ function defaultSingleEntryNavigation() {
 
 export function createAppRouter({
   availableScreens,
-  routeAliases = {},
   defaultScreen = DEFAULT_SCREEN,
   onScreenChange,
   singleEntryNavigation = defaultSingleEntryNavigation,
@@ -56,7 +40,7 @@ export function createAppRouter({
   }
 
   function readLocation() {
-    return parseHashLocation(validScreens, routeAliases, resolvedDefaultScreen);
+    return parseHashLocation(validScreens, resolvedDefaultScreen);
   }
 
   function canonicalizeLocation(location) {
