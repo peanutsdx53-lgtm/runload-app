@@ -98,7 +98,7 @@ const PRECACHE_URLS = [
   "./styles/mobile-pace-calculator.css",
   "./styles/mobile-navigation-unification.css",
   "./styles/mobile-usability.css",
-  "./styles/mobile-course-v16.css",
+  "./styles/mobile-course.css",
   "./styles/mobile-onboarding.css",
   "./styles/mobile-achievements.css",
   "./styles/mobile-final-polish.css",
