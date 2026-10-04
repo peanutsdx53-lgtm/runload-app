@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
-const moduleText = fs.readFileSync('ui/rofJVisualEnhancement.js', 'utf8');
+const moduleText = fs.readFileSync('ui/rofJPresentation.js', 'utf8');
 const scaleDefinition = fs.readFileSync('core/rofJAuthorConfirmedScale.js', 'utf8');
 const visualCss = fs.readFileSync('styles/rof-j-visual.css', 'utf8');
 const compactCss = fs.readFileSync('styles/rof-j-compact.css', 'utf8');
@@ -107,10 +107,10 @@ test('ROF-VISUAL-ASSETS-AND-PRESENTATION-MODULE-ARE-PRECACHED', () => {
 test('ROF-VISUAL-UI-LOADS-ON-DESKTOP-AND-MOBILE', () => {
   assert.ok(index.includes('./styles/rof-j-visual.css'));
   assert.ok(index.includes('./styles/rof-j-compact.css'));
-  assert.ok(index.includes('./ui/rofJVisualEnhancement.js'));
+  assert.ok(index.includes('./ui/rofJPresentation.js'));
   assert.ok(worker.includes('"./styles/rof-j-visual.css"'));
   assert.ok(worker.includes('"./styles/rof-j-compact.css"'));
-  assert.ok(worker.includes('"./ui/rofJVisualEnhancement.js"'));
+  assert.ok(worker.includes('"./ui/rofJPresentation.js"'));
   assert.ok(compactCss.includes('@media (max-width: 54.99rem)'));
 });
 
