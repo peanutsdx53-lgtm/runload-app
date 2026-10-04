@@ -46,7 +46,7 @@ const PRECACHE_URLS = [
   "./index.html",
   "./manifest.webmanifest",
   "./screens/mobile/achievementsScreen.js",
-  "./screens/aboutScreen.js",
+  "./screens/shared/aboutScreen.js",
   "./screens/bodyPartDetailScreen.js",
   "./screens/consultationScreen.js",
   "./screens/desktop/courseEditorScreen.js",
