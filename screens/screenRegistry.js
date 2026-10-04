@@ -15,7 +15,7 @@ import { renderConsultationScreen } from "./consultationScreen.js";
 import { renderReadingScreen } from "./readingScreen.js";
 import { renderSettingsScreen } from "./settingsScreen.js";
 import { renderInterpretationRoomScreen } from "./interpretationRoomScreen.js";
-import { renderSupportGuidanceScreen } from "./supportGuidanceScreen.js";
+import { renderSupportGuidanceScreen } from "./shared/supportGuidanceScreen.js";
 import { renderPrivacyScreen } from "./privacyScreen.js";
 import { renderTermsScreen } from "./termsScreen.js";
 import { renderAboutScreen } from "./aboutScreen.js";
