@@ -127,7 +127,7 @@ check("NO-SCIENTIFIC-VALUE-DUPLICATION-IN-PERSISTENT-SCHEMA", () => {
 
 check("NEW-ASSETS-ARE-PWA-PRECACHED", () => {
   const worker = read("service-worker.js");
-  for (const item of ["./core/selfUnderstandingCore.js", "./styles/self-understanding.css", "./styles/interpretation-room-v50.css", "./ui/interactions/interpretationRoomInteractions.js"]) {
+  for (const item of ["./core/selfUnderstandingCore.js", "./styles/self-understanding.css", "./styles/interpretation-room-compact.css", "./ui/interactions/interpretationRoomInteractions.js"]) {
     assert.ok(worker.includes(`"${item}"`), `missing from service worker: ${item}`);
   }
 });
