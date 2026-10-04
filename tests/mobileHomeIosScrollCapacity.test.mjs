@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
-const iosFix = fs.readFileSync('ui/iosHomeEditScrollFix.js', 'utf8');
+const iosFix = fs.readFileSync('ui/iosHomeEditScroll.js', 'utf8');
 const iosCss = fs.readFileSync('styles/mobile-home-ios-editing.css', 'utf8');
 const threeRowCss = fs.readFileSync('styles/mobile-home-three-row.css', 'utf8');
 const capacity = fs.readFileSync('ui/mobileHomePageCapacity.js', 'utf8');
@@ -165,7 +165,7 @@ test('VERSION-AND-PWA-CACHE-MATCH', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
   assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
-  assert.ok(worker.includes('"./ui/iosHomeEditScrollFix.js"'));
+  assert.ok(worker.includes('"./ui/iosHomeEditScroll.js"'));
   assert.ok(worker.includes('"./styles/mobile-home-three-row.css"'));
   assert.ok(worker.includes('"./ui/mobileHomePageCapacity.js"'));
   assert.ok(worker.includes('"./ui/mobileHomeWidgetIconSwap.js"'));
