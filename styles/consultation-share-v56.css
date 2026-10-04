@@ -23,3 +23,67 @@
     display: none !important;
   }
 }
+
+/* Follow-up visual repairs: selected history states, compact sheet preview, and duplicate settings links. */
+.screen--settings .settings-guide-link[href^="#/terms"],
+.screen--settings .settings-guide-link[href^="#/privacy"] {
+  display: none !important;
+}
+
+.screen--consultation[data-share-prep] .share-sheet-page {
+  container-type: inline-size;
+}
+
+@container (max-width: 32rem) {
+  .screen--consultation[data-share-prep] .share-sheet-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 9px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head > div:first-child {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head h1 {
+    white-space: normal;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dl {
+    width: 100%;
+    max-width: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dl div {
+    min-width: 0;
+  }
+
+  .screen--consultation[data-share-prep] .share-sheet-head dd {
+    overflow-wrap: normal;
+    white-space: nowrap;
+    font-size: .6rem;
+  }
+}
+
+@media (min-width: 55rem) {
+  .screen--history .desktop-history-mode a.active,
+  .screen--history .self-understanding-history-filter a.active {
+    border-color: var(--color-accent-strong) !important;
+    background: var(--color-accent-strong) !important;
+    color: var(--color-on-accent) !important;
+    box-shadow: 0 .16rem .5rem color-mix(in srgb, var(--color-ink) 10%, transparent) !important;
+  }
+
+  .screen--history .self-understanding-history-filter a.active span {
+    background: color-mix(in srgb, var(--color-on-accent) 18%, transparent) !important;
+    color: var(--color-on-accent) !important;
+  }
+
+  .screen--settings .group:has(.settings-guide-links) {
+    display: none !important;
+  }
+}
