@@ -116,7 +116,7 @@ const PRECACHE_URLS = [
   "./styles/consultation-share-print.css",
   "./styles/settings-navigation.css",
   "./styles/desktop-history-state.css",
-  "./styles/pc-course-v17.css",
+  "./styles/desktop-course.css",
   "./styles/interpretation-room.css",
   "./styles/self-understanding.css",
   "./styles/interpretation-room-compact.css",
