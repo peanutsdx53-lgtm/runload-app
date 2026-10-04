@@ -1,0 +1,12 @@
+/* Desktop-only typography and panel tokens. */
+@media (min-width: 55rem) {
+  :root {
+    --pc-type-eyebrow: .75rem;
+    --pc-type-caption: .8125rem;
+    --pc-type-body: .9375rem;
+    --pc-type-section: 1.25rem;
+    --pc-type-title: clamp(2rem, 2.3vw, 2.65rem);
+    --pc-panel-radius: 1.25rem;
+    --pc-panel-padding: clamp(1rem, 1.4vw, 1.4rem);
+  }
+}
