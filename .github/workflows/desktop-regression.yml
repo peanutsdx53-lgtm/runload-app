@@ -4,27 +4,27 @@ on:
   push:
     branches: [main]
     paths:
+      - "app.js"
+      - "core/**/*.js"
+      - "ui/**/*.js"
+      - "screens/**/*.js"
       - "styles/desktop*.css"
       - "styles/pc-*.css"
-      - "ui/desktop*.js"
-      - "screens/*.js"
-      - "screens/**/*.js"
       - "tests/*.test.mjs"
       - "index.html"
       - "service-worker.js"
-      - "ui/appVersionStatus.js"
       - ".github/workflows/desktop-regression.yml"
   pull_request:
     paths:
+      - "app.js"
+      - "core/**/*.js"
+      - "ui/**/*.js"
+      - "screens/**/*.js"
       - "styles/desktop*.css"
       - "styles/pc-*.css"
-      - "ui/desktop*.js"
-      - "screens/*.js"
-      - "screens/**/*.js"
       - "tests/*.test.mjs"
       - "index.html"
       - "service-worker.js"
-      - "ui/appVersionStatus.js"
       - ".github/workflows/desktop-regression.yml"
   workflow_dispatch:
 
