@@ -24,6 +24,7 @@ on:
       - "service-worker.js"
       - "ui/appVersionStatus.js"
       - ".github/workflows/desktop-regression.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
