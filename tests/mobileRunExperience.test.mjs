@@ -4,7 +4,7 @@ import { PRIMARY_REGIONAL_V2_MODEL_VERSION } from "../core/appCore.js";
 import { buildRunFingerprint } from "../ui/runFingerprint.js";
 import { renderBodyTimelineScreen } from "../screens/bodyTimelineScreen.js";
 
-const baseRecord = { id: "run-29", date: "2026-09-30", createdAt: "2026-09-30T11:00:00.000Z", activityType: "run", distanceKm: 5, durationMinutes: 30, runningFormat: "CONTINUOUS_RUN" };
+const baseRecord = { id: `run-29`, date: `2026-09-30`, createdAt: `2026-09-30T11:00:00.000Z`, activityType: `run`, distanceKm: 5, durationMinutes: 30, runningFormat: `CONTINUOUS_RUN` };
 const measurement = { track: [{ lat: 37.5, lon: 139.9, timestamp: 0 }, { lat: 37.51, lon: 139.91, timestamp: 1000 }], acceptedPointCount: 2, rejectedPointCount: 0 };
 const a = buildRunFingerprint(baseRecord, { measurement, fatigue: { pre: 2, post: 4 } });
 const b = buildRunFingerprint(baseRecord, { measurement, fatigue: { pre: 2, post: 4 } });
@@ -65,6 +65,6 @@ const sw = fs.readFileSync(new URL("../service-worker.js", import.meta.url), "ut
 assert.ok(sw.includes(`running-record-app-runtime-${currentVersion}`));
 assert.match(sw, /screens\/bodyTimelineScreen\.js/);
 assert.match(sw, /ui\/runFingerprint\.js/);
-assert.match(sw, /styles\/mobile-run-experiments\.css/);
+assert.match(sw, /styles\/mobile-run-lab\.css/);
 
 console.log("mobileRunExperience: ok");
