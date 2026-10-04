@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 const screen=fs.readFileSync(new URL("../screens/mobile/runMeasurementScreen.js", import.meta.url),"utf8");
+const registry=fs.readFileSync(new URL("../screens/screenRegistry.js", import.meta.url),"utf8");
 const interactions=fs.readFileSync(new URL("../ui/interactions/runMeasurementInteractions.js", import.meta.url),"utf8");
 const css=fs.readFileSync(new URL("../styles/mobile-run-measurement-ergonomics.css", import.meta.url),"utf8");
 const version=fs.readFileSync(new URL("../ui/appVersionStatus.js", import.meta.url),"utf8");
@@ -8,7 +9,11 @@ const worker=fs.readFileSync(new URL("../service-worker.js", import.meta.url),"u
 const currentVersion=version.match(/APP_VERSION = "([^"]+)"/)?.[1]||"";
 assert.match(currentVersion,/^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 assert.ok(worker.includes(`running-record-app-runtime-${currentVersion}`));
-assert.match(screen,/if \(!matchesMobileLayout\(\)\) return desktopUnavailable\(\)/);
+const desktopRegistry=registry.slice(registry.indexOf("export const DESKTOP_SCREEN_RENDERERS"),registry.indexOf("export const MOBILE_SCREEN_RENDERERS"));
+const mobileRegistry=registry.slice(registry.indexOf("export const MOBILE_SCREEN_RENDERERS"),registry.indexOf("export function createScreenRenderers"));
+assert.doesNotMatch(desktopRegistry,/run-measurement/);
+assert.match(mobileRegistry,/"run-measurement": renderRunMeasurementScreen/);
+assert.doesNotMatch(screen,/matchesMobileLayout|desktopUnavailable|run-measurement-unavailable/);
 assert.match(screen,/data-action="toggle-measurement-map"/);
 assert.match(screen,/run-measurement-active__secondary/);
 assert.match(screen,/run-measurement-post__facts--primary/);
