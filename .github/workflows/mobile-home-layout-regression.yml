@@ -72,6 +72,7 @@ jobs:
             if [[ "$test_file" == *mobileWalkJogBrowserFlow.test.mjs ]]; then
               continue
             fi
+            echo "running: $test_file"
             node "$test_file" >/tmp/runload-one-test.log 2>&1 || { cat /tmp/runload-one-test.log; exit 1; }
             pass=$((pass+1))
           done
