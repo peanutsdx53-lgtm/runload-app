@@ -1,0 +1,8 @@
+@media (max-width:54.99rem){
+  .mobile-home-overview-card--achievement strong small{font-size:14px;color:var(--muted);font-weight:700}
+}
+
+@media (max-width:23rem){
+  .achievement-card{grid-template-columns:42px minmax(0,1fr);padding:13px}
+  .achievement-card__medal{width:42px;height:42px}
+}
