@@ -153,7 +153,7 @@ const PRECACHE_URLS = [
   "./ui/bootRecovery.js",
   "./ui/appVersionStatus.js",
   "./ui/readingRuntimeGuard.js",
-  "./ui/rofJVisualEnhancement.js",
+  "./ui/rofJPresentation.js",
   "./ui/mobileMeasurementRecordAutofill.js",
   "./ui/mobileHomeDefaultLayout.js",
   "./ui/mobileNavigationPolicy.js",
