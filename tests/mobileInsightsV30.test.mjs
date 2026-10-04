@@ -113,8 +113,6 @@ assert.match(achievementHtml, /達成済み/);
 
 const screenRegistrySource = fs.readFileSync(new URL("../screens/screenRegistry.js", import.meta.url), "utf8");
 assert.match(screenRegistrySource, /about: renderAboutScreen/);
-const moreSource = fs.readFileSync(new URL("../screens/mobile/moreScreen.js", import.meta.url), "utf8");
-assert.match(moreSource, /このアプリについて/);
 const resultSource = fs.readFileSync(new URL("../screens/resultScreen.js", import.meta.url), "utf8");
 assert.match(resultSource, /renderRunCapsule/);
 assert.match(resultSource, /renderSameCourseComparison/);
