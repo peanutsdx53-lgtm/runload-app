@@ -33,7 +33,7 @@ assert.match(app, /shouldOpenMobileOnboarding/);
 assert.match(app, /\["terms", "privacy"\]\.includes\(location\.screen\)/, "legal documents must be viewable before acceptance");
 assert.match(app, /withMobileOnboardingComplete/);
 
-const terms = read("screens/termsScreen.js");
+const terms = read("screens/shared/termsScreen.js");
 assert.match(terms, /医療・安全に関する位置づけ/);
 assert.match(terms, /法令により制限または免除できない責任/);
 
@@ -46,7 +46,7 @@ const version = read("ui/appVersionStatus.js").match(/APP_VERSION = "([^"]+)"/)?
 assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 const sw = read("service-worker.js");
 assert.match(sw, new RegExp(`running-record-app-runtime-${version.replaceAll(".", "\\.")}`));
-for (const asset of ["./ui/mobileOnboarding.js", "./screens/termsScreen.js", "./styles/mobile-onboarding.css"]) {
+for (const asset of ["./ui/mobileOnboarding.js", "./screens/shared/termsScreen.js", "./styles/mobile-onboarding.css"]) {
   assert.ok(sw.includes(`"${asset}"`), `service worker must precache ${asset}`);
 }
 
