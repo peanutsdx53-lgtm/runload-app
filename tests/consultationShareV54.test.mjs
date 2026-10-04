@@ -56,8 +56,8 @@ test("document preview and dynamic pages stay synchronized", () => {
 
 test("release loads and caches consultation share V54", () => {
   assert.ok(index.includes('./styles/consultation-share-v54.css'));
-  assert.ok(index.includes('./styles/consultation-share-v55.css'));
-  assert.ok(worker.includes('./styles/consultation-share-v55.css'));
+  assert.ok(index.includes('./styles/consultation-share-mobile.css'));
+  assert.ok(worker.includes('./styles/consultation-share-mobile.css'));
   assert.ok(worker.includes('./styles/consultation-share-v54.css'));
   assert.ok(worker.includes('./styles/mobile-home-three-row.css'));
   assert.match(appVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
