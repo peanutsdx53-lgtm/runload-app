@@ -3,7 +3,7 @@ import fs from "node:fs";
 
 const home = fs.readFileSync("screens/homeScreen.js", "utf8");
 const css = fs.readFileSync("styles/mobile-home.css", "utf8");
-const finalCss = fs.readFileSync("styles/mobile-final-polish.css", "utf8");
+const gestureCss = fs.readFileSync("styles/mobile-home-gesture.css", "utf8");
 const interactions = fs.readFileSync("ui/interactions/homeInteractions.js", "utf8");
 const hub = fs.readFileSync("ui/mobileHomeHub.js", "utf8");
 
@@ -27,10 +27,10 @@ assert.match(hub, /homeRoot\?\.classList\?\.contains\("is-home-editing"\)/);
 assert.match(hub, /if \(activePage === 0\) return;/);
 assert.match(hub, /\[data-home-page-viewport\]/);
 assert.match(hub, /target = dx > 0 \? 0 : activePage/);
-assert.match(finalCss, /\.mobile-home-hub-viewport\{touch-action:pan-x pan-y\}/);
-assert.match(finalCss, /\.mobile-home-hub\.is-home-overview-active \.mobile-home-hub-page--overview\{touch-action:pan-y/);
-assert.match(finalCss, /\.mobile-home-overview-open\{flex:0 0 auto;min-width:64px;white-space:nowrap\}/);
-assert.match(finalCss, /mobile-home-ios-drag-handle/);
-assert.match(finalCss, /mobile-home-page-dot/);
+assert.match(gestureCss, /\.mobile-home-hub-viewport\{touch-action:pan-x pan-y\}/);
+assert.match(gestureCss, /\.mobile-home-hub\.is-home-overview-active \.mobile-home-hub-page--overview\{touch-action:pan-y/);
+assert.match(gestureCss, /\.mobile-home-overview-open\{flex:0 0 auto;min-width:64px;white-space:nowrap\}/);
+assert.match(gestureCss, /mobile-home-ios-drag-handle/);
+assert.match(gestureCss, /mobile-home-page-dot/);
 
 console.log("mobileHomeOverview.test.mjs: PASS");
