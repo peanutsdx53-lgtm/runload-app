@@ -96,11 +96,10 @@ check("CONSULTATION-THEME-SHARE-IS-EXPLICIT-AND-BOUNDED", () => {
   assert.doesNotMatch(screen, /reviewEvents\s*\./);
 });
 
-check("LEGACY-REFLECTION-ACHIEVEMENT-CANNOT-BE-NEWLY-UNLOCKED", () => {
+check("RETIRED-REFLECTION-ACHIEVEMENT-IS-ABSENT", () => {
   const achievements = read("ui/mobileAchievements.js");
-  assert.match(achievements, /id: "reflection-3"[\s\S]*legacyOnly: true/);
-  assert.match(achievements, /if \(achievement\.legacyOnly \|\| !achievement\.unlocked/);
-  assert.match(achievements, /achievement\.legacyOnly \? Boolean\(state\.unlocked\[achievement\.id\]\)/);
+  assert.doesNotMatch(achievements, /id: "reflection-3"/);
+  assert.doesNotMatch(achievements, /legacyOnly/);
 });
 
 check("SIMULATION-DOES-NOT-WRITE-CONFIRMATION-EVIDENCE", () => {
