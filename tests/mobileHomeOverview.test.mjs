@@ -4,7 +4,7 @@ import fs from "node:fs";
 const home = fs.readFileSync("screens/mobile/homeScreen.js", "utf8");
 const css = fs.readFileSync("styles/mobile-home.css", "utf8");
 const gestureCss = fs.readFileSync("styles/mobile-home-gesture.css", "utf8");
-const interactions = fs.readFileSync("ui/interactions/homeInteractions.js", "utf8");
+const interactions = fs.readFileSync("ui/interactions/mobileHomeInteractions.js", "utf8");
 const hub = fs.readFileSync("ui/mobileHomeHub.js", "utf8");
 
 for (const legacySurface of ["mobile-home-widgets", "mobile-home-apps", "mobile-home-app-catalog", "mobile-home-dock"]) {

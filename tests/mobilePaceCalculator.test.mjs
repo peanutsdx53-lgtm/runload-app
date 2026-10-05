@@ -20,7 +20,7 @@ async function test(id, fn) {
 
 await test('PACE-TOOL-IS-OPTIONAL-EMOJI-HOME-APP', () => {
   const home = read('screens/mobile/homeScreen.js');
-  const homeLayout = read('ui/interactions/homeLayoutState.js');
+  const homeLayout = read('ui/interactions/mobileHomeLayoutState.js');
   assert.ok(home.includes('href: "#/pace-tool"'));
   assert.ok(home.includes('label: "ペース換算"'));
   assert.ok(home.includes('emoji: "🧮"'));
@@ -37,9 +37,9 @@ await test('PACE-TOOL-HAS-ROUTE-BINDER-AND-HOME-NAVIGATION', () => {
   assert.ok(binders.includes('bindMobilePaceCalculator'));
   assert.ok(binders.includes('"pace-tool": bindMobilePaceCalculator'));
   assert.ok(architecture.includes('screen === "pace-tool"'));
-  assert.ok(architecture.includes('function mobileUtilityReturn()'));
+  assert.ok(architecture.includes('function homeUtilityReturn()'));
   assert.ok(architecture.includes('return { backHref: "#/home", backLabel: "ホーム" };'));
-  assert.ok(architecture.includes('if (screen === "pace-tool") return { title: "ペース換算", ...mobileUtilityReturn() };'));
+  assert.ok(architecture.includes('if (screen === "pace-tool") return { title: "ペース換算", ...homeUtilityReturn() };'));
 });
 
 await test('PACE-TOOL-5KM-35MIN-CALCULATION-IS-EXACT', () => {

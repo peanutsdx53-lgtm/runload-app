@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { PRIMARY_REGIONAL_V2_MODEL_VERSION } from "../core/appCore.js";
-import { buildRunFingerprint } from "../ui/runFingerprint.js";
+import { buildRunFingerprint } from "../ui/mobileRunFingerprint.js";
 import { renderBodyTimelineScreen } from "../screens/bodyTimelineScreen.js";
 
 const baseRecord = { id: "run-29", date: "2026-09-30", createdAt: "2026-09-30T11:00:00.000Z", activityType: "run", distanceKm: 5, durationMinutes: 30, runningFormat: "CONTINUOUS_RUN" };
@@ -40,11 +40,12 @@ assert.equal((html.match(/data-body-timeline-card/g) || []).length, 3);
 assert.match(html, /data-direction="above"/);
 assert.match(html, /data-direction="below"/);
 
-const resultSource = fs.readFileSync(new URL("../screens/resultScreen.js", import.meta.url), "utf8");
+const resultSource = fs.readFileSync(new URL("../screens/mobile/resultScreen.js", import.meta.url), "utf8");
 assert.match(resultSource, /RUN FINGERPRINT/);
 assert.match(resultSource, /#\/body-timeline\?recordId=/);
 assert.match(resultSource, /#\/run-route\?recordId=.*replay=1/);
-assert.match(resultSource, /if \(!mobileLayout \|\| record\.activityType !== "run"\) return ""/);
+assert.match(resultSource, /if \(record\.activityType !== "run"\) return ""/);
+assert.doesNotMatch(resultSource, /mobileLayout/);
 
 const routeSource = fs.readFileSync(new URL("../screens/runRouteScreen.js", import.meta.url), "utf8");
 const routeInteractionSource = fs.readFileSync(new URL("../ui\/interactions\/runRouteInteractions.js", import.meta.url), "utf8");
@@ -64,7 +65,7 @@ assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 const sw = fs.readFileSync(new URL("../service-worker.js", import.meta.url), "utf8");
 assert.ok(sw.includes(`running-record-app-runtime-${currentVersion}`));
 assert.match(sw, /screens\/bodyTimelineScreen\.js/);
-assert.match(sw, /ui\/runFingerprint\.js/);
+assert.match(sw, /ui\/mobileRunFingerprint\.js/);
 assert.match(sw, /styles\/mobile-run-lab\.css/);
 
 console.log("mobileRunExperience: ok");

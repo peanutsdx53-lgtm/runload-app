@@ -44,10 +44,11 @@ const terms = read("screens/shared/termsScreen.js");
 assert.match(terms, /医療・安全に関する位置づけ/);
 assert.match(terms, /法令により制限または免除できない責任/);
 
-const settings = read("screens/settingsScreen.js");
-assert.match(settings, /reopen-onboarding/);
-assert.match(settings, /利用規約/);
-assert.match(settings, /プライバシー/);
+const mobileSettings = read("screens/mobile/settingsScreen.js");
+const commonSettings = read("screens/settingsScreen.js");
+assert.match(mobileSettings, /reopen-onboarding/);
+assert.match(commonSettings, /利用規約/);
+assert.match(commonSettings, /プライバシー/);
 
 const version = read("ui/appVersionStatus.js").match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);

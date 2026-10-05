@@ -7,7 +7,7 @@ const root = process.cwd();
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const app = read("app.js");
 const router = read("ui/appRouter.js");
-const shell = read("ui/appShell.js");
+const shell = read("ui/mobileAppShell.js") + read("ui/appShell.js");
 const worker = read("service-worker.js");
 const version = read("ui/appVersionStatus.js");
 const tokens = read("styles/tokens.css");
@@ -41,9 +41,7 @@ assert.match(homeHub, /is-home-editing/);
 assert.match(homeHub, /moveTo\(0, \{ smooth: false \}\)/, "entering Home edit mode must force the existing app Home");
 assert.match(worker, /\.\/ui\/mobileHomeHub\.js/);
 
-for (const token of ["--mobile-type-caption: 0.75rem", "--mobile-type-label: 0.8125rem", "--mobile-type-body: 0.9375rem", "--mobile-type-control: 1rem", "--mobile-type-title: 1.5rem"]) {
-  assert.ok(tokens.includes(token), `missing typography role ${token}`);
-}
+assert.doesNotMatch(tokens, /--mobile-type-/, "shared tokens must not carry mobile-only roles");
 
 const currentVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);

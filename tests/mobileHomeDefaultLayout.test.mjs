@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
-const homeLayout = fs.readFileSync('ui/interactions/homeLayoutState.js', 'utf8');
-const gridModel = fs.readFileSync('ui/interactions/homeGridModel.js', 'utf8');
+const homeLayout = fs.readFileSync('ui/interactions/mobileHomeLayoutState.js', 'utf8');
+const gridModel = fs.readFileSync('ui/interactions/mobileHomeGridModel.js', 'utf8');
 const guard = fs.readFileSync('ui/mobileHomeDefaultLayout.js', 'utf8');
 const capacity = fs.readFileSync('ui/mobileHomePageCapacity.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');

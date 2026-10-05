@@ -19,9 +19,9 @@ async function test(id, fn) {
 
 await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
   const home = read('screens/mobile/homeScreen.js');
-  const interactions = read('ui/interactions/homeInteractions.js');
-  const homeLayout = read('ui/interactions/homeLayoutState.js');
-  const homeEdit = read('ui/interactions/homeEditPresentation.js');
+  const interactions = read('ui/interactions/mobileHomeInteractions.js');
+  const homeLayout = read('ui/interactions/mobileHomeLayoutState.js');
+  const homeEdit = read('ui/interactions/mobileHomeEditPresentation.js');
   assert.ok(home.includes('data-home-app-catalog'));
   assert.ok(home.includes('href: "#/location-note"'));
   assert.ok(home.includes('href: "#/quick-note"'));
@@ -42,7 +42,7 @@ await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
 });
 
 await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
-  const homeEdit = read('ui/interactions/homeEditPresentation.js');
+  const homeEdit = read('ui/interactions/mobileHomeEditPresentation.js');
   const css = read('styles/mobile-home-editing.css');
   assert.ok(homeEdit.includes('function appPickerIconMarkup'));
   assert.ok(homeEdit.includes('.mobile-home-app__icon'));
@@ -58,8 +58,8 @@ await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
 
 await test('MOBILE-HOME-ALL-APP-LAUNCHERS-ARE-REMOVABLE-AND-RESTORABLE', () => {
   const home = read('screens/mobile/homeScreen.js');
-  const interactions = read('ui/interactions/homeInteractions.js');
-  const homeLayout = read('ui/interactions/homeLayoutState.js');
+  const interactions = read('ui/interactions/mobileHomeInteractions.js');
+  const homeLayout = read('ui/interactions/mobileHomeLayoutState.js');
   const css = read('styles/mobile-quick-tools.css');
   assert.ok(homeLayout.includes('export const HOME_APP_CATALOG'));
   for (const id of ['simulation', 'plan', 'reading', 'share', 'settings', 'record', 'measure', 'history', 'course', 'pace-tool']) {
@@ -75,7 +75,7 @@ await test('MOBILE-HOME-ALL-APP-LAUNCHERS-ARE-REMOVABLE-AND-RESTORABLE', () => {
 
 await test('MOBILE-HOME-NESTED-LAUNCH-LINK-SUPPRESSES-IOS-LINK-CALLOUT', () => {
   const home = read('screens/mobile/homeScreen.js');
-  const interactions = read('ui/interactions/homeInteractions.js');
+  const interactions = read('ui/interactions/mobileHomeInteractions.js');
   const css = read('styles/mobile-quick-tools.css');
   assert.ok(home.includes('class="mobile-home-app__launch"'));
   assert.ok(css.includes('.mobile-home-app__launch'));

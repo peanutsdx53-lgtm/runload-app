@@ -80,7 +80,7 @@ test('HOME-RETURN-IS-BOUND-TO-SHELL-HOME-LINKS', () => {
 });
 
 test('HOME-LAUNCH-RECORDS-ORIGIN-ITEM', () => {
-  const home = read('ui/interactions/homeInteractions.js');
+  const home = read('ui/interactions/mobileHomeInteractions.js');
   assert.ok(home.includes('rememberMobileHomeLaunch'));
   assert.ok(home.includes('item.dataset.homeItemId'));
 });

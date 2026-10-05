@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
 const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
-const source = read('ui/interactions/homeInteractions.js');
+const source = read('ui/interactions/mobileHomeInteractions.js');
 const css = read('styles/mobile-home-editing.css');
 const ret = read('ui/mobileHomeReturnTransition.js');
 const results = [];

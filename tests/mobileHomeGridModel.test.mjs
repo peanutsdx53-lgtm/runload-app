@@ -5,7 +5,7 @@ import {
   packTokens,
   placementIsFree,
   usedRowCount,
-} from '../ui/interactions/homeGridModel.js';
+} from '../ui/interactions/mobileHomeGridModel.js';
 
 const sizes = { today: 'small', plan: 'small', changes: 'medium', checkpoint: 'large' };
 

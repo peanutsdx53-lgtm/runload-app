@@ -106,10 +106,10 @@ const currentVersion = versionSource.match(/APP_VERSION = "([^"]+)"/)?.[1] || ""
 assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 const escapedVersion = currentVersion.replaceAll(".", "\\.");
 
-const resultSource = read("../screens/resultScreen.js");
+const resultSource = read("../screens/mobile/resultScreen.js");
 assert.match(resultSource, /renderRunCapsule/);
 assert.match(resultSource, /renderSameCourseComparison/);
-const historySource = read("../screens/historyScreen.js");
+const historySource = read("../screens/mobile/historyScreen.js");
 assert.match(historySource, /renderMobileFatigueTrend/);
 const index = read("../index.html");
 const platformStyles = read("../ui/platformStyles.js");

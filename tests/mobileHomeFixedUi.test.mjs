@@ -50,7 +50,7 @@ test('HOME-RETURN-PAINTS-SNAPSHOT-BEFORE-NAVIGATION', () => {
 });
 
 test('HOME-PAGE-INDICATOR-REMAINS-VISIBLE-FOR-ONE-PAGE', () => {
-  const source = read('ui/interactions/homeInteractions.js');
+  const source = read('ui/interactions/mobileHomeInteractions.js');
   assert.ok(source.includes('pageIndicator.hidden = false;'));
   assert.equal(source.includes('pageIndicator.hidden = pages.length <= 1 && !editing;'), false);
 });

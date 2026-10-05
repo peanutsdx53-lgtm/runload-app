@@ -5,7 +5,7 @@ import {
   STEP_ESTIMATE_MODEL_ID,
   analyzeMeasuredCourse,
   createMotionStepEstimator,
-} from '../ui/runMeasurementAutoRecord.js';
+} from '../ui/mobileRunMeasurementAutoRecord.js';
 import {
   clearPendingRunMeasurement,
   commitPendingRunMeasurement,
@@ -14,7 +14,7 @@ import {
 } from '../ui/runMeasurementState.js';
 
 const stateText = fs.readFileSync('ui/runMeasurementState.js', 'utf8');
-const interactionText = fs.readFileSync('ui/interactions/runMeasurementInteractions.js', 'utf8');
+const interactionText = fs.readFileSync('ui/interactions/mobileRunMeasurementInteractions.js', 'utf8');
 const screenText = fs.readFileSync('screens/mobile/runMeasurementScreen.js', 'utf8');
 const autofillText = fs.readFileSync('ui/mobileMeasurementRecordAutofill.js', 'utf8');
 const coreText = fs.readFileSync('ui/runMeasurementCore.js', 'utf8');
@@ -211,7 +211,7 @@ await test('MEASUREMENT-RECORD-AUTOFILL-IS-MOBILE-ONLY', async () => {
   assert.ok(autofillText.includes('name="savePlanCourseToLibrary" value="1"'));
   assert.ok(mobileEntryText.includes('./mobileMeasurementRecordAutofill.js'));
   assert.ok(workerText.includes('"./ui/mobileMeasurementRecordAutofill.js"'));
-  assert.ok(workerText.includes('"./ui/runMeasurementAutoRecord.js"'));
+  assert.ok(workerText.includes('"./ui/mobileRunMeasurementAutoRecord.js"'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

@@ -19,7 +19,7 @@ async function test(id, fn) {
 
 await test('PHOTO-MEMO-HOME-ENTRY-USES-EMOJI', () => {
   const home = read('screens/mobile/homeScreen.js');
-  const homeLayout = read('ui/interactions/homeLayoutState.js');
+  const homeLayout = read('ui/interactions/mobileHomeLayoutState.js');
   assert.ok(home.includes('href: "#/photo-note"'));
   assert.ok(home.includes('label: "写真メモ"'));
   assert.ok(home.includes('emoji: "📷"'));
@@ -36,7 +36,7 @@ await test('PHOTO-MEMO-HAS-ROUTE-BINDER-AND-HOME-RETURN', () => {
   assert.ok(binders.includes('bindMobilePhotoMemo'));
   assert.ok(binders.includes('"photo-note": bindMobilePhotoMemo'));
   assert.ok(architecture.includes('screen === "photo-note"'));
-  assert.ok(architecture.includes('title: "写真メモ", ...mobileUtilityReturn()'));
+  assert.ok(architecture.includes('title: "写真メモ", ...homeUtilityReturn()'));
   assert.ok(architecture.includes('return { backHref: "#/home", backLabel: "ホーム" };'));
 });
 

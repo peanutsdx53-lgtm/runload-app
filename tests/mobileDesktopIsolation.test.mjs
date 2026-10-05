@@ -1,53 +1,39 @@
-import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import test from 'node:test';
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import test from "node:test";
 
-const read = (path) => fs.readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+const read = (path) => fs.readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 
-test('mobile-only behavior stays explicitly gated from desktop contracts', () => {
-  const record = read('screens/recordInputScreen.js');
-  const reading = read('screens/readingScreen.js');
-  const history = read('screens/historyScreen.js');
-  const result = read('screens/resultScreen.js');
-  const mobileResult = read('screens/mobile/resultScreen.js');
-  const home = read('ui/interactions/homeInteractions.js');
-  const homeLayout = read('ui/interactions/homeLayoutState.js');
-  const measurement = read('ui/interactions/runMeasurementInteractions.js');
-  const mobileCss = read('styles/mobile-usability.css');
-  const measurementCss = read('styles/mobile-run-measurement-ergonomics.css');
+test("mobile and desktop presentation remain file-level isolated", () => {
+  const sharedRecord = read("screens/recordInputScreen.js");
+  const mobileRecord = read("screens/mobile/recordInputScreen.js");
+  const desktopRecord = read("screens/desktop/recordInputScreen.js");
+  const sharedResult = read("screens/resultScreen.js");
+  const mobileResult = read("screens/mobile/resultScreen.js");
+  const desktopResult = read("screens/desktop/resultScreen.js");
+  const sharedHistory = read("screens/historyScreen.js");
+  const mobileHistory = read("screens/mobile/historyScreen.js");
+  const desktopHistory = read("screens/desktop/historyScreen.js");
+  const sharedShell = read("ui/appShell.js");
+  const mobileShell = read("ui/mobileAppShell.js");
+  const desktopShell = read("ui/desktopAppShell.js");
 
-  assert.match(record, /const mobileLayout = matchesMobileLayout\(\);/);
-  assert.match(record, /step="\$\{mobileLayout \? "0\.01" : "0\.1"\}"/);
-
-  assert.match(reading, /if \(matchesMobileLayout\(\)\) \{/);
-  assert.match(reading, /deferredArticleIds: new Set\(\)/);
-  assert.match(reading, /return renderReadingContent\(\{ services, context \}\);/);
-
-  assert.match(history, /function normalizedView\(value\)/);
-  assert.match(history, /normalized === "checks"|=== "checks" \? "checks" : "records"/);
-  assert.match(history, /function normalizedMobileView\(value\)/);
-  assert.match(history, /const view = mobileLayout\s*\? normalizedMobileView/);
-  assert.match(history, /const content = mobileLayout\s*\? mobileHistoryContent/);
-  assert.match(history, /: historyRecordView\(workspace,context\);/);
-
-  assert.doesNotMatch(result, /mobileAchievements|mobileInsights|matchesMobileLayout/);
-  assert.match(result, /mobileLayout \? renderMobileResultHighlights/);
-  assert.match(mobileResult, /mobileLayout: true/);
-  assert.match(mobileResult, /mobileAchievements/);
-  assert.match(mobileResult, /mobileInsights/);
-
-  assert.match(homeLayout, /loadMobileQuickTools/);
-  assert.match(homeLayout, /\["today", "plan"\]/);
-  assert.match(homeLayout, /1分メモの内容/);
-  assert.match(homeLayout, /checkpoint \|\| "未設定"/);
-  assert.match(home, /from "\.\/homeLayoutState\.js"/);
-
-  assert.match(measurement, /root\.dataset\.measurementMode = mode/);
-  assert.match(measurement, /root\.dataset\.measurementMode = measurementMode/);
-
-  assert.match(mobileCss, /@media \(max-width: 54\.99rem\)/);
-  assert.match(mobileCss, /\.mobile-history-mode/);
-  assert.match(mobileCss, /\.mobile-result-highlights/);
-  assert.match(measurementCss, /@media \(max-width: 54\.99rem\)/);
-  assert.match(measurementCss, /data-measurement-mode="free"/);
+  for (const source of [sharedRecord, sharedResult, sharedHistory, sharedShell]) {
+    assert.doesNotMatch(source, /matchesMobileLayout|mobileLayout|mobile-|desktop-|pc-/i);
+  }
+  assert.match(mobileRecord, /mobile-record-progress|mobile-save-bar/);
+  assert.doesNotMatch(desktopRecord, /mobile-record-progress|mobile-save-bar/);
+  assert.match(mobileResult, /mobile-body-map-hint|mobile-region-trigger/);
+  assert.doesNotMatch(desktopResult, /mobile-body-map-hint|mobile-region-trigger/);
+  assert.match(desktopResult, /pc-result-console/);
+  assert.doesNotMatch(mobileResult, /pc-result-console/);
+  assert.match(mobileHistory, /mobile-history-mode/);
+  assert.match(desktopHistory, /desktop-history-mode/);
+  assert.doesNotMatch(mobileHistory, /desktop-history-mode/);
+  assert.doesNotMatch(desktopHistory, /mobile-history-mode/);
+  assert.match(mobileShell, /renderPrimaryNavigation|mobile-topbar/);
+  assert.match(desktopShell, /renderPrimaryNavigation/);
+  assert.doesNotMatch(desktopShell, /mobile-topbar/);
+  assert.match(sharedShell, /<nav class="primary-navigation" aria-label="主要画面">/);
+  assert.match(desktopShell, /app-header--desktop|pc-global-back/);
 });

@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 
 const home = fs.readFileSync("screens/mobile/homeScreen.js", "utf8");
 const homeCss = fs.readFileSync("styles/mobile-home-editing.css", "utf8");
-const record = fs.readFileSync("screens/recordInputScreen.js", "utf8");
+const record = fs.readFileSync("screens/mobile/recordInputScreen.js", "utf8") + fs.readFileSync("screens/recordInputScreen.js", "utf8");
 const recordCss = fs.readFileSync("styles/mobile-usability.css", "utf8");
 const rof = fs.readFileSync("ui/rofJPresentation.js", "utf8");
 const rofCss = fs.readFileSync("styles/rof-j-visual.css", "utf8");
-const result = fs.readFileSync("screens/resultScreen.js", "utf8");
+const result = fs.readFileSync("screens/mobile/resultScreen.js", "utf8");
 const runLabCss = fs.readFileSync("styles/mobile-run-lab.css", "utf8");
 const version = fs.readFileSync("ui/appVersionStatus.js", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
@@ -58,7 +58,7 @@ test("RESULT-REMOVES-DUPLICATE-MOBILE-INTRO-AND-COLLAPSES-RUN-LAB", () => {
   assert.ok(result.includes('<details class="mobile-run-lab">'));
   assert.ok(runLabCss.includes("details.mobile-run-lab"));
   assert.ok(runLabCss.includes("details.mobile-run-lab[open]"));
-  assert.ok(result.indexOf('renderRegional(regionalV2ResultRecord') < result.lastIndexOf('${runLab}${routeLink}'));
+  assert.ok(result.includes('${renderRegional(regionalV2ResultRecord, allExperiences, record)}${renderFatigue(services, record)}${renderRunLab({ services, record, measurement: savedMeasurement })}${routeLink}'));
   assert.ok(result.includes("見るポイント"));
 });
 
