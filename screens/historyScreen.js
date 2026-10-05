@@ -7,8 +7,6 @@ import { addDaysIso, localTodayIso, parseIsoDate } from "../ui/historyPresentati
 import { formatActivitySummary, formatLocalDate, formatLocalTime, formatNumber } from "../ui/recordPresentation.js";
 
 import { BODY_REGION_VIEWS } from "../ui/bodyRegionVisuals.js";
-import { matchesMobileLayout } from "../ui/deviceLayout.js";
-import { renderMobileFatigueTrend } from "../ui/mobileInsights.js";
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
 const REGION_BY_ID = new Map(REGIONS.map((region) => [region.id, region]));
@@ -83,14 +81,13 @@ function parseSubjectiveKey(value = "") {
   return Object.freeze({ areaId, laterality });
 }
 
-function buildWorkspace(services, context) {
+function buildWorkspace(services, context, { mobileLayout = false } = {}) {
   const allExperiences = services.workflows.records.loadAllExperiences()
     .filter(Boolean)
     .sort(recordChronology);
   if (!allExperiences.length) return null;
 
   const period = normalizedPeriod(context.parameters.get("period"));
-  const mobileLayout = matchesMobileLayout();
   const view = mobileLayout
     ? normalizedMobileView(context.parameters.get("view"))
     : normalizedView(context.parameters.get("view"));
@@ -378,7 +375,7 @@ function selfUnderstandingHistoryView(services, context) {
   const item = (thread) => {
     const shareRecordId = thread.eligibleEpisodes?.at?.(-1)?.recordId || thread.sourceEpisode?.recordId || "";
     const share = shareRecordId ? `<a class="self-understanding-history-share" href="#/consultation?recordId=${encodeURIComponent(shareRecordId)}&threadId=${encodeURIComponent(thread.id)}">この確認を共有用に整理</a>` : "";
-    return `<article class="self-understanding-history-item" data-state="${escapeHtml(thread.userState)}"><header><div><small>${thread.userState === "PAUSED" ? "一時停止中" : thread.userState === "CLOSED" ? "終了" : thread.hasNewEligibleData ? "新しい記録あり" : "確認中"}</small><h3>${escapeHtml(thread.title)}</h3></div><span>${escapeHtml(String(thread.eligibleCount || 0))}件</span></header><p>${thread.type === "USER_DEFINED_LEGACY" ? "以前に自分で残した確認です。内容を自動で解釈していません。" : "自分で次回も見ると決めた内容です。"}</p>${chart(thread)}<div class="self-understanding-history-item__actions">${thread.userState === "WATCHING" ? `<button type="button" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="PAUSE">一時停止</button><button type="button" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="CLOSE">終了</button>` : thread.userState === "PAUSED" ? `<button type="button" class="primary" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="KEEP_WATCHING">確認を再開</button><button type="button" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="CLOSE">終了</button>` : ""}</div>${share}</article>`;
+    return `<article class="self-understanding-history-item" data-state="${escapeHtml(thread.userState)}"><header><div><small>${thread.userState === "PAUSED" ? "一時停止中" : thread.userState === "CLOSED" ? "終了" : thread.hasNewEligibleData ? "新しい記録あり" : "確認中"}</small><h3>${escapeHtml(thread.title)}</h3></div><span>${escapeHtml(String(thread.eligibleCount || 0))}件</span></header><p>自分で次回も見ると決めた内容です。</p>${chart(thread)}<div class="self-understanding-history-item__actions">${thread.userState === "WATCHING" ? `<button type="button" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="PAUSE">一時停止</button><button type="button" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="CLOSE">終了</button>` : thread.userState === "PAUSED" ? `<button type="button" class="primary" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="KEEP_WATCHING">確認を再開</button><button type="button" data-action="history-self-understanding-state" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="CLOSE">終了</button>` : ""}</div>${share}</article>`;
   };
   const filterHref = (state) => buildHref({ view: "checks", checkState: state });
   return `<section class="history-view history-view--checks"><section class="records-head"><div class="comparison-title comparison-title--plain"><div><small>CHECKING THREADS</small><h2>自分について確認してきたこと</h2></div></div><span class="record-total">${collection.length}件</span></section><nav class="self-understanding-history-filter" aria-label="確認していることの状態"><a class="${requestedState === "watching" ? "active" : ""}" href="${escapeHtml(filterHref("watching"))}">確認中 <span>${view.watching.length}</span></a><a class="${requestedState === "paused" ? "active" : ""}" href="${escapeHtml(filterHref("paused"))}">休止中 <span>${view.paused.length}</span></a><a class="${requestedState === "closed" ? "active" : ""}" href="${escapeHtml(filterHref("closed"))}">終了したもの <span>${view.closed.length}</span></a></nav><div class="self-understanding-history-list">${collection.length ? collection.map(item).join("") : `<div class="empty-records"><strong>${requestedState === "watching" ? "確認中の問いはありません" : requestedState === "paused" ? "休止中の問いはありません" : "終了した問いはありません"}</strong></div>`}</div></section>`;
@@ -401,7 +398,7 @@ function mobileHistoryEmpty() {
   return `<section class="history-view"><div class="empty-records empty-records--initial mobile-history-empty"><small>HISTORY</small><strong>最初の記録を残すと、ここで変化を見返せます</strong><p>保存した記録はそのまま残し、比べられる記録だけを同じ部位でつなぎます。</p><div class="mobile-history-empty__preview" aria-label="記録が増えると確認できること"><span><b>1</b>保存記録を探す</span><span><b>2</b>同じ部位を比べる</span><span><b>3</b>前回との差を見る</span></div><a href="#/record-input">記録を始める</a></div></section>`;
 }
 
-function mobileHistoryContent(workspace, context, services) {
+function mobileHistoryContent(workspace, context, services, renderMobileFatigueTrend) {
   if (workspace.view === "checks") return selfUnderstandingHistoryView(services, context);
   if (workspace.view === "trends") {
     return `${renderMobileFatigueTrend(services)}${historyCompareView(workspace)}`;
@@ -409,16 +406,19 @@ function mobileHistoryContent(workspace, context, services) {
   return historyRecordView(workspace, context);
 }
 
-export function renderHistoryScreen({services,context}) {
-  const mobileLayout=matchesMobileLayout();
-  const workspace=buildWorkspace(services,context);
+export function renderHistoryScreenForPlatform({services,context}, { mobileLayout = false, renderMobileFatigueTrend = () => "" } = {}) {
+  const workspace=buildWorkspace(services,context,{ mobileLayout });
   if(!workspace){
     const wantsChecks = String(context?.parameters?.get("view") || "") === "checks";
     const checks = wantsChecks ? selfUnderstandingHistoryView(services, context) : "";
     return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録と、次回も見ると決めた内容を見返します。</p></div></section>${checks || (mobileLayout ? mobileHistoryEmpty() : '<section class="history-view"><div class="empty-records empty-records--initial"><small>SAVED RECORDS</small><strong>保存した記録はまだありません</strong><p>走行または休養を保存すると、ここから記録を探して確認できます。</p><a href="#/record-input">記録を始める</a></div></section>')}</div>`;
   }
   const content = mobileLayout
-    ? mobileHistoryContent(workspace, context, services)
+    ? mobileHistoryContent(workspace, context, services, renderMobileFatigueTrend)
     : workspace.view === "checks" ? selfUnderstandingHistoryView(services, context) : historyRecordView(workspace,context);
   return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">HISTORY</p><h1>履歴</h1><p>過去の記録と、次回も見ると決めた内容を見返します。</p></div></section>${mobileLayout ? mobileHistoryModeSwitch(workspace) : desktopHistoryModeSwitch(workspace)}${content}${services.workflows.history.loadUndoEntry()?'<div class="history-undo" role="status"><p>直前に削除した記録を元に戻せます。</p><button type="button" data-action="undo-history-delete">削除を元に戻す</button></div>':""}</div>`;
+}
+
+export function renderHistoryScreen(args) {
+  return renderHistoryScreenForPlatform(args);
 }

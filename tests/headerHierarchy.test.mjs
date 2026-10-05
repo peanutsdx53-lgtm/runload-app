@@ -51,14 +51,15 @@ await test('HEADER-UTILITY-CONTROLS-SHARE-GEOMETRY',()=>{
 await test('HEADER-HOME-USES-GLOBAL-JAPANESE-SCREEN-NAME',()=>{
   const shell=read('ui/appShell.js');
   const architecture=read('ui/screenArchitecture.js');
-  const home=read('screens/homeScreen.js');
+  const desktopHome=read('screens/desktop/homeScreen.js');
+  const mobileHome=read('screens/mobile/homeScreen.js');
   assert.ok(shell.includes('home: "ホーム"'));
   assert.ok(!architecture.includes('backLabel: "Home"'));
-  assert.ok(!home.includes('<h1>今日</h1>'));
-  assert.ok(!home.includes('CURRENT STATE'));
-  assert.ok(home.includes('<h2>記録と予定</h2>'));
-  assert.ok(home.includes('class="secondary home-measure-link"'));
-  assert.ok(home.includes('GPSで測定'));
+  assert.ok(!desktopHome.includes('<h1>今日</h1>'));
+  assert.ok(!desktopHome.includes('CURRENT STATE'));
+  assert.ok(desktopHome.includes('<h2>記録と予定</h2>'));
+  assert.ok(!desktopHome.includes('#/run-measurement'));
+  assert.ok(mobileHome.includes('#/run-measurement'));
 });
 
 await test('HEADER-PRIMARY-EYEBROWS-ARE-HIDDEN',()=>{

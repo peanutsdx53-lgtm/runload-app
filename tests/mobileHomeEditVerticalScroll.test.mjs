@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 const support = fs.readFileSync('ui/mobileHomeEditScroll.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
+const mobileEntry = fs.readFileSync('ui/mobileRuntimeEntry.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 
 const results = [];
@@ -72,7 +73,7 @@ test('SUPPORT-IS-MOBILE-ONLY', () => {
 });
 
 test('SUPPORT-IS-LOADED-AND-PRECACHED', () => {
-  assert.ok(index.includes('<script type="module" src="./ui/mobileHomeEditScroll.js"></script>'));
+  assert.ok(mobileEntry.includes('./mobileHomeEditScroll.js'));
   assert.ok(worker.includes('"./ui/mobileHomeEditScroll.js"'));
 });
 

@@ -18,9 +18,6 @@
     background: var(--color-paper);
   }
 
-  .screen-layout--home .home-desktop-legacy {
-    display: none;
-  }
 
   .mobile-home-os {
     display: block;
@@ -382,11 +379,6 @@
   }
 }
 
-@media (min-width: 55rem) {
-  .home-desktop-legacy {
-    display: block;
-  }
-}
 
 @media (max-width: 54.99rem) {
   html.is-mobile-home-return-transition::view-transition-group(root) {

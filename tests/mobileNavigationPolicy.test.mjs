@@ -4,6 +4,8 @@ import assert from "node:assert/strict";
 
 const script = fs.readFileSync(new URL("../ui/mobileNavigationPolicy.js", import.meta.url), "utf8");
 const index = fs.readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const mobileEntry = fs.readFileSync(new URL("../ui/mobileRuntimeEntry.js", import.meta.url), "utf8");
+const bootstrap = fs.readFileSync(new URL("../ui/platformBootstrap.js", import.meta.url), "utf8");
 
 function makeLink(href, classes = []) {
   return {
@@ -58,10 +60,11 @@ function runPolicy({ about = false } = {}) {
   return { location, backTop, backInner, moreNav, guideLinks };
 }
 
-assert.ok(index.includes('mobileHomeDefaultLayout.js'));
-assert.ok(index.includes('mobileNavigationPolicy.js'));
-assert.ok(index.indexOf('mobileHomeDefaultLayout.js') < index.indexOf('mobileNavigationPolicy.js'));
-assert.ok(index.indexOf('mobileNavigationPolicy.js') < index.indexOf('./app.js'));
+assert.ok(mobileEntry.includes('mobileHomeDefaultLayout.js'));
+assert.ok(mobileEntry.includes('mobileNavigationPolicy.js'));
+assert.ok(mobileEntry.indexOf('mobileHomeDefaultLayout.js') < mobileEntry.indexOf('mobileNavigationPolicy.js'));
+assert.ok(bootstrap.includes('await import("./mobileRuntimeEntry.js")'));
+assert.ok(bootstrap.includes('await import("../app.js")'));
 assert.doesNotMatch(script, /localStorage|MIGRATION_KEY|OLD_DEFAULT_APP_SETS|migrateGeneratedHomeLayout/);
 
 const normal = runPolicy();

@@ -1,6 +1,6 @@
 import { matchesMobileLayout } from "./deviceLayout.js";
 
-const HOME_SELECTOR = ".screen--home .home-desktop-legacy";
+const HOME_SELECTOR = ".screen--home .home-desktop";
 let queued = false;
 
 function shortcut(href, title, note) {

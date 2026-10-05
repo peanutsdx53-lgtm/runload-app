@@ -8,7 +8,7 @@ const css = fs.readFileSync("styles/consultation-share.css", "utf8");
 const index = fs.readFileSync("index.html", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
 const version = fs.readFileSync("ui/appVersionStatus.js", "utf8");
-const about = fs.readFileSync("screens/aboutScreen.js", "utf8");
+const about = fs.readFileSync("screens/shared/aboutScreen.js", "utf8");
 
 const appVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 

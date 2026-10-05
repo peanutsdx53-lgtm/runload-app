@@ -12,7 +12,7 @@ const region={
 function output(){return {
   target:{recordId:'r2',date:'2026-10-03',origin:'result',selectedRegionId:''},
   state:{targetAvailable:true,regional:'AVAILABLE',history:'AVAILABLE',subjective:'PAIR',support:'NORMAL'},
-  runFacts:{postRunReflection:'後半は少し余裕があった',nextCheckPoint:''},
+  runFacts:{postRunReflection:'後半は少し余裕があった'},
   overview:{attention:{counts:{previousChanged:1,conditionDifferences:1},groups:[{code:'PREVIOUS_CHANGE',regions:[region]}]}},
   selectedRegion:null,
   subjectiveContext:{state:'PAIR',pre:{available:true,value:3},post:{available:true,value:6},difference:{eligible:true,value:3}},
@@ -75,7 +75,7 @@ await test('CONTINUED-USE-PRIORITIZES-THE-PREVIOUSLY-CHOSEN-QUESTION',()=>{
 
 await test('ZERO-CANDIDATE-IS-A-NORMAL-EXPLICIT-STATE',()=>{
   const emptyOutput=output();
-  emptyOutput.runFacts={postRunReflection:'',nextCheckPoint:''};
+  emptyOutput.runFacts={postRunReflection:''};
   emptyOutput.subjectiveContext={state:'UNAVAILABLE',pre:{available:false},post:{available:false},difference:{eligible:false}};
   emptyOutput.conditions={differences:[]};
   const html=renderInterpretationRoom({output:emptyOutput,selfUnderstanding:{...candidate,primaryCandidate:null},mobileLayout:true});

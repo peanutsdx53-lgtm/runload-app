@@ -75,7 +75,7 @@ await test('UI-MOBILE-INPUTS-USE-READABLE-TYPE',()=>{
 });
 
 await test('UI-HOME-REMOVES-REDUNDANT-EMPTY-STATE-COPY',()=>{
-  const home=read('screens/homeScreen.js');
+  const home=read('screens/desktop/homeScreen.js');
   const desktop=read('styles/desktop-foundation.css');
   assert.ok(!home.includes('最新の保存記録'));
   assert.ok(!home.includes('最初の記録'));
@@ -450,7 +450,8 @@ await test('UI-SETTINGS-USES-TWO-QUALITY-THEMES-AND-SHARE-PROFILE',()=>{
 
 
 await test('UI-GPS-MEASUREMENT-STAYS-MOBILE-AND-LEGACY-START-IS-REMOVED',()=>{
-  const home=read('screens/homeScreen.js');
+  const desktopHome=read('screens/desktop/homeScreen.js');
+  const mobileHome=read('screens/mobile/homeScreen.js');
   const app=read('app.js');
   const router=read('ui/appRouter.js');
   const worker=read('service-worker.js');
@@ -461,13 +462,8 @@ await test('UI-GPS-MEASUREMENT-STAYS-MOBILE-AND-LEGACY-START-IS-REMOVED',()=>{
   assert.match(router,/DEFAULT_SCREEN = "home"/);
   assert.doesNotMatch(worker,/screens\/startScreen/);
 
-  const pcStart=home.indexOf('function renderPcFocus');
-  const mobileStart=home.indexOf('function renderMobileFocus');
-  assert.ok(pcStart>=0&&mobileStart>pcStart);
-  const pcBlock=home.slice(pcStart,mobileStart);
-  const mobileBlock=home.slice(mobileStart,home.indexOf('function renderLatestRecord',mobileStart));
-  assert.doesNotMatch(pcBlock,/#\/run-measurement/);
-  assert.match(mobileBlock,/#\/run-measurement/);
+  assert.doesNotMatch(desktopHome,/#\/run-measurement/);
+  assert.match(mobileHome,/#\/run-measurement/);
 
   assert.match(desktop,/\.screen--plan \.plan-measure-link[\s\S]*display:none\s*!important/);
 });

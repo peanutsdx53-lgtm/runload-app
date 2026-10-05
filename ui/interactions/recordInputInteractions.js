@@ -357,7 +357,7 @@ function updateOptionalInputStatus(form) {
   const hasReflection = Boolean(
     !["", "deferred", "not_asked"].includes(String(subjective.status || ""))
     || personal.hasInput
-    || ["postRunReflection", "perceivedDifference", "nextCheckPoint"].some((name) => String(formData.get(name) || "").trim())
+    || String(formData.get("postRunReflection") || "").trim()
   );
   const states = { course: hasCourse, compare: hasCompare, reflection: hasReflection };
   Object.entries(states).forEach(([key, hasInput]) => {
@@ -823,8 +823,6 @@ function readRecordInput(formData, services) {
     },
     reflectionContext: {
       postRunReflection: String(formData.get("postRunReflection") || ""),
-      perceivedDifference: String(formData.get("perceivedDifference") || ""),
-      nextCheckPoint: String(formData.get("nextCheckPoint") || ""),
     },
     planOutcome: plan ? {
       status: plan.outcomeStatus || "completed",

@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const screen = fs.readFileSync('screens/mobile/runMeasurementScreen.js', 'utf8');
-const registry = fs.readFileSync('screens/screenRegistry.js', 'utf8');
+const sharedRegistry = fs.readFileSync('screens/sharedScreenRegistry.js', 'utf8');
+const desktopRegistry = fs.readFileSync('screens/desktopScreenRegistry.js', 'utf8');
+const mobileRegistry = fs.readFileSync('screens/mobileScreenRegistry.js', 'utf8');
 const interactions = fs.readFileSync('ui/interactions/runMeasurementInteractions.js', 'utf8');
 const state = fs.readFileSync('ui/runMeasurementState.js', 'utf8');
 const energy = fs.readFileSync('ui/runMeasurementEnergy.js', 'utf8');
@@ -19,9 +21,6 @@ function test(id, fn) {
 }
 
 test('MEASUREMENT-IS-SMARTPHONE-SPECIFIC', () => {
-  const sharedRegistry = registry.slice(registry.indexOf('export const SHARED_SCREEN_RENDERERS'), registry.indexOf('export const DESKTOP_SCREEN_RENDERERS'));
-  const desktopRegistry = registry.slice(registry.indexOf('export const DESKTOP_SCREEN_RENDERERS'), registry.indexOf('export const MOBILE_SCREEN_RENDERERS'));
-  const mobileRegistry = registry.slice(registry.indexOf('export const MOBILE_SCREEN_RENDERERS'), registry.indexOf('export function createScreenRenderers'));
   assert.ok(!sharedRegistry.includes('run-measurement'));
   assert.ok(!desktopRegistry.includes('run-measurement'));
   assert.ok(mobileRegistry.includes('"run-measurement": renderRunMeasurementScreen'));

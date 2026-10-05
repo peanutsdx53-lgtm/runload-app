@@ -135,7 +135,6 @@ function currentFacts(record = {}) {
       environmentNote: String(record.environmentContext?.environmentNote || ""),
     }),
     postRunReflection: String(record.reflectionContext?.postRunReflection || ""),
-    nextCheckPoint: String(record.reflectionContext?.nextCheckPoint || ""),
   });
 }
 

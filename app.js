@@ -7,16 +7,18 @@ import { focusScreenHeading, renderAppShell, renderDesktopHeader } from "./ui/ap
 import { applyAppSettings } from "./ui/appSettings.js";
 import { APP_GUIDE_VERSION, DEFAULT_GUIDE_SECTION, normalizeGuideSection, shouldOpenGuide, withGuideVersionSeen } from "./ui/guideContent.js";
 import { bindAppShellInteractions } from "./ui/shellInteractions.js";
-import { bindScreenInteractions } from "./ui/screenInteractions.js";
+import { createScreenInteractionBinder } from "./ui/screenInteractions.js";
 import { prepareUiMotion } from "./ui/uiMotion.js";
-import { notifyMobileScreenRendered } from "./ui/mobileHomeReturnTransition.js";
 import { bindScreenTutorial } from "./ui/screenTutorial.js";
-import { bindMobileOnboarding, hasAcceptedCurrentTerms, shouldOpenMobileOnboarding, withMobileOnboardingComplete } from "./ui/mobileOnboarding.js";
 import { handleRecordInputRouteChange, resolveRecordInputReturnState } from "./ui/recordInputWorkspace.js";
 import { createScreenRenderers } from "./screens/screenRegistry.js";
-import { initializeAchievementState } from "./ui/mobileAchievements.js";
 
-const screenRenderers = createScreenRenderers({ mobile: matchesMobileLayout() });
+const mobileLayout = matchesMobileLayout();
+const platformRuntime = mobileLayout
+  ? await import("./ui/mobileAppRuntime.js")
+  : await import("./ui/desktopAppRuntime.js");
+const screenRenderers = await createScreenRenderers({ mobile: mobileLayout });
+const bindScreenInteractions = await createScreenInteractionBinder({ mobile: mobileLayout });
 
 const appRoot = document.getElementById("app");
 const desktopHeaderRoot = document.getElementById("desktop-header-root");
@@ -39,12 +41,12 @@ const applicationServices = Object.freeze({
   fatigue,
   workflows: Object.freeze({ ...baseApplicationServices.workflows, history: linkedHistoryWorkflow }),
 });
-initializeAchievementState(applicationServices);
+platformRuntime.initializePlatformRuntime(applicationServices);
 const initialSettings = applicationServices.storage.settings.load();
 applyAppSettings(initialSettings);
 const initialScreen = resolveViewportDefaultEntryScreen();
 let currentLocation = Object.freeze({ screen: initialScreen, parameters: new URLSearchParams() });
-let onboardingOpen = shouldOpenMobileOnboarding(initialSettings, { mobile: matchesMobileLayout() });
+let onboardingOpen = platformRuntime.shouldOpenOnboarding(initialSettings);
 let onboardingReplay = false;
 let guideOpen = onboardingOpen ? false : shouldOpenGuide(initialSettings);
 let guideSection = DEFAULT_GUIDE_SECTION;
@@ -87,11 +89,11 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       firstVisit: guideFirstVisit,
       version: APP_GUIDE_VERSION,
     },
-    onboarding: {
+    onboardingMarkup: platformRuntime.renderOnboarding({
       open: onboardingOpen,
       replay: onboardingReplay,
-      alreadyAccepted: hasAcceptedCurrentTerms(applicationServices.storage.settings.load()),
-    },
+      settings: applicationServices.storage.settings.load(),
+    }),
     screenContent: renderSelectedScreen({
       services: applicationServices,
       context: currentLocation,
@@ -124,9 +126,9 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       renderCurrentLocation({ focusHeading: false, focusSelector: `#guide-tab-${guideSection}` });
     },
   };
-  bindAppShellInteractions({ root: appRoot, ...shellInteractionCallbacks });
+  bindAppShellInteractions({ root: appRoot, ...shellInteractionCallbacks, bindPlatformShell: platformRuntime.bindPlatformShell });
   if (desktopHeaderRoot?.firstElementChild) {
-    bindAppShellInteractions({ root: desktopHeaderRoot, ...shellInteractionCallbacks });
+    bindAppShellInteractions({ root: desktopHeaderRoot, ...shellInteractionCallbacks, bindPlatformShell: platformRuntime.bindPlatformShell });
   }
   bindScreenInteractions({
     screenName,
@@ -135,16 +137,17 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
     context: currentLocation,
     returnState: recordInputReturnState,
     rerender: () => renderCurrentLocation({ focusHeading: false }),
+    platformRuntime,
   });
   bindScreenTutorial({ root: appRoot, screenName });
   if (desktopHeaderRoot?.firstElementChild) {
     bindScreenTutorial({ root: desktopHeaderRoot, screenName });
   }
-  bindMobileOnboarding({
+  platformRuntime.bindOnboarding({
     root: appRoot,
     onComplete: () => {
       const currentSettings = applicationServices.storage.settings.load();
-      applicationServices.storage.settings.save(withMobileOnboardingComplete(currentSettings));
+      applicationServices.storage.settings.save(platformRuntime.completeOnboarding(currentSettings));
       onboardingOpen = false;
       onboardingReplay = false;
       guideOpen = false;
@@ -157,7 +160,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       router.navigateToScreen("home");
     },
   });
-  notifyMobileScreenRendered(screenName);
+  platformRuntime.notifyScreenRendered(screenName);
 
   window.requestAnimationFrame(() => {
     const requestedFocusSelector = focusSelector || recordInputReturnState?.focusSelector || "";
@@ -181,9 +184,9 @@ function renderScreen(location) {
   currentLocation = location;
   const mobileLayout = matchesMobileLayout();
   const settings = applicationServices.storage.settings.load();
-  const onboardingRequired = shouldOpenMobileOnboarding(settings, { mobile: mobileLayout });
+  const onboardingRequired = platformRuntime.shouldOpenOnboarding(settings);
   const legalPreview = onboardingRequired && ["terms", "privacy"].includes(location.screen);
-  const forceOnboarding = mobileLayout && location.screen === "home" && location.parameters.get("onboarding") === "1";
+  const forceOnboarding = platformRuntime.isMobilePlatform && location.screen === "home" && location.parameters.get("onboarding") === "1";
   if (legalPreview) {
     onboardingOpen = false;
     onboardingReplay = false;

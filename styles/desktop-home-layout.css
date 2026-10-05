@@ -6,7 +6,7 @@
     font-family: var(--font-sans);
   }
 
-  .screen--home .home-desktop-legacy {
+  .screen--home .home-desktop {
     display: grid;
     gap: 1.25rem;
   }
@@ -283,13 +283,13 @@
     grid-template-columns: none !important;
   }
 
-  .screen--home .home-desktop-legacy {
+  .screen--home .home-desktop {
     width: 100% !important;
     max-width: none !important;
     margin-inline: 0 !important;
   }
 
-  .screen--home.screen-layout--home > .home-desktop-legacy {
+  .screen--home.screen-layout--home > .home-desktop {
     grid-column: 1 / -1 !important;
     width: 100% !important;
     max-width: none !important;

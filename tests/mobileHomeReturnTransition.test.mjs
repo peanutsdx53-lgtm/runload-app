@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
 const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
+const mobileRuntime = read('ui/mobileAppRuntime.js');
 const results = [];
 
 function test(id, fn) {
@@ -72,8 +73,10 @@ test('HOME-RETURN-ANIMATES-CONTENT-WITHOUT-TRANSFORMING-HOME-ROOT', () => {
 
 test('HOME-RETURN-IS-BOUND-TO-SHELL-HOME-LINKS', () => {
   const shell = read('ui/shellInteractions.js');
-  assert.ok(shell.includes('bindMobileHomeReturnTransitions'));
-  assert.ok(shell.includes('homeReturnCleanup'));
+  const mobileRuntime = read('ui/mobileAppRuntime.js');
+  assert.ok(shell.includes('bindPlatformShell'));
+  assert.ok(shell.includes('platformCleanup'));
+  assert.ok(mobileRuntime.includes('bindMobileHomeReturnTransitions'));
 });
 
 test('HOME-LAUNCH-RECORDS-ORIGIN-ITEM', () => {
@@ -84,8 +87,8 @@ test('HOME-LAUNCH-RECORDS-ORIGIN-ITEM', () => {
 
 test('APP-NOTIFIES-SCREEN-RENDER-COMPLETION', () => {
   const app = read('app.js');
-  assert.ok(app.includes('notifyMobileScreenRendered'));
-  assert.ok(app.includes('notifyMobileScreenRendered(screenName)'));
+  assert.ok(app.includes('platformRuntime.notifyScreenRendered'));
+  assert.ok(mobileRuntime.includes('notifyMobileScreenRendered'));
 });
 
 test('HOME-RETURN-RESPECTS-REDUCED-MOTION', () => {

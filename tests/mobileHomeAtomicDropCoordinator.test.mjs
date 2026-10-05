@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 const coordinator = fs.readFileSync('ui/mobileHomeDropCoordinator.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
+const mobileEntry = fs.readFileSync('ui/mobileRuntimeEntry.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const versionModule = fs.readFileSync('ui/appVersionStatus.js', 'utf8');
 
@@ -47,8 +48,8 @@ test('DOCK-PLACEMENT-IS-NORMALIZED-CONTINUOUSLY', () => {
 });
 
 test('COORDINATOR-RUNS-BEFORE-EDIT-HELPER', () => {
-  const coordinatorIndex = index.indexOf('./ui/mobileHomeDropCoordinator.js');
-  const helperIndex = index.indexOf('./ui/mobileHomeEditScroll.js');
+  const coordinatorIndex = mobileEntry.indexOf('./mobileHomeDropCoordinator.js');
+  const helperIndex = mobileEntry.indexOf('./mobileHomeEditScroll.js');
   assert.ok(coordinatorIndex >= 0);
   assert.ok(helperIndex > coordinatorIndex);
 });

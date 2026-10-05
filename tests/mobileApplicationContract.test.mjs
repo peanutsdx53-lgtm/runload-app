@@ -6,8 +6,8 @@ const root = path.resolve(new URL("..", import.meta.url).pathname);
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 
 const app = read("app.js");
-const screenRegistry = read("screens/screenRegistry.js");
-const home = read("screens/homeScreen.js");
+const screenRegistry = read("screens/mobileScreenRegistry.js");
+const home = read("screens/mobile/homeScreen.js");
 const achievements = read("screens/mobile/achievementsScreen.js");
 const version = read("ui/appVersionStatus.js");
 const sw = read("service-worker.js");

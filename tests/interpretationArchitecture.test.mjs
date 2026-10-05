@@ -30,7 +30,7 @@ await test('GLOBAL-FEATURE-MENU-DOES-NOT-DUPLICATE-UNDERSTANDING-ENTRY',()=>{
 });
 
 await test('CONTEXTUAL-UNDERSTANDING-ENTRIES-REMAIN',()=>{
-  assert.match(read('screens/homeScreen.js'),/今回を見比べる/);
+  assert.match(read('screens/desktop/homeScreen.js'),/今回を見比べる/);
   assert.match(read('screens/resultScreen.js'),/今回を見比べる/);
   assert.match(read('screens/historyScreen.js'),/この記録を見比べる/);
   assert.match(read('screens/bodyPartDetailScreen.js'),/この部位から見比べる/);
@@ -69,7 +69,8 @@ await test('RESULT-ORGANIZATION-LABEL-IS-USED-INSIDE-THE-WORKSPACE',()=>{
   const outside=[
     'ui/screenArchitecture.js',
     'ui/appShell.js',
-    'screens/homeScreen.js',
+    'screens/desktop/homeScreen.js',
+    'screens/mobile/homeScreen.js',
     'screens/resultScreen.js',
     'screens/historyScreen.js',
     'screens/bodyPartDetailScreen.js',

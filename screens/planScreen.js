@@ -49,7 +49,6 @@ export function renderPlanScreen({ services, context }) {
   const selfHref=planContextHref(context, planId);
   const justSaved=String(context?.parameters?.get("saved")||"")==="1" && Boolean(editing);
   const sourceLabel=sourceRecordId?"今回の記録":"前回の記録";
-  const carryLabel=sourceRecordId?"今回の記録から引き継いだ内容":"前回から引き継いだ内容";
   const simulationQuery=new URLSearchParams();
   simulationQuery.set("from","plan");
   simulationQuery.set("returnTo",selfHref);
@@ -62,7 +61,6 @@ export function renderPlanScreen({ services, context }) {
   const confirmationExperiences=services.workflows?.records?.loadAllExperiences?.() || [];
   const selectedThreadId=String(editing?.selfUnderstandingThreadId||context?.parameters?.get("threadId")||"");
   const scheduledDate=editing?.scheduledDate||localTodayIso();
-  const nextCheck=recent?.reflectionContext?.nextCheckPoint || recent?.reflectionContext?.nextCheck || "";
   const distance=session.distanceKm ?? ""; const duration=session.durationMinutes ?? "";
   return `<div class="screen screen--plan screen-layout screen-layout--plan secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backContext.href)}">← ${escapeHtml(backContext.label)}</a><strong>次の予定</strong><span aria-hidden="true"></span></header>
@@ -70,7 +68,6 @@ export function renderPlanScreen({ services, context }) {
     <section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">${escapeHtml(formatLocalDate(scheduledDate))}</span></section><p class="visually-hidden">予定条件は利用者が入力した事実であり、数値スコアではなく入力した予定事実として扱います。おすすめ・安全判断・自動処方ではありません。</p>
     ${justSaved?`<section class="plan-mobile-saved-success plan-mobile-only" aria-live="polite"><div class="plan-mobile-saved-success__mark" aria-hidden="true">✓</div><div><small>保存完了</small><strong>${planType==="rest"?"休養予定を保存しました":"走行予定を保存しました"}</strong><span>${escapeHtml(formatLocalDate(scheduledDate))}${planType==="rest"?"・休養予定":`・${escapeHtml(planTitle(editing))}`}</span></div>${planType==="rest"?`<a href="#/home">Homeへ戻る</a>`:`<a href="#/run-measurement?planId=${encodeURIComponent(editing?.id||"")}">この予定で測定を始める</a>`}</section>`:""}
     ${selectedThreadId&&planType==="run"?(()=>{const thread=confirmationThemes.find((item)=>item.id===selectedThreadId)||services.storage.selfUnderstandingThreads?.findById?.(selectedThreadId);return thread?`<section class="carry self-understanding-plan-carry"><i></i><div><small>確認中のテーマ</small><strong>${escapeHtml(selfUnderstandingThreadTitle(thread, confirmationExperiences))}</strong><span>この予定に覚えておくテーマです。走行条件を自動で変更するものではありません。</span></div></section>`:"";})():""}
-    ${nextCheck?`<section class="carry"><i></i><div><small>${escapeHtml(carryLabel)}・旧仕様</small><strong>以前に残した確認メモ</strong><span>${escapeHtml(nextCheck)}</span></div></section>`:""}
     <form id="plan-form" class="layout" novalidate>
       <input type="hidden" name="planId" value="${escapeHtml(editing?.id||"")}"><input type="hidden" name="courseJson" value="${escapeHtml(JSON.stringify(course))}"><input type="hidden" name="routePattern" value="${escapeHtml(course.routePattern||"UNKNOWN")}">
       <input class="visually-hidden" type="radio" name="planType" value="run"${planType==="run"?" checked":""}><input class="visually-hidden" type="radio" name="planType" value="rest"${planType==="rest"?" checked":""}>

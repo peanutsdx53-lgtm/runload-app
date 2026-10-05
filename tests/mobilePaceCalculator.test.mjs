@@ -19,7 +19,7 @@ async function test(id, fn) {
 }
 
 await test('PACE-TOOL-IS-OPTIONAL-EMOJI-HOME-APP', () => {
-  const home = read('screens/homeScreen.js');
+  const home = read('screens/mobile/homeScreen.js');
   const interactions = read('ui/interactions/homeInteractions.js');
   assert.ok(home.includes('href: "#/pace-tool"'));
   assert.ok(home.includes('label: "ペース換算"'));
@@ -29,8 +29,8 @@ await test('PACE-TOOL-IS-OPTIONAL-EMOJI-HOME-APP', () => {
 });
 
 await test('PACE-TOOL-HAS-ROUTE-BINDER-AND-HOME-NAVIGATION', () => {
-  const registry = read('screens/screenRegistry.js');
-  const binders = read('ui/screenInteractions.js');
+  const registry = read('screens/mobileScreenRegistry.js');
+  const binders = read('ui/mobileScreenInteractionBinders.js');
   const architecture = read('ui/screenArchitecture.js');
   assert.ok(registry.includes('renderPaceCalculatorScreen'));
   assert.ok(registry.includes('"pace-tool": renderPaceCalculatorScreen'));

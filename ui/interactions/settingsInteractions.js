@@ -6,7 +6,6 @@ import { downloadJsonText } from "./browserUtilities.js";
 import { showDataMessage, showFormMessages } from "./formUtilities.js";
 import { clearRecordInputWorkspace } from "../recordInputWorkspace.js";
 import { renderRestoreInspection } from "../restorePreviewPresentation.js";
-import { clearAllPhotoMemos } from "../mobilePhotoMemoStore.js";
 
 function readSettingsForm(form) {
   const data = new FormData(form);
@@ -58,7 +57,7 @@ function saveSettingsAndProfile(services, settingsUpdate, profileUpdate) {
   return { ok: true, settings: nextSettings, profile: nextProfile };
 }
 
-function bindDataManagement({ services, router, rerender }) {
+function bindDataManagement({ services, router, rerender, platformRuntime }) {
   let pendingRestoreInspection = null;
   const previewHost = document.querySelector("[data-restore-preview-host]");
   const fileInput = document.querySelector('[data-action="restore-backup"]');
@@ -140,8 +139,7 @@ function bindDataManagement({ services, router, rerender }) {
     if (!window.confirm("このアプリの端末内データをすべて削除しますか？")) return;
     const result = services.dataManagement.clearAllUserData();
     if (result.ok) {
-      await clearAllPhotoMemos();
-      try { globalThis.localStorage?.removeItem("running-record-mobile-home-last-launch-v1"); } catch {}
+      await platformRuntime?.clearPlatformUserData?.();
       clearRecordInputWorkspace();
       router.navigateToScreen("home");
     }
@@ -235,7 +233,7 @@ function bindMeasurementNotificationSettings({ services, form }) {
   });
 }
 
-export function bindSettings({ services, router, rerender }) {
+export function bindSettings({ services, router, rerender, platformRuntime }) {
   const form = document.getElementById("app-settings-form");
   form?.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -260,5 +258,5 @@ export function bindSettings({ services, router, rerender }) {
     router.navigateToScreen("home", { onboarding: "1" });
   });
   bindSavedShoeManagement({ services, router });
-  bindDataManagement({ services, router, rerender });
+  bindDataManagement({ services, router, rerender, platformRuntime });
 }

@@ -10,7 +10,7 @@ assert.match(plan,/data-plan-mobile-confirm/);
 assert.match(plan,/plan-mobile-saved-success/);
 assert.match(plan,/この予定で測定を始める/);
 assert.match(plan,/確認中のテーマ/);
-assert.match(plan,/以前に残した確認メモ/);
+assert.doesNotMatch(plan,/以前に残した確認メモ|旧仕様|nextCheckPoint/);
 assert.match(interactions,/setMobileReview/);
 assert.match(interactions,/scrollIntoView/);
 assert.match(css,/\[data-plan-mobile-confirm\]\.is-mobile-review/);

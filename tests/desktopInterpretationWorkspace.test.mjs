@@ -12,7 +12,7 @@ async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catc
 function output(){return {
   state:{targetAvailable:true,support:'NORMAL',regional:'REFERENCE100_V3'},
   target:{recordId:'r1',date:'2026-10-03',origin:'result',selectedRegionId:'BA-DISP-014'},
-  runFacts:{postRunReflection:'後半は少し余裕があった',nextCheckPoint:''},
+  runFacts:{postRunReflection:'後半は少し余裕があった'},
   overview:{attention:{counts:{previousChanged:4,conditionDifferences:2},groups:[{code:'PREVIOUS_CHANGE',regions:[{regionId:'BA-DISP-014',label:'股関節部',value:101.9,referenceDirection:'ABOVE_REFERENCE',previousComparison:{available:true,difference:3.2}}]}]}},
   conditions:{differences:[{id:'distanceKm',previous:5,current:6,delta:1},{id:'durationMinutes',previous:40,current:45,delta:5}]},
   subjectiveContext:{pre:{available:true,value:3},post:{available:true,value:8},difference:{eligible:true,value:5}},

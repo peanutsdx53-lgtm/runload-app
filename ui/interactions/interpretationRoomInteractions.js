@@ -83,17 +83,6 @@ function createThreadFromButton(button, services, context, screen = null) {
       optionalUserLabel: optionalUserLabel || prompt,
     }));
   }
-  if (type === SELF_UNDERSTANDING_TYPES.userDefinedLegacy) {
-    const prompt = String(experience.record.reflectionContext?.nextCheckPoint || "").trim();
-    if (!prompt) return { ok: false, code: "SELF_UNDERSTANDING_LEGACY_PROMPT_EMPTY" };
-    return finishCreate(repository.createOrResume({
-      type,
-      subject: { prompt },
-      createdFromRecord: experience.record,
-      legacyOrigin: { field: "nextCheckPoint", sourceRecordId: experience.record.id },
-      optionalUserLabel,
-    }));
-  }
   return { ok: false, code: "SELF_UNDERSTANDING_TYPE_UNSUPPORTED" };
 }
 

@@ -19,6 +19,7 @@ const screenText = fs.readFileSync('screens/mobile/runMeasurementScreen.js', 'ut
 const autofillText = fs.readFileSync('ui/mobileMeasurementRecordAutofill.js', 'utf8');
 const coreText = fs.readFileSync('ui/runMeasurementCore.js', 'utf8');
 const indexText = fs.readFileSync('index.html', 'utf8');
+const mobileEntryText = fs.readFileSync('ui/mobileRuntimeEntry.js', 'utf8');
 const workerText = fs.readFileSync('service-worker.js', 'utf8');
 
 const results = [];
@@ -208,7 +209,7 @@ await test('MEASUREMENT-RECORD-AUTOFILL-IS-MOBILE-ONLY', async () => {
   assert.ok(autofillText.includes('setValue(form, "stepsProvenance", "ESTIMATED")'));
   assert.ok(autofillText.includes('setValue(form, "surfaceInputMode", "UNKNOWN")'));
   assert.ok(autofillText.includes('name="savePlanCourseToLibrary" value="1"'));
-  assert.ok(indexText.includes('./ui/mobileMeasurementRecordAutofill.js'));
+  assert.ok(mobileEntryText.includes('./mobileMeasurementRecordAutofill.js'));
   assert.ok(workerText.includes('"./ui/mobileMeasurementRecordAutofill.js"'));
   assert.ok(workerText.includes('"./ui/runMeasurementAutoRecord.js"'));
 });

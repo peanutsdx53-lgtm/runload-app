@@ -4,7 +4,7 @@ import { PRIMARY_REGIONAL_V2_MODEL_VERSION } from "../core/appCore.js";
 import { buildRunFingerprint } from "../ui/runFingerprint.js";
 import { renderBodyTimelineScreen } from "../screens/bodyTimelineScreen.js";
 
-const baseRecord = { id: `run-29`, date: `2026-09-30`, createdAt: `2026-09-30T11:00:00.000Z`, activityType: `run`, distanceKm: 5, durationMinutes: 30, runningFormat: `CONTINUOUS_RUN` };
+const baseRecord = { id: "run-29", date: "2026-09-30", createdAt: "2026-09-30T11:00:00.000Z", activityType: "run", distanceKm: 5, durationMinutes: 30, runningFormat: "CONTINUOUS_RUN" };
 const measurement = { track: [{ lat: 37.5, lon: 139.9, timestamp: 0 }, { lat: 37.51, lon: 139.91, timestamp: 1000 }], acceptedPointCount: 2, rejectedPointCount: 0 };
 const a = buildRunFingerprint(baseRecord, { measurement, fatigue: { pre: 2, post: 4 } });
 const b = buildRunFingerprint(baseRecord, { measurement, fatigue: { pre: 2, post: 4 } });
@@ -56,7 +56,7 @@ const mapSource = fs.readFileSync(new URL("../ui/runMeasurementMap.js", import.m
 assert.match(mapSource, /function setMarker\(point\)/);
 assert.match(mapSource, /setCenter, setMarker, setTrack/);
 
-const screenRegistrySource = fs.readFileSync(new URL("../screens/screenRegistry.js", import.meta.url), "utf8");
+const screenRegistrySource = fs.readFileSync(new URL("../screens/sharedScreenRegistry.js", import.meta.url), "utf8");
 assert.match(screenRegistrySource, /"body-timeline": renderBodyTimelineScreen/);
 const versionSource = fs.readFileSync(new URL("../ui/appVersionStatus.js", import.meta.url), "utf8");
 const currentVersion = versionSource.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";

@@ -18,7 +18,7 @@ async function test(id, fn) {
 }
 
 await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
-  const home = read('screens/homeScreen.js');
+  const home = read('screens/mobile/homeScreen.js');
   const interactions = read('ui/interactions/homeInteractions.js');
   assert.ok(home.includes('data-home-app-catalog'));
   assert.ok(home.includes('href: "#/location-note"'));
@@ -55,7 +55,7 @@ await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
 });
 
 await test('MOBILE-HOME-ALL-APP-LAUNCHERS-ARE-REMOVABLE-AND-RESTORABLE', () => {
-  const home = read('screens/homeScreen.js');
+  const home = read('screens/mobile/homeScreen.js');
   const interactions = read('ui/interactions/homeInteractions.js');
   const css = read('styles/mobile-quick-tools.css');
   assert.ok(interactions.includes('const HOME_APP_CATALOG'));
@@ -71,7 +71,7 @@ await test('MOBILE-HOME-ALL-APP-LAUNCHERS-ARE-REMOVABLE-AND-RESTORABLE', () => {
 });
 
 await test('MOBILE-HOME-NESTED-LAUNCH-LINK-SUPPRESSES-IOS-LINK-CALLOUT', () => {
-  const home = read('screens/homeScreen.js');
+  const home = read('screens/mobile/homeScreen.js');
   const interactions = read('ui/interactions/homeInteractions.js');
   const css = read('styles/mobile-quick-tools.css');
   assert.ok(home.includes('class="mobile-home-app__launch"'));
@@ -86,9 +86,9 @@ await test('MOBILE-HOME-NESTED-LAUNCH-LINK-SUPPRESSES-IOS-LINK-CALLOUT', () => {
 });
 
 await test('MOBILE-QUICK-TOOLS-HAVE-ROUTES-AND-HOME-BACK-NAVIGATION', () => {
-  const registry = read('screens/screenRegistry.js');
+  const registry = read('screens/mobileScreenRegistry.js');
   const architecture = read('ui/screenArchitecture.js');
-  const binders = read('ui/screenInteractions.js');
+  const binders = read('ui/mobileScreenInteractionBinders.js');
   for (const route of ['location-note', 'quick-note', 'gear-note', 'departure-check', 'fuel-note']) {
     assert.ok(registry.includes(`"${route}":`));
     assert.ok(binders.includes(`"${route}": bindMobileQuickTool`));

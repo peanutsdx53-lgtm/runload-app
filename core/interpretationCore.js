@@ -474,12 +474,10 @@ function conditionProjection(base = {}, selectedRegion = null) {
 
 function nextCheckProjection(base = {}, selectedRegionId = "", attention = null) {
   const conditions = Array.isArray(base?.comparison?.conditionDifferences) ? base.comparison.conditionDifferences : [];
-  const userRecorded = String(base?.current?.facts?.nextCheckPoint || "");
   return Object.freeze({
     code: "DESCRIPTIVE_ONLY",
     regionId: selectedRegionId,
     conditionIds: Object.freeze(conditions.map((item) => String(item.id || ""))),
-    userRecorded,
     boundaryCodes: Object.freeze(["NO_AUTOMATIC_CONFIRMATION_THEME", "USER_CHOICE_REQUIRED"]),
   });
 }

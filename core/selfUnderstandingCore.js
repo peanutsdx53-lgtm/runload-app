@@ -8,7 +8,6 @@ export const SELF_UNDERSTANDING_TYPES = Object.freeze({
   regionWatch: "REGION_WATCH",
   sameCourseRofPost: "SAME_COURSE_ROF_POST",
   contextQuestion: "CONTEXT_QUESTION",
-  userDefinedLegacy: "USER_DEFINED_LEGACY",
 });
 export const SELF_UNDERSTANDING_STATES = Object.freeze({
   watching: "WATCHING",
@@ -112,11 +111,6 @@ function normalizeSubject(type, source = {}) {
     if (!prompt || !focusKey) return null;
     return Object.freeze({ prompt, focusKey, articleId });
   }
-  if (type === SELF_UNDERSTANDING_TYPES.userDefinedLegacy) {
-    const prompt = text(subject.prompt, 500).trim();
-    if (!prompt) return null;
-    return Object.freeze({ prompt });
-  }
   return null;
 }
 
@@ -125,7 +119,6 @@ function subjectKey(type, subject = {}) {
   if (type === SELF_UNDERSTANDING_TYPES.regionWatch) return `region:${subject.regionId}`;
   if (type === SELF_UNDERSTANDING_TYPES.sameCourseRofPost) return `course-rof-post:${subject.courseId}`;
   if (type === SELF_UNDERSTANDING_TYPES.contextQuestion) return `context:${subject.focusKey}:${subject.prompt}`;
-  if (type === SELF_UNDERSTANDING_TYPES.userDefinedLegacy) return `legacy:${subject.prompt}`;
   return "";
 }
 
@@ -171,10 +164,6 @@ export function normalizeSelfUnderstandingThread(item = {}) {
     lastReviewedStableRecordKey: oneLine(item.lastReviewedStableRecordKey, 260),
     optionalUserLabel: oneLine(item.optionalUserLabel, 120),
     reviewEvents: Object.freeze(events),
-    legacyOrigin: Object.freeze({
-      field: oneLine(item.legacyOrigin?.field, 80),
-      sourceRecordId: oneLine(item.legacyOrigin?.sourceRecordId, 120),
-    }),
     updatedAt: iso(item.updatedAt, createdAt),
   });
 }
@@ -202,7 +191,7 @@ export function createSelfUnderstandingRepository(gateway, storageKey) {
   function findById(id) {
     return loadAll().find((item) => item.id === String(id || "")) || null;
   }
-  function createOrResume({ type, subject, createdFromRecord = {}, semanticConstraints = {}, optionalUserLabel = "", legacyOrigin = null, now = new Date().toISOString() } = {}) {
+  function createOrResume({ type, subject, createdFromRecord = {}, semanticConstraints = {}, optionalUserLabel = "", now = new Date().toISOString() } = {}) {
     const normalizedType = oneLine(type, 60).toUpperCase();
     const normalizedSubject = normalizeSubject(normalizedType, subject);
     if (!THREAD_TYPES.has(normalizedType) || !normalizedSubject) return { ok: false, code: "SELF_UNDERSTANDING_SUBJECT_INVALID", item: null };
@@ -229,7 +218,6 @@ export function createSelfUnderstandingRepository(gateway, storageKey) {
       lastReviewedStableRecordKey: stableRecordKeyFromRecord(createdFromRecord),
       optionalUserLabel: oneLine(optionalUserLabel, 120),
       reviewEvents: [],
-      legacyOrigin: legacyOrigin || {},
       updatedAt: stamp,
     };
     const normalized = normalizeSelfUnderstandingThread(next);
@@ -382,9 +370,6 @@ function episodeEvidence(thread, experience, rofSummariesByRecordId) {
     });
   }
 
-  if (thread.type === SELF_UNDERSTANDING_TYPES.userDefinedLegacy) {
-    return Object.freeze({ kind: thread.type, recordId: record.id, stableRecordKey: stableKey, date: record.date });
-  }
   return null;
 }
 
@@ -406,7 +391,6 @@ function threadTitle(thread = {}, regionLabels = new Map()) {
     return `${thread.subject.courseName || "同じコース"}で走行後の疲労感を見る`;
   }
   if (thread.type === SELF_UNDERSTANDING_TYPES.contextQuestion) return thread.subject.prompt;
-  if (thread.type === SELF_UNDERSTANDING_TYPES.userDefinedLegacy) return thread.subject.prompt;
   return "次回見ること";
 }
 

@@ -9,6 +9,7 @@ test('mobile-only behavior stays explicitly gated from desktop contracts', () =>
   const reading = read('screens/readingScreen.js');
   const history = read('screens/historyScreen.js');
   const result = read('screens/resultScreen.js');
+  const mobileResult = read('screens/mobile/resultScreen.js');
   const home = read('ui/interactions/homeInteractions.js');
   const measurement = read('ui/interactions/runMeasurementInteractions.js');
   const mobileCss = read('styles/mobile-usability.css');
@@ -28,9 +29,11 @@ test('mobile-only behavior stays explicitly gated from desktop contracts', () =>
   assert.match(history, /const content = mobileLayout\s*\? mobileHistoryContent/);
   assert.match(history, /: historyRecordView\(workspace,context\);/);
 
-  assert.match(result, /const mobileLayout = matchesMobileLayout\(\);/);
+  assert.doesNotMatch(result, /mobileAchievements|mobileInsights|matchesMobileLayout/);
   assert.match(result, /mobileLayout \? renderMobileResultHighlights/);
-  assert.match(result, /\{ mobileLayout \}/);
+  assert.match(mobileResult, /mobileLayout: true/);
+  assert.match(mobileResult, /mobileAchievements/);
+  assert.match(mobileResult, /mobileInsights/);
 
   assert.match(home, /loadMobileQuickTools/);
   assert.match(home, /\["today", "plan"\]/);

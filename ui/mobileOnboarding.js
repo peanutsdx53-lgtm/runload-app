@@ -1,12 +1,8 @@
 import { escapeHtml } from "./commonComponents.js";
 import { APP_GUIDE_VERSION } from "./guideContent.js";
+import { TERMS_VERSION, hasAcceptedCurrentTerms, withCurrentTermsAccepted } from "./legalAcceptance.js";
 
 export const MOBILE_ONBOARDING_VERSION = "mobile-onboarding-20260930-v3";
-export const TERMS_VERSION = "terms-20260930-v1";
-
-export function hasAcceptedCurrentTerms(settings = {}) {
-  return settings?.termsAcceptedVersion === TERMS_VERSION;
-}
 
 export function shouldOpenMobileOnboarding(settings = {}, { mobile = true } = {}) {
   if (!mobile) return false;
@@ -14,14 +10,10 @@ export function shouldOpenMobileOnboarding(settings = {}, { mobile = true } = {}
 }
 
 export function withMobileOnboardingComplete(settings = {}, { acceptedAt = new Date().toISOString() } = {}) {
-  const source = settings && typeof settings === "object" ? settings : {};
+  const accepted = withCurrentTermsAccepted(settings, { acceptedAt });
   return Object.freeze({
-    ...source,
+    ...accepted,
     mobileOnboardingVersionSeen: MOBILE_ONBOARDING_VERSION,
-    termsAcceptedVersion: TERMS_VERSION,
-    termsAcceptedAt: source.termsAcceptedVersion === TERMS_VERSION && source.termsAcceptedAt
-      ? source.termsAcceptedAt
-      : acceptedAt,
     guideVersionSeen: APP_GUIDE_VERSION,
   });
 }

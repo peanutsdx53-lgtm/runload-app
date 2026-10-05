@@ -586,14 +586,6 @@ function selectedRegionWatchAction(output = {}, selfUnderstanding = {}) {
   return `<div class="self-understanding-simple-choice"><strong>${escapeHtml(region.label)}</strong><button type="button" class="self-understanding-primary" data-action="create-self-understanding-thread" data-thread-type="REGION_WATCH" data-region-id="${escapeHtml(region.regionId)}">次回も確認する</button></div>`;
 }
 
-function legacyCarryAction(output = {}, selfUnderstanding = {}) {
-  const legacy = String(output?.runFacts?.nextCheckPoint || "").trim();
-  if (!legacy) return "";
-  const already = (selfUnderstanding?.threads || []).some((thread) => thread.type === "USER_DEFINED_LEGACY" && thread.legacyOrigin?.sourceRecordId === output?.target?.recordId && thread.userState !== "CLOSED");
-  if (already) return "";
-  return `<div class="self-understanding-simple-choice"><small>以前に残した内容</small><strong>${escapeHtml(legacy)}</strong><button type="button" class="self-understanding-primary" data-action="create-self-understanding-thread" data-thread-type="USER_DEFINED_LEGACY">次回も確認する</button></div>`;
-}
-
 function sameCourseRofAction(output = {}, selfUnderstanding = {}) {
   const context = selfUnderstanding?.targetContext || {};
   const course = context.course || {};
@@ -616,8 +608,7 @@ function renderNextRail(output, { mobileLayout = false, selfUnderstanding = null
   const active = selfUnderstanding?.activeThread || null;
   const candidate = selfUnderstanding?.primaryCandidate || null;
   const selected = Boolean(output?.selectedRegion);
-  const legacy = !active && !candidate && !selected ? legacyCarryAction(output, selfUnderstanding) : "";
-  const course = !active && !candidate && !selected && !legacy ? sameCourseRofAction(output, selfUnderstanding) : "";
+  const course = !active && !candidate && !selected ? sameCourseRofAction(output, selfUnderstanding) : "";
   const hasRegions = Array.isArray(output?.overview?.attention?.groups) && output.overview.attention.groups.some((group) => Array.isArray(group?.regions) && group.regions.length);
   const content = active
     ? renderActiveThread(active, output)
@@ -625,7 +616,7 @@ function renderNextRail(output, { mobileLayout = false, selfUnderstanding = null
       ? renderBodyObservationCandidate(candidate)
       : selected
         ? selectedRegionWatchAction(output, selfUnderstanding)
-        : legacy || course || `<div class="self-understanding-zero self-understanding-zero--compact"><strong>未設定</strong>${hasRegions ? `<a class="self-understanding-jump" href="#interpretation-attention-title">部位から選ぶ</a>` : ""}</div>`;
+        : course || `<div class="self-understanding-zero self-understanding-zero--compact"><strong>未設定</strong>${hasRegions ? `<a class="self-understanding-jump" href="#interpretation-attention-title">部位から選ぶ</a>` : ""}</div>`;
   return `<aside class="interpretation-room-next-rail self-understanding-rail self-understanding-rail--compact" aria-labelledby="interpretation-next-title">
     <div class="interpretation-room-next-rail__head interpretation-room-next-rail__head--compact"><span>${interpretationIcon("flag")}</span><h2 id="interpretation-next-title">次回見ること</h2></div>
     ${content}
@@ -722,7 +713,6 @@ function desktopNextChecklist(output = {}, selfUnderstanding = null) {
     if (active.type === "REGION_OBSERVATION_PAIR") return [`身体記録：${active.title || region?.label || "同じ部位"}`, "部位表示：自動"];
     if (active.type === "SAME_COURSE_ROF_POST") return [`コース：${active.subject?.courseName || "同じコース"}`, "走行後の疲労感"];
     if (active.type === "REGION_WATCH") return [`部位：${region?.label || active.title || "選択部位"}`, "部位表示：自動"];
-    if (active.type === "USER_DEFINED_LEGACY") return [active.subject?.prompt || active.title || "以前の確認"];
   }
   if (candidate?.kind === "BODY_OBSERVATION_PAIR") return [`身体記録：${candidate.observation?.label || candidateRegionLabel(candidate)}`, "部位表示：自動"];
   if (region) return [`部位：${region.label}`, "部位表示：自動"];
@@ -737,11 +727,6 @@ function renderDesktopAlternativeChecks(output = {}, selfUnderstanding = null, a
   const sameCourseExists = (selfUnderstanding?.threads || []).some((thread) => thread.userState !== "CLOSED" && thread.type === "SAME_COURSE_ROF_POST" && thread.subject?.courseId === course.id);
   if (course.id && finite(context.postRofJ) && !sameCourseExists) {
     options.push(`<button type="button" data-action="create-self-understanding-thread" data-thread-type="SAME_COURSE_ROF_POST"><span>同じコース</span><strong>疲労感を見る</strong></button>`);
-  }
-  const legacy = String(output?.runFacts?.nextCheckPoint || "").trim();
-  const legacyExists = legacy && (selfUnderstanding?.threads || []).some((thread) => thread.type === "USER_DEFINED_LEGACY" && thread.legacyOrigin?.sourceRecordId === output?.target?.recordId && thread.userState !== "CLOSED");
-  if (legacy && !legacyExists) {
-    options.push(`<button type="button" data-action="create-self-understanding-thread" data-thread-type="USER_DEFINED_LEGACY" title="${escapeHtml(legacy)}"><span>以前のメモ</span><strong>${escapeHtml(legacy)}</strong></button>`);
   }
   if (!options.length) return "";
   return `<details class="interpretation-pc-next-alternatives"><summary>別の確認</summary><div>${options.join("")}</div></details>`;
@@ -838,7 +823,6 @@ function proposalNextLabel(type = "", proposal = {}) {
   if (type === "REGION_OBSERVATION_PAIR") return `${proposal.observationLabel || proposal.regionLabel || "同じ部位"}を次回も記録`;
   if (type === "REGION_WATCH") return `${proposal.regionLabel || "同じ部位"}を次回も確認`;
   if (type === "SAME_COURSE_ROF_POST") return `${proposal.courseName || "同じコース"}で走行後の疲労感を記録`;
-  if (type === "USER_DEFINED_LEGACY") return "同じ内容を次回も確認";
   return "次回も確認";
 }
 
@@ -928,20 +912,6 @@ function buildInterpretationProposals(output = {}, selfUnderstanding = null) {
       courseName: course.name || "同じコース",
       canContinue: true,
       nextLabel: proposalNextLabel("SAME_COURSE_ROF_POST", { courseName: course.name || "同じコース" }),
-    }));
-  }
-
-  const legacy = String(output?.runFacts?.nextCheckPoint || "").trim();
-  const legacyExists = legacy && (selfUnderstanding?.threads || []).some((thread) => thread.type === "USER_DEFINED_LEGACY" && thread.legacyOrigin?.sourceRecordId === output?.target?.recordId && thread.userState !== "CLOSED");
-  if (legacy && !legacyExists) {
-    proposals.push(Object.freeze({
-      id: "legacy",
-      findingCode: "PREVIOUS_NOTE",
-      label: `以前に「${legacy}」を次回確認として残していました`,
-      evidence: Object.freeze([]),
-      threadType: "USER_DEFINED_LEGACY",
-      canContinue: true,
-      nextLabel: proposalNextLabel("USER_DEFINED_LEGACY"),
     }));
   }
 

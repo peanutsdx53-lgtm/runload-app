@@ -6,6 +6,7 @@ const gridModel = fs.readFileSync('ui/interactions/homeGridModel.js', 'utf8');
 const guard = fs.readFileSync('ui/mobileHomeDefaultLayout.js', 'utf8');
 const capacity = fs.readFileSync('ui/mobileHomePageCapacity.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
+const mobileEntry = fs.readFileSync('ui/mobileRuntimeEntry.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const versionModule = fs.readFileSync('ui/appVersionStatus.js', 'utf8');
 
@@ -60,8 +61,8 @@ test('CAPACITY-GUARD-STILL-PROTECTS-CUSTOM-HOME-PAGES', () => {
 });
 
 test('RECONCILER-RUNS-BEFORE-CAPACITY-REPAIR', () => {
-  const guardIndex = index.indexOf('./ui/mobileHomeDefaultLayout.js');
-  const capacityIndex = index.indexOf('./ui/mobileHomePageCapacity.js');
+  const guardIndex = mobileEntry.indexOf('./mobileHomeDefaultLayout.js');
+  const capacityIndex = mobileEntry.indexOf('./mobileHomePageCapacity.js');
   assert.ok(guardIndex >= 0 && capacityIndex > guardIndex);
 });
 

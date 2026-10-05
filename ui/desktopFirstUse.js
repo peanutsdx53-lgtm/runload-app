@@ -1,6 +1,6 @@
 import { createApplicationServices } from "../core/appCore.js";
 import { matchesMobileLayout } from "./deviceLayout.js";
-import { TERMS_VERSION, hasAcceptedCurrentTerms } from "./mobileOnboarding.js";
+import { TERMS_VERSION, hasAcceptedCurrentTerms, withCurrentTermsAccepted } from "./legalAcceptance.js";
 
 const services = createApplicationServices();
 const GATE_ID = "runload-desktop-terms-gate";
@@ -65,13 +65,7 @@ function removeGate() {
 
 function acceptTerms() {
   const current = services.storage.settings.load();
-  services.storage.settings.save({
-    ...current,
-    termsAcceptedVersion: TERMS_VERSION,
-    termsAcceptedAt: current?.termsAcceptedVersion === TERMS_VERSION && current?.termsAcceptedAt
-      ? current.termsAcceptedAt
-      : new Date().toISOString(),
-  });
+  services.storage.settings.save(withCurrentTermsAccepted(current));
   removeGate();
   document.querySelector("[data-guide-panel]")?.focus();
 }

@@ -389,9 +389,8 @@ function buildMemo({ purpose, record, feedback, audience, question, dataSelectio
   if (purpose === "previous_comparison" && selected.has("current-result")) appendSection(lines, "前回との比較：", comparisonLines(regional));
   if (purpose === "previous_comparison" && !selected.has("current-result")) appendSection(lines, "前回との比較：", ["共有する内容に数値結果を含めていないため、目安を記載しません。"]);
   if (purpose === "next_check") {
-    const reflection = record.reflectionContext || {};
-    appendSection(lines, "次回に残しておきたいメモ：", [
-      reflection.nextCheckPoint ? `次回確認したいこと：${reflection.nextCheckPoint}` : "次回確認したいことは未入力",
+    appendSection(lines, "次回に確認したいこと：", [
+      "共有時に相談したい内容を入力し、確認中のテーマがある場合は別項目として共有します。",
     ]);
   }
 

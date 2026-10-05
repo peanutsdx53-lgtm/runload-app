@@ -35,7 +35,7 @@ await test('RESULT-GATE-USES-PLAIN-LANGUAGE',()=>{
 });
 
 await test('HOME-LATEST-RUN-SEPARATES-VIEW-AND-UNDERSTAND',()=>{
-  const source=read('screens/homeScreen.js');
+  const source=read('screens/desktop/homeScreen.js');
   const runLine=source.split('\n').find((row)=>row.includes('card-actions')&&row.includes('結果を見る'))||'';
   assert.ok(runLine);
   const view=runLine.indexOf('結果を見る');
@@ -46,13 +46,13 @@ await test('HOME-LATEST-RUN-SEPARATES-VIEW-AND-UNDERSTAND',()=>{
 });
 
 await test('HOME-REMOVES-SEPARATE-INTERPRETATION-PROMO',()=>{
-  const source=read('screens/homeScreen.js');
+  const source=read('screens/desktop/homeScreen.js');
   assert.doesNotMatch(source,/RunLoad解釈|最新の結果を確認/);
   assert.doesNotMatch(source,/必要なときに開く[\s\S]*interpretation-room/);
 });
 
 await test('REST-RECORD-DOES-NOT-OFFER-UNDERSTANDING-ENTRY',()=>{
-  const source=read('screens/homeScreen.js');
+  const source=read('screens/desktop/homeScreen.js');
   const restLine=source.split('\n').find((row)=>row.includes('REST')&&row.includes('記録を開く'))||'';
   assert.ok(restLine);
   assert.doesNotMatch(restLine,/interpretation-room|今回を見比べる|結果を理解する/);

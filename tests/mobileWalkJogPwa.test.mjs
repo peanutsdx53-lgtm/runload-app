@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 const index = fs.readFileSync("index.html", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
+const mobileEntry = fs.readFileSync("ui/mobileRuntimeEntry.js", "utf8");
 const versionModule = fs.readFileSync("ui/appVersionStatus.js", "utf8");
 const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 
@@ -12,15 +13,17 @@ function test(id, fn) {
   catch (error) { results.push({ id, status: "FAIL", message: String(error?.stack || error) }); }
 }
 
-test("INDEX-LOADS-MOBILE-EXTENSION", () => {
+test("MOBILE-ENTRY-LOADS-MOBILE-EXTENSION", () => {
   for (const path of [
-    "./ui/mobileWalkJogMeasurementWiring.js",
-    "./ui/mobileWalkJogGpsQualityUi.js",
-    "./ui/mobileWalkJogCopyGuard.js",
-    "./ui/mobileWalkJogRecordStore.js",
-    "./ui/mobileWalkJogSaveHistoryLink.js",
-    "./ui/mobileWalkJogHistoryUi.js",
-    "./ui/mobileWalkJogGpsQualityHistoryGuard.js",
+    "./mobileWalkJogMeasurementWiring.js",
+    "./mobileWalkJogGpsQualityUi.js",
+    "./mobileWalkJogCopyGuard.js",
+    "./mobileWalkJogRecordStore.js",
+    "./mobileWalkJogSaveHistoryLink.js",
+    "./mobileWalkJogHistoryUi.js",
+    "./mobileWalkJogGpsQualityHistoryGuard.js",
+  ]) assert.ok(mobileEntry.includes(path), `missing ${path}`);
+  for (const path of [
     "./styles/mobile-walk-jog.css",
     "./styles/mobile-walk-jog-records.css",
     "./styles/mobile-walk-jog-history.css",

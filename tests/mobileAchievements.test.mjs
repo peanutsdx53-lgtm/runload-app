@@ -8,11 +8,13 @@ globalThis.localStorage = {
   removeItem(key) { memory.delete(key); },
 };
 
+const today = new Date();
+const currentDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 const records = [
-  { id: "r1", activityType: "run", date: "2026-09-28", distanceKm: 2 },
-  { id: "r2", activityType: "run", date: "2026-09-29", distanceKm: 2 },
-  { id: "r3", activityType: "run", date: "2026-09-30", distanceKm: 2 },
-  { id: "rest1", activityType: "rest", date: "2026-09-30" },
+  { id: "r1", activityType: "run", date: currentDate, distanceKm: 2 },
+  { id: "r2", activityType: "run", date: currentDate, distanceKm: 2 },
+  { id: "r3", activityType: "run", date: currentDate, distanceKm: 2 },
+  { id: "rest1", activityType: "rest", date: currentDate },
 ];
 const services = {
   storage: {

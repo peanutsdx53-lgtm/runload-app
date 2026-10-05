@@ -7,9 +7,9 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
 const read = (rel) => fs.readFileSync(path.join(root, rel), "utf8");
 
-const registry = read("screens/screenRegistry.js");
+const registry = read("screens/mobileScreenRegistry.js");
 const repair = read("ui/mobileNavigationPolicy.js");
-const home = read("screens/homeScreen.js");
+const home = read("screens/mobile/homeScreen.js");
 const settings = read("screens/settingsScreen.js");
 const consultation = read("screens/consultationScreen.js");
 const worker = read("service-worker.js");

@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 const screen=fs.readFileSync(new URL("../screens/mobile/runMeasurementScreen.js", import.meta.url),"utf8");
-const registry=fs.readFileSync(new URL("../screens/screenRegistry.js", import.meta.url),"utf8");
+const desktopRegistry=fs.readFileSync(new URL("../screens/desktopScreenRegistry.js", import.meta.url),"utf8");
+const mobileRegistry=fs.readFileSync(new URL("../screens/mobileScreenRegistry.js", import.meta.url),"utf8");
 const interactions=fs.readFileSync(new URL("../ui/interactions/runMeasurementInteractions.js", import.meta.url),"utf8");
 const css=fs.readFileSync(new URL("../styles/mobile-run-measurement-ergonomics.css", import.meta.url),"utf8");
-const desktopRegistry=registry.slice(registry.indexOf("export const DESKTOP_SCREEN_RENDERERS"),registry.indexOf("export const MOBILE_SCREEN_RENDERERS"));
-const mobileRegistry=registry.slice(registry.indexOf("export const MOBILE_SCREEN_RENDERERS"),registry.indexOf("export function createScreenRenderers"));
 assert.doesNotMatch(desktopRegistry,/run-measurement/);
 assert.match(mobileRegistry,/"run-measurement": renderRunMeasurementScreen/);
 assert.doesNotMatch(screen,/matchesMobileLayout|desktopUnavailable|run-measurement-unavailable/);

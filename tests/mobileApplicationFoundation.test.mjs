@@ -12,7 +12,7 @@ const worker = read("service-worker.js");
 const version = read("ui/appVersionStatus.js");
 const tokens = read("styles/tokens.css");
 const navCss = read("styles/mobile-navigation-unification.css");
-const home = read("screens/homeScreen.js");
+const home = read("screens/mobile/homeScreen.js");
 const homeHub = read("ui/mobileHomeHub.js");
 
 assert.equal(fs.existsSync(path.join(root, "screens/startScreen.js")), false, "legacy Start screen file must stay removed");

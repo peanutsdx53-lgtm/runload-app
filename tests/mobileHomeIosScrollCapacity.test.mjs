@@ -7,6 +7,7 @@ const threeRowCss = fs.readFileSync('styles/mobile-home-three-row.css', 'utf8');
 const capacity = fs.readFileSync('ui/mobileHomePageCapacity.js', 'utf8');
 const grid = fs.readFileSync('ui/interactions/homeGridModel.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
+const mobileEntry = fs.readFileSync('ui/mobileRuntimeEntry.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const versionModule = fs.readFileSync('ui/appVersionStatus.js', 'utf8');
 const coordinator = fs.readFileSync('ui/mobileHomeDropCoordinator.js', 'utf8');
@@ -149,7 +150,7 @@ test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
 });
 
 test('WIDGET-ICON-CROSS-SWAP-IS-OWNED-SEPARATELY', () => {
-  assert.ok(index.includes('./ui/mobileHomeWidgetIconSwap.js'));
+  assert.ok(mobileEntry.includes('./mobileHomeWidgetIconSwap.js'));
   assert.ok(worker.includes('"./ui/mobileHomeWidgetIconSwap.js"'));
   assert.ok(crossSwap.includes('sourceIsWidget && targetIsApp'));
   assert.ok(crossSwap.includes('sourceIsApp && targetIsWidget'));

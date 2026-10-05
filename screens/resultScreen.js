@@ -5,10 +5,7 @@ import { bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, PRIMARY_REGION
 import { officialRofJDescriptor } from "../core/rofJCore.js";
 import { SELF_UNDERSTANDING_BODY_AREA_TO_DISPLAY_REGION } from "../core/selfUnderstandingCore.js";
 import { findSavedRunMeasurement } from "../ui/runMeasurementState.js";
-import { matchesMobileLayout } from "../ui/deviceLayout.js";
-import { consumeUnannouncedAchievements } from "../ui/mobileAchievements.js";
 import { buildRunFingerprint, renderRunFingerprintSvg } from "../ui/runFingerprint.js";
-import { renderRunCapsule, renderSameCourseComparison } from "../ui/mobileInsights.js";
 
 const FRONT = '<circle cx="150" cy="36" r="20"></circle><path d="M110 78 C120 66 135 60 150 60 C165 60 180 66 190 78 L204 126 C208 138 204 150 196 160 L182 176 L188 212 C192 228 190 246 184 262 L172 308 C168 324 166 340 166 356 L166 400 C166 410 158 418 148 418 C138 418 130 410 130 400 L130 356 C130 340 128 324 124 308 L112 262 C106 246 104 228 108 212 L114 176 L100 160 C92 150 88 138 92 126 Z"></path>';
 const BACK = '<circle cx="150" cy="36" r="20"></circle><path d="M112 76 C122 66 136 60 150 60 C164 60 178 66 188 76 L202 124 C206 136 202 150 194 160 L182 174 L188 212 C192 228 190 244 184 262 L172 310 C168 326 166 342 166 358 L166 402 C166 412 158 420 148 420 C138 420 130 412 130 402 L130 358 C130 342 128 326 124 310 L112 262 C106 244 104 228 108 212 L114 174 L102 160 C94 150 90 136 94 124 Z"></path>';
@@ -360,7 +357,6 @@ function renderMobileResultHighlights({ services, record, resultRecord, allExper
   const infos = regionRows(resultRecord).map((row, index) => rowInfo(resultRecord, allExperiences, row, index));
   const availableCount = infos.filter((info) => finite(info.row.value)).length;
   const comparableCount = infos.filter((info) => finite(info.delta)).length;
-  const nextCheck = String(record?.reflectionContext?.nextCheckPoint || "").trim();
   const fatigue = fatigueSnapshot(services, record);
   const items = [
     { title: "12部位の目安", detail: `${availableCount} / 12部位に数値があります。各部位自身の基準100と比べます。` },
@@ -368,9 +364,8 @@ function renderMobileResultHighlights({ services, record, resultRecord, allExper
       ? { title: "前回と比べられる", detail: `${comparableCount} / 12部位で、同じ意味の前回記録と比較できます。` }
       : { title: "今回が比較点", detail: "比較できる前回がない部位は、今回を次回以降の比較点として使えます。" },
   ];
-  if (nextCheck) items.push({ title: "次回確認", detail: nextCheck });
-  else if (finite(fatigue.pre) || finite(fatigue.post)) items.push({ title: "疲労感の記録", detail: `走る前 ${finite(fatigue.pre) ? fmt(fatigue.pre, 0) : "—"} → 走った後 ${finite(fatigue.post) ? fmt(fatigue.post, 0) : "—"}。部位の目安とは別の本人記録です。` });
-  else items.push({ title: "次に1つ確認", detail: "結果を整理して、次回に確認したいことを1つ残せます。" });
+  if (finite(fatigue.pre) || finite(fatigue.post)) items.push({ title: "疲労感の記録", detail: `走る前 ${finite(fatigue.pre) ? fmt(fatigue.pre, 0) : "—"} → 走った後 ${finite(fatigue.post) ? fmt(fatigue.post, 0) : "—"}。部位の目安とは別の本人記録です。` });
+  else items.push({ title: "次に1つ確認", detail: "結果を整理して、次回も見るテーマを1つ選べます。" });
   return `<section class="mobile-result-highlights" aria-labelledby="mobile-result-highlights-title"><div class="mobile-result-highlights__head"><small>今回の確認</small><h2 id="mobile-result-highlights-title">見るポイント</h2></div><div class="mobile-result-highlights__grid">${items.slice(0, 3).map((item, index) => `<article><span>${index + 1}</span><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.detail)}</small></div></article>`).join("")}</div><p>数値は危険度や部位の順位を示すものではありません。</p></section>`;
 }
 
@@ -403,7 +398,7 @@ function renderRunLab({ services, record, measurement, mobileLayout }) {
   </details>`;
 }
 
-function renderAchievementReward(services) {
+function renderAchievementReward(services, consumeUnannouncedAchievements) {
   const unlocked = consumeUnannouncedAchievements(services);
   if (!unlocked.length) return "";
   const first = unlocked[0];
@@ -411,8 +406,7 @@ function renderAchievementReward(services) {
   return `<a class="achievement-reward" href="#/achievements" aria-live="polite"><span class="achievement-reward__icon" aria-hidden="true">🏆</span><span class="achievement-reward__copy"><small>新しい実績</small><strong>${escapeHtml(first.title)}</strong><span>${escapeHtml(extra || "実績を確認")}</span></span></a>`;
 }
 
-export function renderResultScreen({ services, context }) {
-  const mobileLayout = matchesMobileLayout();
+export function renderResultScreenForPlatform({ services, context }, { mobileLayout = false, consumeUnannouncedAchievements = () => [], renderRunCapsule = () => "", renderSameCourseComparison = () => "" } = {}) {
   const requestedRecordId = context.parameters.get("recordId") || "";
   const experience = requestedRecordId ? services.workflows.records.loadExperience(requestedRecordId) : services.workflows.records.loadLatestExperience();
   if (!experience?.record) return `<div class="screen screen--result screen-layout screen-layout--result"><section class="intro"><div class="intro-heading"><div><p class="eyebrow">RESULT</p><h1>今回の走り</h1></div></div><p>保存した記録がまだありません。</p><a href="#/record-input"><span><small>最初の記録</small><strong>記録を始める</strong></span><i>›</i></a></section></div>`;
@@ -428,5 +422,9 @@ export function renderResultScreen({ services, context }) {
   const sameCourse = mobileLayout ? renderSameCourseComparison(record, allExperiences) : "";
   const savedInterpretation = services?.storage?.selfInterpretations?.findByRecordId?.(record.id) || null;
   const interpretationLinkCopy = `<span><small>自分の記録と情報を整理</small><strong>今回を見比べる</strong></span>`;
-  return `<div class="screen screen--result screen-layout screen-layout--result">${renderPcResultConsole({ services, record, resultRecord: regionalV2ResultRecord, allExperiences, feedback: experience.feedback, savedInterpretation })}<div class="result-mobile-layout">${mobileLayout ? renderAchievementReward(services) : ""}${capsule ? "" : `<section class="intro"><div class="intro-heading"><div><p class="eyebrow">RESULT</p><h1>今回の走り</h1></div><span>${escapeHtml(formatLocalDate(record.date))}</span></div>${renderRunSummary(record)}</section>`}${capsule}${sameCourse}${mobileLayout ? renderMobileResultHighlights({ services, record, resultRecord: regionalV2ResultRecord, allExperiences }) : ""}${renderRegional(regionalV2ResultRecord, allExperiences, record, { mobileLayout })}${renderFatigue(services, record)}${runLab}${routeLink}<nav class="result-next-actions" aria-label="結果の次の操作"><a class="understanding-link" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=result">${interpretationLinkCopy}<i aria-hidden="true">›</i></a><a class="history-link" href="#/history?view=trends&metric=region&period=28&anchorDate=${encodeURIComponent(record.date)}&recordId=${encodeURIComponent(record.id)}"><span><small>この日の記録</small><strong>履歴で見る</strong></span><i aria-hidden="true">›</i></a></nav></div></div>`;
+  return `<div class="screen screen--result screen-layout screen-layout--result">${renderPcResultConsole({ services, record, resultRecord: regionalV2ResultRecord, allExperiences, feedback: experience.feedback, savedInterpretation })}<div class="result-mobile-layout">${mobileLayout ? renderAchievementReward(services, consumeUnannouncedAchievements) : ""}${capsule ? "" : `<section class="intro"><div class="intro-heading"><div><p class="eyebrow">RESULT</p><h1>今回の走り</h1></div><span>${escapeHtml(formatLocalDate(record.date))}</span></div>${renderRunSummary(record)}</section>`}${capsule}${sameCourse}${mobileLayout ? renderMobileResultHighlights({ services, record, resultRecord: regionalV2ResultRecord, allExperiences }) : ""}${renderRegional(regionalV2ResultRecord, allExperiences, record, { mobileLayout })}${renderFatigue(services, record)}${runLab}${routeLink}<nav class="result-next-actions" aria-label="結果の次の操作"><a class="understanding-link" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=result">${interpretationLinkCopy}<i aria-hidden="true">›</i></a><a class="history-link" href="#/history?view=trends&metric=region&period=28&anchorDate=${encodeURIComponent(record.date)}&recordId=${encodeURIComponent(record.id)}"><span><small>この日の記録</small><strong>履歴で見る</strong></span><i aria-hidden="true">›</i></a></nav></div></div>`;
+}
+
+export function renderResultScreen(args) {
+  return renderResultScreenForPlatform(args);
 }

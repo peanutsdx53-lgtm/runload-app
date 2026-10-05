@@ -18,7 +18,7 @@ async function test(id, fn) {
 }
 
 await test('PHOTO-MEMO-HOME-ENTRY-USES-EMOJI', () => {
-  const home = read('screens/homeScreen.js');
+  const home = read('screens/mobile/homeScreen.js');
   const interactions = read('ui/interactions/homeInteractions.js');
   assert.ok(home.includes('href: "#/photo-note"'));
   assert.ok(home.includes('label: "写真メモ"'));
@@ -28,8 +28,8 @@ await test('PHOTO-MEMO-HOME-ENTRY-USES-EMOJI', () => {
 });
 
 await test('PHOTO-MEMO-HAS-ROUTE-BINDER-AND-HOME-RETURN', () => {
-  const registry = read('screens/screenRegistry.js');
-  const binders = read('ui/screenInteractions.js');
+  const registry = read('screens/mobileScreenRegistry.js');
+  const binders = read('ui/mobileScreenInteractionBinders.js');
   const architecture = read('ui/screenArchitecture.js');
   assert.ok(registry.includes('renderPhotoMemoScreen'));
   assert.ok(registry.includes('"photo-note": renderPhotoMemoScreen'));

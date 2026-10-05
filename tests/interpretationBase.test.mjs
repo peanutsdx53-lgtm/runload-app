@@ -261,11 +261,12 @@ await test('REST-RECORD-DOES-NOT-FABRICATE-REGIONAL-NUMBERS',()=>{
   assert.equal(out.actions.some(x=>x.actionId==='simulation'),false);
 });
 
-await test('EXISTING-NEXT-CHECK-IS-READ-WITHOUT-NEW-STORAGE',()=>{
+await test('CURRENT-FACTS-OMIT-RETIRED-NEXT-CHECK',()=>{
   const target=fakeExperience({id:'target',value:110});
-  target.record.reflectionContext={nextCheckPoint:'坂の少ない条件で確認'};
+  target.record.reflectionContext={postRunReflection:'後半の感覚を記録'};
   const out=buildBaseInterpretation({targetExperience:target,allExperiences:[target]});
-  assert.equal(out.current.facts.nextCheckPoint,'坂の少ない条件で確認');
+  assert.equal(out.current.facts.postRunReflection,'後半の感覚を記録');
+  assert.equal(Object.hasOwn(out.current.facts,'nextCheckPoint'),false);
 });
 
 await test('BUILD-IS-READ-ONLY',()=>{

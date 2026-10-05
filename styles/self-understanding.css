@@ -219,13 +219,6 @@
 /* Record-screen migration: one current observation memo; legacy text remains readable but secondary. */
 .reflection-fields--v2 { grid-template-columns:1fr !important; }
 .reflection-fields--v2 .field > small { display:block;margin-top:.35rem;color:var(--color-muted);font-size:.78rem;line-height:1.5; }
-.legacy-reflection-note { margin-top:.55rem;border:1px solid var(--color-line);border-radius:var(--radius-small);background:var(--color-surface-muted); }
-.legacy-reflection-note summary { cursor:pointer;padding:.7rem .8rem;font-size:.84rem;font-weight:800; }
-.legacy-reflection-note > div { padding:0 .8rem .8rem; }
-.legacy-reflection-note p { margin:.55rem 0 0; }
-.legacy-reflection-note p small,.legacy-reflection-note p strong { display:block; }
-.legacy-reflection-note p small,.legacy-reflection-note > div > span { color:var(--color-muted);font-size:.76rem;line-height:1.5; }
-.legacy-reflection-note p strong { margin-top:.12rem;font-size:.86rem;white-space:pre-wrap; }
 
 /* History: records and user-selected confirmation themes are separate lanes. */
 .desktop-history-mode,

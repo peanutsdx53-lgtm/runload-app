@@ -54,7 +54,7 @@ await test('BUNDLED-IMAGE-ASSETS-ARE-EXPLICITLY-ACCOUNTED-FOR', () => {
 });
 
 await test('SMARTPHONE-HOME-LAUNCHERS-USE-UNICODE-EMOJI', () => {
-  const home = read('screens/homeScreen.js');
+  const home = read('screens/mobile/homeScreen.js');
   for (const emoji of ['⚖️', '📅', '📖', '📤', '⚙️', '📒', '⏱️', '🕘', '🗺️', '📍', '📝', '🎒', '✅', '💧', '📷', '🧮']) {
     assert.ok(home.includes(`emoji: "${emoji}"`), `missing emoji ${emoji}`);
   }

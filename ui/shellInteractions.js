@@ -1,5 +1,3 @@
-import { bindMobileHomeReturnTransitions } from "./mobileHomeReturnTransition.js";
-
 function getFocusableElements(container) {
   if (!container) return [];
   return [...container.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
@@ -86,8 +84,8 @@ function bindFeatureMenu(root) {
   });
 }
 
-export function bindAppShellInteractions({ root, onOpenGuide, onCloseGuide, onSelectGuideSection }) {
-  const homeReturnCleanup = bindMobileHomeReturnTransitions(root);
+export function bindAppShellInteractions({ root, onOpenGuide, onCloseGuide, onSelectGuideSection, bindPlatformShell = () => null }) {
+  const platformCleanup = bindPlatformShell(root);
   root.querySelectorAll("[data-open-guide]").forEach((button) => {
     button.addEventListener("click", () => {
       const featureMenu = button.closest(".feature-menu");
@@ -111,5 +109,5 @@ export function bindAppShellInteractions({ root, onOpenGuide, onCloseGuide, onSe
   bindGuideKeyboard(guidePanel, onCloseGuide);
   bindGuideTabKeyboard(guidePanel, onSelectGuideSection);
   bindFeatureMenu(root);
-  return () => homeReturnCleanup?.();
+  return () => platformCleanup?.();
 }

@@ -323,11 +323,11 @@ await test('RUN-WALK-WHOLE-RUN-DISTANCE-IS-NOT-MISLABELED-AS-DIRECT-REGION-INPUT
   assert.equal(format.relationship,'DEFINES_EXPOSURE');
 });
 
-await test('NEXT-CHECK-PRESERVES-USER-RECORDED-NEXT-POINT',()=>{
+await test('NEXT-CHECK-DOES-NOT-CARRY-RETIRED-PERSISTED-MEMO',()=>{
   const target=fakeExperience();
-  target.record.reflectionContext={nextCheckPoint:'同じコースで確認する'};
+  target.record.reflectionContext={postRunReflection:'同じコースでの感覚を記録'};
   const out=build({target,selectedRegionId:'BA-DISP-014'});
-  assert.equal(out.nextCheck.userRecorded,'同じコースで確認する');
+  assert.equal(Object.hasOwn(out.nextCheck,'userRecorded'),false);
 });
 
 await test('NEXT-CHECK-IS-STRUCTURED-AND-NON-DIAGNOSTIC',()=>{

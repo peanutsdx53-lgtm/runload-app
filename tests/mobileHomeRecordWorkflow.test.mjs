@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 const read = (path) => fs.readFileSync(path, "utf8");
-const home = read("screens/homeScreen.js");
+const home = read("screens/mobile/homeScreen.js");
 const homeInteractions = read("ui/interactions/homeInteractions.js");
 const record = read("screens/recordInputScreen.js");
 const recordInteractions = read("ui/interactions/recordInputInteractions.js");

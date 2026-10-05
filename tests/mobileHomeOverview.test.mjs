@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 
-const home = fs.readFileSync("screens/homeScreen.js", "utf8");
+const home = fs.readFileSync("screens/mobile/homeScreen.js", "utf8");
 const css = fs.readFileSync("styles/mobile-home.css", "utf8");
 const gestureCss = fs.readFileSync("styles/mobile-home-gesture.css", "utf8");
 const interactions = fs.readFileSync("ui/interactions/homeInteractions.js", "utf8");

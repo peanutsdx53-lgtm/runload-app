@@ -1,0 +1,89 @@
+import { escapeHtml } from "../../ui/commonComponents.js";
+import { formatNumber } from "../../ui/recordPresentation.js";
+import { activityPill, homeConfirmationTheme, homeState, nextPlan, paceLabel, shortDate } from "../shared/homeScreenSupport.js";
+
+function renderPcFocus(experience, draft) {
+  const record = experience?.record || null;
+  const state = homeState(experience, draft);
+  const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
+
+  let eyebrow = "今日の入口";
+  let title = "次のランで確認したいこと";
+  let body = "今日の記録から、次回も見るテーマを選べます";
+  let sourceText = "今日の記録から次回へ引き継げます";
+  let badge = "次回へ引継ぎ";
+  let actions = `<a class="primary" href="#/record-input">今日の記録を始める</a>`;
+
+  if (state === "first") {
+    eyebrow = "記録なし";
+    title = "走行または休養を記録する";
+    body = "保存後に結果と履歴を確認できます";
+    sourceText = "";
+    badge = "はじめる";
+  } else if (state === "draft") {
+    eyebrow = "入力途中";
+    title = "入力途中の記録があります";
+    body = "保存前の入力を続きから再開できます";
+    sourceText = "保存済み記録とは分けて扱います";
+    badge = "下書き";
+    actions = `<a class="primary" href="#/record-input">入力を再開する</a>`;
+  } else if (state === "saved-run") {
+    eyebrow = "今日の記録";
+    title = "今日の走行を保存しました";
+    body = "今回の結果を確認し、必要な部位を詳しく見られます";
+    sourceText = "今日保存した走行記録";
+    badge = "保存済み";
+    actions = `<a class="primary" href="#/result?recordId=${encodeURIComponent(record.id)}">今回の結果を見る</a>`;
+  } else if (state === "saved-rest") {
+    eyebrow = "今日の記録";
+    title = "今日の休養を保存しました";
+    body = "保存した休養記録を確認できます";
+    sourceText = "今日保存した休養記録";
+    badge = "保存済み";
+    actions = `<a class="primary" href="#/result?recordId=${encodeURIComponent(record.id)}">休養記録を見る</a>`;
+  }
+
+  const sourceHtml = sourceText ? `<p class="source"><b>${escapeHtml(sourceDate)}${record ? "の記録" : ""}</b><span>${escapeHtml(sourceText)}</span></p>` : "";
+  return `<section class="focus home-focus--pc focus--${escapeHtml(state)}"><div class="focus-top"><span class="marker" aria-hidden="true"><i></i></span><div class="focus-copy"><small>${escapeHtml(eyebrow)}</small><h2>${escapeHtml(title)}</h2><p class="focus-text">${escapeHtml(body)}</p>${sourceHtml}</div><span class="carry">${escapeHtml(badge)}</span></div><div class="focus-actions">${actions}</div></section>`;
+}
+
+function renderLatestRecord(experience) {
+  if (!experience?.record) {
+    return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>記録なし</strong></div><span class="pill">—</span></div><a class="card-link" href="#/record-input"><span>記録を始める</span><span>›</span></a></article>`;
+  }
+  const record = experience.record;
+  if (record.activityType === "rest") {
+    return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">REST</span></div><div class="plan"><strong>休養</strong></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>記録を開く</span><span>›</span></a></article>`;
+  }
+  return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実際に走った時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><div class="card-actions"><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を見る</span><span>›</span></a><a class="card-link card-link--understanding" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=home"><span>今回を見比べる</span><span>›</span></a></div></article>`;
+}
+
+function renderPcConfirmationCard(theme) {
+  if (!theme?.hasNewEligibleData) return "";
+  return `<article class="card self-understanding-home-card"><div class="card-head"><div><small>次回見ること</small><strong>新しい記録があります</strong></div><span class="pill">${escapeHtml(String(theme.newCount || 1))}件</span></div><div class="plan"><strong>${escapeHtml(theme.title || "次回見ること")}</strong><span>あなたが続けて見ると決めた内容です</span></div><a class="card-link" href="#/history?view=checks"><span>確認の続きを見る</span><span>›</span></a></article>`;
+}
+
+function renderPlanCard(services) {
+  const plan = nextPlan(services);
+  if (!plan) {
+    return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>未設定</strong></div><span class="pill">—</span></div><a class="card-link" href="#/plan"><span>予定を作る</span><span>›</span></a></article>`;
+  }
+  const planned = plan.plannedSession || {};
+  const rest = plan.planType === "rest" || planned.activityType === "rest";
+  const main = rest ? "休養" : (Number(planned.distanceKm) > 0 ? `${formatNumber(planned.distanceKm, 2)} km` : "走行予定");
+  const details = rest ? "内容はあとで変更できます" : [planned.course?.name, Number(planned.durationMinutes) > 0 ? `${formatNumber(planned.durationMinutes, 0)}分` : ""].filter(Boolean).join("・") || "内容はあとで変更できます";
+  return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong></div><span class="pill">保存済み</span></div><div class="plan"><strong>${escapeHtml(main)}</strong><span>${escapeHtml(details)}</span></div><a class="card-link" href="#/plan?planId=${encodeURIComponent(plan.id)}"><span>予定を開く</span><span>›</span></a></article>`;
+}
+
+export function renderHomeScreen({ services }) {
+  const latestExperience = services.workflows.records.loadLatestExperience();
+  const draft = services.storage.draft.load();
+  const state = homeState(latestExperience, draft);
+  const confirmationTheme = homeConfirmationTheme(services);
+  return `<div class="screen screen--home screen-layout screen-layout--home home-state--${escapeHtml(state)}" data-home-state="${escapeHtml(state)}">
+    <div class="home-desktop">
+      ${renderPcFocus(latestExperience, draft)}
+      <section class="section"><div class="section-head"><div><h2>記録と予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPcConfirmationCard(confirmationTheme)}${renderPlanCard(services)}</div></section>
+    </div>
+  </div>`;
+}

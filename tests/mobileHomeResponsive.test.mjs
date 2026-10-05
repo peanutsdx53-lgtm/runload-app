@@ -7,7 +7,7 @@ const css = fs.readFileSync("styles/mobile-home-responsive.css", "utf8");
 
 assert.ok(index.includes('styles/mobile-home-responsive.css'));
 assert.ok(worker.includes('styles/mobile-home-responsive.css'));
-assert.ok(index.indexOf('interpretation-loop-v53.css') < index.indexOf('mobile-home-responsive.css'));
+assert.ok(index.indexOf('interpretation-loop.css') < index.indexOf('mobile-home-responsive.css'));
 assert.ok(css.includes('grid-auto-rows: 112px'));
 assert.ok(css.includes('grid-auto-rows: 120px'));
 assert.ok(css.includes('mobile-home-page-dot:only-child'));

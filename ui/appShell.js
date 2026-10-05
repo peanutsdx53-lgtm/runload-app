@@ -1,6 +1,5 @@
 import { escapeHtml } from "./commonComponents.js";
 import { renderGuideDialog } from "./guideContent.js";
-import { renderMobileOnboarding } from "./mobileOnboarding.js";
 import { FEATURE_DESTINATION_GROUPS, PRIMARY_DESTINATIONS, resolveScreenContextNavigation } from "./screenArchitecture.js";
 
 const PRIMARY_NAVIGATION = PRIMARY_DESTINATIONS;
@@ -214,7 +213,7 @@ function renderImmersiveHeader(currentScreen, currentLocation, hasResult) {
   return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(title)}</strong><div class="interpretation-room-header__actions" aria-label="画面操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "immersive" })}</div></header>`;
 }
 
-export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {}, onboarding = {} }) {
+export function renderAppShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {}, onboardingMarkup = "" }) {
   const standalone = currentScreen === "run-measurement";
   if (standalone) {
     return `
@@ -228,7 +227,7 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
           currentScreen,
           firstVisit: Boolean(guide.firstVisit),
         })}
-        ${renderMobileOnboarding({ open: Boolean(onboarding.open), replay: Boolean(onboarding.replay), alreadyAccepted: Boolean(onboarding.alreadyAccepted) })}
+        ${onboardingMarkup}
       </div>`;
   }
   const immersive = currentScreen === "interpretation-room";
@@ -245,7 +244,7 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
           currentScreen,
           firstVisit: Boolean(guide.firstVisit),
         })}
-        ${renderMobileOnboarding({ open: Boolean(onboarding.open), replay: Boolean(onboarding.replay), alreadyAccepted: Boolean(onboarding.alreadyAccepted) })}
+        ${onboardingMarkup}
       </div>`;
   }
   return `
@@ -265,7 +264,7 @@ export function renderAppShell({ currentScreen, currentLocation, screenContent, 
         currentScreen,
         firstVisit: Boolean(guide.firstVisit),
       })}
-      ${renderMobileOnboarding({ open: Boolean(onboarding.open), replay: Boolean(onboarding.replay), alreadyAccepted: Boolean(onboarding.alreadyAccepted) })}
+      ${onboardingMarkup}
     </div>`;
 }
 

@@ -18,7 +18,7 @@ await test('RESULT-LAUNCHES-CANONICAL-INTERPRETATION',()=>{
 });
 
 await test('HOME-LATEST-RECORD-SEPARATES-RESULT-AND-ORGANIZATION',()=>{
-  const s=read('screens/homeScreen.js');
+  const s=read('screens/desktop/homeScreen.js');
   assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=home/);
   assert.doesNotMatch(s,/experience=v3/);
   assert.match(s,/結果を見る/);

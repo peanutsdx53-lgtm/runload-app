@@ -8,6 +8,7 @@ const root = path.resolve(here, "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 
 const onboarding = await import("../ui/mobileOnboarding.js");
+const legal = await import("../ui/legalAcceptance.js");
 
 assert.equal(onboarding.shouldOpenMobileOnboarding({}, { mobile: false }), false, "desktop must not be blocked by mobile onboarding");
 assert.equal(onboarding.shouldOpenMobileOnboarding({}, { mobile: true }), true, "new mobile users require onboarding");
@@ -15,7 +16,7 @@ assert.equal(onboarding.shouldOpenMobileOnboarding({}, { mobile: true }), true, 
 const completed = onboarding.withMobileOnboardingComplete({ appearanceMode: "dark" }, { acceptedAt: "2026-09-30T00:00:00.000Z" });
 assert.equal(completed.appearanceMode, "dark", "completion must preserve existing settings");
 assert.equal(completed.mobileOnboardingVersionSeen, onboarding.MOBILE_ONBOARDING_VERSION);
-assert.equal(completed.termsAcceptedVersion, onboarding.TERMS_VERSION);
+assert.equal(completed.termsAcceptedVersion, legal.TERMS_VERSION);
 assert.equal(completed.termsAcceptedAt, "2026-09-30T00:00:00.000Z");
 assert.equal(onboarding.shouldOpenMobileOnboarding(completed, { mobile: true }), false, "completed current onboarding must not reopen automatically");
 
@@ -29,9 +30,12 @@ assert.match(markup, /#\/privacy/);
 assert.match(markup, /data-onboarding-complete disabled/);
 
 const app = read("app.js");
-assert.match(app, /shouldOpenMobileOnboarding/);
+assert.match(app, /platformRuntime\.shouldOpenOnboarding/);
+const mobileRuntime = read("ui/mobileAppRuntime.js");
+assert.match(mobileRuntime, /shouldOpenMobileOnboarding/);
 assert.match(app, /\["terms", "privacy"\]\.includes\(location\.screen\)/, "legal documents must be viewable before acceptance");
-assert.match(app, /withMobileOnboardingComplete/);
+assert.match(app, /platformRuntime\.completeOnboarding/);
+assert.match(mobileRuntime, /withMobileOnboardingComplete/);
 
 const terms = read("screens/shared/termsScreen.js");
 assert.match(terms, /医療・安全に関する位置づけ/);
@@ -46,7 +50,7 @@ const version = read("ui/appVersionStatus.js").match(/APP_VERSION = "([^"]+)"/)?
 assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 const sw = read("service-worker.js");
 assert.match(sw, new RegExp(`running-record-app-runtime-${version.replaceAll(".", "\\.")}`));
-for (const asset of ["./ui/mobileOnboarding.js", "./screens/shared/termsScreen.js", "./styles/mobile-onboarding.css"]) {
+for (const asset of ["./ui/mobileOnboarding.js", "./ui/legalAcceptance.js", "./ui/mobileAppRuntime.js", "./screens/shared/termsScreen.js", "./styles/mobile-onboarding.css"]) {
   assert.ok(sw.includes(`"${asset}"`), `service worker must precache ${asset}`);
 }
 

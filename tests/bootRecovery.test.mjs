@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 const index = fs.readFileSync('index.html', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const recovery = fs.readFileSync('ui/bootRecovery.js', 'utf8');
+const bootstrap = fs.readFileSync('ui/platformBootstrap.js', 'utf8');
 
 const results = [];
 function test(id, fn) {
@@ -13,8 +14,9 @@ function test(id, fn) {
 
 test('BOOT-RECOVERY-LOADS-BEFORE-APP-MODULES', () => {
   const recoveryIndex = index.indexOf('./ui/bootRecovery.js');
-  const appIndex = index.indexOf('./app.js');
-  assert.ok(recoveryIndex >= 0 && appIndex > recoveryIndex);
+  const bootstrapIndex = index.indexOf('./ui/platformBootstrap.js');
+  assert.ok(recoveryIndex >= 0 && bootstrapIndex > recoveryIndex);
+  assert.ok(bootstrap.includes('await import("../app.js")'));
   assert.ok(worker.includes('"./ui/bootRecovery.js"'));
 });
 

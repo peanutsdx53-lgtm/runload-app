@@ -21,7 +21,7 @@ assert.match(css, /\.about-hero/);
 assert.match(css, /\.about-credits/);
 assert.doesNotMatch(css, /\.run-capsule/);
 
-const screenRegistrySource = read("../screens/screenRegistry.js");
+const screenRegistrySource = read("../screens/sharedScreenRegistry.js");
 assert.match(screenRegistrySource, /about: renderAboutScreen/);
 const index = read("../index.html");
 assert.match(index, /styles\/mobile-about\.css/);

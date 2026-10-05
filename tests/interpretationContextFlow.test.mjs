@@ -14,7 +14,7 @@ function output({ body = true, fatigue = true, conditions = true, reflection = f
   return {
     target: { recordId: 'r2', date: '2026-10-02', origin: 'result', selectedRegionId: '' },
     state: { targetAvailable: true, regional: 'AVAILABLE', history: 'AVAILABLE', subjective: fatigue ? 'PAIR' : 'UNAVAILABLE', support: 'NORMAL' },
-    runFacts: { postRunReflection: reflection ? '後半の感じ方を次も見たい' : '', nextCheckPoint: '', environment: { temperatureC: temperature, environmentNote: temperature != null ? '暑く感じた' : '' } },
+    runFacts: { postRunReflection: reflection ? '後半の感じ方を次も見たい' : '', environment: { temperatureC: temperature, environmentNote: temperature != null ? '暑く感じた' : '' } },
     overview: { attention: { counts: { conditionDifferences: conditions ? 1 : 0 }, groups: [] } },
     selectedRegion: null,
     subjectiveContext: fatigue
