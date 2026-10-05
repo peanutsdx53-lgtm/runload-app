@@ -1,3 +1,4 @@
+import { cloneJsonValue as clone, toFiniteNumber as finiteNumber } from "../../shared/valueUtilities.js";
 import "./primaryModelResults.js";
 import { internalModules } from "./modules.js";
 
@@ -409,14 +410,7 @@ const { INPUT_LIMITS, normalizePlainText, normalizeSingleLineText } = internalMo
 const { createCollectionRepository } = internalModules.collectionRepository;
 const { STORAGE_KEYS } = internalModules.storageKeys;
 
-function finiteNumber(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
-}
 
-function clone(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 
 function normalizeCourse(course = {}) {
   const source = course && typeof course === "object" ? course : {};

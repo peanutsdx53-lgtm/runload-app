@@ -1,3 +1,4 @@
+import { cloneJsonValue as cloneValue } from "../../shared/valueUtilities.js";
 import "./planPreview.js";
 import { internalModules } from "./modules.js";
 
@@ -8,9 +9,6 @@ const { clonePlanFactPreview, createPlanFactPreview, normalizePlanFactSession } 
 const { normalizePlainText, normalizeSingleLineText } = internalModules.inputSafety;
 const { isValidLocalDate } = internalModules.inputValidation;
 
-function cloneValue(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 
 function createReadablePlanId(date, existingIds) {
   const prefix = `plan-${date || "unscheduled"}-`;

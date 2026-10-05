@@ -1,3 +1,4 @@
+import { writeMobileLocalJson } from "./mobileStorageUtilities.js";
 import { findSavedRunMeasurement } from "./runMeasurementState.js";
 
 const STORAGE_KEY = "running-record-mobile-achievements-v1";
@@ -47,15 +48,6 @@ function readState() {
     };
   } catch {
     return null;
-  }
-}
-
-function writeState(state) {
-  try {
-    globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(state));
-    return true;
-  } catch {
-    return false;
   }
 }
 
@@ -120,7 +112,7 @@ export function syncAchievements(services, { initializeAnnouncements = false } =
   if (!previous && initializeAnnouncements) {
     Object.keys(state.unlocked).forEach((id) => { state.announced[id] = state.unlocked[id]; });
   }
-  writeState(state);
+  writeMobileLocalJson(STORAGE_KEY, state);
   return evaluated.map((achievement) => Object.freeze({
     ...achievement,
     unlockedAt: state.unlocked[achievement.id] || "",
@@ -149,7 +141,7 @@ export function consumeUnannouncedAchievements(services) {
   if (!unseen.length) return [];
   const stamp = nowIso();
   unseen.forEach((achievement) => { state.announced[achievement.id] = stamp; });
-  writeState(state);
+  writeMobileLocalJson(STORAGE_KEY, state);
   return unseen;
 }
 

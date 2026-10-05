@@ -32,13 +32,13 @@ await test('FIRST-USE-STARTS-WITH-ONE-USER-EXPERIENCE-AND-ONE-NEXT-ACTION',()=>{
     assert.match(html,/あなたの身体の記録/);
     assert.match(html,/股関節部の外側/);
     assert.match(html,/対応する情報を見る/);
-    assert.match(html,/data-v53-stage="focus"/);
+    assert.match(html,/data-interpretation-flow-stage="focus"/);
   }
 });
 
 await test('COMPARISON-IS-STAGED-AND-KEEPS-CONSTRUCTS-SEPARATE',()=>{
   const html=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,mobileLayout:true});
-  assert.match(html,/data-v53-reveal="compare"/);
+  assert.match(html,/data-interpretation-flow-reveal="compare"/);
   assert.match(html,/RunLoadの部位表示/);
   assert.match(html,/同じ部位/);
   assert.match(html,/2つは別の情報です/);
@@ -106,9 +106,9 @@ await test('TECHNICAL-DETAIL-REMAINS-SECONDARY-ON-BOTH-LAYOUTS',()=>{
 
 await test('NEW-FLOW-NO-LONGER-WRITES-SELF-INTERPRETATION-SNAPSHOTS',()=>{
   const source=fs.readFileSync('ui/interpretationRoomPresentation.js','utf8');
-  const v53=source.slice(source.indexOf('function v53QuestionForCandidate'),source.indexOf('function publicConstructText'));
-  assert.doesNotMatch(v53,/finalize-self-interpretation|selfInterpretations|今回の解釈を残す/);
-  assert.match(v53,/create-self-understanding-thread/);
+  const interpretationFlow=source.slice(source.indexOf('function interpretationFlowQuestionForCandidate'),source.indexOf('function publicConstructText'));
+  assert.doesNotMatch(interpretationFlow,/finalize-self-interpretation|selfInterpretations|今回の解釈を残す/);
+  assert.match(interpretationFlow,/create-self-understanding-thread/);
 });
 
 const failed=results.filter(r=>r.status==='FAIL');

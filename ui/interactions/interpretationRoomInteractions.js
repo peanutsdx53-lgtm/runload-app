@@ -15,15 +15,15 @@ function selfUnderstandingNote(screen) {
   return String(screen?.querySelector?.("[data-self-understanding-note]")?.value || "").trim();
 }
 
-function setV53Stage(screen, stage = "focus", completion = "") {
-  const room = screen?.matches?.(".v53-room") ? screen : screen?.querySelector?.(".v53-room");
+function setInterpretationFlowStage(screen, stage = "focus", completion = "") {
+  const room = screen?.matches?.(".interpretation-flow-room") ? screen : screen?.querySelector?.(".interpretation-flow-room");
   if (!room) return false;
   const allowed = new Set(["focus", "compare", "decision", "done"]);
   const next = allowed.has(String(stage)) ? String(stage) : "focus";
-  room.dataset.v53Stage = next;
-  if (next === "done" && completion) room.dataset.v53Completion = String(completion);
-  else if (next !== "done") delete room.dataset.v53Completion;
-  room.querySelector?.(`[data-v53-step="${next === "done" ? "decision" : next}"]`)?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+  room.dataset.interpretationFlowStage = next;
+  if (next === "done" && completion) room.dataset.interpretationFlowCompletion = String(completion);
+  else if (next !== "done") delete room.dataset.interpretationFlowCompletion;
+  room.querySelector?.(`[data-interpretation-flow-step="${next === "done" ? "decision" : next}"]`)?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
   return true;
 }
 
@@ -145,33 +145,33 @@ export function bindInterpretationRoom({ root = document, services, context, rer
   if (!screen) return null;
 
   const onClick = (event) => {
-    const flowButton = event.target.closest?.('[data-action="v53-flow-stage"]');
+    const flowButton = event.target.closest?.('[data-action="interpretation-flow-flow-stage"]');
     if (flowButton && screen.contains(flowButton)) {
       event.preventDefault();
-      setV53Stage(screen, flowButton.dataset.nextStage || "focus");
+      setInterpretationFlowStage(screen, flowButton.dataset.nextStage || "focus");
       return;
     }
 
-    const finishButton = event.target.closest?.('[data-action="v53-finish-this-time"]');
+    const finishButton = event.target.closest?.('[data-action="interpretation-flow-finish-this-time"]');
     if (finishButton && screen.contains(finishButton)) {
       event.preventDefault();
-      setV53Stage(screen, "done", finishButton.dataset.v53DoneKind || "this-time");
+      setInterpretationFlowStage(screen, "done", finishButton.dataset.interpretationFlowDoneKind || "this-time");
       return;
     }
 
-    const undoButton = event.target.closest?.('[data-action="v53-undo-created-thread"]');
+    const undoButton = event.target.closest?.('[data-action="interpretation-flow-undo-created-thread"]');
     if (undoButton && screen.contains(undoButton)) {
       event.preventDefault();
-      const room = screen?.matches?.(".v53-room") ? screen : screen?.querySelector?.(".v53-room");
-      const threadId = String(room?.dataset?.v53CreatedThreadId || "");
+      const room = screen?.matches?.(".interpretation-flow-room") ? screen : screen?.querySelector?.(".interpretation-flow-room");
+      const threadId = String(room?.dataset?.interpretationFlowCreatedThreadId || "");
       const experience = targetExperience(services, context);
       const result = threadId ? services?.storage?.selfUnderstandingThreads?.review?.(threadId, { record: experience?.record || {}, decision: "CLOSE" }) : null;
       if (!result?.ok) {
         window.alert("確認中の問いを更新できませんでした。");
         return;
       }
-      if (room) delete room.dataset.v53CreatedThreadId;
-      setV53Stage(screen, "done", "undone");
+      if (room) delete room.dataset.interpretationFlowCreatedThreadId;
+      setInterpretationFlowStage(screen, "done", "undone");
       return;
     }
 
@@ -195,9 +195,9 @@ export function bindInterpretationRoom({ root = document, services, context, rer
         window.alert(errorMessage(result?.code));
         return;
       }
-      const room = screen?.matches?.(".v53-room") ? screen : screen?.querySelector?.(".v53-room");
-      if (room) room.dataset.v53CreatedThreadId = String(result.item?.id || "");
-      if (!setV53Stage(screen, "done", "saved")) rerender?.();
+      const room = screen?.matches?.(".interpretation-flow-room") ? screen : screen?.querySelector?.(".interpretation-flow-room");
+      if (room) room.dataset.interpretationFlowCreatedThreadId = String(result.item?.id || "");
+      if (!setInterpretationFlowStage(screen, "done", "saved")) rerender?.();
       return;
     }
 
@@ -217,7 +217,7 @@ export function bindInterpretationRoom({ root = document, services, context, rer
         window.alert("次回見る内容を更新できませんでした。");
         return;
       }
-      if (!setV53Stage(screen, "done", "updated")) rerender?.();
+      if (!setInterpretationFlowStage(screen, "done", "updated")) rerender?.();
     }
   };
 

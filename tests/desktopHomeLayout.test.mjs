@@ -6,6 +6,7 @@ const css = read("styles/desktop-home-layout.css");
 const home = read("ui/desktopHomeWorkspace.js");
 const screen = read("screens/desktop/homeScreen.js");
 const index = read("index.html");
+const platformStyles = read("ui/platformStyles.js");
 const desktopEntry = read("ui/desktopRuntimeEntry.js");
 const worker = read("service-worker.js");
 
@@ -22,7 +23,7 @@ assert.match(home, /コース設定/);
 assert.match(home, /共有用にまとめる/);
 assert.match(home, /matchesMobileLayout/);
 assert.match(screen, /記録と予定/);
-assert.ok(index.includes('./styles/desktop-home-layout.css'));
+assert.ok(platformStyles.includes('./styles/desktop-home-layout.css'));
 assert.ok(worker.includes('./styles/desktop-home-layout.css'));
 assert.ok(desktopEntry.includes('./desktopHomeWorkspace.js'));
 assert.ok(worker.includes('./ui/desktopHomeWorkspace.js'));

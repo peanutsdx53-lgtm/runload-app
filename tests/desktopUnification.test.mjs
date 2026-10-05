@@ -4,6 +4,7 @@ import fs from "node:fs";
 const read = (path) => fs.readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 
 const index = read("index.html");
+const platformStyles = read("ui/platformStyles.js");
 const serviceWorker = read("service-worker.js");
 const homeWorkspace = read("ui/desktopHomeWorkspace.js");
 const appVersion = read("ui/appVersionStatus.js");
@@ -13,9 +14,9 @@ const rofCompactCss = read("styles/rof-j-compact.css");
 const currentVersion = appVersion.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 
 assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
-assert.match(index, /styles\/desktop-unification\.css/);
+assert.match(platformStyles, /styles\/desktop-unification\.css/);
 assert.ok(
-  index.indexOf("styles/desktop-unification.css") > index.indexOf("styles/desktop-history-state.css"),
+  platformStyles.indexOf("styles/desktop-unification.css") > platformStyles.indexOf("styles/desktop-history-state.css"),
   "desktop unification CSS must be loaded after older desktop/share layers",
 );
 

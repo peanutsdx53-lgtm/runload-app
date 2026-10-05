@@ -7,12 +7,13 @@ const more=read("screens/desktop/moreScreen.js");
 const terms=read("screens/shared/termsScreen.js");
 const privacy=read("screens/shared/privacyScreen.js");
 const index=read("index.html");
+const platformStyles=read("ui/platformStyles.js");
 const worker=read("service-worker.js");
 const version=read("ui/appVersionStatus.js");
 
 assert.match(version,/APP_VERSION = "\d{4}\.\d{2}\.\d{2}\.\d+"/);
 assert.match(worker,/running-record-app-runtime-\d{4}\.\d{2}\.\d{2}\.\d+/);
-assert.match(index,/desktop-information\.css/);
+assert.match(platformStyles,/desktop-information\.css/);
 assert.ok(worker.includes('"./styles/desktop-information.css"'));
 assert.match(more,/このアプリについて/);
 assert.match(more,/設定、共有、サポート、アプリ情報をまとめています。/);

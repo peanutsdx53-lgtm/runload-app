@@ -27,8 +27,8 @@ function selfUnderstanding(){return {primaryCandidate:{kind:'BODY_OBSERVATION_PA
 
 await test('FIRST-FRAME-IS-ONE-FOCUS-NOT-AN-ANALYSIS-DUMP',()=>{
   const html=renderMobile({output:baseOutput(),selfUnderstanding:selfUnderstanding()});
-  assert.match(html,/v53-room--mobile/);
-  assert.match(html,/data-v53-stage="focus"/);
+  assert.match(html,/interpretation-flow-room--mobile/);
+  assert.match(html,/data-interpretation-flow-stage="focus"/);
   assert.match(html,/今回、まず見るところ/);
   assert.match(html,/最初は自分で記録した内容だけを見ます/);
   assert.match(html,/対応する情報を見る/);
@@ -36,7 +36,7 @@ await test('FIRST-FRAME-IS-ONE-FOCUS-NOT-AN-ANALYSIS-DUMP',()=>{
 
 await test('INTERACTION-REVEALS-RELATED-RUNLOAD-INFORMATION',()=>{
   const html=renderMobile({output:baseOutput(),selfUnderstanding:selfUnderstanding()});
-  assert.match(html,/data-v53-reveal="compare"/);
+  assert.match(html,/data-interpretation-flow-reveal="compare"/);
   assert.match(html,/RunLoadの部位表示/);
   assert.match(html,/同じ部位/);
   assert.match(html,/表示理由/);
@@ -103,20 +103,20 @@ await test('SUPPORT-STATE-TAKES-PRECEDENCE',()=>{
   const out=baseOutput(); out.state.support='URGENT'; out.next={selectionRequired:false,primaryAction:{actionId:'official-help',destination:'support-guidance',parameters:{},enabled:true},otherActions:[]};
   const html=renderMobile({output:out,selfUnderstanding:selfUnderstanding()});
   assert.match(html,/先に確認することがあります/);
-  assert.doesNotMatch(html,/v53-room/);
+  assert.doesNotMatch(html,/interpretation-flow-room/);
 });
 
 await test('REST-STATE-DOES-NOT-FABRICATE-REGIONAL-RESULTS',()=>{
   const out=baseOutput(); out.target.activityType='rest'; out.state.regional='REST';
   const html=renderMobile({output:out,selfUnderstanding:selfUnderstanding()});
   assert.match(html,/今回は休養の記録です/);
-  assert.doesNotMatch(html,/v53-pair/);
+  assert.doesNotMatch(html,/interpretation-flow-pair/);
 });
 
 await test('CSS-HAS-RESPONSIVE-STAGED-INTERACTION-AND-REDUCED-MOTION',()=>{
   const css=fs.readFileSync(path.join(root,'styles/interpretation-technical-details.css'),'utf8');
   assert.match(css,/grid-template-columns:\s*minmax\(0, 1fr\) minmax\(19rem, 34%\)/);
-  assert.match(css,/\.v53-room\[data-v53-stage="focus"\] \[data-v53-reveal="compare"\] \{ display: none; \}/);
+  assert.match(css,/\.interpretation-flow-room\[data-interpretation-flow-stage="focus"\] \[data-interpretation-flow-reveal="compare"\] \{ display: none; \}/);
   assert.match(css,/@media \(max-width: 820px\)/);
   assert.match(css,/@media \(max-width: 390px\)/);
   assert.match(css,/@media \(prefers-reduced-motion: reduce\)/);

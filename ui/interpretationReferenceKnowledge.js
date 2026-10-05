@@ -1,12 +1,6 @@
-import "../core/internal/readingCatalog.js";
-import { internalModules } from "../core/internal/modules.js";
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
+import { findReadingArticleById } from "../core/appCore.js";
 
-const ARTICLES = internalModules.columnData?.COLUMN_ARTICLES || [];
-const ARTICLE_BY_ID = new Map(ARTICLES.map((article) => [article.id, article]));
-
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
 
 export function normalizeInterpretationConditionId(value = "") {
   const raw = String(value || "").trim();
@@ -23,7 +17,7 @@ export function normalizeInterpretationConditionId(value = "") {
 }
 
 function articleById(id = "") {
-  const article = ARTICLE_BY_ID.get(String(id || "")) || null;
+  const article = findReadingArticleById(id);
   if (!article) return null;
   const governance = article.evidenceGovernance || null;
   if (governance?.sourceIntegrity?.status && governance.sourceIntegrity.status !== "PASS") return null;

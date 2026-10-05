@@ -1,3 +1,4 @@
+import { compareExperienceRecordChronology as recordChronology } from "../shared/recordUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
 import { bodyRegionFormalName, PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
@@ -186,12 +187,6 @@ function consultationProfileSummary(profile = {}) {
     available: parts.length > 0,
     value: parts.length ? parts.join("／") : "未設定",
   });
-}
-
-function recordChronology(left, right) {
-  return String(left?.record?.date || "").localeCompare(String(right?.record?.date || ""))
-    || String(left?.record?.createdAt || "").localeCompare(String(right?.record?.createdAt || ""))
-    || String(left?.record?.id || "").localeCompare(String(right?.record?.id || ""));
 }
 
 function previousRunExperience(allExperiences = [], target = null) {

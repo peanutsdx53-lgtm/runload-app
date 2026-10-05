@@ -1,3 +1,4 @@
+import { cloneJsonValue as cloneValue } from "../../shared/valueUtilities.js";
 import "./applicationDomain.js";
 import { internalModules } from "./modules.js";
 
@@ -12,9 +13,6 @@ const { evaluateSupportDecision } = internalModules.supportDecision;
 const { STORAGE_KEYS } = internalModules.storageKeys;
 const { createPrimaryRegionalV2ResultRecord, upsertPrimaryRegionalV2ResultRecord, validatePrimaryRegionalV2ResultRecord, PRIMARY_REGIONAL_V2_MODEL_VERSION } = internalModules.primaryRegionalResultService;
 
-function cloneValue(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 
 function sortRecords(records = []) {
   return [...records].sort((left, right) => (

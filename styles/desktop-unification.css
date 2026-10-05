@@ -348,7 +348,7 @@
   .course-derived-frame { width: min(66rem, calc(100vw - 2rem)) !important; }
 }
 
-/* V58 audit corrections: compact sparse areas and make the global header authoritative. */
+/* Desktop layout corrections: compact sparse areas and keep the global header authoritative. */
 @media (min-width: 55rem) {
   /* PC no longer needs a duplicate "More" primary destination; its functions live in the header menu. */
   .primary-navigation__link[data-navigation-screen="more"] {
@@ -356,9 +356,7 @@
   }
 
   /* Empty/new-user home state should occupy only the space its content needs. */
-  .screen--home .pc-home-dashboard {
-    align-items: start !important;
-  }
+  
 
   .screen--home .pc-home-dashboard > .home-focus--pc,
   .screen--home .pc-home-rail {
@@ -370,7 +368,7 @@
     min-height: 7rem !important;
   }
 
-  /* Higher-specificity legacy course rules otherwise re-show the duplicate internal top bar. */
+  /* The global desktop header is authoritative on derived course screens. */
   .screen--course-library.screen-layout--course .course-derived-head,
   .screen--gpx-analysis.screen-layout--gpx .course-derived-head,
   .screen--course-editor.screen-layout--course .course-derived-head,
@@ -486,7 +484,7 @@
   }
 }
 
-/* V58 continuation: remove remaining PC-only duplication without touching smartphone layout. */
+/* Remove remaining desktop-only duplication without touching smartphone layout. */
 @media (min-width: 55rem) {
   /* Context navigation belongs to the global header on PC. */
   .screen--body-part-detail .detail-topbar,
@@ -504,16 +502,16 @@
   }
 
   /* In the interpretation room, retain the useful stage guide but remove the repeated screen intro. */
-  .v53-room--pc .v53-head > div:first-child {
+  .interpretation-flow-room--pc .interpretation-flow-head > div:first-child {
     display: none !important;
   }
 
-  .v53-room--pc .v53-head {
+  .interpretation-flow-room--pc .interpretation-flow-head {
     justify-content: flex-end !important;
     margin-bottom: .8rem !important;
   }
 
-  .v53-room--pc.v53-room--empty .v53-head {
+  .interpretation-flow-room--pc.interpretation-flow-room--empty .interpretation-flow-head {
     display: none !important;
   }
 
@@ -574,9 +572,9 @@
   /* Remaining true buttons follow the same size/radius hierarchy. */
   :is(
     .secondary-action,
-    .v53-primary,
-    .v53-secondary,
-    .v53-text-button,
+    .interpretation-flow-primary,
+    .interpretation-flow-secondary,
+    .interpretation-flow-text-button,
     .condition-compare-reset,
     .add-section,
     .run-route-replay__head button
@@ -589,13 +587,13 @@
     line-height: 1.2 !important;
   }
 
-  :is(.v53-primary) {
+  :is(.interpretation-flow-primary) {
     border: 1px solid var(--color-accent-strong) !important;
     background: var(--color-accent-strong) !important;
     color: var(--color-on-accent) !important;
   }
 
-  :is(.v53-secondary, .v53-text-button, .secondary-action, .condition-compare-reset) {
+  :is(.interpretation-flow-secondary, .interpretation-flow-text-button, .secondary-action, .condition-compare-reset) {
     border: 1px solid var(--color-line) !important;
     background: var(--color-surface) !important;
     color: var(--color-accent-strong) !important;
@@ -646,7 +644,7 @@
   }
 }
 
-/* V58 final cleanup pass: PC-only information density and caution-copy reduction. */
+/* Desktop information-density and caution-copy refinement. */
 @media (min-width: 55rem) {
   /* Low-information rest result uses only the space required by its content. */
   .screen--result .pc-result-console--rest {
@@ -762,7 +760,7 @@
   }
 }
 
-/* V58 self-audit correction: the desktop header is also authoritative in empty timeline state. */
+/* The desktop header is also authoritative in the empty timeline state. */
 @media (min-width: 55rem) {
   .screen--body-timeline .body-timeline-empty > .eyebrow,
   .screen--body-timeline .body-timeline-empty > h1 {
@@ -778,7 +776,7 @@
   }
 }
 
-/* V58.1 PC selection-state unification: one visual language for single-choice segmented controls. */
+/* Desktop selection-state unification: one visual language for single-choice segmented controls. */
 @media (min-width: 55rem) {
   /* Containers */
   .screen--record-input.screen-layout--record .activity-toggle,
@@ -887,7 +885,7 @@
 }
 
 @media (min-width: 55rem) {
-  /* Record's legacy split-button edges are retired so it matches the shared segmented control. */
+  /* Record activity controls use the shared segmented-control shape. */
   .screen--record-input.screen-layout--record .activity-toggle label,
   .screen--record-input.screen-layout--record .activity-toggle label + label {
     border: 0 !important;
@@ -899,7 +897,7 @@
   }
 }
 
-/* V58.2 approved PC refinement pass: workspace density, motion, and route-context polish. */
+/* Desktop refinement: workspace density, motion, and route-context polish. */
 @media (min-width: 69rem) {
   /* Settings uses the available desktop width instead of leaving an unused right half. */
   .screen--settings.screen-layout--settings .secondary-derived-body {

@@ -26,12 +26,12 @@ const selfUnderstanding={
 
 await test('PC-USES-WIDE-CANVAS-AND-DECISION-RAIL',()=>{
   const html=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:false});
-  assert.match(html,/v53-room--pc/);
-  assert.match(html,/v53-layout/);
-  assert.match(html,/v53-canvas/);
-  assert.match(html,/v53-rail/);
-  assert.match(html,/data-v53-stage="focus"/);
-  assert.doesNotMatch(html,/v53-room--mobile/);
+  assert.match(html,/interpretation-flow-room--pc/);
+  assert.match(html,/interpretation-flow-layout/);
+  assert.match(html,/interpretation-flow-canvas/);
+  assert.match(html,/interpretation-flow-rail/);
+  assert.match(html,/data-interpretation-flow-stage="focus"/);
+  assert.doesNotMatch(html,/interpretation-flow-room--mobile/);
 });
 
 await test('PC-TEACHES-USE-THROUGH-STAGED-INTERACTION',()=>{
@@ -40,7 +40,7 @@ await test('PC-TEACHES-USE-THROUGH-STAGED-INTERACTION',()=>{
   assert.match(html,/2<\/i>見比べる/);
   assert.match(html,/3<\/i>次へ/);
   assert.match(html,/対応する情報を見る/);
-  assert.match(html,/data-v53-reveal="compare"/);
+  assert.match(html,/data-interpretation-flow-reveal="compare"/);
   assert.match(html,/次にどうするか決める/);
 });
 
@@ -77,23 +77,23 @@ await test('PC-KEEPS-CANDIDATE-REASON-AND-TECHNICAL-DETAIL-TRACEABLE-BUT-SECONDA
 
 await test('PC-CSS-USES-LARGE-SCREEN-ASYMMETRIC-WORKSPACE',()=>{
   const css=read('styles/interpretation-technical-details.css');
-  assert.match(css,/\.v53-layout\s*\{/);
+  assert.match(css,/\.interpretation-flow-layout\s*\{/);
   assert.match(css,/grid-template-columns:\s*minmax\(0,\s*1fr\)\s*minmax\(19rem,\s*34%\)/);
-  assert.match(css,/\.v53-rail\s*\{[^}]*position:\s*sticky/s);
+  assert.match(css,/\.interpretation-flow-rail\s*\{[^}]*position:\s*sticky/s);
   assert.match(css,/@media \(max-width: 820px\)/);
-  assert.match(css,/\.v53-layout\s*\{\s*display:\s*block;/s);
+  assert.match(css,/\.interpretation-flow-layout\s*\{\s*display:\s*block;/s);
 });
 
 await test('PC-SHARES-ONE-SEMANTIC-STATE-MACHINE-WITH-MOBILE-BUT-NOT-LAYOUT',()=>{
   const pc=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:false});
   const mobile=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:true});
   for(const html of [pc,mobile]) {
-    assert.match(html,/data-v53-stage="focus"/);
+    assert.match(html,/data-interpretation-flow-stage="focus"/);
     assert.match(html,/対応する情報を見る/);
     assert.match(html,/次に自分で確かめること/);
   }
-  assert.match(pc,/v53-room--pc/);
-  assert.match(mobile,/v53-room--mobile/);
+  assert.match(pc,/interpretation-flow-room--pc/);
+  assert.match(mobile,/interpretation-flow-room--mobile/);
 });
 
 const failed=results.filter(r=>r.status==='FAIL');

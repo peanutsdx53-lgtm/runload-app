@@ -42,7 +42,7 @@ await test('PWA-DROPS-RETIRED-SCREEN',()=>{
 
 await test('RETIRED-ACTIVATION-STYLES-REMOVED',()=>{
   const screens=read('styles/screens.css');
-  const mobile=read('styles/mobile.css');
+  const mobile=read('styles/mobile-screen-layouts.css');
   assert.doesNotMatch(screens,/\.activation-(?:intro|grid|source|card)|\.result-activation-hub/);
   assert.doesNotMatch(mobile,/screen-layout--activation|\.activation-link(?:-wrap)?/);
 });

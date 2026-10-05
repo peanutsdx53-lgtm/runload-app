@@ -1,3 +1,4 @@
+import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
 import { STORAGE_KEYS } from "./appCore.js";
 import {
   ROF_J_INSTRUMENT_ID,
@@ -32,9 +33,6 @@ export const ROF_J_DESCRIPTOR_MAP = Object.freeze({
 
 const DIRECTION_LABELS = Object.freeze({ UP: "上昇", SAME: "変化なし", DOWN: "低下" });
 
-function clone(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 function isObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }

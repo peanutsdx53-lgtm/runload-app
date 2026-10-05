@@ -1,5 +1,11 @@
-const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
-const MOBILE_HOME_MAX_WIDTH_PX = 879;
+import {
+  applyHomeIconPlacement as applyIconPlacement,
+  clearHomeGridPlacement as clearGridPlacement,
+  homeGridPlacementOf as placementOf,
+  homeGridTokenForElement as homeGridToken,
+  matchesMobileHomeLayout as mobileLayoutMatches,
+} from "./mobileHomeGridUtilities.js";
+
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const SCROLL_INTENT_PX = 8;
 const SCROLL_INTENT_RATIO = 1.15;
@@ -23,11 +29,6 @@ let dragScrollFrame = null;
 let dragScrollSpeed = 0;
 let lastDragTargetRefresh = 0;
 let dispatchingSyntheticEvent = false;
-
-function mobileLayoutMatches() {
-  if (typeof globalThis.matchMedia === "function") return globalThis.matchMedia(MOBILE_HOME_QUERY).matches;
-  return Number(globalThis.innerWidth || 0) <= MOBILE_HOME_MAX_WIDTH_PX;
-}
 
 function scrollingElement() {
   return document.scrollingElement || document.documentElement;
@@ -144,20 +145,6 @@ function dragScrollSpeedForPoint(clientX, clientY) {
   return 0;
 }
 
-function homeGridToken(element) {
-  const appId = element?.dataset?.homeItemId || "";
-  if (appId) return `app:${appId}`;
-  const widgetId = element?.dataset?.homeWidgetId || "";
-  return widgetId ? `widget:${widgetId}` : "";
-}
-
-function placementOf(element) {
-  return {
-    row: Number(element?.dataset?.homeRow) || 1,
-    col: Number(element?.dataset?.homeCol) || 1,
-  };
-}
-
 function samePlacement(left, right) {
   return Boolean(left && right && left.row === right.row && left.col === right.col);
 }
@@ -195,22 +182,6 @@ function adoptActiveDrag(event) {
   lastY = event.clientY;
   lastClientX = event.clientX;
   lastClientY = event.clientY;
-}
-
-function applyIconPlacement(element, placement) {
-  if (!element || !placement) return;
-  element.dataset.homeRow = String(placement.row);
-  element.dataset.homeCol = String(placement.col);
-  element.style.gridRow = `${placement.row} / span 1`;
-  element.style.gridColumn = `${placement.col} / span 1`;
-}
-
-function clearGridPlacement(element) {
-  if (!element) return;
-  element.style.removeProperty("grid-row");
-  element.style.removeProperty("grid-column");
-  delete element.dataset.homeRow;
-  delete element.dataset.homeCol;
 }
 
 function normalizeDockPlacements(homeRoot) {

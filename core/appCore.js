@@ -23,6 +23,10 @@ export const buildPrimaryRegionalV2ComparisonSignature = internalModules.primary
 export const comparePrimaryRegionalV2Signatures = internalModules.primaryRegionalResultService["comparePrimaryRegionalV2Signatures"];
 export const createApplicationServices = internalModules.applicationServices["createApplicationServices"];
 export const createHistoryWorkflow = internalModules.historyWorkflow["createHistoryWorkflow"];
+export function findReadingArticleById(articleId = "") {
+  const id = String(articleId || "");
+  return internalModules.columnData?.COLUMN_ARTICLES?.find((article) => article.id === id) || null;
+}
 export const createMemoryStorage = internalModules.storageGateway["createMemoryStorage"];
 export const createPlanFactPreview = internalModules.planPreview["createPlanFactPreview"];
 export const hasTreadmillOutdoorSurfaceMixFromComponents = internalModules.modelConstants["hasTreadmillOutdoorSurfaceMixFromComponents"];

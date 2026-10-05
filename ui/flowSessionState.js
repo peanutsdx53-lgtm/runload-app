@@ -1,3 +1,4 @@
+import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
 const PREFIX = "runner-load-app-flow-session-v1";
 const COURSE_SELECTION_KEY = `${PREFIX}-course-selection-v1`;
 const GPX_CANDIDATE_KEY = `${PREFIX}-gpx-candidate-v1`;
@@ -12,7 +13,6 @@ function store() {
   };
 }
 function safeJson(raw) { try { return JSON.parse(raw || "null"); } catch { return null; } }
-function clone(value) { return value == null ? value : JSON.parse(JSON.stringify(value)); }
 
 export function saveCourseSelection({ target = "record-input", preset = null } = {}) {
   if (!preset?.course) return null;

@@ -1,3 +1,4 @@
+import { isPresentFiniteNumber as finite } from "../../shared/valueUtilities.js";
 import "./bodyRegionTerminology.js";
 import { internalModules } from "./modules.js";
 
@@ -77,9 +78,6 @@ const DEFAULT_QUESTION_BY_PURPOSE = Object.freeze({
   next_check: "次回までに記録しておくとよいことはありますか？",
 });
 
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
 
 function unique(values = []) {
   return [...new Set(values.filter(Boolean).map(String))];
@@ -118,17 +116,6 @@ function runningFormatLabel(value = "") {
     RUN_WALK: "走りと歩きを混ぜた",
   }[String(value || "")] || "";
 }
-
-function resultStateLabel(value = "") {
-  return {
-    CALCULATED: "表示あり",
-    PARTIAL: "一部の条件で表示",
-    NOT_CALCULABLE: "表示なし",
-    OUT_OF_SUPPORTED_RANGE: "確認できる範囲外",
-    NOT_APPLICABLE: "対象外",
-  }[String(value || "")] || "表示状態を確認できません";
-}
-
 function comparisonReason(value = "") {
   return {
     COMPARABLE: "前の記録があります",

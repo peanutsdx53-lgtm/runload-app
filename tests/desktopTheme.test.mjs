@@ -4,6 +4,7 @@ import fs from "node:fs";
 const read = (path) => fs.readFileSync(path, "utf8");
 const css = read("styles/desktop-theme.css");
 const index = read("index.html");
+const platformStyles = read("ui/platformStyles.js");
 const worker = read("service-worker.js");
 const guard = read("ui/readingRuntimeGuard.js");
 const reading = read("screens/readingScreen.js");
@@ -21,7 +22,7 @@ assert.match(css, /opacity: 0\.86 !important/);
 assert.match(css, /primary-navigation__icon, \.primary-navigation__label/);
 assert.match(css, /@media \(min-width: 55rem\)/);
 
-assert.match(index, /desktop-theme\.css/);
+assert.match(platformStyles, /desktop-theme\.css/);
 assert.match(index, /readingRuntimeGuard\.js/);
 assert.ok(worker.includes('"./styles/desktop-theme.css"'));
 assert.ok(worker.includes('"./ui/readingRuntimeGuard.js"'));

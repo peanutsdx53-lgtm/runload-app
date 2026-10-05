@@ -576,7 +576,7 @@
 }
 
 
-/* Mobile record refinement v15: required-first hierarchy and stronger activity selection. */
+/* Mobile record: required-first hierarchy and stronger activity selection. */
 @media (max-width: 54.99rem) {
   .screen-layout--record .activity-toggle {
     padding: 5px;

@@ -51,7 +51,7 @@ async function check(id, fn) {
 await check('BODY-EXPERIENCE-STAYS-PRIMARY-AND-REFERENCE100-IS-SECONDARY', () => {
   const html = renderInterpretationRoom({ output: output(), selfUnderstanding: bodyCandidate(), mobileLayout: false });
   assert.match(html, /あなたの身体の記録/);
-  assert.match(html, /v54-model-secondary/);
+  assert.match(html, /interpretation-context-model-secondary/);
   assert.match(html, /考える材料・RunLoadの部位表示/);
   assert.match(html, /この値は身体の感覚そのものではありません/);
   assert.match(html, /次の走行では、股関節部の外側を自分がどう感じたか確認する/);
@@ -70,7 +70,7 @@ await check('REFERENCE-KNOWLEDGE-FOLLOWS-THE-USER-FOCUS', () => {
 
 await check('REFERENCE-IS-A-SEPARATE-NON-PERSONALIZED-LAYER', () => {
   const html = renderInterpretationRoom({ output: output(), selfUnderstanding: bodyCandidate(), mobileLayout: true });
-  assert.equal((html.match(/class="v54-reference"/g) || []).length, 1);
+  assert.equal((html.match(/class="interpretation-context-reference"/g) || []).length, 1);
   assert.match(html, /参考情報・あなたへの判定ではありません/);
   assert.match(html, /根拠と全文を見る/);
   assert.match(html, /#\/reading\?articleId=context-not-single-cause/);
@@ -124,7 +124,7 @@ await check('ZERO-MATERIAL-REMAINS-A-NORMAL-ZERO-CANDIDATE-STATE', () => {
   const html = renderInterpretationRoom({ output: empty, selfUnderstanding: { ...bodyCandidate(), primaryCandidate: null }, mobileLayout: true });
   assert.match(html, /今回は、続けて確かめる問いはまだありません/);
   assert.doesNotMatch(html, /data-thread-type="CONTEXT_QUESTION"/);
-  assert.doesNotMatch(html, /class="v54-reference"/);
+  assert.doesNotMatch(html, /class="interpretation-context-reference"/);
 });
 
 await check('CONTEXT-THREAD-STORES-AGENCY-NOT-SCIENTIFIC-VALUES', () => {
@@ -167,7 +167,7 @@ await check('CONTEXT-THREAD-RESURFACES-ONLY-WHEN-ITS-OWN-MATERIAL-EXISTS', () =>
 
 await check('SUPPLEMENTAL-MATERIALS-STAY-HIDDEN-UNTIL-COMPARE', () => {
   const html = renderInterpretationRoom({ output: output(), selfUnderstanding: bodyCandidate(), mobileLayout: true });
-  assert.match(html, /v54-secondary-materials" data-v53-reveal="compare"/);
+  assert.match(html, /interpretation-context-secondary-materials" data-interpretation-flow-reveal="compare"/);
   assert.match(html, /補足の材料を見る/);
 });
 

@@ -1,6 +1,6 @@
 import { escapeHtml } from "./commonComponents.js";
 import { APP_GUIDE_VERSION } from "./guideContent.js";
-import { TERMS_VERSION, hasAcceptedCurrentTerms, withCurrentTermsAccepted } from "./legalAcceptance.js";
+import { hasAcceptedCurrentTerms, withCurrentTermsAccepted } from "./legalAcceptance.js";
 
 export const MOBILE_ONBOARDING_VERSION = "mobile-onboarding-20260930-v3";
 

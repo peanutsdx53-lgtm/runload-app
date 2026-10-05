@@ -1,4 +1,4 @@
-const MOBILE_QUERY = "(max-width: 54.99rem)";
+import { clearHomeGridPlacement as clearPlacement, matchesMobileHomeLayout as mobileMatches, readMobileHomeJson as readJson, writeMobileHomeJson as writeJson } from "./mobileHomeGridUtilities.js";
 const LAYOUT_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_KEY = "running-record-mobile-home-widgets-v1";
@@ -13,32 +13,8 @@ const DEFAULT_VISIBLE_WIDGETS = Object.freeze(["today", "plan", "changes"]);
 let queued = false;
 let reconciling = false;
 
-function mobileMatches() {
-  return typeof globalThis.matchMedia === "function"
-    ? globalThis.matchMedia(MOBILE_QUERY).matches
-    : Number(globalThis.innerWidth || 0) <= 879;
-}
-
-function readJson(key) {
-  try { return JSON.parse(globalThis.localStorage?.getItem(key) || "null"); }
-  catch { return null; }
-}
-
-function writeJson(key, value) {
-  try { globalThis.localStorage?.setItem(key, JSON.stringify(value)); }
-  catch { /* Home layout persistence is optional. */ }
-}
-
 function hasStoredHomeLayout() {
   return [LAYOUT_KEY, POSITION_KEY, WIDGET_KEY].some((key) => readJson(key) !== null);
-}
-
-function clearPlacement(element) {
-  if (!element) return;
-  element.style.removeProperty("grid-row");
-  element.style.removeProperty("grid-column");
-  delete element.dataset.homeRow;
-  delete element.dataset.homeCol;
 }
 
 function applyPlacement(element, row, col, columns = 1, rows = 1) {

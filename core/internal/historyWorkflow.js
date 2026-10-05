@@ -1,3 +1,4 @@
+import { cloneJsonValue as cloneValue } from "../../shared/valueUtilities.js";
 import "./recordWorkflow.js";
 import { internalModules } from "./modules.js";
 import {
@@ -10,9 +11,6 @@ import {
 const moduleExports = Object.create(null);
 const { STORAGE_KEYS } = internalModules.storageKeys;
 
-function cloneValue(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 
 function localDateFromOffset(daysAgo = 0) {
   const date = new Date();
@@ -255,9 +253,8 @@ function createHistoryWorkflow({
     );
     if (!rofJRead.ok) return rofJRead;
     const nextRofJEntries = { ...(rofJRead.envelope.entries || {}) };
-    const hasRofJUndo = Object.prototype.hasOwnProperty.call(entry, "rofJ")
-      || Object.prototype.hasOwnProperty.call(entry, "secondPillarRofJ");
-    const undoRofJ = Object.prototype.hasOwnProperty.call(entry, "rofJ") ? entry.rofJ : entry.secondPillarRofJ;
+    const hasRofJUndo = Object.prototype.hasOwnProperty.call(entry, "rofJ");
+    const undoRofJ = entry.rofJ;
     if (hasRofJUndo) {
       delete nextRofJEntries[recordId];
       if (undoRofJ) nextRofJEntries[recordId] = cloneValue(undoRofJ);
@@ -269,9 +266,8 @@ function createHistoryWorkflow({
     );
     if (!lifecycleRead.ok) return lifecycleRead;
     const nextLifecycleEntries = { ...(lifecycleRead.envelope.pendingByRunId || {}) };
-    const hasRofJLifecycleUndo = Object.prototype.hasOwnProperty.call(entry, "rofJLifecycle")
-      || Object.prototype.hasOwnProperty.call(entry, "secondPillarLifecycle");
-    const undoRofJLifecycle = Object.prototype.hasOwnProperty.call(entry, "rofJLifecycle") ? entry.rofJLifecycle : entry.secondPillarLifecycle;
+    const hasRofJLifecycleUndo = Object.prototype.hasOwnProperty.call(entry, "rofJLifecycle");
+    const undoRofJLifecycle = entry.rofJLifecycle;
     if (hasRofJLifecycleUndo) {
       delete nextLifecycleEntries[recordId];
       if (undoRofJLifecycle) nextLifecycleEntries[recordId] = cloneValue(undoRofJLifecycle);

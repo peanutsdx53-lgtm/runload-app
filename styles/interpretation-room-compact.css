@@ -1,4 +1,4 @@
-/* Interpretation room V50: action-first, low-density review flow.
+/* Interpretation room: action-first, low-density review flow.
    Keeps the semantic engine intact while reducing explanatory copy and card nesting. */
 
 .screen--interpretation-room .interpretation-room--compact-dashboard,
@@ -526,7 +526,7 @@
   .interpretation-room-context-lines > details > summary > i { transition:none; }
 }
 
-/* V50 density refinement: one workspace surface, not a stack of cards. */
+/* Density refinement: one workspace surface, not a stack of cards. */
 .self-understanding-jump {
   display: inline-flex;
   margin-top: .4rem;
@@ -692,7 +692,7 @@
   }
 }
 
-/* V51 desktop studio: PC is a simultaneous review-and-decision workspace, not an enlarged mobile stack. */
+/* Desktop studio: PC is a simultaneous review-and-decision workspace, not an enlarged mobile stack. */
 @media (min-width: 55rem) {
   .screen--interpretation-room .interpretation-room--pc-studio {
     width: min(100%, 112rem);

@@ -563,20 +563,10 @@
 }
 
 @media (max-width: 54.99rem) {
-  .run-measurement-active__map-toolbar {
-    position: relative;
-    z-index: 6;
-  }
-  .run-measurement-active__map-wrap .run-measurement__map {
-    top: 3.25rem;
-  }
-  .run-measurement-active__map-wrap .run-measurement__map-controls {
-    top: 4rem;
-  }
-  .run-measurement-active__map-wrap.is-collapsed {
-    min-height: 0;
-    height: auto;
-  }
+  
+  
+  
+  
 }
 
 @media (max-width: 54.99rem) {

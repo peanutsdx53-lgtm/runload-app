@@ -1,6 +1,4 @@
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 
 function clamp(value, min = 0, max = 1) {
   return Math.max(min, Math.min(max, Number(value)));

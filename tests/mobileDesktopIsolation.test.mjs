@@ -11,6 +11,7 @@ test('mobile-only behavior stays explicitly gated from desktop contracts', () =>
   const result = read('screens/resultScreen.js');
   const mobileResult = read('screens/mobile/resultScreen.js');
   const home = read('ui/interactions/homeInteractions.js');
+  const homeLayout = read('ui/interactions/homeLayoutState.js');
   const measurement = read('ui/interactions/runMeasurementInteractions.js');
   const mobileCss = read('styles/mobile-usability.css');
   const measurementCss = read('styles/mobile-run-measurement-ergonomics.css');
@@ -35,10 +36,11 @@ test('mobile-only behavior stays explicitly gated from desktop contracts', () =>
   assert.match(mobileResult, /mobileAchievements/);
   assert.match(mobileResult, /mobileInsights/);
 
-  assert.match(home, /loadMobileQuickTools/);
-  assert.match(home, /\["today", "plan"\]/);
-  assert.match(home, /1分メモの内容/);
-  assert.match(home, /checkpoint \|\| "未設定"/);
+  assert.match(homeLayout, /loadMobileQuickTools/);
+  assert.match(homeLayout, /\["today", "plan"\]/);
+  assert.match(homeLayout, /1分メモの内容/);
+  assert.match(homeLayout, /checkpoint \|\| "未設定"/);
+  assert.match(home, /from "\.\/homeLayoutState\.js"/);
 
   assert.match(measurement, /root\.dataset\.measurementMode = mode/);
   assert.match(measurement, /root\.dataset\.measurementMode = measurementMode/);

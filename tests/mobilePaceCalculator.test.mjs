@@ -20,12 +20,12 @@ async function test(id, fn) {
 
 await test('PACE-TOOL-IS-OPTIONAL-EMOJI-HOME-APP', () => {
   const home = read('screens/mobile/homeScreen.js');
-  const interactions = read('ui/interactions/homeInteractions.js');
+  const homeLayout = read('ui/interactions/homeLayoutState.js');
   assert.ok(home.includes('href: "#/pace-tool"'));
   assert.ok(home.includes('label: "ペース換算"'));
   assert.ok(home.includes('emoji: "🧮"'));
-  assert.ok(interactions.includes('id: "pace-tool"'));
-  assert.ok(interactions.includes('["#/pace-tool", "pace-tool"]'));
+  assert.ok(homeLayout.includes('id: "pace-tool"'));
+  assert.ok(homeLayout.includes('["#/pace-tool", "pace-tool"]'));
 });
 
 await test('PACE-TOOL-HAS-ROUTE-BINDER-AND-HOME-NAVIGATION', () => {
@@ -71,9 +71,10 @@ await test('PACE-TOOL-SCREEN-HAS-PRESETS-AND-RESEARCH-BOUNDARY', () => {
 
 await test('PACE-TOOL-MOBILE-STYLES-AND-PWA-ASSETS-ARE-REGISTERED', () => {
   const index = read('index.html');
+const platformStyles = read('ui/platformStyles.js');
   const sw = read('service-worker.js');
   const css = read('styles/mobile-pace-calculator.css');
-  assert.ok(index.includes('./styles/mobile-pace-calculator.css'));
+  assert.ok(platformStyles.includes('./styles/mobile-pace-calculator.css'));
   for (const asset of [
     './screens/mobile/paceCalculatorScreen.js',
     './styles/mobile-pace-calculator.css',

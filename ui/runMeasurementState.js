@@ -1,3 +1,4 @@
+import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
 import { simplifyTrackForStorage } from "./runMeasurementCore.js";
 
 const RUN_MEASUREMENT_STORAGE_KEY = "runner-load-app-new-v1-run-measurements-v1";
@@ -18,9 +19,6 @@ function storage(type) {
   };
 }
 
-function clone(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 
 function readJson(target, key, fallback) {
   try {

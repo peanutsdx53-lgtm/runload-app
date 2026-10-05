@@ -36,8 +36,8 @@ await test('READING-HAS-SEARCH-FILTER-COUNTS-AND-EMPTY-STATE',()=>{
 });
 
 await test('READING-FILTER-HIDDEN-STATE-CANNOT-BE-OVERRIDDEN',()=>{
-  const mobile=read('styles/mobile.css');
-  const desktop=read('styles/desktop.css');
+  const mobile=read('styles/mobile-screen-layouts.css');
+  const desktop=read('styles/desktop-screen-layouts.css');
   assert.ok(mobile.includes('[data-reading-card][hidden]'));
   assert.ok(mobile.includes('display:none !important'));
   assert.ok(desktop.includes('[data-reading-card][hidden]'));
@@ -66,7 +66,7 @@ await test('READING-INTERACTIONS-PRESERVE-CONTEXT',()=>{
 });
 
 await test('READING-LAST-ODD-CARD-KEEPS-ACTION-ALIGNED',()=>{
-  const desktop=read('styles/desktop.css');
+  const desktop=read('styles/desktop-screen-layouts.css');
   const finalFix=desktop.lastIndexOf('.screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd)');
   assert.ok(finalFix>=0);
   const tail=desktop.slice(finalFix,finalFix+420);
@@ -76,8 +76,8 @@ await test('READING-LAST-ODD-CARD-KEEPS-ACTION-ALIGNED',()=>{
 });
 
 await test('READING-LAYOUT-HAS-SEARCH-LARGER-TYPE-AND-RELATED-CARDS',()=>{
-  const mobile=read('styles/mobile.css');
-  const desktop=read('styles/desktop.css');
+  const mobile=read('styles/mobile-screen-layouts.css');
+  const desktop=read('styles/desktop-screen-layouts.css');
   assert.ok(mobile.includes('.reading-search'));
   assert.ok(mobile.includes('.reading-related-card'));
   assert.ok(desktop.includes('font-size:1rem !important'));

@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const support = fs.readFileSync('ui/mobileHomeEditScroll.js', 'utf8');
+const gridUtilities = fs.readFileSync('ui/mobileHomeGridUtilities.js', 'utf8');
 
 const results = [];
 function test(id, fn) {
@@ -31,11 +32,11 @@ test('ICON-SWAP-KEEPS-DOM-ORDER-CONSISTENT', () => {
 });
 
 test('DOCK-REMOVES-HOME-GRID-PLACEMENT', () => {
-  assert.ok(support.includes('function clearGridPlacement(element)'));
-  assert.ok(support.includes('element.style.removeProperty("grid-row");'));
-  assert.ok(support.includes('element.style.removeProperty("grid-column");'));
-  assert.ok(support.includes('delete element.dataset.homeRow;'));
-  assert.ok(support.includes('delete element.dataset.homeCol;'));
+  assert.ok(support.includes('clearHomeGridPlacement as clearGridPlacement'));
+  assert.ok(gridUtilities.includes('element.style.removeProperty("grid-row");'));
+  assert.ok(gridUtilities.includes('element.style.removeProperty("grid-column");'));
+  assert.ok(gridUtilities.includes('delete element.dataset.homeRow;'));
+  assert.ok(gridUtilities.includes('delete element.dataset.homeCol;'));
   assert.ok(support.includes('function normalizeDockPlacements(homeRoot)'));
 });
 

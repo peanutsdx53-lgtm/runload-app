@@ -5,16 +5,16 @@ const read = (path) => fs.readFileSync(path, "utf8");
 const css = read("styles/desktop-first-use.css");
 const gate = read("ui/desktopFirstUse.js");
 const index = read("index.html");
+const platformStyles = read("ui/platformStyles.js");
 const desktopEntry = read("ui/desktopRuntimeEntry.js");
 const worker = read("service-worker.js");
 
-assert.ok(index.includes('./styles/desktop-first-use.css'));
+assert.ok(platformStyles.includes('./styles/desktop-first-use.css'));
 assert.ok(desktopEntry.includes('./desktopFirstUse.js'));
 assert.ok(worker.includes('./styles/desktop-first-use.css'));
 assert.ok(worker.includes('./ui/desktopFirstUse.js'));
 assert.match(css, /\.desktop-first-use/);
 assert.match(css, /desktop-first-use__summary/);
-assert.match(gate, /TERMS_VERSION/);
 assert.match(gate, /hasAcceptedCurrentTerms/);
 assert.match(read("ui/legalAcceptance.js"), /termsAcceptedVersion/);
 assert.match(gate, /withCurrentTermsAccepted/);

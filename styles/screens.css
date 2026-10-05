@@ -40,7 +40,7 @@
   .screen--consultation .next-action{ break-inside: avoid; }
 }
 @media print {
-  .plan-outcome-editor{ display: none !important; }
+  
 }.check-option {
   min-height: 3rem;
   display: flex;

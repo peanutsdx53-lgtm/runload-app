@@ -70,7 +70,7 @@ await test('UI-JAPANESE-LABELS-USE-NATURAL-WRAPPING',()=>{
 });
 
 await test('UI-MOBILE-INPUTS-USE-READABLE-TYPE',()=>{
-  const css=read('styles/mobile.css');
+  const css=read('styles/mobile-screen-layouts.css');
   assert.ok(css.includes('font-size: 1rem !important;'));
 });
 
@@ -100,7 +100,7 @@ await test('UI-RECORD-SURFACES-OPTIONAL-ENTRY-STATUS',()=>{
 await test('UI-FATIGUE-SLIDER-HAS-DIRECT-MANIPULATION-AFFORDANCE',()=>{
   const screen=read('screens/recordInputScreen.js');
   const interactions=read('ui/interactions/recordInputInteractions.js');
-  const css=read('styles/mobile.css');
+  const css=read('styles/mobile-screen-layouts.css');
   assert.ok(screen.includes('class="rof-close-button"'));
   assert.ok(screen.includes('data-rof-slider-wrap'));
   assert.ok(interactions.includes('is-untouched'));
@@ -119,12 +119,12 @@ await test('UI-RESULT-REMOVES-PERSISTENT-EXPLANATION-CLUTTER',()=>{
 await test('UI-INTERPRETATION-HAS-RUNLOAD-USER-FINAL-LOOP',()=>{
   const css=read('styles/interpretation-technical-details.css');
   const presentation=read('ui/interpretationRoomPresentation.js');
-  assert.ok(css.includes('.v53-layout'));
-  assert.ok(css.includes('[data-v53-only-stage]'));
+  assert.ok(css.includes('.interpretation-flow-layout'));
+  assert.ok(css.includes('[data-interpretation-flow-only-stage]'));
   assert.ok(presentation.includes('今回を見比べる'));
   assert.ok(presentation.includes('次に自分で確かめること'));
   assert.ok(presentation.includes('この問いを次も確かめる'));
-  assert.ok(presentation.includes('v53QuestionForCandidate'));
+  assert.ok(presentation.includes('interpretationFlowQuestionForCandidate'));
   assert.ok(presentation.includes('今回はここまで'));
   assert.ok(presentation.includes('まだ決めない'));
 });
@@ -132,8 +132,8 @@ await test('UI-INTERPRETATION-HAS-RUNLOAD-USER-FINAL-LOOP',()=>{
 await test('UI-PC-RESULT-USES-TIME-AWARE-CHRONOLOGY-AND-STATE-LINKED-COLOR',()=>{
   const screen=read('screens/resultScreen.js');
   const history=read('screens/historyScreen.js');
-  const css=read('styles/desktop.css');
-  const mobile=read('styles/mobile.css');
+  const css=read('styles/desktop-screen-layouts.css');
+  const mobile=read('styles/mobile-screen-layouts.css');
   const audit=css;
 
   assert.ok(screen.includes('function recordChronology(left = {}, right = {})'));
@@ -171,7 +171,7 @@ await test('UI-PC-RESULT-USES-TIME-AWARE-CHRONOLOGY-AND-STATE-LINKED-COLOR',()=>
 });
 
 await test('UI-DESKTOP-WIDE-GRIDS-ARE-BALANCED',()=>{
-  const css=read('styles/desktop.css');
+  const css=read('styles/desktop-screen-layouts.css');
   assert.ok(css.includes('.screen--history.screen-layout--history .record-list {\n    grid-template-columns: repeat(3'));
   assert.ok(css.includes('.screen--plan.screen-layout--plan .saved-list {\n    grid-template-columns: repeat(3'));
   assert.ok(css.includes('.screen--course-library.screen-layout--course .list {\n    grid-template-columns: repeat(3'));
@@ -211,8 +211,8 @@ await test('UI-SEMANTIC-COLORS-MEET-CONTRAST-IN-LIGHT-AND-DARK',()=>{
 
 await test('UI-SHARED-SEGMENTED-MODES-USE-STRONG-THEME-SELECTION',()=>{
   const tokens=read('styles/tokens.css');
-  const mobile=read('styles/mobile.css');
-  const desktop=read('styles/desktop.css');
+  const mobile=read('styles/mobile-screen-layouts.css');
+  const desktop=read('styles/desktop-screen-layouts.css');
 
   assert.match(tokens,/--color-segment-selected-surface:\s*var\(--color-accent\)/);
   assert.match(tokens,/--color-segment-selected-border:\s*var\(--color-accent\)/);
@@ -236,7 +236,7 @@ await test('UI-SHARED-SEGMENTED-MODES-USE-STRONG-THEME-SELECTION',()=>{
 });
 
 await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
-  const css=read('styles/desktop.css');
+  const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
   const remSize=(selector)=>{
     let offset=0;
@@ -274,7 +274,7 @@ await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
 await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
   const screen=read('screens/desktop/courseLibraryScreen.js');
   const shared=read('styles/screens.css');
-  const css=read('styles/desktop.css');
+  const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
   const remSize=(selector)=>{
     let offset=0;
@@ -319,7 +319,7 @@ await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
 await test('UI-PC-COURSE-DERIVED-MATCHES-RECORD-SUBFLOW-CHROME',()=>{
   const screen=read('screens/desktop/courseLibraryScreen.js');
   const shell=read('ui/appShell.js');
-  const css=read('styles/desktop.css');
+  const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
 
   assert.ok(screen.includes('course-library-title-mobile'));
@@ -347,7 +347,7 @@ await test('UI-PC-COURSE-DERIVED-MATCHES-RECORD-SUBFLOW-CHROME',()=>{
 
 
 await test('UI-PC-COURSE-EDITOR-INPUTS-ARE-COMPACT-AND-READABLE',()=>{
-  const css=read('styles/desktop.css');
+  const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
 
   assert.match(audit,/@media \(min-width: 80rem\)/);
@@ -365,7 +365,7 @@ await test('UI-PC-COURSE-EDITOR-INPUTS-ARE-COMPACT-AND-READABLE',()=>{
 
 
 await test('UI-PC-COURSE-EDITOR-PERCENT-UNITS-MATCH-AND-GPX-IS-NOT-DUPLICATED',()=>{
-  const css=read('styles/desktop.css');
+  const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
 
   assert.match(audit,/\.mfield > div > em,[\s\S]*\.percent-control > em/);
@@ -379,7 +379,7 @@ await test('UI-PC-COURSE-EDITOR-PERCENT-UNITS-MATCH-AND-GPX-IS-NOT-DUPLICATED',(
 await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
   const screen=read('screens/historyScreen.js');
   const shared=read('styles/screens.css');
-  const css=read('styles/desktop.css');
+  const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
 
   assert.ok(screen.includes('history-records-title-mobile'));
@@ -455,7 +455,7 @@ await test('UI-GPS-MEASUREMENT-STAYS-MOBILE-AND-LEGACY-START-IS-REMOVED',()=>{
   const app=read('app.js');
   const router=read('ui/appRouter.js');
   const worker=read('service-worker.js');
-  const desktop=read('styles/desktop.css');
+  const desktop=read('styles/desktop-screen-layouts.css');
 
   assert.equal(fs.existsSync(path.join(root,'screens/startScreen.js')),false);
   assert.doesNotMatch(app,/renderStartScreen|screens\/startScreen/);

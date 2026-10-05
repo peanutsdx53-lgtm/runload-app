@@ -50,7 +50,7 @@ await test('CONSULTATION-READS-PROFILE-BUT-DOES-NOT-AUTO-SHARE-IT',()=>{
 });
 
 await test('SETTINGS-SHARE-PROFILE-BASIC-FIELDS-STAY-WITHIN-DISCLOSURE',()=>{
-  const css=read('styles/desktop.css');
+  const css=read('styles/desktop-screen-layouts.css');
   assert.match(css,/\.subdetails-body > \.fields\.two-fields \{[\s\S]*?width:\s*100%\s*!important;[\s\S]*?grid-template-columns:\s*11rem 11rem repeat\(2, minmax\(0, 1fr\)\)\s*!important;/);
   assert.match(css,/@media \(min-width: 80rem\) and \(max-width: 86rem\) \{[\s\S]*?grid-template-columns:\s*10rem 10rem repeat\(2, minmax\(0, 1fr\)\)\s*!important;/);
   assert.doesNotMatch(css,/grid-template-columns:\s*11rem 11rem 16rem 16rem\s*!important/);

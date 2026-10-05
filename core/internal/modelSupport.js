@@ -1,3 +1,4 @@
+import { toFiniteNumber as toFiniteNumber } from "../../shared/valueUtilities.js";
 import "./platformInfrastructure.js";
 import { internalModules } from "./modules.js";
 
@@ -324,10 +325,6 @@ internalModules.primaryRegionalSnapshot = moduleExports;
 // ===== core/model/numberUtilities.js =====
 {
 const moduleExports = Object.create(null);
-function toFiniteNumber(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
-}
 
 function clampNumber(value, minimum, maximum, fallback = 0) {
   return Math.min(maximum, Math.max(minimum, toFiniteNumber(value, fallback)));

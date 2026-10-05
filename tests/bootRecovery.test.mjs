@@ -36,9 +36,9 @@ test('BOOT-RECOVERY-IS-BOUNDED', () => {
 
 test('SERVICE-WORKER-WAITS-FOR-EXPLICIT-ACTIVATION', () => {
   const installBlock = worker.match(/self\.addEventListener\("install"[\s\S]*?\n\}\);/)?.[0] || '';
-  assert.ok(installBlock.includes('cache.addAll(PRECACHE_URLS)'));
+  assert.ok(installBlock.includes('cache.addAll(COMMON_PRECACHE_URLS)'));
   assert.ok(!installBlock.includes('self.skipWaiting()'));
-  assert.ok(worker.includes('if (event.data?.type === "SKIP_WAITING") self.skipWaiting();'));
+  assert.ok(worker.includes('event.data?.type === "SKIP_WAITING"') && worker.includes('self.skipWaiting();'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

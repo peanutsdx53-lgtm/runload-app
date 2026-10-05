@@ -1,10 +1,16 @@
+import {
+  homeGridTokenForElement as tokenForElement,
+  matchesMobileHomeLayout as mobileLayoutMatches,
+  readMobileHomeJson as readJson,
+  writeMobileHomeJson as writeJson,
+} from "./mobileHomeGridUtilities.js";
+
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const LAYOUT_STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 const MAX_ROWS = 3;
 const COLUMNS = 4;
 const MAX_PAGES = 4;
-const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
 const DEFAULT_WIDGET_SIZES = Object.freeze({
   today: "medium",
   plan: "small",
@@ -14,22 +20,6 @@ const DEFAULT_WIDGET_SIZES = Object.freeze({
 
 let repairQueued = false;
 let repairing = false;
-
-function mobileLayoutMatches() {
-  return typeof globalThis.matchMedia === "function"
-    ? globalThis.matchMedia(MOBILE_HOME_QUERY).matches
-    : Number(globalThis.innerWidth || 0) <= 879;
-}
-
-function readJson(key) {
-  try { return JSON.parse(globalThis.localStorage?.getItem(key) || "null"); }
-  catch { return null; }
-}
-
-function writeJson(key, value) {
-  try { globalThis.localStorage?.setItem(key, JSON.stringify(value)); }
-  catch { /* Home layout persistence is optional. */ }
-}
 
 function widgetState() {
   const stored = readJson(WIDGET_STORAGE_KEY) || {};
@@ -144,12 +134,6 @@ function migrateStoredPositions() {
     if (text && !pages[target].includes(text)) pages[target].push(text);
   });
   writeJson(LAYOUT_STORAGE_KEY, { ...layout, pages, activePage: Math.min(Number(layout.activePage) || 0, pageCount - 1) });
-}
-
-function tokenForElement(element) {
-  if (element?.dataset?.homeItemId) return `app:${element.dataset.homeItemId}`;
-  if (element?.dataset?.homeWidgetId) return `widget:${element.dataset.homeWidgetId}`;
-  return "";
 }
 
 function applyPlacement(element, placement, token, sizes) {

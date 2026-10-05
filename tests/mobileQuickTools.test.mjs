@@ -20,6 +20,8 @@ async function test(id, fn) {
 await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
   const home = read('screens/mobile/homeScreen.js');
   const interactions = read('ui/interactions/homeInteractions.js');
+  const homeLayout = read('ui/interactions/homeLayoutState.js');
+  const homeEdit = read('ui/interactions/homeEditPresentation.js');
   assert.ok(home.includes('data-home-app-catalog'));
   assert.ok(home.includes('href: "#/location-note"'));
   assert.ok(home.includes('href: "#/quick-note"'));
@@ -34,38 +36,39 @@ await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
   for (const emoji of ['⚖️', '📅', '📖', '📤', '⚙️', '📒', '⏱️', '🕘', '🗺️']) assert.ok(home.includes(`emoji: "${emoji}"`));
   assert.ok(!home.includes('function mobileHomeIcon'));
   assert.ok(!home.includes('<svg viewBox="0 0 24 24"'));
-  assert.ok(interactions.includes('HOME_APP_CATALOG'));
-  assert.ok(interactions.includes('data-home-app-add-id'));
+  assert.ok(homeLayout.includes('HOME_APP_CATALOG'));
+  assert.ok(homeEdit.includes('data-home-app-add-id'));
   assert.ok(interactions.includes('removeHomeApp'));
 });
 
 await test('MOBILE-QUICK-TOOLS-PICKER-SHOWS-REAL-APP-ICONS', () => {
-  const interactions = read('ui/interactions/homeInteractions.js');
+  const homeEdit = read('ui/interactions/homeEditPresentation.js');
   const css = read('styles/mobile-home-editing.css');
-  assert.ok(interactions.includes('function appPickerIconMarkup'));
-  assert.ok(interactions.includes('.mobile-home-app__icon'));
-  assert.ok(interactions.includes('mobile-home-widget-picker__option--app'));
-  assert.ok(interactions.includes('mobile-home-widget-picker__option--widget'));
+  assert.ok(homeEdit.includes('function appPickerIconMarkup'));
+  assert.ok(homeEdit.includes('.mobile-home-app__icon'));
+  assert.ok(homeEdit.includes('mobile-home-widget-picker__option--app'));
+  assert.ok(homeEdit.includes('mobile-home-widget-picker__option--widget'));
   assert.ok(css.includes('.mobile-home-widget-picker__app-icon .mobile-home-emoji'));
   assert.ok(css.includes('.mobile-home-widget-picker__option--app'));
   assert.ok(css.includes('.mobile-home-widget-picker__option--app > .mobile-home-widget-picker__add'));
-  assert.ok(interactions.includes('<div class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app">'));
-  assert.ok(interactions.includes('class="mobile-home-widget-picker__add" data-home-app-add-id='));
+  assert.ok(homeEdit.includes('<div class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app">'));
+  assert.ok(homeEdit.includes('class="mobile-home-widget-picker__add" data-home-app-add-id='));
   assert.ok(read('styles/mobile-home.css').includes('.mobile-home-emoji'));
 });
 
 await test('MOBILE-HOME-ALL-APP-LAUNCHERS-ARE-REMOVABLE-AND-RESTORABLE', () => {
   const home = read('screens/mobile/homeScreen.js');
   const interactions = read('ui/interactions/homeInteractions.js');
+  const homeLayout = read('ui/interactions/homeLayoutState.js');
   const css = read('styles/mobile-quick-tools.css');
-  assert.ok(interactions.includes('const HOME_APP_CATALOG'));
+  assert.ok(homeLayout.includes('export const HOME_APP_CATALOG'));
   for (const id of ['simulation', 'plan', 'reading', 'share', 'settings', 'record', 'measure', 'history', 'course', 'pace-tool']) {
-    assert.ok(interactions.includes(`id: "${id}"`), `missing app catalog entry ${id}`);
+    assert.ok(homeLayout.includes(`id: "${id}"`), `missing app catalog entry ${id}`);
   }
   assert.ok(interactions.includes('function removeHomeApp(id)'));
   assert.ok(interactions.includes('function addHomeApp(id)'));
-  assert.ok(interactions.includes('dock.length > DEFAULT_LAYOUT.dock.length'));
-  assert.ok(!interactions.includes('REQUIRED_ITEM_IDS.every'));
+  assert.ok(homeLayout.includes('dock.length > DEFAULT_LAYOUT.dock.length'));
+  assert.ok(!homeLayout.includes('REQUIRED_ITEM_IDS.every'));
   assert.ok(home.includes('data-home-app-remove'));
   assert.ok(css.includes('.mobile-home-os.is-home-editing .mobile-home-app-remove'));
 });
@@ -99,8 +102,10 @@ await test('MOBILE-QUICK-TOOLS-HAVE-ROUTES-AND-HOME-BACK-NAVIGATION', () => {
 
 await test('MOBILE-QUICK-TOOLS-STORE-IS-LOCAL-ONLY', () => {
   const store = read('ui/mobileQuickToolsStore.js');
+  const storage = read('ui/mobileStorageUtilities.js');
   assert.ok(store.includes('running-record-mobile-quick-tools-v1'));
-  assert.ok(store.includes('localStorage'));
+  assert.ok(store.includes('writeMobileLocalJson'));
+  assert.ok(storage.includes('localStorage'));
   assert.ok(!store.includes('fetch('));
   assert.ok(!store.includes('XMLHttpRequest'));
 });
@@ -127,8 +132,9 @@ await test('MOBILE-QUICK-TOOLS-PWA-ASSETS-ARE-PRECACHED', () => {
 
 await test('MOBILE-QUICK-TOOLS-STYLE-IS-MOBILE-FIRST', () => {
   const index = read('index.html');
+const platformStyles = read('ui/platformStyles.js');
   const css = read('styles/mobile-quick-tools.css');
-  assert.ok(index.includes('./styles/mobile-quick-tools.css'));
+  assert.ok(platformStyles.includes('./styles/mobile-quick-tools.css'));
   assert.ok(css.includes('@media (max-width: 54.99rem)'));
   assert.ok(css.includes('.mobile-home-app-catalog'));
   assert.ok(css.includes('.mobile-home-app-remove'));

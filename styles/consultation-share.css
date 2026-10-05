@@ -1,4 +1,4 @@
-/* Consultation share sheet V54: advisor-first information design and A4 output. */
+/* Consultation share sheet InterpretationContext: advisor-first information design and A4 output. */
 .screen--consultation[data-share-prep] {
   --share-ink: #1d2c36;
   --share-navy: #163247;
@@ -1063,10 +1063,6 @@ html.consult-viewer-open body {
     page-break-after: auto;
   }
 
-  .screen--consultation[data-share-prep] .share-sheet-page[hidden] {
-    display: none !important;
-  }
-
   .screen--consultation[data-share-prep] .share-sheet-block,
   .screen--consultation[data-share-prep] .share-sheet-section,
   .screen--consultation[data-share-prep] .share-sheet-focus,
@@ -1152,7 +1148,7 @@ html.consult-viewer-open body {
   }
 }
 
-/* Neutralize the legacy V44 desktop grid: V54 owns the new four-step flow. */
+/* Consultation share preparation uses the current four-step flow. */
 @media (min-width: 69rem) {
   .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body {
     display: block !important;

@@ -1,3 +1,4 @@
+import { formatJapaneseTimestamp as formatTimestamp } from "../mobileDateUtilities.js";
 import { escapeHtml } from "../commonComponents.js";
 import {
   PHOTO_MEMO_MAX_BYTES,
@@ -10,18 +11,6 @@ import {
 
 const MAX_SOURCE_BYTES = 25_000_000;
 const JPEG_QUALITIES = Object.freeze([0.82, 0.72, 0.62, 0.52, 0.44]);
-
-function formatTimestamp(value = "") {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "日時不明";
-  return new Intl.DateTimeFormat("ja-JP", {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
 
 function formatBytes(bytes = 0) {
   const value = Number(bytes) || 0;

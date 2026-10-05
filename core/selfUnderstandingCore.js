@@ -1,3 +1,5 @@
+import { normalizeIsoText as iso, sanitizeText as text } from "../shared/textUtilities.js";
+import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
 // RunLoad self-understanding memory layer.
 // This module never recalculates or redefines the scientific numeric model.
 
@@ -34,21 +36,9 @@ const THREAD_TYPES = new Set(Object.values(SELF_UNDERSTANDING_TYPES));
 const THREAD_STATES = new Set(Object.values(SELF_UNDERSTANDING_STATES));
 const REVIEW_DECISIONS = new Set(["KEEP_WATCHING", "PAUSE", "CLOSE", "VIEWED"]);
 
-function clone(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
-
-function text(value, max = 240) {
-  return String(value ?? "").replace(/\u0000/g, "").slice(0, max);
-}
 
 function oneLine(value, max = 160) {
   return text(value, max).replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim();
-}
-
-function iso(value, fallback = "") {
-  const raw = oneLine(value, 50);
-  return raw && Number.isFinite(Date.parse(raw)) ? raw : fallback;
 }
 
 function stableRecordKeyFromRecord(record = {}) {

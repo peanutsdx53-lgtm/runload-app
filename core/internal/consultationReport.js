@@ -1,3 +1,5 @@
+import { compareExperienceRecordChronology as recordChronology } from "../../shared/recordUtilities.js";
+import { isPresentFiniteNumber as hasFiniteValue, normalizeKnownValue } from "../../shared/valueUtilities.js";
 import "./readingService.js";
 import { internalModules } from "./modules.js";
 
@@ -14,17 +16,8 @@ const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Ob
 const REGION_BY_ID = new Map(REGIONS.map((region) => [region.id, region]));
 const DEFAULT_REGION_ID = "BA-DISP-019";
 
-function hasFiniteValue(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
-
 function finiteOrNull(value) {
   return hasFiniteValue(value) ? Number(value) : null;
-}
-
-function normalizeRegionId(value = "") {
-  const requested = String(value || "");
-  return REGION_BY_ID.has(requested) ? requested : DEFAULT_REGION_ID;
 }
 
 function activitySummary(record = {}) {
@@ -134,12 +127,6 @@ function modelReference(experience, regionId) {
   });
 }
 
-function recordChronology(left, right) {
-  return String(left?.record?.date || "").localeCompare(String(right?.record?.date || ""))
-    || String(left?.record?.createdAt || "").localeCompare(String(right?.record?.createdAt || ""))
-    || String(left?.record?.id || "").localeCompare(String(right?.record?.id || ""));
-}
-
 function recentFacts(allExperiences, target, regionId) {
   const currentRow = resultRow(target, regionId);
   const currentSignature = currentRow && target?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION
@@ -175,7 +162,7 @@ function recentFacts(allExperiences, target, regionId) {
 
 function buildConsultationReport(experience, allExperiences = [], options = {}) {
   if (!experience) return null;
-  const regionId = normalizeRegionId(options.regionId);
+  const regionId = normalizeKnownValue(options.regionId, REGION_BY_ID, DEFAULT_REGION_ID);
   const feedback = experience.feedback || {};
   const personal = summarizePersonalContext(experience.record.personalContext || {});
   const exactObservations = normalizeExactObservations(feedback);

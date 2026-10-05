@@ -31,10 +31,11 @@ check("RECORD-MEMO-LABEL-DISTINGUISHES-RUN-AND-REST", () => {
 check("HOME-CONFIRMATION-ENTRY-IS-ACTIONABLE-NOT-PERMANENT", () => {
   const home = read("screens/mobile/homeScreen.js");
   const interactions = read("ui/interactions/homeInteractions.js");
+  const homeLayout = read("ui/interactions/homeLayoutState.js");
   assert.match(home, /data-mobile-confirmation-banner/);
   assert.match(home, /hasNewEligibleData/);
   assert.match(home, /#\/history\?view=checks/);
-  assert.match(interactions, /const theme = themeWithNew \|\| view\.watching\[0\] \|\| null/);
+  assert.match(homeLayout, /const theme = themeWithNew \|\| view\.watching\[0\] \|\| null/);
   assert.match(interactions, /syncConfirmationBanner/);
   assert.match(interactions, /checkpoint && !checkpoint\.hidden/);
 });
@@ -72,7 +73,7 @@ check("THEME-CREATION-REQUIRES-EXPLICIT-UI-ACTION", () => {
   const viewBuilder = core.slice(core.indexOf("export function buildSelfUnderstandingView"));
   assert.doesNotMatch(viewBuilder, /createOrResume\(/);
   const presentation = read("ui/interpretationRoomPresentation.js");
-  assert.match(presentation, /次回も確認する/);
+  assert.match(presentation, /この問いを次も確かめる/);
   assert.match(presentation, /次回見ること/);
   assert.doesNotMatch(presentation, /確認テーマ/);
 });

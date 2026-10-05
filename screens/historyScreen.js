@@ -1,3 +1,5 @@
+import { compareExperienceRecordChronology as recordChronology } from "../shared/recordUtilities.js";
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 
 import { PRIMARY_REGIONAL_V2_REGION_DEFS, bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } from "../core/appCore.js";
 import { buildSelfUnderstandingView } from "../core/selfUnderstandingCore.js";
@@ -58,18 +60,9 @@ function normalizedRegionalDisplay(value) {
   return String(value || "").toLowerCase() === "difference" ? "difference" : "ratio";
 }
 
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
 
 function resultRow(resultRecord, regionId) {
   return resultRecord?.result?.regions?.find((row) => row.regionId === regionId) || null;
-}
-
-function recordChronology(left, right) {
-  return String(left?.record?.date || "").localeCompare(String(right?.record?.date || ""))
-    || String(left?.record?.createdAt || "").localeCompare(String(right?.record?.createdAt || ""))
-    || String(left?.record?.id || "").localeCompare(String(right?.record?.id || ""));
 }
 
 function subjectiveKey(areaId = "", laterality = "") {
@@ -275,9 +268,6 @@ function regionLocatorSvg(regionId) {
 }
 function regionViewLabel(regionId) {
   return BODY_REGION_VIEWS.find((view)=>view.paths.some(([id])=>id===regionId))?.title || "部位";
-}
-function historyNavButton(label, small, href, active=false) {
-  return `<button type="button" class="${active?"active":""}" data-history-href="${escapeHtml(href)}" aria-pressed="${active}"><span>${escapeHtml(label)}</span><small>${escapeHtml(small)}</small></button>`;
 }
 function historyChartSvg(items, workspace, desktop = false) {
   if (!items.length) return '<text x="360" y="160" text-anchor="middle" class="chart-axis-label">比較できる記録がありません</text>';

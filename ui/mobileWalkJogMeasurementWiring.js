@@ -1,8 +1,10 @@
+import { getSessionStorage as safeSessionStorage } from "./mobileStorageUtilities.js";
+import { toFiniteNumber as finiteNumber } from "../shared/valueUtilities.js";
 import { matchesMobileLayout } from "./deviceLayout.js";
 import {
   STRICT_ALL12_BANDS,
   summarizeMobileWalkJogCoverage,
-} from "../core/internal/mobileWalkJogSpeedModel.js";
+} from "../core/mobileWalkJogCore.js";
 
 export const MOBILE_ACTIVITY_IDS = Object.freeze({
   WALK: "WALK",
@@ -22,10 +24,6 @@ const ACTIVITY_LABELS = Object.freeze({
   MIXED: "走り＋歩き",
 });
 
-function finiteNumber(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
-}
 
 export function parseElapsedText(value = "") {
   const parts = String(value || "").trim().split(":").map(Number);
@@ -92,14 +90,6 @@ function readMetrics(root) {
   const distanceKm = finiteNumber(root.querySelector("[data-measurement-distance]")?.textContent);
   const elapsedSeconds = parseElapsedText(root.querySelector("[data-measurement-elapsed]")?.textContent);
   return { distanceKm, elapsedSeconds };
-}
-
-function safeSessionStorage() {
-  try {
-    return globalThis.sessionStorage || null;
-  } catch {
-    return null;
-  }
 }
 
 function persistAnalysis(payload) {

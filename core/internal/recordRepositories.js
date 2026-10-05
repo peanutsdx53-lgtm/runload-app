@@ -1,12 +1,10 @@
+import { cloneJsonValue as cloneValue } from "../../shared/valueUtilities.js";
 import "./inputSupport.js";
 import { internalModules } from "./modules.js";
 
 // ===== core/storage/collectionRepository.js =====
 {
 const moduleExports = Object.create(null);
-function cloneValue(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 
 function createCollectionRepository({
   gateway,

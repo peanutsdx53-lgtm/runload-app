@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const coordinator = fs.readFileSync('ui/mobileHomeDropCoordinator.js', 'utf8');
+const gridUtilities = fs.readFileSync('ui/mobileHomeGridUtilities.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 const mobileEntry = fs.readFileSync('ui/mobileRuntimeEntry.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
@@ -40,10 +41,11 @@ test('DIRECT-SWAP-CANCELS-BASE-DRAG-PATH', () => {
 
 test('DOCK-PLACEMENT-IS-NORMALIZED-CONTINUOUSLY', () => {
   assert.ok(coordinator.includes('.mobile-home-dock [data-home-item-id]'));
-  assert.ok(coordinator.includes('element.style.removeProperty("grid-row");'));
-  assert.ok(coordinator.includes('element.style.removeProperty("grid-column");'));
-  assert.ok(coordinator.includes('delete element.dataset.homeRow;'));
-  assert.ok(coordinator.includes('delete element.dataset.homeCol;'));
+  assert.ok(coordinator.includes('clearHomeGridPlacement as clearGridPlacement'));
+  assert.ok(gridUtilities.includes('element.style.removeProperty("grid-row");'));
+  assert.ok(gridUtilities.includes('element.style.removeProperty("grid-column");'));
+  assert.ok(gridUtilities.includes('delete element.dataset.homeRow;'));
+  assert.ok(gridUtilities.includes('delete element.dataset.homeCol;'));
   assert.ok(coordinator.includes('new MutationObserver(() => queueDockNormalization(appRoot))'));
 });
 
@@ -55,14 +57,16 @@ test('COORDINATOR-RUNS-BEFORE-EDIT-HELPER', () => {
 });
 
 test('FIX-IS-MOBILE-ONLY', () => {
-  assert.ok(coordinator.includes('(max-width: 54.99rem)'));
-  assert.ok(coordinator.includes('mobileLayoutMatches()'));
+  assert.ok(coordinator.includes('matchesMobileHomeLayout as mobileLayoutMatches'));
+  assert.ok(gridUtilities.includes('(max-width: 54.99rem)'));
+  assert.ok(gridUtilities.includes('export function matchesMobileHomeLayout()'));
 });
 
 test('PWA-CACHE-INCLUDES-COORDINATOR-AND-CURRENT-VERSION', () => {
   const version = versionModule.match(/APP_VERSION = "([^"]+)"/)?.[1] || '';
   assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
   assert.ok(worker.includes('"./ui/mobileHomeDropCoordinator.js"'));
+  assert.ok(worker.includes('"./ui/mobileHomeGridUtilities.js"'));
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
 });
 

@@ -292,4 +292,4 @@ router = createAppRouter({
 });
 
 router.start();
-registerPwaServiceWorker();
+registerPwaServiceWorker({ platform: mobileLayout ? "mobile" : "desktop" });

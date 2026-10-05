@@ -194,10 +194,11 @@ function updateMobileResultFatigue(section) {
   const postValue = displayedRofValue(section.querySelector(".fatigue-values .post strong"));
   const card = section.querySelector(".fatigue-card");
   if (postValue != null && card) {
-    let note = card.querySelector("[data-rof-result-guidance]") || card.querySelector(".candidate-note");
+    let note = card.querySelector("[data-rof-result-guidance]");
     if (!note) {
       note = document.createElement("p");
       note.className = "candidate-note";
+      note.dataset.rofResultGuidance = "";
       card.append(note);
     }
     note.dataset.rofResultGuidance = "";
@@ -225,9 +226,9 @@ function updatePcResultFatigue(section) {
   if (postValue == null) return;
   let note = section.querySelector("[data-rof-result-guidance]");
   if (!note) {
-    const legacyNote = [...section.children].find((element) => element.tagName === "P");
-    note = legacyNote || document.createElement("p");
-    if (!legacyNote) section.append(note);
+    note = document.createElement("p");
+    note.dataset.rofResultGuidance = "";
+    section.append(note);
   }
   note.dataset.rofResultGuidance = "";
   setTextIfChanged(note, `運動後の疲労感の目安：${rofJGuidanceForSelection(postValue)}`);

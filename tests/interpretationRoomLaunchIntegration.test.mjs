@@ -140,7 +140,7 @@ await test('SIMULATION-CHANGES-CAN-BE-REVERTED-INDIVIDUALLY',()=>{
 });
 
 await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
-  const css=read('styles/desktop.css');
+  const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
   assert.match(audit,/\.condition-compare-hero h1[\s\S]*font-size:2\.55rem\s*!important/);
   assert.match(audit,/\.measure-field>span[\s\S]*font-size:\.84rem\s*!important/);
@@ -154,7 +154,7 @@ await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
 });
 
 await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
-  const css=read('styles/mobile.css');
+  const css=read('styles/mobile-screen-layouts.css');
   const audit=css;
   assert.match(audit,/\.condition-compare-hero p:last-child[\s\S]*font-size:14px/);
   assert.match(audit,/\.measure-field>span[\s\S]*font-size:13px/);

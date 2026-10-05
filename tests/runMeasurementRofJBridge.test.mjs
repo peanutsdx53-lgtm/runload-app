@@ -10,6 +10,7 @@ const state = fs.readFileSync('ui/runMeasurementState.js', 'utf8');
 const energy = fs.readFileSync('ui/runMeasurementEnergy.js', 'utf8');
 const enhancer = fs.readFileSync('ui/rofJPresentation.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
+const platformStyles = fs.readFileSync('ui/platformStyles.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const measurementCss = fs.readFileSync('styles/mobile-run-measurement.css', 'utf8');
 const ergonomicsCss = fs.readFileSync('styles/mobile-run-measurement-ergonomics.css', 'utf8');
@@ -95,7 +96,7 @@ test('MEASUREMENT-USES-SAME-ROF-PANEL-CONTRACT-AS-RECORD-INPUT', () => {
 });
 
 test('MEASUREMENT-ROF-LAYOUT-HAS-DEDICATED-MOBILE-CORRECTIONS', () => {
-  assert.ok(index.includes('./styles/mobile-run-measurement-ergonomics.css'));
+  assert.ok(platformStyles.includes('./styles/mobile-run-measurement-ergonomics.css'));
   assert.ok(worker.includes('"./styles/mobile-run-measurement-ergonomics.css"'));
   assert.ok(ergonomicsCss.includes('.run-measurement-fatigue .rof-current'));
   assert.ok(ergonomicsCss.includes('grid-template-columns: auto 42px minmax(0, 1fr);'));
@@ -168,7 +169,7 @@ test('CANCEL-CLEANS-UP-UNSAVED-MEASUREMENT-AND-ROF', () => {
 });
 
 test('MOBILE-MEASUREMENT-STYLES-ARE-CANONICAL-LOADED-AND-PRECACHED', () => {
-  assert.ok(index.includes('./styles/mobile-run-measurement.css'));
+  assert.ok(platformStyles.includes('./styles/mobile-run-measurement.css'));
   assert.ok(worker.includes('"./styles/mobile-run-measurement.css"'));
   assert.ok(screen.includes('run-measurement--mobile'));
   assert.ok(!screen.includes('run-measurement--v2'));

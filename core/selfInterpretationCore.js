@@ -1,3 +1,5 @@
+import { normalizeIsoText as iso, sanitizeText as text } from "../shared/textUtilities.js";
+import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
 // RunLoad user-confirmed interpretation snapshots.
 // This layer stores the user's chosen meaning/focus. It does not recalculate
 // Reference-100, ROF-J, or any scientific result.
@@ -7,21 +9,9 @@ export const SELF_INTERPRETATION_STORE_VERSION = "SELF_INTERPRETATION_STORE_V1";
 
 const DECISIONS = new Set(["CONTINUE", "THIS_TIME_ONLY", "STOP"]);
 
-function clone(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
-
-function text(value, max = 240) {
-  return String(value ?? "").replace(/\u0000/g, "").slice(0, max);
-}
 
 function oneLine(value, max = 180) {
   return text(value, max).replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim();
-}
-
-function iso(value, fallback = "") {
-  const raw = oneLine(value, 50);
-  return raw && Number.isFinite(Date.parse(raw)) ? raw : fallback;
 }
 
 function stableRecordKey(record = {}) {

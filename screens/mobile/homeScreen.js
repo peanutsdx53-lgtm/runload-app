@@ -1,3 +1,4 @@
+import { mondayOfWeekAtNoon as mondayOfWeek } from "../../ui/mobileDateUtilities.js";
 import { escapeHtml } from "../../ui/commonComponents.js";
 import { formatNumber } from "../../ui/recordPresentation.js";
 import { findSavedRunMeasurement } from "../../ui/runMeasurementState.js";
@@ -14,13 +15,6 @@ function parseLocalDate(dateText = "") {
   const match = String(dateText).match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!match) return null;
   return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0, 0);
-}
-
-function mondayOfWeek(date = new Date()) {
-  const result = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
-  const day = result.getDay();
-  result.setDate(result.getDate() - (day === 0 ? 6 : day - 1));
-  return result;
 }
 
 function weeklySummary(services) {

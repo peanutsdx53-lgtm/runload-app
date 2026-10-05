@@ -1,3 +1,5 @@
+import { createMobileMeasurementScanner } from "./mobileMeasurementDomUtilities.js";
+import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
 import { matchesMobileLayout } from "./deviceLayout.js";
 import {
   MOBILE_ACTIVITY_IDS,
@@ -16,9 +18,6 @@ const MIXED_SEGMENT_GAITS = Object.freeze([
   MOBILE_ACTIVITY_IDS.RUNNING_CURRENT,
 ]);
 
-function clone(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 
 function safeStorage(kind = "local") {
   try {
@@ -258,10 +257,7 @@ function bindRoot(root) {
   applyActivityState(root);
 }
 
-function scan() {
-  if (!matchesMobileLayout()) return;
-  document.querySelectorAll("[data-run-measurement]").forEach(bindRoot);
-}
+const scan = createMobileMeasurementScanner(bindRoot);
 
 export function installMobileWalkJogRecordStore() {
   if (typeof document === "undefined" || typeof MutationObserver === "undefined") return () => {};

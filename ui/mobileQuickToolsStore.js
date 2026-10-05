@@ -1,3 +1,4 @@
+import { writeMobileLocalJson } from "./mobileStorageUtilities.js";
 const STORAGE_KEY = "running-record-mobile-quick-tools-v1";
 const MAX_ENTRIES_PER_TOOL = 50;
 
@@ -54,15 +55,6 @@ export function loadMobileQuickTools() {
   }
 }
 
-function writeState(state) {
-  try {
-    globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(state));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 function createId(prefix) {
   const uuid = globalThis.crypto?.randomUUID?.();
   if (uuid) return `${prefix}-${uuid}`;
@@ -82,7 +74,7 @@ export function addMobileQuickToolEntry(tool, values = {}) {
     ...current,
     [collection]: [entry, ...current[collection]].slice(0, MAX_ENTRIES_PER_TOOL),
   };
-  return writeState(next) ? entry : null;
+  return writeMobileLocalJson(STORAGE_KEY, next) ? entry : null;
 }
 
 export function removeMobileQuickToolEntry(tool, id) {
@@ -91,5 +83,5 @@ export function removeMobileQuickToolEntry(tool, id) {
   const current = loadMobileQuickTools();
   const nextCollection = current[collection].filter((entry) => entry.id !== String(id || ""));
   if (nextCollection.length === current[collection].length) return false;
-  return writeState({ ...current, [collection]: nextCollection });
+  return writeMobileLocalJson(STORAGE_KEY, { ...current, [collection]: nextCollection });
 }

@@ -6,6 +6,7 @@ const screen = fs.readFileSync("screens/consultationScreen.js", "utf8");
 const interactions = fs.readFileSync("ui/interactions/consultationInteractions.js", "utf8");
 const css = fs.readFileSync("styles/consultation-share.css", "utf8");
 const index = fs.readFileSync("index.html", "utf8");
+const platformStyles = fs.readFileSync("ui/platformStyles.js", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
 const version = fs.readFileSync("ui/appVersionStatus.js", "utf8");
 const about = fs.readFileSync("screens/shared/aboutScreen.js", "utf8");
@@ -56,7 +57,7 @@ test("document preview and dynamic pages stay synchronized", () => {
 
 test("release loads and caches consultation share base stylesheet", () => {
   assert.ok(index.includes('./styles/consultation-share.css'));
-  assert.ok(index.includes('./styles/consultation-share-mobile.css'));
+  assert.ok(platformStyles.includes('./styles/consultation-share-mobile.css'));
   assert.ok(worker.includes('./styles/consultation-share-mobile.css'));
   assert.ok(worker.includes('./styles/consultation-share.css'));
   assert.ok(worker.includes('./styles/mobile-home-three-row.css'));

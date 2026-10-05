@@ -397,7 +397,6 @@
 
 /* 文字拡大・高コントラスト・狭幅の横断調整 */
 @media (max-width: 35rem) {
-  .result-card__heading{ display: grid; }
   .status-label { justify-self: start; }
 }
 @media (prefers-contrast: more) {
@@ -870,7 +869,7 @@ details.ui-motion-details.is-ui-motion-closing > :not(summary) {
   gap: var(--space-2);
   justify-content: flex-end;
 }
-.screen-tutorial__actions .button--text { margin-right: auto; }
+
 @media (max-width: 34rem) {
   .screen-tutorial__panel { padding: var(--space-4); }
 }
@@ -912,7 +911,7 @@ details.ui-motion-details.is-ui-motion-closing > :not(summary) {
   background: var(--color-accent-soft);
   color: var(--color-accent-strong);
 }
-.screen-tutorial__header p:last-child { color: var(--color-muted); }
+
 .screen-tutorial__progress,
 .screen-tutorial__close {
   border-color: var(--color-line);

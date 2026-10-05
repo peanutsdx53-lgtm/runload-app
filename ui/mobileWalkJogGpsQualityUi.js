@@ -1,3 +1,5 @@
+import { createMobileMeasurementScanner } from "./mobileMeasurementDomUtilities.js";
+import { getSessionStorage as safeSessionStorage } from "./mobileStorageUtilities.js";
 import { matchesMobileLayout } from "./deviceLayout.js";
 import {
   createMobileGpsQualityTracker,
@@ -7,11 +9,6 @@ import {
 const ANALYSIS_KEY = "runner-load-app-mobile-walk-jog-analysis-v1.3";
 const BOUND_ROOTS = new WeakSet();
 const EXTENSION_ACTIVITIES = new Set(["WALK", "JOGGING", "MIXED"]);
-
-function safeSessionStorage() {
-  try { return globalThis.sessionStorage || null; }
-  catch { return null; }
-}
 
 function readAnalysis(storage = safeSessionStorage()) {
   try {
@@ -129,10 +126,7 @@ function bindRoot(root) {
   phaseObserver.observe(root, { attributes: true, attributeFilter: ["data-measurement-phase"] });
 }
 
-function scan() {
-  if (!matchesMobileLayout()) return;
-  document.querySelectorAll("[data-run-measurement]").forEach(bindRoot);
-}
+const scan = createMobileMeasurementScanner(bindRoot);
 
 export function installMobileWalkJogGpsQualityUi() {
   if (typeof document === "undefined" || typeof MutationObserver === "undefined") return () => {};

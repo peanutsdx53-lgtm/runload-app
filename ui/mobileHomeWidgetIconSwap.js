@@ -1,4 +1,9 @@
-const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
+import {
+  homeGridPlacementOf as placementOf,
+  homeGridTokenForElement as gridToken,
+  matchesMobileHomeLayout as mobileLayoutMatches,
+} from "./mobileHomeGridUtilities.js";
+
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const LAYOUT_STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
@@ -11,19 +16,6 @@ let root = null;
 let source = null;
 let sourcePage = null;
 let sourcePlacement = null;
-
-function mobileLayoutMatches() {
-  return typeof globalThis.matchMedia === "function"
-    ? globalThis.matchMedia(MOBILE_HOME_QUERY).matches
-    : Number(globalThis.innerWidth || 0) <= 879;
-}
-
-function placementOf(element) {
-  return {
-    row: Number(element?.dataset?.homeRow) || 1,
-    col: Number(element?.dataset?.homeCol) || 1,
-  };
-}
 
 function footprintOf(element) {
   if (!element?.dataset?.homeWidgetId) return { columns: 1, rows: 1 };
@@ -69,12 +61,6 @@ function applyPlacement(element, placement) {
   element.dataset.homeCol = String(normalized.col);
   element.style.gridRow = `${normalized.row} / span ${footprint.rows}`;
   element.style.gridColumn = `${normalized.col} / span ${footprint.columns}`;
-}
-
-function gridToken(element) {
-  if (element?.dataset?.homeItemId) return `app:${element.dataset.homeItemId}`;
-  if (element?.dataset?.homeWidgetId) return `widget:${element.dataset.homeWidgetId}`;
-  return "";
 }
 
 function pagesFor(homeRoot) {

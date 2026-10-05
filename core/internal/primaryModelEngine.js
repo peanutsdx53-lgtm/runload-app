@@ -81,7 +81,6 @@ function interp(o,x){
   for(let i=0;i<xs.length-1;i++){if(x>=xs[i]-1e-12&&x<=xs[i+1]+1e-12)return linear(x,xs[i],Number(o[xs[i]]),xs[i+1],Number(o[xs[i+1]]));}
   return null;
 }
-function isKnot(o,x){return sortedKeys(o).some(k=>near(k,x))}
 function vhat(v){return v/Math.sqrt(9.81*0.99)}
 function gain(v,c){const [d0,d1,d2]=c,q=vhat(v);return d0+d1*q+d2*q*q}
 function muscleA(v,m){return Object.entries(EMG_COEFFS[m]).reduce((s,[k,c])=>s+GAZENDAM_FF_RELATIVE_AREA[Number(k)]*gain(v,c),0)}
@@ -103,18 +102,6 @@ function rawBaselineInside(r,v){
   if(HO_REGIONS[r]) return HO_REGIONS[r].reduce((s,m)=>s+interp(HO[m],v)/HO[m][2.5],0)/HO_REGIONS[r].length;
   throw new Error('UNKNOWN_REGION');
 }
-function nearestInterior(r,b){
-  if(r==='R01'||r==='R08') return b===2.5?3.5:3.5;
-  if(r==='R05') return b<3?10/3.6:14/3.6;
-  if(r==='R06'||r==='R09') return b===2.78?3.0:4.0;
-  if(HO_REGIONS[r]) return 2.0;
-  return null;
-}
-function boundaryLogSlope(r,b){
-  if(r==='R05') return (-31.17*3.6)/hagH(b*3.6);
-  const n=nearestInterior(r,b); const qb=rawBaselineInside(r,b), qn=rawBaselineInside(r,n);
-  return (Math.log(qn)-Math.log(qb))/(n-b);
-}
 function baselineResponse(regionId,speedMps){
   const d=DEF.get(regionId),v=Number(speedMps); if(!d||!(v>0)) throw new Error('VALID_REGION_AND_POSITIVE_SPEED_REQUIRED');
   if((regionId==='R01'||regionId==='R08')&&v>=2.25-1e-12&&v<2.50-1e-12){
@@ -133,11 +120,6 @@ function baselineResponse(regionId,speedMps){
   if(v<lo-1e-12||v>hi+1e-12)return {ratio:null,evidenceState:'EVIDENCE_INSUFFICIENT',sourceFamily:d.baselineSource,routeId:null,flags:['OUTSIDE_DIRECT_AND_APPROVED_SPEED_BRIDGE']};
   return {ratio:rawBaselineInside(regionId,v),evidenceState:'DIRECT',sourceFamily:d.baselineSource,routeId:`DIRECT-${regionId}-SPEED`,flags:[(regionId==='R11'||regionId==='R12')?'PROJECT_DEFINED_COMPONENT_COMPOSITE':null].filter(Boolean)};
 }
-
-function normalizeStrike(obs){
-  if(!obs||typeof obs!=='object')return null; const value=String(obs.value||'').toUpperCase(), provenance=String(obs.provenance||'').toUpperCase();
-  if(!['RFS','FFS','MFS'].includes(value))return null; return {value,provenance,verified:VERIFIED_PROVENANCE.has(provenance)};
-}
 function weakest(states){
   const rank={DIRECT:0,P1_SOURCE_MODEL_EXTENSION:1,P2_CROSS_SOURCE_BRIDGE:2,EVIDENCE_INSUFFICIENT:9};
   return states.reduce((w,s)=>(rank[s]??8)>(rank[w]??8)?s:w,states[0]||'DIRECT');
@@ -153,13 +135,7 @@ function r05CadenceJoint(speed,cadence,personalRef){
   if(rel<=0)raw=linear(rel,lo,D,0,H); else raw=linear(rel,0,H,hi,I);
   return {active:true,ratio:raw/hagH(2.78*3.6),state:(near(rel,0)?'SOURCE_DEFINED_MODEL':'SOURCE_BOUNDED_INTERPOLATION'),relativeCadence:rel,sourceHull:[lo,hi],sourceFamily:'HAGEN_2023_SPEED_RELATIVE_CADENCE'};
 }
-function vhGradeRatio(r,gradeDeg){const raw=interp(VH_GRADE[r],gradeDeg);if(raw==null)return null;return raw/VH_GRADE[r]['0']}
 function r09CadenceAbsolute(delta){const raw=interp(R09_CAD,delta);return raw==null?null:raw/VAN_SPEED.R09[2.78]}
-function r09CadenceRelative(delta){const raw=interp(R09_CAD,delta);return raw==null?null:raw/R09_CAD['0']}
-function horiguchiRatio(r,strike,gradeDeg){const pts=HORIGUCHI[r]?.[strike];if(!pts)return null;const raw=interp(pts,gradeDeg);return raw==null?null:raw/pts['0']}
-function isOverground(runSetting){const x=String(runSetting||'').toUpperCase();return x.includes('OUTDOOR')||x.includes('OVERGROUND')}
-function grassShare(surfaceComponents){if(!Array.isArray(surfaceComponents))return 0;return surfaceComponents.filter(x=>String(x.category||x.userCategory||'').toUpperCase().includes('NATURAL_GRASS')).reduce((s,x)=>s+Number(x.sharePercent??x.share_percent??0),0)/100}
-
 function evaluateRegionSegment(regionId,{distanceKm,speedMps,gradePercent=null,cadenceSpm=null,personalHabitualCadenceSpm=null,surfaceComponents=null,runSetting=null,footStrikeObservation=null,allowR12GrassEnvelope=false}={}){
   const d=Number(distanceKm),v=Number(speedMps); if(!(d>=0&&v>0))return {regionId,state:'INVALID_SEGMENT_FACT'};
   const b=baselineResponse(regionId,v); const trace={baseline:b,components:[],states:[b.evidenceState],interactionState:'NO_UNRESOLVED_INTERACTION',unquantified:[]};
@@ -265,9 +241,6 @@ function gradeAxisSegments(record,exposure){
   const u=Number(record.uphillSharePercent??0),d=Number(record.downhillSharePercent??0),f=Math.max(0,100-u-d),gu=Number(record.uphillGradePercent??0),gd=Number(record.downhillGradePercent??0);
   if(u<0||d<0||u+d>100+1e-8||gu<0||gd<0)return null;
   const a=[];if(u>0)a.push({distanceKm:exposure.distanceKm*u/100,speedMps:exposure.speedMps,gradePercent:gu,axis:'GRADE_UP'});if(d>0)a.push({distanceKm:exposure.distanceKm*d/100,speedMps:exposure.speedMps,gradePercent:-gd,axis:'GRADE_DOWN'});if(f>0)a.push({distanceKm:exposure.distanceKm*f/100,speedMps:exposure.speedMps,gradePercent:0,axis:'GRADE_FLAT'});return a;
-}
-function surfaceAxisSegments(record,exposure){
-  if(!Array.isArray(record.surfaceComponents)||!record.surfaceComponents.length)return null;let total=0;const a=[];for(const x of record.surfaceComponents){const sh=Number(x.sharePercent??x.share_percent??0);if(sh<0)return null;total+=sh;if(sh>0)a.push({distanceKm:exposure.distanceKm*sh/100,speedMps:exposure.speedMps,surfaceComponents:[{category:x.category||x.userCategory,sharePercent:100}],runSetting:record.runSetting,axis:'SURFACE'});}if(total>100+1e-8)return null;if(total<100-1e-8)a.push({distanceKm:exposure.distanceKm*(100-total)/100,speedMps:exposure.speedMps,axis:'SURFACE_UNKNOWN_REMAINDER'});return a;
 }
 function evalSegments(segments,record,{useWholeCadence=false}={}){return segments.map((s,i)=>({index:i,remainderState:s.remainderState||null,speedProvenance:s.speedProvenance||null,regionResults:Object.fromEntries(REGION_DEFS.map(r=>[r.id,evaluateRegionSegment(r.id,{...s,cadenceSpm:s.cadenceSpm??(useWholeCadence?record.averageCadenceSpm:null),personalHabitualCadenceSpm:s.personalHabitualCadenceSpm??(useWholeCadence?record.personalHabitualCadenceSpm:null),runSetting:s.runSetting??record.runSetting,footStrikeObservation:s.footStrikeObservation??record.footStrikeObservation,allowR12GrassEnvelope:record.allowR12GrassEnvelope===true})]))}))}
 

@@ -1,12 +1,10 @@
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { escapeHtml } from "./commonComponents.js";
 import { formatLocalDate } from "./recordPresentation.js";
 import { listMobileExtensionRecords } from "./mobileWalkJogRecordStore.js";
 import { achievementSummary } from "./mobileAchievements.js";
 import { buildRunFingerprint, renderRunFingerprintSvg } from "./runFingerprint.js";
 
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));

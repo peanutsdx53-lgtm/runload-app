@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..');
-const source = fs.readFileSync(path.join(root, 'ui/interactions/homeInteractions.js'), 'utf8');
+const source = fs.readFileSync(path.join(root, 'ui/interactions/homeEditPresentation.js'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'styles/mobile-home-editing.css'), 'utf8');
 assert.ok(source.includes('<div class="mobile-home-widget-picker__option mobile-home-widget-picker__option--app">'));
 assert.ok(source.includes('<div class="mobile-home-widget-picker__option mobile-home-widget-picker__option--widget">'));

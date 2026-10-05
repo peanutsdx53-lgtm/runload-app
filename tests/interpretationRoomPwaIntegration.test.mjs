@@ -5,17 +5,28 @@ import path from 'node:path';
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 const source=async(path)=>readFile(new URL(`../${path}`,import.meta.url),'utf8');
-function precache(sw){const block=sw.slice(sw.indexOf('const PRECACHE_URLS = ['),sw.indexOf('];',sw.indexOf('const PRECACHE_URLS = ['))+2);return [...block.matchAll(/"(\.\/[^\"]+)"/g)].map(m=>m[1]);}
+function assetList(sw,name){
+  const start=sw.indexOf(`const ${name} = [`);
+  if(start<0) return [];
+  const block=sw.slice(start,sw.indexOf('];',start)+2);
+  return [...block.matchAll(/"(\.\/[^"]+)"/g)].map(m=>m[1]);
+}
+function commonPrecache(sw){return assetList(sw,'COMMON_PRECACHE_URLS');}
+function runtimeAssets(sw){return [
+  ...assetList(sw,'COMMON_PRECACHE_URLS'),
+  ...assetList(sw,'MOBILE_PLATFORM_URLS'),
+  ...assetList(sw,'DESKTOP_PLATFORM_URLS'),
+];}
 
 await test('PWA-PRECACHE-INCLUDES-INTERPRETATION-RUNTIME',async()=>{
   const sw=await source('service-worker.js');
-  const paths=precache(sw);
+  const paths=commonPrecache(sw);
   for(const rel of ['./core/interpretationCore.js','./screens/interpretationRoomScreen.js','./styles/interpretation-room.css','./ui/interpretationRoomPresentation.js','./ui/interpretationReferenceKnowledge.js','./ui/bodyRegionVisuals.js']) assert.ok(paths.includes(rel),rel);
 });
 
 await test('PWA-PRECACHE-EXCLUDES-RETIRED-ACTIVATION-SCREEN',async()=>{
   const sw=await source('service-worker.js');
-  assert.ok(!precache(sw).includes('./screens/activationScreen.js'));
+  assert.ok(!runtimeAssets(sw).includes('./screens/activationScreen.js'));
 });
 
 await test('PWA-CACHE-NAME-MATCHES-VISIBLE-APP-VERSION',async()=>{
@@ -26,12 +37,12 @@ await test('PWA-CACHE-NAME-MATCHES-VISIBLE-APP-VERSION',async()=>{
   assert.ok(sw.includes(`const CACHE_NAME = "running-record-app-runtime-${version}";`));
 });
 
-await test('PWA-ACTIVATE-PRUNES-STALE-SAME-CACHE-RESOURCES',async()=>{
+await test('PWA-ACTIVATE-PRUNES-OLD-VERSION-CACHES',async()=>{
   const sw=await source('service-worker.js');
-  assert.match(sw,/caches\.open\(CACHE_NAME\)/);
-  assert.match(sw,/cache\.keys\(\)/);
-  assert.match(sw,/!PRECACHE_PATHS\.has\(new URL\(request\.url\)\.pathname\)/);
-  assert.match(sw,/cache\.delete\(request\)/);
+  assert.match(sw,/caches\.keys\(\)/);
+  assert.match(sw,/key\.startsWith\(CACHE_PREFIX\) && key !== CACHE_NAME/);
+  assert.match(sw,/caches\.delete\(key\)/);
+  assert.doesNotMatch(sw,/cache\.keys\(\).*PRECACHE_PATHS/s);
 });
 
 await test('PWA-INTERPRETATION-STYLESHEET-IS-SAME-ORIGIN-EXTERNAL',async()=>{
@@ -45,7 +56,7 @@ await test('PWA-INTERPRETATION-STYLESHEET-IS-SAME-ORIGIN-EXTERNAL',async()=>{
 
 await test('PWA-PRECACHE-PATHS-ALL-EXIST',async()=>{
   const sw=await source('service-worker.js');
-  for(const rel of precache(sw)){
+  for(const rel of runtimeAssets(sw)){
     const file=rel.replace(/^\.\//,'');
     await access(new URL(`../${file}`,import.meta.url));
   }
@@ -53,7 +64,7 @@ await test('PWA-PRECACHE-PATHS-ALL-EXIST',async()=>{
 
 await test('PWA-PRECACHE-EXCLUDES-UNUSED-EXPLANATION-MODULE',async()=>{
   const sw=await source('service-worker.js');
-  assert.ok(!precache(sw).includes('./ui/hierarchicalExplanation.js'));
+  assert.ok(!runtimeAssets(sw).includes('./ui/hierarchicalExplanation.js'));
 });
 
 await test('PWA-HAS-ONE-CANONICAL-REGISTRATION-PATH',async()=>{
@@ -61,13 +72,13 @@ await test('PWA-HAS-ONE-CANONICAL-REGISTRATION-PATH',async()=>{
   const app=await source('app.js');
   const platform=await source('core/internal/platformInfrastructure.js');
   assert.ok(!html.includes('pwaUpdateBootstrap.js'));
-  assert.ok(app.includes('registerPwaServiceWorker();'));
-  assert.ok(platform.includes('function registerPwaServiceWorker()'));
+  assert.ok(app.includes('registerPwaServiceWorker({ platform: mobileLayout ? "mobile" : "desktop" });'));
+  assert.ok(platform.includes('function registerPwaServiceWorker({ platform = "" } = {})'));
 });
 
 await test('PWA-PRECACHE-COVERS-RUNTIME-MODULE-GRAPH',async()=>{
   const sw=await source('service-worker.js');
-  const cached=new Set(precache(sw).map((item)=>item.replace(/^\.\//,'')));
+  const cached=new Set(runtimeAssets(sw).map((item)=>item.replace(/^\.\//,'')));
   const visited=new Set();
   const importPatterns=[
     /\bfrom\s+["']([^"']+)["']/g,

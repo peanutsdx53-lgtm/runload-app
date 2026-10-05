@@ -2,10 +2,11 @@ import fs from "node:fs";
 import assert from "node:assert/strict";
 
 const index = fs.readFileSync("index.html", "utf8");
+const platformStyles = fs.readFileSync("ui/platformStyles.js", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
 const css = fs.readFileSync("styles/mobile-result-region-sheet.css", "utf8");
 
-assert.ok(index.includes('styles/mobile-result-region-sheet.css'));
+assert.ok(platformStyles.includes('styles/mobile-result-region-sheet.css'));
 assert.ok(worker.includes('styles/mobile-result-region-sheet.css'));
 assert.ok(css.includes('.result-mobile-layout:has(.run-capsule) .mobile-result-highlights'));
 assert.ok(css.includes('.region-sheet .focus-summary > span'));

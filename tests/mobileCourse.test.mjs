@@ -7,6 +7,7 @@ const gpx=fs.readFileSync("screens/mobile/gpxAnalysisScreen.js","utf8");
 const interactions=fs.readFileSync("ui/interactions/courseInteractions.js","utf8");
 const css=fs.readFileSync("styles/mobile-course.css","utf8");
 const index=fs.readFileSync("index.html","utf8");
+const platformStyles=fs.readFileSync("ui/platformStyles.js","utf8");
 const worker=fs.readFileSync("service-worker.js","utf8");
 
 assert.match(sharedEditor,/matchesMobileLayout\(\)\?renderMobileCourseEditor/);
@@ -21,7 +22,7 @@ assert.match(gpx,/GPXから坂道を入力/);
 assert.match(interactions,/function updateMobileSummary/);
 assert.match(interactions,/data-course-grade-family/);
 assert.match(css,/surface-mix-item > span:first-child/);
-assert.match(index,/mobile-course\.css/);
+assert.match(platformStyles,/mobile-course\.css/);
 assert.doesNotMatch(worker,/screens\/(?:mobile|desktop)\/courseEditorScreen\.js/);
 assert.match(worker,/screens\/shared\/courseEditorScreen\.js/);
 assert.match(worker,/mobile-course\.css/);

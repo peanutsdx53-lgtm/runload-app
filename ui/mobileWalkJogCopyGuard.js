@@ -1,3 +1,4 @@
+import { createMobileMeasurementScanner } from "./mobileMeasurementDomUtilities.js";
 import { matchesMobileLayout } from "./deviceLayout.js";
 
 const BOUND_ROOTS = new WeakSet();
@@ -34,10 +35,7 @@ function bindRoot(root) {
   scheduleApply();
 }
 
-function scan() {
-  if (!matchesMobileLayout()) return;
-  document.querySelectorAll("[data-run-measurement]").forEach(bindRoot);
-}
+const scan = createMobileMeasurementScanner(bindRoot);
 
 export function installMobileWalkJogCopyGuard() {
   if (typeof document === "undefined" || typeof MutationObserver === "undefined") return () => {};

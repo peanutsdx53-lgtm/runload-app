@@ -6,6 +6,7 @@ const interactions = fs.readFileSync("ui/interactions/consultationInteractions.j
 const utility = fs.readFileSync("ui/interactions/browserUtilities.js", "utf8");
 const css = fs.readFileSync("styles/consultation-share-mobile.css", "utf8");
 const index = fs.readFileSync("index.html", "utf8");
+const platformStyles = fs.readFileSync("ui/platformStyles.js", "utf8");
 
 test("all share outputs remain available when question is empty", () => {
   assert.ok(interactions.includes("updateQuestionGuidance"));
@@ -30,7 +31,7 @@ test("clipboard falls back when Clipboard API rejects", () => {
 });
 
 test("narrow A4 preview stacks header metadata without overlap", () => {
-  assert.ok(index.indexOf("consultation-share.css") < index.indexOf("consultation-share-mobile.css"));
+  assert.ok(platformStyles.indexOf("consultation-share.css") < platformStyles.indexOf("consultation-share-mobile.css"));
   assert.match(css, /max-width:\s*35rem/);
   assert.match(css, /share-sheet-head\s*\{[\s\S]*display:\s*grid/);
   assert.match(css, /share-sheet-head dl\s*\{[\s\S]*width:\s*100%/);

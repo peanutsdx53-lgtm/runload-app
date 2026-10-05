@@ -1,6 +1,6 @@
 import { createApplicationServices } from "../core/appCore.js";
 import { matchesMobileLayout } from "./deviceLayout.js";
-import { TERMS_VERSION, hasAcceptedCurrentTerms, withCurrentTermsAccepted } from "./legalAcceptance.js";
+import { hasAcceptedCurrentTerms, withCurrentTermsAccepted } from "./legalAcceptance.js";
 
 const services = createApplicationServices();
 const GATE_ID = "runload-desktop-terms-gate";

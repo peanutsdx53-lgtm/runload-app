@@ -59,7 +59,7 @@ await test('REST-RECORD-DOES-NOT-OFFER-UNDERSTANDING-ENTRY',()=>{
 });
 
 await test('ENTRY-STYLING-IS-CALM-NOT-WARNING',()=>{
-  const css=read('styles/mobile.css');
+  const css=read('styles/mobile-screen-layouts.css');
   const start=css.indexOf('.screen-layout--result .result-next-actions {');
   const block=css.slice(start,start+2400);
   assert.ok(start>=0);
@@ -69,7 +69,7 @@ await test('ENTRY-STYLING-IS-CALM-NOT-WARNING',()=>{
 });
 
 await test('HOME-UNDERSTANDING-ACTION-IS-VISUALLY-SECONDARY',()=>{
-  const css=read('styles/mobile.css');
+  const css=read('styles/mobile-screen-layouts.css');
   const line=css.split('\n').find((row)=>row.includes('.card-link--understanding'))||'';
   assert.match(line,/background:transparent/);
   assert.match(line,/border-color:transparent/);

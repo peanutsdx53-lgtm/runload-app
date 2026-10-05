@@ -1,3 +1,4 @@
+import { cloneJsonValue as clone, isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 // Result interpretation base
 // Deterministic, read-only interpretation of persisted calculation outputs.
 // This module does not calculate or modify Primary Regional Reference-100 or ROF-J values.
@@ -19,13 +20,7 @@ const COURSE_SURFACE_KEYS = Object.freeze([
   "trailPercent", "naturalGrassPercent", "artificialTurfPercent", "sandPercent",
 ]);
 
-function clone(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
 
 function uniqueStrings(values = []) {
   return Object.freeze([...new Set(values.filter(Boolean).map((value) => String(value)))]);

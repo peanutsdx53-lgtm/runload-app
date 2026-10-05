@@ -107,9 +107,6 @@
 }
 
 @media (min-width: 55rem) and (max-width: 79.99rem) {
-  .app-shell:not(.app-shell--immersive) .app-main {
-    padding-top: calc(4.75rem + var(--space-5));
-  }
 }
 
 /* Home: PC-only adaptive dashboard. */
@@ -359,10 +356,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.35rem;
     overflow: hidden;
-  }
-
-  .screen--record-input.screen-layout--record .activity-toggle label {
-    min-width: 0;
   }
 
   .screen--record-input.screen-layout--record .activity-toggle span {

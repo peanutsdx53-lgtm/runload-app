@@ -1,3 +1,4 @@
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
 import { matchesMobileLayout } from "../ui/deviceLayout.js";
@@ -6,7 +7,6 @@ import {
   PRIMARY_REGIONAL_V2_MODEL_VERSION,
 } from "../core/appCore.js";
 
-function finite(value) { return value !== null && value !== "" && Number.isFinite(Number(value)); }
 function fmt(value, digits = 1) { return finite(value) ? Number(value).toFixed(digits).replace(/\.0$/, "") : "—"; }
 function signed(value, digits = 1) { if (!finite(value)) return "—"; const n = Number(value); return `${n > 0 ? "+" : ""}${fmt(n, digits)}`; }
 function signatureFor(record = {}, regionId = "") { return record?.comparison_signatures?.[regionId] || null; }

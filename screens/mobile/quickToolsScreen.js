@@ -1,17 +1,6 @@
+import { formatJapaneseTimestamp as formatTimestamp } from "../../ui/mobileDateUtilities.js";
 import { escapeHtml } from "../../ui/commonComponents.js";
 import { loadMobileQuickTools } from "../../ui/mobileQuickToolsStore.js";
-
-function formatTimestamp(value = "") {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "日時不明";
-  return new Intl.DateTimeFormat("ja-JP", {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
 
 function renderDeleteButton(tool, id) {
   return `<button type="button" class="mobile-tool-history__delete" data-mobile-tool-delete="${escapeHtml(id)}" data-mobile-tool-delete-kind="${escapeHtml(tool)}">削除</button>`;

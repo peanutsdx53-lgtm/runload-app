@@ -1,4 +1,4 @@
-/* V52 interpretation loop: materials -> RunLoad view -> user choice -> final interpretation. */
+/* Interpretation loop: materials -> RunLoad view -> user choice -> final interpretation. */
 
 .interpretation-loop-mobile-head,
 .interpretation-loop-pc-head,
@@ -517,7 +517,7 @@
   .interpretation-loop-alternatives-pc a { transition: none !important; }
 }
 
-/* V52 secondary information: available without competing with the interpretation flow. */
+/* Secondary information remains available without competing with the interpretation flow. */
 .interpretation-loop-more {
   border-bottom: 1px solid var(--color-line);
 }

@@ -1,3 +1,4 @@
+import { cloneJsonValue as clone } from "../../shared/valueUtilities.js";
 import "./primaryModelEngine.js";
 import "./primaryInputProcessing.js";
 import "./recordRepositories.js";
@@ -50,7 +51,6 @@ const SOURCE_REGISTRY = Object.freeze({
   JIN_2018: { label: "Jin 2018", role: "股関節部・足関節部の低速側で用いる限定的な資料間接続" },
   LI_2020: { label: "Li 2020", role: "後足部・足底中部・前足部の高速側で用いる限定的な資料間接続" },
 });
-function clone(v){return v==null?v:JSON.parse(JSON.stringify(v));}
 function sanitize(v){return String(v||"").replace(/[^0-9A-Za-z._-]/g,"_");}
 function revision(record={}){return String(record.updatedAt||record.createdAt||"");}
 function unique(xs=[]){return [...new Set(xs.filter(Boolean).map(String))];}

@@ -1,4 +1,11 @@
-const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
+import {
+  applyHomeIconPlacement as applyIconPlacement,
+  clearHomeGridPlacement as clearGridPlacement,
+  homeGridPlacementOf as placementOf,
+  homeGridTokenForElement as gridTokenForElement,
+  matchesMobileHomeLayout as mobileLayoutMatches,
+} from "./mobileHomeGridUtilities.js";
+
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const LAYOUT_STORAGE_KEY = "running-record-mobile-home-layout-v1";
 
@@ -9,34 +16,6 @@ let trackedSourcePage = null;
 let trackedSourcePlacement = null;
 let dockNormalizeQueued = false;
 let releasingCoreDrag = false;
-
-function mobileLayoutMatches() {
-  if (typeof globalThis.matchMedia === "function") return globalThis.matchMedia(MOBILE_HOME_QUERY).matches;
-  return Number(globalThis.innerWidth || 0) <= 879;
-}
-
-function placementOf(element) {
-  return {
-    row: Number(element?.dataset?.homeRow) || 1,
-    col: Number(element?.dataset?.homeCol) || 1,
-  };
-}
-
-function applyIconPlacement(element, placement) {
-  if (!element || !placement) return;
-  element.dataset.homeRow = String(placement.row);
-  element.dataset.homeCol = String(placement.col);
-  element.style.gridRow = `${placement.row} / span 1`;
-  element.style.gridColumn = `${placement.col} / span 1`;
-}
-
-function clearGridPlacement(element) {
-  if (!element) return;
-  element.style.removeProperty("grid-row");
-  element.style.removeProperty("grid-column");
-  delete element.dataset.homeRow;
-  delete element.dataset.homeCol;
-}
 
 function normalizeDockPlacements(root = document) {
   root.querySelectorAll?.(".mobile-home-dock [data-home-item-id]").forEach(clearGridPlacement);
@@ -49,13 +28,6 @@ function queueDockNormalization(root = document) {
     dockNormalizeQueued = false;
     normalizeDockPlacements(root);
   });
-}
-
-function gridTokenForElement(element) {
-  const appId = element?.dataset?.homeItemId || "";
-  if (appId) return `app:${appId}`;
-  const widgetId = element?.dataset?.homeWidgetId || "";
-  return widgetId ? `widget:${widgetId}` : "";
 }
 
 function activePageIndex(root, pageCount) {
@@ -229,7 +201,7 @@ function handlePointerUp(event) {
   }
 
   // Direct home-icon swaps are owned here. The original pointerup is stopped so
-  // neither the legacy free-slot path nor the older post-drop helper can also run.
+  // the core free-slot path and post-drop helper cannot also run for the same swap.
   event.preventDefault();
   event.stopImmediatePropagation();
 

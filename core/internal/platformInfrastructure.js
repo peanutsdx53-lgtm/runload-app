@@ -1,3 +1,4 @@
+import { cloneJsonValue as cloneValue } from "../../shared/valueUtilities.js";
 import { internalModules } from "./modules.js";
 
 // ===== core/pwaRegistration.js =====
@@ -53,7 +54,7 @@ async function clearLocalPwaDeliveryState() {
   }
 }
 
-function registerPwaServiceWorker() {
+function registerPwaServiceWorker({ platform = "" } = {}) {
   if (!("serviceWorker" in navigator) || !window.isSecureContext) return;
 
   if (isLocalLiveServerDevelopment()) {
@@ -67,6 +68,10 @@ function registerPwaServiceWorker() {
     try {
       const registration = await navigator.serviceWorker.register("./service-worker.js", { updateViaCache: "none" });
       await registration.update();
+      const readyRegistration = await navigator.serviceWorker.ready;
+      if (platform === "mobile" || platform === "desktop") {
+        readyRegistration.active?.postMessage({ type: "CACHE_PLATFORM", platform });
+      }
       if (registration.waiting && navigator.serviceWorker.controller) {
         showUpdateNotice(registration);
       }
@@ -166,9 +171,6 @@ internalModules.storageKeys = moduleExports;
 const moduleExports = Object.create(null);
 const { STORAGE_KEYS } = internalModules.storageKeys;
 
-function cloneValue(value) {
-  return value == null ? value : JSON.parse(JSON.stringify(value));
-}
 
 function createFailure(operation, key, error, details = {}) {
   return {

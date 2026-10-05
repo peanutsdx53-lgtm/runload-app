@@ -5,6 +5,7 @@ const read = (path) => fs.readFileSync(path, "utf8");
 const css = read("styles/mobile-home-experience.css");
 const js = read("ui/mobileHomeExperience.js");
 const index = read("index.html");
+const platformStyles = read("ui/platformStyles.js");
 const worker = read("service-worker.js");
 
 assert.match(css, /screen--home\.mobile-home-ambient/);
@@ -15,7 +16,7 @@ assert.match(css, /prefers-reduced-motion/);
 assert.match(js, /buildPersonalChallenge/);
 assert.match(js, /buildDynamicHomeCards/);
 assert.match(js, /resolveAmbientProfile/);
-assert.ok(index.includes('./styles/mobile-home-experience.css'));
+assert.ok(platformStyles.includes('./styles/mobile-home-experience.css'));
 assert.ok(worker.includes('./styles/mobile-home-experience.css'));
 assert.ok(worker.includes('./ui/mobileHomeExperience.js'));
 

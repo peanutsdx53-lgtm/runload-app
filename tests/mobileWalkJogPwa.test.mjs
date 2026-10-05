@@ -2,6 +2,7 @@ import fs from "node:fs";
 import assert from "node:assert/strict";
 
 const index = fs.readFileSync("index.html", "utf8");
+const platformStyles = fs.readFileSync("ui/platformStyles.js", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
 const mobileEntry = fs.readFileSync("ui/mobileRuntimeEntry.js", "utf8");
 const versionModule = fs.readFileSync("ui/appVersionStatus.js", "utf8");
@@ -27,11 +28,12 @@ test("MOBILE-ENTRY-LOADS-MOBILE-EXTENSION", () => {
     "./styles/mobile-walk-jog.css",
     "./styles/mobile-walk-jog-records.css",
     "./styles/mobile-walk-jog-history.css",
-  ]) assert.ok(index.includes(path), `missing ${path}`);
+  ]) assert.ok(platformStyles.includes(path), `missing ${path}`);
 });
 
 test("SERVICE-WORKER-PRECACHES-MOBILE-EXTENSION", () => {
   for (const path of [
+    "./core/mobileWalkJogCore.js",
     "./core/internal/mobileWalkJogSpeedModel.js",
     "./ui/mobileWalkJogMeasurementWiring.js",
     "./ui/mobileWalkJogGpsQuality.js",

@@ -1,5 +1,3 @@
-import { escapeHtml } from "./commonComponents.js";
-
 export const PRIMARY_DESTINATIONS = Object.freeze([
   Object.freeze({ screen: "home", label: "ホーム", description: "今日の入口", icon: "home" }),
   Object.freeze({ screen: "record-input", label: "記録", description: "走行・休養を残す", icon: "record" }),
@@ -257,8 +255,4 @@ function route(screen, values = {}) {
     if (value !== undefined && value !== null && value !== "") query.set(key, String(value));
   });
   return `#/${screen}${query.size ? `?${query.toString()}` : ""}`;
-}
-
-function workspaceLink({ href, label, description, current = false }) {
-  return `<a class="workspace-navigation__link${current ? " is-current" : ""}" href="${escapeHtml(href)}"${current ? ' aria-current="page"' : ""}><strong>${escapeHtml(label)}</strong><small>${escapeHtml(description)}</small></a>`;
 }

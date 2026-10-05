@@ -1,9 +1,9 @@
-/* Desktop interpretation refinement v60.
+/* Desktop interpretation detail presentation.
  * Improves scanability and reduces vertical length on the PC "今回を見比べる" screen.
  * Desktop only: smartphone layout and interaction remain unchanged.
  */
 @media (min-width: 55rem) {
-  .screen--interpretation-room .v53-technical-more.interpretation-loop-more {
+  .screen--interpretation-room .interpretation-flow-technical-more.interpretation-loop-more {
     margin-top: 1rem !important;
     overflow: hidden;
     border: 1px solid var(--color-line) !important;
@@ -12,7 +12,7 @@
     box-shadow: var(--shadow-soft) !important;
   }
 
-  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > summary {
+  .screen--interpretation-room .interpretation-flow-technical-more.interpretation-loop-more > summary {
     min-height: 4rem;
     padding: .85rem 1.05rem !important;
     display: grid;
@@ -29,7 +29,7 @@
     list-style: none;
   }
 
-  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > summary::before {
+  .screen--interpretation-room .interpretation-flow-technical-more.interpretation-loop-more > summary::before {
     content: "i";
     width: 2.25rem;
     height: 2.25rem;
@@ -42,7 +42,7 @@
     font-weight: 900;
   }
 
-  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > summary::after {
+  .screen--interpretation-room .interpretation-flow-technical-more.interpretation-loop-more > summary::after {
     content: "+";
     width: 2rem;
     height: 2rem;
@@ -57,18 +57,18 @@
     line-height: 1;
   }
 
-  .screen--interpretation-room .v53-technical-more.interpretation-loop-more[open] > summary {
+  .screen--interpretation-room .interpretation-flow-technical-more.interpretation-loop-more[open] > summary {
     background: var(--color-selection-surface) !important;
     box-shadow: inset 0 -1px 0 var(--color-line);
   }
 
-  .screen--interpretation-room .v53-technical-more.interpretation-loop-more[open] > summary::after {
+  .screen--interpretation-room .interpretation-flow-technical-more.interpretation-loop-more[open] > summary::after {
     content: "−";
     background: var(--color-accent-strong);
     color: var(--color-on-accent);
   }
 
-  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > div {
+  .screen--interpretation-room .interpretation-flow-technical-more.interpretation-loop-more > div {
     margin: 0 !important;
     padding: 1rem !important;
     display: grid;
@@ -322,7 +322,7 @@
 /* At narrower PC widths, use the full width for each information family.
    Region cards remain two-column, so the page is still much shorter than before. */
 @media (min-width: 55rem) and (max-width: 68rem) {
-  .screen--interpretation-room .v53-technical-more.interpretation-loop-more > div {
+  .screen--interpretation-room .interpretation-flow-technical-more.interpretation-loop-more > div {
     grid-template-columns: minmax(0, 1fr) !important;
     gap: .75rem !important;
   }

@@ -1,10 +1,9 @@
+import { mondayOfWeekAtNoon as mondayOfWeek } from "./mobileDateUtilities.js";
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { achievementSummary } from "./mobileAchievements.js";
 import { collectMobileFatigueHistory } from "./mobileInsights.js";
 import { listMobileExtensionRecords } from "./mobileWalkJogRecordStore.js";
 
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
 
 function localDateText(date = new Date()) {
   const year = date.getFullYear();
@@ -23,13 +22,6 @@ function parseLocalDate(value = "") {
 function dateFromTimestamp(value = "") {
   const date = new Date(String(value || ""));
   return Number.isFinite(date.getTime()) ? date : null;
-}
-
-function mondayOfWeek(date = new Date()) {
-  const result = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
-  const day = result.getDay();
-  result.setDate(result.getDate() - (day === 0 ? 6 : day - 1));
-  return result;
 }
 
 function inRange(date, start, end) {

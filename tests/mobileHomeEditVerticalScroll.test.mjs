@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const support = fs.readFileSync('ui/mobileHomeEditScroll.js', 'utf8');
+const gridUtilities = fs.readFileSync('ui/mobileHomeGridUtilities.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 const mobileEntry = fs.readFileSync('ui/mobileRuntimeEntry.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
@@ -67,14 +68,15 @@ test('ICON-TARGET-HIDES-EMPTY-SLOT-PREVIEW', () => {
 });
 
 test('SUPPORT-IS-MOBILE-ONLY', () => {
-  assert.ok(support.includes('(max-width: 54.99rem)'));
-  assert.ok(support.includes('typeof globalThis.matchMedia === "function"'));
-  assert.ok(support.includes('MOBILE_HOME_MAX_WIDTH_PX'));
+  assert.ok(support.includes('matchesMobileHomeLayout as mobileLayoutMatches'));
+  assert.ok(gridUtilities.includes('(max-width: 54.99rem)'));
+  assert.ok(gridUtilities.includes('typeof globalThis.matchMedia === "function"'));
 });
 
 test('SUPPORT-IS-LOADED-AND-PRECACHED', () => {
   assert.ok(mobileEntry.includes('./mobileHomeEditScroll.js'));
   assert.ok(worker.includes('"./ui/mobileHomeEditScroll.js"'));
+  assert.ok(worker.includes('"./ui/mobileHomeGridUtilities.js"'));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

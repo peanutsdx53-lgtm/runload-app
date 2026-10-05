@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
-const home = fs.readFileSync('ui/interactions/homeInteractions.js', 'utf8');
+const homeLayout = fs.readFileSync('ui/interactions/homeLayoutState.js', 'utf8');
 const gridModel = fs.readFileSync('ui/interactions/homeGridModel.js', 'utf8');
 const guard = fs.readFileSync('ui/mobileHomeDefaultLayout.js', 'utf8');
 const capacity = fs.readFileSync('ui/mobileHomePageCapacity.js', 'utf8');
@@ -36,7 +36,7 @@ test('SETTINGS-HAS-A-DEFINED-FIRST-RUN-CELL-AND-SHARE-MOVES-TO-CATALOG', () => {
   assert.match(guard, /settings: 4/);
   assert.match(guard, /moveAppToCatalog\(root, "share"\)/);
   assert.match(guard, /catalog\.append\(item\)/);
-  assert.ok(home.includes('id: "share", label: "共有"'), 'Share must remain available in the app catalog');
+  assert.ok(homeLayout.includes('id: "share", label: "共有"'), 'Share must remain available in the app catalog');
 });
 
 test('DYNAMIC-CARDS-ARE-NORMALIZED-INTO-TWO-STABLE-WIDGET-SLOTS', () => {

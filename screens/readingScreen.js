@@ -1,3 +1,4 @@
+import { toFiniteNumber as numberValue } from "../shared/valueUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { BODY_AREA_BY_ID, BODY_AREA_TO_PRIMARY_REGIONAL_V2, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/appCore.js";
 import { matchesMobileLayout } from "../ui/deviceLayout.js";
@@ -10,10 +11,6 @@ const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep";
 const visibleArticles = (articles = []) => articles;
 const publicArticleId = (articleId = "") => String(articleId || "");
 
-function numberValue(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
-}
 
 function dateToTime(dateText = "") {
   const match = String(dateText || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);

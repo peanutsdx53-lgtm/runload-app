@@ -4,6 +4,7 @@ import path from "node:path";
 import os from "node:os";
 import { spawn, spawnSync } from "node:child_process";
 import assert from "node:assert/strict";
+import test from "node:test";
 
 const ROOT = process.cwd();
 const MIME = Object.freeze({
@@ -174,7 +175,7 @@ async function navigate(client, url) {
   await sleep(120);
 }
 
-async function run() {
+async function run(t) {
   assert.equal(typeof WebSocket, "function", "Node 22 WebSocket global is required");
   const server = await createServer();
   const address = server.address();
@@ -204,7 +205,7 @@ async function run() {
     await navigate(client, `${baseUrl}/#/run-measurement`);
     const managedBlock = await client.evaluate('location.href.startsWith("chrome-error://") && document.body.innerText.includes("organization") && document.body.innerText.includes("blocked")');
     if (managedBlock) {
-      console.log("SKIP\tMOBILE-BROWSER-FLOW\tmanaged Chromium URLBlocklist prevents localhost navigation in this environment");
+      t.skip("managed Chromium URLBlocklist prevents application navigation in this environment");
       return;
     }
     await waitFor(client, 'document.querySelector("[data-mobile-onboarding]") || document.querySelector("[name=mobileActivityIdentity][value=WALK]")', "mobile application did not render");
@@ -307,7 +308,6 @@ async function run() {
   }
 }
 
-run().catch((error) => {
-  console.error(`FAIL\tMOBILE-BROWSER-FLOW\t${error?.stack || error}`);
-  process.exitCode = 1;
+test("mobile walk/jog browser flow and desktop non-interference", async (t) => {
+  await run(t);
 });

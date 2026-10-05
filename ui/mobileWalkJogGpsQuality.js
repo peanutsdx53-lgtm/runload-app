@@ -1,9 +1,6 @@
+import { toFiniteNumber as finiteTime } from "../shared/valueUtilities.js";
 const DEFAULT_MAX_UNUSABLE_GPS_MS = 30000;
 
-function finiteTime(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
-}
 
 function isUsableQuality(value) {
   return value === "good" || value === "fair";

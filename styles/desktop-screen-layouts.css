@@ -1698,9 +1698,7 @@
     box-shadow: 0 1.3rem 3.2rem color-mix(in srgb, var(--color-ink) 18%, transparent);
   }
 
-  .screen--course-editor.screen-layout--course .editor-main > .eyebrow {
-    font-size: 0.72rem !important;
-  }
+  
 
   .screen--course-editor.screen-layout--course .editor-main > h1 {
     margin-top: 0.25rem !important;
@@ -1732,20 +1730,14 @@
     font-size: 0.82rem !important;
   }
 
-  .screen--course-editor.screen-layout--course .e-title small {
-    font-size: 0.72rem !important;
-  }
+  
 
   .screen--course-editor.screen-layout--course .e-title h2 {
     margin-top: 0.12rem !important;
     font-size: 1.22rem !important;
   }
 
-  .screen--course-editor.screen-layout--course .field > span,
-  .screen--course-editor.screen-layout--course .mfield > span,
-  .screen--course-editor.screen-layout--course .section-field > span {
-    font-size: 0.8rem !important;
-  }
+  
 
   .screen--course-editor.screen-layout--course .field input,
   .screen--course-editor.screen-layout--course .field select,
@@ -1792,10 +1784,7 @@
     border-radius: 1rem !important;
   }
 
-  .screen--course-editor.screen-layout--course .editor-actions .primary {
-    min-height: 3.25rem !important;
-    font-size: 0.92rem !important;
-  }
+  
 
   /* ===== Body record / shoes: derived panel over Record ===== */
   .screen--record-input.screen-layout--record .subscreen {
@@ -2337,9 +2326,7 @@
     width: min(100%, 46rem) !important;
   }
 
-  .screen--course-editor.screen-layout--course .mode.three {
-    width: min(100%, 34rem) !important;
-  }
+  
 
   .screen--course-editor.screen-layout--course .mode button {
     min-height: 3rem !important;
@@ -2771,9 +2758,7 @@
     font-size: 1.2rem !important;
   }
 
-  .screen--course-library.screen-layout--course .card-head strong {
-    font-size: 1rem !important;
-  }
+  
 
   .screen--course-library.screen-layout--course .fact strong {
     font-size: 0.88rem !important;
@@ -3935,9 +3920,7 @@
     font-size: 0.76rem !important;
   }
 
-  .screen--reading.screen-layout--reading .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  }
+  
 
   .screen--reading.screen-layout--reading .points strong {
     font-size: 0.9rem !important;
@@ -4019,9 +4002,7 @@
 }
 
 @media (min-width: 80rem) and (max-width: 92rem) {
-  .screen--reading.screen-layout--reading .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
+  
 
   .screen--settings.screen-layout--settings .display-setting-list {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -4649,11 +4630,7 @@
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
-  .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) {
-    width: auto !important;
-    grid-column: auto !important;
-    display: block !important;
-  }
+  
 
   .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) > :not(.text-link),
   .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd) .text-link {
@@ -7481,9 +7458,7 @@
     filter: drop-shadow(0 0 5px color-mix(in srgb, var(--color-focus) 22%, transparent));
   }
 
-  .pc-result-body-map .region-path.is-selected {
-    stroke-width: 7;
-  }
+  
 
   /* Lower-left becomes a mode surface: one region or all regions. */
   .pc-result-insights {
@@ -7498,9 +7473,7 @@
     height: 100%;
   }
 
-  .pc-detail-panel[hidden]{
-    display: none !important;
-  }
+  
 
   .pc-detail-panel > header {
     min-height: 1.68rem;
@@ -7527,11 +7500,7 @@
     letter-spacing: 0.08em;
   }
 
-  .pc-detail-panel > header h3 {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.15;
-  }
+  
 
   .pc-detail-panel > header > span {
     color: var(--color-muted);
@@ -9103,7 +9072,7 @@
 }
 
 /* Reading: every article card keeps the same vertical action alignment.
- * Legacy odd-card layout rules must not turn the ninth card into block layout. */
+ * Odd-card layout rules must keep the ninth card in the same grid flow. */
 @media (min-width:80rem){
   .screen--reading.screen-layout--reading .grid > .article-card:last-child:nth-child(odd){
     width:auto !important;
@@ -9749,10 +9718,7 @@
 
 
 @media (min-width:55rem){
-  .interpretation-room--selected-detail{
-    width:min(100%,96rem) !important;
-    max-width:96rem !important;
-  }
+  
 }
 @media (min-width:64rem){
 }

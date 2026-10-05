@@ -1,3 +1,10 @@
+## APP v2026.10.05.1 — Codebase Cleanup Release
+
+- Removes retired compatibility paths, historical presentation-generation identifiers, stale fixture/workflow references, and temporary audit workflows.
+- Separates desktop/mobile runtime assets and platform styles while keeping shared assets explicit.
+- Centralizes repeated runtime helpers and adds cleanup acceptance checks for ownership, reachability, PWA assets, and architectural boundaries.
+- Keeps current record/storage contracts and scientific calculation behavior unchanged; the complete regression suite remains the release gate.
+
 ## APP v2026.09.30.26 — Mobile Upgrade Final Candidate
 
 - Preserves the editable/reorderable launcher Home as the primary mobile page.

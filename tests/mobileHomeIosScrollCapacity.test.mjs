@@ -7,6 +7,7 @@ const threeRowCss = fs.readFileSync('styles/mobile-home-three-row.css', 'utf8');
 const capacity = fs.readFileSync('ui/mobileHomePageCapacity.js', 'utf8');
 const grid = fs.readFileSync('ui/interactions/homeGridModel.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
+const platformStyles = fs.readFileSync('ui/platformStyles.js', 'utf8');
 const mobileEntry = fs.readFileSync('ui/mobileRuntimeEntry.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const versionModule = fs.readFileSync('ui/appVersionStatus.js', 'utf8');
@@ -97,8 +98,8 @@ test('IOS-EDIT-SUPPRESSES-COPY-CALLOUT-AND-SELECTION', () => {
 });
 
 test('THREE-ROW-OVERRIDE-LOADS-AFTER-IOS-EDITING-CSS', () => {
-  const iosIndex = index.indexOf('./styles/mobile-home-ios-editing.css');
-  const threeRowIndex = index.indexOf('./styles/mobile-home-three-row.css');
+  const iosIndex = platformStyles.indexOf('./styles/mobile-home-ios-editing.css');
+  const threeRowIndex = platformStyles.indexOf('./styles/mobile-home-three-row.css');
   assert.ok(iosIndex >= 0 && threeRowIndex > iosIndex);
 });
 

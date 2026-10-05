@@ -1,3 +1,4 @@
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate, formatLocalTime } from "../ui/recordPresentation.js";
 import { courseSummaryText } from "../ui/coursePresentation.js";
@@ -32,7 +33,6 @@ const VIEWS = Object.freeze([
   ]) }),
 ]);
 
-function finite(value) { return value !== null && value !== "" && Number.isFinite(Number(value)); }
 function fmt(value, digits = 1) { return finite(value) ? Number(value).toFixed(digits).replace(/\.0$/, "") : "—"; }
 function signed(value, digits = 1) { if (!finite(value)) return "—"; const n = Number(value); return `${n > 0 ? "+" : ""}${fmt(n, digits)}`; }
 function direction(value) { if (!finite(value)) return "unavailable"; const delta = Number(value) - 100; return Math.abs(delta) < 1 ? "reference" : delta > 0 ? "above" : "below"; }
@@ -157,7 +157,7 @@ function renderFatigue(services, record = {}) {
   const postLabel = finite(post) ? fmt(post, 0) : "—";
   const descriptor = finite(post) ? officialRofJDescriptor(post) : "";
   const deltaLabel = finite(delta) ? signed(delta, 0) : "—";
-  return `<section class="fatigue-section"><div class="fatigue-inner"><div class="section-heading"><span class="section-index">02</span><div><small>FATIGUE CHANGE</small><h2>疲労感の変化から見る</h2></div></div><div class="fatigue-card"><div class="fatigue-values"><div><small>走る前</small><strong>${preLabel}</strong></div><div class="delta"><span></span><strong>${deltaLabel}</strong><small>変化</small></div><div class="post"><small>走った後</small><strong>${postLabel}</strong></div></div><div class="fatigue-track">${finite(pre) && finite(post) ? `<i class="fatigue-range" style="--pre:${prePos}%;--post:${postPos}%"></i><b class="pre" style="left:${prePos}%"><em>前</em></b><b class="post-point" style="left:${postPos}%"><em>後</em></b>` : ""}</div><div class="fatigue-axis"><span>0</span><span>5</span><span>10</span></div>${descriptor ? `<p class="candidate-note">走った後：${escapeHtml(descriptor)}</p>` : ""}</div><dl class="visually-hidden"><div><dt>走る前</dt><dd>${escapeHtml(rofLabel(pre))}</dd></div><div><dt>走った後</dt><dd>${escapeHtml(rofLabel(post))}</dd></div><div><dt>POST − PRE</dt><dd>${escapeHtml(deltaLabel)}</dd></div></dl><p class="visually-hidden">0〜10の疲労感尺度は、その時点で自分が感じている疲労感の記録です。部位の目安とは別に扱い、回復度・安全性・走行可否の判定には使いません。</p></div></section>`;
+  return `<section class="fatigue-section"><div class="fatigue-inner"><div class="section-heading"><span class="section-index">02</span><div><small>FATIGUE CHANGE</small><h2>疲労感の変化から見る</h2></div></div><div class="fatigue-card"><div class="fatigue-values"><div><small>走る前</small><strong>${preLabel}</strong></div><div class="delta"><span></span><strong>${deltaLabel}</strong><small>変化</small></div><div class="post"><small>走った後</small><strong>${postLabel}</strong></div></div><div class="fatigue-track">${finite(pre) && finite(post) ? `<i class="fatigue-range" style="--pre:${prePos}%;--post:${postPos}%"></i><b class="pre" style="left:${prePos}%"><em>前</em></b><b class="post-point" style="left:${postPos}%"><em>後</em></b>` : ""}</div><div class="fatigue-axis"><span>0</span><span>5</span><span>10</span></div>${descriptor ? `<p class="candidate-note" data-rof-result-guidance>走った後：${escapeHtml(descriptor)}</p>` : ""}</div><dl class="visually-hidden"><div><dt>走る前</dt><dd>${escapeHtml(rofLabel(pre))}</dd></div><div><dt>走った後</dt><dd>${escapeHtml(rofLabel(post))}</dd></div><div><dt>POST − PRE</dt><dd>${escapeHtml(deltaLabel)}</dd></div></dl><p class="visually-hidden">0〜10の疲労感尺度は、その時点で自分が感じている疲労感の記録です。部位の目安とは別に扱い、回復度・安全性・走行可否の判定には使いません。</p></div></section>`;
 }
 
 
@@ -167,30 +167,6 @@ function fatigueSnapshot(services, record = {}) {
   const post = summary?.available && finite(summary.post) ? Number(summary.post) : null;
   return Object.freeze({ pre, post, delta: finite(pre) && finite(post) ? post - pre : null });
 }
-
-function pcRegionAxis(info) {
-  if (!finite(info?.row?.value)) return `<span class="pc-region-axis is-unavailable"><i></i></span>`;
-  const currentPos = position(info.row.value);
-  const previousPos = finite(info.prev) ? position(info.prev) : null;
-  const changeBand = finite(previousPos)
-    ? `<span class="pc-region-axis__change" style="--pos:${currentPos}%;--prev:${previousPos}%"></span>`
-    : "";
-  return `<span class="pc-region-axis" aria-hidden="true"><i class="pc-region-axis__baseline"></i>${changeBand}<b class="pc-region-axis__current" style="--pos:${currentPos}%"></b>${finite(previousPos) ? `<em class="pc-region-axis__previous" style="--prev:${previousPos}%"></em>` : ""}</span>`;
-}
-
-function pcRegionTile(info, selectedId, recordId) {
-  const row = info.row;
-  const name = bodyRegionFormalName(row.regionId, row.regionName || row.regionId);
-  const current = finite(row.value) ? fmt(row.value, 1) : "—";
-  const delta = finite(info.delta) ? signed(info.delta, 1) : "比較なし";
-  const state = direction(row.value);
-  const selected = row.regionId === selectedId ? " is-selected" : "";
-  const stateLabel = state === "above" ? "基準より上" : state === "below" ? "基準より下" : state === "reference" ? "基準付近" : "表示なし";
-  const previousLabel = finite(info.prev) ? fmt(info.prev, 1) : "—";
-  const deltaClass = finite(info.delta) ? (Number(info.delta) > 0 ? " is-up" : Number(info.delta) < 0 ? " is-down" : "") : "";
-  return `<a class="pc-region-tile${selected}" data-direction="${state}" href="#/body-part-detail?recordId=${encodeURIComponent(recordId || "")}&regionId=${encodeURIComponent(row.regionId)}" data-region-id="${escapeHtml(row.regionId)}"><span class="pc-region-tile__top"><span class="pc-region-tile__copy"><strong>${escapeHtml(name)}</strong><small>${escapeHtml(stateLabel)}</small></span><b>${escapeHtml(current)}</b></span>${pcRegionAxis(info)}<span class="pc-region-tile__meta"><span>前回 <strong>${escapeHtml(previousLabel)}</strong></span><em class="${deltaClass.trim()}">${escapeHtml(delta)}</em></span></a>`;
-}
-
 function pcRegionGroups(infos, selectedId) {
   const viewByRegion = new Map(VIEWS.flatMap((view) => view.paths.map(([id]) => [id, view.title])));
   return `<div class="pc-region-matrix pc-region-matrix--summary" role="list" aria-label="12部位の数値">${infos.map((info) => {
@@ -295,7 +271,7 @@ function renderPcFatigue(snapshot) {
   const prePos = finite(snapshot.pre) ? Math.max(0, Math.min(100, snapshot.pre * 10)) : 0;
   const postPos = finite(snapshot.post) ? Math.max(0, Math.min(100, snapshot.post * 10)) : 0;
   const descriptor = finite(snapshot.post) ? officialRofJDescriptor(snapshot.post) : "";
-  return `<section class="pc-result-fatigue" aria-label="運動前後の疲労度"><header><div><small>FATIGUE</small><h3>運動前後の疲労度</h3></div></header><div class="pc-fatigue-journey"><div class="pc-fatigue-node is-pre"><small>運動前</small><strong>${finite(snapshot.pre) ? escapeHtml(fmt(snapshot.pre,0)) : "—"}</strong></div><div class="pc-fatigue-bridge"><span></span><div><small>変化</small><strong>${finite(snapshot.delta) ? escapeHtml(signed(snapshot.delta,0)) : "—"}</strong></div><i>→</i></div><div class="pc-fatigue-node is-post"><small>運動後</small><strong>${finite(snapshot.post) ? escapeHtml(fmt(snapshot.post,0)) : "—"}</strong></div></div><div class="pc-fatigue-scale"><span class="pc-fatigue-scale__range" style="--pre:${prePos}%;--post:${postPos}%"></span>${finite(snapshot.pre) ? `<i class="pc-fatigue-scale__point is-pre" style="left:${prePos}%"><b>前</b></i>` : ""}${finite(snapshot.post) ? `<i class="pc-fatigue-scale__point is-post" style="left:${postPos}%"><b>後</b></i>` : ""}</div><div class="pc-fatigue-scale__axis"><span>0</span><span>5</span><span>10</span></div>${descriptor ? `<p>${escapeHtml(descriptor)}</p>` : ""}</section>`;
+  return `<section class="pc-result-fatigue" aria-label="運動前後の疲労度"><header><div><small>FATIGUE</small><h3>運動前後の疲労度</h3></div></header><div class="pc-fatigue-journey"><div class="pc-fatigue-node is-pre"><small>運動前</small><strong>${finite(snapshot.pre) ? escapeHtml(fmt(snapshot.pre,0)) : "—"}</strong></div><div class="pc-fatigue-bridge"><span></span><div><small>変化</small><strong>${finite(snapshot.delta) ? escapeHtml(signed(snapshot.delta,0)) : "—"}</strong></div><i>→</i></div><div class="pc-fatigue-node is-post"><small>運動後</small><strong>${finite(snapshot.post) ? escapeHtml(fmt(snapshot.post,0)) : "—"}</strong></div></div><div class="pc-fatigue-scale"><span class="pc-fatigue-scale__range" style="--pre:${prePos}%;--post:${postPos}%"></span>${finite(snapshot.pre) ? `<i class="pc-fatigue-scale__point is-pre" style="left:${prePos}%"><b>前</b></i>` : ""}${finite(snapshot.post) ? `<i class="pc-fatigue-scale__point is-post" style="left:${postPos}%"><b>後</b></i>` : ""}</div><div class="pc-fatigue-scale__axis"><span>0</span><span>5</span><span>10</span></div>${descriptor ? `<p data-rof-result-guidance>${escapeHtml(descriptor)}</p>` : ""}</section>`;
 }
 
 function renderPcRestResultConsole({ record, feedback = null }) {

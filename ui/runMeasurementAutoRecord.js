@@ -1,3 +1,4 @@
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { haversineDistanceMeters } from "./runMeasurementCore.js";
 
 export const STEP_ESTIMATE_MODEL_ID = "device-motion-peak-v1";
@@ -10,10 +11,6 @@ const MAX_ALTITUDE_ACCURACY_M = 30;
 const MAX_ABS_GRADE_PERCENT = 30;
 const MIN_GRADE_DISTANCE_M = 5;
 const GRADE_THRESHOLD_PERCENT = 1;
-
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
 
 function round(value, digits = 1) {
   const scale = 10 ** digits;

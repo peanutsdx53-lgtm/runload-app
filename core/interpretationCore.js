@@ -1,3 +1,4 @@
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 // Result interpretation core.
 // Deterministic, read-only projection for beginner-facing result understanding.
 // This module consumes persisted results and never recalculates Primary Reference-100 or ROF-J values.
@@ -15,10 +16,6 @@ const INTERPRETATION_ROUTE_RESOLVER_VERSION = "persisted-calculation-route-trace
 
 const CURRENT_PRIMARY_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
 const ROF_ANCHORS = Object.freeze([2, 4, 6, 8, 10]);
-
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
 
 function frozenArray(items = []) {
   return Object.freeze(items.map((item) => Object.freeze(item)));

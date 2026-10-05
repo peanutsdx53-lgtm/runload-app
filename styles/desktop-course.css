@@ -1,4 +1,4 @@
-/* PC course refinement v17. Desktop only. */
+/* Desktop course presentation. */
 @media (min-width: 55rem) {
   /* Shared course shell */
   .screen--course-editor.course-derived-screen,
@@ -161,14 +161,6 @@
     border-radius: 0.62rem !important;
     font-size: 0.88rem !important;
     font-weight: 760 !important;
-  }
-
-  .screen--course-editor .grade-mode {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  }
-
-  .screen--course-editor .mode.three {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
   .screen--course-editor .e-card > .note {

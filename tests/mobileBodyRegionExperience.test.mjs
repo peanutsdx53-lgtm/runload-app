@@ -6,7 +6,7 @@ const result = fs.readFileSync(new URL("../screens/resultScreen.js", import.meta
 const detail = fs.readFileSync(new URL("../screens/bodyPartDetailScreen.js", import.meta.url), "utf8");
 const interactions = fs.readFileSync(new URL("../ui/interactions/bodyPartDetailInteractions.js", import.meta.url), "utf8");
 const screenInteractions = fs.readFileSync(new URL("../ui/sharedScreenInteractionBinders.js", import.meta.url), "utf8");
-const css = fs.readFileSync(new URL("../styles/mobile.css", import.meta.url), "utf8");
+const css = fs.readFileSync(new URL("../styles/mobile-screen-layouts.css", import.meta.url), "utf8");
 
 test("mobile result makes body-map reference meaning explicit and widens touch targets", () => {
   assert.match(result, /100は「その部位自身の基準」です/);

@@ -1,11 +1,9 @@
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { PRIMARY_REGIONAL_V2_MODEL_VERSION } from "../core/appCore.js";
 import { BODY_REGION_VIEWS } from "../ui/bodyRegionVisuals.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
 
-function finite(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
-}
 
 function direction(value) {
   if (!finite(value)) return "unavailable";

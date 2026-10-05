@@ -127,7 +127,7 @@ function renderRunObservationMemo(record = {}, { isRest = false } = {}) {
   const memoLabel = isRest ? "今回のメモ" : "走ったときのメモ";
   const memoPlaceholder = isRest ? "休養中に覚えておきたいことがあれば残します" : "走っていて覚えておきたいことがあれば残します";
   const memoHelp = isRest ? "今回の自分の観察として保存します。空欄でも問題ありません。" : "結果を見る前の自分の観察として保存します。空欄でも問題ありません。";
-  return `<div class="reflection-fields reflection-fields--v2">
+  return `<div class="reflection-fields reflection-fields--single-column">
     <label class="field"><span>${escapeHtml(memoLabel)} <b>任意</b></span><textarea name="postRunReflection" maxlength="500" rows="2" placeholder="${escapeHtml(memoPlaceholder)}">${escapeHtml(reflection.postRunReflection || "")}</textarea><small>${escapeHtml(memoHelp)}</small></label>
   </div>`;
 }

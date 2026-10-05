@@ -3,7 +3,7 @@ import fs from "node:fs";
 const read = (path) => fs.readFileSync(path, "utf8");
 const screen = read("screens/simulationScreen.js");
 const interactions = read("ui/interactions/simulationInteractions.js");
-const css = read("styles/mobile.css");
+const css = read("styles/mobile-screen-layouts.css");
 const results = [];
 function test(name, fn) { try { fn(); results.push({ name, status: "PASS" }); } catch (error) { results.push({ name, status: "FAIL", message: error.message }); } }
 test("condition comparison exposes a mobile-only one-condition picker", () => { assert.ok(screen.includes("data-mobile-simulation-picker")); for (const tab of ["distance","time","course","format"]) assert.ok(screen.includes(`data-simulation-mobile-tab="${tab}"`)); assert.ok(screen.includes("何を変えて比べる？")); });

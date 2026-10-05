@@ -1,3 +1,4 @@
+import { toFiniteNumber as finiteNumber } from "../../shared/valueUtilities.js";
 import "./historyWorkflow.js";
 import { internalModules } from "./modules.js";
 
@@ -18,11 +19,6 @@ const SURFACE_CLASSES = new Set([
 ]);
 const RUNNING_FORMATS = new Set(["CONTINUOUS_RUN", "RUN_WALK", "UNKNOWN"]);
 const PLAN_FACT_PREVIEW_VERSION = "plan-facts-v1";
-
-function finiteNumber(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
-}
 
 function provided(value) {
   return value !== undefined && value !== null && value !== "";

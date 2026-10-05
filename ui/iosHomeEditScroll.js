@@ -1,14 +1,9 @@
-const MOBILE_HOME_QUERY = "(max-width: 54.99rem)";
+import { matchesMobileHomeLayout as mobileLayoutMatches } from "./mobileHomeGridUtilities.js";
+
 const IOS_NATIVE_SCROLL_CLASS = "is-runload-ios-home-native-scroll";
 const IOS_VERTICAL_LOCK_CLASS = "is-runload-ios-home-edit-vertical-locked";
 
 let lockedScrollY = null;
-
-function mobileLayoutMatches() {
-  return typeof globalThis.matchMedia === "function"
-    ? globalThis.matchMedia(MOBILE_HOME_QUERY).matches
-    : Number(globalThis.innerWidth || 0) <= 879;
-}
 
 function isIOSLike() {
   const ua = String(globalThis.navigator?.userAgent || "");
