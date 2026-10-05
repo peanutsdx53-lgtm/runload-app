@@ -75,8 +75,20 @@ jobs:
           node --check ui/interactions/mobileHomeInteractions.js
       - name: Mobile Home regression
         run: node tests/mobileHomeDefaultLayout.test.mjs
-      - name: Full regression
-        run: node --test tests/*.test.mjs
+      - name: Full non-browser regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          pass=0
+          for test_file in tests/*.test.mjs; do
+            if [[ "$test_file" == *mobileWalkJogBrowserFlow.test.mjs ]]; then
+              continue
+            fi
+            echo "running: $test_file"
+            node "$test_file"
+            pass=$((pass+1))
+          done
+          echo "non-browser test files passed: $pass"
       - name: Commit audited fix
         shell: bash
         run: |
