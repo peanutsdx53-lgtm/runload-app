@@ -6,6 +6,7 @@ const scaleDefinition = fs.readFileSync('core/rofJAuthorConfirmedScale.js', 'utf
 const visualCss = fs.readFileSync('styles/rof-j-visual.css', 'utf8');
 const compactCss = fs.readFileSync('styles/rof-j-compact.css', 'utf8');
 const mobileCompactCss = fs.readFileSync('styles/mobile-rof-j-compact-responsive.css', 'utf8');
+const mobileVisualCss = fs.readFileSync('styles/mobile-rof-j-visual-responsive.css', 'utf8');
 const mobileResultModule = fs.readFileSync('ui/mobileRofJPresentation.js', 'utf8');
 const desktopResultModule = fs.readFileSync('ui/desktopRofJPresentation.js', 'utf8');
 const core = fs.readFileSync('core/rofJCore.js', 'utf8');
@@ -61,6 +62,14 @@ test('DAILY-USE-VIEW-SHOWS-CORRECTED-HORIZONTAL-ANCHOR-GUIDE', () => {
   assert.ok(visualCss.includes('.rof-author-anchor__position'));
   assert.ok(visualCss.includes('.rof-author-anchor__visual'));
   assert.ok(compactCss.includes('.rof-visual-guide--compact'));
+});
+
+test('MOBILE-ANCHOR-LABELS-STAY-BELOW-THEIR-IMAGES', () => {
+  assert.ok(!mobileVisualCss.includes('grid-template-columns: 4.25rem minmax(0, 1fr) 3rem'));
+  assert.ok(!mobileVisualCss.includes('grid-template-columns: 3.9rem minmax(0, 1fr) 2.65rem'));
+  assert.ok(!mobileVisualCss.includes('width: 2.85rem'));
+  assert.ok(!mobileVisualCss.includes('width: 2.5rem'));
+  assert.ok(mobileVisualCss.includes('grid-template-rows: 2.85rem auto'));
 });
 
 test('CURRENT-SELECTION-GUIDANCE-OVERRIDES-LEGACY-PLACEHOLDER-TEXT', () => {
