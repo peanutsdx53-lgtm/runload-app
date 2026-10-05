@@ -1,0 +1,44 @@
+/* Shared screen-layout theme aliases preserved from the approved pre-split UI.
+   Geometry and viewport-specific rules remain in desktop/mobile styles. */
+
+.screen-layout {
+  --bg: var(--color-paper);
+  --surface: var(--color-surface);
+  --surface2: var(--color-surface-muted);
+  --ink: var(--color-ink);
+  --muted: var(--color-muted);
+  --line: var(--color-line);
+  --accent: var(--color-accent);
+  --accent2: var(--color-accent-strong);
+  --soft: var(--color-accent-soft);
+  --thread: var(--color-model);
+  --threadSoft: var(--color-model-soft);
+  --model: var(--color-model);
+  --model-soft: var(--color-model-soft);
+  --violet: var(--color-model);
+  --violetSoft: var(--color-model-soft);
+  --warn: var(--color-attention);
+  --warnSoft: var(--color-attention-soft);
+  --weekend: var(--color-weekend-saturday);
+  --shadow: var(--shadow-card);
+  --paper: var(--color-paper);
+  --s: var(--color-surface);
+  --s2: var(--color-surface-muted);
+  --a: var(--color-accent);
+  --a2: var(--color-accent-strong);
+  --accent-strong: var(--color-accent-strong);
+  --accent-soft: var(--color-accent-soft);
+  --focus: var(--color-focus);
+  --shadow2: var(--shadow-card);
+  --neutral: var(--color-neutral-soft);
+  --danger: var(--color-danger);
+  --dangerSoft: var(--color-danger-soft);
+  --urgent: var(--color-attention);
+  --urgentSoft: var(--color-attention-soft);
+  --up: var(--color-attention);
+  --flat: var(--color-muted);
+  --down: var(--color-info);
+  --gap: var(--color-neutral-soft);
+  --ease: cubic-bezier(.2,.8,.2,1);
+  min-width: 0;
+}

@@ -1,0 +1,18 @@
+/* Shared Result visual foundation preserved from the approved pre-split UI.
+   Platform-specific layout remains in desktop/mobile styles. */
+
+.screen-layout--result .body-silhouette {
+  fill: color-mix(in srgb,var(--color-map-silhouette) 78%,var(--color-map-line));
+  stroke: var(--color-map-line);
+  stroke-width: 3;
+}
+
+.screen-layout--result .region-path{fill-opacity:1;stroke-width:4;transition:filter .15s ease,stroke-width .15s ease,transform .15s ease;transform-box:fill-box;transform-origin:center}
+.screen-layout--result .region-path[data-direction="above"]{fill:var(--model);stroke:color-mix(in srgb,var(--model) 78%,var(--surface))}
+.screen-layout--result .region-path[data-direction="reference"]{fill:var(--accent-soft);stroke:var(--accent-strong)}
+.screen-layout--result .region-path[data-direction="below"]{fill:var(--color-info);stroke:color-mix(in srgb,var(--color-info) 78%,var(--surface))}
+.screen-layout--result .region-path[data-direction="unavailable"]{fill:url(#hatch-front);stroke:var(--muted);stroke-dasharray:9 6}
+.screen-layout--result .body-view[data-view="back"] .region-path[data-direction="unavailable"]{fill:url(#hatch-back)}
+.screen-layout--result .body-view[data-view="sole"] .region-path[data-direction="unavailable"]{fill:url(#hatch-sole)}
+.screen-layout--result .region-link:focus-visible .region-path,.screen-layout--result .region-link:hover .region-path{filter:brightness(1.12) saturate(1.08);stroke:var(--focus);stroke-width:9;transform:scale(1.02)}
+.screen-layout--result .body-view{min-width:0;margin:0;text-align:center}

@@ -1,0 +1,8 @@
+/* Desktop-only responsive rules extracted from styles/self-understanding.css. */
+
+@media (min-width:55rem) {
+  .self-understanding-thread__actions { grid-template-columns:1fr 1fr; }
+  .self-understanding-thread__actions .self-understanding-primary { grid-column:1 / -1; }
+  .history-view--checks .self-understanding-history-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .history-view--checks .self-understanding-history-item:has(.self-understanding-history-chart) { grid-column:auto; }
+}

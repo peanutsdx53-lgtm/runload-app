@@ -1,0 +1,19 @@
+/* Desktop-only responsive rules extracted from styles/components.css. */
+
+@media (min-width: 80rem) {
+  .primary-navigation__link {
+    min-height: 3.45rem;
+    padding: 0.42rem 0.2rem;
+    border-radius: 1rem;
+    font-size: var(--type-label);
+  }
+  .primary-navigation__icon { width: 1.12rem; height: 1.12rem; }
+  .primary-navigation__link.is-current::after {
+    top: 22%;
+    right: auto;
+    bottom: 22%;
+    left: 0.13rem;
+    width: 0.15rem;
+    height: auto;
+  }
+}

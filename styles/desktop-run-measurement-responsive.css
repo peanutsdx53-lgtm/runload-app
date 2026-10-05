@@ -1,0 +1,21 @@
+/* Desktop-only responsive rules extracted from styles/run-measurement.css. */
+
+@media (min-width: 55rem) {
+
+  .run-launch__choice--app {
+    color: var(--color-on-accent);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .run-launch__choice--app small,
+  .run-launch__choice--app span {
+    color: color-mix(in srgb, var(--color-on-accent) 84%, transparent);
+  }
+
+
+  .home-measure-link,
+  .plan-measure-link {
+    display: none !important;
+  }
+}

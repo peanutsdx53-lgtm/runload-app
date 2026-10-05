@@ -894,83 +894,7 @@ html.consult-viewer-open body {
   }
 }
 
-@media (max-width: 35rem) {
-  .screen--consultation[data-share-prep] .share-step {
-    padding: 14px;
-    border-radius: 18px;
-  }
 
-  .screen--consultation[data-share-prep] .share-choice-grid,
-  .screen--consultation[data-share-prep] .share-choice-grid--compact {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-page {
-    padding: 16px 14px 46px;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-head {
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-head h1 {
-    font-size: 1.1rem !important;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-head dl {
-    grid-template-columns: 1fr;
-    gap: 3px;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-head dl div {
-    display: flex;
-    justify-content: flex-end;
-    gap: 4px;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-head dd {
-    margin: 0;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-two-column {
-    grid-template-columns: 1fr;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-region-summary {
-    grid-template-columns: 1fr;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-region-visual-grid {
-    grid-template-columns: 82px minmax(0, 1fr);
-    gap: 8px;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-body-map {
-    height: 112px;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-body-map svg {
-    width: 58px;
-    height: 100px;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-history-table th,
-  .screen--consultation[data-share-prep] .share-sheet-history-table td {
-    font-size: .57rem;
-    padding: 5px;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-footer {
-    left: 14px;
-    right: 14px;
-    bottom: 12px;
-  }
-}
 
 @media print {
   @page {
@@ -1149,25 +1073,7 @@ html.consult-viewer-open body {
 }
 
 /* Consultation share preparation uses the current four-step flow. */
-@media (min-width: 69rem) {
-  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body {
-    display: block !important;
-    grid-template-columns: none !important;
-    grid-template-areas: none !important;
-  }
 
-  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body > .share-step {
-    position: static !important;
-    grid-area: auto !important;
-    grid-column: auto !important;
-    grid-row: auto !important;
-    margin-top: 16px !important;
-  }
-
-  .screen--consultation.screen-layout--consultation[data-share-prep] .share-output-actions {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  }
-}
 
 .screen--consultation[data-share-prep] .consultation-confirmation-theme {
   margin-top: 12px;

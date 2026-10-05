@@ -673,15 +673,20 @@
     display: grid;
     gap: 0.8rem;
     align-items: start;
+    justify-content: space-between;
+    border: 1px solid var(--line);
     border-radius: 1.05rem;
+    background: var(--surface);
   }
 
   .screen--record-input.screen-layout--record .desktop-save-area strong {
+    display: block;
     font-size: 1rem;
     line-height: 1.35;
   }
 
   .screen--record-input.screen-layout--record .desktop-save-area span {
+    display: block;
     margin-top: 0.32rem;
     font-size: 0.8rem;
     line-height: 1.48;
@@ -903,7 +908,7 @@
     clip-path: url(#body-clip-sole);
   }
 
-  .screen--result.screen-layout--result .region-path--mobile-shape {
+  .screen--result.screen-layout--result .region-path--front-lower-shape {
     display: none;
   }
 

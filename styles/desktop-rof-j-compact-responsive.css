@@ -1,0 +1,11 @@
+/* Desktop-only responsive rules extracted from styles/rof-j-compact.css. */
+
+@media (min-width: 55rem) {
+  body:not(.record-overlay-open) .screen-layout--record [data-record-rof-overlay]:not([hidden]) {
+    display: none !important;
+  }
+
+  body.record-overlay-open .screen-layout--record [data-record-rof-overlay]:not([hidden]) {
+    display: grid !important;
+  }
+}

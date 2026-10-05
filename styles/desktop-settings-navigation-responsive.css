@@ -1,0 +1,7 @@
+/* Desktop-only responsive rules extracted from styles/settings-navigation.css. */
+
+@media (min-width: 55rem) {
+  .screen--settings .group:has(.settings-guide-links) {
+    display: none !important;
+  }
+}

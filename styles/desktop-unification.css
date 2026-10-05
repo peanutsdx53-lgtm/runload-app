@@ -1,32 +1,32 @@
 /* PC-only consolidation pass. Smartphone presentation remains untouched. */
 @media (min-width: 55rem) {
   /* Global desktop header: one screen title, one back control, one utility area. */
-  #desktop-header-root > .app-header--desktop {
+  #platform-header-root > .app-header--desktop {
     display: grid !important;
     grid-template-columns: minmax(10rem, 1fr) auto minmax(10rem, 1fr) !important;
     align-items: center !important;
     gap: 1rem !important;
   }
 
-  #desktop-header-root .app-header__leading {
+  #platform-header-root .app-header__leading {
     min-width: 0;
     justify-self: start;
     display: flex;
     align-items: center;
   }
 
-  #desktop-header-root .app-header__brand {
+  #platform-header-root .app-header__brand {
     justify-self: center;
     margin: 0 !important;
     white-space: nowrap;
   }
 
-  #desktop-header-root .app-header__actions {
+  #platform-header-root .app-header__actions {
     justify-self: end;
     margin-left: 0 !important;
   }
 
-  #desktop-header-root .pc-global-back {
+  #platform-header-root .pc-global-back {
     width: fit-content;
     min-width: 0;
     min-height: 2.65rem;
@@ -45,13 +45,13 @@
     box-shadow: 0 .18rem .6rem color-mix(in srgb, var(--color-ink) 5%, transparent);
   }
 
-  #desktop-header-root .pc-global-back:hover,
-  #desktop-header-root .pc-global-back:focus-visible {
+  #platform-header-root .pc-global-back:hover,
+  #platform-header-root .pc-global-back:focus-visible {
     border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-line));
     background: var(--color-selection-surface);
   }
 
-  #desktop-header-root .app-header__back-placeholder { width: 1px; height: 1px; }
+  #platform-header-root .app-header__back-placeholder { width: 1px; height: 1px; }
 
   /* The global header already names the screen. Remove duplicate screen titles/intros on PC. */
   .screen--history > .page-head > div,
@@ -502,16 +502,16 @@
   }
 
   /* In the interpretation room, retain the useful stage guide but remove the repeated screen intro. */
-  .interpretation-flow-room--pc .interpretation-flow-head > div:first-child {
+  .interpretation-flow-room--wide .interpretation-flow-head > div:first-child {
     display: none !important;
   }
 
-  .interpretation-flow-room--pc .interpretation-flow-head {
+  .interpretation-flow-room--wide .interpretation-flow-head {
     justify-content: flex-end !important;
     margin-bottom: .8rem !important;
   }
 
-  .interpretation-flow-room--pc.interpretation-flow-room--empty .interpretation-flow-head {
+  .interpretation-flow-room--wide.interpretation-flow-room--empty .interpretation-flow-head {
     display: none !important;
   }
 

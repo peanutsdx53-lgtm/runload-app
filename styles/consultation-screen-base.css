@@ -1,0 +1,245 @@
+/* Shared Consultation visual foundation.
+   Platform-specific responsive and print shell rules remain in platform styles. */
+
+/* ===== Screen: consultation ===== */
+.screen-layout--consultation a,.screen-layout--consultation button,.screen-layout--consultation input,.screen-layout--consultation textarea{font:inherit;-webkit-tap-highlight-color:transparent}
+.screen-layout--consultation a{text-decoration:none;color:inherit}
+.screen-layout--consultation .eyebrow{margin:0;color:var(--accent);font-size:var(--type-label);font-weight:900;letter-spacing:.16em}
+.screen-layout--consultation .head h1{margin:4px 0 0;font-size:30px;letter-spacing:-.04em}
+.screen-layout--consultation .head p:last-child{margin:7px 0 0;color:var(--muted);font-size:var(--type-label);line-height:1.55}
+.screen-layout--consultation .source{margin-top:18px;padding:13px 14px;border:1px solid var(--line);border-radius:17px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:14px;box-shadow:var(--shadow)}
+.screen-layout--consultation .source small,.screen-layout--consultation .source strong,.screen-layout--consultation .source span{display:block}
+.screen-layout--consultation .source small{font-size:var(--type-label);color:var(--muted);font-weight:850}
+.screen-layout--consultation .source strong{margin-top:3px;font-size:14px}
+.screen-layout--consultation .source span{margin-top:3px;color:var(--muted);font-size:var(--type-label)}
+.screen-layout--consultation .source a{flex:0 0 auto;min-height:38px;padding:0 11px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);color:var(--accent2);font-size:var(--type-label);font-weight:900;display:grid;place-items:center}
+.screen-layout--consultation .section{margin-top:20px}
+.screen-layout--consultation .section-head small{display:block;color:var(--muted);font-size:var(--type-label);font-weight:900;letter-spacing:.12em}
+.screen-layout--consultation .section-head h2{margin:3px 0 0;font-size:17px}
+.screen-layout--consultation .section-head p{margin:5px 0 0;color:var(--muted);font-size:var(--type-label);line-height:1.5}
+.screen-layout--consultation .field{display:grid;gap:6px;margin-top:10px}
+.screen-layout--consultation .field span{font-size:var(--type-label);color:var(--muted);font-weight:850}
+.screen-layout--consultation .field input,.screen-layout--consultation .field textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:10px 11px;outline:none}
+.screen-layout--consultation .field input{min-height:42px}
+.screen-layout--consultation .field textarea{min-height:88px;resize:vertical;line-height:1.5}
+.screen-layout--consultation .field input:focus,.screen-layout--consultation .field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent)}
+.screen-layout--consultation .route{padding:15px;border:1px solid var(--line);border-radius:19px;background:var(--surface);box-shadow:var(--shadow);display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center}
+.screen-layout--consultation .route.primary{border-color:color-mix(in srgb,var(--violet) 35%,var(--line));background:linear-gradient(135deg,var(--violetSoft),var(--surface))}
+.screen-layout--consultation .route .icon{width:42px;height:42px;border-radius:13px;background:var(--soft);color:var(--accent2);display:grid;place-items:center;font-weight:900}
+.screen-layout--consultation .route.primary .icon{background:var(--violet);color:var(--color-on-model)}
+.screen-layout--consultation .route small,.screen-layout--consultation .route strong,.screen-layout--consultation .route span{display:block}
+.screen-layout--consultation .route small{font-size:var(--type-label);color:var(--muted)}
+.screen-layout--consultation .route strong{margin-top:2px;font-size:12px}
+.screen-layout--consultation .route span{margin-top:4px;font-size:var(--type-label);color:var(--muted);line-height:1.45}
+.screen-layout--consultation .route i{font-style:normal;font-size:20px;color:var(--accent2)}
+.screen-layout--consultation .panel{margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}
+.screen-layout--consultation .panel[hidden]{display:none}
+.screen-layout--consultation .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.screen-layout--consultation .panel-head small,.screen-layout--consultation .panel-head strong{display:block}
+.screen-layout--consultation .panel-head small{font-size:var(--type-label);color:var(--muted);font-weight:850}
+.screen-layout--consultation .panel-head strong{margin-top:2px;font-size:13px}
+.screen-layout--consultation .status{padding:5px 7px;border-radius:999px;background:var(--soft);color:var(--accent2);font-size:var(--type-label);font-weight:850}
+.screen-layout--consultation .memo{margin-top:11px;padding:12px;border:1px solid var(--line);border-radius:13px;background:var(--surface2);white-space:pre-wrap;font-size:var(--type-label);line-height:1.6}
+.screen-layout--consultation .actions{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}
+.screen-layout--consultation .actions button{min-height:40px;padding:0 12px;border:1px solid var(--accent);border-radius:10px;background:var(--surface);color:var(--accent2);font-size:var(--type-label);font-weight:900}
+.screen-layout--consultation .actions button.primary{background:var(--accent);color:var(--color-on-accent)}
+.screen-layout--consultation .report{margin-top:11px;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.screen-layout--consultation .report header{padding:14px;background:var(--soft)}
+.screen-layout--consultation .report header small,.screen-layout--consultation .report header strong,.screen-layout--consultation .report header span{display:block}
+.screen-layout--consultation .report header small{font-size:var(--type-label);color:var(--muted)}
+.screen-layout--consultation .report header strong{margin-top:2px;font-size:15px}
+.screen-layout--consultation .report header span{margin-top:4px;font-size:var(--type-label);color:var(--muted)}
+.screen-layout--consultation .report section{padding:12px 14px;border-top:1px solid var(--line)}
+.screen-layout--consultation .report section small,.screen-layout--consultation .report section strong,.screen-layout--consultation .report section p{display:block}
+.screen-layout--consultation .report section small{font-size:var(--type-label);color:var(--muted);font-weight:850}
+.screen-layout--consultation .report section strong{margin-top:3px;font-size:var(--type-label)}
+.screen-layout--consultation .report section p{margin:4px 0 0;font-size:var(--type-label);color:var(--muted);line-height:1.5}
+.screen-layout--consultation .boundary{margin-top:12px;padding:11px 12px;border-left:3px solid var(--accent);background:color-mix(in srgb,var(--soft) 62%,transparent);border-radius:0 11px 11px 0;color:var(--muted);font-size:var(--type-label);line-height:1.55}
+.screen-layout--consultation .support-link{margin-top:12px;padding:12px 13px;border:1px solid color-mix(in srgb,var(--warn) 28%,var(--line));border-radius:14px;background:var(--warnSoft);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.screen-layout--consultation .support-link small,.screen-layout--consultation .support-link strong{display:block}
+.screen-layout--consultation .support-link small{font-size:var(--type-label);color:var(--muted)}
+.screen-layout--consultation .support-link strong{margin-top:2px;font-size:var(--type-label);color:var(--warn)}
+.screen-layout--consultation .support-link i{font-style:normal;font-size:20px;color:var(--warn)}
+@media (min-width:760px){}
+
+/* ===== share preparation redesign ===== */
+.screen-layout--consultation .share-step{margin-top:24px}
+.screen-layout--consultation .share-purpose-step .section-head h2{font-size:15px}
+.screen-layout--consultation .share-purpose-step .field{margin-top:12px}
+.screen-layout--consultation .share-purpose-step .field span{font-size:var(--type-label)}
+.screen-layout--consultation .share-purpose-step .field input{min-height:48px}
+.screen-layout--consultation .share-purpose-step .field textarea{min-height:72px}
+.screen-layout--consultation .share-region-field{margin-top:12px}
+
+.screen-layout--consultation .field select{
+  width:100%;
+  min-width:0;
+  min-height:48px;
+  padding:9px 11px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--surface);
+  color:var(--ink);
+  font-size:16px;
+  outline:none;
+}
+.screen-layout--consultation .field select:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent);
+}
+.screen-layout--consultation .field small{
+  color:var(--muted);
+  font-size:var(--type-label);
+  line-height:1.5;
+}
+.screen-layout--consultation .share-source-list{margin-top:11px;display:grid;gap:8px}
+.screen-layout--consultation .share-source{
+  min-height:64px;
+  padding:10px 11px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--surface);
+  display:grid;
+  grid-template-columns:22px minmax(0,1fr);
+  gap:9px;
+  align-items:start;
+}
+.screen-layout--consultation .share-source input{
+  width:18px;
+  height:18px;
+  margin:2px 0 0;
+  accent-color:var(--accent);
+}
+.screen-layout--consultation .share-source span,
+.screen-layout--consultation .share-source strong,
+.screen-layout--consultation .share-source small,
+.screen-layout--consultation .share-source em{display:block}
+.screen-layout--consultation .share-source strong{font-size:var(--type-label)}
+.screen-layout--consultation .share-source small{margin-top:2px;color:var(--muted);font-size:var(--type-label)}
+.screen-layout--consultation .share-source em{margin-top:5px;color:var(--ink);font-size:var(--type-label);font-style:normal;line-height:1.45}
+.screen-layout--consultation .share-region-detail{margin-top:6px;display:grid!important;gap:2px}
+.screen-layout--consultation .share-region-detail b,
+.screen-layout--consultation .share-region-detail span{display:block}
+.screen-layout--consultation .share-region-detail .share-region-name{font-weight:850;color:var(--ink)}
+.screen-layout--consultation .share-region-detail b{font-size:var(--type-label);color:var(--accent-strong)}
+.screen-layout--consultation .share-region-detail span{font-size:var(--type-label);line-height:1.45}
+.screen-layout--consultation .share-region-detail span:last-child{color:var(--muted)}
+.screen-layout--consultation .share-source:has(input:checked){
+  border-color:var(--color-selection-border);
+  background:var(--color-selection-surface);
+}
+.screen-layout--consultation .share-source.is-unavailable{opacity:.62}
+.screen-layout--consultation .share-preview{
+  margin-top:11px;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:var(--surface);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.screen-layout--consultation .share-preview>header{
+  padding:13px 14px;
+  background:var(--soft);
+}
+.screen-layout--consultation .share-preview>header small,
+.screen-layout--consultation .share-preview>header strong,
+.screen-layout--consultation .share-preview>header span{display:block}
+.screen-layout--consultation .share-preview>header small{color:var(--muted);font-size:var(--type-label);font-weight:850}
+.screen-layout--consultation .share-preview>header strong{margin-top:2px;font-size:13px}
+.screen-layout--consultation .share-preview>header span{margin-top:4px;color:var(--muted);font-size:var(--type-label);line-height:1.45}
+.screen-layout--consultation .share-preview-grid{display:grid}
+.screen-layout--consultation .share-card{
+  padding:11px 14px;
+  border-top:1px solid var(--line);
+}
+.screen-layout--consultation .share-card[hidden]{display:none!important}
+.screen-layout--consultation .share-card small,
+.screen-layout--consultation .share-card strong{display:block}
+.screen-layout--consultation .share-card small{color:var(--muted);font-size:var(--type-label);font-weight:850}
+.screen-layout--consultation .share-card strong{margin-top:3px;font-size:var(--type-label);line-height:1.5}
+.screen-layout--consultation .share-card--regional .share-region-detail{margin-top:7px}
+.screen-layout--consultation .share-card--regional .share-region-detail b{font-size:var(--type-label)}
+.screen-layout--consultation .share-card--regional .share-region-detail span{font-size:var(--type-label)}
+.screen-layout--consultation .share-output-actions{margin-top:11px;display:grid;gap:8px}
+.screen-layout--consultation .share-output-actions .output{
+  width:100%;
+  min-height:64px;
+  padding:11px 13px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--surface);
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  text-align:left;
+}
+.screen-layout--consultation .share-output-actions .output.primary{border-color:var(--accent);background:var(--accent);color:var(--color-on-accent)}
+.screen-layout--consultation .share-output-actions .output.secondary{background:var(--surface2)}
+.screen-layout--consultation .share-output-actions .output span,
+.screen-layout--consultation .share-output-actions .output strong,
+.screen-layout--consultation .share-output-actions .output small{display:block}
+.screen-layout--consultation .share-output-actions .output strong{font-size:var(--type-label)}
+.screen-layout--consultation .share-output-actions .output small{margin-top:2px;color:inherit;opacity:.72;font-size:var(--type-label)}
+.screen-layout--consultation .share-output-actions .output i{font-style:normal;font-size:18px}
+html.consult-viewer-open{overflow:hidden}
+.screen-layout--consultation .share-viewer[hidden]{display:none!important}
+.screen-layout--consultation .share-viewer{
+  position:fixed;
+  inset:0;
+  z-index:140;
+  padding:max(14px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+  background:color-mix(in srgb,var(--ink) 44%,transparent);
+  overflow:auto;
+}
+.screen-layout--consultation .share-viewer-shell{
+  width:min(100%,720px);
+  min-height:calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  margin:0 auto;
+  border-radius:20px;
+  background:var(--paper);
+  overflow:hidden;
+  box-shadow:0 20px 56px rgba(0,0,0,.24);
+}
+.screen-layout--consultation .share-viewer-head{
+  padding:14px 15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid var(--line);
+}
+.screen-layout--consultation .share-viewer-head small,
+.screen-layout--consultation .share-viewer-head strong{display:block}
+.screen-layout--consultation .share-viewer-head small{color:var(--accent);font-size:var(--type-label);font-weight:900;letter-spacing:.12em}
+.screen-layout--consultation .share-viewer-head strong{margin-top:2px;font-size:16px}
+.screen-layout--consultation .share-viewer-head button{
+  width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px
+}
+.screen-layout--consultation .share-viewer-purpose{padding:16px 15px;background:var(--soft)}
+.screen-layout--consultation .share-viewer-purpose small,
+.screen-layout--consultation .share-viewer-purpose strong,
+.screen-layout--consultation .share-viewer-purpose p{display:block}
+.screen-layout--consultation .share-viewer-purpose small{color:var(--muted);font-size:var(--type-label);font-weight:850}
+.screen-layout--consultation .share-viewer-purpose strong{margin-top:3px;font-size:18px}
+.screen-layout--consultation .share-viewer-purpose p{margin:7px 0 0;font-size:var(--type-label);line-height:1.5}
+.screen-layout--consultation .share-viewer-grid{display:grid}
+.screen-layout--consultation .share-viewer-grid .share-card{padding:14px 15px;background:var(--surface)}
+.screen-layout--consultation .share-viewer-grid .share-card small{font-size:var(--type-label)}
+.screen-layout--consultation .share-viewer-grid .share-card strong{font-size:12px}
+.screen-layout--consultation .share-viewer-shell>footer{
+  padding:12px 15px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:var(--type-label);
+  line-height:1.5;
+}
+.screen-layout--consultation .share-print-document{display:none}
+
+@media (min-width:760px){
+  .screen-layout--consultation .share-source-list{grid-template-columns:1fr 1fr}
+  .screen-layout--consultation .share-preview-grid{grid-template-columns:1fr 1fr}
+  .screen-layout--consultation .share-preview-grid .share-card--regional{grid-column:1/-1}
+  .screen-layout--consultation .share-output-actions{grid-template-columns:repeat(3,1fr)}
+}

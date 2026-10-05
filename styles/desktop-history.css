@@ -251,6 +251,7 @@
 
   .screen--history.screen-layout--history .type-toggle {
     min-height: 2.85rem !important;
+    margin-top: 0;
   }
 
   .screen--history.screen-layout--history .type-toggle button {

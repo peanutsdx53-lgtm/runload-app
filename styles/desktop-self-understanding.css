@@ -1,0 +1,11 @@
+/* Desktop-only self-understanding history navigation. */
+.desktop-history-mode {
+  display:flex; gap:.35rem; margin:0 0 1rem; padding:.25rem; border:1px solid var(--color-line);
+  border-radius:var(--radius-medium); background:var(--color-surface-muted);
+}
+.desktop-history-mode a {
+  flex:1; min-height:2.7rem; display:flex; align-items:center; justify-content:center; gap:.4rem; padding:.55rem .7rem;
+  border-radius:calc(var(--radius-medium) - 4px); color:var(--color-muted); font-size:.88rem; font-weight:800; text-decoration:none;
+}
+.desktop-history-mode a.active { background:var(--color-surface); color:var(--color-ink); box-shadow:var(--shadow-soft); }
+.desktop-history-mode a:focus-visible { outline:3px solid var(--color-focus); outline-offset:2px; }

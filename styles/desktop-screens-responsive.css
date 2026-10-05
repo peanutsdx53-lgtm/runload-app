@@ -1,0 +1,23 @@
+/* Desktop-only responsive rules extracted from styles/screens.css. */
+
+@media (min-width: 64rem) {  .field-grid--four { grid-template-columns: repeat(4, minmax(0, 1fr)); }  .distribution-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 64rem) {
+}
+
+@media (min-width: 64rem) {
+}
+
+@media (min-width: 58rem) {
+}
+
+@media (min-width: 70rem) {  .feature-menu__link--primary-duplicate,
+  .feature-menu__group--primary-duplicate-only { display: none; }
+}
+
+@media (min-width: 64.01rem) {
+}
+
+@media (min-width: 56rem) {  .record-rof-overlay { bottom: 0; align-items: center; }  .record-subscreen { bottom: 0; }
+}

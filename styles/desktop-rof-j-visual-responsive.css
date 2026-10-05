@@ -1,0 +1,18 @@
+/* Desktop-only responsive rules extracted from styles/rof-j-visual.css. */
+
+@media (min-width: 55rem) {
+  .screen--record-input .rof-visual-guide {
+    padding: 0.8rem 0.9rem;
+  }
+
+  .screen--record-input .rof-author-anchor {
+    min-height: 4rem;
+    grid-template-columns: minmax(5.2rem, auto) minmax(0, 1fr) 4.1rem;
+    padding-left: 0.75rem;
+  }
+
+  .screen--record-input .rof-author-anchor__visual {
+    width: 3.85rem;
+    height: 3.4rem;
+  }
+}

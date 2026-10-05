@@ -32,14 +32,6 @@
   --type-heading: 1.5rem;
   --type-display: 2rem;
 
-  /* Smartphone role scale. No smartphone text role is smaller than 12px at 16px root size. */
-  --mobile-type-caption: 0.75rem;
-  --mobile-type-label: 0.8125rem;
-  --mobile-type-body: 0.9375rem;
-  --mobile-type-control: 1rem;
-  --mobile-type-section: 1.125rem;
-  --mobile-type-title: 1.5rem;
-  --mobile-type-display: 2rem;
   --line-body: 1.65;
   --line-compact: 1.35;
 

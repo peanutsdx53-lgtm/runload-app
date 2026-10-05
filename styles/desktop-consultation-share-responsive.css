@@ -1,0 +1,21 @@
+/* Desktop-only responsive rules extracted from styles/consultation-share.css. */
+
+@media (min-width: 69rem) {
+  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body {
+    display: block !important;
+    grid-template-columns: none !important;
+    grid-template-areas: none !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body > .share-step {
+    position: static !important;
+    grid-area: auto !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    margin-top: 16px !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-output-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
