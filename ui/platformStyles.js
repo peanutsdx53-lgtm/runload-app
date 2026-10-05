@@ -108,7 +108,6 @@ const DESKTOP_STYLE_GROUPS = Object.freeze([
   ]) }),
   Object.freeze({ before: "./styles/interpretation-room-compact.css", urls: Object.freeze([
     "./styles/desktop-rof-j-compact-responsive.css",
-    "./styles/desktop-course.css",
     "./styles/desktop-ui-tokens.css",
     "./styles/desktop-first-use.css",
     "./styles/desktop-history.css",
@@ -121,7 +120,6 @@ const DESKTOP_STYLE_GROUPS = Object.freeze([
     "./styles/desktop-empty-states.css",
     "./styles/desktop-home-layout.css",
     "./styles/desktop-interpretation-regions.css",
-    "./styles/desktop-course-editor.css",
     "./styles/desktop-actions.css",
     "./styles/desktop-about.css",
     "./styles/desktop-settings.css",
@@ -139,6 +137,8 @@ const DESKTOP_STYLE_GROUPS = Object.freeze([
     "./styles/desktop-settings-navigation-responsive.css",
     "./styles/desktop-history-state.css",
     "./styles/desktop-unification.css",
+    "./styles/desktop-course.css",
+    "./styles/desktop-course-editor.css",
     "./styles/desktop-interpretation-details.css",
   ]) }),
 ]);

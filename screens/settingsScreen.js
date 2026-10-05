@@ -2,6 +2,10 @@ import { APPEARANCE_MODE_OPTIONS, COLOR_THEME_OPTIONS, TEXT_SIZE_OPTIONS, normal
 import { escapeHtml } from "../ui/commonComponents.js";
 import { PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
 
+function checked(current, value) {
+  return current === value ? " checked" : "";
+}
+
 function displayOptionLabel(option) {
   return escapeHtml(option?.label || "");
 }

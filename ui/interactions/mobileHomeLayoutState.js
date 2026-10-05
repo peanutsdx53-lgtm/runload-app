@@ -574,8 +574,11 @@ export function makeWidgetShell(anchor, id) {
 
 export function prepareWidgets(widgetsContainer, services) {
   const existingAnchors = [...widgetsContainer.children].filter((node) => node.matches?.(".mobile-home-widget"));
+  const dynamicSlots = ["plan", "changes"];
+  let dynamicIndex = 0;
   existingAnchors.forEach((anchor, index) => {
-    const id = widgetIdFromAnchor(anchor, index);
+    const isDynamic = Boolean(anchor.dataset.dynamicWidget);
+    const id = isDynamic ? (dynamicSlots[dynamicIndex++] || "") : widgetIdFromAnchor(anchor, index);
     if (id) makeWidgetShell(anchor, id);
   });
   if (!widgetsContainer.querySelector('[data-home-widget-id="checkpoint"]')) {
