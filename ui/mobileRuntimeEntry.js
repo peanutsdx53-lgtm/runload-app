@@ -1,3 +1,5 @@
+import "./mobileRofJPresentation.js";
+import "./mobileVersionStatus.js";
 import "./mobileMeasurementRecordAutofill.js";
 import "./mobileHomeDefaultLayout.js";
 import "./mobileNavigationPolicy.js";

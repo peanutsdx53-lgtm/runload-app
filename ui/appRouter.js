@@ -1,6 +1,4 @@
 const DEFAULT_SCREEN = "home";
-const MOBILE_LAYOUT_QUERY = "(max-width: 54.99rem)";
-
 function parseHashLocation(validScreens, defaultScreen = DEFAULT_SCREEN) {
   const rawHash = window.location.hash.replace(/^#\/?/, "");
   const [rawScreen = "", rawQuery = ""] = rawHash.split("?");
@@ -20,15 +18,11 @@ function buildHash(screenName, parameters = {}) {
   return `#/${screenName}${query ? `?${query}` : ""}`;
 }
 
-function defaultSingleEntryNavigation() {
-  return Boolean(globalThis.matchMedia?.(MOBILE_LAYOUT_QUERY)?.matches);
-}
-
 export function createAppRouter({
   availableScreens,
   defaultScreen = DEFAULT_SCREEN,
   onScreenChange,
-  singleEntryNavigation = defaultSingleEntryNavigation,
+  singleEntryNavigation = false,
 }) {
   const validScreens = new Set(availableScreens);
   const resolvedDefaultScreen = validScreens.has(defaultScreen) ? defaultScreen : DEFAULT_SCREEN;

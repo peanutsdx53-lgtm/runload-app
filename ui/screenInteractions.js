@@ -3,7 +3,7 @@ import { SHARED_SCREEN_INTERACTION_BINDERS } from "./sharedScreenInteractionBind
 export async function createScreenInteractionBinder({ mobile = false } = {}) {
   const platformBinders = mobile
     ? (await import("./mobileScreenInteractionBinders.js")).MOBILE_SCREEN_INTERACTION_BINDERS
-    : Object.freeze({});
+    : (await import("./desktopScreenInteractionBinders.js")).DESKTOP_SCREEN_INTERACTION_BINDERS;
   const binders = Object.freeze({ ...SHARED_SCREEN_INTERACTION_BINDERS, ...platformBinders });
   let activeCleanup = null;
 

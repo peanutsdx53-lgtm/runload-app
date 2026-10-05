@@ -1,4 +1,4 @@
-export const APP_VERSION = "2026.10.05.1";
+export const APP_VERSION = "2026.10.05.3";
 export const APP_VERSION_LABEL = `v${APP_VERSION}`;
 
 // Keep this release identifier aligned with service-worker.js before publishing.
@@ -8,16 +8,6 @@ const APP_CACHE_PREFIXES = Object.freeze([
 
 let enhancementQueued = false;
 let resetting = false;
-
-function addMobileHomeVersion() {
-  const title = document.querySelector(".mobile-home-os__header > div");
-  if (!title || title.querySelector("[data-app-version]")) return;
-  const label = document.createElement("small");
-  label.dataset.appVersion = APP_VERSION;
-  label.textContent = `APP ${APP_VERSION_LABEL}`;
-  label.setAttribute("aria-label", `アプリバージョン ${APP_VERSION_LABEL}`);
-  title.append(label);
-}
 
 function createSettingsUpdatePanel() {
   const section = document.createElement("section");
@@ -101,7 +91,6 @@ function bindResetButton() {
 
 function enhanceVersionStatus() {
   enhancementQueued = false;
-  addMobileHomeVersion();
   addSettingsUpdatePanel();
   bindResetButton();
 }

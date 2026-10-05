@@ -380,7 +380,7 @@ function renderInterpretationMaterialPanel(output = {}, selfUnderstanding = null
   const rows = renderMaterialRows(output, selfUnderstanding);
   if (!rows.length) return "";
   const body = `<div class="interpretation-loop-material-list">${rows.map((row) => `<div><span>${interpretationIcon(row.icon)}</span><small>${escapeHtml(row.label)}</small><strong>${escapeHtml(row.value)}</strong></div>`).join("")}</div>`;
-  if (compact) return `<details class="interpretation-loop-material-mobile"><summary>材料を見る <b>${rows.length}</b></summary>${body}</details>`;
+  if (compact) return `<details class="interpretation-loop-material-compact"><summary>材料を見る <b>${rows.length}</b></summary>${body}</details>`;
   return `<section class="interpretation-loop-material" aria-labelledby="interpretation-loop-material-title"><header><small>MATERIAL</small><h2 id="interpretation-loop-material-title">今回の材料</h2></header>${body}</section>`;
 }
 
@@ -524,30 +524,30 @@ function renderInterpretationContextContextRail(candidate = {}) {
   </aside>`;
 }
 
-function renderInterpretationContextContextFirst(output = {}, selfUnderstanding = null, candidate = {}, { mobile = false } = {}) {
+function renderInterpretationContextContextFirst(output = {}, selfUnderstanding = null, candidate = {}, { compact = false } = {}) {
   const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
   const materials = renderMaterialRows(output, selfUnderstanding);
-  return `<div class="interpretation-room interpretation-flow-room interpretation-context-room interpretation-context-room--context ${mobile ? "interpretation-flow-room--mobile" : "interpretation-flow-room--pc"}" data-interpretation-room-state="interpretation-context-context-first" data-interpretation-flow-stage="focus">
+  return `<div class="interpretation-room interpretation-flow-room interpretation-context-room interpretation-context-room--context ${compact ? "interpretation-flow-room--compact" : "interpretation-flow-room--wide"}" data-interpretation-room-state="interpretation-context-context-first" data-interpretation-flow-stage="focus">
     <header class="interpretation-flow-head"><div><small>${escapeHtml(date)}</small><h1>今回の自分を見ていく</h1><p>身体の部位記録がなくても、自分が残した疲労感・条件・メモから振り返れます。</p></div>${renderInterpretationFlowStageGuide()}</header>
     <div class="interpretation-flow-layout"><main class="interpretation-flow-canvas"><div class="interpretation-flow-canvas-kicker" data-interpretation-flow-title-focus><small>今回、まず見るところ</small><h2>${escapeHtml(candidate.focusLabel)}</h2><p>最初は自分で残した記録だけを見ます。</p></div><div class="interpretation-flow-canvas-kicker" data-interpretation-flow-title-compare><small>考える材料を追加</small><h2>今回の記録に関係する一般情報</h2><p>自分の記録を理解するための背景として使います。個人への判定には使いません。</p></div>${renderInterpretationContextContextFocus(candidate, output)}${materials.length ? `<details class="interpretation-flow-more-materials interpretation-context-secondary-materials" data-interpretation-flow-reveal="compare"><summary>補足の材料を見る <b>${materials.length}</b></summary>${renderInterpretationMaterialPanel(output, selfUnderstanding)}</details>` : ""}</main>${renderInterpretationContextContextRail(candidate)}</div>
-    ${renderInterpretationLoopDetails(output, { mobile })}
+    ${renderInterpretationLoopDetails(output, { compact })}
   </div>`;
 }
 
-function renderInterpretationFlowFirst(output = {}, selfUnderstanding = null, { mobile = false } = {}) {
+function renderInterpretationFlowFirst(output = {}, selfUnderstanding = null, { compact = false } = {}) {
   const candidate = selfUnderstanding?.primaryCandidate || null;
   if (!candidate || candidate.kind !== "BODY_OBSERVATION_PAIR") {
     const contextCandidate = buildInterpretationContextCandidate(output);
-    return contextCandidate ? renderInterpretationContextContextFirst(output, selfUnderstanding, contextCandidate, { mobile }) : renderInterpretationFlowEmpty(output, selfUnderstanding, { mobile });
+    return contextCandidate ? renderInterpretationContextContextFirst(output, selfUnderstanding, contextCandidate, { compact }) : renderInterpretationFlowEmpty(output, selfUnderstanding, { compact });
   }
   const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
   const meta = interpretationFlowCandidateMeta(candidate);
   const materials = renderMaterialRows(output, selfUnderstanding);
   const reference = selectInterpretationReferenceKnowledge(output, { bodyPair: true });
-  return `<div class="interpretation-room interpretation-flow-room interpretation-context-room ${mobile ? "interpretation-flow-room--mobile" : "interpretation-flow-room--pc"}" data-interpretation-room-state="interpretation-context-first" data-interpretation-flow-stage="focus">
+  return `<div class="interpretation-room interpretation-flow-room interpretation-context-room ${compact ? "interpretation-flow-room--compact" : "interpretation-flow-room--wide"}" data-interpretation-room-state="interpretation-context-first" data-interpretation-flow-stage="focus">
     <header class="interpretation-flow-head"><div><small>${escapeHtml(date)}</small><h1>今回の自分を見ていく</h1><p>自分の体験を主役にして、RunLoadの情報と参考情報を必要な順に確認します。</p></div>${renderInterpretationFlowStageGuide()}</header>
     <div class="interpretation-flow-layout"><main class="interpretation-flow-canvas"><div class="interpretation-flow-canvas-kicker" data-interpretation-flow-title-focus><small>今回、まず見るところ</small><h2>${escapeHtml(meta.observationLabel)}</h2><p>最初は自分で記録した内容だけを見ます。</p></div><div class="interpretation-flow-canvas-kicker" data-interpretation-flow-title-compare><small>考える材料を追加</small><h2>${escapeHtml(meta.observationLabel)}について別の情報も確認できます</h2><p>自分の感覚を中心に、別の情報を補助材料として並べます。</p></div>${renderInterpretationFlowBodyPair(candidate)}${renderInterpretationContextReferenceKnowledge(reference, output)}${materials.length ? `<details class="interpretation-flow-more-materials interpretation-context-secondary-materials" data-interpretation-flow-reveal="compare"><summary>補足の材料を見る <b>${materials.length}</b></summary>${renderInterpretationMaterialPanel(output, selfUnderstanding)}</details>` : ""}</main>${renderInterpretationFlowFirstRail(candidate)}</div>
-    ${renderInterpretationLoopDetails(output, { mobile })}
+    ${renderInterpretationLoopDetails(output, { compact })}
   </div>`;
 }
 
@@ -578,9 +578,9 @@ function renderInterpretationFlowActiveRail(thread = {}) {
   </aside>`;
 }
 
-function renderInterpretationFlowActive(output = {}, selfUnderstanding = null, { mobile = false } = {}) {
+function renderInterpretationFlowActive(output = {}, selfUnderstanding = null, { compact = false } = {}) {
   const thread = selfUnderstanding?.activeThread || null;
-  if (!thread) return renderInterpretationFlowFirst(output, selfUnderstanding, { mobile });
+  if (!thread) return renderInterpretationFlowFirst(output, selfUnderstanding, { compact });
   const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
   const current = activeEpisodeForTarget(thread, output);
   const previous = [thread.sourceEpisode, ...(thread.eligibleEpisodes || [])].filter(Boolean).filter((episode) => String(episode.recordId || "") !== String(current?.recordId || ""));
@@ -589,37 +589,37 @@ function renderInterpretationFlowActive(output = {}, selfUnderstanding = null, {
     ? getInterpretationReferenceKnowledgeById(thread.subject?.articleId || "")
     : selectInterpretationReferenceKnowledge(output, { bodyPair: thread.type === "REGION_OBSERVATION_PAIR" });
   const historyLabel = isContextQuestion ? "これまで確認した走行" : "比較できる記録";
-  return `<div class="interpretation-room interpretation-flow-room interpretation-context-room ${mobile ? "interpretation-flow-room--mobile" : "interpretation-flow-room--pc"}" data-interpretation-room-state="interpretation-context-active" data-interpretation-flow-stage="focus">
+  return `<div class="interpretation-room interpretation-flow-room interpretation-context-room ${compact ? "interpretation-flow-room--compact" : "interpretation-flow-room--wide"}" data-interpretation-room-state="interpretation-context-active" data-interpretation-flow-stage="focus">
     <header class="interpretation-flow-head"><div><small>${escapeHtml(date)}</small><h1>前回から見ていたこと</h1><p>${escapeHtml(thread.title || compactThreadTitle(thread))}</p></div>${renderInterpretationFlowStageGuide()}</header>
     <div class="interpretation-flow-layout"><main class="interpretation-flow-canvas"><div class="interpretation-flow-canvas-kicker"><small>今回、新しい材料があります</small><h2>今回の自分の記録から確認します</h2><p>数値だけでなく、その日の距離・時間・疲労感などの文脈も一緒に見ます。</p></div><div class="interpretation-flow-active-current">${renderInterpretationFlowActiveEpisodeCard(current, "今回")}</div><section class="interpretation-flow-previous" data-interpretation-flow-reveal="compare"><header><small>これまで</small><h3>${escapeHtml(historyLabel)} ${escapeHtml(String(Number(thread.eligibleCount || previous.length + 1)))}件</h3></header><div>${previous.slice(-4).map((episode) => renderInterpretationFlowActiveEpisodeCard(episode)).join("")}</div><p>記録の並びと背景は一緒に確認しますが、傾向の確定・原因推定・良し悪しの判定は行いません。</p></section>${renderInterpretationContextReferenceKnowledge(reference, output, { compact: true })}</main>${renderInterpretationFlowActiveRail(thread)}</div>
-    ${renderInterpretationLoopDetails(output, { mobile })}
+    ${renderInterpretationLoopDetails(output, { compact })}
   </div>`;
 }
 
-function renderInterpretationFlowEmpty(output = {}, selfUnderstanding = null, { mobile = false } = {}) {
+function renderInterpretationFlowEmpty(output = {}, selfUnderstanding = null, { compact = false } = {}) {
   const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
   const materials = renderMaterialRows(output, selfUnderstanding);
-  return `<div class="interpretation-room interpretation-flow-room interpretation-flow-room--empty ${mobile ? "interpretation-flow-room--mobile" : "interpretation-flow-room--pc"}" data-interpretation-room-state="interpretation-flow-empty" data-interpretation-flow-stage="done"><header class="interpretation-flow-head"><div><small>${escapeHtml(date)}</small><h1>今回を見比べる</h1><p>必要な材料がないときは、無理に意味や問いを作りません。</p></div></header><section class="interpretation-flow-empty-card"><span aria-hidden="true">—</span><h2>今回は、続けて確かめる問いはまだありません</h2><p>今回の走行結果はそのまま確認できます。身体の記録と対応する情報、または以前から確認中の問いに新しい材料ができたときに、ここで見比べられます。</p><a class="interpretation-flow-primary interpretation-flow-link-button" href="#/result?recordId=${encodeURIComponent(output?.target?.recordId || "")}">結果に戻る</a>${materials.length ? `<details class="interpretation-flow-more-materials"><summary>今回の材料を見る <b>${materials.length}</b></summary>${renderInterpretationMaterialPanel(output, selfUnderstanding)}</details>` : ""}</section></div>`;
+  return `<div class="interpretation-room interpretation-flow-room interpretation-flow-room--empty ${compact ? "interpretation-flow-room--compact" : "interpretation-flow-room--wide"}" data-interpretation-room-state="interpretation-flow-empty" data-interpretation-flow-stage="done"><header class="interpretation-flow-head"><div><small>${escapeHtml(date)}</small><h1>今回を見比べる</h1><p>必要な材料がないときは、無理に意味や問いを作りません。</p></div></header><section class="interpretation-flow-empty-card"><span aria-hidden="true">—</span><h2>今回は、続けて確かめる問いはまだありません</h2><p>今回の走行結果はそのまま確認できます。身体の記録と対応する情報、または以前から確認中の問いに新しい材料ができたときに、ここで見比べられます。</p><a class="interpretation-flow-primary interpretation-flow-link-button" href="#/result?recordId=${encodeURIComponent(output?.target?.recordId || "")}">結果に戻る</a>${materials.length ? `<details class="interpretation-flow-more-materials"><summary>今回の材料を見る <b>${materials.length}</b></summary>${renderInterpretationMaterialPanel(output, selfUnderstanding)}</details>` : ""}</section></div>`;
 }
 
-function renderInterpretationLoopDetails(output = {}, { mobile = false } = {}) {
+function renderInterpretationLoopDetails(output = {}, { compact = false } = {}) {
   const next = output?.next || {};
   const actions = [next.primaryAction, ...(next.otherActions || [])].filter((action) => action && action.enabled !== false);
   const actionLinks = actions.length
     ? `<nav class="interpretation-loop-secondary-actions" aria-label="ほかの操作">${actions.map((action) => { const copy = actionCopy(action); return `<a href="${escapeHtml(actionHref(action, output))}"><span>${interpretationIcon(copy.icon)}</span><strong>${escapeHtml(copy.title)}</strong></a>`; }).join("")}</nav>`
     : "";
   const detail = `${renderPatternBoard(output)}${renderContextBoard(output)}${output?.selectedRegion ? `<div class="interpretation-room-selected-advanced-stack">${renderAdvanced(output, output.selectedRegion)}</div>` : ""}${actionLinks}`;
-  return `<details class="interpretation-flow-technical-more interpretation-loop-more${mobile ? " interpretation-loop-more--mobile" : ""}"><summary>計算・条件・根拠を詳しく見る</summary><div>${detail}</div></details>`;
+  return `<details class="interpretation-flow-technical-more interpretation-loop-more${compact ? " interpretation-loop-more--compact" : ""}"><summary>計算・条件・根拠を詳しく見る</summary><div>${detail}</div></details>`;
 }
 
-function renderMobileInterpretationLoop(output = {}, selfUnderstanding = null) {
-  if (selfUnderstanding?.activeThread) return renderInterpretationFlowActive(output, selfUnderstanding, { mobile: true });
-  return renderInterpretationFlowFirst(output, selfUnderstanding, { mobile: true });
+function renderCompactInterpretationLoop(output = {}, selfUnderstanding = null) {
+  if (selfUnderstanding?.activeThread) return renderInterpretationFlowActive(output, selfUnderstanding, { compact: true });
+  return renderInterpretationFlowFirst(output, selfUnderstanding, { compact: true });
 }
 
-function renderDesktopInterpretationLoop(output = {}, selfUnderstanding = null) {
-  if (selfUnderstanding?.activeThread) return renderInterpretationFlowActive(output, selfUnderstanding, { mobile: false });
-  return renderInterpretationFlowFirst(output, selfUnderstanding, { mobile: false });
+function renderWideInterpretationLoop(output = {}, selfUnderstanding = null) {
+  if (selfUnderstanding?.activeThread) return renderInterpretationFlowActive(output, selfUnderstanding, { compact: false });
+  return renderInterpretationFlowFirst(output, selfUnderstanding, { compact: false });
 }
 
 function publicConstructText(value = "") {
@@ -652,13 +652,13 @@ function renderAdvanced(output, region) {
   const sources = Array.isArray(evidence.sources) ? evidence.sources : [];
   return `${renderCalculationDetails(region)}<details class="interpretation-room-advanced"><summary>計算の考え方と根拠を詳しく見る</summary><div>${evidence.construct ? `<p><strong>この数値が表す内容</strong><br>${escapeHtml(publicConstructText(evidence.construct))}</p>` : ""}${sources.length ? `<p><strong>この計算の背景資料</strong></p><ul>${sources.map((source) => `<li>${escapeHtml(source.label || "参考資料")}${source.role ? ` — ${escapeHtml(publicSourceRoleText(source.role))}` : ""}</li>`).join("")}</ul>` : ""}<p class="interpretation-room-boundary-line">ここでは、選択した部位の計算に関係する情報を確認できます。</p></div></details>`;
 }
-export function renderInterpretationRoom({ output, selfUnderstanding = null, savedInterpretation = null, interpretationFocus = "", mobileLayout = false } = {}) {
+export function renderInterpretationRoom({ output, selfUnderstanding = null, savedInterpretation = null, interpretationFocus = "", compactLayout = false } = {}) {
   if (!output?.state?.targetAvailable) {
     return `<div class="interpretation-room interpretation-room--empty" data-interpretation-room-state="empty"><header class="interpretation-room-hero"><p>結果を整理する</p><h1>対象の保存記録がありません</h1></header><a class="interpretation-room-action interpretation-room-action--primary" href="#/record-input"><span class="interpretation-room-action__icon">${interpretationIcon("record")}</span><span class="interpretation-room-action__copy"><strong>記録を始める</strong></span><i aria-hidden="true">›</i></a></div>`;
   }
   if (output?.state?.support && output.state.support !== "NORMAL") return renderSupportPriority(output);
   if (output?.state?.regional === "REST") return renderRest(output);
 
-  if (!mobileLayout) return renderDesktopInterpretationLoop(output, selfUnderstanding, savedInterpretation, interpretationFocus);
-  return renderMobileInterpretationLoop(output, selfUnderstanding, savedInterpretation, interpretationFocus);
+  if (!compactLayout) return renderWideInterpretationLoop(output, selfUnderstanding, savedInterpretation, interpretationFocus);
+  return renderCompactInterpretationLoop(output, selfUnderstanding, savedInterpretation, interpretationFocus);
 }

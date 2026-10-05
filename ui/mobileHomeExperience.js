@@ -36,7 +36,14 @@ function currentWeekRange(now = new Date()) {
 }
 
 function recordHasReflection(record = {}) {
-  return Boolean(String(record?.reflectionContext?.postRunReflection || "").trim());
+  const reflection = record?.reflectionContext || {};
+  return [
+    reflection.postRunReflection,
+    reflection.nextCheckPoint,
+    reflection.whatWentWell,
+    reflection.noticed,
+    reflection.recoveryMemo,
+  ].some((value) => String(value || "").trim().length > 0);
 }
 
 function recordCourseKey(record = {}) {

@@ -33,7 +33,7 @@ function workflowReturnLabel(href = "") {
   return "記録";
 }
 
-function mobileUtilityReturn() {
+function homeUtilityReturn() {
   return { backHref: "#/home", backLabel: "ホーム" };
 }
 
@@ -145,13 +145,13 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   }
 
   if (screen === "achievements") return { title: "実績", backHref: "#/home", backLabel: "ホーム" };
-  if (screen === "location-note") return { title: "地点メモ", ...mobileUtilityReturn() };
-  if (screen === "quick-note") return { title: "1分メモ", ...mobileUtilityReturn() };
-  if (screen === "gear-note") return { title: "装備メモ", ...mobileUtilityReturn() };
-  if (screen === "departure-check") return { title: "出発チェック", ...mobileUtilityReturn() };
-  if (screen === "fuel-note") return { title: "補給メモ", ...mobileUtilityReturn() };
-  if (screen === "photo-note") return { title: "写真メモ", ...mobileUtilityReturn() };
-  if (screen === "pace-tool") return { title: "ペース換算", ...mobileUtilityReturn() };
+  if (screen === "location-note") return { title: "地点メモ", ...homeUtilityReturn() };
+  if (screen === "quick-note") return { title: "1分メモ", ...homeUtilityReturn() };
+  if (screen === "gear-note") return { title: "装備メモ", ...homeUtilityReturn() };
+  if (screen === "departure-check") return { title: "出発チェック", ...homeUtilityReturn() };
+  if (screen === "fuel-note") return { title: "補給メモ", ...homeUtilityReturn() };
+  if (screen === "photo-note") return { title: "写真メモ", ...homeUtilityReturn() };
+  if (screen === "pace-tool") return { title: "ペース換算", ...homeUtilityReturn() };
 
   if (screen === "plan") {
     const interpretationReturn = interpretationReturnContext(parameter, recordId || parameter("sourceRecordId"));

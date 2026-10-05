@@ -1,15 +1,39 @@
 const MOBILE_STYLE_GROUPS = Object.freeze([
+  Object.freeze({ before: "./styles/components.css", urls: Object.freeze([
+    "./styles/mobile-layout-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/screens.css", urls: Object.freeze([
+    "./styles/mobile-components-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/responsive.css", urls: Object.freeze([
+    "./styles/mobile-screens-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/record-screen-base.css", urls: Object.freeze([
+    "./styles/mobile-responsive.css",
+  ]) }),
   Object.freeze({ before: "./styles/interpretation-room.css", urls: Object.freeze([
     "./styles/mobile-screen-layouts.css",
   ]) }),
-  Object.freeze({ before: "./styles/rof-j-visual.css", urls: Object.freeze([
+  Object.freeze({ before: "./styles/self-understanding.css", urls: Object.freeze([
+    "./styles/mobile-interpretation-room-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/run-measurement.css", urls: Object.freeze([
+    "./styles/mobile-self-understanding.css",
+    "./styles/mobile-self-understanding-responsive.css",
     "./styles/mobile-home.css",
     "./styles/mobile-home-editing.css",
     "./styles/mobile-home-ios-editing.css",
     "./styles/mobile-home-three-row.css",
     "./styles/mobile-record.css",
   ]) }),
+  Object.freeze({ before: "./styles/rof-j-visual.css", urls: Object.freeze([
+    "./styles/mobile-run-measurement-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/rof-j-compact.css", urls: Object.freeze([
+    "./styles/mobile-rof-j-visual-responsive.css",
+  ]) }),
   Object.freeze({ before: "./styles/interpretation-room-compact.css", urls: Object.freeze([
+    "./styles/mobile-rof-j-compact-responsive.css",
     "./styles/mobile-run-measurement.css",
     "./styles/mobile-run-measurement-ergonomics.css",
     "./styles/mobile-walk-jog.css",
@@ -33,26 +57,57 @@ const MOBILE_STYLE_GROUPS = Object.freeze([
     "./styles/mobile-about.css",
     "./styles/mobile-home-experience.css",
   ]) }),
+  Object.freeze({ before: "./styles/interpretation-loop.css", urls: Object.freeze([
+    "./styles/mobile-interpretation-room-compact-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/interpretation-technical-details.css", urls: Object.freeze([
+    "./styles/mobile-interpretation-loop-responsive.css",
+  ]) }),
   Object.freeze({ before: "./styles/consultation-share.css", urls: Object.freeze([
+    "./styles/mobile-interpretation-technical-details-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/consultation-share-print.css", urls: Object.freeze([
+    "./styles/mobile-consultation-share-responsive.css",
     "./styles/mobile-home-responsive.css",
     "./styles/mobile-result-region-sheet.css",
     "./styles/mobile-body-part-detail.css",
     "./styles/mobile-history.css",
     "./styles/mobile-home-viewport-balance.css",
   ]) }),
-  Object.freeze({ before: "./styles/consultation-share-print.css", urls: Object.freeze([
+  Object.freeze({ before: "./styles/settings-navigation.css", urls: Object.freeze([
     "./styles/consultation-share-mobile.css",
   ]) }),
 ]);
 
 const DESKTOP_STYLE_GROUPS = Object.freeze([
+  Object.freeze({ before: "./styles/components.css", urls: Object.freeze([
+    "./styles/desktop-layout-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/screens.css", urls: Object.freeze([
+    "./styles/desktop-components-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/responsive.css", urls: Object.freeze([
+    "./styles/desktop-screens-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/record-screen-base.css", urls: Object.freeze([
+    "./styles/desktop-responsive.css",
+  ]) }),
   Object.freeze({ before: "./styles/interpretation-room.css", urls: Object.freeze([
     "./styles/desktop-foundation.css",
   ]) }),
   Object.freeze({ before: "./styles/run-measurement.css", urls: Object.freeze([
+    "./styles/desktop-self-understanding.css",
+    "./styles/desktop-self-understanding-responsive.css",
     "./styles/desktop-screen-layouts.css",
   ]) }),
+  Object.freeze({ before: "./styles/rof-j-visual.css", urls: Object.freeze([
+    "./styles/desktop-run-measurement-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/rof-j-compact.css", urls: Object.freeze([
+    "./styles/desktop-rof-j-visual-responsive.css",
+  ]) }),
   Object.freeze({ before: "./styles/interpretation-room-compact.css", urls: Object.freeze([
+    "./styles/desktop-rof-j-compact-responsive.css",
     "./styles/desktop-course.css",
     "./styles/desktop-ui-tokens.css",
     "./styles/desktop-first-use.css",
@@ -71,7 +126,17 @@ const DESKTOP_STYLE_GROUPS = Object.freeze([
     "./styles/desktop-about.css",
     "./styles/desktop-settings.css",
   ]) }),
+  Object.freeze({ before: "./styles/interpretation-loop.css", urls: Object.freeze([
+    "./styles/desktop-interpretation-room-compact-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/interpretation-technical-details.css", urls: Object.freeze([
+    "./styles/desktop-interpretation-loop-responsive.css",
+  ]) }),
+  Object.freeze({ before: "./styles/consultation-share-print.css", urls: Object.freeze([
+    "./styles/desktop-consultation-share-responsive.css",
+  ]) }),
   Object.freeze({ before: null, urls: Object.freeze([
+    "./styles/desktop-settings-navigation-responsive.css",
     "./styles/desktop-history-state.css",
     "./styles/desktop-unification.css",
     "./styles/desktop-interpretation-details.css",
