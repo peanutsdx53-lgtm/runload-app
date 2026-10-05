@@ -1,0 +1,99 @@
+name: RunLoad cleanup validation
+
+on:
+  push:
+    branches:
+      - _runload_cleanup_stage_20261005
+
+permissions:
+  contents: write
+
+concurrency:
+  group: runload-cleanup-validation-20261005
+  cancel-in-progress: false
+
+jobs:
+  validate-and-stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout staging payload
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify base and reconstruct exact patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_BASE='afc68be429eab95e9ad5ccfd680d050fccc19b8f'
+          EXPECTED_B64='9ecbd7398c480ef3c9dc11aabfc9a090387748108c93829eddef331531973af4'
+          EXPECTED_GZ='274bac391973ed4faeba2af1d0244110207574313f0d19c5e761548825653b8d'
+          EXPECTED_PATCH='d1cb6a8713457bba416d6cbe72a8430f36e06a9a7d4b941202fffd07182c9efe'
+
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$EXPECTED_BASE"
+
+          test "$(find .cleanup-payload -maxdepth 1 -type f -name 'part-*.txt' | wc -l | tr -d ' ')" = '15'
+          cat .cleanup-payload/part-*.txt > /tmp/cleanup.patch.gz.b64
+          echo "$EXPECTED_B64  /tmp/cleanup.patch.gz.b64" | sha256sum -c -
+          base64 --decode /tmp/cleanup.patch.gz.b64 > /tmp/cleanup.patch.gz
+          echo "$EXPECTED_GZ  /tmp/cleanup.patch.gz" | sha256sum -c -
+          gunzip -c /tmp/cleanup.patch.gz > /tmp/cleanup.patch
+          echo "$EXPECTED_PATCH  /tmp/cleanup.patch" | sha256sum -c -
+
+      - name: Apply cleanup to exact main base
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach origin/main
+          git apply --check /tmp/cleanup.patch
+          git apply /tmp/cleanup.patch
+          git add -A
+
+      - name: Verify exact cleaned tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_COUNT='393'
+          EXPECTED_MANIFEST='3528b101b976557b022c0be0f2ae6dfc485e17ffb6c69cb26c83ef8ecbac6dbe'
+          count="$(find . -type f -not -path './.git/*' | wc -l | tr -d ' ')"
+          manifest="$(LC_ALL=C find . -type f -not -path './.git/*' -print0 | sort -z | xargs -0 sha256sum | sha256sum | awk '{print $1}')"
+          echo "file_count=$count"
+          echo "manifest_sha256=$manifest"
+          test "$count" = "$EXPECTED_COUNT"
+          test "$manifest" = "$EXPECTED_MANIFEST"
+          test -z "$(git status --porcelain --untracked-files=all | grep '^?? \.cleanup-payload/' || true)"
+          test ! -e .github/workflows/_runload-cleanup-validate.yml
+
+      - name: Syntax check all JavaScript modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+            count=$((count + 1))
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0 | sort -z)
+          echo "syntax_checked=$count"
+          test "$count" = '298'
+
+      - name: Run complete automated test suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --test tests/*.test.mjs
+
+      - name: Recheck base and create validated commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_BASE='afc68be429eab95e9ad5ccfd680d050fccc19b8f'
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$EXPECTED_BASE"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Complete app code cleanup and architecture consolidation'
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_BASE"
+          echo "validated_commit=$(git rev-parse HEAD)"
+          git push --force origin HEAD:refs/heads/_runload_cleanup_validated_20261005
