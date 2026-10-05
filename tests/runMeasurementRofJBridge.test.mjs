@@ -4,10 +4,11 @@ import assert from 'node:assert/strict';
 const screen = fs.readFileSync('screens/mobile/runMeasurementScreen.js', 'utf8');
 const sharedRegistry = fs.readFileSync('screens/sharedScreenRegistry.js', 'utf8');
 const desktopRegistry = fs.readFileSync('screens/desktopScreenRegistry.js', 'utf8');
+const desktopFallback = fs.readFileSync('screens/desktop/runMeasurementScreen.js', 'utf8');
 const mobileRegistry = fs.readFileSync('screens/mobileScreenRegistry.js', 'utf8');
-const interactions = fs.readFileSync('ui/interactions/runMeasurementInteractions.js', 'utf8');
+const interactions = fs.readFileSync('ui/interactions/mobileRunMeasurementInteractions.js', 'utf8');
 const state = fs.readFileSync('ui/runMeasurementState.js', 'utf8');
-const energy = fs.readFileSync('ui/runMeasurementEnergy.js', 'utf8');
+const energy = fs.readFileSync('ui/mobileRunMeasurementEnergy.js', 'utf8');
 const enhancer = fs.readFileSync('ui/rofJPresentation.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 const platformStyles = fs.readFileSync('ui/platformStyles.js', 'utf8');
@@ -23,7 +24,9 @@ function test(id, fn) {
 
 test('MEASUREMENT-IS-SMARTPHONE-SPECIFIC', () => {
   assert.ok(!sharedRegistry.includes('run-measurement'));
-  assert.ok(!desktopRegistry.includes('run-measurement'));
+  assert.ok(desktopRegistry.includes('"run-measurement": renderRunMeasurementScreen'));
+  assert.ok(desktopFallback.includes('ランニング測定はスマホ版の機能です'));
+  assert.ok(!desktopFallback.includes('data-measurement-active'));
   assert.ok(mobileRegistry.includes('"run-measurement": renderRunMeasurementScreen'));
   assert.ok(!screen.includes('matchesMobileLayout'));
   assert.ok(!screen.includes('desktopUnavailable'));
@@ -141,7 +144,7 @@ test('ENERGY-MODEL-USES-CONTROLLED-COMPENDIUM-BOUNDARY', () => {
   assert.ok(energy.includes('GPS_DISTANCE_INSUFFICIENT'));
   assert.ok(energy.includes('SPEED_OUT_OF_SUPPORTED_RANGE'));
   assert.ok(!energy.includes('heightCm'));
-  assert.ok(worker.includes('"./ui/runMeasurementEnergy.js"'));
+  assert.ok(worker.includes('"./ui/mobileRunMeasurementEnergy.js"'));
 });
 
 test('ENERGY-METADATA-IS-PRESERVED-SEPARATELY', () => {

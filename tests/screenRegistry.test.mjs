@@ -8,7 +8,7 @@ const mobile = fs.readFileSync("screens/mobileScreenRegistry.js", "utf8");
 const app = fs.readFileSync("app.js", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
 
-const mobileOnly = ["run-measurement","location-note","quick-note","gear-note","departure-check","fuel-note","photo-note","pace-tool","achievements"];
+const mobileOnly = ["location-note","quick-note","gear-note","departure-check","fuel-note","photo-note","pace-tool","achievements"];
 
 assert.match(shared, /export const SHARED_SCREEN_RENDERERS/);
 assert.doesNotMatch(shared, /run-measurement|renderDesktopMoreScreen|renderAchievementsScreen/);
@@ -17,12 +17,15 @@ assert.match(desktop, /more: renderMoreScreen/);
 assert.match(desktop, /"gpx-analysis": renderGpxAnalysisScreen/);
 assert.match(desktop, /"course-library": renderCourseLibraryScreen/);
 assert.match(desktop, /"course-editor": renderCourseEditorScreen/);
-assert.doesNotMatch(desktop, /run-measurement|renderAchievementsScreen|quickToolsScreen/);
+assert.match(desktop, /"run-measurement": renderRunMeasurementScreen/);
+assert.match(desktop, /\.\/desktop\/runMeasurementScreen\.js/);
+assert.doesNotMatch(desktop, /renderAchievementsScreen|quickToolsScreen|location-note|quick-note|gear-note|departure-check|fuel-note|photo-note|pace-tool|achievements/);
 assert.match(mobile, /export const MOBILE_SCREEN_RENDERERS/);
 assert.match(mobile, /"gpx-analysis": renderGpxAnalysisScreen/);
 assert.match(mobile, /"course-library": renderCourseLibraryScreen/);
 assert.match(mobile, /"course-editor": renderCourseEditorScreen/);
 assert.doesNotMatch(mobile, /renderMoreScreen/);
+assert.match(mobile, /"run-measurement": renderRunMeasurementScreen/);
 for (const screen of mobileOnly) assert.ok(mobile.includes(`"${screen}"`) || mobile.includes(`${screen}:`), `mobile-only screen missing: ${screen}`);
 assert.match(router, /await import\("\.\/mobileScreenRegistry\.js"\)/);
 assert.match(router, /await import\("\.\/desktopScreenRegistry\.js"\)/);

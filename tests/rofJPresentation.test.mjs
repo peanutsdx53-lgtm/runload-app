@@ -5,6 +5,9 @@ const moduleText = fs.readFileSync('ui/rofJPresentation.js', 'utf8');
 const scaleDefinition = fs.readFileSync('core/rofJAuthorConfirmedScale.js', 'utf8');
 const visualCss = fs.readFileSync('styles/rof-j-visual.css', 'utf8');
 const compactCss = fs.readFileSync('styles/rof-j-compact.css', 'utf8');
+const mobileCompactCss = fs.readFileSync('styles/mobile-rof-j-compact-responsive.css', 'utf8');
+const mobileResultModule = fs.readFileSync('ui/mobileRofJPresentation.js', 'utf8');
+const desktopResultModule = fs.readFileSync('ui/desktopRofJPresentation.js', 'utf8');
 const core = fs.readFileSync('core/rofJCore.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
@@ -111,7 +114,9 @@ test('ROF-VISUAL-UI-LOADS-ON-DESKTOP-AND-MOBILE', () => {
   assert.ok(worker.includes('"./styles/rof-j-visual.css"'));
   assert.ok(worker.includes('"./styles/rof-j-compact.css"'));
   assert.ok(worker.includes('"./ui/rofJPresentation.js"'));
-  assert.ok(compactCss.includes('@media (max-width: 54.99rem)'));
+  assert.ok(mobileCompactCss.includes('@media (max-width: 54.99rem)'));
+  assert.ok(worker.includes('"./styles/mobile-rof-j-compact-responsive.css"'));
+  assert.ok(worker.includes('"./styles/desktop-rof-j-compact-responsive.css"'));
 });
 
 test('ATTRIBUTION-AND-LICENSE-ARE-EXPLICIT-BUT-NOT-PRIMARY-INPUT-CONTENT', () => {
@@ -126,12 +131,15 @@ test('ATTRIBUTION-AND-LICENSE-ARE-EXPLICIT-BUT-NOT-PRIMARY-INPUT-CONTENT', () =>
 });
 
 test('RESULT-SCREENS-USE-AUTHOR-CONFIRMED-GUIDANCE', () => {
-  assert.ok(moduleText.includes('updateMobileResultFatigue'));
-  assert.ok(moduleText.includes('updatePcResultFatigue'));
-  assert.ok(moduleText.includes('走った後の疲労感の目安'));
-  assert.ok(moduleText.includes('運動後の疲労感の目安'));
-  assert.ok(moduleText.includes('dl.visually-hidden > div'));
-  assert.ok(moduleText.includes('enhanceResultFatigue()'));
+  assert.ok(mobileResultModule.includes('updateMobileResultFatigue'));
+  assert.ok(desktopResultModule.includes('updateDesktopResultFatigue'));
+  assert.ok(mobileResultModule.includes('走った後の疲労感の目安'));
+  assert.ok(desktopResultModule.includes('運動後の疲労感の目安'));
+  assert.ok(mobileResultModule.includes('dl.visually-hidden > div'));
+  assert.ok(mobileResultModule.includes('document.querySelectorAll(".fatigue-section").forEach(updateMobileResultFatigue)'));
+  assert.ok(desktopResultModule.includes('document.querySelectorAll(".pc-result-fatigue").forEach(updateDesktopResultFatigue)'));
+  assert.ok(!moduleText.includes('updateMobileResultFatigue'));
+  assert.ok(!moduleText.includes('updateDesktopResultFatigue'));
 });
 
 test('VERSION-AND-PWA-CACHE-MATCH', () => {

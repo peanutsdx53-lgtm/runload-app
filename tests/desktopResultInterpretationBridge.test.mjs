@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const read=(p)=>fs.readFileSync(p,'utf8');
-const screen=read('screens/resultScreen.js');
-const interactions=read('ui/interactions/resultInteractions.js');
-const css=read('styles/interpretation-room-compact.css');
+const screen=read('screens/desktop/resultScreen.js');
+const interactions=read('ui/interactions/desktopResultInteractions.js');
+const css=read('styles/desktop-interpretation-room-compact-responsive.css');
 const results=[];
 function test(id,fn){try{fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 

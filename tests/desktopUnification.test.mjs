@@ -10,7 +10,7 @@ const homeWorkspace = read("ui/desktopHomeWorkspace.js");
 const appVersion = read("ui/appVersionStatus.js");
 const about = read("screens/shared/aboutScreen.js");
 const unificationCss = read("styles/desktop-unification.css");
-const rofCompactCss = read("styles/rof-j-compact.css");
+const rofCompactCss = read("styles/desktop-rof-j-compact-responsive.css");
 const currentVersion = appVersion.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 
 assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);

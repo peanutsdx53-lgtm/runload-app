@@ -28,7 +28,7 @@ for (const file of [...presentationFiles, ...walk("styles", (p) => p.endsWith(".
 
 const history = fs.readFileSync("core/internal/historyWorkflow.js", "utf8");
 assert.doesNotMatch(history, /secondPillarRofJ|secondPillarLifecycle/, "retired pre-release history aliases must stay absent");
-assert.doesNotMatch(fs.readFileSync("ui/interactions/homeInteractions.js", "utf8"), /legacyApps|parsed\.apps/, "retired mobile-home layout conversion must stay absent");
+assert.doesNotMatch(fs.readFileSync("ui/interactions/mobileHomeInteractions.js", "utf8"), /legacyApps|parsed\.apps/, "retired mobile-home layout conversion must stay absent");
 assert.doesNotMatch(fs.readFileSync("styles/self-understanding.css", "utf8"), /self-understanding-legacy/, "unused retired self-understanding styles must stay absent");
 
 for (const file of walk(".github/workflows", (p) => p.endsWith(".yml") || p.endsWith(".yaml"))) {
@@ -129,10 +129,11 @@ function platformDependencies(file, platform) {
     replaceConditional(["ui/mobileRuntimeEntry.js", "ui/desktopRuntimeEntry.js"], `ui/${platform}RuntimeEntry.js`);
   } else if (file === "app.js") {
     replaceConditional(["ui/mobileAppRuntime.js", "ui/desktopAppRuntime.js"], `ui/${platform}AppRuntime.js`);
+    replaceConditional(["ui/mobileAppShell.js", "ui/desktopAppShell.js"], `ui/${platform}AppShell.js`);
   } else if (file === "screens/screenRegistry.js") {
     replaceConditional(["screens/mobileScreenRegistry.js", "screens/desktopScreenRegistry.js"], `screens/${platform}ScreenRegistry.js`);
   } else if (file === "ui/screenInteractions.js") {
-    replaceConditional(["ui/mobileScreenInteractionBinders.js"], platform === "mobile" ? "ui/mobileScreenInteractionBinders.js" : null);
+    replaceConditional(["ui/mobileScreenInteractionBinders.js", "ui/desktopScreenInteractionBinders.js"], `ui/${platform}ScreenInteractionBinders.js`);
   }
   return [...dependencies];
 }
@@ -172,4 +173,48 @@ for (const file of desktopGraph) {
   assert.ok(desktopCacheSet.has(url), `desktop-only runtime module missing from desktop cache: ${url}`);
   assert.equal(commonCacheSet.has(url), false, `desktop-only runtime module leaked into common precache: ${url}`);
   assert.equal(mobileCacheSet.has(url), false, `desktop-only runtime module leaked into mobile cache: ${url}`);
+}
+
+
+const sharedStyleUrls = [...indexSource.matchAll(/href="(\.\/styles\/[^\"]+\.css)"/g)].map((match) => match[1]);
+for (const url of sharedStyleUrls) {
+  const source = fs.readFileSync(url.slice(2), "utf8");
+  assert.doesNotMatch(
+    source,
+    /(?:\.(?:mobile|desktop|pc)-|\[data-(?:mobile|desktop|pc)(?:[\]=>~^$*|\s]))/i,
+    `${url} contains a platform-only selector but is loaded as shared CSS`,
+  );
+}
+
+const commonScreenRenderers = walk("screens", (p) => p.endsWith(".js"))
+  .filter((file) => path.dirname(file) === "screens")
+  .filter((file) => !/[\\/](?:mobile|desktop)ScreenRegistry\.js$/.test(file) && !/[\\/]screenRegistry\.js$/.test(file));
+for (const file of commonScreenRenderers) {
+  const source = fs.readFileSync(file, "utf8");
+  assert.doesNotMatch(
+    source,
+    /(?:class=["'][^"']*\b(?:mobile|desktop|pc)-|data-(?:mobile|desktop|pc)(?:=|\s|>))/i,
+    `${file} renders platform-only markup from the shared screen layer`,
+  );
+}
+assert.doesNotMatch(
+  fs.readFileSync("app.js", "utf8"),
+  /(?:\.(?:mobile|desktop|pc)-|#(?:mobile|desktop|pc)-|data-(?:mobile|desktop|pc)(?:=|\s|>))/i,
+  "app.js must delegate platform DOM selectors to the selected platform layer",
+);
+
+function hasPlatformOwnedName(file, platform) {
+  const normalized = file.replaceAll("\\", "/");
+  const base = path.posix.basename(normalized);
+  if (normalized.includes(`/${platform}/`)) return true;
+  if (base.startsWith(platform)) return true;
+  return platform === "mobile" && base.startsWith("ios");
+}
+for (const file of mobileGraph) {
+  if (desktopGraph.has(file)) continue;
+  assert.equal(hasPlatformOwnedName(file, "mobile"), true, `mobile-only runtime file has ambiguous ownership: ${file}`);
+}
+for (const file of desktopGraph) {
+  if (mobileGraph.has(file)) continue;
+  assert.equal(hasPlatformOwnedName(file, "desktop"), true, `desktop-only runtime file has ambiguous ownership: ${file}`);
 }

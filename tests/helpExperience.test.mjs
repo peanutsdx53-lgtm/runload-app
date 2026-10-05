@@ -32,16 +32,21 @@ await test('HELP-FIRST-USE-HAS-ALWAYS-VISIBLE-DISMISS-CONTROLS',()=>{
 });
 
 await test('HELP-STANDALONE-SHELL-RENDERS-GUIDE',()=>{
-  const shell=read('ui/appShell.js');
-  const standalone=shell.slice(shell.indexOf('if (standalone)'),shell.indexOf('const immersive'));
-  assert.match(standalone,/renderGuideDialog/);
+  const common=read('ui/appShell.js');
+  const mobile=read('ui/mobileAppShell.js');
+  const desktop=read('ui/desktopAppShell.js');
+  assert.match(common,/renderShellLayers[\s\S]*renderGuideDialog/);
+  assert.match(mobile,/app-shell--standalone[\s\S]*\$\{layers\}/);
+  assert.match(desktop,/app-shell--standalone[\s\S]*\$\{layers\}/);
 });
 
 await test('HELP-IMMERSIVE-SHELL-RENDERS-GUIDE',()=>{
   const shell=read('ui/appShell.js');
-  const immersive=shell.slice(shell.indexOf('if (immersive)'),shell.indexOf('return `',shell.indexOf('if (immersive)')+50));
+  const mobile=read('ui/mobileAppShell.js');
+  const desktop=read('ui/desktopAppShell.js');
   assert.match(shell,/context-help-button--immersive/);
-  assert.match(shell,/app-shell--immersive[\s\S]*renderGuideDialog/);
+  assert.match(mobile,/app-shell--immersive[\s\S]*\$\{layers\}/);
+  assert.match(desktop,/app-shell--immersive[\s\S]*\$\{layers\}/);
 });
 
 await test('HELP-CONTEXT-BUTTONS-USE-SCREEN-SPECIFIC-TUTORIALS',()=>{
@@ -87,7 +92,7 @@ await test('HELP-GPS-SCREEN-HAS-OPERATION-GUIDE',()=>{
 
 await test('HELP-DESKTOP-TUTORIAL-BINDING-IS-PRESENT',()=>{
   const app=read('app.js');
-  assert.match(app,/bindScreenTutorial\(\{ root: desktopHeaderRoot, screenName \}\)/);
+  assert.match(app,/bindScreenTutorial\(\{ root: platformHeaderRoot, screenName \}\)/);
 });
 
 await test('HELP-STYLES-ARE-THEME-AWARE',()=>{

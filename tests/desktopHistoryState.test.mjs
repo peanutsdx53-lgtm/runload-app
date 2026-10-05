@@ -3,7 +3,7 @@ import fs from "node:fs";
 
 const read = (path) => fs.readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const css = read("styles/desktop-history-state.css");
-const historyScreen = read("screens/historyScreen.js");
+const historyScreen = read("screens/historyScreen.js") + read("screens/desktop/historyScreen.js");
 const index = read("index.html");
 const platformStyles = read("ui/platformStyles.js");
 const worker = read("service-worker.js");

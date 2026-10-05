@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 
 const versionModule = fs.readFileSync('ui/appVersionStatus.js', 'utf8');
+const mobileVersionModule = fs.readFileSync('ui/mobileVersionStatus.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 
@@ -21,7 +22,8 @@ const version = versionMatch?.[1] || '';
 test('APP-VERSION-IS-EXPLICIT-AND-VISIBLE', () => {
   assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
   assert.ok(versionModule.includes('data-app-version'));
-  assert.ok(versionModule.includes('addMobileHomeVersion'));
+  assert.ok(mobileVersionModule.includes('addMobileHomeVersion'));
+  assert.ok(!versionModule.includes('addMobileHomeVersion'));
   assert.ok(versionModule.includes('addSettingsUpdatePanel'));
 });
 

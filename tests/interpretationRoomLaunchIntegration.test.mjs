@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderSimulationScreen } from '../screens/simulationScreen.js';
+import { renderSimulationScreen } from '../screens/desktop/simulationScreen.js';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(here,'..');
@@ -11,7 +11,7 @@ const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 
 await test('RESULT-LAUNCHES-CANONICAL-INTERPRETATION',()=>{
-  const s=read('screens/resultScreen.js');
+  const s=read('screens/desktop/resultScreen.js');
   assert.match(s,/#\/interpretation-room\?recordId=\$\{encodeURIComponent\(record\.id\)\}&origin=result/);
   assert.doesNotMatch(s,/experience=v3/);
   assert.match(s,/今回を見比べる/);
@@ -104,7 +104,7 @@ await test('SIMULATION-INTERACTION-COMPARES-AGAINST-SOURCE-EXPERIENCE-NOT-LATEST
   assert.match(source,/\.\.\.source/);
   assert.match(source,/changedConditionLabels\(data\)/);
   assert.match(source,/comparisonStats\(result,previous\)/);
-  assert.match(source,/renderChangeGroups\(items,compare\)/);
+  assert.match(source,/renderChangeGroups\(items,compare,platformEnhancement\)/);
   assert.match(source,/simulation-change-groups/);
   assert.match(source,/data-simulation-adjust/);
   assert.match(source,/data-simulation-condition-count/);
@@ -154,7 +154,7 @@ await test('PC-CONDITION-COMPARISON-USES-READABLE-TYPE',()=>{
 });
 
 await test('MOBILE-CONDITION-COMPARISON-DOES-NOT-USE-MICRO-TYPE',()=>{
-  const css=read('styles/mobile-screen-layouts.css');
+  const css=read('styles/simulation-screen-base.css') + read('styles/mobile-screen-layouts.css');
   const audit=css;
   assert.match(audit,/\.condition-compare-hero p:last-child[\s\S]*font-size:14px/);
   assert.match(audit,/\.measure-field>span[\s\S]*font-size:13px/);

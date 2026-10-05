@@ -26,8 +26,8 @@ const candidate={
 };
 
 await test('FIRST-USE-STARTS-WITH-ONE-USER-EXPERIENCE-AND-ONE-NEXT-ACTION',()=>{
-  for(const mobileLayout of [true,false]){
-    const html=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,mobileLayout});
+  for(const compactLayout of [true,false]){
+    const html=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,compactLayout});
     assert.match(html,/今回、まず見るところ/);
     assert.match(html,/あなたの身体の記録/);
     assert.match(html,/股関節部の外側/);
@@ -37,7 +37,7 @@ await test('FIRST-USE-STARTS-WITH-ONE-USER-EXPERIENCE-AND-ONE-NEXT-ACTION',()=>{
 });
 
 await test('COMPARISON-IS-STAGED-AND-KEEPS-CONSTRUCTS-SEPARATE',()=>{
-  const html=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,mobileLayout:true});
+  const html=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,compactLayout:true});
   assert.match(html,/data-interpretation-flow-reveal="compare"/);
   assert.match(html,/RunLoadの部位表示/);
   assert.match(html,/同じ部位/);
@@ -46,7 +46,7 @@ await test('COMPARISON-IS-STAGED-AND-KEEPS-CONSTRUCTS-SEPARATE',()=>{
 });
 
 await test('USER-PERSISTS-A-CHECKING-QUESTION-NOT-A-SYSTEM-CONCLUSION',()=>{
-  const html=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,mobileLayout:true});
+  const html=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,compactLayout:true});
   assert.match(html,/次に自分で確かめること/);
   assert.match(html,/次の走行では、股関節部の外側を自分がどう感じたか確認する/);
   assert.match(html,/data-action="create-self-understanding-thread"/);
@@ -63,7 +63,7 @@ await test('CONTINUED-USE-PRIORITIZES-THE-PREVIOUSLY-CHOSEN-QUESTION',()=>{
     eligibleEpisodes:[],eligibleCount:2,newCount:1,userState:'WATCHING',hasNewEligibleData:true,
   };
   const su={...candidate,primaryCandidate:null,activeThread:active,threads:[active],counts:{watching:1,paused:0,newThreadCount:1}};
-  const html=renderInterpretationRoom({output:output(),selfUnderstanding:su,mobileLayout:true});
+  const html=renderInterpretationRoom({output:output(),selfUnderstanding:su,compactLayout:true});
   assert.match(html,/前回から見ていたこと/);
   assert.match(html,/今回、新しい材料があります/);
   assert.match(html,/これまでと見比べる/);
@@ -78,7 +78,7 @@ await test('ZERO-CANDIDATE-IS-A-NORMAL-EXPLICIT-STATE',()=>{
   emptyOutput.runFacts={postRunReflection:''};
   emptyOutput.subjectiveContext={state:'UNAVAILABLE',pre:{available:false},post:{available:false},difference:{eligible:false}};
   emptyOutput.conditions={differences:[]};
-  const html=renderInterpretationRoom({output:emptyOutput,selfUnderstanding:{...candidate,primaryCandidate:null},mobileLayout:true});
+  const html=renderInterpretationRoom({output:emptyOutput,selfUnderstanding:{...candidate,primaryCandidate:null},compactLayout:true});
   assert.match(html,/今回は、続けて確かめる問いはまだありません/);
   assert.match(html,/無理に意味や問いを作りません/);
   assert.doesNotMatch(html,/create-self-understanding-thread/);
@@ -87,7 +87,7 @@ await test('ZERO-CANDIDATE-IS-A-NORMAL-EXPLICIT-STATE',()=>{
 await test('NEXT-RUN-AND-HISTORY-ARE-CONNECTED-TO-CHECKING-THREADS',()=>{
   const record=fs.readFileSync('screens/recordInputScreen.js','utf8');
   const history=fs.readFileSync('screens/historyScreen.js','utf8');
-  const result=fs.readFileSync('screens/resultScreen.js','utf8');
+  const result=fs.readFileSync('screens/mobile/resultScreen.js','utf8');
   assert.match(record,/record-interpretation-carry/);
   assert.match(record,/前回から/);
   assert.match(history,/自分について確認してきたこと/);
@@ -97,8 +97,8 @@ await test('NEXT-RUN-AND-HISTORY-ARE-CONNECTED-TO-CHECKING-THREADS',()=>{
 });
 
 await test('TECHNICAL-DETAIL-REMAINS-SECONDARY-ON-BOTH-LAYOUTS',()=>{
-  const mobile=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,mobileLayout:true});
-  const pc=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,mobileLayout:false});
+  const mobile=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,compactLayout:true});
+  const pc=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,compactLayout:false});
   for(const html of [mobile,pc]) assert.match(html,/<summary>計算・条件・根拠を詳しく見る<\/summary>/);
   assert.match(mobile,/補足の材料を見る/);
   assert.match(pc,/補足の材料を見る/);

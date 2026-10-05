@@ -6,9 +6,10 @@ import {
 } from '../ui/runMeasurementNotifications.js';
 
 const settingsModule = fs.readFileSync('ui/appSettings.js', 'utf8');
-const settingsScreen = fs.readFileSync('screens/settingsScreen.js', 'utf8');
+const settingsScreen = fs.readFileSync('screens/mobile/settingsScreen.js', 'utf8');
+const commonSettingsScreen = fs.readFileSync('screens/settingsScreen.js', 'utf8');
 const settingsInteractions = fs.readFileSync('ui/interactions/settingsInteractions.js', 'utf8');
-const measurementInteractions = fs.readFileSync('ui/interactions/runMeasurementInteractions.js', 'utf8');
+const measurementInteractions = fs.readFileSync('ui/interactions/mobileRunMeasurementInteractions.js', 'utf8');
 const worker = fs.readFileSync('service-worker.js', 'utf8');
 const versionModule = fs.readFileSync('ui/appVersionStatus.js', 'utf8');
 
@@ -40,13 +41,14 @@ await test('DEFAULT-NOTIFICATIONS-ARE-ON', async () => {
 });
 
 await test('SETTINGS-SCREEN-EXPOSES-SMARTPHONE-NOTIFICATION-TOGGLES', async () => {
-  assert.ok(settingsScreen.includes('data-mobile-measurement-notifications'));
+  assert.ok(settingsScreen.includes('data-measurement-notifications'));
+  assert.ok(!commonSettingsScreen.includes('data-measurement-notifications'));
   assert.ok(settingsScreen.includes('name="measurementSoundEnabled"'));
   assert.ok(settingsScreen.includes('name="measurementVibrationEnabled"'));
   assert.ok(settingsScreen.includes('通知音を試す'));
   assert.ok(settingsScreen.includes('振動を試す'));
   assert.ok(settingsScreen.includes('iPhoneなど振動APIに対応していない環境'));
-  assert.ok(settingsScreen.includes('if (!matchesMobileLayout()) return ""'));
+  assert.ok(!settingsScreen.includes('matchesMobileLayout'));
 });
 
 await test('SETTINGS-ARE-SAVED-IMMEDIATELY', async () => {

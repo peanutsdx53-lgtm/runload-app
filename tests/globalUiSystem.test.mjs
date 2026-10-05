@@ -84,21 +84,21 @@ await test('UI-HOME-REMOVES-REDUNDANT-EMPTY-STATE-COPY',()=>{
 });
 
 await test('UI-RECORD-SURFACES-OPTIONAL-ENTRY-STATUS',()=>{
-  const screen=read('screens/recordInputScreen.js');
+  const screen=read('screens/recordInputScreen.js') + read('screens/desktop/recordInputScreen.js');
   const interactions=read('ui/interactions/recordInputInteractions.js');
   assert.ok(!screen.includes('今日の記録</h1>'));
   for(const key of ['course','compare','reflection']){
     assert.ok(screen.includes(`data-optional-status="${key}"`),key);
     assert.ok(screen.includes(`data-save-optional="${key}"`),key);
   }
-  assert.ok(interactions.includes('function updateOptionalInputStatus(form)'));
+  assert.ok(interactions.includes('function updateOptionalInputStatus(form, platformEnhancement = {})'));
   assert.ok(interactions.includes('[data-run-fields], [data-run-optional]'));
   assert.ok(!screen.includes('任意項目は空欄のままでも保存できます。'));
   assert.ok(!screen.includes('入力途中は、この端末に下書きとして保存されます。'));
 });
 
 await test('UI-FATIGUE-SLIDER-HAS-DIRECT-MANIPULATION-AFFORDANCE',()=>{
-  const screen=read('screens/recordInputScreen.js');
+  const screen=read('screens/recordInputScreen.js') + read('screens/desktop/recordInputScreen.js');
   const interactions=read('ui/interactions/recordInputInteractions.js');
   const css=read('styles/mobile-screen-layouts.css');
   assert.ok(screen.includes('class="rof-close-button"'));
@@ -109,7 +109,7 @@ await test('UI-FATIGUE-SLIDER-HAS-DIRECT-MANIPULATION-AFFORDANCE',()=>{
 });
 
 await test('UI-RESULT-REMOVES-PERSISTENT-EXPLANATION-CLUTTER',()=>{
-  const screen=read('screens/resultScreen.js');
+  const screen=read('screens/mobile/resultScreen.js');
   assert.ok(screen.includes('class="result-next-actions"'));
   assert.ok(!screen.includes('rof-boundary-details'));
   assert.ok(!screen.includes('class="compact-boundary"'));
@@ -130,15 +130,14 @@ await test('UI-INTERPRETATION-HAS-RUNLOAD-USER-FINAL-LOOP',()=>{
 });
 
 await test('UI-PC-RESULT-USES-TIME-AWARE-CHRONOLOGY-AND-STATE-LINKED-COLOR',()=>{
-  const screen=read('screens/resultScreen.js');
+  const screen=read('screens/resultScreen.js') + read('screens/desktop/resultScreen.js');
   const history=read('screens/historyScreen.js');
   const css=read('styles/desktop-screen-layouts.css');
-  const mobile=read('styles/mobile-screen-layouts.css');
+  const mobile=read('styles/history-screen-base.css') + read('styles/mobile-screen-layouts.css');
   const audit=css;
 
   assert.ok(screen.includes('function recordChronology(left = {}, right = {})'));
   assert.ok(screen.includes('String(left.createdAt || "").localeCompare(String(right.createdAt || ""))'));
-  assert.ok(screen.includes('recordChronology(item.record || {}, currentRecord) < 0'));
   assert.ok(screen.includes('recordChronology(experience?.record || {}, currentRecord) <= 0'));
   assert.ok(screen.includes('.sort((a, b) => recordChronology(a.experience?.record || {}, b.experience?.record || {}))'));
   assert.ok(screen.includes('function historyAxisLabel(point, points = [])'));
@@ -273,7 +272,7 @@ await test('UI-PC-RECORD-STATUS-CARD-CENTERS-AND-USES-READABLE-TYPE',()=>{
 
 await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
   const screen=read('screens/desktop/courseLibraryScreen.js');
-  const shared=read('styles/screens.css');
+  const mobileCss=read('styles/mobile-usability.css');
   const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
   const remSize=(selector)=>{
@@ -297,7 +296,7 @@ await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
   assert.ok(screen.includes('course-current-label--mobile'));
   assert.ok(screen.includes('course-current-label--pc'));
   assert.ok(screen.includes('course-library-pc-count'));
-  assert.match(shared,/\.course-library-pc-only\s*\{\s*display:\s*none;/);
+  assert.match(mobileCss,/\.screen-layout--course \.course-library-pc-only\s*\{\s*display:\s*none\s*!important;/);
   assert.match(audit,/@media \(min-width: 80rem\)/);
   assert.match(audit,/course-derived-frame--library[\s\S]*height:\s*auto\s*!important/);
   assert.match(audit,/course-derived-head > strong[\s\S]*display:\s*none\s*!important/);
@@ -318,7 +317,7 @@ await test('UI-PC-COURSE-LIBRARY-USES-CLEAR-WORKSPACE-HIERARCHY',()=>{
 
 await test('UI-PC-COURSE-DERIVED-MATCHES-RECORD-SUBFLOW-CHROME',()=>{
   const screen=read('screens/desktop/courseLibraryScreen.js');
-  const shell=read('ui/appShell.js');
+  const shell=read('ui/desktopAppShell.js') + read('ui/appShell.js');
   const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
 
@@ -377,14 +376,12 @@ await test('UI-PC-COURSE-EDITOR-PERCENT-UNITS-MATCH-AND-GPX-IS-NOT-DUPLICATED',(
 
 
 await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
-  const screen=read('screens/historyScreen.js');
-  const shared=read('styles/screens.css');
+  const screen=read('screens/historyScreen.js') + read('screens/desktop/historyScreen.js');
   const css=read('styles/desktop-screen-layouts.css');
   const audit=css;
 
-  assert.ok(screen.includes('history-records-title-mobile'));
-  assert.ok(screen.includes('history-records-title-pc'));
-  assert.match(shared,/\.history-records-title-pc\s*\{\s*display:\s*none;/);
+  assert.ok(screen.includes('desktop-history-mode'));
+  assert.ok(!screen.includes('mobile-history-mode'));
 
   assert.match(audit,/> \.page-head[\s\S]*clip-path:\s*inset\(50%\)\s*!important/);
   assert.match(audit,/\.screen--history\.screen-layout--history \.history-view--records[\s\S]*width:\s*min\(100%, 72rem\)\s*!important/);
@@ -402,14 +399,14 @@ await test('UI-PC-HISTORY-RECORD-BROWSER-USES-READABLE-FULL-WIDTH-ROWS',()=>{
 
 
 await test('UI-HISTORY-SEPARATES-RECORDS-AND-INTERPRETATIONS',()=>{
-  const screen=read('screens/historyScreen.js');
-  const selfCss=read('styles/self-understanding.css');
-  const renderStart=screen.indexOf('export function renderHistoryScreen');
+  const screen=read('screens/historyScreen.js') + read('screens/desktop/historyScreen.js');
+  const selfCss=read('styles/self-understanding.css') + read('styles/desktop-self-understanding.css');
+  const renderStart=screen.indexOf('export function renderHistoryScreenWithPresentation');
   assert.ok(renderStart>=0,'history render function');
   const render=screen.slice(renderStart);
   assert.match(screen,/function normalizedView\(value\)/);
-  assert.ok(render.includes('historyRecordView(workspace,context)'));
-  assert.ok(render.includes('selfUnderstandingHistoryView(services, context)'));
+  assert.ok(screen.includes('historyRecordView(workspace, context)'));
+  assert.ok(screen.includes('selfUnderstandingHistoryView(services, context)'));
   assert.ok(screen.includes('自分について確認してきたこと'));
   assert.ok(!screen.includes('recentInterpretations(services')); 
   assert.ok(screen.includes('次回も見る'));

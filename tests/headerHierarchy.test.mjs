@@ -17,7 +17,7 @@ await test('HEADER-SHELL-REMOVES-DUPLICATE-CONTEXT-LABELS',()=>{
 });
 
 await test('HEADER-MOBILE-USES-SCREEN-NAME-AND-UTILITY-CONTROLS',()=>{
-  const shell=read('ui/appShell.js');
+  const shell=read('ui/mobileAppShell.js') + read('ui/appShell.js');
   assert.ok(shell.includes('resolveHeaderTitle'));
   assert.ok(shell.includes('mobile-topbar__screen-title'));
   assert.ok(!shell.includes('<strong>RunLoad</strong>'));
@@ -26,10 +26,10 @@ await test('HEADER-MOBILE-USES-SCREEN-NAME-AND-UTILITY-CONTROLS',()=>{
 });
 
 await test('HEADER-DESKTOP-USES-SAME-SCREEN-NAME-AS-MOBILE',()=>{
-  const shell=read('ui/appShell.js');
+  const shell=read('ui/desktopAppShell.js');
   assert.ok(shell.includes('app-header__screen-title'));
   assert.ok(shell.includes('PRIMARY_HEADER_TITLES'));
-  assert.ok(shell.includes('const title = resolveHeaderTitle(currentScreen, currentLocation);'));
+  assert.ok(shell.includes('resolveHeaderTitle(currentScreen, currentLocation)'));
   assert.ok(!shell.includes('aria-label="RunLoad Home"'));
 });
 

@@ -3,7 +3,7 @@ import {
   RUN_ENERGY_MODEL_ID,
   estimateRunningEnergy,
   selectRunningMetBySpeed,
-} from '../ui/runMeasurementEnergy.js';
+} from '../ui/mobileRunMeasurementEnergy.js';
 
 const results = [];
 function test(id, fn) {

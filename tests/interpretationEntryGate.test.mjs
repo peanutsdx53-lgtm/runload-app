@@ -14,7 +14,7 @@ async function test(id,fn){
 }
 
 await test('RESULT-GATE-COMES-AFTER-TWO-RESULT-BLOCKS',()=>{
-  const source=read('screens/resultScreen.js');
+  const source=read('screens/mobile/resultScreen.js');
   const line=source.split('\n').find((row)=>row.includes('result-next-actions')&&row.includes('understanding-link'))||'';
   assert.ok(line);
   const regional=line.indexOf('renderRegional(');
@@ -26,7 +26,7 @@ await test('RESULT-GATE-COMES-AFTER-TWO-RESULT-BLOCKS',()=>{
 });
 
 await test('RESULT-GATE-USES-PLAIN-LANGUAGE',()=>{
-  const source=read('screens/resultScreen.js');
+  const source=read('screens/mobile/resultScreen.js');
   const gate=source.match(/<nav class="result-next-actions"[\s\S]*?<\/nav>/)?.[0]||'';
   assert.match(source,/今回を見比べる/);
   assert.match(gate,/interpretationLinkCopy/);

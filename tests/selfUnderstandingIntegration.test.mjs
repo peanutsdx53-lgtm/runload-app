@@ -16,8 +16,11 @@ check("RECORD-BURDEN-ONE-VISIBLE-RAW-MEMO", () => {
   const screen = read("screens/recordInputScreen.js");
   const observationBlock = screen.match(/function renderRunObservationMemo[\s\S]*?\n}\n/)?.[0] || "";
   assert.match(observationBlock, /textarea name="postRunReflection"/);
-  assert.doesNotMatch(observationBlock, /perceivedDifference|nextCheckPoint|legacy-reflection-note/);
   assert.equal((observationBlock.match(/<textarea/g) || []).length, 1);
+  assert.match(observationBlock, /type="hidden" name="perceivedDifference"/);
+  assert.match(observationBlock, /type="hidden" name="nextCheckPoint"/);
+  assert.match(observationBlock, /previous-reflection-note/);
+  assert.match(observationBlock, /以前の内容はそのまま保存します。自動で新しい意味に読み替えません。/);
   assert.match(observationBlock, /結果を見る前の自分の観察/);
 });
 
@@ -30,8 +33,8 @@ check("RECORD-MEMO-LABEL-DISTINGUISHES-RUN-AND-REST", () => {
 
 check("HOME-CONFIRMATION-ENTRY-IS-ACTIONABLE-NOT-PERMANENT", () => {
   const home = read("screens/mobile/homeScreen.js");
-  const interactions = read("ui/interactions/homeInteractions.js");
-  const homeLayout = read("ui/interactions/homeLayoutState.js");
+  const interactions = read("ui/interactions/mobileHomeInteractions.js");
+  const homeLayout = read("ui/interactions/mobileHomeLayoutState.js");
   assert.match(home, /data-mobile-confirmation-banner/);
   assert.match(home, /hasNewEligibleData/);
   assert.match(home, /#\/history\?view=checks/);
@@ -45,15 +48,17 @@ check("REST-PLAN-DOES-NOT-PRESENT-RUN-CONFIRMATION-CARRY", () => {
   assert.match(plan, /selectedThreadId&&planType==="run"/);
 });
 
-check("RETIRED-REFLECTION-COMPATIBILITY-PATH-IS-ABSENT", () => {
-  const files = [
-    "screens/recordInputScreen.js",
+check("PREVIOUS-REFLECTION-DATA-IS-PRESERVED-BUT-NOT-REINTERPRETED", () => {
+  const recordScreen = read("screens/recordInputScreen.js");
+  assert.match(recordScreen, /name="perceivedDifference"/);
+  assert.match(recordScreen, /name="nextCheckPoint"/);
+  assert.match(recordScreen, /自動で新しい意味に読み替えません/);
+  const activeInterpretation = [
     "ui/interactions/interpretationRoomInteractions.js",
     "ui/interpretationRoomPresentation.js",
     "core/selfUnderstandingCore.js",
-    "styles/self-understanding.css",
   ].map(read).join("\n");
-  assert.doesNotMatch(files, /nextCheckPoint|perceivedDifference|USER_DEFINED_LEGACY|userDefinedLegacy|legacyOrigin|legacy-reflection-note/);
+  assert.doesNotMatch(activeInterpretation, /nextCheckPoint|perceivedDifference|USER_DEFINED_LEGACY|userDefinedLegacy|legacyOrigin/);
 });
 
 check("BODY-OBSERVATION-THEME-CARRIES-EXACT-BODY-AREA", () => {

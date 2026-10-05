@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderInterpretationRoom } from '../ui/interpretationRoomPresentation.js';
-const renderMobile = (args) => renderInterpretationRoom({ ...args, mobileLayout: true });
+const renderMobile = (args) => renderInterpretationRoom({ ...args, compactLayout: true });
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(here,'..');
@@ -27,7 +27,7 @@ function selfUnderstanding(){return {primaryCandidate:{kind:'BODY_OBSERVATION_PA
 
 await test('FIRST-FRAME-IS-ONE-FOCUS-NOT-AN-ANALYSIS-DUMP',()=>{
   const html=renderMobile({output:baseOutput(),selfUnderstanding:selfUnderstanding()});
-  assert.match(html,/interpretation-flow-room--mobile/);
+  assert.match(html,/interpretation-flow-room--compact/);
   assert.match(html,/data-interpretation-flow-stage="focus"/);
   assert.match(html,/今回、まず見るところ/);
   assert.match(html,/最初は自分で記録した内容だけを見ます/);
@@ -62,7 +62,7 @@ await test('DECISION-IS-A-CHECKING-QUESTION-WITH-LOW-BURDEN-OPTIONS',()=>{
 
 await test('TECHNICAL-DETAIL-AND-OTHER-ACTIONS-STAY-SECONDARY',()=>{
   const html=renderMobile({output:baseOutput(),selfUnderstanding:selfUnderstanding()});
-  assert.match(html,/interpretation-loop-more--mobile/);
+  assert.match(html,/interpretation-loop-more--compact/);
   assert.match(html,/<summary>計算・条件・根拠を詳しく見る<\/summary>/);
   for(const label of ['条件を変えて比較する','次の記録条件を整理する','共有用に整理する','関連する読みものを確認する']) assert.match(html,new RegExp(label));
 });
@@ -115,10 +115,11 @@ await test('REST-STATE-DOES-NOT-FABRICATE-REGIONAL-RESULTS',()=>{
 
 await test('CSS-HAS-RESPONSIVE-STAGED-INTERACTION-AND-REDUCED-MOTION',()=>{
   const css=fs.readFileSync(path.join(root,'styles/interpretation-technical-details.css'),'utf8');
+  const mobileCss=fs.readFileSync(path.join(root,'styles/mobile-interpretation-technical-details-responsive.css'),'utf8');
   assert.match(css,/grid-template-columns:\s*minmax\(0, 1fr\) minmax\(19rem, 34%\)/);
   assert.match(css,/\.interpretation-flow-room\[data-interpretation-flow-stage="focus"\] \[data-interpretation-flow-reveal="compare"\] \{ display: none; \}/);
-  assert.match(css,/@media \(max-width: 820px\)/);
-  assert.match(css,/@media \(max-width: 390px\)/);
+  assert.match(mobileCss,/@media \(max-width: 820px\)/);
+  assert.match(mobileCss,/@media \(max-width: 390px\)/);
   assert.match(css,/@media \(prefers-reduced-motion: reduce\)/);
   assert.doesNotMatch(css,/#[0-9a-fA-F]{3,8}\b/);
 });

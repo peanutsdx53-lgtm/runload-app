@@ -25,17 +25,17 @@ const selfUnderstanding={
 };
 
 await test('PC-USES-WIDE-CANVAS-AND-DECISION-RAIL',()=>{
-  const html=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:false});
-  assert.match(html,/interpretation-flow-room--pc/);
+  const html=renderInterpretationRoom({output:output(),selfUnderstanding,compactLayout:false});
+  assert.match(html,/interpretation-flow-room--wide/);
   assert.match(html,/interpretation-flow-layout/);
   assert.match(html,/interpretation-flow-canvas/);
   assert.match(html,/interpretation-flow-rail/);
   assert.match(html,/data-interpretation-flow-stage="focus"/);
-  assert.doesNotMatch(html,/interpretation-flow-room--mobile/);
+  assert.doesNotMatch(html,/interpretation-flow-room--compact/);
 });
 
 await test('PC-TEACHES-USE-THROUGH-STAGED-INTERACTION',()=>{
-  const html=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:false});
+  const html=renderInterpretationRoom({output:output(),selfUnderstanding,compactLayout:false});
   assert.match(html,/1<\/i>記録/);
   assert.match(html,/2<\/i>見比べる/);
   assert.match(html,/3<\/i>次へ/);
@@ -45,7 +45,7 @@ await test('PC-TEACHES-USE-THROUGH-STAGED-INTERACTION',()=>{
 });
 
 await test('PC-LINKS-USER-EXPERIENCE-AND-RUNLOAD-INFORMATION-WITHOUT-EQUATING-THEM',()=>{
-  const html=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:false});
+  const html=renderInterpretationRoom({output:output(),selfUnderstanding,compactLayout:false});
   assert.match(html,/あなたの身体の記録/);
   assert.match(html,/股関節部の外側/);
   assert.match(html,/RunLoadの部位表示/);
@@ -56,7 +56,7 @@ await test('PC-LINKS-USER-EXPERIENCE-AND-RUNLOAD-INFORMATION-WITHOUT-EQUATING-TH
 });
 
 await test('PC-USER-SELECTS-A-NEXT-QUESTION-NOT-AN-ANSWER',()=>{
-  const html=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:false});
+  const html=renderInterpretationRoom({output:output(),selfUnderstanding,compactLayout:false});
   assert.match(html,/次に自分で確かめること/);
   assert.match(html,/次の走行では、股関節部の外側を自分がどう感じたか確認する/);
   assert.match(html,/この問いを次も確かめる/);
@@ -66,7 +66,7 @@ await test('PC-USER-SELECTS-A-NEXT-QUESTION-NOT-AN-ANSWER',()=>{
 });
 
 await test('PC-KEEPS-CANDIDATE-REASON-AND-TECHNICAL-DETAIL-TRACEABLE-BUT-SECONDARY',()=>{
-  const html=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:false});
+  const html=renderInterpretationRoom({output:output(),selfUnderstanding,compactLayout:false});
   assert.match(html,/表示理由/);
   assert.match(html,/身体の記録と同じ部位に、今回の部位表示があるため/);
   assert.match(html,/<summary>計算・条件・根拠を詳しく見る<\/summary>/);
@@ -77,23 +77,24 @@ await test('PC-KEEPS-CANDIDATE-REASON-AND-TECHNICAL-DETAIL-TRACEABLE-BUT-SECONDA
 
 await test('PC-CSS-USES-LARGE-SCREEN-ASYMMETRIC-WORKSPACE',()=>{
   const css=read('styles/interpretation-technical-details.css');
+  const mobileCss=read('styles/mobile-interpretation-technical-details-responsive.css');
   assert.match(css,/\.interpretation-flow-layout\s*\{/);
   assert.match(css,/grid-template-columns:\s*minmax\(0,\s*1fr\)\s*minmax\(19rem,\s*34%\)/);
   assert.match(css,/\.interpretation-flow-rail\s*\{[^}]*position:\s*sticky/s);
-  assert.match(css,/@media \(max-width: 820px\)/);
-  assert.match(css,/\.interpretation-flow-layout\s*\{\s*display:\s*block;/s);
+  assert.match(mobileCss,/@media \(max-width: 820px\)/);
+  assert.match(mobileCss,/\.interpretation-flow-layout\s*\{\s*display:\s*block;/s);
 });
 
 await test('PC-SHARES-ONE-SEMANTIC-STATE-MACHINE-WITH-MOBILE-BUT-NOT-LAYOUT',()=>{
-  const pc=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:false});
-  const mobile=renderInterpretationRoom({output:output(),selfUnderstanding,mobileLayout:true});
+  const pc=renderInterpretationRoom({output:output(),selfUnderstanding,compactLayout:false});
+  const mobile=renderInterpretationRoom({output:output(),selfUnderstanding,compactLayout:true});
   for(const html of [pc,mobile]) {
     assert.match(html,/data-interpretation-flow-stage="focus"/);
     assert.match(html,/対応する情報を見る/);
     assert.match(html,/次に自分で確かめること/);
   }
-  assert.match(pc,/interpretation-flow-room--pc/);
-  assert.match(mobile,/interpretation-flow-room--mobile/);
+  assert.match(pc,/interpretation-flow-room--wide/);
+  assert.match(mobile,/interpretation-flow-room--compact/);
 });
 
 const failed=results.filter(r=>r.status==='FAIL');
