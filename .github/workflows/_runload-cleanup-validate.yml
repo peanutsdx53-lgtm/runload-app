@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify base and reconstruct exact patch
+      - name: Verify base and reconstruct exact payloads
         shell: bash
         run: |
           set -euo pipefail
@@ -30,6 +30,15 @@ jobs:
           EXPECTED_B64='9ecbd7398c480ef3c9dc11aabfc9a090387748108c93829eddef331531973af4'
           EXPECTED_GZ='274bac391973ed4faeba2af1d0244110207574313f0d19c5e761548825653b8d'
           EXPECTED_PATCH='d1cb6a8713457bba416d6cbe72a8430f36e06a9a7d4b941202fffd07182c9efe'
+          EXPECTED_DESKTOP_DELTA_B64='ffe8402ddab0c3081a229b08db0836fc28f68d830d19b366449a57a484109bf7'
+          EXPECTED_DESKTOP_DELTA_GZ='8ded25e1fac1d715449367c7e206cd821d7b311b35e1e9848d314e557f81d924'
+          EXPECTED_DESKTOP_DELTA='03b8aef4a86bf3296dabf80e61635570be8ee49788194adb6a6d1c9ba68aad85'
+          EXPECTED_MOBILE_DELTA_B64='1e40d0f31faf11ce04a01716e0387e0ff958014236fb7f4694692a6713112d1d'
+          EXPECTED_MOBILE_DELTA_GZ='92748f1e7314f6e6276ddf97641c1a2b26f92a6eafdd8146c5f502718fb139e4'
+          EXPECTED_MOBILE_DELTA='f1010d51eda7610879cb1b9f98cc3a4c9e83b4f2a56977a09fb1fd442fff9602'
+          EXPECTED_SMALL_B64='1b44a718f879a4381ee3021a96f9f3a40f55d640968c4323bde5202c6248eaec'
+          EXPECTED_SMALL_GZ='9abc66f578c4c4c42faf0d612a29596bf681831851f2d64d848c501ec60518d0'
+          EXPECTED_SMALL_TAR='9d4f28a483533b4d5bfb4146bdde07c661ee29d873ad90033f501ef2058c9453'
 
           git fetch origin main
           test "$(git rev-parse origin/main)" = "$EXPECTED_BASE"
@@ -42,13 +51,44 @@ jobs:
           gunzip -c /tmp/cleanup.patch.gz > /tmp/cleanup.patch
           echo "$EXPECTED_PATCH  /tmp/cleanup.patch" | sha256sum -c -
 
+          cp .cleanup-compact/desktop.delta.patch.gz.b64 /tmp/desktop.delta.patch.gz.b64
+          echo "$EXPECTED_DESKTOP_DELTA_B64  /tmp/desktop.delta.patch.gz.b64" | sha256sum -c -
+          base64 --decode /tmp/desktop.delta.patch.gz.b64 > /tmp/desktop.delta.patch.gz
+          echo "$EXPECTED_DESKTOP_DELTA_GZ  /tmp/desktop.delta.patch.gz" | sha256sum -c -
+          gunzip -c /tmp/desktop.delta.patch.gz > /tmp/desktop.delta.patch
+          echo "$EXPECTED_DESKTOP_DELTA  /tmp/desktop.delta.patch" | sha256sum -c -
+
+          cp .cleanup-compact/mobile.delta.patch.gz.b64 /tmp/mobile.delta.patch.gz.b64
+          echo "$EXPECTED_MOBILE_DELTA_B64  /tmp/mobile.delta.patch.gz.b64" | sha256sum -c -
+          base64 --decode /tmp/mobile.delta.patch.gz.b64 > /tmp/mobile.delta.patch.gz
+          echo "$EXPECTED_MOBILE_DELTA_GZ  /tmp/mobile.delta.patch.gz" | sha256sum -c -
+          gunzip -c /tmp/mobile.delta.patch.gz > /tmp/mobile.delta.patch
+          echo "$EXPECTED_MOBILE_DELTA  /tmp/mobile.delta.patch" | sha256sum -c -
+
+          test "$(find .cleanup-compact -maxdepth 1 -type f -name 'small-*.txt' | wc -l | tr -d ' ')" = '7'
+          cat .cleanup-compact/small-*.txt > /tmp/small-additions.tar.gz.b64
+          echo "$EXPECTED_SMALL_B64  /tmp/small-additions.tar.gz.b64" | sha256sum -c -
+          base64 --decode /tmp/small-additions.tar.gz.b64 > /tmp/small-additions.tar.gz
+          echo "$EXPECTED_SMALL_GZ  /tmp/small-additions.tar.gz" | sha256sum -c -
+          gunzip -c /tmp/small-additions.tar.gz > /tmp/small-additions.tar
+          echo "$EXPECTED_SMALL_TAR  /tmp/small-additions.tar" | sha256sum -c -
+
       - name: Apply cleanup to exact main base
         shell: bash
         run: |
           set -euo pipefail
           git checkout --detach origin/main
+          cp styles/desktop.css /tmp/desktop-source.css
+          cp styles/mobile.css /tmp/mobile-source.css
           git apply --check /tmp/cleanup.patch
           git apply /tmp/cleanup.patch
+          cp /tmp/desktop-source.css styles/desktop-screen-layouts.css
+          cp /tmp/mobile-source.css styles/mobile-screen-layouts.css
+          git apply --check /tmp/desktop.delta.patch
+          git apply /tmp/desktop.delta.patch
+          git apply --check /tmp/mobile.delta.patch
+          git apply /tmp/mobile.delta.patch
+          tar -xf /tmp/small-additions.tar -C .
           git add -A
 
       - name: Verify exact cleaned tree
@@ -63,7 +103,9 @@ jobs:
           echo "manifest_sha256=$manifest"
           test "$count" = "$EXPECTED_COUNT"
           test "$manifest" = "$EXPECTED_MANIFEST"
-          test -z "$(git status --porcelain --untracked-files=all | grep '^?? \.cleanup-payload/' || true)"
+          test ! -e .cleanup-payload
+          test ! -e .cleanup-additions
+          test ! -e .cleanup-compact
           test ! -e .github/workflows/_runload-cleanup-validate.yml
 
       - name: Syntax check all JavaScript modules
