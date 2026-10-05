@@ -1,3 +1,10 @@
+## APP v2026.10.05.2 — Platform Isolation Completion
+
+- Mobile and desktop screen renderers, interaction binders, shell UI, and responsive styles are loaded from platform-owned files only.
+- Shared runtime no longer renders platform-only DOM or owns platform-only CSS selectors.
+- Mobile-only runtime helpers use explicit mobile ownership names; PWA platform caches follow the same boundary.
+- Architecture acceptance now fails on platform-specific markup/CSS leakage or ambiguous platform-only runtime ownership.
+
 ## APP v2026.10.05.1 — Codebase Cleanup Release
 
 - Removes retired compatibility paths, historical presentation-generation identifiers, stale fixture/workflow references, and temporary audit workflows.

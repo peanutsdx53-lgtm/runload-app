@@ -69,9 +69,9 @@ Shared application-shell and browser presentation responsibilities:
 Mobile Home interaction ownership is split by responsibility:
 
 - `ui/mobileHomeGridUtilities.js`: mobile-only Home layout primitives shared by layout, drag/drop, capacity, and iOS edit-scroll modules.
-- `ui/interactions/homeLayoutState.js`: Home catalog, persisted layout state, page/widget scaffold, and layout application.
-- `ui/interactions/homeEditPresentation.js`: edit controls, add-item picker, and drag-ghost presentation helpers.
-- `ui/interactions/homeInteractions.js`: pointer/gesture coordination, page navigation, edit actions, and event lifecycle only.
+- `ui/interactions/mobileHomeLayoutState.js`: Home catalog, persisted layout state, page/widget scaffold, and layout application.
+- `ui/interactions/mobileHomeEditPresentation.js`: edit controls, add-item picker, and drag-ghost presentation helpers.
+- `ui/interactions/mobileHomeInteractions.js`: pointer/gesture coordination, page navigation, edit actions, and event lifecycle only.
 
 `ui/platformBootstrap.js` selects one platform at startup. It loads `ui/platformStyles.js`, then exactly one of `mobileRuntimeEntry.js` or `desktopRuntimeEntry.js`, before importing `app.js`. `app.js` likewise selects one platform application runtime and one platform screen registry. Opposite-platform runtime modules must not be fetched merely for compatibility.
 
@@ -97,7 +97,7 @@ Platform ownership:
 - `desktop-foundation.css`, `desktop-screen-layouts.css`, and `desktop-*.css`: desktop-only presentation.
 - `consultation-share-mobile.css`: smartphone-only consultation override.
 
-Desktop must not load or cache mobile-only styles, and mobile must not load or cache desktop-only styles. Shared styles must not duplicate platform-only ownership. `tests/codebaseArchitecture.test.mjs` enforces the loader/cache separation.
+Desktop must not load or cache mobile-only styles, and mobile must not load or cache desktop-only styles. Shared styles must not contain platform-only `.mobile-*`, `.desktop-*`, `.pc-*`, or platform data selectors. Platform-only runtime files must have explicit platform ownership in their filename or directory. `tests/codebaseArchitecture.test.mjs` enforces these boundaries in the loader, dependency graph, DOM/CSS ownership, and PWA cache lists.
 
 Do not create numbered CSS generations such as `*-v2.css` or temporary `prototype-*.css`. Modify the owning layer instead.
 
@@ -116,8 +116,9 @@ Version identifiers may exist inside output schemas or scientific/model metadata
 
 - `ui/appRouter.js`: hash route parsing and dispatch support.
 - `ui/screenArchitecture.js`: screen hierarchy and contextual back-navigation.
-- `ui/appShell.js`: primary navigation and shell/header presentation.
-- `app.js`: application composition and screen registration.
+- `ui/appShell.js`: platform-neutral navigation, contextual-help, and shell-layer primitives only.
+- `ui/mobileAppShell.js` / `ui/desktopAppShell.js`: platform-owned headers, shell composition, and platform-only DOM selectors.
+- `app.js`: application composition and platform selection; it delegates platform markup and selectors to the selected platform layer.
 
 Context passed between derived screens should be limited to meaningful navigation state such as record, region, origin, and return location. Do not keep obsolete compatibility flags after a flow becomes canonical.
 

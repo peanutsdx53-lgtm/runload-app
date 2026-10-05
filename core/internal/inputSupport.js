@@ -525,7 +525,7 @@ function normalizeRunningRecord(input = {}, options = {}) {
     }),
     personalContext: normalizePersonalContext(input.personalContext || {}),
     environmentContext: normalizeContextObject(input.environmentContext, { temperatureC: "number", environmentNote: 500 }),
-    reflectionContext: normalizeContextObject(input.reflectionContext, { postRunReflection: 500 }),
+    reflectionContext: normalizeContextObject(input.reflectionContext, { postRunReflection: 500, perceivedDifference: 500, nextCheckPoint: 500 }),
     regionalModelSnapshot: normalizeRegionalModelSnapshot(input.regionalModelSnapshot),
     createdAt: normalizeSingleLineText(input.createdAt, 50) || nowIso,
     updatedAt: nowIso,

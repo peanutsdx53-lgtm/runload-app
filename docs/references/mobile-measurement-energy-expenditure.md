@@ -33,7 +33,7 @@ The official unit-conversion page also lists the ACSM running metabolic equation
 
 Model ID: `adult-compendium-2024-running-speed-v1`
 
-Implementation file: `ui/runMeasurementEnergy.js`
+Implementation file: `ui/mobileRunMeasurementEnergy.js`
 
 The implementation:
 

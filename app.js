@@ -3,7 +3,7 @@ import { registerPwaServiceWorker, createApplicationServices, createHistoryWorkf
 import { createRofJServices } from "./core/rofJCore.js";
 import { createAppRouter } from "./ui/appRouter.js";
 import { matchesMobileLayout, resolveViewportDefaultEntryScreen } from "./ui/deviceLayout.js";
-import { focusScreenHeading, renderAppShell, renderDesktopHeader } from "./ui/appShell.js";
+import { focusScreenHeading } from "./ui/appShell.js";
 import { applyAppSettings } from "./ui/appSettings.js";
 import { APP_GUIDE_VERSION, DEFAULT_GUIDE_SECTION, normalizeGuideSection, shouldOpenGuide, withGuideVersionSeen } from "./ui/guideContent.js";
 import { bindAppShellInteractions } from "./ui/shellInteractions.js";
@@ -17,11 +17,14 @@ const mobileLayout = matchesMobileLayout();
 const platformRuntime = mobileLayout
   ? await import("./ui/mobileAppRuntime.js")
   : await import("./ui/desktopAppRuntime.js");
+const platformShell = mobileLayout
+  ? await import("./ui/mobileAppShell.js")
+  : await import("./ui/desktopAppShell.js");
 const screenRenderers = await createScreenRenderers({ mobile: mobileLayout });
 const bindScreenInteractions = await createScreenInteractionBinder({ mobile: mobileLayout });
 
 const appRoot = document.getElementById("app");
-const desktopHeaderRoot = document.getElementById("desktop-header-root");
+const platformHeaderRoot = document.getElementById("platform-header-root");
 const baseApplicationServices = createApplicationServices();
 const fatigue = createRofJServices({
   gateway: baseApplicationServices.storage.gateway,
@@ -69,17 +72,17 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
     : null;
   const renderSelectedScreen = screenRenderers[screenName] ?? screenRenderers.home;
   const latestExperience = applicationServices.workflows.records.loadLatestExperience();
-  if (desktopHeaderRoot) {
-    desktopHeaderRoot.innerHTML = ["interpretation-room", "run-measurement"].includes(screenName)
+  if (platformHeaderRoot) {
+    platformHeaderRoot.innerHTML = ["interpretation-room", "run-measurement"].includes(screenName)
       ? ""
-      : renderDesktopHeader({
+      : platformShell.renderPlatformHeader({
           currentScreen: screenName,
           currentLocation,
           hasResult: Boolean(latestExperience),
         });
   }
 
-  appRoot.innerHTML = renderAppShell({
+  appRoot.innerHTML = platformShell.renderPlatformShell({
     currentScreen: screenName,
     currentLocation,
     hasResult: Boolean(latestExperience),
@@ -116,9 +119,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
       guideFirstVisit = false;
       const focusSelector = currentLocation.screen === "interpretation-room"
         ? ".interpretation-room-header .context-help-button"
-        : matchesMobileLayout()
-          ? ".mobile-topbar .context-help-button"
-          : "#desktop-header-root .context-help-button";
+        : platformShell.resolvePlatformGuideReturnFocusSelector();
       renderCurrentLocation({ focusHeading: false, focusSelector });
     },
     onSelectGuideSection: (section) => {
@@ -127,8 +128,8 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
     },
   };
   bindAppShellInteractions({ root: appRoot, ...shellInteractionCallbacks, bindPlatformShell: platformRuntime.bindPlatformShell });
-  if (desktopHeaderRoot?.firstElementChild) {
-    bindAppShellInteractions({ root: desktopHeaderRoot, ...shellInteractionCallbacks, bindPlatformShell: platformRuntime.bindPlatformShell });
+  if (platformHeaderRoot?.firstElementChild) {
+    bindAppShellInteractions({ root: platformHeaderRoot, ...shellInteractionCallbacks, bindPlatformShell: platformRuntime.bindPlatformShell });
   }
   bindScreenInteractions({
     screenName,
@@ -140,8 +141,8 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
     platformRuntime,
   });
   bindScreenTutorial({ root: appRoot, screenName });
-  if (desktopHeaderRoot?.firstElementChild) {
-    bindScreenTutorial({ root: desktopHeaderRoot, screenName });
+  if (platformHeaderRoot?.firstElementChild) {
+    bindScreenTutorial({ root: platformHeaderRoot, screenName });
   }
   platformRuntime.bindOnboarding({
     root: appRoot,
@@ -182,7 +183,6 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
 function renderScreen(location) {
   handleRecordInputRouteChange(currentLocation.screen, location.screen);
   currentLocation = location;
-  const mobileLayout = matchesMobileLayout();
   const settings = applicationServices.storage.settings.load();
   const onboardingRequired = platformRuntime.shouldOpenOnboarding(settings);
   const legalPreview = onboardingRequired && ["terms", "privacy"].includes(location.screen);
@@ -289,6 +289,7 @@ router = createAppRouter({
   availableScreens: Object.keys(screenRenderers),
   defaultScreen: initialScreen,
   onScreenChange: renderScreen,
+  singleEntryNavigation: platformRuntime.isMobilePlatform,
 });
 
 router.start();
