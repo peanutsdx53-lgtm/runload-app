@@ -46,7 +46,7 @@ jobs:
 
           p = root / 'ui/platformStyles.js'
           s = p.read_text()
-          if s.indexOf('"./styles/desktop-course.css"') < s.indexOf('"./styles/desktop-unification.css"'):
+          if s.index('"./styles/desktop-course.css"') < s.index('"./styles/desktop-unification.css"'):
               if s.count('    "./styles/desktop-course.css",\n') != 1: raise SystemExit('desktop course style count unexpected')
               if s.count('    "./styles/desktop-course-editor.css",\n') != 1: raise SystemExit('desktop course editor style count unexpected')
               s = s.replace('    "./styles/desktop-course.css",\n', '', 1)
