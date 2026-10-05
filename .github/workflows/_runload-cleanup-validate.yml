@@ -126,13 +126,14 @@ jobs:
           set -euo pipefail
           node --test tests/*.test.mjs
 
-      - name: Recheck base and create validated commit
+      - name: Recheck base and create validated app commit
         shell: bash
         run: |
           set -euo pipefail
           EXPECTED_BASE='afc68be429eab95e9ad5ccfd680d050fccc19b8f'
           git fetch origin main
           test "$(git rev-parse origin/main)" = "$EXPECTED_BASE"
+          git restore --source=origin/main --staged --worktree .github/workflows
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'Complete app code cleanup and architecture consolidation'
