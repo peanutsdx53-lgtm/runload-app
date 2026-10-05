@@ -16,6 +16,13 @@ function test(id, fn) {
   catch (error) { results.push({ id, status: 'FAIL', message: String(error?.stack || error) }); }
 }
 
+test('HOME-PAGE-LIMIT-IS-OWNED-BY-SPLIT-LAYOUT-MODULE', () => {
+  assert.match(homeLayout, /export const MAX_HOME_PAGES = 4/);
+  const interactions = fs.readFileSync('ui/interactions/mobileHomeInteractions.js', 'utf8');
+  assert.match(interactions, /MAX_HOME_PAGES,/);
+  assert.doesNotMatch(interactions, /const MAX_HOME_PAGES = 4/);
+});
+
 test('HOME-GRID-REMAINS-HARD-CAPPED-AT-THREE-ROWS', () => {
   assert.match(gridModel, /HOME_MAX_ROWS = 3/);
   assert.match(guard, /grid\.style\.setProperty\("--home-grid-rows", "3"\)/);

@@ -11,6 +11,8 @@ import {
 import { loadMobileQuickTools } from "../mobileQuickToolsStore.js";
 import { buildSelfUnderstandingView } from "../../core/selfUnderstandingCore.js";
 
+export const MAX_HOME_PAGES = 4;
+
 const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";

@@ -1,6 +1,7 @@
 import { bindMobileHomeHub } from "../mobileHomeHub.js";
 import {
   HOME_COLUMNS,
+  MAX_HOME_PAGES,
   findNearestFreePlacement,
   footprintForToken,
   normalizePlacement,
@@ -55,7 +56,6 @@ const LAUNCH_ANIMATION_MS = 360;
 const LAUNCH_NAVIGATION_MS = 260;
 const TAP_SLOP_PX = 8;
 const DRAG_START_PX = 10;
-const MAX_HOME_PAGES = 4;
 const PAGE_EDGE_PX = 16;
 const PAGE_EDGE_DELAY_MS = 850;
 
