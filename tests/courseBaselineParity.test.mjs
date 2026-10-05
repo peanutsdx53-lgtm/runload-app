@@ -15,6 +15,7 @@ const mobileInteractions = read("ui/interactions/mobileCourseInteractions.js");
 const desktopCss = read("styles/desktop-course.css");
 const desktopEditorCss = read("styles/desktop-course-editor.css");
 const mobileCss = read("styles/mobile-course.css");
+const platformStyles = read("ui/platformStyles.js");
 
 test("course library keeps separate baseline desktop and mobile presentations", () => {
   assert.match(desktopLibrary, /今回のコース/);
@@ -48,6 +49,17 @@ test("course visual contracts keep baseline platform dimensions", () => {
   assert.match(mobileCss, /--course-mobile-field:\s*52px/);
   assert.match(mobileCss, /course-mobile-library-card/);
   assert.match(mobileCss, /gpx-mobile-card/);
+});
+
+test("desktop course reference presentation overrides later desktop consolidation", () => {
+  const unificationIndex = platformStyles.indexOf("./styles/desktop-unification.css");
+  const courseIndex = platformStyles.indexOf("./styles/desktop-course.css");
+  const editorIndex = platformStyles.indexOf("./styles/desktop-course-editor.css");
+  assert.ok(unificationIndex >= 0 && courseIndex > unificationIndex && editorIndex > courseIndex);
+  assert.match(desktopCss, /Reference course-screen chrome/);
+  assert.match(desktopCss, /course-derived-head[\s\S]*display:\s*grid\s*!important/);
+  assert.match(desktopCss, /course-derived-frame[\s\S]*border:\s*2px solid var\(--color-line\)\s*!important/);
+  assert.match(desktopCss, /head\.clean-head > div,[\s\S]*compact-intro[\s\S]*display:\s*block\s*!important/);
 });
 
 test("GPX keeps baseline platform-specific copy and shared element contract", () => {
