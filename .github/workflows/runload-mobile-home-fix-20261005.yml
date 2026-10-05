@@ -1,4 +1,4 @@
-name: Apply RunLoad Mobile Home Fix
+name: Correct RunLoad Mobile Home Import
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  apply-fix:
+  fix:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,86 +19,45 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Apply audited mobile Home fix
+      - name: Correct import ownership
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-
-          root = Path('.')
-
-          layout = root / 'ui/interactions/mobileHomeLayoutState.js'
-          s = layout.read_text()
-          if 'export const MAX_HOME_PAGES = 4;' not in s:
-              needle = 'const STORAGE_KEY = "running-record-mobile-home-layout-v1";\n'
-              if needle not in s:
-                  raise SystemExit('layout insertion anchor not found')
-              s = s.replace(needle, 'export const MAX_HOME_PAGES = 4;\n\n' + needle, 1)
-              layout.write_text(s)
-
-          interactions = root / 'ui/interactions/mobileHomeInteractions.js'
-          s = interactions.read_text()
-          if '  MAX_HOME_PAGES,\n' not in s:
-              needle = '  HOME_COLUMNS,\n  findNearestFreePlacement,'
-              if needle not in s:
-                  raise SystemExit('interaction import anchor not found')
-              s = s.replace(needle, '  HOME_COLUMNS,\n  MAX_HOME_PAGES,\n  findNearestFreePlacement,', 1)
-          s = s.replace('const MAX_HOME_PAGES = 4;\n', '', 1)
-          interactions.write_text(s)
-
-          for rel in ['service-worker.js', 'ui/appVersionStatus.js', 'screens/shared/aboutScreen.js']:
-              p = root / rel
-              text = p.read_text()
-              if '2026.10.05.4' not in text:
-                  if '2026.10.05.3' not in text:
-                      raise SystemExit(f'version anchor missing: {rel}')
-                  text = text.replace('2026.10.05.3', '2026.10.05.4')
-                  p.write_text(text)
-
-          test_file = root / 'tests/mobileHomeDefaultLayout.test.mjs'
-          s = test_file.read_text()
-          marker = "test('HOME-PAGE-LIMIT-IS-OWNED-BY-SPLIT-LAYOUT-MODULE'"
-          if marker not in s:
-              anchor = "test('HOME-GRID-REMAINS-HARD-CAPPED-AT-THREE-ROWS', () => {\n"
+          p = Path('ui/interactions/mobileHomeInteractions.js')
+          s = p.read_text()
+          s = s.replace('  HOME_COLUMNS,\n  MAX_HOME_PAGES,\n  findNearestFreePlacement,', '  HOME_COLUMNS,\n  findNearestFreePlacement,', 1)
+          anchor = '  ALL_ITEM_ID_SET,\n  DEFAULT_LAYOUT,\n'
+          block = s[s.rfind('import {', 0, s.find('from "./mobileHomeLayoutState.js";')):s.find('from "./mobileHomeLayoutState.js";')]
+          if 'MAX_HOME_PAGES' not in block:
               if anchor not in s:
-                  raise SystemExit('test insertion anchor not found')
-              insert = "test('HOME-PAGE-LIMIT-IS-OWNED-BY-SPLIT-LAYOUT-MODULE', () => {\n  assert.match(homeLayout, /export const MAX_HOME_PAGES = 4/);\n  const interactions = fs.readFileSync('ui/interactions/mobileHomeInteractions.js', 'utf8');\n  assert.match(interactions, /MAX_HOME_PAGES,/);\n  assert.doesNotMatch(interactions, /const MAX_HOME_PAGES = 4/);\n});\n\n"
-              s = s.replace(anchor, insert + anchor, 1)
-              test_file.write_text(s)
+                  raise SystemExit('layout import anchor missing')
+              s = s.replace(anchor, anchor + '  MAX_HOME_PAGES,\n', 1)
+          p.write_text(s)
           PY
-      - name: JavaScript syntax
+      - name: Verify module linkage
         shell: bash
         run: |
           set -euo pipefail
-          node --check ui/interactions/mobileHomeLayoutState.js
           node --check ui/interactions/mobileHomeInteractions.js
-      - name: Mobile Home regression
-        run: node tests/mobileHomeDefaultLayout.test.mjs
+          node --input-type=module -e "import('./ui/interactions/mobileHomeInteractions.js')"
+          node tests/mobileHomeDefaultLayout.test.mjs
       - name: Full non-browser regression
         shell: bash
         run: |
           set -euo pipefail
-          pass=0
           for test_file in tests/*.test.mjs; do
-            if [[ "$test_file" == *mobileWalkJogBrowserFlow.test.mjs ]]; then
-              continue
-            fi
-            echo "running: $test_file"
-            node "$test_file"
-            pass=$((pass+1))
+            [[ "$test_file" == *mobileWalkJogBrowserFlow.test.mjs ]] && continue
+            node "$test_file" >/dev/null
           done
-          echo "non-browser test files passed: $pass"
-      - name: Commit audited fix
+      - name: Commit correction
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ui/interactions/mobileHomeLayoutState.js ui/interactions/mobileHomeInteractions.js ui/appVersionStatus.js service-worker.js screens/shared/aboutScreen.js tests/mobileHomeDefaultLayout.test.mjs
-          if git diff --cached --quiet; then
-            echo "No changes required"
-            exit 0
-          fi
-          git commit -m "Fix mobile Home interaction initialization"
+          git add ui/interactions/mobileHomeInteractions.js
+          git diff --cached --quiet && exit 0
+          git commit -m "Correct mobile Home page-limit import"
           git push origin HEAD:main
