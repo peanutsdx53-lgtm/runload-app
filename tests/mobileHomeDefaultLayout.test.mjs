@@ -26,6 +26,14 @@ test('HOME-PAGE-LIMIT-IS-OWNED-BY-SPLIT-LAYOUT-MODULE', () => {
   assert.doesNotMatch(interactions, /const MAX_HOME_PAGES = 4/);
 });
 
+test('DYNAMIC-WIDGETS-ARE-ASSIGNED-BEFORE-PERSISTED-VISIBILITY-IS-APPLIED', () => {
+  const interactions = fs.readFileSync('ui/interactions/mobileHomeInteractions.js', 'utf8');
+  assert.match(homeLayout, /const dynamicSlots = \["plan", "changes"\]/);
+  assert.match(homeLayout, /anchor\.dataset\.dynamicWidget/);
+  assert.match(homeLayout, /dynamicSlots\[dynamicIndex\+\+\]/);
+  assert.ok(interactions.indexOf('prepareWidgets(sourceWidgets, context.services)') < interactions.indexOf('applyWidgetLayout(root, widgetLayout)'));
+});
+
 test('HOME-GRID-REMAINS-HARD-CAPPED-AT-THREE-ROWS', () => {
   assert.match(gridModel, /HOME_MAX_ROWS = 3/);
   assert.match(guard, /grid\.style\.setProperty\("--home-grid-rows", "3"\)/);
