@@ -1,7 +1,6 @@
 import { buildInterpretation } from "../core/interpretationCore.js";
 import { buildSelfUnderstandingView } from "../core/selfUnderstandingCore.js";
 import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
-import { matchesMobileLayout } from "../ui/deviceLayout.js";
 
 const ALLOWED_ORIGINS = new Set(["result", "history", "body-part-detail", "simulation", "home"]);
 
@@ -25,7 +24,7 @@ function rofContext(services, recordId) {
   };
 }
 
-export function renderInterpretationRoomScreen({ services, context }) {
+export function renderInterpretationRoomScreenWithPresentation({ services, context }, { compactLayout = false, selectDefaultRegion = false } = {}) {
   const parameters = context?.parameters || new URLSearchParams();
   const requestedRecordId = String(parameters.get("recordId") || "");
   const origin = safeOrigin(parameters);
@@ -60,8 +59,7 @@ export function renderInterpretationRoomScreen({ services, context }) {
     supportDecision: targetExperience?.supportDecision || null,
   });
 
-  const mobileLayout = matchesMobileLayout();
-  if (!mobileLayout && !regionId && output?.state?.regional === "AVAILABLE") {
+  if (selectDefaultRegion && !regionId && output?.state?.regional === "AVAILABLE") {
     const candidateRegionId = String(selfUnderstanding?.primaryCandidate?.subject?.regionId || "");
     const activeRegionId = ["REGION_WATCH", "REGION_OBSERVATION_PAIR"].includes(String(selfUnderstanding?.activeThread?.type || ""))
       ? String(selfUnderstanding.activeThread?.subject?.regionId || "")
@@ -70,20 +68,20 @@ export function renderInterpretationRoomScreen({ services, context }) {
     const changedRegionId = String(groups.find((group) => group?.code === "PREVIOUS_CHANGE")?.regions?.[0]?.regionId || "");
     const repeatedRegionId = String(groups.find((group) => group?.code === "REPEATED_DIRECTION")?.regions?.[0]?.regionId || "");
     const firstRegionId = String(groups.find((group) => Array.isArray(group?.regions) && group.regions.length)?.regions?.[0]?.regionId || "");
-    const desktopRegionId = candidateRegionId || activeRegionId || changedRegionId || repeatedRegionId || firstRegionId;
-    if (desktopRegionId) {
+    const selectedRegionId = candidateRegionId || activeRegionId || changedRegionId || repeatedRegionId || firstRegionId;
+    if (selectedRegionId) {
       output = buildInterpretation({
         targetExperience,
         allExperiences,
         rofSummary: rof.summary,
         rofRecentReferences: rof.recentReferences,
         origin,
-        selectedRegionId: desktopRegionId,
+        selectedRegionId,
         supportDecision: targetExperience?.supportDecision || null,
       });
     }
   }
 
   const savedInterpretation = services?.storage?.selfInterpretations?.findByRecordId?.(recordId) || null;
-  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, selfUnderstanding, savedInterpretation, interpretationFocus, mobileLayout })}</section>`;
+  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, selfUnderstanding, savedInterpretation, interpretationFocus, compactLayout })}</section>`;
 }

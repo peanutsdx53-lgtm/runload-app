@@ -2,20 +2,6 @@ import { APPEARANCE_MODE_OPTIONS, COLOR_THEME_OPTIONS, TEXT_SIZE_OPTIONS, normal
 import { escapeHtml } from "../ui/commonComponents.js";
 import { PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
 
-const MOBILE_QUERY = "(max-width: 54.99rem)";
-
-function checked(current, value) {
-  return current === value ? " checked" : "";
-}
-
-function checkedBoolean(value) {
-  return value ? " checked" : "";
-}
-
-function matchesMobileLayout() {
-  return typeof globalThis.matchMedia === "function" ? globalThis.matchMedia(MOBILE_QUERY).matches : false;
-}
-
 function displayOptionLabel(option) {
   return escapeHtml(option?.label || "");
 }
@@ -27,25 +13,6 @@ function renderDisplayChoices(name, current, options, { theme = false } = {}) {
 function renderDisplaySetting({ eyebrow, title, name, current, options, theme = false }) {
   const currentLabel = options.find((option) => option.value === current)?.label || options[0]?.label || "";
   return `<details class="display-setting"><summary><span class="display-setting__title"><small>${escapeHtml(eyebrow)}</small><strong>${escapeHtml(title)}</strong></span><span class="display-setting__current" data-display-setting-value="${escapeHtml(name)}">${escapeHtml(currentLabel)}</span><i aria-hidden="true">⌄</i></summary><div class="display-setting__body">${renderDisplayChoices(name, current, options, { theme })}</div></details>`;
-}
-
-function renderMeasurementNotificationSettings(settings = {}) {
-  if (!matchesMobileLayout()) return "";
-  const soundSupported = Boolean(globalThis.AudioContext || globalThis.webkitAudioContext);
-  const vibrationSupported = typeof globalThis.navigator?.vibrate === "function";
-  return `<section class="group" data-mobile-measurement-notifications><p class="group-title">MEASUREMENT</p>
-    <div class="boundary"><strong>測定中の通知</strong><span>時間・距離の目標到達やペース注意を、対応している方法で知らせます。</span></div>
-    <div class="measurement-notification-options">
-      <label class="choice-card measurement-notification-option"><input type="checkbox" name="measurementSoundEnabled" value="on" data-immediate-measurement-setting${checkedBoolean(settings.measurementSoundEnabled)}><span><strong>通知音</strong><small>${soundSupported ? "目標到達・ペース注意で音を鳴らします。" : "この端末・ブラウザーでは通知音を利用できません。"}</small></span></label>
-      <label class="choice-card measurement-notification-option"><input type="checkbox" name="measurementVibrationEnabled" value="on" data-immediate-measurement-setting${checkedBoolean(settings.measurementVibrationEnabled)}><span><strong>振動</strong><small>${vibrationSupported ? "対応端末では目標到達・ペース注意を振動でも知らせます。" : "この端末・ブラウザーでは振動を利用できません。設定は保存されます。"}</small></span></label>
-    </div>
-    <div class="action-row measurement-notification-tests">
-      <button type="button" data-action="test-measurement-sound"${soundSupported ? "" : " disabled"}>通知音を試す</button>
-      <button type="button" data-action="test-measurement-vibration"${vibrationSupported ? "" : " disabled"}>振動を試す</button>
-    </div>
-    <p class="note">iPhoneなど振動APIに対応していない環境では、振動をオンにしても音と画面表示だけを使用します。</p>
-    <p class="visually-hidden" data-measurement-notification-status role="status" aria-live="polite"></p>
-  </section>`;
 }
 
 function renderSavedShoes(settings = {}) {
@@ -62,7 +29,9 @@ function renderDataOverview(services) {
   return `<div class="data-overview"><div><small>走行・休養記録</small><strong>${records.length}件</strong></div><div><small>予定</small><strong>${plans.length}件</strong></div><div><small>保存コース</small><strong>${courseCount}件</strong></div><div><small>入力途中</small><strong>${draft ? "下書きあり" : "なし"}</strong></div></div>`;
 }
 
-export function renderSettingsScreen({ services, context }) {
+export function renderSettingsScreenWithPresentation({ services, context }, presentation = {}) {
+  const renderMeasurementNotifications = presentation.renderMeasurementNotifications || (() => "");
+  const renderFirstUseGuide = presentation.renderFirstUseGuide || (() => "");
   const settings = normalizeAppSettings(services.storage.settings.load());
   const profile = services.storage.profile.load();
   const saved = context?.parameters?.get("status") === "saved";
@@ -83,7 +52,7 @@ export function renderSettingsScreen({ services, context }) {
         <p class="visually-hidden" data-display-settings-status role="status" aria-live="polite"></p>
       </section>
 
-      ${renderMeasurementNotificationSettings(settings)}
+      ${renderMeasurementNotifications(settings)}
 
       <section class="group"><p class="group-title">SHARE PROFILE</p>
         <details class="disclosure"><summary><span><small>OPTIONAL PROFILE</small><strong>共有用プロフィール</strong><span>共有用にまとめる画面で、必要な項目だけ選んで使える任意情報</span></span><i>⌄</i></summary><div class="disclosure-body">
@@ -112,7 +81,7 @@ export function renderSettingsScreen({ services, context }) {
 
     <section class="group"><p class="group-title">APP GUIDE</p>
       <div class="settings-guide-links">
-        <button type="button" class="settings-guide-link settings-guide-link--mobile" data-action="reopen-onboarding"><span><small>FIRST USE</small><strong>チュートリアルをもう一度見る</strong></span><span aria-hidden="true">›</span></button>
+        ${renderFirstUseGuide(settings)}
         <a class="settings-guide-link" href="#/terms?returnTo=%23%2Fsettings"><span><small>TERMS</small><strong>利用規約</strong></span><span aria-hidden="true">›</span></a>
         <a class="settings-guide-link" href="#/privacy?returnTo=%23%2Fsettings"><span><small>PRIVACY</small><strong>プライバシー</strong></span><span aria-hidden="true">›</span></a>
       </div>

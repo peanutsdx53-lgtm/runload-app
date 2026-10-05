@@ -1,4 +1,4 @@
-import { compareExperienceRecordChronology as recordChronology } from "../shared/recordUtilities.js";
+import { compareExperienceRecordChronology as recordChronology, recordedNextCheckText } from "../shared/recordUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
 import { bodyRegionFormalName, PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
@@ -348,7 +348,7 @@ function consultationShareItems({ facts, fatigue, bodyRecord, regional, next, pl
     { key: "run", label: "今回の走行", value: facts, note: "距離・時間・ペース・コース", checked: true, available: true },
     { key: "fatigue", label: "疲労感", value: fatigue.label, note: "走る前と走った後", checked: fatigue.label !== "未記録", available: fatigue.label !== "未記録" },
     { key: "body", label: "身体の記録", value: bodyRecord, note: "本人が入力した部位・左右・程度・感覚", checked: bodyRecord !== "未記録", available: bodyRecord !== "未記録" },
-    { key: "next", label: "次に確認したいこと", value: next, note: "本人が次回も見ると決めたテーマ", checked: next !== "未記録", available: next !== "未記録" },
+    { key: "next", label: "次に確認したいこと", value: next, note: "本人が記録した確認点", checked: next !== "未記録", available: next !== "未記録" },
     { key: "plan", label: "次の予定", value: plan || "未設定", note: "保存済みの次回方針", checked: hasPlan, available: hasPlan },
     { key: "recent", label: "最近の経過", value: `直近${recentCount}件`, note: "今回までの保存記録を時系列で確認", checked: recentCount > 1, available: recentCount > 0 },
     { key: "regional", label: "RunLoad参考情報", value: regional.copyValue, note: "選択部位・基準100・前回比較・推移", checked: regional.available, available: regional.available, regional },
@@ -558,7 +558,7 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
     ? `${plan.scheduledDate ? formatLocalDate(plan.scheduledDate) : "日付未設定"}・${planSummary(plan)}`
     : "未設定";
   const confirmationTheme = confirmationThread ? selfUnderstandingThreadTitle(confirmationThread, allExperiences) : "";
-  const next = confirmationTheme || "未記録";
+  const next = recordedNextCheckText(experience, { includeFeedback: true }) || "未記録";
   const recentRows = consultationRecentRows({ services, allExperiences, experience, regionId: selectedRegionId });
   const automaticChanges = consultationAutomaticChanges(allExperiences, experience);
   const items = consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan: planValue, profile, recentCount: recentRows.length });

@@ -47,7 +47,7 @@ function engineInput(data){
 }
 function sourceValues(services,recordId=""){const x=recordId?services.workflows.records.loadExperience(recordId):services.workflows.records.loadLatestExperience();const rows=x?.regionalV2ResultRecord?.result?.regions||x?.regionalV2Result?.regions||[];return new Map(rows.map((r)=>[r.regionId,r.value]));}
 function sameNumber(a,b,tolerance=.001){return finite(a)&&finite(b)&&Math.abs(Number(a)-Number(b))<=tolerance;}
-function changedConditionItems(data){
+export function changedConditionItems(data){
   const source=sourceConditionFrom(data);
   const currentCourse=courseFrom(data);
   const items=[];
@@ -126,20 +126,20 @@ function groupCopy(state,compare){
   if(state==="reference")return{title:"基準100付近",note:"この部位自身の基準100付近",icon:"stable"};
   return{title:"表示できない部位",note:"今回の条件では数値を表示できません",icon:"reference"};
 }
-function renderChangeGroups(items,compare){
+function renderChangeGroups(items,compare,platformEnhancement={}){
   const order=["above","below","reference","unavailable"];
   return order.map((state)=>{
     const group=items.filter((item)=>item.state===state);
     if(!group.length)return"";
     const copy=groupCopy(state,compare);
     const rows=`<div class="simulation-change-list">${group.map((item)=>`<div class="simulation-change-row"><span class="simulation-change-row__icon">${simulationResultIcon("reference")}</span><span class="simulation-change-row__copy"><strong>${item.def.name}</strong><small>${compare?(finite(item.prev)?`元 ${Number(item.prev).toFixed(1)} → 今回 ${finite(item.value)?Number(item.value).toFixed(1):"—"}`:"元の記録との比較なし"):`今回 ${finite(item.value)?Number(item.value).toFixed(1):"—"} / 基準100`}</small></span><b>${compare?(finite(item.delta)?signed(item.delta):"—"):(finite(item.value)?signed(Number(item.value)-100):"—")}</b></div>`).join("")}</div>`;
-    const mobileMore=state!=="reference"&&group.length>3?`<button type="button" class="simulation-mobile-group-toggle" data-simulation-mobile-group-toggle hidden data-total="${group.length}">残り${group.length-3}部位を見る</button>`:"";
+    const expansionControl=platformEnhancement.renderGroupExpansionControl?.({ state, group }) || "";
     const heading=`<span>${simulationResultIcon(copy.icon)}</span><div><strong>${copy.title}</strong><small>${copy.note}</small></div><b>${group.length}部位</b>`;
     if(state==="reference")return `<details class="simulation-change-group simulation-change-group--collapsed" data-state="${state}"><summary>${heading}</summary>${rows}</details>`;
-    return `<article class="simulation-change-group" data-state="${state}"><header>${heading}</header>${rows}${mobileMore}</article>`;
+    return `<article class="simulation-change-group" data-state="${state}"><header>${heading}</header>${rows}${expansionControl}</article>`;
   }).join("");
 }
-function render(result,previous,compare,data,course){
+function render(result,previous,compare,data,course,platformEnhancement={}){
   const items=comparisonItems(result,previous,compare);
   const stats=comparisonStats(result,previous);
   const labels=changedConditionLabels(data);
@@ -149,64 +149,16 @@ function render(result,previous,compare,data,course){
     <section class="simulation-change-overview"><div class="simulation-change-overview__head"><div><small>CONDITION COMPARISON</small><h3>変化の見立て</h3><p>${message}</p></div><button type="button" data-action="simulation-toggle-compare" aria-pressed="${compare}">${compare?"基準100との位置を見る":"元の記録との差に戻る"}</button></div>
       <div class="simulation-change-metrics"><article><span>${simulationResultIcon("compare")}</span><div><small>比較できる部位</small><strong>${stats.comparable}<em>/ 12</em></strong></div></article><article><span>${simulationResultIcon("above")}</span><div><small>1ポイント以上の差</small><strong>${stats.changed}<em>部位</em></strong></div></article><article><span>${simulationResultIcon("stable")}</span><div><small>ほぼ同じ</small><strong>${stats.stable}<em>部位</em></strong></div></article></div>
     </section>
-    <section class="simulation-change-groups" aria-label="${compare?"元の記録からの変化":"基準100との位置"}">${renderChangeGroups(items,compare)}</section>
+    <section class="simulation-change-groups" aria-label="${compare?"元の記録からの変化":"基準100との位置"}">${renderChangeGroups(items,compare,platformEnhancement)}</section>
     <section class="simulation-condition-readout"><span>${simulationResultIcon("conditions")}</span><div><strong>変更した条件</strong><p>${labels.join(" / ")}</p><small>コース：${course?.name||"未選択"}。条件差と部位差を同一画面で確認できます。</small></div></section>
     <p class="compact-boundary">部位ごとの数値は独立した基準で計算しています。ここでは部位間の順位ではなく、元の記録との差の方向を確認します。計算状態：${result?.state||"—"}</p>
   </div>`;
 }
-export function bindSimulation({services}){
+export function bindSimulation({services}, platformEnhancement = {}){
   const form=document.getElementById("simulation-form"),target=document.getElementById("simulation-result");if(!form||!target)return;let compare=true;const sourceRecordId=String(form.querySelector('[name="sourceRecordId"]')?.value||"");const previous=sourceValues(services,sourceRecordId);
-  const mobileMedia=globalThis.matchMedia?.("(max-width: 54.99rem)")||null;
-  const mobilePicker=form.querySelector("[data-mobile-simulation-picker]");
-  const mobileSections=[...form.querySelectorAll("[data-simulation-mobile-section]")];
-  let mobileFocus="distance";
-  const mobileTabForItem=(id)=>id==="distanceKm"?"distance":id==="durationMinutes"?"time":id==="courseJson"?"course":["runningFormat","runningDistanceKm","runningDurationMinutes"].includes(id)?"format":"";
-  function syncMobileSimulationPicker(changedItems=[]){
-    const mobile=Boolean(mobileMedia?.matches);
-    if(mobilePicker)mobilePicker.hidden=!mobile;
-    if(!mobile){mobileSections.forEach((section)=>{section.hidden=false;});return;}
-    mobileSections.forEach((section)=>{section.hidden=String(section.dataset.simulationMobileSection||"")!==mobileFocus;});
-    form.querySelectorAll("[data-simulation-mobile-tab]").forEach((button)=>{
-      const tab=String(button.dataset.simulationMobileTab||"");
-      const active=tab===mobileFocus;
-      button.setAttribute("aria-pressed",String(active));
-      button.classList.toggle("is-active",active);
-      const changed=changedItems.some((item)=>mobileTabForItem(item.id)===tab);
-      button.classList.toggle("is-changed",changed);
-      const state=form.querySelector(`[data-simulation-tab-state="${tab}"]`);
-      if(state)state.textContent=changed?"変更あり":active?"表示中":"未変更";
-    });
-    const idleCopy=document.querySelector(".condition-compare-overview-idle p");
-    if(idleCopy)idleCopy.textContent="下の項目から1つ選んで変更すると、元の保存記録との差を表示します。";
-  }
-  mobilePicker?.addEventListener("click",(event)=>{
-    const button=event.target.closest?.("[data-simulation-mobile-tab]");
-    if(!button)return;
-    mobileFocus=String(button.dataset.simulationMobileTab||"distance");
-    syncMobileSimulationPicker(changedConditionItems(new FormData(form)));
-    form.querySelector(`[data-simulation-mobile-section="${mobileFocus}"] input, [data-simulation-mobile-section="${mobileFocus}"] select`)?.focus({preventScroll:true});
-  });
-  mobileMedia?.addEventListener?.("change",()=>syncMobileSimulationPicker(changedConditionItems(new FormData(form))));
-  function update(){const data=new FormData(form);const runWalk=String(data.get("runningFormat"))==="RUN_WALK";form.querySelector('[data-simulation-run-walk]').hidden=!runWalk;const changedItems=changedConditionItems(data);const labels=changedItems.map((item)=>item.label);syncMobileSimulationPicker(changedItems);const chips=form.querySelector('[data-simulation-assumption-chips]');if(chips){chips.innerHTML=changedItems.length?changedItems.map((item)=>`<button type="button" data-simulation-revert="${item.id}" aria-label="${item.label}を元に戻す"><span>${item.label}</span><b aria-hidden="true">×</b></button>`).join(""):'<span>変更なし</span>';}const multiWarning=form.querySelector('[data-simulation-multi-warning]');if(multiWarning)multiWarning.hidden=!(Boolean(mobileMedia?.matches)&&changedItems.length>1);const built=engineInput(data);const warning=form.querySelector('[data-simulation-input-warning]');if(built.error){target.innerHTML="";if(warning){warning.hidden=false;warning.textContent=built.error;}return;}if(warning)warning.hidden=true;const result=services.model.primaryRegionalV2.calculatePrimaryRegionalV2(built.input);const d=Number(data.get("distanceKm")),t=Number(data.get("durationMinutes"));const p=pace(d,t);const stats=comparisonStats(result,previous);const unchanged=!labels.length&&stats.changed===0;const shell=form.closest(".condition-compare");if(shell)shell.classList.toggle("is-unchanged",unchanged);const idleOverview=document.querySelector(".condition-compare-overview-idle");if(idleOverview)idleOverview.hidden=!unchanged;const set=(sel,text)=>{const el=form.querySelector(sel)||document.querySelector(sel);if(el)el.textContent=text;};set('[data-simulation-derived-pace]',p);set('[data-simulation-current-summary]',`${d.toFixed(1)} km・${Math.round(t)}分`);set('[data-simulation-current-pace]',`${p}・${built.course.name||"コース未選択"}`);set('[data-simulation-condition-count]',String(labels.length));set('[data-simulation-region-count]',String(stats.changed));set('[data-simulation-change-label]',comparisonLabel(stats,labels.length));const calc=form.querySelector('.calc-state');if(calc)calc.textContent=result?.state==="OK"?"計算済み":"確認が必要";target.innerHTML=render(result,previous,compare,data,built.course);bindToggle();}
-  function bindMobileResultGroups(){
-    const mobile=Boolean(mobileMedia?.matches);
-    target.querySelectorAll(".simulation-change-group").forEach((group)=>{
-      const rows=[...group.querySelectorAll(".simulation-change-row")];
-      const button=group.querySelector("[data-simulation-mobile-group-toggle]");
-      if(!button)return;
-      if(!mobile||rows.length<=3){group.classList.remove("is-mobile-truncated","is-mobile-expanded");button.hidden=true;return;}
-      group.classList.add("is-mobile-truncated");
-      button.hidden=false;
-      button.textContent=`残り${rows.length-3}部位を見る`;
-      button.setAttribute("aria-expanded","false");
-      button.addEventListener("click",()=>{
-        const expanded=group.classList.toggle("is-mobile-expanded");
-        button.setAttribute("aria-expanded",String(expanded));
-        button.textContent=expanded?"表示を戻す":`残り${rows.length-3}部位を見る`;
-      });
-    });
-  }
-  function bindToggle(){target.querySelector('[data-action="simulation-toggle-compare"]')?.addEventListener("click",()=>{compare=!compare;update();});bindMobileResultGroups();}
+  let platformState = null;
+  function update(){const data=new FormData(form);const runWalk=String(data.get("runningFormat"))==="RUN_WALK";form.querySelector('[data-simulation-run-walk]').hidden=!runWalk;const changedItems=changedConditionItems(data);const labels=changedItems.map((item)=>item.label);platformEnhancement.sync?.({ form, target, changedItems, state: platformState });const chips=form.querySelector('[data-simulation-assumption-chips]');if(chips){chips.innerHTML=changedItems.length?changedItems.map((item)=>`<button type="button" data-simulation-revert="${item.id}" aria-label="${item.label}を元に戻す"><span>${item.label}</span><b aria-hidden="true">×</b></button>`).join(""):'<span>変更なし</span>';}const multiWarning=form.querySelector('[data-simulation-multi-warning]');if(multiWarning)multiWarning.hidden=!(platformEnhancement.showMultiWarning?.({ changedItems, state: platformState }) ?? false);const built=engineInput(data);const warning=form.querySelector('[data-simulation-input-warning]');if(built.error){target.innerHTML="";if(warning){warning.hidden=false;warning.textContent=built.error;}return;}if(warning)warning.hidden=true;const result=services.model.primaryRegionalV2.calculatePrimaryRegionalV2(built.input);const d=Number(data.get("distanceKm")),t=Number(data.get("durationMinutes"));const p=pace(d,t);const stats=comparisonStats(result,previous);const unchanged=!labels.length&&stats.changed===0;const shell=form.closest(".condition-compare");if(shell)shell.classList.toggle("is-unchanged",unchanged);const idleOverview=document.querySelector(".condition-compare-overview-idle");if(idleOverview)idleOverview.hidden=!unchanged;const set=(sel,text)=>{const el=form.querySelector(sel)||document.querySelector(sel);if(el)el.textContent=text;};set('[data-simulation-derived-pace]',p);set('[data-simulation-current-summary]',`${d.toFixed(1)} km・${Math.round(t)}分`);set('[data-simulation-current-pace]',`${p}・${built.course.name||"コース未選択"}`);set('[data-simulation-condition-count]',String(labels.length));set('[data-simulation-region-count]',String(stats.changed));set('[data-simulation-change-label]',comparisonLabel(stats,labels.length));const calc=form.querySelector('.calc-state');if(calc)calc.textContent=result?.state==="OK"?"計算済み":"確認が必要";target.innerHTML=render(result,previous,compare,data,built.course,platformEnhancement);bindToggle();}
+  function bindToggle(){target.querySelector('[data-action="simulation-toggle-compare"]')?.addEventListener("click",()=>{compare=!compare;update();});platformEnhancement.bindResultGroups?.({ target, state: platformState });}
   form.querySelector("[data-simulation-assumption-chips]")?.addEventListener("click",(event)=>{
     const button=event.target.closest?.("[data-simulation-revert]");
     if(!button)return;
@@ -246,7 +198,7 @@ export function bindSimulation({services}){
   form.addEventListener("reset",(event)=>{
     event.preventDefault();
     compare=true;
-    mobileFocus="distance";
+    platformEnhancement.reset?.({ form, state: platformState });
     const current=new FormData(form);
     const source=sourceConditionFrom(current);
     const engine=sourceEngineInputFrom(current);
@@ -266,7 +218,7 @@ export function bindSimulation({services}){
   });
   consumeCourseSelection("simulation");
   const initialChanged=changedConditionItems(new FormData(form));
-  const initialTab=mobileTabForItem(initialChanged[0]?.id||"");
-  if(initialTab)mobileFocus=initialTab;
+  platformState=platformEnhancement.bind?.({ form, target, changedConditionItems, update }) || null;
+  platformEnhancement.initialize?.({ form, state: platformState, changedItems: initialChanged });
   update();
 }

@@ -35,6 +35,7 @@ export function homeConfirmationTheme(services) {
   return view.watching.find((thread) => thread.hasNewEligibleData) || null;
 }
 
+
 export function homeState(experience, draft) {
   if (draft) return "draft";
   const record = experience?.record || null;

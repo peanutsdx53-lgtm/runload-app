@@ -10,26 +10,19 @@ import { PERSONAL_CONTEXT_FIELD_NAMES, personalContextFromFields, personalSummar
 import { confirmGradeDomain } from "./gradeDomainConfirmation.js";
 import { commitPendingRunMeasurement } from "../runMeasurementState.js";
 
-function updateInputFormVisibility(form) {
+function updateInputFormVisibility(form, platformEnhancement = {}) {
   const activityType = form.querySelector('[name="activityType"]:checked')?.value || "run";
   const runningFormat = String(form.elements.namedItem("runningFormat")?.value || "UNKNOWN").toUpperCase();
   const runWalk = activityType === "run" && runningFormat === "RUN_WALK";
   form.querySelectorAll("[data-run-fields], [data-run-optional], [data-record-stage-run-only]").forEach((element) => setHidden(element, activityType === "rest"));
   form.querySelectorAll(".fatigue-inline, [data-record-rof-overlay]").forEach((element) => setHidden(element, activityType === "rest"));
   form.querySelectorAll("[data-rest-fields]").forEach((element) => setHidden(element, activityType !== "rest"));
-  const desktopLayout = Boolean(globalThis.matchMedia?.("(min-width: 55rem)")?.matches);
-  if (desktopLayout) {
-    const coreTitle = form.querySelector("[data-record-core-title]");
-    if (coreTitle) coreTitle.textContent = activityType === "rest" ? "今日の休養" : "今日の走行";
-    form.querySelectorAll("[data-record-reflection-label]").forEach((element) => {
-      element.textContent = activityType === "rest" ? "身体・休養時の記録" : "身体・走ったときの記録";
-    });
-  }
+  platformEnhancement.updateVisibility?.({ form, activityType, runWalk });
   form.querySelectorAll("[data-run-walk-fields], [data-run-walk-container]").forEach((element) => setHidden(element, !runWalk));
   form.querySelectorAll("[data-run-walk-required]").forEach((element) => { element.required = runWalk; });
 }
 
-function updateRecordSubmitAvailability(form) {
+function updateRecordSubmitAvailability(form, platformEnhancement = {}) {
   const activityType = form.querySelector('[name="activityType"]:checked')?.value || "run";
   const date = String(form.elements.namedItem("date")?.value || "").trim();
   const distance = Number(form.elements.namedItem("distanceKm")?.value);
@@ -83,74 +76,7 @@ function updateRecordSubmitAvailability(form) {
   };
   setChecklistState("distance", distanceReady);
   setChecklistState("duration", durationReady);
-  mobileRecordStageStatus(form);
-}
-
-function mobileRecordStageStatus(form) {
-  const progress = form.querySelector("[data-mobile-record-progress]");
-  if (!progress) return;
-  const activityType = form.querySelector('[name="activityType"]:checked')?.value || "run";
-  const dateReady = Boolean(String(form.elements.namedItem("date")?.value || "").trim());
-  const distanceReady = Number(form.elements.namedItem("distanceKm")?.value) > 0;
-  const durationReady = Number(form.elements.namedItem("durationMinutes")?.value) > 0;
-  const stage1Complete = dateReady && (activityType === "rest" || (distanceReady && durationReady));
-  const optionalMap = {
-    2: form.querySelector('[data-optional-status="course"]')?.textContent === "入力あり",
-    3: form.querySelector('[data-optional-status="compare"]')?.textContent === "入力あり",
-    4: form.querySelector('[data-optional-status="reflection"]')?.textContent === "入力あり",
-  };
-  progress.querySelectorAll("[data-record-stage-jump]").forEach((button) => {
-    const stage = Number(button.dataset.recordStageJump || 0);
-    const status = button.querySelector(`[data-record-stage-status="${stage}"]`);
-    const complete = stage === 1 ? stage1Complete : Boolean(optionalMap[stage]);
-    button.classList.toggle("is-complete", complete);
-    if (status) status.textContent = stage === 1 ? (complete ? "完了" : "入力中") : (complete ? "入力あり" : "任意");
-  });
-}
-
-function setActiveMobileRecordStage(form, stage, { scroll = false } = {}) {
-  const progress = form.querySelector("[data-mobile-record-progress]");
-  if (!progress) return;
-  const targetStage = Number(stage || 1);
-  progress.querySelectorAll("[data-record-stage-jump]").forEach((button) => {
-    const active = Number(button.dataset.recordStageJump || 0) === targetStage;
-    button.classList.toggle("is-active", active);
-    if (active) button.setAttribute("aria-current", "step");
-    else button.removeAttribute("aria-current");
-  });
-  const target = form.querySelector(`[data-record-stage="${targetStage}"]`);
-  if (target instanceof HTMLDetailsElement) {
-    form.querySelectorAll('details.stage-card[data-record-stage]').forEach((details) => { details.open = details === target; });
-  }
-  if (scroll && target) {
-    const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
-  }
-}
-
-function bindMobileRecordStageNavigation(form) {
-  const progress = form.querySelector("[data-mobile-record-progress]");
-  if (!progress) return;
-  progress.querySelectorAll("[data-record-stage-jump]").forEach((button) => {
-    button.addEventListener("click", () => setActiveMobileRecordStage(form, Number(button.dataset.recordStageJump || 1), { scroll: true }));
-  });
-  form.querySelectorAll('details.stage-card[data-record-stage]').forEach((details) => {
-    details.addEventListener("toggle", () => {
-      if (details.open) setActiveMobileRecordStage(form, Number(details.dataset.recordStage || 1));
-    });
-  });
-  mobileRecordStageStatus(form);
-}
-
-function applyMobileRecordEntryFocus(form, context) {
-  if (!form.querySelector("[data-mobile-record-progress]")) return;
-  if (context?.parameters?.get?.("focus") !== "next-check") return;
-  setActiveMobileRecordStage(form, 4);
-  globalThis.requestAnimationFrame?.(() => {
-    const target = form.elements.namedItem("postRunReflection");
-    target?.scrollIntoView?.({ block: "center" });
-    target?.focus?.({ preventScroll: true });
-  });
+  platformEnhancement.updateStageStatus?.({ form });
 }
 
 const SURFACE_CLASS_BY_RECORD_KEY = Object.freeze({
@@ -332,7 +258,7 @@ function updatePersonalSummary(form) {
   if (detail) detail.textContent = summary.description;
 }
 
-function updateOptionalInputStatus(form) {
+function updateOptionalInputStatus(form, platformEnhancement = {}) {
   const formData = new FormData(form);
   const distance = Number(form.elements.namedItem("distanceKm")?.value || 0);
   const course = readCourse(formData, distance);
@@ -357,7 +283,7 @@ function updateOptionalInputStatus(form) {
   const hasReflection = Boolean(
     !["", "deferred", "not_asked"].includes(String(subjective.status || ""))
     || personal.hasInput
-    || String(formData.get("postRunReflection") || "").trim()
+    || ["postRunReflection", "perceivedDifference", "nextCheckPoint"].some((name) => String(formData.get(name) || "").trim())
   );
   const states = { course: hasCourse, compare: hasCompare, reflection: hasReflection };
   Object.entries(states).forEach(([key, hasInput]) => {
@@ -369,7 +295,7 @@ function updateOptionalInputStatus(form) {
       if (state) state.textContent = statusText;
     });
   });
-  mobileRecordStageStatus(form);
+  platformEnhancement.updateStageStatus?.({ form });
 }
 
 function readPersonalContext(formData) {
@@ -563,7 +489,7 @@ function renderRecordSelectedBodyList(form) {
       if (side) side.value = BODY_AREA_LATERALITY.unknown;
       refreshRecordBodyUi(form);
       updateSubjectiveSummary(form);
-      updateOptionalInputStatus(form);
+      updateOptionalInputStatus(form, platformEnhancement);
       saveDraftFromForm(form, form.__appServices, false);
     });
   });
@@ -681,7 +607,7 @@ function bindEmbeddedRecordSubflows(form, services) {
     }
     normalizeEmbeddedBodyStatus(form);
     updateSubjectiveSummary(form);
-    updateOptionalInputStatus(form);
+    updateOptionalInputStatus(form, platformEnhancement);
     saveDraftFromForm(form, services, false);
     closeRecordSubflow(form);
   });
@@ -699,7 +625,7 @@ function bindEmbeddedRecordSubflows(form, services) {
     const saveCheckbox = form.elements.namedItem("saveCurrentShoePreset");
     if (saveCheckbox) saveCheckbox.checked = false;
     updatePersonalSummary(form);
-    updateOptionalInputStatus(form);
+    updateOptionalInputStatus(form, platformEnhancement);
     saveDraftFromForm(form, services, false);
     closeRecordSubflow(form);
   });
@@ -823,6 +749,8 @@ function readRecordInput(formData, services) {
     },
     reflectionContext: {
       postRunReflection: String(formData.get("postRunReflection") || ""),
+      perceivedDifference: String(formData.get("perceivedDifference") || ""),
+      nextCheckPoint: String(formData.get("nextCheckPoint") || ""),
     },
     planOutcome: plan ? {
       status: plan.outcomeStatus || "completed",
@@ -915,19 +843,18 @@ function saveDraftFromForm(form, services, announce = false) {
   }
 }
 
-export function bindRecordInput({ services, router, context, returnState = null }) {
+export function bindRecordInput({ services, router, context, returnState = null }, platformEnhancement = {}) {
   const form = document.getElementById("record-input-form");
   if (!form) return;
   if (returnState?.restore || context?.parameters?.get("resume") === "1") restoreRecordInputWorkspace(form);
   else clearRecordInputWorkspace();
-  updateInputFormVisibility(form);
-  updateRecordSubmitAvailability(form);
+  updateInputFormVisibility(form, platformEnhancement);
+  updateRecordSubmitAvailability(form, platformEnhancement);
   updateCourseSummary(form);
   updateSubjectiveSummary(form);
   updatePersonalSummary(form);
-  updateOptionalInputStatus(form);
-  bindMobileRecordStageNavigation(form);
-  applyMobileRecordEntryFocus(form, context);
+  updateOptionalInputStatus(form, platformEnhancement);
+  platformEnhancement.bind?.({ form, context });
   bindFatigueLifecycle(form, { services, router, context });
   const returnStatus = form.querySelector("[data-record-return-status]");
   if (returnStatus && returnState?.notice) {
@@ -947,7 +874,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
       }
       applyCoursePresetToForm(form, { ...preset.course, id: preset.id, name: preset.name });
       updateCourseSummary(form);
-      updateOptionalInputStatus(form);
+      updateOptionalInputStatus(form, platformEnhancement);
       saveDraftFromForm(form, services, false);
       refreshActiveRecordInputWorkspace(form);
       if (returnStatus) {
@@ -959,7 +886,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
   form.querySelector('[data-action="clear-record-course"]')?.addEventListener("click", () => {
     applyCoursePresetToForm(form, {});
     updateCourseSummary(form);
-    updateOptionalInputStatus(form);
+    updateOptionalInputStatus(form, platformEnhancement);
     saveDraftFromForm(form, services, false);
     refreshActiveRecordInputWorkspace(form);
     if (returnStatus) {
@@ -977,16 +904,16 @@ export function bindRecordInput({ services, router, context, returnState = null 
   const requestedSubflow = String(context?.parameters?.get("subflow") || "");
   if (["subjective", "personal"].includes(requestedSubflow)) openRecordSubflow(form, requestedSubflow);
   form.addEventListener("change", () => {
-    updateInputFormVisibility(form);
-    updateRecordSubmitAvailability(form);
+    updateInputFormVisibility(form, platformEnhancement);
+    updateRecordSubmitAvailability(form, platformEnhancement);
     updateCourseSummary(form);
     updateSubjectiveSummary(form);
     updatePersonalSummary(form);
-    updateOptionalInputStatus(form);
+    updateOptionalInputStatus(form, platformEnhancement);
     saveDraftFromForm(form, services, false);
     refreshActiveRecordInputWorkspace(form);
   });
-  form.addEventListener("input", () => { updateRecordSubmitAvailability(form); updateCourseSummary(form); updateSubjectiveSummary(form); updatePersonalSummary(form); updateOptionalInputStatus(form); saveDraftFromForm(form, services, false); refreshActiveRecordInputWorkspace(form); });
+  form.addEventListener("input", () => { updateRecordSubmitAvailability(form, platformEnhancement); updateCourseSummary(form); updateSubjectiveSummary(form); updatePersonalSummary(form); updateOptionalInputStatus(form, platformEnhancement); saveDraftFromForm(form, services, false); refreshActiveRecordInputWorkspace(form); });
   document.querySelectorAll('[data-action="save-record-draft"]').forEach((button) => button.addEventListener("click", () => saveDraftFromForm(form, services, true)));
 
   form.addEventListener("submit", (event) => {
@@ -1047,13 +974,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
     if (postSaveWarnings.length) {
       window.alert(`記録は保存しました。\n\n${postSaveWarnings.join("\n")}`);
     }
-    const mobileReturnTo = form.querySelector("[data-mobile-record-progress]")
-      ? String(context?.parameters?.get?.("returnTo") || "")
-      : "";
-    if (mobileReturnTo === "interpretation-room") {
-      router.navigateToScreen("interpretation-room", { recordId: result.record.id, origin: "result" });
-    } else {
-      router.navigateToScreen("result", { recordId: result.record.id });
-    }
+    const destination = platformEnhancement.postSaveDestination?.({ context, recordId: result.record.id }) || { screen: "result", parameters: { recordId: result.record.id } };
+    router.navigateToScreen(destination.screen, destination.parameters);
   });
 }

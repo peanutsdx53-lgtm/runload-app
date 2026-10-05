@@ -5,12 +5,11 @@ import { personalContextSummary } from "../ui/personalContextPresentation.js";
 
 import { formatLocalDate } from "../ui/recordPresentation.js";
 import { peekPendingRunMeasurement } from "../ui/runMeasurementState.js";
-import { matchesMobileLayout } from "../ui/deviceLayout.js";
 
 import { selfUnderstandingThreadTitle } from "../core/selfUnderstandingCore.js";
 import { renderEmbeddedPersonalSubflow, renderEmbeddedSubjectiveSubflow } from "../ui/recordEmbeddedSubflows.js";
 
-function renderRofJInlineAndOverlay({ services, linkedRunId = "", editing = false }) {
+export function renderRofJInlineAndOverlay({ services, linkedRunId = "", editing = false }) {
   if (!services?.fatigue) return "";
   const summary = linkedRunId ? services.fatigue.summarizeRun?.(linkedRunId) : null;
   const entry = linkedRunId ? services.fatigue.repository?.loadByRunId?.(linkedRunId) : null;
@@ -45,7 +44,7 @@ function runWalkSectionSurface(section = {}) {
   return String(first?.userCategory || "UNKNOWN").toUpperCase();
 }
 
-function renderRunWalkDetails(record = {}, { mobileLayout = false } = {}) {
+function renderRunWalkDetails(record = {}, { durationStep = "0.1" } = {}) {
   const active = String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK";
   const rows = Array.from({ length: 5 }, (_, index) => {
     const section = Array.isArray(record.runWalkRunningSections) ? record.runWalkRunningSections[index] || {} : {};
@@ -63,7 +62,7 @@ function renderRunWalkDetails(record = {}, { mobileLayout = false } = {}) {
     <div class="inline-helper inline-helper--important"><strong>走りと歩きを混ぜた場合、部位ごとの目安は「走った区間」を対象にします。</strong><p>歩いた区間を走行として扱いません。走った距離と時間を入力してください。</p></div>
     <div class="field-grid field-grid--two">
       <label class="field"><span>走った距離（km） <strong aria-label="この走り方では必須">この走り方では必須</strong></span><input name="runWalkRunningDistanceKm" type="number" min="0.01" max="10000" step="0.01" value="${escapeHtml(record.runWalkRunningDistanceKm ?? "")}" placeholder="例：4.0" data-run-walk-required></label>
-      <label class="field"><span>走った時間（分） <strong aria-label="この走り方では必須">この走り方では必須</strong></span><input name="runWalkRunningDurationMinutes" type="number" min="0.01" max="100000" step="${mobileLayout ? "0.01" : "0.1"}" value="${escapeHtml(record.runWalkRunningDurationMinutes ?? "")}" placeholder="例：25" data-run-walk-required></label>
+      <label class="field"><span>走った時間（分） <strong aria-label="この走り方では必須">この走り方では必須</strong></span><input name="runWalkRunningDurationMinutes" type="number" min="0.01" max="100000" step="${escapeHtml(durationStep)}" value="${escapeHtml(record.runWalkRunningDurationMinutes ?? "")}" placeholder="例：25" data-run-walk-required></label>
     </div>
     <details class="record-run-walk-composition"><summary>走った区間の坂・路面内訳（複数の坂・路面がある場合）</summary><p class="field-help">走った区間に複数の坂や路面がある場合は、その割合を合計100%で入力します。歩いた区間は含めません。区間ごとの速度は自動で補いません。</p>${rows}</details>
     <p class="field-help">殿部・大腿前面・大腿後面・下腿後面は、平均速度2.25〜4.50 m/sで目安を表示します。範囲外では、この4部位は「目安なし」です。ほかの部位は、確認できる条件だけを反映します。</p>
@@ -91,7 +90,7 @@ function checked(value) {
   return value ? " checked" : "";
 }
 
-function hasDetailedCourse(course = {}) {
+export function hasDetailedCourse(course = {}) {
   if (course.name) return true;
   if (String(course.gradeKnowledge || "UNKNOWN") !== "UNKNOWN") return true;
   if (String(course.modelSurfaceClass || "UNKNOWN") !== "UNKNOWN") return true;
@@ -99,7 +98,7 @@ function hasDetailedCourse(course = {}) {
   return SURFACE_FIELDS.some(({ recordKey }) => Number(course[recordKey] || 0) > 0);
 }
 
-function hasComparisonInfo(record = {}) {
+export function hasComparisonInfo(record = {}) {
   const environment = record.environmentContext || {};
   return Boolean(
     String(record.steps ?? "").trim()
@@ -112,23 +111,31 @@ function hasComparisonInfo(record = {}) {
   );
 }
 
-function hasReflectionInfo(record = {}, feedback = {}) {
+export function hasReflectionInfo(record = {}, feedback = {}) {
   const reflection = record.reflectionContext || {};
   const subjectiveStatus = String(feedback.checkStatus || "deferred");
   return Boolean(
     !["", "deferred", "not_asked"].includes(subjectiveStatus)
     || personalContextSummary(record).hasInput
     || String(reflection.postRunReflection || "").trim()
+    || String(reflection.perceivedDifference || "").trim()
+    || String(reflection.nextCheckPoint || "").trim()
   );
 }
 
 function renderRunObservationMemo(record = {}, { isRest = false } = {}) {
   const reflection = record.reflectionContext || {};
+  const perceivedDifference = String(reflection.perceivedDifference || "");
+  const nextCheckPoint = String(reflection.nextCheckPoint || "");
+  const hasPreviousReflection = Boolean(perceivedDifference.trim() || nextCheckPoint.trim());
   const memoLabel = isRest ? "今回のメモ" : "走ったときのメモ";
   const memoPlaceholder = isRest ? "休養中に覚えておきたいことがあれば残します" : "走っていて覚えておきたいことがあれば残します";
   const memoHelp = isRest ? "今回の自分の観察として保存します。空欄でも問題ありません。" : "結果を見る前の自分の観察として保存します。空欄でも問題ありません。";
-  return `<div class="reflection-fields reflection-fields--single-column">
+  return `<div class="reflection-fields reflection-fields--v2">
     <label class="field"><span>${escapeHtml(memoLabel)} <b>任意</b></span><textarea name="postRunReflection" maxlength="500" rows="2" placeholder="${escapeHtml(memoPlaceholder)}">${escapeHtml(reflection.postRunReflection || "")}</textarea><small>${escapeHtml(memoHelp)}</small></label>
+    <input type="hidden" name="perceivedDifference" value="${escapeHtml(perceivedDifference)}">
+    <input type="hidden" name="nextCheckPoint" value="${escapeHtml(nextCheckPoint)}">
+    ${hasPreviousReflection ? `<details class="previous-reflection-note"><summary>以前の振り返り記録を確認</summary><div>${perceivedDifference.trim() ? `<p><small>いつもとの違い</small><strong>${escapeHtml(perceivedDifference)}</strong></p>` : ""}${nextCheckPoint.trim() ? `<p><small>次回確認したいこと</small><strong>${escapeHtml(nextCheckPoint)}</strong></p>` : ""}<span>以前の内容はそのまま保存します。自動で新しい意味に読み替えません。</span></div></details>` : ""}
   </div>`;
 }
 
@@ -144,7 +151,7 @@ function renderCarryFocus(services, { editing = false, isRest = false } = {}) {
   return `<div class="record-interpretation-carry" data-run-fields><span>⚑</span><small>前回から</small><strong>${escapeHtml(title)}</strong></div>`;
 }
 
-function optionalInputStatus(hasInput) {
+export function optionalInputStatus(hasInput) {
   return hasInput ? "入力あり" : "未入力";
 }
 
@@ -198,22 +205,26 @@ function renderCourseHiddenFields(course = {}) {
   return `<div class="course-hidden-fields" hidden aria-hidden="true">${baseFields}${sectionFields}${surfaceFields}</div>`;
 }
 
-function renderMobileRecordProgress({ isRest = false } = {}) {
-  return `<nav class="mobile-record-progress" aria-label="入力の進み具合" data-mobile-record-progress>
-    <button type="button" class="mobile-record-progress__item is-active" data-record-stage-jump="1" aria-current="step"><span>1</span><strong>基本</strong><em data-record-stage-status="1">入力中</em></button>
-    <button type="button" class="mobile-record-progress__item" data-record-stage-jump="2" data-record-stage-run-only${isRest ? " hidden" : ""}><span>2</span><strong>条件</strong><em data-record-stage-status="2">任意</em></button>
-    <button type="button" class="mobile-record-progress__item" data-record-stage-jump="3" data-record-stage-run-only${isRest ? " hidden" : ""}><span>3</span><strong>比較</strong><em data-record-stage-status="3">任意</em></button>
-    <button type="button" class="mobile-record-progress__item" data-record-stage-jump="4"><span>4</span><strong>次回</strong><em data-record-stage-status="4">任意</em></button>
-  </nav>`;
-}
-
 function renderEnvironmentContext(record = {}) {
   const context = record.environmentContext || {};
   return `<details class="inner-details"><summary><span>環境を残す</span><i>⌄</i></summary><div class="inner-body environment-fields"><label class="field"><span>気温（℃）</span><input name="temperatureC" type="number" inputmode="decimal" min="-50" max="60" step="0.1" value="${escapeHtml(context.temperatureC ?? "")}" placeholder="例：24"></label><label class="field"><span>環境メモ</span><textarea name="environmentNote" maxlength="500" rows="1" placeholder="例：暑い、向かい風、湿度が高い">${escapeHtml(context.environmentNote || "")}</textarea></label></div></details>`;
 }
 
-export function renderRecordInputScreen({ services, context }) {
-  const mobileLayout = matchesMobileLayout();
+export function renderRecordInputScreenWithPresentation({ services, context }, presentation = {}) {
+  const {
+    durationStep = "0.1",
+    runWalkDurationStep = durationStep,
+    coreTitle = ({ isRest }) => isRest ? "今日の休養" : "今日の走行",
+    runningFormatLabel = "走り方",
+    runningFormatOptions = Object.freeze({ unknown: "覚えていない・未設定", continuous: "途中で歩かず走った", runWalk: "走りと歩きを混ぜた" }),
+    renderProgress = () => "",
+    renderPrimaryFatigue = ({ services: value, linkedRunId: runId, editing: isEditing }) => renderRofJInlineAndOverlay({ services: value, linkedRunId: runId, editing: isEditing }),
+    renderMeasurementPrefill = () => "",
+    renderReflectionLead = () => "",
+    renderBottomClearance = () => "",
+    renderFormControls = () => "",
+    renderAfterForm = () => "",
+  } = presentation;
   const requestedRecordId = context?.parameters?.get("recordId") || "";
   const requestedPlanId = context?.parameters?.get("planId") || "";
   const startNew = context?.parameters?.get("new") === "1";
@@ -291,12 +302,12 @@ export function renderRecordInputScreen({ services, context }) {
     ${editing ? `<p class="parity-record-banner">保存済みの${escapeHtml(formatLocalDate(record.date))}の記録を更新します。</p>` : measurement ? `<p class="parity-record-banner">GPS測定結果から距離と時間を転記しています。必要なら保存前に修正できます。</p>` : selectedPlan ? `<p class="parity-record-banner">保存した予定から今回の記録へ転記しています。</p>` : savedDraft ? `<p class="parity-record-banner">入力途中の下書きから再開しています。</p>` : ""}
     <form id="record-input-form" class="record-form" data-editing="${editing ? "true" : "false"}" novalidate>
       <input type="hidden" name="recordId" value="${escapeHtml(effectiveRecordId)}"><input type="hidden" name="planId" value="${escapeHtml(selectedPlan?.id || "")}"><div class="form-messages" data-form-messages tabindex="-1" hidden></div>
-      ${mobileLayout ? renderMobileRecordProgress({ isRest }) : ""}
-      <section class="core-card" data-information-role="fact" data-record-stage="1"><div class="core-heading"><span class="core-stage-icon">1</span><div class="core-title-copy"><p class="stage-label">必須</p><h2 data-record-core-title>${!mobileLayout && isRest ? "今日の休養" : "今日の走行"}</h2></div><span data-record-required-progress>距離・時間</span></div>
-        ${mobileLayout ? "" : renderRofJInlineAndOverlay({ services, linkedRunId, editing })}
+      ${renderProgress({ isRest })}
+      <section class="core-card" data-information-role="fact" data-record-stage="1"><div class="core-heading"><span class="core-stage-icon">1</span><div class="core-title-copy"><p class="stage-label">必須</p><h2 data-record-core-title>${escapeHtml(coreTitle({ isRest }))}</h2></div><span data-record-required-progress>距離・時間</span></div>
+        ${renderPrimaryFatigue({ services, linkedRunId, editing, isRest })}
         <div class="activity-field"><span class="activity-field__label" id="record-activity-label">記録の種類</span><fieldset class="activity-toggle" aria-labelledby="record-activity-label"><label><input type="radio" name="activityType" value="run"${checked(!isRest)}><span>走行</span></label><label><input type="radio" name="activityType" value="rest"${checked(isRest)}><span>休養</span></label></fieldset></div>
         <div class="date-field"><span class="date-label">日付</span><label class="date-control"><span data-record-date-display>${escapeHtml(recordDateLabel(record.date))}</span><input name="date" type="date" value="${escapeHtml(record.date)}" required></label></div>
-        <div data-run-fields${isRest ? " hidden" : ""}>${mobileLayout && measurement ? '<div class="mobile-record-prefill" data-record-measurement-prefill><strong>GPS測定から入力済み</strong><span>保存前に変更できます</span></div>' : ""}<div class="measure-grid"><label class="measure-field"><span>距離</span><div><input name="distanceKm" type="number" inputmode="decimal" min="0.01" max="10000" step="0.01" value="${escapeHtml(record.distanceKm || "")}" placeholder="5.0" required><b>km</b></div></label><label class="measure-field"><span>実際に走った時間</span><div><input name="durationMinutes" type="number" inputmode="decimal" min="0.01" max="100000" step="${mobileLayout ? "0.01" : "0.1"}" value="${escapeHtml(record.durationMinutes || "")}" placeholder="35"><b>分</b></div></label></div></div>
+        <div data-run-fields${isRest ? " hidden" : ""}>${renderMeasurementPrefill({ measurement })}<div class="measure-grid"><label class="measure-field"><span>距離</span><div><input name="distanceKm" type="number" inputmode="decimal" min="0.01" max="10000" step="0.01" value="${escapeHtml(record.distanceKm || "")}" placeholder="5.0" required><b>km</b></div></label><label class="measure-field"><span>実際に走った時間</span><div><input name="durationMinutes" type="number" inputmode="decimal" min="0.01" max="100000" step="${escapeHtml(durationStep)}" value="${escapeHtml(record.durationMinutes || "")}" placeholder="35"><b>分</b></div></label></div></div>
         <div class="rest-note" data-rest-fields${isRest ? "" : " hidden"}><strong>休養日として保存</strong><span>走行による数値結果は表示しません。身体記録やメモは必要な場合だけ追加できます。</span></div>
       </section>
 
@@ -304,36 +315,15 @@ export function renderRecordInputScreen({ services, context }) {
         <details class="stage-card" data-record-stage="2" data-run-fields${isRest ? " hidden" : ""}><summary><span class="stage-icon">2</span><span class="summary-copy"><small>任意</small><strong>コースと走行条件</strong><em data-optional-status="course">${optionalInputStatus(hasDetailedCourse(course))}</em></span><i>⌄</i></summary><div class="stage-body">${renderRecentCourseShortcuts(recentCourses)}<p class="record-return-status" data-record-return-status role="status" aria-live="polite" hidden></p>${renderCourseEntry(course, isRest, { fromPlan: Boolean(selectedPlan) })}</div></details>
         ${renderCourseHiddenFields(course)}
 
-        <details class="stage-card" data-record-stage="3" data-run-fields${isRest ? " hidden" : ""}><summary><span class="stage-icon">3</span><span class="summary-copy"><small>任意</small><strong>比較しやすくする情報</strong><em data-optional-status="compare">${optionalInputStatus(hasComparisonInfo(record))}</em></span><i>⌄</i></summary><div class="stage-body"><div class="two-fields"><label class="field"><span>歩数</span><input name="steps" type="number" inputmode="numeric" min="0" max="10000000" step="1" value="${escapeHtml(record.steps || "")}" placeholder="例：6000"></label><label class="field"><span>歩数の取得方法</span><select name="stepsProvenance"><option value="UNKNOWN"${selected(record.stepsProvenance, "UNKNOWN")}>不明・未設定</option><option value="DEVICE_MEASURED"${selected(record.stepsProvenance, "DEVICE_MEASURED")}>端末・時計で計測</option><option value="ESTIMATED"${selected(record.stepsProvenance, "ESTIMATED")}>手入力・おおよそ</option></select></label></div><label class="field field--running-format"><span>${mobileLayout ? "走行形式" : "走り方"}</span><select name="runningFormat"><option value="UNKNOWN"${selected(record.runningFormat, "UNKNOWN")}>${mobileLayout ? "未設定" : "覚えていない・未設定"}</option><option value="CONTINUOUS_RUN"${selected(record.runningFormat, "CONTINUOUS_RUN")}>${mobileLayout ? "走り続けた" : "途中で歩かず走った"}</option><option value="RUN_WALK"${selected(record.runningFormat, "RUN_WALK")}>${mobileLayout ? "走り＋歩き" : "走りと歩きを混ぜた"}</option></select></label><div class="nested-panel" data-run-walk-container${String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK" ? "" : " hidden"}>${renderRunWalkDetails(record, { mobileLayout })}</div>${renderEnvironmentContext(record)}</div></details>
+        <details class="stage-card" data-record-stage="3" data-run-fields${isRest ? " hidden" : ""}><summary><span class="stage-icon">3</span><span class="summary-copy"><small>任意</small><strong>比較しやすくする情報</strong><em data-optional-status="compare">${optionalInputStatus(hasComparisonInfo(record))}</em></span><i>⌄</i></summary><div class="stage-body"><div class="two-fields"><label class="field"><span>歩数</span><input name="steps" type="number" inputmode="numeric" min="0" max="10000000" step="1" value="${escapeHtml(record.steps || "")}" placeholder="例：6000"></label><label class="field"><span>歩数の取得方法</span><select name="stepsProvenance"><option value="UNKNOWN"${selected(record.stepsProvenance, "UNKNOWN")}>不明・未設定</option><option value="DEVICE_MEASURED"${selected(record.stepsProvenance, "DEVICE_MEASURED")}>端末・時計で計測</option><option value="ESTIMATED"${selected(record.stepsProvenance, "ESTIMATED")}>手入力・おおよそ</option></select></label></div><label class="field field--running-format"><span>${escapeHtml(runningFormatLabel)}</span><select name="runningFormat"><option value="UNKNOWN"${selected(record.runningFormat, "UNKNOWN")}>${escapeHtml(runningFormatOptions.unknown)}</option><option value="CONTINUOUS_RUN"${selected(record.runningFormat, "CONTINUOUS_RUN")}>${escapeHtml(runningFormatOptions.continuous)}</option><option value="RUN_WALK"${selected(record.runningFormat, "RUN_WALK")}>${escapeHtml(runningFormatOptions.runWalk)}</option></select></label><div class="nested-panel" data-run-walk-container${String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK" ? "" : " hidden"}>${renderRunWalkDetails(record, { durationStep: runWalkDurationStep })}</div>${renderEnvironmentContext(record)}</div></details>
 
-        <details class="stage-card" data-record-stage="4"><summary><span class="stage-icon">4</span><span class="summary-copy"><small>任意</small><strong data-record-reflection-label>${isRest ? "身体・休養時の記録" : "身体・走ったときの記録"}</strong><em data-optional-status="reflection">${optionalInputStatus(hasReflectionInfo(record, feedback))}</em></span><i>⌄</i></summary><div class="stage-body">${carryFocus}${mobileLayout ? `<section class="mobile-record-wellbeing" data-mobile-record-wellbeing data-run-fields${isRest ? " hidden" : ""}><div class="mobile-record-wellbeing__head"><div><small>任意</small><strong>体調・感覚</strong></div><span>走る前後の疲労感</span></div>${renderRofJInlineAndOverlay({ services, linkedRunId, editing })}</section>` : ""}<div class="linked-records"><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="subjective"><span class="linked-icon">＋</span><span><small>身体の記録</small><strong>今回の身体記録</strong><em data-subjective-summary-status>${escapeHtml(subjectiveSummaryFromFields(subjectiveFieldsFromFeedback(feedback)).label)}</em></span><i>›</i></button><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="personal"><span class="linked-icon">＋</span><span><small>使用したもの</small><strong>今回のシューズ</strong><em data-personal-summary-status>${escapeHtml(personalContextSummary(record).hasInput ? personalContextSummary(record).description : "未選択")}</em></span><i>›</i></button></div>${renderRunObservationMemo(record, { isRest })}<input type="hidden" name="memo" value=""></div></details>
+        <details class="stage-card" data-record-stage="4"><summary><span class="stage-icon">4</span><span class="summary-copy"><small>任意</small><strong data-record-reflection-label>${isRest ? "身体・休養時の記録" : "身体・走ったときの記録"}</strong><em data-optional-status="reflection">${optionalInputStatus(hasReflectionInfo(record, feedback))}</em></span><i>⌄</i></summary><div class="stage-body">${carryFocus}${renderReflectionLead({ services, linkedRunId, editing, isRest })}<div class="linked-records"><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="subjective"><span class="linked-icon">＋</span><span><small>身体の記録</small><strong>今回の身体記録</strong><em data-subjective-summary-status>${escapeHtml(subjectiveSummaryFromFields(subjectiveFieldsFromFeedback(feedback)).label)}</em></span><i>›</i></button><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="personal"><span class="linked-icon">＋</span><span><small>使用したもの</small><strong>今回のシューズ</strong><em data-personal-summary-status>${escapeHtml(personalContextSummary(record).hasInput ? personalContextSummary(record).description : "未選択")}</em></span><i>›</i></button></div>${renderRunObservationMemo(record, { isRest })}<input type="hidden" name="memo" value=""></div></details>
       </section>
-      ${mobileLayout ? '<div class="mobile-record-bottom-clearance" aria-hidden="true"></div>' : ""}
+      ${renderBottomClearance()}
 
       ${renderEmbeddedSubjectiveSubflow(feedback)}${renderEmbeddedPersonalSubflow(record, settings)}
-      <aside class="desktop-save-area" aria-label="入力状況">
-        <div class="desktop-save-area__intro"><strong>入力状況</strong></div>
-        <div class="save-readiness" data-save-readiness>
-          <div class="save-readiness__summary">
-            <span>必須</span>
-            <strong data-save-readiness-progress>${isRest ? "保存可" : "0 / 2"}</strong>
-          </div>
-          <div class="save-readiness__bar" aria-hidden="true"><i data-save-readiness-bar style="width:${isRest ? "100" : "0"}%"></i></div>
-          <div class="save-checklist" data-save-run-checklist${isRest ? " hidden" : ""}>
-            <div data-save-check="distance"><span>距離</span><b data-save-check-state="distance">未入力</b></div>
-            <div data-save-check="duration"><span>実際に走った時間</span><b data-save-check-state="duration">未入力</b></div>
-          </div>
-          <div class="optional-readiness" aria-label="任意項目の入力状況">
-            <p>任意</p>
-            <div data-save-optional="course" data-run-optional${isRest ? " hidden" : ""}><span>コースと走行条件</span><b>${optionalInputStatus(hasDetailedCourse(course))}</b></div>
-            <div data-save-optional="compare" data-run-optional${isRest ? " hidden" : ""}><span>比較しやすくする情報</span><b>${optionalInputStatus(hasComparisonInfo(record))}</b></div>
-            <div data-save-optional="reflection"><span data-record-reflection-label>${isRest ? "身体・休養時の記録" : "身体・走ったときの記録"}</span><b>${optionalInputStatus(hasReflectionInfo(record, feedback))}</b></div>
-          </div>
-        </div>
-        <span class="draft-status" data-draft-status role="status" aria-live="polite"></span>
-        <button class="primary-save" type="submit">${editing ? "記録を更新して結果を見る" : "記録を保存して結果を見る"}</button>
-      </aside>
+      ${renderFormControls({ editing, isRest, course, record, feedback })}
     </form>
-    <div class="mobile-save-bar" data-record-mobile-save-bar>${editing ? "" : '<button class="draft-button" type="button" data-action="save-record-draft">下書き</button>'}<button class="primary-save" type="submit" form="record-input-form">${editing ? "更新して結果を見る" : "保存して結果を見る"}</button></div>
+    ${renderAfterForm({ editing, isRest, course, record, feedback })}
   </div>`;
 }

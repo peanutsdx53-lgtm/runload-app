@@ -1,17 +1,16 @@
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
-import { matchesMobileLayout } from "../ui/deviceLayout.js";
 import {
   bodyRegionFormalName,
   PRIMARY_REGIONAL_V2_MODEL_VERSION,
 } from "../core/appCore.js";
 
-function fmt(value, digits = 1) { return finite(value) ? Number(value).toFixed(digits).replace(/\.0$/, "") : "—"; }
-function signed(value, digits = 1) { if (!finite(value)) return "—"; const n = Number(value); return `${n > 0 ? "+" : ""}${fmt(n, digits)}`; }
+export function fmt(value, digits = 1) { return finite(value) ? Number(value).toFixed(digits).replace(/\.0$/, "") : "—"; }
+export function signed(value, digits = 1) { if (!finite(value)) return "—"; const n = Number(value); return `${n > 0 ? "+" : ""}${fmt(n, digits)}`; }
 function signatureFor(record = {}, regionId = "") { return record?.comparison_signatures?.[regionId] || null; }
 function sameSignature(a, b) { return Boolean(a && b && a.modelVersion === b.modelVersion && a.outputSemanticVersion === b.outputSemanticVersion && a.regionId === b.regionId && a.constructId === b.constructId && a.referenceId === b.referenceId); }
-function shortDate(iso = "") { const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${Number(m[2])}/${Number(m[3])}` : iso; }
+export function shortDate(iso = "") { const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${Number(m[2])}/${Number(m[3])}` : iso; }
 
 const REGION_VIEW = Object.freeze({
   "BA-DISP-014": ["前面", "M120 142 C130 132 140 128 150 128 C160 128 170 132 180 142 L178 178 C168 184 160 188 150 188 C140 188 132 184 122 178 Z"],
@@ -44,18 +43,18 @@ function comparableHistory(experience, regionId, allExperiences) {
     .slice(-5);
 }
 
-function trendSvg(rows, { desktop = false } = {}) {
+export function trendSvg(rows, { annotated = false } = {}) {
   if (!rows.length) return '<text x="160" y="72" text-anchor="middle">比較できる保存記録はありません</text>';
   const values = rows.map((item) => Number(item.row.value));
   const min = Math.min(94, ...values) - 1; const max = Math.max(106, ...values) + 1;
   const xs = rows.length === 1
-    ? [desktop ? 168 : 160]
-    : rows.map((_, i) => (desktop ? 44 : 28) + i * ((desktop ? 244 : 264) / (rows.length - 1)));
+    ? [annotated ? 168 : 160]
+    : rows.map((_, i) => (annotated ? 44 : 28) + i * ((annotated ? 244 : 264) / (rows.length - 1)));
   const y = (v) => 120 - (Number(v) - min) / Math.max(1, max - min) * 92;
   const points = rows.map((item, i) => `${xs[i]},${y(item.row.value)}`).join(" ");
   const baseline = y(100);
   const base = `<line class="grid" x1="20" y1="28" x2="300" y2="28"></line><line class="grid" x1="20" y1="74" x2="300" y2="74"></line><line class="grid" x1="20" y1="120" x2="300" y2="120"></line><line class="baseline" x1="20" y1="${baseline}" x2="300" y2="${baseline}"></line><text x="22" y="${baseline - 5}">100</text>${rows.length > 1 ? `<polyline class="trend-line" points="${points}"></polyline>` : ""}`;
-  if (desktop) return `${base}${rows.map((item, i) => `<circle class="trend-point${i === rows.length - 1 ? " current" : ""}" cx="${xs[i]}" cy="${y(item.row.value)}" r="5"></circle><text x="${xs[i]}" y="${Math.max(12, y(item.row.value) - 10)}" text-anchor="middle">${fmt(item.row.value, 1)}</text>`).join("")}`;
+  if (annotated) return `${base}${rows.map((item, i) => `<circle class="trend-point${i === rows.length - 1 ? " current" : ""}" cx="${xs[i]}" cy="${y(item.row.value)}" r="5"></circle><text x="${xs[i]}" y="${Math.max(12, y(item.row.value) - 10)}" text-anchor="middle">${fmt(item.row.value, 1)}</text>`).join("")}`;
   return `${base}${rows.map((item, i) => {
     const record = item.experience?.record || {};
     const distance = finite(record.distanceKm) ? fmt(record.distanceKm, 2) : "";
@@ -65,8 +64,13 @@ function trendSvg(rows, { desktop = false } = {}) {
   }).join("")}`;
 }
 
-export function renderBodyPartDetailScreen({ services, context }) {
-  const mobileLayout = matchesMobileLayout();
+export function renderBodyPartDetailScreenWithPresentation({ services, context }, presentation = {}) {
+  const {
+    renderMetrics = () => "",
+    renderReference = () => "",
+    renderTrend = ({ history }) => `<svg class="trend-svg" viewBox="0 0 320 145" role="img" aria-label="保存記録の推移">${trendSvg(history, { annotated: true })}</svg>`,
+    renderTrendDetail = () => "",
+  } = presentation;
   const recordId = String(context.parameters.get("recordId") || "");
   const regionId = String(context.parameters.get("regionId") || "");
   const experience = services.workflows.records.loadExperience(recordId);
@@ -82,7 +86,6 @@ export function renderBodyPartDetailScreen({ services, context }) {
   const currentHistoryIndex = Math.max(0, history.length - 1);
   const currentHistory = history[currentHistoryIndex] || null;
   const currentHistoryRecord = currentHistory?.experience?.record || experience.record;
-  const mobileMetrics = mobileLayout ? `<div class="mobile-detail-metrics" aria-label="この部位の比較"><article><small>基準100との差</small><strong>${finite(baselineDelta) ? signed(baselineDelta, 1) : "—"}</strong></article><article><small>前回</small><strong>${previous ? fmt(previous.row.value, 1) : "—"}</strong></article><article><small>前回との差</small><strong>${finite(delta) ? signed(delta, 1) : "—"}</strong></article></div>` : "";
-  const mobileTrendDetail = mobileLayout && history.length ? `<div class="mobile-trend-detail" data-trend-detail data-selected-index="${currentHistoryIndex}"><small>選択した保存記録</small><div><strong data-trend-detail-date>${escapeHtml(shortDate(currentHistoryRecord.date))}</strong><span><b data-trend-detail-value>${fmt(currentHistory?.row?.value ?? row.value, 1)}</b><em>この部位</em></span></div><p data-trend-detail-facts>${finite(currentHistoryRecord.distanceKm) ? `${fmt(currentHistoryRecord.distanceKm, 2)} km` : "距離なし"}${finite(currentHistoryRecord.durationMinutes) ? ` ・ ${fmt(currentHistoryRecord.durationMinutes, 1)}分` : ""}</p></div>` : "";
-  return `<div class="screen screen--body-part-detail screen-layout screen-layout--result"><div class="detail-topbar" data-context-back-duplicate><a href="#/result?recordId=${encodeURIComponent(recordId)}">‹ <span>今回の結果</span></a><strong>部位詳細</strong><span></span></div><main class="detail-main"><section class="detail-title"><p class="eyebrow">BODY REGION DETAIL</p><h1>${escapeHtml(name)}</h1><p>${escapeHtml(formatLocalDate(experience.record.date))}の保存結果</p></section><section class="detail-hero"><div class="detail-locator">${locatorSvg(regionId)}</div><div class="detail-value"><small>今回の目安</small><strong>${fmt(row.value, 1)}</strong>${mobileLayout ? `<span class="mobile-detail-reference">この部位自身の基準 = 100</span>` : ""}<div class="detail-comparison"><span><small>前回</small><b>${previous ? fmt(previous.row.value, 1) : "—"}</b></span><i></i><span><small>前回からの変化</small><b>${finite(delta) ? signed(delta, 1) : "—"}</b></span></div></div></section>${mobileMetrics}<section class="trend-card"><div class="trend-head"><div><small>同じ部位</small><h2>保存記録の推移</h2></div><span>${finite(delta) ? `前回からの変化 ${signed(delta, 1)}` : "前回比較なし"}</span></div><svg class="trend-svg trend-svg--mobile" viewBox="0 0 320 145" role="img" aria-label="保存記録の推移">${trendSvg(history)}</svg><svg class="trend-svg trend-svg--pc" viewBox="0 0 320 145" role="img" aria-label="保存記録の推移">${trendSvg(history, { desktop: true })}</svg><div class="trend-dates">${history.map((item) => `<span>${escapeHtml(shortDate(item.experience.record.date))}</span>`).join("")}</div>${mobileTrendDetail}<p>同じ部位・同じ計算方法・同じ基準で比べられる保存記録を表示します。</p></section><p class="compact-boundary">この部位自身の基準を100とした比較です。別の部位との順位ではありません。</p><div class="screen-actions"><a class="button button--text" href="#/interpretation-room?recordId=${encodeURIComponent(recordId)}&origin=body-part-detail&regionId=${encodeURIComponent(regionId)}">この部位から見比べる</a></div></main></div>`;
+  const state = Object.freeze({ recordId, regionId, experience, row, history, previous, delta, baselineDelta, currentHistoryIndex, currentHistory, currentHistoryRecord });
+  return `<div class="screen screen--body-part-detail screen-layout screen-layout--result"><div class="detail-topbar" data-context-back-duplicate><a href="#/result?recordId=${encodeURIComponent(recordId)}">‹ <span>今回の結果</span></a><strong>部位詳細</strong><span></span></div><main class="detail-main"><section class="detail-title"><p class="eyebrow">BODY REGION DETAIL</p><h1>${escapeHtml(name)}</h1><p>${escapeHtml(formatLocalDate(experience.record.date))}の保存結果</p></section><section class="detail-hero"><div class="detail-locator">${locatorSvg(regionId)}</div><div class="detail-value"><small>今回の目安</small><strong>${fmt(row.value, 1)}</strong>${renderReference(state)}<div class="detail-comparison"><span><small>前回</small><b>${previous ? fmt(previous.row.value, 1) : "—"}</b></span><i></i><span><small>前回からの変化</small><b>${finite(delta) ? signed(delta, 1) : "—"}</b></span></div></div></section>${renderMetrics(state)}<section class="trend-card"><div class="trend-head"><div><small>同じ部位</small><h2>保存記録の推移</h2></div><span>${finite(delta) ? `前回からの変化 ${signed(delta, 1)}` : "前回比較なし"}</span></div>${renderTrend(state)}<div class="trend-dates">${history.map((item) => `<span>${escapeHtml(shortDate(item.experience.record.date))}</span>`).join("")}</div>${renderTrendDetail(state)}<p>同じ部位・同じ計算方法・同じ基準で比べられる保存記録を表示します。</p></section><p class="compact-boundary">この部位自身の基準を100とした比較です。別の部位との順位ではありません。</p><div class="screen-actions"><a class="button button--text" href="#/interpretation-room?recordId=${encodeURIComponent(recordId)}&origin=body-part-detail&regionId=${encodeURIComponent(regionId)}">この部位から見比べる</a></div></main></div>`;
 }

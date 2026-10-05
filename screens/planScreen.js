@@ -3,6 +3,7 @@ import { peekCourseSelection } from "../ui/flowSessionState.js";
 import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
 import { SELF_UNDERSTANDING_STATES, selfUnderstandingThreadTitle } from "../core/selfUnderstandingCore.js";
+import { recordedNextCheckText } from "../shared/recordUtilities.js";
 
 function localTodayIso() { const d = new Date(); const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,"0"); const day=String(d.getDate()).padStart(2,"0"); return `${y}-${m}-${day}`; }
 function courseFromPlan(plan) { return plan?.plannedSession?.course || { name:"", gradeKnowledge:"UNKNOWN", modelSurfaceClass:"UNKNOWN" }; }
@@ -35,7 +36,10 @@ function planBackContext(context) {
   return { href:`#/interpretation-room?${query.toString()}`, label:"結果の整理へ戻る" };
 }
 
-export function renderPlanScreen({ services, context }) {
+export function renderPlanScreenWithPresentation({ services, context }, presentation = {}) {
+  const renderSavedStatus = presentation.renderSavedStatus || (() => "");
+  const renderReviewControl = presentation.renderReviewControl || (() => "");
+  const renderConfirmEditControl = presentation.renderConfirmEditControl || (() => "");
   const planId=String(context?.parameters?.get("planId")||"");
   const editing=planId?services.storage.plans.findById(planId):null;
   const selected=peekCourseSelection("plan")?.preset || null;
@@ -49,6 +53,7 @@ export function renderPlanScreen({ services, context }) {
   const selfHref=planContextHref(context, planId);
   const justSaved=String(context?.parameters?.get("saved")||"")==="1" && Boolean(editing);
   const sourceLabel=sourceRecordId?"今回の記録":"前回の記録";
+  const carryLabel=sourceRecordId?"今回の記録から引き継いだ内容":"前回から引き継いだ内容";
   const simulationQuery=new URLSearchParams();
   simulationQuery.set("from","plan");
   simulationQuery.set("returnTo",selfHref);
@@ -61,13 +66,15 @@ export function renderPlanScreen({ services, context }) {
   const confirmationExperiences=services.workflows?.records?.loadAllExperiences?.() || [];
   const selectedThreadId=String(editing?.selfUnderstandingThreadId||context?.parameters?.get("threadId")||"");
   const scheduledDate=editing?.scheduledDate||localTodayIso();
+  const previousCheckNote=recordedNextCheckText(recent);
   const distance=session.distanceKm ?? ""; const duration=session.durationMinutes ?? "";
   return `<div class="screen screen--plan screen-layout screen-layout--plan secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backContext.href)}">← ${escapeHtml(backContext.label)}</a><strong>次の予定</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="page-head"><div><p class="eyebrow">NEXT PLAN</p><h1>次の予定</h1><p>次の走りや休養を、必要な項目だけで準備します。</p></div><span class="date-pill">${escapeHtml(formatLocalDate(scheduledDate))}</span></section><p class="visually-hidden">予定条件は利用者が入力した事実であり、数値スコアではなく入力した予定事実として扱います。おすすめ・安全判断・自動処方ではありません。</p>
-    ${justSaved?`<section class="plan-mobile-saved-success plan-mobile-only" aria-live="polite"><div class="plan-mobile-saved-success__mark" aria-hidden="true">✓</div><div><small>保存完了</small><strong>${planType==="rest"?"休養予定を保存しました":"走行予定を保存しました"}</strong><span>${escapeHtml(formatLocalDate(scheduledDate))}${planType==="rest"?"・休養予定":`・${escapeHtml(planTitle(editing))}`}</span></div>${planType==="rest"?`<a href="#/home">Homeへ戻る</a>`:`<a href="#/run-measurement?planId=${encodeURIComponent(editing?.id||"")}">この予定で測定を始める</a>`}</section>`:""}
+    ${renderSavedStatus({ justSaved, planType, scheduledDate, editing, planTitle, formatLocalDate, escapeHtml })}
     ${selectedThreadId&&planType==="run"?(()=>{const thread=confirmationThemes.find((item)=>item.id===selectedThreadId)||services.storage.selfUnderstandingThreads?.findById?.(selectedThreadId);return thread?`<section class="carry self-understanding-plan-carry"><i></i><div><small>確認中のテーマ</small><strong>${escapeHtml(selfUnderstandingThreadTitle(thread, confirmationExperiences))}</strong><span>この予定に覚えておくテーマです。走行条件を自動で変更するものではありません。</span></div></section>`:"";})():""}
+    ${previousCheckNote?`<section class="carry"><i></i><div><small>${escapeHtml(carryLabel)}・旧仕様</small><strong>以前に残した確認メモ</strong><span>${escapeHtml(previousCheckNote)}</span></div></section>`:""}
     <form id="plan-form" class="layout" novalidate>
       <input type="hidden" name="planId" value="${escapeHtml(editing?.id||"")}"><input type="hidden" name="courseJson" value="${escapeHtml(JSON.stringify(course))}"><input type="hidden" name="routePattern" value="${escapeHtml(course.routePattern||"UNKNOWN")}">
       <input class="visually-hidden" type="radio" name="planType" value="run"${planType==="run"?" checked":""}><input class="visually-hidden" type="radio" name="planType" value="rest"${planType==="rest"?" checked":""}>
@@ -84,9 +91,9 @@ export function renderPlanScreen({ services, context }) {
         </div>
         <div data-plan-rest-fields${planType==="rest"?"":" hidden"}><div class="summary-card plan-rest-summary"><small>休養予定</small><strong>走行条件は入力しません</strong><span>予定日だけを確認して保存します。</span></div></div>
         <label class="field plan-memo-field"><span>メモ <b>任意</b></span><textarea name="memo" rows="3" maxlength="500">${escapeHtml(editing?.memo||"")}</textarea></label>
-        <button class="plan-mobile-review-button plan-mobile-only" type="button" data-action="plan-mobile-review" aria-controls="plan-mobile-confirm" aria-expanded="false"><span>STEP 2</span><strong>保存前の確認へ</strong><i aria-hidden="true">›</i></button>
+        ${renderReviewControl()}
       </div></section>
-      <aside class="panel confirm-panel" id="plan-mobile-confirm" data-plan-mobile-confirm><div class="panel-head"><small>CHECK</small><h2>保存前の確認</h2><p>入力した予定だけを確認します。</p></div><div class="confirm"><button class="plan-mobile-edit-button plan-mobile-only" type="button" data-action="plan-mobile-edit">← 予定内容を修正</button><div class="summary-card"><small data-plan-summary-kind>${planType==="rest"?"休養予定":"走行予定"}</small><strong data-plan-summary-date>${escapeHtml(formatLocalDate(scheduledDate))}</strong><span data-plan-summary-line>${planType==="rest"?"走行条件なし":`${distance||"—"} km・${duration||"—"}分・${course.name||"コース未選択"}`}</span></div><div class="summary-row" data-plan-summary-metrics${planType==="rest"?" hidden":""}><div><small>距離</small><strong data-plan-summary-distance>${escapeHtml(distance||"—")} km</strong></div><div><small>時間</small><strong data-plan-summary-duration>${escapeHtml(duration||"—")}分</strong></div><div><small>コース</small><strong data-plan-summary-course>${escapeHtml(course.name||"未選択")}</strong></div></div><div class="form-messages" data-form-messages tabindex="-1" hidden></div><button class="save" type="submit">${editing?"変更を保存する":"予定を保存する"}</button></div></aside>
+      <aside class="panel confirm-panel" id="plan-confirm" data-plan-confirm><div class="panel-head"><small>CHECK</small><h2>保存前の確認</h2><p>入力した予定だけを確認します。</p></div><div class="confirm">${renderConfirmEditControl()}<div class="summary-card"><small data-plan-summary-kind>${planType==="rest"?"休養予定":"走行予定"}</small><strong data-plan-summary-date>${escapeHtml(formatLocalDate(scheduledDate))}</strong><span data-plan-summary-line>${planType==="rest"?"走行条件なし":`${distance||"—"} km・${duration||"—"}分・${course.name||"コース未選択"}`}</span></div><div class="summary-row" data-plan-summary-metrics${planType==="rest"?" hidden":""}><div><small>距離</small><strong data-plan-summary-distance>${escapeHtml(distance||"—")} km</strong></div><div><small>時間</small><strong data-plan-summary-duration>${escapeHtml(duration||"—")}分</strong></div><div><small>コース</small><strong data-plan-summary-course>${escapeHtml(course.name||"未選択")}</strong></div></div><div class="form-messages" data-form-messages tabindex="-1" hidden></div><button class="save" type="submit">${editing?"変更を保存する":"予定を保存する"}</button></div></aside>
     </form>
     <details class="saved"><summary><div><strong>保存した予定</strong><span>予定内容と実施状況を見る</span></div><span>${plans.length}件</span></summary><div class="saved-list">${plans.length?plans.map(savedPlanCard).join(""):'<div class="saved-card saved-card--empty"><strong>保存した予定はまだありません</strong><span>予定を保存すると、ここから実施状況の確認や編集ができます。</span></div>'}</div></details>
     </div>

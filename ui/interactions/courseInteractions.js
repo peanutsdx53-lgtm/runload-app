@@ -88,51 +88,12 @@ function updateVisibility(form) {
   if (grade === "SECTIONS") updateSectionRows(form);
 }
 
-function setText(form, selector, value) {
-  const node = form.querySelector(selector);
-  if (node) node.textContent = value;
-}
-
-function mobileGradeSummary(data) {
-  const mode = String(data.get("gradeInputMode") || "UNKNOWN");
-  if (mode === "FLAT") return "ほぼ平坦";
-  if (mode === "UNKNOWN") return "不明";
-  if (mode === "SUMMARY") return `上り ${number(data, "upPercent")}%・下り ${number(data, "downPercent")}%`;
-  const sections = readSections(data);
-  const up = sections.filter((item) => item.gradeDirection === "UPHILL").reduce((sum, item) => sum + item.sharePercent, 0);
-  const down = sections.filter((item) => item.gradeDirection === "DOWNHILL").reduce((sum, item) => sum + item.sharePercent, 0);
-  return sections.length ? `上り ${up}%・下り ${down}%` : "区間未入力";
-}
-
-function mobileSurfaceSummary(form, data) {
-  const mode = String(data.get("surfaceInputMode") || "UNKNOWN");
-  if (mode === "UNKNOWN") return "未設定";
-  if (mode === "SINGLE") {
-    const select = form.elements.namedItem("primarySurfaceKey");
-    return select?.selectedOptions?.[0]?.textContent?.trim() || "1種類";
-  }
-  const active = SURFACE_FIELDS
-    .map(({ recordKey, label }) => ({ label, value: number(data, recordKey) }))
-    .filter((item) => item.value > 0)
-    .sort((a, b) => b.value - a.value);
-  if (!active.length) return "未入力";
-  return active.length === 1 ? active[0].label : `${active[0].label}ほか${active.length - 1}種類`;
-}
-
-function updateMobileSummary(form, data = new FormData(form)) {
-  if (!form.querySelector("[data-course-summary-name]")) return;
-  const name = String(data.get("courseName") || "").trim() || "名称未入力";
-  setText(form, "[data-course-summary-name]", name);
-  setText(form, "[data-course-summary-grade]", mobileGradeSummary(data));
-  setText(form, "[data-course-summary-surface]", mobileSurfaceSummary(form, data));
-}
-
-function updateTotals(form) {
+function updateTotals(form, platformEnhancement = {}) {
   const data = new FormData(form); const up = number(data, "upPercent"), down = number(data, "downPercent");
   const flat = form.querySelector("[data-flat-share]"); if (flat) flat.value = Number.isFinite(up + down) ? String(100 - up - down) : "—";
   const section = form.querySelector("[data-section-share-total]"); if (section) section.value = String(Array.from({ length: 5 }, (_, i) => number(data, `sectionShare_${i}`)).reduce((a, b) => a + b, 0));
   const surface = form.querySelector("[data-surface-share-total]"); if (surface) surface.value = String(SURFACE_FIELDS.reduce((sum, { recordKey }) => sum + number(data, recordKey), 0));
-  updateMobileSummary(form, data);
+  platformEnhancement.updateSummary?.({ form, data });
 }
 export function bindCourseLibrary({ services, rerender }) {
   document.querySelectorAll('[data-action="use-course"]').forEach((button) => button.addEventListener("click", () => {
@@ -153,24 +114,24 @@ export function bindCourseLibrary({ services, rerender }) {
     const result = services.storage.courses.removeById(preset.id); if (!result.ok) { if (status) status.textContent = "コースを削除できませんでした。"; return; } rerender();
   }));
 }
-export function bindCourseEditor({ services }) {
+export function bindCourseEditor({ services }, platformEnhancement = {}) {
   const form = document.getElementById("course-editor-form"); if (!form) return;
   form.querySelectorAll("[data-course-grade-family]").forEach((button) => button.addEventListener("click", () => {
     const select = form.elements.namedItem("gradeInputMode"); if (!select) return;
     const family = button.dataset.courseGradeFamily || "UNKNOWN";
     if (family === "PROFILE") select.value = gradeFamily(select.value) === "PROFILE" ? select.value : "SUMMARY";
     else select.value = family;
-    updateVisibility(form); updateTotals(form);
+    updateVisibility(form); updateTotals(form, platformEnhancement);
   }));
-  form.querySelectorAll("[data-course-grade-mode]").forEach((button) => button.addEventListener("click", () => { const select=form.elements.namedItem("gradeInputMode"); if(select) select.value=button.dataset.courseGradeMode; updateVisibility(form); updateTotals(form); }));
-  form.querySelectorAll("[data-course-surface-mode]").forEach((button) => button.addEventListener("click", () => { const select=form.elements.namedItem("surfaceInputMode"); if(select) select.value=button.dataset.courseSurfaceMode; updateVisibility(form); updateTotals(form); }));
+  form.querySelectorAll("[data-course-grade-mode]").forEach((button) => button.addEventListener("click", () => { const select=form.elements.namedItem("gradeInputMode"); if(select) select.value=button.dataset.courseGradeMode; updateVisibility(form); updateTotals(form, platformEnhancement); }));
+  form.querySelectorAll("[data-course-surface-mode]").forEach((button) => button.addEventListener("click", () => { const select=form.elements.namedItem("surfaceInputMode"); if(select) select.value=button.dataset.courseSurfaceMode; updateVisibility(form); updateTotals(form, platformEnhancement); }));
   form.querySelector('[data-action="add-course-section"]')?.addEventListener("click", () => {
     const current = Number(form.dataset.visibleCourseSections || initialVisibleSectionCount(form));
     form.dataset.visibleCourseSections = String(Math.min(5, current + 1));
     updateSectionRows(form);
   });
-  form.addEventListener("input", () => updateTotals(form)); form.addEventListener("change", () => { updateVisibility(form); updateTotals(form); });
-  updateVisibility(form); updateTotals(form);
+  form.addEventListener("input", () => updateTotals(form, platformEnhancement)); form.addEventListener("change", () => { updateVisibility(form); updateTotals(form, platformEnhancement); });
+  updateVisibility(form); updateTotals(form, platformEnhancement);
   form.addEventListener("submit", (event) => {
     event.preventDefault(); const data = new FormData(form); const id = String(data.get("courseId") || ""); const course = readCourseEditor(data);
     const validation = validateCoursePresetInput(course); if (!validation.ok) { showFormMessages(form, validation.message || "コースを保存できませんでした。"); return; }

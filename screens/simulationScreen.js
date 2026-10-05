@@ -1,4 +1,5 @@
 import { escapeHtml } from "../ui/commonComponents.js";
+import { recordedNextCheckText } from "../shared/recordUtilities.js";
 import { peekCourseSelection } from "../ui/flowSessionState.js";
 import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js";
 
@@ -53,7 +54,8 @@ function runningFormatValue(record){
   return String(record?.runningFormat||"").toUpperCase()==="RUN_WALK"?"RUN_WALK":"CONTINUOUS_RUN";
 }
 
-export function renderSimulationScreen({ services, context }) {
+export function renderSimulationScreenWithPresentation({ services, context }, presentation = {}) {
+  const renderConditionPicker = presentation.renderConditionPicker || (() => "");
   const from=String(context?.parameters?.get("from")||"");
   const recordId=String(context?.parameters?.get("recordId")||"");
   const roomOrigin=String(context?.parameters?.get("roomOrigin")||"result");
@@ -84,6 +86,7 @@ export function renderSimulationScreen({ services, context }) {
   const runningFormat=runningFormatValue(recent);
   const runningDistance=Number(recent?.runningDistanceKm)>0?Number(recent.runningDistanceKm):Math.max(.1,distance*.8);
   const runningDuration=Number(recent?.runningDurationMinutes)>0?Number(recent.runningDurationMinutes):Math.max(1,Math.round(duration*.8));
+  const previousCheckNote=recordedNextCheckText(recent);
   const sourceLabel=recordId?"選択した記録":"直近の記録";
   const comparisonTitle=recordId?"保存記録を基準に条件を比べる":"直近記録を基準に条件を比べる";
   const recordDate=dateLabel(recent?.date||"");
@@ -108,6 +111,7 @@ export function renderSimulationScreen({ services, context }) {
       <div class="condition-compare-hero__copy">${recordDate?`<time>${escapeHtml(recordDate)}</time>`:""}<p class="eyebrow">CONDITION COMPARE</p><h1>${escapeHtml(comparisonTitle)}</h1><p>保存された記録を基準に、変更した条件だけで12部位を再計算し、元の記録との差を整理します。</p></div>
       <div class="condition-compare-hero__mark"><span>${simulationScreenIcon("compare")}</span><div><strong>条件比較</strong><small>条件差と部位差を分けて確認</small></div></div>
     </section>
+    ${previousCheckNote?`<section class="carry-card condition-compare-carry" aria-label="今回から引き継いだ内容"><span>${simulationScreenIcon("flag")}</span><div><small>今回の記録から</small><strong>次に確認したいこと</strong><p>${escapeHtml(previousCheckNote)}</p></div></section>`:""}
     <section class="condition-compare-overview" aria-labelledby="simulationOverviewTitle">
       <div class="condition-compare-section-head"><div><small>比較の要約</small><h2 id="simulationOverviewTitle">今回の比較で見えること</h2></div><p>条件を変更した結果を、元の記録との差として整理します。</p></div>
       <div class="condition-compare-overview-idle" hidden><span>${simulationScreenIcon("conditions")}</span><div><strong>条件を1項目変更すると比較が始まります</strong><p>右側で距離・時間・コースなどを変更すると、元の保存記録との差だけを表示します。</p></div></div>
@@ -127,22 +131,14 @@ export function renderSimulationScreen({ services, context }) {
         <div class="panel-head"><div><small>CHANGE CONDITIONS</small><h2 id="conditionTitle">条件を変更</h2></div><span>元の記録を初期値に使用</span></div>
         <div class="condition-body">
           <p class="condition-compare-condition__lead">変更した項目だけを使って再計算します。入力すると比較結果が自動で更新されます。</p>
-          <nav class="mobile-simulation-picker" data-mobile-simulation-picker hidden aria-label="変更する条件">
-            <div class="mobile-simulation-picker__head"><strong>何を変えて比べる？</strong><span>1つずつ変えると、違いを確認しやすくなります。</span></div>
-            <div class="mobile-simulation-picker__grid">
-              <button type="button" data-simulation-mobile-tab="distance" aria-pressed="true"><span>距離</span><small data-simulation-tab-state="distance">表示中</small></button>
-              <button type="button" data-simulation-mobile-tab="time" aria-pressed="false"><span>時間</span><small data-simulation-tab-state="time">未変更</small></button>
-              <button type="button" data-simulation-mobile-tab="course" aria-pressed="false"><span>コース</span><small data-simulation-tab-state="course">未変更</small></button>
-              <button type="button" data-simulation-mobile-tab="format" aria-pressed="false"><span>走り方</span><small data-simulation-tab-state="format">未変更</small></button>
-            </div>
-          </nav>
+          ${renderConditionPicker()}
           <div class="measure-grid">
-            <label class="measure-field" data-simulation-mobile-section="distance"><span>距離</span><div><input name="distanceKm" type="number" inputmode="decimal" min="0.01" max="100" step="0.01" value="${distance.toFixed(1)}" aria-label="距離"><b>km</b></div><small class="condition-compare-adjust"><button type="button" data-simulation-adjust="distanceKm:-0.5">−0.5</button><button type="button" data-simulation-adjust="distanceKm:0.5">＋0.5</button></small></label>
-            <label class="measure-field" data-simulation-mobile-section="time"><span>実際に走った時間</span><div><input name="durationMinutes" type="number" inputmode="decimal" min="0.01" max="600" step="0.1" value="${Math.round(duration)}" aria-label="実際に走った時間"><b>分</b></div><small class="condition-compare-adjust"><button type="button" data-simulation-adjust="durationMinutes:-5">−5分</button><button type="button" data-simulation-adjust="durationMinutes:5">＋5分</button></small></label>
+            <label class="measure-field" data-simulation-condition-section="distance"><span>距離</span><div><input name="distanceKm" type="number" inputmode="decimal" min="0.01" max="100" step="0.01" value="${distance.toFixed(1)}" aria-label="距離"><b>km</b></div><small class="condition-compare-adjust"><button type="button" data-simulation-adjust="distanceKm:-0.5">−0.5</button><button type="button" data-simulation-adjust="distanceKm:0.5">＋0.5</button></small></label>
+            <label class="measure-field" data-simulation-condition-section="time"><span>実際に走った時間</span><div><input name="durationMinutes" type="number" inputmode="decimal" min="0.01" max="600" step="0.1" value="${Math.round(duration)}" aria-label="実際に走った時間"><b>分</b></div><small class="condition-compare-adjust"><button type="button" data-simulation-adjust="durationMinutes:-5">−5分</button><button type="button" data-simulation-adjust="durationMinutes:5">＋5分</button></small></label>
           </div>
           <div class="derived-pace"><span>入力から計算した平均ペース</span><strong data-simulation-derived-pace>${escapeHtml(pace(distance,duration))}</strong></div>
-          <a class="selected-course selected course-link" data-simulation-mobile-section="course" href="#/course-library?returnTo=${encodeURIComponent(selfHref)}"><div><small>コース条件</small><strong data-simulation-course-name>${escapeHtml(course.name||"未選択")}</strong><span>${escapeHtml(course.name?`${slopeSummary(course)}・${primarySurfaceSummary(course)}`:"坂・路面は未設定")}</span></div><b>変更 ›</b></a>
-          <details class="details compact-details" data-simulation-mobile-section="format"${runningFormat==="RUN_WALK"?" open":""}><summary><span><strong>走り方</strong><small>元の記録から変更する場合に確認</small></span><i>⌄</i></summary><div class="details-body"><label class="field"><span>走り方</span><select name="runningFormat"><option value="CONTINUOUS_RUN"${runningFormat==="CONTINUOUS_RUN"?" selected":""}>途中で歩かず走る</option><option value="RUN_WALK"${runningFormat==="RUN_WALK"?" selected":""}>走りと歩きを混ぜる</option></select></label><div class="runwalk-grid" data-simulation-run-walk${runningFormat==="RUN_WALK"?"":" hidden"}><label><span>走った区間の距離</span><div><input name="runningDistanceKm" type="number" min="0.1" max="100" step="0.1" value="${runningDistance.toFixed(1)}"><em>km</em></div></label><label><span>走った区間の時間</span><div><input name="runningDurationMinutes" type="number" min="1" max="600" step="1" value="${Math.round(runningDuration)}"><em>分</em></div></label><p>走りと歩きを混ぜた場合は、走った区間の距離と時間を12部位の計算に使用します。</p></div></div></details>
+          <a class="selected-course selected course-link" data-simulation-condition-section="course" href="#/course-library?returnTo=${encodeURIComponent(selfHref)}"><div><small>コース条件</small><strong data-simulation-course-name>${escapeHtml(course.name||"未選択")}</strong><span>${escapeHtml(course.name?`${slopeSummary(course)}・${primarySurfaceSummary(course)}`:"坂・路面は未設定")}</span></div><b>変更 ›</b></a>
+          <details class="details compact-details" data-simulation-condition-section="format"${runningFormat==="RUN_WALK"?" open":""}><summary><span><strong>走り方</strong><small>元の記録から変更する場合に確認</small></span><i>⌄</i></summary><div class="details-body"><label class="field"><span>走り方</span><select name="runningFormat"><option value="CONTINUOUS_RUN"${runningFormat==="CONTINUOUS_RUN"?" selected":""}>途中で歩かず走る</option><option value="RUN_WALK"${runningFormat==="RUN_WALK"?" selected":""}>走りと歩きを混ぜる</option></select></label><div class="runwalk-grid" data-simulation-run-walk${runningFormat==="RUN_WALK"?"":" hidden"}><label><span>走った区間の距離</span><div><input name="runningDistanceKm" type="number" min="0.1" max="100" step="0.1" value="${runningDistance.toFixed(1)}"><em>km</em></div></label><label><span>走った区間の時間</span><div><input name="runningDurationMinutes" type="number" min="1" max="600" step="1" value="${Math.round(runningDuration)}"><em>分</em></div></label><p>走りと歩きを混ぜた場合は、走った区間の距離と時間を12部位の計算に使用します。</p></div></div></details>
           <div class="input-warning" data-simulation-input-warning hidden role="status"></div>
           <button class="secondary-action condition-compare-reset" type="reset">元の条件に戻す</button>
         </div>

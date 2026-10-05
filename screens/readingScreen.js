@@ -1,7 +1,6 @@
 import { toFiniteNumber as numberValue } from "../shared/valueUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { BODY_AREA_BY_ID, BODY_AREA_TO_PRIMARY_REGIONAL_V2, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/appCore.js";
-import { matchesMobileLayout } from "../ui/deviceLayout.js";
 
 const REGION_BY_ID = new Map(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => [region.displayId, region]));
 const SLOPE_DIRECT_REGION_IDS = new Set(PRIMARY_REGIONAL_V2_REGION_DEFS
@@ -405,7 +404,7 @@ function renderReadingDetail(article, items) {
   </article>`;
 }
 
-function renderReadingContent({ services, context, deferredArticleIds }) {
+export function renderReadingContent({ services, context, deferredArticleIds }) {
   const available = new Map(visibleArticles(services.column.list()).map((article) => [article.id, article]));
   const items = READING_ITEMS.map((item) => ({ ...item, article: available.get(item.id) })).filter((item) => item.article);
   const allExperiences = services.workflows.records.loadAllExperiences();
@@ -452,11 +451,4 @@ function renderReadingContent({ services, context, deferredArticleIds }) {
     <div class="drawer" data-reading-drawer hidden><section class="sheet" role="dialog" aria-modal="true" aria-label="読みもの本文">${[...detailArticles.values()].map((article) => renderReadingDetail(article, items)).join("")}</section></div>
     </div>
   </div>`;
-}
-
-export function renderReadingScreen({ services, context }) {
-  if (matchesMobileLayout()) {
-    return renderReadingContent({ services, context, deferredArticleIds: new Set() });
-  }
-  return renderReadingContent({ services, context });
 }

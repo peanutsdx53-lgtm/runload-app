@@ -18,20 +18,10 @@ function updateVisibility(form){
   set('[data-plan-summary-distance]',`${distance||'—'} km`); set('[data-plan-summary-duration]',`${duration||'—'}分`); set('[data-plan-summary-course]',course.name||'未選択');
   const metrics=form.querySelector('[data-plan-summary-metrics]');if(metrics)metrics.hidden=rest;
 }
-function setMobileReview(form, open) {
-  const confirm=form.querySelector('[data-plan-mobile-confirm]');
-  const review=form.querySelector('[data-action="plan-mobile-review"]');
-  if(confirm)confirm.classList.toggle('is-mobile-review',Boolean(open));
-  if(review)review.setAttribute('aria-expanded',open?'true':'false');
-  if(open)confirm?.scrollIntoView?.({behavior:'smooth',block:'start'});
-  else form.querySelector('.panel')?.scrollIntoView?.({behavior:'smooth',block:'start'});
-}
 export function bindPlan({ services, router, rerender }) {
   const form=document.getElementById("plan-form");
   if(form){
     updateVisibility(form);
-    form.querySelector('[data-action="plan-mobile-review"]')?.addEventListener('click',()=>setMobileReview(form,true));
-    form.querySelector('[data-action="plan-mobile-edit"]')?.addEventListener('click',()=>setMobileReview(form,false));
     form.querySelectorAll('[data-plan-type-button]').forEach((button)=>button.addEventListener('click',()=>{const radio=form.querySelector(`[name="planType"][value="${button.dataset.planTypeButton}"]`);if(radio)radio.checked=true;updateVisibility(form);}));
     form.addEventListener("input",()=>updateVisibility(form));
     form.addEventListener("change",()=>updateVisibility(form));
