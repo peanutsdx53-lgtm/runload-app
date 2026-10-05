@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { internalModules } from "../core/internal/modules.js";
 import "../core/internal/inputSupport.js";
 import { renderRecordInputScreen as renderDesktopRecordInput } from "../screens/desktop/recordInputScreen.js";
 import { renderRecordInputScreen as renderMobileRecordInput } from "../screens/mobile/recordInputScreen.js";
+import { BODY_OBSERVATION_INTENSITY_OPTIONS, bodyObservationIntensityDisplay } from "../ui/subjectivePresentation.js";
 
 const previousRecord = {
   id: "record-legacy-reflection",
@@ -53,5 +55,20 @@ const normalized = internalModules.inputValidation.normalizeRunningRecord(previo
 assert.equal(normalized.reflectionContext.postRunReflection, previousRecord.reflectionContext.postRunReflection);
 assert.equal(normalized.reflectionContext.perceivedDifference, previousRecord.reflectionContext.perceivedDifference);
 assert.equal(normalized.reflectionContext.nextCheckPoint, previousRecord.reflectionContext.nextCheckPoint);
+
+
+const recordInteractionSource = fs.readFileSync(new URL("../ui/interactions/recordInputInteractions.js", import.meta.url), "utf8");
+const mobileRecordCss = fs.readFileSync(new URL("../styles/mobile-screen-layouts.css", import.meta.url), "utf8");
+const interpretationSource = fs.readFileSync(new URL("../ui/interpretationRoomPresentation.js", import.meta.url), "utf8");
+
+assert.match(recordInteractionSource, /function bindEmbeddedRecordSubflows\(form, services, platformEnhancement = \{\}\)/, "embedded subflow binder must receive platform enhancement");
+assert.match(recordInteractionSource, /bindEmbeddedRecordSubflows\(form, services, platformEnhancement\)/, "record binder must pass platform enhancement to embedded subflows");
+assert.doesNotMatch(recordInteractionSource, /\[1,2,3,4,5\]\.map\(\(value\)/, "body intensity options must not be bare numbers");
+assert.deepEqual(BODY_OBSERVATION_INTENSITY_OPTIONS.map((item) => item.label), ["ごく軽い", "軽い", "中程度", "強い", "とても強い"]);
+assert.equal(bodyObservationIntensityDisplay(2), "軽い（2 / 5）");
+assert.match(recordInteractionSource, /程度（自分が感じた強さ）/);
+assert.match(recordInteractionSource, /1 ごく軽い → 5 とても強い/);
+assert.match(interpretationSource, /bodyObservationIntensityDisplay\(meta\.intensity\)/, "interpretation view must explain the same body intensity scale");
+assert.match(mobileRecordCss, /\.screen-layout--record \.sub-flow-save\{[\s\S]*?background:var\(--surface\);[\s\S]*?color:var\(--accent2\)/, "mobile subflow return action must be visually secondary to final save");
 
 console.log("recordInputBaselineParity.test.mjs: PASS");

@@ -1552,6 +1552,21 @@
   box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 12%,transparent);
 }
 
+.screen-layout--record .body-intensity-scale-note{
+  color:var(--muted);
+  font-size:var(--type-label);
+  line-height:1.35;
+}
+.screen-layout--record .sub-flow-save{
+  border:1px solid var(--accent);
+  background:var(--surface);
+  color:var(--accent2);
+  box-shadow:none;
+}
+.screen-layout--record .sub-flow-save:active{
+  background:var(--accent-soft);
+}
+
 /* Result: keep the fatigue block aligned with the main content column. */
 .screen-layout--result .fatigue-section{
   margin-top:36px;

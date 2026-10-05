@@ -4,7 +4,7 @@ import { ROF_J_DESCRIPTOR_MAP } from "../../core/rofJCore.js";
 import { booleanValue, numberValue, optionalNumberValue, setHidden, showFormMessages } from "./formUtilities.js";
 import { primarySurfaceSummary, slopeSummary } from "../coursePresentation.js";
 import { beginRecordInputJourney, clearRecordInputWorkspace, refreshActiveRecordInputWorkspace, restoreRecordInputWorkspace, saveRecordInputWorkspace } from "../recordInputWorkspace.js";
-import { subjectiveSummaryFromFields } from "../subjectivePresentation.js";
+import { BODY_OBSERVATION_INTENSITY_OPTIONS, subjectiveSummaryFromFields } from "../subjectivePresentation.js";
 import { RECORD_REGIONAL_SUBJECTIVE_AREAS } from "../recordEmbeddedSubflows.js";
 import { PERSONAL_CONTEXT_FIELD_NAMES, personalContextFromFields, personalSummaryFromFields } from "../personalContextPresentation.js";
 import { confirmGradeDomain } from "./gradeDomainConfirmation.js";
@@ -458,7 +458,7 @@ function selectedRecordBodyAreas(form) {
   });
 }
 
-function renderRecordSelectedBodyList(form) {
+function renderRecordSelectedBodyList(form, platformEnhancement = {}) {
   const selected = selectedRecordBodyAreas(form);
   const list = form.querySelector("[data-record-selected-body-list]");
   const summary = form.querySelector("[data-record-selected-body-summary]");
@@ -467,14 +467,14 @@ function renderRecordSelectedBodyList(form) {
   list.innerHTML = selected.map((item) => {
     const score = Number(recordBodyScore(form, item.areaId)?.value || 1);
     const side = String(recordBodySide(form, item.areaId)?.value || BODY_AREA_LATERALITY.unknown);
-    return `<div class="record-selected-body-row selected-body-row" data-record-selected-row="${item.areaId}"><div class="selected-body-row-head"><strong>${item.label}</strong><button type="button" data-action="remove-record-body" aria-label="${item.label}を削除">×</button></div><div class="selected-body-controls"><label><span>程度</span><select data-record-selected-level>${[1,2,3,4,5].map((value) => `<option value="${value}"${score === value ? " selected" : ""}>${value}</option>`).join("")}</select></label><label><span>左右</span><select data-record-selected-side>${Object.values(BODY_AREA_LATERALITY).map((value) => `<option value="${value}"${side === value ? " selected" : ""}>${BODY_AREA_LATERALITY_LABELS[value]}</option>`).join("")}</select></label></div></div>`;
+    return `<div class="record-selected-body-row selected-body-row" data-record-selected-row="${item.areaId}"><div class="selected-body-row-head"><strong>${item.label}</strong><button type="button" data-action="remove-record-body" aria-label="${item.label}を削除">×</button></div><div class="selected-body-controls"><label><span>程度（自分が感じた強さ）</span><select data-record-selected-level aria-label="${item.label}の程度">${BODY_OBSERVATION_INTENSITY_OPTIONS.map(({ value, label }) => `<option value="${value}"${score === value ? " selected" : ""}>${value} / 5　${label}</option>`).join("")}</select><small class="body-intensity-scale-note">1 ごく軽い → 5 とても強い</small></label><label><span>左右</span><select data-record-selected-side>${Object.values(BODY_AREA_LATERALITY).map((value) => `<option value="${value}"${side === value ? " selected" : ""}>${BODY_AREA_LATERALITY_LABELS[value]}</option>`).join("")}</select></label></div></div>`;
   }).join("");
   list.querySelectorAll("[data-record-selected-row]").forEach((row) => {
     const areaId = String(row.dataset.recordSelectedRow || "");
     row.querySelector("[data-record-selected-level]")?.addEventListener("change", (event) => {
       const control = recordBodyScore(form, areaId);
       if (control) control.value = String(event.currentTarget.value);
-      refreshRecordBodyUi(form);
+      refreshRecordBodyUi(form, platformEnhancement);
       saveDraftFromForm(form, form.__appServices, false);
     });
     row.querySelector("[data-record-selected-side]")?.addEventListener("change", (event) => {
@@ -487,7 +487,7 @@ function renderRecordSelectedBodyList(form) {
       const side = recordBodySide(form, areaId);
       if (score) score.value = "0";
       if (side) side.value = BODY_AREA_LATERALITY.unknown;
-      refreshRecordBodyUi(form);
+      refreshRecordBodyUi(form, platformEnhancement);
       updateSubjectiveSummary(form);
       updateOptionalInputStatus(form, platformEnhancement);
       saveDraftFromForm(form, form.__appServices, false);
@@ -495,7 +495,7 @@ function renderRecordSelectedBodyList(form) {
   });
 }
 
-function refreshRecordBodyUi(form) {
+function refreshRecordBodyUi(form, platformEnhancement = {}) {
   const status = recordBodyStatus(form);
   const bodyEntry = form.querySelector("[data-record-body-entry]");
   const consultExtra = form.querySelector("[data-record-consultation-extra]");
@@ -508,7 +508,7 @@ function refreshRecordBodyUi(form) {
     path.classList.toggle("is-selected", level > 0);
     path.setAttribute("aria-pressed", String(level > 0));
   });
-  renderRecordSelectedBodyList(form);
+  renderRecordSelectedBodyList(form, platformEnhancement);
 }
 
 function clearRecordBodyAreas(form) {
@@ -529,11 +529,11 @@ function clearRecordConsultationFacts(form) {
   if (note) note.value = "";
 }
 
-function normalizeEmbeddedBodyStatus(form) {
+function normalizeEmbeddedBodyStatus(form, platformEnhancement = {}) {
   const status = recordBodyStatus(form);
   if (!["discomfort_reported", "strong_reported"].includes(status)) clearRecordBodyAreas(form);
   if (status !== "strong_reported") clearRecordConsultationFacts(form);
-  refreshRecordBodyUi(form);
+  refreshRecordBodyUi(form, platformEnhancement);
 }
 
 function openRecordSubflow(form, name) {
@@ -576,7 +576,7 @@ function saveEmbeddedShoePreset(form, services) {
   return { ok: true, saved: true };
 }
 
-function bindEmbeddedRecordSubflows(form, services) {
+function bindEmbeddedRecordSubflows(form, services, platformEnhancement = {}) {
   form.__appServices = services;
   form.querySelectorAll('[data-action="open-record-subflow"]').forEach((button) => {
     button.addEventListener("click", () => openRecordSubflow(form, String(button.dataset.subflow || "")));
@@ -588,14 +588,14 @@ function bindEmbeddedRecordSubflows(form, services) {
       const areaId = String(path.dataset.recordBodyRegion || "");
       const score = recordBodyScore(form, areaId);
       if (score && Number(score.value || 0) === 0) score.value = "2";
-      refreshRecordBodyUi(form);
+      refreshRecordBodyUi(form, platformEnhancement);
       updateSubjectiveSummary(form);
     };
     path.addEventListener("click", activate);
     path.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); activate(); } });
   });
   form.querySelectorAll('[name="subjectiveStatus"]').forEach((control) => control.addEventListener("change", () => {
-    normalizeEmbeddedBodyStatus(form);
+    normalizeEmbeddedBodyStatus(form, platformEnhancement);
     updateSubjectiveSummary(form);
   }));
   form.querySelector('[data-action="apply-body-subflow"]')?.addEventListener("click", () => {
@@ -605,7 +605,7 @@ function bindEmbeddedRecordSubflows(form, services) {
       showFormMessages(form, ["身体図から部位を1つ以上選んでください。"]);
       return;
     }
-    normalizeEmbeddedBodyStatus(form);
+    normalizeEmbeddedBodyStatus(form, platformEnhancement);
     updateSubjectiveSummary(form);
     updateOptionalInputStatus(form, platformEnhancement);
     saveDraftFromForm(form, services, false);
@@ -630,7 +630,7 @@ function bindEmbeddedRecordSubflows(form, services) {
     closeRecordSubflow(form);
   });
 
-  normalizeEmbeddedBodyStatus(form);
+  normalizeEmbeddedBodyStatus(form, platformEnhancement);
   updateSubjectiveSummary(form);
   updatePersonalSummary(form);
 }
@@ -900,7 +900,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
     beginRecordInputJourney({ returnTo, source: "course" });
     router.navigateToScreen("course-library", { returnTo });
   });
-  bindEmbeddedRecordSubflows(form, services);
+  bindEmbeddedRecordSubflows(form, services, platformEnhancement);
   const requestedSubflow = String(context?.parameters?.get("subflow") || "");
   if (["subjective", "personal"].includes(requestedSubflow)) openRecordSubflow(form, requestedSubflow);
   form.addEventListener("change", () => {

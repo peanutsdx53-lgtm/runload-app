@@ -58,7 +58,7 @@ await testCase('STRONG-REPORTED-RETAINS-EXPLICIT-FLAG',()=>{
 await testCase('INITIALIZATION-NORMALIZES-HIDDEN-CONSULTATION-FACTS',()=>{
   const source=read('ui/interactions/recordInputInteractions.js');
   const bind=source.match(/function bindEmbeddedRecordSubflows[\s\S]*?export function readSubjectiveFeedback/)?.[0]||'';
-  assert.match(bind,/normalizeEmbeddedBodyStatus\(form\);/);
+  assert.match(bind,/normalizeEmbeddedBodyStatus\(form, platformEnhancement\);/);
 });
 
 await testCase('RESULT-ORGANIZATION-SEMANTICS-STAY-BOUNDED',()=>{

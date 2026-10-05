@@ -1,6 +1,7 @@
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { escapeHtml } from "./commonComponents.js";
 import { formatLocalDate } from "./recordPresentation.js";
+import { bodyObservationIntensityDisplay } from "./subjectivePresentation.js";
 import {
   buildInterpretationContextCandidate,
   getInterpretationReferenceKnowledgeById,
@@ -448,7 +449,7 @@ function renderInterpretationFlowBodyPair(candidate = {}, { active = false } = {
     <article class="interpretation-flow-source-card interpretation-flow-source-card--user" data-interpretation-flow-focus-card>
       <header><span class="interpretation-flow-source-mark">自</span><div><small>あなたの身体の記録</small><strong>${escapeHtml(meta.observationLabel)}</strong></div></header>
       <div class="interpretation-flow-source-value">${escapeHtml(meta.sensation)}</div>
-      <p>${escapeHtml(meta.timing)}${meta.intensity != null ? `・強さ ${escapeHtml(String(meta.intensity))} / 5` : ""}</p>
+      <p>${escapeHtml(meta.timing)}${meta.intensity != null ? `・程度 ${escapeHtml(bodyObservationIntensityDisplay(meta.intensity))}` : ""}</p>
     </article>
     <div class="interpretation-flow-relation" data-interpretation-flow-reveal="compare"><span></span><b>同じ部位</b><span></span></div>
     <article class="interpretation-flow-source-card interpretation-flow-source-card--model interpretation-context-model-secondary" data-interpretation-flow-reveal="compare">
@@ -560,7 +561,7 @@ function renderInterpretationFlowActiveEpisodeCard(episode = {}, label = "今回
   const contextLine = interpretationContextRunContextLine(episode.runContext || {}, episode.postRofJ);
   if (episode.row && finite(episode.row.value)) {
     const observation = episode.observation || null;
-    return `<article class="interpretation-flow-episode interpretation-context-episode"><time>${escapeHtml(episode.date ? formatLocalDate(episode.date) : label)}</time><div>${observation ? `<span class="interpretation-context-episode-user"><small>自分の記録</small><strong>${escapeHtml(sensationLabel(observation.sensationType))}${Number.isFinite(Number(observation.intensity)) ? ` ${escapeHtml(String(Number(observation.intensity)))} / 5` : ""}</strong></span>` : ""}<span class="interpretation-context-episode-model"><small>補助：部位表示</small><strong>${escapeHtml(number(episode.row.value))}</strong></span></div>${contextLine ? `<p class="interpretation-context-episode-context"><small>その日の条件</small>${escapeHtml(contextLine)}</p>` : ""}</article>`;
+    return `<article class="interpretation-flow-episode interpretation-context-episode"><time>${escapeHtml(episode.date ? formatLocalDate(episode.date) : label)}</time><div>${observation ? `<span class="interpretation-context-episode-user"><small>自分の記録</small><strong>${escapeHtml(sensationLabel(observation.sensationType))}${Number.isFinite(Number(observation.intensity)) ? `・${escapeHtml(bodyObservationIntensityDisplay(observation.intensity))}` : ""}</strong></span>` : ""}<span class="interpretation-context-episode-model"><small>補助：部位表示</small><strong>${escapeHtml(number(episode.row.value))}</strong></span></div>${contextLine ? `<p class="interpretation-context-episode-context"><small>その日の条件</small>${escapeHtml(contextLine)}</p>` : ""}</article>`;
   }
   if (episode.kind === "CONTEXT_QUESTION") {
     return `<article class="interpretation-flow-episode interpretation-context-episode"><time>${escapeHtml(episode.date ? formatLocalDate(episode.date) : label)}</time><div><span class="interpretation-context-episode-user"><small>走行記録</small><strong>${escapeHtml(contextLine || "今回の走行記録があります")}</strong></span></div></article>`;

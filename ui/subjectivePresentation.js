@@ -7,6 +7,25 @@ const DETAILED_SUBJECTIVE_STATUSES = Object.freeze([
   "strong_reported",
 ]);
 
+export const BODY_OBSERVATION_INTENSITY_OPTIONS = Object.freeze([
+  Object.freeze({ value: 1, label: "ごく軽い" }),
+  Object.freeze({ value: 2, label: "軽い" }),
+  Object.freeze({ value: 3, label: "中程度" }),
+  Object.freeze({ value: 4, label: "強い" }),
+  Object.freeze({ value: 5, label: "とても強い" }),
+]);
+
+export function bodyObservationIntensityLabel(value) {
+  const target = Number(value);
+  return BODY_OBSERVATION_INTENSITY_OPTIONS.find((item) => item.value === target)?.label || "";
+}
+
+export function bodyObservationIntensityDisplay(value) {
+  const target = Number(value);
+  const label = bodyObservationIntensityLabel(target);
+  return label ? `${label}（${target} / 5）` : "";
+}
+
 function stringValue(value, fallback = "") {
   return value === undefined || value === null ? String(fallback) : String(value);
 }
