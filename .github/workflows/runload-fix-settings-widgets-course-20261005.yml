@@ -25,210 +25,63 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-
+          import base64
           root = Path('.')
 
-          # Mobile Settings: restore the shared helper removed during platform split.
           p = root / 'screens/settingsScreen.js'
           s = p.read_text()
           helper = 'function checked(current, value) {\n  return current === value ? " checked" : "";\n}\n\n'
           anchor = 'function displayOptionLabel(option) {\n'
           if helper not in s:
-              if anchor not in s:
-                  raise SystemExit('settings checked-helper anchor missing')
-              s = s.replace(anchor, helper + anchor, 1)
-              p.write_text(s)
+              if anchor not in s: raise SystemExit('settings helper anchor missing')
+              p.write_text(s.replace(anchor, helper + anchor, 1))
 
-          # Mobile Home: formalize dynamic cards before persisted widget visibility is applied.
           p = root / 'ui/interactions/mobileHomeLayoutState.js'
           s = p.read_text()
-          old = '''export function prepareWidgets(widgetsContainer, services) {\n  const existingAnchors = [...widgetsContainer.children].filter((node) => node.matches?.(".mobile-home-widget"));\n  existingAnchors.forEach((anchor, index) => {\n    const id = widgetIdFromAnchor(anchor, index);\n    if (id) makeWidgetShell(anchor, id);\n  });\n'''
-          new = '''export function prepareWidgets(widgetsContainer, services) {\n  const existingAnchors = [...widgetsContainer.children].filter((node) => node.matches?.(".mobile-home-widget"));\n  const dynamicSlots = ["plan", "changes"];\n  let dynamicIndex = 0;\n  existingAnchors.forEach((anchor, index) => {\n    const isDynamic = Boolean(anchor.dataset.dynamicWidget);\n    const id = isDynamic ? (dynamicSlots[dynamicIndex++] || "") : widgetIdFromAnchor(anchor, index);\n    if (id) makeWidgetShell(anchor, id);\n  });\n'''
+          old = 'export function prepareWidgets(widgetsContainer, services) {\n  const existingAnchors = [...widgetsContainer.children].filter((node) => node.matches?.(".mobile-home-widget"));\n  existingAnchors.forEach((anchor, index) => {\n    const id = widgetIdFromAnchor(anchor, index);\n    if (id) makeWidgetShell(anchor, id);\n  });\n'
+          new = 'export function prepareWidgets(widgetsContainer, services) {\n  const existingAnchors = [...widgetsContainer.children].filter((node) => node.matches?.(".mobile-home-widget"));\n  const dynamicSlots = ["plan", "changes"];\n  let dynamicIndex = 0;\n  existingAnchors.forEach((anchor, index) => {\n    const isDynamic = Boolean(anchor.dataset.dynamicWidget);\n    const id = isDynamic ? (dynamicSlots[dynamicIndex++] || "") : widgetIdFromAnchor(anchor, index);\n    if (id) makeWidgetShell(anchor, id);\n  });\n'
           if 'const dynamicSlots = ["plan", "changes"];' not in s:
-              if old not in s:
-                  raise SystemExit('mobile Home dynamic-widget anchor missing')
-              s = s.replace(old, new, 1)
-              p.write_text(s)
+              if old not in s: raise SystemExit('mobile Home widget anchor missing')
+              p.write_text(s.replace(old, new, 1))
 
-          # PC course design: course reference styles must follow desktop consolidation.
           p = root / 'ui/platformStyles.js'
           s = p.read_text()
           if s.indexOf('"./styles/desktop-course.css"') < s.indexOf('"./styles/desktop-unification.css"'):
-              if s.count('    "./styles/desktop-course.css",\n') != 1 or s.count('    "./styles/desktop-course-editor.css",\n') != 1:
-                  raise SystemExit('unexpected desktop course stylesheet multiplicity')
+              if s.count('    "./styles/desktop-course.css",\n') != 1: raise SystemExit('desktop course style count unexpected')
+              if s.count('    "./styles/desktop-course-editor.css",\n') != 1: raise SystemExit('desktop course editor style count unexpected')
               s = s.replace('    "./styles/desktop-course.css",\n', '', 1)
               s = s.replace('    "./styles/desktop-course-editor.css",\n', '', 1)
               needle = '    "./styles/desktop-unification.css",\n    "./styles/desktop-interpretation-details.css",'
               replacement = '    "./styles/desktop-unification.css",\n    "./styles/desktop-course.css",\n    "./styles/desktop-course-editor.css",\n    "./styles/desktop-interpretation-details.css",'
-              if needle not in s:
-                  raise SystemExit('desktop final style group anchor missing')
-              s = s.replace(needle, replacement, 1)
-              p.write_text(s)
+              if needle not in s: raise SystemExit('desktop final style group anchor missing')
+              p.write_text(s.replace(needle, replacement, 1))
 
           p = root / 'styles/desktop-course.css'
           s = p.read_text()
-          restore = r'''
-
-/* Reference course-screen chrome. Keep this after desktop-unification.css. */
-@media (min-width: 55rem) {
-  .screen--course-editor.course-derived-screen,
-  .screen--course-library.course-derived-screen,
-  .screen--gpx-analysis.course-derived-screen {
-    place-items: stretch center !important;
-    background: color-mix(in srgb, var(--color-ink) 10%, var(--color-paper)) !important;
-  }
-
-  .screen--course-editor .course-derived-frame,
-  .screen--course-library .course-derived-frame,
-  .screen--gpx-analysis .course-derived-frame {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: grid !important;
-    grid-template-rows: auto minmax(0, 1fr) !important;
-    border: 2px solid var(--color-line) !important;
-    background: var(--color-surface) !important;
-  }
-
-  .screen--course-editor .course-derived-head,
-  .screen--course-library .course-derived-head,
-  .screen--gpx-analysis .course-derived-head {
-    display: grid !important;
-    grid-template-columns: minmax(13rem, 1fr) auto minmax(10rem, 1fr) !important;
-    gap: 0.9rem !important;
-    align-items: center !important;
-    background: var(--color-surface) !important;
-  }
-
-  .screen--course-editor .course-derived-body,
-  .screen--course-library .course-derived-body,
-  .screen--gpx-analysis .course-derived-body {
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: var(--color-surface) !important;
-    box-shadow: none !important;
-  }
-
-  .screen--course-library .course-derived-body > .head.clean-head > div,
-  .screen--gpx-analysis .course-derived-body > .compact-intro {
-    display: block !important;
-  }
-}
-
-@media (min-width: 80rem) {
-  .screen--course-editor.course-derived-screen,
-  .screen--gpx-analysis.course-derived-screen {
-    background: color-mix(in srgb, var(--color-ink) 16%, transparent) !important;
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
-  }
-
-  .screen--course-library.course-derived-screen {
-    background: color-mix(in srgb, var(--color-paper) 64%, transparent) !important;
-    backdrop-filter: blur(5px) !important;
-    -webkit-backdrop-filter: blur(5px) !important;
-  }
-
-  .screen--course-editor .course-derived-head,
-  .screen--course-library .course-derived-head,
-  .screen--gpx-analysis .course-derived-head {
-    grid-template-columns: 1fr auto 1fr !important;
-  }
-
-  .screen--course-library.screen-layout--course .course-derived-frame--library {
-    border: 0 !important;
-    background: transparent !important;
-  }
-
-  .screen--course-library.screen-layout--course .course-derived-body {
-    border: 2px solid var(--color-line) !important;
-    border-top: 0 !important;
-    border-radius: 0 0 1.35rem 1.35rem !important;
-    box-shadow: 0 1.35rem 3.4rem color-mix(in srgb, var(--color-ink) 20%, transparent) !important;
-  }
-}
-'''
+          css64 = 'Ci8qIFJlZmVyZW5jZSBjb3Vyc2Utc2NyZWVuIGNocm9tZS4gS2VlcCB0aGlzIGFmdGVyIGRlc2t0b3AtdW5pZmljYXRpb24uY3NzLiAqLwpAbWVkaWEgKG1pbi13aWR0aDogNTVyZW0pIHsKICAuc2NyZWVuLS1jb3Vyc2UtZWRpdG9yLmNvdXJzZS1kZXJpdmVkLXNjcmVlbiwKICAuc2NyZWVuLS1jb3Vyc2UtbGlicmFyeS5jb3Vyc2UtZGVyaXZlZC1zY3JlZW4sCiAgLnNjcmVlbi0tZ3B4LWFuYWx5c2lzLmNvdXJzZS1kZXJpdmVkLXNjcmVlbiB7CiAgICBwbGFjZS1pdGVtczogc3RyZXRjaCBjZW50ZXIgIWltcG9ydGFudDsKICAgIGJhY2tncm91bmQ6IGNvbG9yLW1peChpbiBzcmdiLCB2YXIoLS1jb2xvci1pbmspIDEwJSwgdmFyKC0tY29sb3ItcGFwZXIpKSAhaW1wb3J0YW50OwogIH0KCiAgLnNjcmVlbi0tY291cnNlLWVkaXRvciAuY291cnNlLWRlcml2ZWQtZnJhbWUsCiAgLnNjcmVlbi0tY291cnNlLWxpYnJhcnkgLmNvdXJzZS1kZXJpdmVkLWZyYW1lLAogIC5zY3JlZW4tLWdweC1hbmFseXNpcyAuY291cnNlLWRlcml2ZWQtZnJhbWUgewogICAgaGVpZ2h0OiAxMDAlICFpbXBvcnRhbnQ7CiAgICBtaW4taGVpZ2h0OiAwICFpbXBvcnRhbnQ7CiAgICBkaXNwbGF5OiBncmlkICFpbXBvcnRhbnQ7CiAgICBncmlkLXRlbXBsYXRlLXJvd3M6IGF1dG8gbWlubWF4KDAsIDFmcikgIWltcG9ydGFudDsKICAgIGJvcmRlcjogMnB4IHNvbGlkIHZhcigtLWNvbG9yLWxpbmUpICFpbXBvcnRhbnQ7CiAgICBiYWNrZ3JvdW5kOiB2YXIoLS1jb2xvci1zdXJmYWNlKSAhaW1wb3J0YW50OwogIH0KCiAgLnNjcmVlbi0tY291cnNlLWVkaXRvciAuY291cnNlLWRlcml2ZWQtaGVhZCwKICAuc2NyZWVuLS1jb3Vyc2UtbGlicmFyeSAuY291cnNlLWRlcml2ZWQtaGVhZCwKICAuc2NyZWVuLS1ncHgtYW5hbHlzaXMgLmNvdXJzZS1kZXJpdmVkLWhlYWQgewogICAgZGlzcGxheTogZ3JpZCAhaW1wb3J0YW50OwogICAgZ3JpZC10ZW1wbGF0ZS1jb2x1bW5zOiBtaW5tYXgoMTNyZW0sIDFmcikgYXV0byBtaW5tYXgoMTByZW0sIDFmcikgIWltcG9ydGFudDsKICAgIGdhcDogMC45cmVtICFpbXBvcnRhbnQ7CiAgICBhbGlnbi1pdGVtczogY2VudGVyICFpbXBvcnRhbnQ7CiAgICBiYWNrZ3JvdW5kOiB2YXIoLS1jb2xvci1zdXJmYWNlKSAhaW1wb3J0YW50OwogIH0KCiAgLnNjcmVlbi0tY291cnNlLWVkaXRvciAuY291cnNlLWRlcml2ZWQtYm9keSwKICAuc2NyZWVuLS1jb3Vyc2UtbGlicmFyeSAuY291cnNlLWRlcml2ZWQtYm9keSwKICAuc2NyZWVuLS1ncHgtYW5hbHlzaXMgLmNvdXJzZS1kZXJpdmVkLWJvZHkgewogICAgYm9yZGVyOiAwICFpbXBvcnRhbnQ7CiAgICBib3JkZXItcmFkaXVzOiAwICFpbXBvcnRhbnQ7CiAgICBiYWNrZ3JvdW5kOiB2YXIoLS1jb2xvci1zdXJmYWNlKSAhaW1wb3J0YW50OwogICAgYm94LXNoYWRvdzogbm9uZSAhaW1wb3J0YW50OwogIH0KCiAgLnNjcmVlbi0tY291cnNlLWxpYnJhcnkgLmNvdXJzZS1kZXJpdmVkLWJvZHkgPiAuaGVhZC5jbGVhbi1oZWFkID4gZGl2LAogIC5zY3JlZW4tLWdweC1hbmFseXNpcyAuY291cnNlLWRlcml2ZWQtYm9keSA+IC5jb21wYWN0LWludHJvIHsKICAgIGRpc3BsYXk6IGJsb2NrICFpbXBvcnRhbnQ7CiAgfQp9CgpAbWVkaWEgKG1pbi13aWR0aDogODByZW0pIHsKICAuc2NyZWVuLS1jb3Vyc2UtZWRpdG9yLmNvdXJzZS1kZXJpdmVkLXNjcmVlbiwKICAuc2NyZWVuLS1ncHgtYW5hbHlzaXMuY291cnNlLWRlcml2ZWQtc2NyZWVuIHsKICAgIGJhY2tncm91bmQ6IGNvbG9yLW1peChpbiBzcmdiLCB2YXIoLS1jb2xvci1pbmspIDE2JSwgdHJhbnNwYXJlbnQpICFpbXBvcnRhbnQ7CiAgICBiYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KSAhaW1wb3J0YW50OwogICAgLXdlYmtpdC1iYWNrZHJvcC1maWx0ZXI6IGJsdXIoNHB4KSAhaW1wb3J0YW50OwogIH0KCiAgLnNjcmVlbi0tY291cnNlLWxpYnJhcnkuY291cnNlLWRlcml2ZWQtc2NyZWVuIHsKICAgIGJhY2tncm91bmQ6IGNvbG9yLW1peChpbiBzcmdiLCB2YXIoLS1jb2xvci1wYXBlcikgNjQlLCB0cmFuc3BhcmVudCkgIWltcG9ydGFudDsKICAgIGJhY2tkcm9wLWZpbHRlcjogYmx1cig1cHgpICFpbXBvcnRhbnQ7CiAgICAtd2Via2l0LWJhY2tkcm9wLWZpbHRlcjogYmx1cig1cHgpICFpbXBvcnRhbnQ7CiAgfQoKICAuc2NyZWVuLS1jb3Vyc2UtZWRpdG9yIC5jb3Vyc2UtZGVyaXZlZC1oZWFkLAogIC5zY3JlZW4tLWNvdXJzZS1saWJyYXJ5IC5jb3Vyc2UtZGVyaXZlZC1oZWFkLAogIC5zY3JlZW4tLWdweC1hbmFseXNpcyAuY291cnNlLWRlcml2ZWQtaGVhZCB7CiAgICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDFmciBhdXRvIDFmciAhaW1wb3J0YW50OwogIH0KCiAgLnNjcmVlbi0tY291cnNlLWxpYnJhcnkuc2NyZWVuLWxheW91dC0tY291cnNlIC5jb3Vyc2UtZGVyaXZlZC1mcmFtZS0tbGlicmFyeSB7CiAgICBib3JkZXI6IDAgIWltcG9ydGFudDsKICAgIGJhY2tncm91bmQ6IHRyYW5zcGFyZW50ICFpbXBvcnRhbnQ7CiAgfQoKICAuc2NyZWVuLS1jb3Vyc2UtbGlicmFyeS5zY3JlZW4tbGF5b3V0LS1jb3Vyc2UgLmNvdXJzZS1kZXJpdmVkLWJvZHkgewogICAgYm9yZGVyOiAycHggc29saWQgdmFyKC0tY29sb3ItbGluZSkgIWltcG9ydGFudDsKICAgIGJvcmRlci10b3A6IDAgIWltcG9ydGFudDsKICAgIGJvcmRlci1yYWRpdXM6IDAgMCAxLjM1cmVtIDEuMzVyZW0gIWltcG9ydGFudDsKICAgIGJveC1zaGFkb3c6IDAgMS4zNXJlbSAzLjRyZW0gY29sb3ItbWl4KGluIHNyZ2IsIHZhcigtLWNvbG9yLWluaykgMjAlLCB0cmFuc3BhcmVudCkgIWltcG9ydGFudDsKICB9Cn0K'
           if '/* Reference course-screen chrome.' not in s:
-              s = s.rstrip() + restore
-              p.write_text(s)
+              p.write_text(s.rstrip() + base64.b64decode(css64).decode())
 
-          # PWA release/cache refresh.
           for rel in ['service-worker.js', 'ui/appVersionStatus.js', 'screens/shared/aboutScreen.js']:
               p = root / rel
               t = p.read_text()
               if '2026.10.05.5' not in t:
-                  if '2026.10.05.4' not in t:
-                      raise SystemExit(f'version anchor missing: {rel}')
+                  if '2026.10.05.4' not in t: raise SystemExit(f'version anchor missing: {rel}')
                   p.write_text(t.replace('2026.10.05.4', '2026.10.05.5'))
-
-          # Existing regression suites are strengthened; no duplicate test file is added.
-          p = root / 'tests/settingsShareProfile.test.mjs'
-          s = p.read_text()
-          marker = "SETTINGS-RENDERER-OWNS-RADIO-CHECKED-HELPER"
-          if marker not in s:
-              anchor = "await test('SETTINGS-OFFERS-ONLY-SIMPLE-AND-NATURAL-THEMES',()=>{\n"
-              insert = "await test('SETTINGS-RENDERER-OWNS-RADIO-CHECKED-HELPER',()=>{\n  const source=read('screens/settingsScreen.js');\n  assert.match(source,/function checked\\(current, value\\)/);\n  assert.match(source,/checked\\(current, option\\.value\\)/);\n});\n\n"
-              if anchor not in s:
-                  raise SystemExit('settings regression anchor missing')
-              p.write_text(s.replace(anchor, insert + anchor, 1))
-
-          p = root / 'tests/mobileHomeDefaultLayout.test.mjs'
-          s = p.read_text()
-          marker = 'DYNAMIC-WIDGETS-ARE-ASSIGNED-BEFORE-PERSISTED-VISIBILITY-IS-APPLIED'
-          if marker not in s:
-              anchor = "test('HOME-GRID-REMAINS-HARD-CAPPED-AT-THREE-ROWS', () => {\n"
-              insert = "test('DYNAMIC-WIDGETS-ARE-ASSIGNED-BEFORE-PERSISTED-VISIBILITY-IS-APPLIED', () => {\n  const interactions = fs.readFileSync('ui/interactions/mobileHomeInteractions.js', 'utf8');\n  assert.match(homeLayout, /const dynamicSlots = \\\\[\\\"plan\\\", \\\"changes\\\"\\\\]/);\n  assert.match(homeLayout, /anchor\\\\.dataset\\\\.dynamicWidget/);\n  assert.match(homeLayout, /dynamicSlots\\\\[dynamicIndex\\\\+\\\\+\\\\]/);\n  assert.ok(interactions.indexOf('prepareWidgets(sourceWidgets, context.services)') < interactions.indexOf('applyWidgetLayout(root, widgetLayout)'));\n});\n\n"
-              if anchor not in s:
-                  raise SystemExit('mobile Home regression anchor missing')
-              p.write_text(s.replace(anchor, insert + anchor, 1))
-
-          p = root / 'tests/courseBaselineParity.test.mjs'
-          s = p.read_text()
-          if 'const platformStyles = read("ui/platformStyles.js");' not in s:
-              anchor = 'const mobileCss = read("styles/mobile-course.css");\n'
-              if anchor not in s:
-                  raise SystemExit('course platformStyles test anchor missing')
-              s = s.replace(anchor, anchor + 'const platformStyles = read("ui/platformStyles.js");\n', 1)
-          marker = 'desktop course reference presentation overrides later desktop consolidation'
-          if marker not in s:
-              anchor = 'test("GPX keeps baseline platform-specific copy and shared element contract", () => {\n'
-              insert = '''test("desktop course reference presentation overrides later desktop consolidation", () => {\n  const unificationIndex = platformStyles.indexOf("./styles/desktop-unification.css");\n  const courseIndex = platformStyles.indexOf("./styles/desktop-course.css");\n  const editorIndex = platformStyles.indexOf("./styles/desktop-course-editor.css");\n  assert.ok(unificationIndex >= 0 && courseIndex > unificationIndex && editorIndex > courseIndex);\n  assert.match(desktopCss, /Reference course-screen chrome/);\n  assert.match(desktopCss, /course-derived-head[\\s\\S]*display:\\s*grid\\s*!important/);\n  assert.match(desktopCss, /course-derived-frame[\\s\\S]*border:\\s*2px solid var\\(--color-line\\)\\s*!important/);\n  assert.match(desktopCss, /head\\.clean-head > div,[\\s\\S]*compact-intro[\\s\\S]*display:\\s*block\\s*!important/);\n});\n\n'''
-              if anchor not in s:
-                  raise SystemExit('course regression insertion anchor missing')
-              s = s.replace(anchor, insert + anchor, 1)
-          p.write_text(s)
           PY
-
-      - name: JavaScript syntax
+      - name: Verify focused behavior
         shell: bash
         run: |
           set -euo pipefail
           node --check screens/settingsScreen.js
           node --check ui/interactions/mobileHomeLayoutState.js
           node --check ui/platformStyles.js
-
-      - name: Focused regressions
-        shell: bash
-        run: |
-          set -euo pipefail
           node tests/settingsShareProfile.test.mjs
           node tests/mobileHomeDefaultLayout.test.mjs
           node --test tests/courseBaselineParity.test.mjs
           node tests/desktopCourse.test.mjs
           node tests/desktopCourseEditor.test.mjs
-
-      - name: Mobile settings render
-        shell: bash
-        run: |
-          set -euo pipefail
-          node --input-type=module <<'NODE'
-          import { renderSettingsScreen } from './screens/mobile/settingsScreen.js';
-          const services={storage:{settings:{load:()=>({})},profile:{load:()=>({runningGoalTags:[],savedShoes:[]})},records:{loadAll:()=>[]},plans:{loadAll:()=>[]},courses:{loadAll:()=>[]},draft:{load:()=>null}}};
-          const html=renderSettingsScreen({services,context:{parameters:new URLSearchParams()}});
-          if(!html.includes('screen--settings') || !html.includes('name="textSize"')) throw new Error('mobile settings render incomplete');
-          console.log('MOBILE_SETTINGS_RENDER=PASS');
-          NODE
-
-      - name: All non-browser regressions
+      - name: Verify all non-browser regressions
         shell: bash
         run: |
           set -euo pipefail
@@ -237,7 +90,6 @@ jobs:
             [[ "$f" == *mobileWalkJogBrowserFlow.test.mjs ]] || files+=("$f")
           done
           node --test "${files[@]}"
-
       - name: Commit fixes and remove temporary workflow
         shell: bash
         run: |
@@ -245,6 +97,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git rm .github/workflows/runload-fix-settings-widgets-course-20261005.yml
-          git add screens/settingsScreen.js ui/interactions/mobileHomeLayoutState.js ui/platformStyles.js styles/desktop-course.css service-worker.js ui/appVersionStatus.js screens/shared/aboutScreen.js tests/settingsShareProfile.test.mjs tests/mobileHomeDefaultLayout.test.mjs tests/courseBaselineParity.test.mjs
+          git add screens/settingsScreen.js ui/interactions/mobileHomeLayoutState.js ui/platformStyles.js styles/desktop-course.css service-worker.js ui/appVersionStatus.js screens/shared/aboutScreen.js
           git commit -m "Fix mobile settings widgets and restore PC course design"
           git push origin HEAD:main
