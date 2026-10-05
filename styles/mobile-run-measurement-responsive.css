@@ -1,0 +1,57 @@
+/* Mobile-only responsive rules extracted from styles/run-measurement.css. */
+
+@media (max-width: 640px) {
+  .run-launch {
+    place-items: stretch;
+    padding-inline: 0;
+    padding-block: 0;
+  }
+
+  .run-launch__panel {
+    min-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+
+  .run-measurement {
+    grid-template-rows: auto minmax(16rem, 42dvh) auto auto auto;
+  }
+
+  .run-measurement__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .run-measurement__metrics article:nth-child(3) {
+    border-left: 0;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .run-measurement__metrics article:nth-child(4) {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .home-measure-link {
+    padding: 0.55rem 0.7rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .run-route-view {
+    padding-inline: 0.75rem;
+  }
+
+  .run-route-view__map-wrap {
+    min-height: 52dvh;
+  }
+
+  .run-route-view__summary {
+    grid-template-columns: 1fr;
+  }
+
+  .run-route-view__summary > div + div {
+    border-top: 1px solid var(--color-line);
+    border-left: 0;
+  }
+}

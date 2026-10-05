@@ -84,7 +84,7 @@
 
 .mobile-onboarding__home-demo small {
   color: var(--color-muted);
-  font-size: var(--mobile-type-label);
+  font-size: var(--type-caption);
   font-weight: 800;
 }
 

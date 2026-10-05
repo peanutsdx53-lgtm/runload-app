@@ -1,0 +1,129 @@
+/* Mobile-only responsive rules extracted from styles/interpretation-room-compact.css. */
+
+@media (max-width: 54.99rem) {
+  .app-shell--immersive .app-main { padding-inline: .75rem; }
+  .interpretation-room--compact-dashboard,
+  .interpretation-room--compact-selected { padding-top: .75rem; }
+
+  .interpretation-room-dashboard { display:grid; grid-template-columns:1fr; }
+  .interpretation-room--compact-selected .interpretation-room-selected-workspace {
+    display:grid;
+    grid-template-columns:1fr !important;
+    grid-template-areas:
+      "detail"
+      "next"
+      "context"
+      "advanced" !important;
+  }
+
+  .interpretation-room-insight--compact { order: 1; }
+  .self-understanding-rail--compact { order: 2; }
+  .interpretation-room-patterns--compact { order: 3; }
+  .interpretation-room-context--compact { order: 4; }
+
+  .interpretation-room-quick-facts { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .interpretation-room-quick-facts > span:nth-child(4) { grid-column: 1 / -1; border-left:0; border-top:1px solid var(--color-line); }
+  .interpretation-room-quick-facts > span { padding:.62rem .45rem .15rem; flex-wrap:wrap; }
+  .interpretation-room-quick-facts small { width:100%; margin:0; }
+
+  .interpretation-room-patterns--compact,
+  .interpretation-room-context--compact,
+  .self-understanding-rail--compact,
+  .interpretation-room-insight--compact,
+  .interpretation-room-region-detail--compact { border-radius: 1.2rem; }
+
+  .interpretation-room-pattern-group--compact .interpretation-room-region-chips { margin-left:0; }
+  .interpretation-room-context-rows,
+  .interpretation-room-fatigue-inline { margin-left:0; }
+  .interpretation-room-context-rows > div { align-items:flex-start; }
+  .context-values { white-space:normal; text-align:right; }
+
+  .self-understanding-pair-line { grid-template-columns:1fr auto .72fr; }
+  .self-understanding-pair-line b { white-space:normal; }
+
+  .interpretation-room-selected-head--compact { border-radius:1.1rem; }
+  .interpretation-room-region-primary { grid-template-columns:1fr; gap:.65rem; }
+  .interpretation-room-region-primary dl { border-top:1px solid var(--color-line); padding-top:.55rem; }
+
+  .interpretation-room-selected-workspace .interpretation-room-selected-main,
+  .interpretation-room-selected-workspace .interpretation-room-selected-side { display:contents; }
+  .interpretation-room--compact-selected .interpretation-room-region-detail--compact { grid-area:detail !important; }
+  .interpretation-room--compact-selected .interpretation-room-selected-side .self-understanding-rail--compact { grid-area:next !important; }
+  .interpretation-room--compact-selected .interpretation-room-selected-main .interpretation-room-context--compact { grid-area:context !important; }
+  .interpretation-room--compact-selected .interpretation-room-selected-advanced-stack { grid-area:advanced !important; }
+}
+
+@media (max-width: 54.99rem) {
+  .interpretation-room--compact-dashboard .interpretation-room-dashboard {
+    gap: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 1.2rem;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+  }
+  .interpretation-room-review-stack { display: contents; }
+
+  .interpretation-room--compact-dashboard .interpretation-room-insight--compact,
+  .interpretation-room--compact-dashboard .self-understanding-rail--compact,
+  .interpretation-room--compact-dashboard .interpretation-room-patterns--compact,
+  .interpretation-room--compact-dashboard .interpretation-room-context--compact {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .interpretation-room--compact-dashboard .self-understanding-rail--compact,
+  .interpretation-room--compact-dashboard .interpretation-room-patterns--compact,
+  .interpretation-room--compact-dashboard .interpretation-room-context--compact {
+    border-top: 1px solid var(--color-line);
+  }
+  .interpretation-room--compact-dashboard .interpretation-room-insight--compact,
+  .interpretation-room--compact-dashboard .self-understanding-rail--compact,
+  .interpretation-room--compact-dashboard .interpretation-room-patterns--compact,
+  .interpretation-room--compact-dashboard .interpretation-room-context--compact {
+    padding: .78rem .9rem;
+  }
+
+  .interpretation-room--compact-selected {
+    gap: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 1.2rem;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+  }
+  .interpretation-room--compact-selected .interpretation-room-selected-head--compact,
+  .interpretation-room--compact-selected .interpretation-room-region-detail--compact,
+  .interpretation-room--compact-selected .interpretation-room-context--compact,
+  .interpretation-room--compact-selected .self-understanding-rail--compact {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .interpretation-room--compact-selected .interpretation-room-selected-head--compact { padding: .72rem .9rem; }
+  .interpretation-room--compact-selected .interpretation-room-region-detail--compact,
+  .interpretation-room--compact-selected .interpretation-room-context--compact,
+  .interpretation-room--compact-selected .self-understanding-rail--compact,
+  .interpretation-room--compact-selected .interpretation-room-selected-advanced-stack {
+    border-top: 1px solid var(--color-line);
+  }
+  .interpretation-room--compact-selected .interpretation-room-region-detail--compact,
+  .interpretation-room--compact-selected .interpretation-room-context--compact,
+  .interpretation-room--compact-selected .self-understanding-rail--compact { padding: .78rem .9rem; }
+  .interpretation-room--compact-selected .interpretation-room-selected-advanced-stack { padding: .55rem .9rem .8rem; }
+}
+
+@media (max-width: 54.99rem) {
+  .screen--interpretation-room .interpretation-room--compact-selected { gap: 0; }
+  .interpretation-room--compact-selected .interpretation-room-selected-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "detail"
+      "next"
+      "context"
+      "advanced";
+    gap: 0;
+  }
+}

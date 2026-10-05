@@ -1,0 +1,31 @@
+/* Mobile-only responsive rules extracted from styles/self-understanding.css. */
+
+@media (max-width:54.99rem) {
+  .interpretation-room-mobile-path { grid-template-columns:repeat(5,auto); }
+  .self-understanding-candidate__layers { grid-template-columns:1fr; }
+  .self-understanding-candidate__layers > i { transform:rotate(90deg);justify-self:center; }
+  .self-understanding-primary,
+  .self-understanding-secondary { min-height:3rem; }
+  .mobile-history-mode { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .mobile-history-mode a { min-width:0; }
+  .desktop-history-mode { display:none; }
+  .self-understanding-history-filter { overflow:auto; }
+  .self-understanding-history-filter a { min-width:7rem; }
+}
+
+@media (max-width:54.99rem) {
+  .self-understanding-thread__links { grid-template-columns: 1fr; }
+  .self-understanding-history-values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width:54.99rem) {
+  .self-understanding-candidate__layers > i {
+    transform: none;
+    font-size: 0;
+    line-height: 1;
+  }
+  .self-understanding-candidate__layers > i::before {
+    content: "↓";
+    font-size: 1rem;
+  }
+}

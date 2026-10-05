@@ -1,0 +1,77 @@
+/* Mobile-only responsive rules extracted from styles/rof-j-visual.css. */
+
+@media (max-width: 54.99rem) {
+  .screen-layout--record .rof-sheet {
+    max-height: calc(100dvh - max(0.75rem, env(safe-area-inset-top)) - max(0.75rem, env(safe-area-inset-bottom)));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .screen-layout--record .rof-visual-guide {
+    padding: 0.6rem;
+  }
+
+  .rof-author-anchor {
+    min-height: 3.25rem;
+    grid-template-columns: 4.25rem minmax(0, 1fr) 3rem;
+    gap: 0.45rem;
+    padding: 0.25rem 0.35rem 0.25rem 0.5rem;
+  }
+
+  .rof-author-anchor__visual {
+    width: 2.85rem;
+    height: 2.65rem;
+  }
+}
+
+@media (max-width: 54.99rem) {
+  .screen-layout--record .rof-visual-guide {
+    padding: 0.55rem;
+  }
+  .rof-author-anchor-list {
+    gap: 0.24rem;
+  }
+  .rof-author-anchor {
+    grid-template-rows: 2.85rem auto;
+    gap: 0.16rem;
+    padding: 0.28rem 0.08rem 0.34rem;
+  }
+  .rof-author-anchor__visual {
+    height: 2.85rem;
+  }
+  .rof-author-anchor__position {
+    font-size: 0.66rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .rof-author-anchor {
+    grid-template-columns: 3.9rem minmax(0, 1fr) 2.65rem;
+    gap: 0.35rem;
+  }
+
+  .rof-author-anchor__position,
+  .rof-author-anchor__descriptor,
+  .rof-visual-guide__head small,
+  .rof-visual-guide__head span,
+  .rof-rights-note {
+    font-size: var(--type-label);
+  }
+
+  .rof-author-anchor__visual {
+    width: 2.5rem;
+    height: 2.35rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .rof-author-anchor {
+    grid-template-rows: 2.5rem auto;
+  }
+  .rof-author-anchor__visual {
+    height: 2.5rem;
+  }
+  .rof-author-anchor__position {
+    font-size: 0.61rem;
+  }
+}

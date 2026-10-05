@@ -1,0 +1,162 @@
+/* Mobile-only responsive rules extracted from styles/components.css. */
+
+@media (max-width: 26rem) {
+  .app-header__actions { gap: var(--space-2); }
+  .primary-navigation { padding: var(--space-1); }
+  .primary-navigation__link {
+    min-height: 3.5rem;
+    padding-inline: 0;
+    font-size: var(--type-label);
+  }
+  .guide-dialog {
+    --guide-dialog-top-offset: max(5.25rem, calc(env(safe-area-inset-top) + 4.5rem));
+    --guide-dialog-bottom-offset: max(var(--space-2), env(safe-area-inset-bottom));
+    padding-right: var(--space-2);
+    padding-left: var(--space-2);
+  }
+  .guide-dialog__panel { border-radius: var(--radius-medium); }
+  .guide-dialog__header { gap: var(--space-2); }
+  .guide-tab { flex-basis: calc(33.333% - var(--space-2)); padding-inline: var(--space-1); }
+  .guide-dialog__footer { display: flex; }
+}
+
+@media (max-width: 35rem) {
+  .status-label { justify-self: start; }
+}
+
+@media (max-width: 640px) {
+  .feature-menu__panel:not([hidden]) {
+    top: calc(100% + 0.65rem);
+    right: 0;
+    left: auto;
+    width: min(24rem, calc(100vw - 1rem));
+    max-height: min(68dvh, calc(100dvh - 8rem));
+  }
+}
+
+@media (max-width: 34rem) {
+}
+
+@media (max-width: 34rem) {
+  .screen-guide > summary { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 34rem) {
+  .screen-tutorial__panel { padding: var(--space-4); }
+}
+
+@media (max-width: 44rem) {
+  .restore-preview { padding: var(--space-4); }
+  .restore-preview__counts { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 35rem) {
+  .context-help-button {
+    width: 2.4rem;
+    height: 2.4rem;
+    flex-basis: 2.4rem;
+    font-size: 0.92rem;
+  }
+  .app-menu-button {
+    min-height: 2.5rem;
+    padding: 0.42rem 0.82rem;
+    font-size: 0.88rem;
+  }
+  .guide-dialog {
+    --guide-dialog-top-offset: max(0.35rem, env(safe-area-inset-top));
+    --guide-dialog-bottom-offset: max(0.35rem, env(safe-area-inset-bottom));
+    padding-right: 0.35rem;
+    padding-left: 0.35rem;
+  }
+  .guide-dialog__panel {
+    width: 100%;
+    border-radius: var(--radius-medium);
+  }
+  .guide-dialog__header {
+    gap: var(--space-2);
+    padding: 0.72rem 0.9rem 0.62rem;
+  }
+  .guide-dialog__header > div > p:first-child {
+    margin-bottom: 0.15rem;
+    font-size: var(--type-label);
+  }
+  .guide-dialog__header h2 {
+    margin-bottom: 0.25rem;
+    font-size: 1.3rem;
+    line-height: 1.12;
+  }
+  .guide-dialog__header p:last-child {
+    font-size: 0.84rem;
+    line-height: 1.42;
+  }
+  .guide-tabs {
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding: 0.48rem 0.7rem;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+  .guide-tab {
+    min-height: 2.35rem;
+    flex: 0 0 auto;
+    padding: 0.35rem 0.72rem;
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
+  .guide-dialog__body { padding: 0.85rem 0.9rem 1rem; }
+  .guide-dialog__footer { padding: 0.62rem 0.9rem; }
+  .guide-lead,
+  .guide-note { padding: var(--space-3); }
+  .guide-lead { margin-bottom: var(--space-4); }
+  .guide-step-card {
+    grid-template-columns: 2.1rem minmax(0, 1fr);
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+  .guide-step-card > span {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+}
+
+@media (max-width: 35rem) and (max-height: 40rem) {
+  .guide-dialog__header > div > p:first-child { display: none; }
+  .guide-dialog__header p:last-child { font-size: 0.78rem; }
+}
+
+@media (max-width: 34rem) {
+  .button {
+    min-height: var(--button-height-medium);
+    padding-inline: 0.9rem;
+  }
+  .screen-tutorial {
+    padding: max(0.55rem, env(safe-area-inset-top)) 0.55rem max(0.55rem, env(safe-area-inset-bottom));
+  }
+  .screen-tutorial__panel {
+    width: 100%;
+    max-height: calc(100dvh - max(1.1rem, env(safe-area-inset-top) + env(safe-area-inset-bottom)));
+    gap: 0.85rem;
+    padding: 1rem;
+  }
+  .screen-tutorial__actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+  .screen-tutorial__actions .button,
+  .screen-tutorial__actions .button--primary,
+  .screen-tutorial__actions .button--text {
+    width: 100%;
+    min-width: 0;
+    margin-right: 0;
+    padding-inline: 0.5rem;
+  }
+  .guide-dialog__footer {
+    justify-content: flex-end;
+  }
+  .guide-dialog__footer > .button {
+    width: auto;
+    min-width: var(--button-min-inline-large);
+  }
+}

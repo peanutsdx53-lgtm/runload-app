@@ -1,0 +1,40 @@
+/* Mobile-only responsive rules extracted from styles/layout.css. */
+
+@media (max-width: 35rem) {
+  .app-header { flex-wrap: wrap; gap: var(--space-2); }
+  .app-header__actions { margin-left: auto; }
+}
+
+@media (max-width: 26rem) {
+  .app-header {
+    align-items: flex-start;
+    padding-left: max(var(--space-3), env(safe-area-inset-left));
+    padding-right: max(var(--space-3), env(safe-area-inset-right));
+  }
+  .app-main { width: min(100% - 1.25rem, var(--content-width)); }
+  .primary-navigation {
+    width: calc(100% - 0.75rem);
+    bottom: calc(var(--space-2) + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 35rem) {
+  .app-header {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: max(0.35rem, env(safe-area-inset-top));
+    padding-right: max(0.65rem, env(safe-area-inset-right));
+    padding-bottom: 0.35rem;
+    padding-left: max(0.65rem, env(safe-area-inset-left));
+  }
+  .app-header__actions { margin-left: 0; }
+  .app-main {
+    padding-top: var(--space-4);
+    scroll-margin-top: 4rem;
+  }
+}
+
+@media (max-width: 26rem) {
+  .app-header { align-items: center; }
+}

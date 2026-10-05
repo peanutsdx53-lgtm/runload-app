@@ -1,0 +1,64 @@
+/* Mobile-only self-understanding home confirmation banner. */
+
+.mobile-home-confirmation-banner {
+  width: min(100%, 42rem);
+  margin: .15rem auto .8rem;
+  padding: .78rem .9rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: .7rem;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 48%, var(--color-line));
+  border-inline-start: 4px solid var(--color-accent);
+  border-radius: var(--radius-medium);
+  background: color-mix(in srgb, var(--color-accent-soft) 52%, var(--color-surface));
+  color: var(--color-ink);
+  text-decoration: none;
+  box-shadow: var(--shadow-soft);
+}
+
+.mobile-home-confirmation-banner[hidden] { display: none !important; }
+
+.mobile-home-confirmation-banner > span:first-child {
+  color: var(--color-accent-strong);
+  font-size: 1.15rem;
+}
+
+.mobile-home-confirmation-banner > span:nth-child(2) {
+  min-width: 0;
+  display: grid;
+  gap: .12rem;
+}
+
+.mobile-home-confirmation-banner small,
+.mobile-home-confirmation-banner strong,
+.mobile-home-confirmation-banner em { display: block; }
+
+.mobile-home-confirmation-banner small {
+  color: var(--color-accent-strong);
+  font-size: .72rem;
+  font-weight: 850;
+}
+
+.mobile-home-confirmation-banner strong {
+  overflow: hidden;
+  font-size: .9rem;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+}
+
+.mobile-home-confirmation-banner em {
+  color: var(--color-muted);
+  font-size: .72rem;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.mobile-home-confirmation-banner > i {
+  color: var(--color-accent-strong);
+  font-size: 1.2rem;
+  font-style: normal;
+}

@@ -579,9 +579,7 @@
 
 
 /* Mobile-only Phase 6: plan decide -> review -> start flow. */
-.plan-mobile-only { display: none; }
 @media (max-width: 54.99rem) {
-  .screen-layout--plan .plan-mobile-only { display: flex; }
 
   .screen-layout--plan .carry {
     margin-top: 12px;
@@ -649,11 +647,12 @@
   .screen-layout--plan .plan-mobile-review-button strong { font-size: 12px; }
   .screen-layout--plan .plan-mobile-review-button i { font-size: 20px; font-style: normal; }
 
-  .screen-layout--plan [data-plan-mobile-confirm] { display: none; }
-  .screen-layout--plan [data-plan-mobile-confirm].is-mobile-review { display: block; scroll-margin-top: 116px; }
+  .screen-layout--plan [data-plan-confirm] { display: none; }
+  .screen-layout--plan [data-plan-confirm].is-mobile-review { display: block; scroll-margin-top: 116px; }
 
   .screen-layout--plan .plan-mobile-edit-button {
     width: auto;
+    display: flex;
     min-height: 38px;
     margin: -2px 0 10px;
     padding: 0 10px;
