@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "screens/homeScreen.js"
+      - "screens/mobile/homeScreen.js"
+      - "screens/shared/homeScreenSupport.js"
       - "ui/mobileHomeExperience.js"
       - "ui/mobileHomeDefaultLayout.js"
       - "ui/mobileHomePageCapacity.js"
@@ -18,7 +19,8 @@ on:
       - ".github/workflows/mobile-home-layout-regression.yml"
   pull_request:
     paths:
-      - "screens/homeScreen.js"
+      - "screens/mobile/homeScreen.js"
+      - "screens/shared/homeScreenSupport.js"
       - "ui/mobileHomeExperience.js"
       - "ui/mobileHomeDefaultLayout.js"
       - "ui/mobileHomePageCapacity.js"
