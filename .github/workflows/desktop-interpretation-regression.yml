@@ -55,7 +55,7 @@ jobs:
             await page.goto(`${BASE}/tests/fixtures/desktop-interpretation-compare.html`, { waitUntil: 'domcontentloaded' });
             await page.addStyleTag({ url: `${BASE}/styles/desktop-interpretation-details.css` });
             await page.evaluate(() => document.body.classList.add('screen--interpretation-room'));
-            const details = page.locator('.v53-technical-more.interpretation-loop-more').first();
+            const details = page.locator('.interpretation-flow-technical-more.interpretation-loop-more').first();
             await details.evaluate((node) => { node.open = true; });
             await page.waitForTimeout(200);
 
@@ -94,8 +94,8 @@ jobs:
             const overflow = await page.evaluate(() => ({
               body: document.body.scrollWidth,
               viewport: window.innerWidth,
-              details: document.querySelector('.v53-technical-more.interpretation-loop-more')?.scrollWidth || 0,
-              detailsClient: document.querySelector('.v53-technical-more.interpretation-loop-more')?.clientWidth || 0,
+              details: document.querySelector('.interpretation-flow-technical-more.interpretation-loop-more')?.scrollWidth || 0,
+              detailsClient: document.querySelector('.interpretation-flow-technical-more.interpretation-loop-more')?.clientWidth || 0,
             }));
             assert(overflow.body <= overflow.viewport + 1, `${name}: page horizontal overflow: ${JSON.stringify(overflow)}`);
             assert(overflow.details <= overflow.detailsClient + 1, `${name}: details horizontal overflow: ${JSON.stringify(overflow)}`);
