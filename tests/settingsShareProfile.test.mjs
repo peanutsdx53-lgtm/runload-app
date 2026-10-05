@@ -9,6 +9,12 @@ const read=(p)=>fs.readFileSync(path.join(root,p),'utf8');
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 
+await test('SETTINGS-RENDERER-OWNS-RADIO-CHECKED-HELPER',()=>{
+  const source=read('screens/settingsScreen.js');
+  assert.match(source,/function checked\(current, value\)/);
+  assert.match(source,/checked\(current, option\.value\)/);
+});
+
 await test('SETTINGS-OFFERS-ONLY-SIMPLE-AND-NATURAL-THEMES',()=>{
   const source=read('ui/appSettings.js');
   const block=source.match(/export const COLOR_THEME_OPTIONS = Object\.freeze\(\[[\s\S]*?\]\);/)?.[0]||'';
