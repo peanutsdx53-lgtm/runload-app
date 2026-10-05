@@ -4,7 +4,15 @@ on:
   push:
     branches: [main]
     paths:
+      - "app.js"
       - "core/internal/mobileWalkJogSpeedModel.js"
+      - "screens/screenRegistry.js"
+      - "screens/mobileScreenRegistry.js"
+      - "ui/platformBootstrap.js"
+      - "ui/mobileRuntimeEntry.js"
+      - "ui/mobileAppRuntime.js"
+      - "ui/mobileOnboarding.js"
+      - "ui/legalAcceptance.js"
       - "ui/mobileWalkJogMeasurementWiring.js"
       - "ui/mobileWalkJogGpsQuality.js"
       - "ui/mobileWalkJogGpsQualityUi.js"
@@ -17,6 +25,7 @@ on:
       - "styles/mobile-walk-jog.css"
       - "styles/mobile-walk-jog-records.css"
       - "styles/mobile-walk-jog-history.css"
+      - "tests/mobileOnboarding.test.mjs"
       - "tests/mobileWalkJogSpeedModel.test.mjs"
       - "tests/mobileWalkJogMeasurementWiring.test.mjs"
       - "tests/mobileWalkJogRecordStore.test.mjs"
@@ -31,7 +40,15 @@ on:
       - ".github/workflows/mobile-walk-jog-regression.yml"
   pull_request:
     paths:
+      - "app.js"
       - "core/internal/mobileWalkJogSpeedModel.js"
+      - "screens/screenRegistry.js"
+      - "screens/mobileScreenRegistry.js"
+      - "ui/platformBootstrap.js"
+      - "ui/mobileRuntimeEntry.js"
+      - "ui/mobileAppRuntime.js"
+      - "ui/mobileOnboarding.js"
+      - "ui/legalAcceptance.js"
       - "ui/mobileWalkJogMeasurementWiring.js"
       - "ui/mobileWalkJogGpsQuality.js"
       - "ui/mobileWalkJogGpsQualityUi.js"
@@ -44,6 +61,7 @@ on:
       - "styles/mobile-walk-jog.css"
       - "styles/mobile-walk-jog-records.css"
       - "styles/mobile-walk-jog-history.css"
+      - "tests/mobileOnboarding.test.mjs"
       - "tests/mobileWalkJogSpeedModel.test.mjs"
       - "tests/mobileWalkJogMeasurementWiring.test.mjs"
       - "tests/mobileWalkJogRecordStore.test.mjs"
@@ -82,6 +100,8 @@ jobs:
         run: node tests/mobileWalkJogCopyGuard.test.mjs
       - name: Mobile activity history isolation regression
         run: node tests/mobileWalkJogHistoryUi.test.mjs
+      - name: Mobile onboarding/runtime regression
+        run: node tests/mobileOnboarding.test.mjs
       - name: Mobile activity browser flow audit
         run: node tests/mobileWalkJogBrowserFlow.test.mjs
       - name: Mobile activity PWA regression

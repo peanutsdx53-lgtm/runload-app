@@ -1,10 +1,10 @@
 import {
   bindMobileOnboarding,
-  hasAcceptedCurrentTerms,
   renderMobileOnboarding,
   shouldOpenMobileOnboarding,
   withMobileOnboardingComplete,
 } from "./mobileOnboarding.js";
+import { hasAcceptedCurrentTerms } from "./legalAcceptance.js";
 import { bindMobileHomeReturnTransitions, notifyMobileScreenRendered } from "./mobileHomeReturnTransition.js";
 import { initializeAchievementState } from "./mobileAchievements.js";
 import { clearAllPhotoMemos } from "./mobilePhotoMemoStore.js";
