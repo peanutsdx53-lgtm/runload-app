@@ -1,7 +1,6 @@
 import { bindMobileHomeHub } from "../mobileHomeHub.js";
 import {
   HOME_COLUMNS,
-  MAX_HOME_PAGES,
   findNearestFreePlacement,
   footprintForToken,
   normalizePlacement,
@@ -10,6 +9,7 @@ import { rememberMobileHomeLaunch } from "../mobileHomeReturnTransition.js";
 import {
   ALL_ITEM_ID_SET,
   DEFAULT_LAYOUT,
+  MAX_HOME_PAGES,
   WIDGET_SIZE_ORDER,
   appToken,
   widgetToken,
