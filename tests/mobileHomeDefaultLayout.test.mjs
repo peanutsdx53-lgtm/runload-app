@@ -19,7 +19,10 @@ function test(id, fn) {
 test('HOME-PAGE-LIMIT-IS-OWNED-BY-SPLIT-LAYOUT-MODULE', () => {
   assert.match(homeLayout, /export const MAX_HOME_PAGES = 4/);
   const interactions = fs.readFileSync('ui/interactions/mobileHomeInteractions.js', 'utf8');
-  assert.match(interactions, /MAX_HOME_PAGES,/);
+  const gridImport = interactions.match(/import\s*\{([\s\S]*?)\}\s*from\s*["']\.\/mobileHomeGridModel\.js["'];/)?.[1] ?? '';
+  const layoutImport = interactions.match(/import\s*\{([\s\S]*?)\}\s*from\s*["']\.\/mobileHomeLayoutState\.js["'];/)?.[1] ?? '';
+  assert.doesNotMatch(gridImport, /MAX_HOME_PAGES/);
+  assert.match(layoutImport, /MAX_HOME_PAGES/);
   assert.doesNotMatch(interactions, /const MAX_HOME_PAGES = 4/);
 });
 
