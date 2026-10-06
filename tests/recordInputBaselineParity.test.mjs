@@ -43,6 +43,12 @@ function servicesFor(record) {
 }
 
 const context = { parameters: new URLSearchParams({ recordId: previousRecord.id }) };
+const desktopPlacementHtml = renderDesktopRecordInput({ services: servicesFor(previousRecord), context });
+const desktopStage1Index = desktopPlacementHtml.indexOf('data-record-stage="1"');
+const desktopStage4Index = desktopPlacementHtml.indexOf('data-record-stage="4"');
+const desktopFatigueIndex = desktopPlacementHtml.indexOf('data-fatigue-lifecycle');
+assert.ok(desktopStage1Index >= 0 && desktopStage4Index > desktopStage1Index && desktopFatigueIndex > desktopStage4Index, "desktop fatigue input must live in stage 4 rather than stage 1");
+
 for (const [platform, render] of [["desktop", renderDesktopRecordInput], ["mobile", renderMobileRecordInput]]) {
   const html = render({ services: servicesFor(previousRecord), context });
   assert.match(html, /name="perceivedDifference" value="いつもより脚が重かった"/, `${platform}: previous perceivedDifference must be retained in the edit form`);

@@ -4,10 +4,13 @@ import {
   hasReflectionInfo,
   optionalInputStatus,
   renderRecordInputScreenWithPresentation,
+  renderRofJInlineAndOverlay,
 } from "../recordInputScreen.js";
 
 const DESKTOP_PRESENTATION = Object.freeze({
   coreTitle: ({ isRest }) => isRest ? "今日の休養" : "今日の走行",
+  renderPrimaryFatigue: () => "",
+  renderReflectionLead: ({ services, linkedRunId, editing, isRest }) => `<section class="desktop-record-wellbeing" data-run-fields${isRest ? " hidden" : ""}>${renderRofJInlineAndOverlay({ services, linkedRunId, editing })}</section>`,
   renderFormControls: ({ editing, isRest, course, record, feedback }) => `<aside class="desktop-save-area" aria-label="入力状況">
     <div class="desktop-save-area__intro"><strong>入力状況</strong></div>
     <div class="save-readiness" data-save-readiness>

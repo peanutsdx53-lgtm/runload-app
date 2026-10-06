@@ -280,8 +280,10 @@ function updateOptionalInputStatus(form, platformEnhancement = {}) {
   );
   const subjective = subjectiveSummaryFromFields(fieldsFromForm(form));
   const personal = personalSummaryFromFields(readPersonalContextFieldsFromForm(form));
+  const hasFatigue = Boolean(form.querySelector('[data-fatigue-lifecycle][data-fatigue-has-input="true"]'));
   const hasReflection = Boolean(
-    !["", "deferred", "not_asked"].includes(String(subjective.status || ""))
+    hasFatigue
+    || !["", "deferred", "not_asked"].includes(String(subjective.status || ""))
     || personal.hasInput
     || ["postRunReflection", "perceivedDifference", "nextCheckPoint"].some((name) => String(formData.get(name) || "").trim())
   );

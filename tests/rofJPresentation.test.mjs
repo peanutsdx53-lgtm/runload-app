@@ -7,6 +7,7 @@ const visualCss = fs.readFileSync('styles/rof-j-visual.css', 'utf8');
 const compactCss = fs.readFileSync('styles/rof-j-compact.css', 'utf8');
 const mobileCompactCss = fs.readFileSync('styles/mobile-rof-j-compact-responsive.css', 'utf8');
 const mobileVisualCss = fs.readFileSync('styles/mobile-rof-j-visual-responsive.css', 'utf8');
+const desktopVisualCss = fs.readFileSync('styles/desktop-rof-j-visual-responsive.css', 'utf8');
 const mobileResultModule = fs.readFileSync('ui/mobileRofJPresentation.js', 'utf8');
 const desktopResultModule = fs.readFileSync('ui/desktopRofJPresentation.js', 'utf8');
 const core = fs.readFileSync('core/rofJCore.js', 'utf8');
@@ -61,6 +62,10 @@ test('DAILY-USE-VIEW-SHOWS-CORRECTED-HORIZONTAL-ANCHOR-GUIDE', () => {
   assert.ok(visualCss.includes('grid-template-columns: repeat(5, minmax(0, 1fr))'));
   assert.ok(visualCss.includes('.rof-author-anchor__position'));
   assert.ok(visualCss.includes('.rof-author-anchor__visual'));
+  assert.ok(moduleText.includes('return "2〜3"'));
+  assert.ok(moduleText.includes('return "7〜8"'));
+  assert.ok(desktopVisualCss.includes('white-space: nowrap'));
+  assert.ok(desktopVisualCss.includes('grid-template-columns: repeat(5, minmax(0, 1fr))'));
   assert.ok(compactCss.includes('.rof-visual-guide--compact'));
 });
 

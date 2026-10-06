@@ -1,18 +1,51 @@
 /* Desktop-only responsive rules extracted from styles/rof-j-visual.css. */
 
 @media (min-width: 55rem) {
+  .screen--record-input .desktop-record-wellbeing {
+    min-width: 0;
+    display: block;
+    margin: 0 0 0.9rem;
+  }
+
+  .screen--record-input .desktop-record-wellbeing .fatigue-inline {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    min-height: 3.8rem !important;
+    margin: 0 !important;
+    padding: 0.72rem 0.8rem !important;
+    grid-template-columns: minmax(14rem, 1fr) minmax(10rem, 0.85fr) 8.5rem !important;
+    gap: 1rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.8rem !important;
+    background: color-mix(in srgb, var(--color-surface) 94%, var(--color-surface-muted)) !important;
+  }
+
   .screen--record-input .rof-visual-guide {
     padding: 0.8rem 0.9rem;
   }
 
+  .screen--record-input .rof-author-anchor-list {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
   .screen--record-input .rof-author-anchor {
-    min-height: 4rem;
-    grid-template-columns: minmax(5.2rem, auto) minmax(0, 1fr) 4.1rem;
-    padding-left: 0.75rem;
+    min-height: 0;
+    grid-template-columns: 1fr;
+    grid-template-rows: 3.4rem auto;
+    padding: 0.34rem 0.18rem 0.42rem;
   }
 
   .screen--record-input .rof-author-anchor__visual {
-    width: 3.85rem;
+    width: 100%;
     height: 3.4rem;
+    justify-self: center;
+  }
+
+  .screen--record-input .rof-author-anchor__position {
+    width: 100%;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.2;
   }
 }
