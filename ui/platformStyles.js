@@ -141,7 +141,6 @@ const DESKTOP_STYLE_GROUPS = Object.freeze([
     "./styles/desktop-course.css",
     "./styles/desktop-course-editor.css",
     "./styles/desktop-interpretation-details.css",
-    "./styles/desktop-consultation-empty-balance.css",
   ]) }),
 ]);
 
