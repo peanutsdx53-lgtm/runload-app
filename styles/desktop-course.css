@@ -1,4 +1,4 @@
-/* Desktop course presentation. */
+/* Desktop course presentation. Reference layout contract. */
 @media (min-width: 55rem) {
   /* Shared course shell */
   .screen--course-editor.course-derived-screen,
@@ -775,80 +775,24 @@
     font-size: 0.74rem !important;
   }
 }
-/* Reference course-screen chrome. Keep this after desktop-unification.css. */
+
 @media (min-width: 55rem) {
-  .screen--course-editor.course-derived-screen,
-  .screen--course-library.course-derived-screen,
-  .screen--gpx-analysis.course-derived-screen {
-    place-items: stretch center !important;
-    background: color-mix(in srgb, var(--color-ink) 10%, var(--color-paper)) !important;
+  .screen--course-editor .editor-actions .primary {
+    padding: 1px 1.1rem !important;
+    border-color: var(--a) !important;
+    background: var(--a) !important;
+    color: var(--color-on-accent) !important;
+    font-weight: 900 !important;
+    line-height: 1.25 !important;
   }
 
-  .screen--course-editor .course-derived-frame,
-  .screen--course-library .course-derived-frame,
-  .screen--gpx-analysis .course-derived-frame {
-    height: 100% !important;
-    min-height: 0 !important;
-    display: grid !important;
-    grid-template-rows: auto minmax(0, 1fr) !important;
-    border: 2px solid var(--color-line) !important;
-    background: var(--color-surface) !important;
+  .screen--gpx-analysis .file-button {
+    padding: 0 !important;
+    font-weight: 900 !important;
+    line-height: 1.65 !important;
   }
 
-  .screen--course-editor .course-derived-head,
-  .screen--course-library .course-derived-head,
-  .screen--gpx-analysis .course-derived-head {
-    display: grid !important;
-    grid-template-columns: minmax(13rem, 1fr) auto minmax(10rem, 1fr) !important;
-    gap: 0.9rem !important;
-    align-items: center !important;
-    background: var(--color-surface) !important;
-  }
-
-  .screen--course-editor .course-derived-body,
-  .screen--course-library .course-derived-body,
-  .screen--gpx-analysis .course-derived-body {
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: var(--color-surface) !important;
-    box-shadow: none !important;
-  }
-
-  .screen--course-library .course-derived-body > .head.clean-head > div,
-  .screen--gpx-analysis .course-derived-body > .compact-intro {
-    display: block !important;
-  }
-}
-
-@media (min-width: 80rem) {
-  .screen--course-editor.course-derived-screen,
-  .screen--gpx-analysis.course-derived-screen {
-    background: color-mix(in srgb, var(--color-ink) 16%, transparent) !important;
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
-  }
-
-  .screen--course-library.course-derived-screen {
-    background: color-mix(in srgb, var(--color-paper) 64%, transparent) !important;
-    backdrop-filter: blur(5px) !important;
-    -webkit-backdrop-filter: blur(5px) !important;
-  }
-
-  .screen--course-editor .course-derived-head,
-  .screen--course-library .course-derived-head,
-  .screen--gpx-analysis .course-derived-head {
-    grid-template-columns: 1fr auto 1fr !important;
-  }
-
-  .screen--course-library.screen-layout--course .course-derived-frame--library {
-    border: 0 !important;
-    background: transparent !important;
-  }
-
-  .screen--course-library.screen-layout--course .course-derived-body {
-    border: 2px solid var(--color-line) !important;
-    border-top: 0 !important;
-    border-radius: 0 0 1.35rem 1.35rem !important;
-    box-shadow: 0 1.35rem 3.4rem color-mix(in srgb, var(--color-ink) 20%, transparent) !important;
+  .screen--gpx-analysis .priority-import .import-meta {
+    display: flex !important;
   }
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.06.1";
+const CACHE_NAME = "running-record-app-runtime-2026.10.06.2";
 const CACHE_PREFIX = "running-record-app-";
 const COMMON_PRECACHE_URLS = [
   "./shared/valueUtilities.js",
@@ -82,6 +82,7 @@ const COMMON_PRECACHE_URLS = [
   "./styles/plan-screen-base.css",
   "./styles/simulation-screen-base.css",
   "./styles/consultation-screen-base.css",
+  "./styles/course-screen-base.css",
   "./styles/rof-j-visual.css",
   "./styles/rof-j-compact.css",
   "./styles/consultation-share.css",

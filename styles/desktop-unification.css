@@ -57,29 +57,15 @@
   .screen--history > .page-head > div,
   .screen--plan .secondary-derived-body > .page-head > div,
   .secondary-derived-body > .head,
-  .screen--course-library .course-derived-body > .head.clean-head > div,
-  .screen--gpx-analysis .course-derived-body > .compact-intro,
-  .screen--course-editor .course-derived-body > .eyebrow,
-  .screen--course-editor .course-derived-body > h1,
-  .screen--course-editor .course-derived-body > h1 + p,
   .screen--more.screen-layout--more > .head {
     display: none !important;
   }
 
   /* Course library keeps its creation action while removing the repeated title copy. */
-  .screen--course-library .course-derived-body > .head.clean-head {
-    min-height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: flex !important;
-    justify-content: flex-end !important;
-    border: 0 !important;
-    background: transparent !important;
-  }
+  
 
   /* One derived-screen frame. The page behind remains visible, blurred and never clips a side. */
-  body.secondary-derived-open::before,
-  body.course-derived-open::before {
+  body.secondary-derived-open::before {
     content: "";
     position: fixed;
     inset: 4.75rem 0 0;
@@ -118,40 +104,13 @@
     overflow-y: auto !important;
   }
 
-  .course-derived-screen {
-    position: fixed !important;
-    inset: 4.75rem 0 0 !important;
-    z-index: 70 !important;
-    width: 100vw !important;
-    max-width: none !important;
-    height: calc(100dvh - 4.75rem) !important;
-    margin: 0 !important;
-    padding: .9rem 1.5rem 1rem !important;
-    display: grid !important;
-    place-items: center !important;
-    overflow: hidden !important;
-    transform: none !important;
-    background: transparent !important;
-  }
+  
 
-  .course-derived-frame {
-    width: min(74rem, calc(100vw - 3rem)) !important;
-    max-width: min(74rem, calc(100vw - 3rem)) !important;
-    height: min(100%, 48rem) !important;
-    max-height: calc(100dvh - 6.65rem) !important;
-    margin: 0 auto !important;
-    border: 1px solid var(--color-line) !important;
-    border-radius: 1.2rem !important;
-    background: var(--color-surface) !important;
-    box-shadow: var(--shadow-dialog) !important;
-  }
+  
 
-  .course-derived-head { display: none !important; }
+  
 
-  .course-derived-body {
-    min-height: 0 !important;
-    padding: 1.2rem 1.35rem 1.45rem !important;
-  }
+  
 
   /* Shared control grammar. */
   :is(
@@ -254,7 +213,7 @@
   }
 
   .screen--record-input .rest-note span { display: none !important; }
-  .screen--course-library .boundary { display: none !important; }
+  
   .screen--plan .details-body > .note { display: none !important; }
   .screen--settings .disclosure-body .boundary + .fields small { display: none !important; }
 
@@ -345,7 +304,7 @@
 
 @media (min-width: 55rem) and (max-width: 79.99rem) {
   .secondary-derived-screen { width: min(66rem, calc(100vw - 2rem)) !important; }
-  .course-derived-frame { width: min(66rem, calc(100vw - 2rem)) !important; }
+  
 }
 
 /* Desktop layout corrections: compact sparse areas and keep the global header authoritative. */
@@ -369,12 +328,7 @@
   }
 
   /* The global desktop header is authoritative on derived course screens. */
-  .screen--course-library.screen-layout--course .course-derived-head,
-  .screen--gpx-analysis.screen-layout--gpx .course-derived-head,
-  .screen--course-editor.screen-layout--course .course-derived-head,
-  .screen--course-editor.screen-layout--course .editor-head.course-derived-head {
-    display: none !important;
-  }
+  
 
   /* Meta implementation copy is not part of the PC interface. */
   .screen--more.screen-layout--more > .head,
@@ -396,19 +350,9 @@
     transform: translate(-50%, -50%) !important;
   }
 
-  .course-derived-frame {
-    height: auto !important;
-    max-height: calc(100dvh - 6.65rem) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-  }
+  
 
-  .course-derived-body {
-    flex: 0 1 auto !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-  }
+  
 
   /* Rest mode already has a clear state chip; remove the duplicated explanatory block. */
   .screen--record-input .rest-note {
@@ -424,40 +368,11 @@
 
 @media (min-width: 55rem) {
   /* Course subflows use the same centered, single-panel chrome as other derived screens. */
-  .screen--course-library.screen-layout--course.course-derived-screen,
-  .screen--course-editor.screen-layout--course.course-derived-screen,
-  .screen--gpx-analysis.screen-layout--gpx.course-derived-screen {
-    place-items: center !important;
-  }
+  
 
-  .screen--course-library.screen-layout--course .course-derived-frame--library,
-  .screen--course-editor.screen-layout--course .course-derived-frame,
-  .screen--gpx-analysis.screen-layout--gpx .course-derived-frame {
-    width: min(74rem, calc(100vw - 3rem)) !important;
-    max-width: min(74rem, calc(100vw - 3rem)) !important;
-    height: auto !important;
-    max-height: calc(100dvh - 6.65rem) !important;
-    align-self: center !important;
-    display: block !important;
-    overflow: visible !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-  }
+  
 
-  .screen--course-library.screen-layout--course .course-derived-body,
-  .screen--course-editor.screen-layout--course .course-derived-body,
-  .screen--gpx-analysis.screen-layout--gpx .course-derived-body {
-    width: 100% !important;
-    max-height: calc(100dvh - 6.65rem) !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    border: 1px solid var(--color-line) !important;
-    border-radius: 1.2rem !important;
-    background: var(--color-surface) !important;
-    box-shadow: var(--shadow-dialog) !important;
-  }
+  
 }
 
 @media (min-width: 55rem) {
@@ -466,22 +381,7 @@
     z-index: 70 !important;
   }
 
-  .screen--course-editor.screen-layout--course .editor.course-derived-frame {
-    position: relative !important;
-    inset: auto !important;
-    width: min(74rem, calc(100vw - 3rem)) !important;
-    max-width: min(74rem, calc(100vw - 3rem)) !important;
-    height: auto !important;
-    max-height: calc(100dvh - 6.65rem) !important;
-    min-height: 0 !important;
-    align-self: center !important;
-    display: block !important;
-    overflow: visible !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-  }
+  
 }
 
 /* Remove remaining desktop-only duplication without touching smartphone layout. */
@@ -539,35 +439,11 @@
   }
 
   /* Course selectors use the same segmented-control grammar as run/rest. */
-  .screen--course-editor .mode {
-    gap: .35rem !important;
-    padding: .3rem !important;
-    overflow: visible !important;
-    border: 1px solid var(--color-line) !important;
-    border-radius: .85rem !important;
-    background: var(--color-surface-muted) !important;
-  }
+  
 
-  .screen--course-editor .mode button,
-  .screen--course-editor .mode button:last-child {
-    min-height: 2.5rem !important;
-    padding: .5rem .8rem !important;
-    border: 1px solid transparent !important;
-    border-radius: .62rem !important;
-    background: transparent !important;
-    color: var(--color-muted) !important;
-    font-size: .84rem !important;
-    font-weight: 850 !important;
-    box-shadow: none !important;
-  }
+  
 
-  .screen--course-editor .mode button.active,
-  .screen--course-editor .mode button[aria-pressed="true"] {
-    border-color: color-mix(in srgb, var(--color-accent) 55%, var(--color-line)) !important;
-    background: var(--color-surface) !important;
-    color: var(--color-accent-strong) !important;
-    box-shadow: 0 .16rem .5rem color-mix(in srgb, var(--color-ink) 6%, transparent) !important;
-  }
+  
 
   /* Remaining true buttons follow the same size/radius hierarchy. */
   :is(
@@ -619,12 +495,7 @@
   }
 
   /* Centered derived panels must always fit completely within the viewport. */
-  .secondary-derived-screen,
-  .course-derived-screen,
-  .course-derived-frame,
-  .screen--course-library.screen-layout--course .course-derived-body,
-  .screen--course-editor.screen-layout--course .course-derived-body,
-  .screen--gpx-analysis.screen-layout--gpx .course-derived-body {
+  .secondary-derived-screen {
     box-sizing: border-box !important;
   }
 }
@@ -785,7 +656,6 @@
   .screen--history.screen-layout--history .display-toggle,
   .screen--history.screen-layout--history .type-toggle,
   .screen--result.screen-layout--result .pc-summary-controls > div,
-  .screen--course-editor.screen-layout--course .mode,
   .screen--reading.screen-layout--reading .filters,
   .screen--history .history-desktop-workspace__period > div,
   .guide-tabs {
@@ -804,7 +674,6 @@
   .screen--history.screen-layout--history .display-toggle button,
   .screen--history.screen-layout--history .type-toggle button,
   .screen--result.screen-layout--result .pc-summary-controls button,
-  .screen--course-editor.screen-layout--course .mode button,
   .screen--reading.screen-layout--reading .filters button,
   .screen--history .history-desktop-workspace__period a,
   .guide-tabs .guide-tab {
@@ -831,8 +700,6 @@
   .screen--history.screen-layout--history .type-toggle button[aria-pressed="true"],
   .screen--result.screen-layout--result .pc-summary-controls button.is-active,
   .screen--result.screen-layout--result .pc-summary-controls button[aria-pressed="true"],
-  .screen--course-editor.screen-layout--course .mode button.active,
-  .screen--course-editor.screen-layout--course .mode button[aria-pressed="true"],
   .screen--reading.screen-layout--reading .filters button.active,
   .screen--reading.screen-layout--reading .filters button[aria-pressed="true"],
   .screen--history .history-desktop-workspace__period a.active,
@@ -852,7 +719,6 @@
   .screen--history.screen-layout--history .display-toggle button:not(.active):hover,
   .screen--history.screen-layout--history .type-toggle button:not(.active):hover,
   .screen--result.screen-layout--result .pc-summary-controls button:not(.is-active):hover,
-  .screen--course-editor.screen-layout--course .mode button:not(.active):hover,
   .screen--reading.screen-layout--reading .filters button:not(.active):hover,
   .screen--history .history-desktop-workspace__period a:not(.active):hover,
   .guide-tabs .guide-tab:not(.is-current):hover {
@@ -867,7 +733,6 @@
   .screen--history.screen-layout--history .display-toggle button.active:hover,
   .screen--history.screen-layout--history .type-toggle button.active:hover,
   .screen--result.screen-layout--result .pc-summary-controls button.is-active:hover,
-  .screen--course-editor.screen-layout--course .mode button.active:hover,
   .screen--reading.screen-layout--reading .filters button.active:hover,
   .screen--history .history-desktop-workspace__period a.active:hover,
   .guide-tabs .guide-tab.is-current:hover {
@@ -965,23 +830,13 @@
 
 @media (min-width: 55rem) {
   /* Sparse course/file-assist states do not consume more height than their content. */
-  .screen--course-library .empty-course-card {
-    min-height: 0 !important;
-    padding: .8rem .9rem !important;
-  }
+  
 
-  .screen--course-library .empty-course-card .card-main {
-    min-height: 0 !important;
-  }
+  
 
-  .screen--gpx-analysis #gpx-result-area[hidden] ~ * { min-height: 0 !important; }
-  .screen--gpx-analysis .priority-import {
-    min-height: 0 !important;
-    padding: 1rem 1.1rem !important;
-  }
-  .screen--gpx-analysis .priority-import .import-meta {
-    display: none !important;
-  }
+  
+  
+  
 
   /* Compact, non-blocking confirmation for settings changes. */
   .screen--settings .parity-save-message {
@@ -1018,9 +873,7 @@
     animation: pc-derived-enter 160ms ease-out both;
   }
 
-  .course-derived-screen .course-derived-body {
-    animation: pc-course-derived-enter 160ms ease-out both;
-  }
+  
 
   .screen--result [data-pc-summary-view]:not([hidden]),
   .screen--result [data-pc-detail-region]:not([hidden]),
@@ -1034,10 +887,7 @@
     to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   }
 
-  @keyframes pc-course-derived-enter {
-    from { opacity: 0; transform: scale(.992); }
-    to { opacity: 1; transform: scale(1); }
-  }
+  
 
   @keyframes pc-content-fade {
     from { opacity: .35; }
@@ -1052,7 +902,6 @@
 
 @media (min-width: 55rem) and (prefers-reduced-motion: reduce) {
   .secondary-derived-screen,
-  .course-derived-screen .course-derived-body,
   .screen--result [data-pc-summary-view]:not([hidden]),
   .screen--result [data-pc-detail-region]:not([hidden]),
   .screen--history .history-view,

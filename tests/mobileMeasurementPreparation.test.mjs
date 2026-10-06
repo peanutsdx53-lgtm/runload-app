@@ -5,6 +5,8 @@ const screen = fs.readFileSync("screens/mobile/runMeasurementScreen.js", "utf8")
 const interactions = fs.readFileSync("ui/interactions/mobileRunMeasurementInteractions.js", "utf8");
 const store = fs.readFileSync("ui/mobileWalkJogRecordStore.js", "utf8");
 const record = fs.readFileSync("screens/mobile/recordInputScreen.js", "utf8");
+const ergonomics = fs.readFileSync("styles/mobile-run-measurement-ergonomics.css", "utf8");
+const recordRof = fs.readFileSync("styles/record-screen-base.css", "utf8");
 const results = [];
 const test = (id, fn) => { try { fn(); results.push([id,"PASS"]); } catch (error) { results.push([id,"FAIL",String(error?.stack||error)]); } };
 
@@ -22,6 +24,18 @@ test("FATIGUE-LABELS-ARE-ACTIVITY-NEUTRAL", () => {
   assert.ok(screen.includes("運動後の疲労感"));
   assert.ok(store.includes('pre: readFatigueValue(root, "before")'));
   assert.ok(store.includes('post: readFatigueValue(root, "after")'));
+});
+
+test("MEASUREMENT-ROF-MATCHES-RECORD-VISUAL-GRAMMAR", () => {
+  assert.match(screen, /class="rof-scale-panel"/);
+  assert.match(screen, /class="rof-current"/);
+  assert.match(ergonomics, /Measurement ROF-J uses the same visual grammar as the Record ROF-J sheet/);
+  assert.match(ergonomics, /run-measurement-fatigue__question\s*\{[\s\S]*display:\s*block/);
+  assert.match(ergonomics, /run-measurement-fatigue \.rof-scale-panel\s*\{[\s\S]*border-radius:\s*18px/);
+  assert.match(ergonomics, /run-measurement-fatigue \.rof-current\s*\{[\s\S]*grid-template-columns:\s*auto 54px minmax\(0, 1fr\)/);
+  assert.match(ergonomics, /run-measurement-fatigue \.rof-current > strong\s*\{[\s\S]*font-size:\s*34px/);
+  assert.match(recordRof, /\.rof-scale-panel\s*\{/);
+  assert.match(recordRof, /\.rof-current\s*\{/);
 });
 
 test("EXTENSION-DOES-NOT-CREATE-CANONICAL-FATIGUE-LIFECYCLE", () => {

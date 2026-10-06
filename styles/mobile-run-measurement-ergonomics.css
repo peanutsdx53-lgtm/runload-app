@@ -628,3 +628,72 @@
   details.run-measurement-fatigue:not([open]){padding-top:0;padding-bottom:0}
   details.run-measurement-fatigue:not([open])>.run-measurement-fatigue__head{min-height:56px}
 }
+
+/* Measurement ROF-J uses the same visual grammar as the Record ROF-J sheet. */
+@media (max-width: 54.99rem) {
+  .run-measurement-fatigue__body { display: grid; gap: 0; padding-top: 0; }
+  .run-measurement-fatigue__question {
+    display: block; margin: 9px 0 8px; color: var(--ink);
+    font-size: 12px; font-weight: 800; line-height: 1.45;
+  }
+  .run-measurement-fatigue .rof-scale-panel {
+    min-width: 0; display: block; padding: 11px 13px 10px;
+    border: 1px solid var(--line); border-radius: 18px; background: var(--surface);
+  }
+  .run-measurement-fatigue .rof-current {
+    min-width: 0; display: grid; grid-template-columns: auto 54px minmax(0, 1fr);
+    align-items: center; gap: 10px; padding: 0 0 8px; border-bottom: 1px solid var(--line);
+  }
+  .run-measurement-fatigue .rof-current > span {
+    color: var(--muted); font-size: var(--type-label); font-weight: 800; white-space: nowrap;
+  }
+  .run-measurement-fatigue .rof-current > strong {
+    color: var(--accent2); font-family: var(--font-numeric); font-size: 34px;
+    font-variant-numeric: tabular-nums; line-height: 1; text-align: center;
+  }
+  .run-measurement-fatigue .rof-current > em {
+    min-width: 0; min-height: 2.7em; display: flex; align-items: center; color: var(--ink);
+    font-size: var(--type-label); font-style: normal; font-weight: 800; line-height: 1.35; overflow-wrap: normal;
+  }
+  .run-measurement-fatigue .rof-slider-wrap { min-width: 0; display: block; margin: 10px 0 0; padding: 0 2px; }
+  .run-measurement-fatigue .rof-slider-wrap input[type="range"] {
+    width: 100%; min-width: 0; margin: 0; accent-color: var(--accent); touch-action: pan-x;
+  }
+  .run-measurement-fatigue .rof-ticks {
+    min-width: 0; display: grid; grid-template-columns: repeat(11, 1fr); align-items: center;
+    width: 100%; margin-top: 7px; color: var(--muted); font-family: var(--font-numeric);
+    font-size: var(--type-label); font-variant-numeric: tabular-nums; line-height: 1; text-align: center;
+  }
+  .run-measurement-fatigue .rof-ticks span:first-child { text-align: left; }
+  .run-measurement-fatigue .rof-ticks span:last-child { text-align: right; }
+  .run-measurement-fatigue .rof-anchor-guide {
+    display: grid; gap: 0; margin: 8px 0 0; padding: 8px 9px;
+    border-radius: 12px; background: var(--accent-soft);
+  }
+  .run-measurement-fatigue .rof-anchor-guide small {
+    color: var(--muted); font-size: var(--type-label); font-weight: 850;
+  }
+  .run-measurement-fatigue [data-record-rof-anchor] {
+    min-width: 0; min-height: 3em; margin-top: 4px; display: flex; align-items: flex-start;
+    color: var(--accent2); font-size: var(--type-label); font-weight: 800; line-height: 1.5; overflow-wrap: normal;
+  }
+  .run-measurement-fatigue .rof-visual-guide--compact {
+    width: 100%; margin-top: 0.15rem; padding: 0.42rem 0.48rem;
+  }
+  .run-measurement-fatigue .rof-about { margin-top: 4px; border-top: 1px solid var(--line); }
+  .run-measurement-fatigue .rof-about > summary {
+    min-height: 42px; display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: var(--type-label); font-weight: 800;
+  }
+  .run-measurement-fatigue .rof-about > div { padding: 0 4px 6px; }
+  .run-measurement-fatigue .rof-about p {
+    margin: 0; color: var(--muted); font-size: var(--type-label); line-height: 1.5;
+  }
+  .run-measurement-fatigue .rof-about small {
+    display: block; margin-top: 5px; color: var(--muted); font-size: var(--type-label);
+  }
+}
+@media (max-width: 360px) {
+  .run-measurement-fatigue .rof-current { grid-template-columns: auto 48px minmax(0, 1fr); gap: 8px; }
+  .run-measurement-fatigue .rof-current > strong { font-size: 30px; }
+}

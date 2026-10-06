@@ -36,3 +36,37 @@
     font-size: .68rem;
   }
 }
+
+@media (max-width: 54.99rem) {
+  /* Plain history headings must never inherit the numbered comparison grid. */
+  .screen-layout--history .comparison-title--plain {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .screen-layout--history .records-head .comparison-title--plain {
+    flex: 1 1 auto;
+  }
+
+  .screen-layout--history .comparison-title--plain > div {
+    min-width: 0;
+  }
+
+  .screen-layout--history .comparison-title--plain h2 {
+    max-width: 100%;
+    word-break: keep-all;
+    overflow-wrap: normal;
+  }
+
+  /* Use the same selected-state grammar as the main history mode switch. */
+  .screen-layout--history .self-understanding-history-filter a.active {
+    background: var(--color-segment-selected-surface);
+    color: var(--color-segment-selected-text);
+    box-shadow: var(--shadow-segment-selected);
+  }
+
+  .screen-layout--history .self-understanding-history-filter a.active span {
+    color: inherit;
+  }
+}

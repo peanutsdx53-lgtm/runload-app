@@ -13,8 +13,14 @@ const sharedContext = read("screens/shared/courseLibraryContext.js");
 const commonInteractions = read("ui/interactions/courseInteractions.js");
 const mobileInteractions = read("ui/interactions/mobileCourseInteractions.js");
 const desktopCss = read("styles/desktop-course.css");
+const desktopScreenLayoutsCss = read("styles/desktop-screen-layouts.css");
+const desktopUnificationCss = read("styles/desktop-unification.css");
 const desktopEditorCss = read("styles/desktop-course-editor.css");
 const mobileCss = read("styles/mobile-course.css");
+const sharedCourseCss = read("styles/course-screen-base.css");
+const mobileScreenLayoutsCss = read("styles/mobile-screen-layouts.css");
+const indexHtml = read("index.html");
+const worker = read("service-worker.js");
 const platformStyles = read("ui/platformStyles.js");
 
 test("course library keeps separate baseline desktop and mobile presentations", () => {
@@ -51,15 +57,29 @@ test("course visual contracts keep baseline platform dimensions", () => {
   assert.match(mobileCss, /gpx-mobile-card/);
 });
 
-test("desktop course reference presentation overrides later desktop consolidation", () => {
+test("shared course and GPX foundation is loaded once for both platforms", () => {
+  assert.match(indexHtml, /styles\/course-screen-base\.css/);
+  assert.match(worker, /\.\/styles\/course-screen-base\.css/);
+  assert.match(sharedCourseCss, /Screen: course/);
+  assert.match(sharedCourseCss, /\.screen-layout--course \.card\{[\s\S]*?border:[^;]+;[\s\S]*?background:/);
+  assert.match(sharedCourseCss, /Screen: gpx/);
+  assert.match(sharedCourseCss, /\.screen-layout--gpx \.candidate/);
+  assert.doesNotMatch(mobileScreenLayoutsCss, /Screen: course/);
+  assert.doesNotMatch(mobileScreenLayoutsCss, /Screen: gpx/);
+});
+
+test("desktop course reference presentation survives desktop consolidation", () => {
   const unificationIndex = platformStyles.indexOf("./styles/desktop-unification.css");
   const courseIndex = platformStyles.indexOf("./styles/desktop-course.css");
   const editorIndex = platformStyles.indexOf("./styles/desktop-course-editor.css");
   assert.ok(unificationIndex >= 0 && courseIndex > unificationIndex && editorIndex > courseIndex);
-  assert.match(desktopCss, /Reference course-screen chrome/);
-  assert.match(desktopCss, /course-derived-head[\s\S]*display:\s*grid\s*!important/);
-  assert.match(desktopCss, /course-derived-frame[\s\S]*border:\s*2px solid var\(--color-line\)\s*!important/);
-  assert.match(desktopCss, /head\.clean-head > div,[\s\S]*compact-intro[\s\S]*display:\s*block\s*!important/);
+  assert.doesNotMatch(desktopUnificationCss, /course-derived|screen--course|screen--gpx/);
+  assert.match(desktopScreenLayoutsCss, /\.course-derived-screen\s*\{[\s\S]*?position:\s*fixed\s*!important;[\s\S]*?top:\s*4\.75rem\s*!important/);
+  assert.match(desktopScreenLayoutsCss, /\.course-derived-frame\s*\{[\s\S]*?width:\s*min\(100%, 74rem\)\s*!important;[\s\S]*?border:\s*2px solid var\(--color-line\)\s*!important/);
+  assert.match(desktopScreenLayoutsCss, /\.course-derived-head\s*\{[\s\S]*?display:\s*grid\s*!important;[\s\S]*?grid-template-columns:\s*minmax\(13rem, 1fr\) auto minmax\(10rem, 1fr\)\s*!important/);
+  assert.match(desktopCss, /Desktop course presentation\. Reference layout contract/);
+  assert.match(desktopCss, /screen--course-editor\.course-derived-screen,[\s\S]*padding:\s*1\.15rem 1\.35rem 1\.35rem\s*!important/);
+  assert.match(desktopCss, /screen--course-library[\s\S]*grid-template-columns:\s*repeat\(2/);
 });
 
 test("GPX keeps baseline platform-specific copy and shared element contract", () => {
