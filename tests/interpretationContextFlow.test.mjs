@@ -60,11 +60,11 @@ await check('BODY-EXPERIENCE-STAYS-PRIMARY-AND-REFERENCE100-IS-SECONDARY', () =>
 
 await check('REFERENCE-KNOWLEDGE-FOLLOWS-THE-USER-FOCUS', () => {
   const bodyRef = selectInterpretationReferenceKnowledge(output(), { bodyPair: true });
-  assert.equal(bodyRef?.id, 'context-not-single-cause');
+  assert.equal(bodyRef?.id, 'regional-six-eight-28');
   assert.equal(bodyRef?.evidenceGovernance?.sourceIntegrity?.status, 'PASS');
   const context = buildInterpretationContextCandidate(output({ body: false }));
   assert.equal(context?.focusKey, 'POST_RUN_FATIGUE_CONTEXT');
-  assert.equal(context?.reference?.id, 'context-not-single-cause');
+  assert.equal(context?.reference?.id, 'rof-j-how-to-read');
   assert.match(context?.question || '', /疲労感とその日の走行条件/);
 });
 
@@ -73,7 +73,7 @@ await check('REFERENCE-IS-A-SEPARATE-NON-PERSONALIZED-LAYER', () => {
   assert.equal((html.match(/class="interpretation-context-reference"/g) || []).length, 1);
   assert.match(html, /参考情報・あなたへの判定ではありません/);
   assert.match(html, /根拠と全文を見る/);
-  assert.match(html, /#\/reading\?articleId=context-not-single-cause/);
+  assert.match(html, /#\/reading\?articleId=regional-six-eight-28/);
   assert.doesNotMatch(html, /あなたの原因は|あなたは危険|この数値なら休むべき/);
 });
 
@@ -105,26 +105,27 @@ await check('ENVIRONMENT-FACT-REACHES-INTERPRETATION-WITHOUT-BECOMING-A-SCORE', 
 });
 
 await check('GENERAL-KNOWLEDGE-CAN-USE-PUBLIC-GUIDANCE-NOT-ONLY-RESEARCH-PAPERS', () => {
-  const warm = output({ body: false, temperature: 29 });
+  const warm = output({ body: false, fatigue: false, conditions: false, temperature: 29 });
   const ref = selectInterpretationReferenceKnowledge(warm, { bodyPair: false });
   assert.equal(ref?.id, 'heat-not-temperature-only');
   assert.ok(ref?.sourceKinds?.includes('公的資料'));
   assert.equal(ref?.evidenceGovernance?.sourceIntegrity?.status, 'PASS');
   const context = buildInterpretationContextCandidate(warm);
-  assert.equal(context?.focusKey, 'POST_RUN_FATIGUE_ENVIRONMENT_CONTEXT');
-  assert.match(context?.question || '', /疲労感と気温などの環境/);
+  assert.equal(context?.focusKey, 'ENVIRONMENT_CONTEXT');
+  assert.match(context?.question || '', /気温などの環境/);
   const html = renderInterpretationRoom({ output: warm, selfUnderstanding: { ...bodyCandidate(), primaryCandidate: null }, mobileLayout: true });
   assert.match(html, /暑い日の走りは、気温だけで判断しない/);
   assert.match(html, /公的資料/);
   assert.doesNotMatch(html, /29℃だから危険|走るべきではない/);
 });
 
-await check('ZERO-MATERIAL-REMAINS-A-NORMAL-ZERO-CANDIDATE-STATE', () => {
-  const empty = output({ body: false, fatigue: false, conditions: false, reflection: false });
-  const html = renderInterpretationRoom({ output: empty, selfUnderstanding: { ...bodyCandidate(), primaryCandidate: null }, mobileLayout: true });
+await check('REGIONAL-ONLY-KEEPS-ZERO-CANDIDATE-WHILE-BASIC-REFERENCE-REMAINS-AVAILABLE', () => {
+  const regionalOnly = output({ body: false, fatigue: false, conditions: false, reflection: false });
+  const reference = selectInterpretationReferenceKnowledge(regionalOnly, { bodyPair: false });
+  assert.equal(reference?.id, 'regional-three-views');
+  const html = renderInterpretationRoom({ output: regionalOnly, selfUnderstanding: { ...bodyCandidate(), primaryCandidate: null }, mobileLayout: true });
   assert.match(html, /今回は、続けて確かめる問いはまだありません/);
   assert.doesNotMatch(html, /data-thread-type="CONTEXT_QUESTION"/);
-  assert.doesNotMatch(html, /class="interpretation-context-reference"/);
 });
 
 await check('CONTEXT-THREAD-STORES-AGENCY-NOT-SCIENTIFIC-VALUES', () => {
@@ -169,6 +170,33 @@ await check('SUPPLEMENTAL-MATERIALS-STAY-HIDDEN-UNTIL-COMPARE', () => {
   const html = renderInterpretationRoom({ output: output(), selfUnderstanding: bodyCandidate(), mobileLayout: true });
   assert.match(html, /interpretation-context-secondary-materials" data-interpretation-flow-reveal="compare"/);
   assert.match(html, /補足の材料を見る/);
+});
+
+
+await check('REFERENCE-PRIORITY-MATCHES-READING-MASTER-V1-1', () => {
+  const noFatigueHot = output({ body: false, fatigue: false, conditions: false, temperature: 29 });
+  assert.equal(selectInterpretationReferenceKnowledge(noFatigueHot)?.id, 'heat-not-temperature-only');
+
+  const multiple = output({ body: false, fatigue: false, conditions: false, temperature: null });
+  multiple.state.regional = 'AVAILABLE';
+  multiple.conditions.differences = [
+    { id: 'distanceKm', previous: 5, current: 6 },
+    { id: 'paceSecondsPerKm', previous: 360, current: 330 },
+  ];
+  assert.equal(selectInterpretationReferenceKnowledge(multiple)?.id, 'context-not-single-cause');
+
+  const gradeOnly = output({ body: false, fatigue: false, conditions: false, temperature: null });
+  gradeOnly.conditions.differences = [{ id: 'grade', previous: 0, current: 3 }];
+  assert.equal(selectInterpretationReferenceKnowledge(gradeOnly)?.id, 'grade-and-coverage');
+
+  const surfaceOnly = output({ body: false, fatigue: false, conditions: false, temperature: null });
+  surfaceOnly.conditions.differences = [{ id: 'surface', previous: 'ROAD', current: 'TRAIL' }];
+  assert.equal(selectInterpretationReferenceKnowledge(surfaceOnly)?.id, 'surface-missingness');
+
+  const urgent = output({ body: false, fatigue: true, conditions: true, temperature: 30 });
+  urgent.safety = { route: 'urgent' };
+  urgent.state.support = 'URGENT';
+  assert.equal(selectInterpretationReferenceKnowledge(urgent), null);
 });
 
 const failed = checks.filter((item) => item.status === 'FAIL');

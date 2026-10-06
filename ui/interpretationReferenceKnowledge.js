@@ -64,34 +64,46 @@ function environmentContext(output = {}) {
 
 export function selectInterpretationReferenceKnowledge(output = {}, { bodyPair = false } = {}) {
   const ids = conditionIds(output);
+  const uniqueIds = [...new Set(ids.filter((id) => ["distance", "duration", "pace", "grade", "surface", "cadence", "course", "running-format"].includes(id)))];
   const environment = environmentContext(output);
+  const supportRoute = String(output?.safety?.route || output?.state?.support || "normal").toLowerCase();
   let articleId = "";
   let matchReason = "";
 
-  // A body observation remains the strongest user-owned starting point. The
-  // reference layer supplies background only; it never explains the user's
-  // sensation as a personal cause.
+  // Safety and consultation routes are handled by the dedicated support layer.
+  // General reading must not compete with that action.
+  if (["urgent", "consult"].includes(supportRoute)) return null;
+
   if (bodyPair) {
-    articleId = "context-not-single-cause";
-    matchReason = "身体の感じ方を一つの原因に決めないため";
+    articleId = "regional-six-eight-28";
+    matchReason = "自分の身体記録と12部位の参考表示を別の情報として確認するため";
+  } else if (hasSubjective(output)) {
+    articleId = "rof-j-how-to-read";
+    matchReason = "疲労感の0〜10を、自分の主観的な記録として読むため";
   } else if (environment.temperatureC != null) {
     articleId = "heat-not-temperature-only";
     matchReason = "気温の記録があるため";
-  } else if (hasSubjective(output)) {
+  } else if (uniqueIds.length >= 2) {
     articleId = "context-not-single-cause";
-    matchReason = "疲労感を一つの原因だけで説明しないため";
+    matchReason = "複数の走行条件が違うため、一つの原因に決めないため";
   } else if (hasReflection(output)) {
     articleId = "goals-and-recording-differ";
     matchReason = "自分が残した振り返りを次の確認につなげるため";
-  } else if (ids.includes("grade") || ids.includes("surface")) {
+  } else if (ids.includes("grade")) {
+    articleId = "grade-and-coverage";
+    matchReason = "坂の条件に違いがあるため";
+  } else if (ids.includes("surface")) {
     articleId = "surface-missingness";
-    matchReason = "坂や路面の記録があるため";
+    matchReason = "路面の条件に違いがあるため";
   } else if (ids.includes("pace")) {
     articleId = "talk-test-as-subjective-cue";
     matchReason = "走る速さを一つの数字だけで捉えないため";
   } else if (ids.includes("distance") || ids.includes("duration")) {
     articleId = "training-progression-no-universal-rule";
     matchReason = "距離や時間の違いを一つの万能ルールで判断しないため";
+  } else if (String(output?.state?.regional || "") === "AVAILABLE") {
+    articleId = "regional-three-views";
+    matchReason = "12部位の数字をその部位自身の100と比べて読むため";
   }
 
   const article = articleById(articleId);

@@ -93,7 +93,10 @@ function buildColumnRecommendation(services, experience, allExperiences = [], co
     && String(environment.temperatureC).trim() !== "";
   const hasRecordedContext = hasTemperature || Boolean(String(environment.environmentNote || "").trim());
 
-  if (route === "consult" || route === "urgent") {
+  if (route === "urgent") {
+    return recommendation("seek-care-and-emergency-signs", "安全に関わる記録があるため、一般的な受診・緊急対応の目安を確認できます。");
+  }
+  if (route === "consult") {
     return recommendation(CONSULTATION_PREP_CORE_ARTICLE_ID, "共有する前に、伝える内容を整理するための記事です。");
   }
   if (record.activityType === "rest") {
@@ -155,14 +158,38 @@ function resolveColumnTargetExperience(services, context) {
 
 const READING_ITEMS = Object.freeze([
   Object.freeze({ id: "regional-three-views", filter: "result" }),
-  Object.freeze({ id: "history-compatible", filter: "record" }),
-  Object.freeze({ id: "plan-facts-current", filter: "record" }),
-  Object.freeze({ id: "training-progression-no-universal-rule", filter: "running" }),
-  Object.freeze({ id: "context-not-single-cause", filter: "running" }),
+  Object.freeze({ id: "regional-six-eight-28", filter: "result" }),
+  Object.freeze({ id: "model-limits", filter: "result" }),
+  Object.freeze({ id: "personal-reference", filter: "result" }),
+  Object.freeze({ id: "history-compatible", filter: "result" }),
+  Object.freeze({ id: "plan-facts-current", filter: "result" }),
+  Object.freeze({ id: "rof-j-how-to-read", filter: "result" }),
+  Object.freeze({ id: "sleep-not-hours-only", filter: "before" }),
+  Object.freeze({ id: "heat-not-temperature-only", filter: "before" }),
+  Object.freeze({ id: "warmup-general", filter: "before" }),
+  Object.freeze({ id: "pre-run-self-check", filter: "before" }),
+  Object.freeze({ id: "talk-test-as-subjective-cue", filter: "during" }),
+  Object.freeze({ id: "stop-signs-during-run", filter: "during" }),
   Object.freeze({ id: "cooldown-stretching-limits", filter: "after" }),
   Object.freeze({ id: "hydration-not-more-is-better", filter: "after" }),
-  Object.freeze({ id: "heat-not-temperature-only", filter: "before" }),
-  Object.freeze({ id: CONSULTATION_PREP_CORE_ARTICLE_ID, filter: "share" }),
+  Object.freeze({ id: "post-run-food-timing-context", filter: "after" }),
+  Object.freeze({ id: "post-run-self-check", filter: "after" }),
+  Object.freeze({ id: "pain-timing-and-persistence", filter: "after" }),
+  Object.freeze({ id: "rest-days-and-recovery", filter: "after" }),
+  Object.freeze({ id: "training-progression-no-universal-rule", filter: "training" }),
+  Object.freeze({ id: "goals-and-recording-differ", filter: "training" }),
+  Object.freeze({ id: "beginner-training-options", filter: "training" }),
+  Object.freeze({ id: "run-walk-as-option", filter: "training" }),
+  Object.freeze({ id: "progression-over-weeks", filter: "training" }),
+  Object.freeze({ id: "strength-and-cross-training", filter: "training" }),
+  Object.freeze({ id: "restart-after-break", filter: "training" }),
+  Object.freeze({ id: "injury-prevention-no-single-method", filter: "training" }),
+  Object.freeze({ id: "grade-and-coverage", filter: "course" }),
+  Object.freeze({ id: "surface-missingness", filter: "course" }),
+  Object.freeze({ id: "slope-endpoints", filter: "course" }),
+  Object.freeze({ id: "context-not-single-cause", filter: "course" }),
+  Object.freeze({ id: "consultation-prep", filter: "share" }),
+  Object.freeze({ id: "seek-care-and-emergency-signs", filter: "share" }),
 ]);
 
 const READING_COPY = Object.freeze({
@@ -263,6 +290,70 @@ const READING_COPY = Object.freeze({
       "次に、身体で気になったことや疲労感など、自分が感じたことを自分の言葉で添えます。事実と感覚を分けておくと、『記録にあること』と『自分が感じたこと』が混ざりにくくなります。",
       "最後に、何を見てほしいのか、何を聞きたいのかを一つ書きます。情報をたくさん並べるより、相談したいことが分かる方が相手も確認しやすくなります。",
       "共有する前には、必要な内容だけになっているかを自分で確認します。自分だけのメモなど、見せたくない情報が入っていないかを見ることも大切です。",
+    ]),
+  }),
+
+  "rof-j-how-to-read": Object.freeze({
+    category: "結果・記録",
+    title: "疲労感の0〜10は、どう見ればいい？",
+    summary: "0〜10は、その時に自分がどの程度疲れていると感じるかを残す尺度です。__良い・悪いの点数や、走ってよいかを決める数字ではありません__。",
+    body: Object.freeze([
+      "ROF-Jでは、その時点で感じている**全体的な疲労感**にいちばん近い数字を0〜10から選びます。運動のきつさそのものを点数にする尺度とは目的が違います。",
+      "走る前と走った後では、記録したタイミングが違います。前後の差は『そのとき自分がどう感じていたか』の変化として残せますが、それだけで回復の良し悪しや安全性を判断するものではありません。",
+      "同じ数字でも、人が違えば同じ状態とは限りません。まずは**自分の記録の中で**、走る前・走った後・別の日の値を見返すために使います。",
+      "低い数字でも、胸痛、めまい、強い痛みなど別の異変があるときは、疲労感の数字を優先して判断しません。",
+    ]),
+  }),
+  "stop-signs-during-run": Object.freeze({
+    category: "走っている間",
+    title: "走っている途中で、やめた方がよいサイン",
+    summary: "体調の異変を感じたら、__予定した距離やペースよりも中止を優先する場面があります__。",
+    body: Object.freeze([
+      "厚生労働省の案内では、運動中に**胸痛・動悸・めまいやふらつき・いつもと違う強い疲れ・関節や筋肉の強い痛み・冷や汗**などを感じた場合は、直ちに運動を中止するよう案内しています。",
+      "『予定した距離まであと少し』『ペースを落とせば大丈夫』といった目標より、体調の異変を優先します。中止したことは失敗ではなく、その日の事実として記録できます。",
+      "暑い環境でめまい、頭痛、吐き気などが出た場合には熱中症の可能性もあります。涼しい場所へ移るなど、公的機関が案内している対応を優先します。",
+      "症状が強い、続く、悪化する場合や、緊急性が疑われる場合は、記事やアプリ内の数値で様子を決めず、適切な医療・救急につなげます。",
+    ]),
+  }),
+  "beginner-training-options": Object.freeze({
+    category: "練習を続ける",
+    title: "初心者の練習方法には、どんな種類がある？",
+    summary: "初心者の練習には、走る・歩くを交互にするなど、__いくつかの進め方があります__。",
+    body: Object.freeze([
+      "最初から長く走り続ける方法だけが初心者向けではありません。NHS Couch to 5Kのように、短い走行と歩行を交互にしながら、少しずつ走る時間を増やす公開プログラムもあります。",
+      "一般的な身体活動ガイドでも、活動量を増やすときは**少ない量から徐々に増やす**考え方が示されています。",
+      "どの方法が合うかは、生活時間、体調、これまでの運動経験などでも変わります。このアプリは練習メニューを自動処方しません。",
+    ]),
+  }),
+  "progression-over-weeks": Object.freeze({
+    category: "練習を続ける",
+    title: "何週間で進める？ 日程より自分の進み方を見る",
+    summary: "具体的な期間のプログラム例はありますが、__その期間を全員共通の締切にする必要はありません__。",
+    body: Object.freeze([
+      "身体活動ガイドでは、活動量を増やすときに**徐々に進める**ことが勧められています。",
+      "NHS Couch to 5Kには9週間という具体的な例がありますが、これは公開プログラムの一例です。『9週間で達成できなければ遅い』という意味ではありません。",
+      "初心者ランナーを対象にした研究では、『毎週10％』のような一つの増加率がけがを減らす万能ルールだとは確認されませんでした。",
+    ]),
+  }),
+  "injury-prevention-no-single-method": Object.freeze({
+    category: "練習を続ける",
+    title: "障害予防に「これだけやればよい」はない",
+    summary: "ランニング障害は、__一つのフォーム、一つの増加率、一つのケアだけで説明できるものではありません__。",
+    body: Object.freeze([
+      "ランニング障害の研究では、トレーニングだけでなく、過去の障害、身体的特徴、行動や環境など、さまざまな要因が検討されています。",
+      "レビューやランナー・専門家への調査でも、予防や管理には複数の考え方があり、情報の受け取り方も人によって違うことが示されています。",
+      "『このストレッチをすれば防げる』『毎週この割合なら安全』『このフォームならけがをしない』と一つの方法を万能な予防策として扱わないことが大切です。",
+    ]),
+  }),
+  "seek-care-and-emergency-signs": Object.freeze({
+    category: "相談・安全",
+    title: "受診や緊急対応を考えるのは、どんなとき？",
+    summary: "セルフケアだけで様子を見るのではなく、医療者への相談や救急対応を考えた方がよい場面があります。__アプリの数値ではなく、実際の症状を優先します__。",
+    body: Object.freeze([
+      "強い痛みや大きな腫れがある、痛みがなかなか改善しないなどの場合、NHSの案内では医療者への相談を勧めています。",
+      "熱中症が疑われるとき、厚生労働省は**自力で水が飲めない、意識がない場合はすぐに救急車を呼ぶ**よう案内しています。",
+      "胸痛、めまい、強い痛みなどが運動中に出た場合は、まず運動を中止します。症状が強い、続く、悪化する、緊急性が疑われる場合は、記事を読み続けるより医療・救急への連絡を優先します。",
+      "このアプリは診断を行わず、12部位の数字や疲労感の点数から受診要否を判定しません。",
     ]),
   }),
 });
@@ -416,7 +507,7 @@ export function renderReadingContent({ services, context, deferredArticleIds }) 
     ${featured ? (() => { const copy = readingArticleCopy(featured); return `<section class="recommend"><div class="recommend__copy"><small>${target.experience ? "この記録から" : "まず読むなら"}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(recommendation.reason || copy.summary)}</p><div class="recommend__meta"><span>${escapeHtml(copy.category)}</span><span>約${readingMinutes(copy)}分</span></div></div><a href="${escapeHtml(readingArticleHref(featured.id, context))}"><span>読む</span><b aria-hidden="true">→</b></a></section>`; })() : ""}
     <section class="reading-tools" aria-label="読みものを探す">
       <div class="reading-search" role="search"><span class="reading-search__icon" aria-hidden="true">⌕</span><input type="search" inputmode="search" autocomplete="off" placeholder="キーワードで探す　例：暑さ、睡眠、履歴" aria-label="読みものをキーワードで検索" data-reading-search><button type="button" data-reading-search-clear hidden>クリア</button></div>
-      <div class="filter-strip"><div class="filter-strip-head"><span>テーマで絞る</span><small>横にスライド <b aria-hidden="true">→</b></small></div><div class="filters" role="group" aria-label="読みものをテーマで絞り込み">${filterButton("all","すべて")}${filterButton("result","結果")}${filterButton("record","記録・履歴")}${filterButton("running","走り方")}${filterButton("after","走った後")}${filterButton("before","走る前")}${filterButton("share","共有")}</div></div>
+      <div class="filter-strip"><div class="filter-strip-head"><span>テーマで絞る</span><small>横にスライド <b aria-hidden="true">→</b></small></div><div class="filters" role="group" aria-label="読みものをテーマで絞り込み">${filterButton("all","すべて")}${filterButton("result","結果・記録")}${filterButton("before","走る前")}${filterButton("during","走っている間")}${filterButton("after","走った後")}${filterButton("training","練習を続ける")}${filterButton("course","コース・条件")}${filterButton("share","相談・安全")}</div></div>
     </section>
     <div class="reading-list-head"><strong>記事</strong><span data-reading-count aria-live="polite">${items.length}件</span></div>
     <div class="grid">${items.map((item) => renderReadingArticle(item.article, item.filter, featured?.id === item.article.id, context)).join("")}</div>
