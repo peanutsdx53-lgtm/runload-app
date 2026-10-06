@@ -18,7 +18,10 @@ function renderHeader({ currentScreen, currentLocation, hasResult = false }) {
       ? { backHref: "#/home", backLabel: "ホーム" }
       : null);
   const title = resolveHeaderTitle(currentScreen, currentLocation);
-  const titleHtml = `<div class="mobile-topbar__brand mobile-topbar__screen-title"><strong>${escapeHtml(title)}</strong></div>`;
+  const readingArticleOpen = currentScreen === "reading" && Boolean(currentLocation?.parameters?.get?.("articleId"));
+  const titleHtml = readingArticleOpen
+    ? `<div class="mobile-topbar__brand mobile-topbar__screen-title" aria-hidden="true"></div>`
+    : `<div class="mobile-topbar__brand mobile-topbar__screen-title"><strong>${escapeHtml(title)}</strong></div>`;
   if (context) {
     return `<header class="mobile-topbar mobile-topbar--context"><a class="mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a>${titleHtml}<div class="mobile-topbar__actions" aria-label="操作">${help}${menu}</div></header>`;
   }

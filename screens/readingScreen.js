@@ -353,29 +353,9 @@ function renderReadingArticle(article, filter, isFeatured = false, context = nul
   </article>`;
 }
 
-function articleBackTarget(context) {
-  const origin = context.parameters.get("origin") || "";
-  const recordId = context.parameters.get("recordId") || "";
-  const regionId = context.parameters.get("regionId") || "";
-  const from = context.parameters.get("from") || "";
-  const roomOrigin = context.parameters.get("roomOrigin") || "result";
-  if (from === "interpretation-room") {
-    const roomQuery = new URLSearchParams();
-    if (recordId) roomQuery.set("recordId", recordId);
-    roomQuery.set("origin", roomOrigin);
-    if (regionId) roomQuery.set("regionId", regionId);
-    return Object.freeze({ href: `#/interpretation-room?${roomQuery.toString()}`, label: "結果の整理へ戻る" });
-  }
-  if (origin === "result-condition" && recordId && regionId) {
-    return Object.freeze({ href: `#/body-part-detail?recordId=${encodeURIComponent(recordId)}&regionId=${encodeURIComponent(regionId)}`, label: "部位結果へ戻る" });
-  }
-  return Object.freeze({ href: "#/reading", label: "読みものへ戻る" });
-}
-
 function renderReadingArticleView(article, items, context) {
   const copy = readingArticleCopy(article);
   const related = relatedReadingItems(article, items);
-  const back = articleBackTarget(context);
   return `<div class="screen screen--reading-article screen-layout screen-layout--reading-article" data-reading-article-screen>
     <main class="reading-article-page">
       <article class="reading-detail reading-detail--page">
@@ -388,7 +368,6 @@ function renderReadingArticleView(article, items, context) {
             const relatedCopy = readingArticleCopy(item.article);
             return `<a class="reading-related-card" href="${escapeHtml(readingArticleHref(item.article.id, context))}"><span><small>${escapeHtml(relatedCopy.category)}</small><strong>${escapeHtml(relatedCopy.title)}</strong></span><b aria-hidden="true">→</b></a>`;
           }).join("")}</div></section>` : ""}
-          <div class="reading-detail__footer"><a class="reading-detail__back" href="${escapeHtml(back.href)}">${escapeHtml(back.label)}</a></div>
         </div>
       </article>
     </main>

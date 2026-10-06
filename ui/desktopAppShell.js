@@ -21,13 +21,17 @@ export function renderPlatformHeader({ currentScreen, currentLocation, hasResult
   const primaryTitle = PRIMARY_HEADER_TITLES[primary] || resolveHeaderTitle(currentScreen, currentLocation);
   const context = resolveScreenContextNavigation(currentScreen, currentLocation);
   const title = context?.title || primaryTitle;
+  const readingArticleOpen = currentScreen === "reading" && Boolean(currentLocation?.parameters?.get?.("articleId"));
   const desktopContext = context?.backHref === "#/more" ? { ...context, backHref: "#/home", backLabel: "ホーム" } : context;
   const fallback = currentScreen !== "home" ? { backHref: "#/home", backLabel: "ホーム" } : null;
   const back = desktopContext || fallback;
   const backControl = back
     ? `<a class="app-header__back pc-global-back" href="${escapeHtml(back.backHref)}" aria-label="${escapeHtml(back.backLabel)}へ戻る"><span aria-hidden="true">←</span><span>${escapeHtml(back.backLabel)}</span></a>`
     : `<span class="app-header__back-placeholder" aria-hidden="true"></span>`;
-  return `<header class="app-header app-header--desktop app-header--viewport-fixed"><div class="app-header__leading">${backControl}</div><strong class="app-header__brand app-header__screen-title">${escapeHtml(title)}</strong><div class="app-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen)}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}</div></header>`;
+  const titleControl = readingArticleOpen
+    ? `<span class="app-header__brand app-header__screen-title" aria-hidden="true"></span>`
+    : `<strong class="app-header__brand app-header__screen-title">${escapeHtml(title)}</strong>`;
+  return `<header class="app-header app-header--desktop app-header--viewport-fixed"><div class="app-header__leading">${backControl}</div>${titleControl}<div class="app-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen)}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}</div></header>`;
 }
 
 export function renderPlatformShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {}, onboardingMarkup = "" }) {
