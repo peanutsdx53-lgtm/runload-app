@@ -33,7 +33,7 @@ test('UPDATE-RESET-PRESERVES-USER-DATA', () => {
   assert.ok(versionModule.includes('navigator.serviceWorker.getRegistrations()'));
   assert.ok(versionModule.includes('registration.update()'));
   assert.ok(versionModule.includes('window.location.reload()'));
-  assert.ok(versionModule.includes('記録、予定、保存コース、プロフィール、設定は削除しません'));
+  assert.ok(versionModule.includes('記録、予定、保存コース、プロフィール、設定を残したまま最新版を読み込み直します'));
   assert.ok(!versionModule.includes('localStorage.clear'));
 });
 
