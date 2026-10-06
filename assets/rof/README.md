@@ -8,7 +8,7 @@ The five PNG files in this directory are cropped from Appendix A of:
 
 Changes made for RunLoad:
 
-- each of the five original diagram components was cropped from the published ROF scale;
+- each of the five original diagram components was cropped from the published ROF scale with surrounding white margin so the complete figure remains visible;
 - the diagram itself is not redrawn or altered;
 - each crop is displayed at the corresponding original ROF anchor position.
 

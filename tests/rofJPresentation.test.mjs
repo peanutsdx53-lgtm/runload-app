@@ -54,30 +54,40 @@ test('SELECTABLE-SCORES-REMAIN-INTEGER-ZERO-THROUGH-TEN', () => {
   assert.ok(core.includes('Number.isInteger(value) && value >= 0 && value <= 10'));
 });
 
-test('DAILY-USE-VIEW-SHOWS-CORRECTED-HORIZONTAL-ANCHOR-GUIDE', () => {
+test('DAILY-USE-VIEW-SHOWS-FULL-FIGURES-AND-DESCRIPTORS-ALIGNED-TO-AXIS', () => {
   assert.ok(moduleText.includes('疲労感の目安'));
   assert.ok(moduleText.includes('横軸と同じ向き'));
   assert.ok(moduleText.includes('rof-author-anchor-list'));
   assert.ok(moduleText.includes('.sort((left, right) => Number(left.position) - Number(right.position))'));
+  assert.ok(moduleText.includes('descriptor.className = "rof-author-anchor__descriptor"'));
+  assert.ok(moduleText.includes('descriptor.textContent = anchor.descriptor'));
+  assert.ok(!moduleText.includes('position.className = "rof-author-anchor__position"'));
   assert.ok(visualCss.includes('grid-template-columns: repeat(5, minmax(0, 1fr))'));
-  assert.ok(visualCss.includes('.rof-author-anchor__position'));
-  assert.ok(visualCss.includes('.rof-author-anchor__visual'));
-  assert.ok(moduleText.includes('return "2〜3"'));
-  assert.ok(moduleText.includes('return "7〜8"'));
-  assert.ok(desktopVisualCss.includes('white-space: nowrap'));
-  assert.ok(desktopVisualCss.includes('grid-template-columns: repeat(5, minmax(0, 1fr))'));
-  assert.ok(desktopVisualCss.includes('width: 3.35rem'));
-  assert.ok(desktopVisualCss.includes('height: 2.85rem'));
-  assert.ok(desktopVisualCss.includes('max-width: 58%'));
+  assert.ok(visualCss.includes('.rof-author-anchor__descriptor'));
+  assert.ok(!moduleText.includes('rof-author-anchor__position'));
+  assert.ok(!visualCss.includes('.rof-author-anchor__position'));
+  assert.ok(desktopVisualCss.includes('grid-template-rows: 5.4rem auto'));
+  assert.ok(desktopVisualCss.includes('max-height: 5.4rem'));
+  assert.ok(mobileVisualCss.includes('grid-template-rows: 4.45rem auto'));
+  assert.ok(mobileVisualCss.includes('max-height: 4.45rem'));
   assert.ok(compactCss.includes('.rof-visual-guide--compact'));
 });
 
-test('MOBILE-ANCHOR-LABELS-STAY-BELOW-THEIR-IMAGES', () => {
-  assert.ok(!mobileVisualCss.includes('grid-template-columns: 4.25rem minmax(0, 1fr) 3rem'));
-  assert.ok(!mobileVisualCss.includes('grid-template-columns: 3.9rem minmax(0, 1fr) 2.65rem'));
-  assert.ok(!mobileVisualCss.includes('width: 2.85rem'));
-  assert.ok(!mobileVisualCss.includes('width: 2.5rem'));
-  assert.ok(mobileVisualCss.includes('grid-template-rows: 2.85rem auto'));
+test('ROF-VISUAL-CROPS-KEEP-FULL-FIGURE-MARGINS', () => {
+  const expected = new Map([
+    ['assets/rof/rof-visual-lowest.png', [182, 210]],
+    ['assets/rof/rof-visual-low.png', [130, 220]],
+    ['assets/rof/rof-visual-moderate.png', [130, 220]],
+    ['assets/rof/rof-visual-high.png', [160, 235]],
+    ['assets/rof/rof-visual-highest.png', [215, 120]],
+  ]);
+  for (const [assetPath, [width, height]] of expected) {
+    const bytes = fs.readFileSync(assetPath);
+    assert.equal(bytes.toString('ascii', 1, 4), 'PNG');
+    assert.equal(bytes.readUInt32BE(16), width, `${assetPath} width`);
+    assert.equal(bytes.readUInt32BE(20), height, `${assetPath} height`);
+  }
+  assert.ok(notice.includes('surrounding white margin so the complete figure remains visible'));
 });
 
 test('CURRENT-SELECTION-GUIDANCE-OVERRIDES-LEGACY-PLACEHOLDER-TEXT', () => {

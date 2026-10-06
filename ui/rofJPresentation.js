@@ -26,12 +26,6 @@ export function setTextIfChanged(node, value) {
   node.textContent = value;
 }
 
-function visualAnchorPositionLabel(anchor) {
-  if (Number(anchor?.position) === 2.5) return "2〜3";
-  if (Number(anchor?.position) === 7.5) return "7〜8";
-  return String(anchor?.positionLabel || "");
-}
-
 function createAnchorPoint(anchor) {
   const point = document.createElement("div");
   point.className = "rof-author-anchor";
@@ -48,11 +42,11 @@ function createAnchorPoint(anchor) {
   image.decoding = "async";
   visual.append(image);
 
-  const position = document.createElement("b");
-  position.className = "rof-author-anchor__position";
-  position.textContent = visualAnchorPositionLabel(anchor);
+  const descriptor = document.createElement("span");
+  descriptor.className = "rof-author-anchor__descriptor";
+  descriptor.textContent = anchor.descriptor;
 
-  point.append(visual, position);
+  point.append(visual, descriptor);
   return point;
 }
 
