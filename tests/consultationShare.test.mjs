@@ -22,7 +22,7 @@ test("consultation share workflow is advisor-first", () => {
   assert.ok(interactions.includes('questionRequirement.textContent = "推奨"'));
   assert.ok(screen.includes("すでに行った対応"));
   assert.ok(screen.includes("最近の経過"));
-  assert.ok(screen.includes("RunLoad参考情報"));
+  assert.ok(screen.includes("部位ごとの参考情報"));
 });
 
 test("consultation document separates facts subjective context and reference", () => {

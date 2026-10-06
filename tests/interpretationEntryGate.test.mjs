@@ -53,7 +53,7 @@ await test('HOME-REMOVES-SEPARATE-INTERPRETATION-PROMO',()=>{
 
 await test('REST-RECORD-DOES-NOT-OFFER-UNDERSTANDING-ENTRY',()=>{
   const source=read('screens/desktop/homeScreen.js');
-  const restLine=source.split('\n').find((row)=>row.includes('REST')&&row.includes('記録を開く'))||'';
+  const restLine=source.split('\n').find((row)=>row.includes('休養')&&row.includes('記録を開く'))||'';
   assert.ok(restLine);
   assert.doesNotMatch(restLine,/interpretation-room|今回を見比べる|結果を理解する/);
 });

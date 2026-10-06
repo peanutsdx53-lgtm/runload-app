@@ -52,7 +52,7 @@ await check('BODY-EXPERIENCE-STAYS-PRIMARY-AND-REFERENCE100-IS-SECONDARY', () =>
   const html = renderInterpretationRoom({ output: output(), selfUnderstanding: bodyCandidate(), mobileLayout: false });
   assert.match(html, /あなたの身体の記録/);
   assert.match(html, /interpretation-context-model-secondary/);
-  assert.match(html, /考える材料・RunLoadの部位表示/);
+  assert.match(html, /考える材料・部位ごとの参考表示/);
   assert.match(html, /この値は身体の感覚そのものではありません/);
   assert.match(html, /次の走行では、股関節部の外側を自分がどう感じたか確認する/);
   assert.doesNotMatch(html, /次の走行でも、股関節部の外側について自分の記録と部位表示を見比べる/);

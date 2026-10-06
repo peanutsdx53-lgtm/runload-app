@@ -73,7 +73,7 @@ function servicesFor(record) {
     guide: { open: false },
     onboardingMarkup: "",
   });
-  assert.match(shell, /<nav class="primary-navigation" aria-label="主要画面">/, "desktop Home must retain the approved left primary navigation");
+  assert.match(shell, /<nav class="primary-navigation" aria-label="主な機能">/, "desktop Home must retain the approved left primary navigation");
   assert.match(shell, /data-navigation-screen="home" aria-current="page"/, "desktop Home navigation must mark Home current");
 }
 

@@ -26,7 +26,7 @@ const platformStyles = read("ui/platformStyles.js");
 test("course library keeps separate baseline desktop and mobile presentations", () => {
   assert.match(desktopLibrary, /今回のコース/);
   assert.match(desktopLibrary, /\＋ 新しいコース/);
-  assert.match(desktopLibrary, /GPXを読み込む/);
+  assert.match(desktopLibrary, /ルートファイルを読み込む/);
   assert.doesNotMatch(desktopLibrary, /course-mobile-library/);
   assert.match(mobileLibrary, /course-mobile-library/);
   assert.match(mobileLibrary, /保存したコース/);
@@ -91,6 +91,6 @@ test("GPX keeps baseline platform-specific copy and shared element contract", ()
   }
   assert.match(desktopGpx, /ルートファイルから坂道を入力/);
   assert.match(desktopGpx, /外部送信なし/);
-  assert.match(mobileGpx, /GPXから坂道を入力/);
+  assert.match(mobileGpx, /ルートファイルから坂道を入力/);
   assert.match(mobileGpx, /端末内で処理・外部送信なし・元ファイルは保存しません/);
 });

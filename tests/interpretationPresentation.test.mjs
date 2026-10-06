@@ -37,7 +37,7 @@ await test('FIRST-FRAME-IS-ONE-FOCUS-NOT-AN-ANALYSIS-DUMP',()=>{
 await test('INTERACTION-REVEALS-RELATED-RUNLOAD-INFORMATION',()=>{
   const html=renderMobile({output:baseOutput(),selfUnderstanding:selfUnderstanding()});
   assert.match(html,/data-interpretation-flow-reveal="compare"/);
-  assert.match(html,/RunLoadの部位表示/);
+  assert.match(html,/部位ごとの参考表示/);
   assert.match(html,/同じ部位/);
   assert.match(html,/表示理由/);
 });

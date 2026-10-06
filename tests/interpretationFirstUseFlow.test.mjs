@@ -39,7 +39,7 @@ await test('FIRST-USE-STARTS-WITH-ONE-USER-EXPERIENCE-AND-ONE-NEXT-ACTION',()=>{
 await test('COMPARISON-IS-STAGED-AND-KEEPS-CONSTRUCTS-SEPARATE',()=>{
   const html=renderInterpretationRoom({output:output(),selfUnderstanding:candidate,compactLayout:true});
   assert.match(html,/data-interpretation-flow-reveal="compare"/);
-  assert.match(html,/RunLoadの部位表示/);
+  assert.match(html,/部位ごとの参考表示/);
   assert.match(html,/同じ部位/);
   assert.match(html,/2つは別の情報です/);
   assert.match(html,/原因だという意味ではありません/);
