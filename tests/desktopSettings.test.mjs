@@ -3,6 +3,8 @@ import fs from "node:fs";
 
 const read = (path) => fs.readFileSync(path, "utf8");
 const css = read("styles/desktop-settings.css");
+const unified = read("styles/desktop-unification.css");
+const screen = read("screens/settingsScreen.js");
 const index = read("index.html");
 const platformStyles = read("ui/platformStyles.js");
 const worker = read("service-worker.js");
@@ -10,5 +12,10 @@ const worker = read("service-worker.js");
 assert.match(css, /data-action="reset-update-state"[\s\S]*width:\s*fit-content\s*!important/);
 assert.ok(platformStyles.includes('./styles/desktop-settings.css'));
 assert.ok(worker.includes('./styles/desktop-settings.css'));
+assert.match(screen, /eyebrow: "文字", title: "文字サイズ"/);
+assert.doesNotMatch(screen, /TEXT SIZE|APPEARANCE|THEME/);
+assert.match(unified, /PC information\/settings\/share workspace correction/);
+assert.match(unified, /screen--settings\.screen-layout--settings \.secondary-derived-body[\s\S]*grid-template-areas:/);
+assert.match(unified, /data-app-update-panel[\s\S]*position: sticky/);
 
 console.log("desktopSettings.test.mjs: PASS");

@@ -5,6 +5,7 @@ const read=(path)=>fs.readFileSync(path,"utf8");
 const desktopCss=read("styles/desktop-consultation.css");
 const shareCss=read("styles/consultation-share.css");
 const desktopShareCss=read("styles/desktop-consultation-share-responsive.css");
+const unified=read("styles/desktop-unification.css");
 const screen=read("screens/consultationScreen.js");
 const index=read("index.html");
 const platformStyles=read("ui/platformStyles.js");
@@ -27,6 +28,10 @@ assert.match(desktopCss,/@media \(min-width: 69rem\)/);
 assert.match(shareCss,/Consultation share preparation uses the current four-step flow/);
 assert.match(desktopShareCss,/grid-template-areas: none !important/);
 assert.match(desktopShareCss,/grid-template-columns: repeat\(3, minmax\(0, 1fr\)\) !important/);
+assert.match(unified,/share-document-step[\s\S]*position: static !important/);
+assert.match(unified,/share-document-step[\s\S]*max-height: none !important[\s\S]*overflow: visible !important/);
+assert.match(unified,/share-sheet-head h1[\s\S]*white-space: normal !important/);
+assert.match(unified,/share-sheet-head dl[\s\S]*width: 100% !important/);
 assert.match(shareCss,/@media print/);
 
 console.log("desktopConsultation.test.mjs: PASS");

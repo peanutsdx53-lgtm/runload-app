@@ -49,9 +49,9 @@ export function renderSettingsScreenWithPresentation({ services, context }, pres
     <form id="app-settings-form" novalidate>
       <section class="group"><p class="group-title">表示</p>
         <div class="display-setting-list">
-          ${renderDisplaySetting({ eyebrow: "TEXT SIZE", title: "文字サイズ", name: "textSize", current: settings.textSize, options: TEXT_SIZE_OPTIONS })}
-          ${renderDisplaySetting({ eyebrow: "APPEARANCE", title: "明るさ", name: "appearanceMode", current: settings.appearanceMode, options: APPEARANCE_MODE_OPTIONS })}
-          ${renderDisplaySetting({ eyebrow: "THEME", title: "配色", name: "colorTheme", current: settings.colorTheme, options: COLOR_THEME_OPTIONS, theme: true })}
+          ${renderDisplaySetting({ eyebrow: "文字", title: "文字サイズ", name: "textSize", current: settings.textSize, options: TEXT_SIZE_OPTIONS })}
+          ${renderDisplaySetting({ eyebrow: "表示", title: "明るさ", name: "appearanceMode", current: settings.appearanceMode, options: APPEARANCE_MODE_OPTIONS })}
+          ${renderDisplaySetting({ eyebrow: "配色", title: "配色", name: "colorTheme", current: settings.colorTheme, options: COLOR_THEME_OPTIONS, theme: true })}
         </div>
         <p class="visually-hidden" data-display-settings-status role="status" aria-live="polite"></p>
       </section>

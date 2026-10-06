@@ -914,3 +914,360 @@
     transition: none !important;
   }
 }
+
+
+/* ===== PC information/settings/share workspace correction ===== */
+@media screen and (min-width: 55rem) {
+  body.secondary-derived-open:has(.screen--settings, .screen--privacy, .screen--support-guidance, .screen--consultation) {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: auto !important;
+  }
+
+  body.secondary-derived-open:has(.screen--settings, .screen--privacy, .screen--support-guidance, .screen--consultation)::before {
+    display: none !important;
+  }
+
+  body.secondary-derived-open:has(.screen--settings, .screen--privacy, .screen--support-guidance, .screen--consultation) #app,
+  body.secondary-derived-open:has(.screen--settings, .screen--privacy, .screen--support-guidance, .screen--consultation) #app > .app-shell:not(.app-shell--immersive),
+  body.secondary-derived-open:has(.screen--settings, .screen--privacy, .screen--support-guidance, .screen--consultation) #app > .app-shell:not(.app-shell--immersive) > .app-main {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+  }
+
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support,
+    .screen--consultation.screen-layout--consultation
+  ).secondary-derived-screen {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: auto !important;
+    width: min(100%, 94rem) !important;
+    max-width: 94rem !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    padding: 1rem 1.25rem 2.25rem !important;
+    transform: none !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support,
+    .screen--consultation.screen-layout--consultation
+  ) > .secondary-derived-body {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Settings: primary controls left, compact app status right, data management below. */
+  .screen--settings.screen-layout--settings .secondary-derived-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 21rem) !important;
+    grid-template-areas:
+      "form app"
+      "data data" !important;
+    gap: 1rem 1.15rem !important;
+    align-items: start !important;
+  }
+
+  .screen--settings.screen-layout--settings #app-settings-form {
+    grid-area: form !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 1rem !important;
+    min-width: 0 !important;
+  }
+
+  .screen--settings.screen-layout--settings [data-app-update-panel] {
+    grid-area: app !important;
+    position: sticky;
+    top: 5.75rem;
+    min-width: 0;
+    margin: 0 !important;
+  }
+
+  .screen--settings.screen-layout--settings .secondary-derived-body > section.group:last-of-type {
+    grid-area: data !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .screen--settings.screen-layout--settings #app-settings-form > .group,
+  .screen--settings.screen-layout--settings [data-app-update-panel],
+  .screen--settings.screen-layout--settings .secondary-derived-body > section.group:last-of-type {
+    padding: 1rem 1.05rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-soft) !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: .7rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
+    grid-column: auto !important;
+  }
+
+  /* Privacy: normal page flow, bounded icons, and scannable disclosure cards. */
+  .screen--privacy.screen-layout--privacy .secondary-derived-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: .9rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .lead {
+    margin: 0 !important;
+    padding: 1rem 1.05rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1rem !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .list {
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .75rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item {
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1rem !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item[open] {
+    grid-column: 1 / -1 !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item summary {
+    display: grid !important;
+    grid-template-columns: 2.75rem minmax(0, 1fr) auto !important;
+    gap: .8rem !important;
+    align-items: center !important;
+    min-height: 5rem !important;
+    padding: .85rem .95rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .icon {
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    display: grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
+    border-radius: .8rem !important;
+    background: var(--color-accent-soft) !important;
+    color: var(--color-accent-strong) !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .icon svg {
+    width: 1.45rem !important;
+    height: 1.45rem !important;
+    display: block !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.7 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item .body {
+    padding: 0 1rem 1rem 4.35rem !important;
+    columns: 1 !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .warning {
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  /* Public support: safety information stays visible and uses the page width. */
+  .screen--support-guidance.screen-layout--support .secondary-derived-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: .9rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .notice {
+    display: block !important;
+    margin: 0 !important;
+    padding: .85rem 1rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .85rem !important;
+    background: var(--color-surface-muted) !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .cards {
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .85rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card {
+    min-width: 0 !important;
+    min-height: 11rem !important;
+    padding: 1.05rem 1.1rem !important;
+    border-radius: 1rem !important;
+    box-shadow: var(--shadow-soft) !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card:first-child {
+    grid-column: 1 / -1 !important;
+    min-height: 0 !important;
+  }
+
+  /* Share preparation: one page scroll, generous preview width, no nested right-column scroll. */
+  .screen--consultation.screen-layout--consultation.secondary-derived-screen {
+    width: min(100%, 96rem) !important;
+    max-width: 96rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.35fr) minmax(30rem, .8fr) !important;
+    grid-template-areas:
+      "source source"
+      "confirmation confirmation"
+      "purpose document"
+      "context document"
+      "sources document"
+      "support support" !important;
+    gap: .95rem 1.15rem !important;
+    align-items: start !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .share-purpose-step { grid-area: purpose !important; }
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .share-context-step { grid-area: context !important; }
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .share-source-step { grid-area: sources !important; }
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > .share-document-step {
+    grid-area: document !important;
+    position: static !important;
+    top: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
+    min-width: 0 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-step {
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-soft) !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-step > .section-head {
+    margin-bottom: .8rem !important;
+    padding-bottom: .65rem !important;
+    border-bottom: 1px solid var(--color-line) !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-document-stage {
+    max-height: none !important;
+    margin-top: .65rem !important;
+    overflow: visible !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-print-document {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-sheet-page {
+    padding: 1rem 1rem 2.8rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-sheet-head {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: .55rem !important;
+    align-items: start !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-sheet-head > div:first-child {
+    min-width: 0 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-sheet-head h1 {
+    margin: .1rem 0 0 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    font-size: 1.22rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-sheet-head dl {
+    width: 100% !important;
+    max-width: none !important;
+    flex: none !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: .45rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-sheet-head dd {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-output-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: .55rem !important;
+  }
+}
+
+@media screen and (min-width: 55rem) and (max-width: 74rem) {
+  .screen--settings.screen-layout--settings .secondary-derived-body,
+  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: none !important;
+  }
+
+  .screen--settings.screen-layout--settings #app-settings-form,
+  .screen--settings.screen-layout--settings [data-app-update-panel],
+  .screen--settings.screen-layout--settings .secondary-derived-body > section.group:last-of-type,
+  .screen--consultation.screen-layout--consultation[data-share-prep] > .secondary-derived-body > * {
+    grid-area: auto !important;
+    grid-column: auto !important;
+  }
+
+  .screen--settings.screen-layout--settings [data-app-update-panel] {
+    position: static !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .list,
+  .screen--support-guidance.screen-layout--support .cards {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item[open],
+  .screen--support-guidance.screen-layout--support .card:first-child {
+    grid-column: auto !important;
+  }
+}
