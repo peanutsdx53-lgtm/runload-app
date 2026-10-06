@@ -51,7 +51,7 @@ function enhanceHome() {
   recordPlan.classList.add("pc-home-rail");
   recordPlan.querySelector(".grid")?.classList.add("pc-home-rail__cards");
   const sectionHead = recordPlan.querySelector(".section-head > div");
-  if (sectionHead && !sectionHead.querySelector("small")) sectionHead.insertAdjacentHTML("afterbegin", "<small>RECENT</small>");
+  if (sectionHead && !sectionHead.querySelector("small")) sectionHead.insertAdjacentHTML("afterbegin", "<small>最近の記録</small>");
 
   host.append(createOverview());
 }

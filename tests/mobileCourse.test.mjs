@@ -19,7 +19,7 @@ assert.match(mobileEditor,/surface-mix-grid/);
 assert.match(mobileEditor,/data-course-summary-name/);
 assert.ok(!mobileEditor.includes("gpx-inline"),"mobile editor must not duplicate the GPX route");
 assert.match(library,/course-mobile-gpx-link/);
-assert.match(gpx,/GPXから坂道を入力/);
+assert.match(gpx,/ルートファイルから坂道を入力/);
 assert.match(mobileInteractions,/const mobileEnhancement = Object\.freeze/);
 assert.match(mobileInteractions,/updateSummary\(\{ form, data \}\)/);
 assert.match(interactions,/data-course-grade-family/);

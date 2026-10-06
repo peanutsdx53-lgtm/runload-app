@@ -48,8 +48,8 @@ test("FATIGUE-GUIDE-MATCHES-HORIZONTAL-SLIDER-AND-HIDES-FORMAL-NAME-BY-DEFAULT",
   assert.ok(rofCss.includes("grid-template-columns: repeat(5, minmax(0, 1fr))"));
   assert.ok(rofCss.includes(".rof-author-anchor__descriptor"));
   assert.ok(rofCss.includes("display: none"));
-  assert.ok(record.includes("尺度の出典・正式表現"));
-  assert.ok(record.includes("正式名称：ROF-J"));
+  assert.ok(record.includes("疲労感の尺度について"));
+  assert.ok(!record.includes("正式名称：ROF-J"));
   assert.ok(!record.includes("ROF-Jの目安"));
 });
 

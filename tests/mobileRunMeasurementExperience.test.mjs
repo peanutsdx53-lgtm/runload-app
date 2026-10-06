@@ -7,7 +7,7 @@ const mobileRegistry=fs.readFileSync(new URL("../screens/mobileScreenRegistry.js
 const interactions=fs.readFileSync(new URL("../ui/interactions/mobileRunMeasurementInteractions.js", import.meta.url),"utf8");
 const css=fs.readFileSync(new URL("../styles/mobile-run-measurement-ergonomics.css", import.meta.url),"utf8");
 assert.match(desktopRegistry,/"run-measurement": renderRunMeasurementScreen/);
-assert.match(desktopFallback,/ランニング測定はスマホ版の機能です/);
+assert.match(desktopFallback,/この端末では測定を利用できません/);
 assert.doesNotMatch(desktopFallback,/data-measurement-prep|data-measurement-active|data-measurement-post/);
 assert.match(mobileRegistry,/"run-measurement": renderRunMeasurementScreen/);
 assert.doesNotMatch(screen,/matchesMobileLayout|desktopUnavailable|run-measurement-unavailable/);

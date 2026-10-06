@@ -1,7 +1,7 @@
 export function renderPaceCalculatorScreen() {
   return `<div class="screen screen-layout screen-layout--mobile-tool mobile-tool-screen mobile-pace-tool" data-mobile-pace-tool>
     <section class="mobile-tool-head">
-      <p class="eyebrow">SMARTPHONE TOOL</p>
+      <p class="eyebrow">便利な機能</p>
       <h1>ペース換算</h1>
       <p>距離と目標時間から、平均ペースと通過目安を確認します。</p>
     </section>

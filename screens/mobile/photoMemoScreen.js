@@ -7,7 +7,7 @@ function megabytes(bytes) {
 export function renderPhotoMemoScreen() {
   return `<div class="screen screen-layout screen-layout--mobile-tool mobile-tool-screen mobile-photo-memo-screen" data-mobile-photo-memo>
     <section class="mobile-tool-head">
-      <p class="eyebrow">SMARTPHONE TOOL</p>
+      <p class="eyebrow">便利な機能</p>
       <h1>写真メモ</h1>
       <p>その場の様子を、自分で撮影・選択した写真と短いメモで残します。</p>
     </section>

@@ -21,7 +21,7 @@ assert.match(router, /DEFAULT_SCREEN = "home"/, "unknown/empty routes must resol
 assert.doesNotMatch(worker, /screens\/startScreen/, "PWA precache must not reference the deleted Start screen");
 
 assert.deepEqual(PRIMARY_DESTINATIONS.map(({ screen }) => screen), ["home", "record-input", "result", "history", "more"]);
-assert.match(shell, /<nav class="primary-navigation" aria-label="主要画面">/);
+assert.match(shell, /<nav class="primary-navigation" aria-label="主な機能">/);
 assert.doesNotMatch(shell, /primary-navigation--mobile|MOBILE_PRIMARY_NAVIGATION/, "rebaseline must not add a persistent mobile five-tab navigation");
 assert.match(navCss, /Home is reached from the header, not a floating bottom navigation/);
 assert.match(navCss, /screen-layout:not\(\.screen-layout--home\).*primary-navigation/);

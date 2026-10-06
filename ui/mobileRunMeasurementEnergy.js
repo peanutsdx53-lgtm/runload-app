@@ -62,7 +62,7 @@ export function selectRunningMetBySpeed(averageSpeedKmh) {
 
   // Some Compendium speed rows have small gaps. For a measured average speed
   // inside one of those gaps, use the nearest adjacent official speed band.
-  // This deterministic bridge is RunLoad's mapping rule, not a new MET value.
+  // This deterministic bridge is the application's mapping rule, not a new MET value.
   let nearest = RUNNING_MET_BANDS[0];
   let nearestDistance = distanceToBand(speedMph, nearest);
   for (const band of RUNNING_MET_BANDS.slice(1)) {

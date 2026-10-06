@@ -6,7 +6,7 @@ const services = createApplicationServices();
 const GATE_ID = "runload-desktop-terms-gate";
 
 const TERMS_SECTIONS = Object.freeze([
-  ["1. 本アプリについて", "RunLoadは、走行・休養・コース・身体の記録を整理し、自分の記録を振り返るためのアプリです。"],
+  ["1. 本アプリについて", "このアプリは、走行・休養・コース・身体の記録を整理し、自分の記録を振り返るためのアプリです。"],
   ["2. 医療・安全に関する位置づけ", "本アプリは、診断、原因の特定、危険度・傷害確率の判定、走行可否、受診要否、治療・運動処方を行いません。緊急時や体調に不安がある場合は、本アプリの表示だけで判断せず、公的な相談先や医療機関を利用してください。"],
   ["3. 記録と計算結果", "入力内容やGPS等から得た情報に基づき、記録・比較用の表示を作成します。表示値は実際の筋力、関節力、組織負荷等を直接測定した値ではありません。入力内容や利用環境により、記録や表示に差が生じる場合があります。"],
   ["4. データの扱い", "アプリ内の記録は端末内保存を基本とします。GPSは測定時に端末の許可を得て取得します。地図表示ではOpenStreetMapの地図画像を取得します。バックアップ、外部サイト、電話、共有等は利用者が操作した場合に実行されます。"],
@@ -27,9 +27,9 @@ function gateMarkup() {
     <section class="desktop-first-use__panel" role="dialog" aria-modal="true" aria-labelledby="desktop-first-use-title" tabindex="-1">
       <header class="desktop-first-use__header">
         <span class="desktop-first-use__brand" aria-hidden="true">R</span>
-        <div><p>RUNLOAD</p><h2 id="desktop-first-use-title">利用を開始する前に</h2></div>
+        <div><p>走行記録</p><h2 id="desktop-first-use-title">利用を開始する前に</h2></div>
       </header>
-      <p class="desktop-first-use__lead">利用規約とデータの扱いを確認し、同意してからPC版を利用してください。</p>
+      <p class="desktop-first-use__lead">利用規約とデータの扱いを確認し、同意してから利用してください。</p>
       <div class="desktop-first-use__summary" aria-label="重要事項">
         <article><small>PURPOSE</small><strong>記録と振り返り</strong><span>走行・休養・身体の記録を自己理解と自己判断の材料として整理します。</span></article>
         <article><small>BOUNDARY</small><strong>医療判断ではありません</strong><span>診断、走行可否、受診要否、治療・運動処方は行いません。</span></article>

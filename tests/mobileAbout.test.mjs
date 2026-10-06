@@ -12,7 +12,7 @@ const escapedVersion = currentVersion.replaceAll(".", "\\.");
 const about = renderAboutScreen();
 assert.match(about, /このアプリについて/);
 assert.match(about, /OpenStreetMap contributors/);
-assert.match(about, /GitHub/);
+assert.doesNotMatch(about, /GitHub/);
 assert.match(about, new RegExp(`v${escapedVersion}`));
 
 const css = read("../styles/mobile-about.css");

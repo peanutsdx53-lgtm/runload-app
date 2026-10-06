@@ -47,7 +47,7 @@ await test('SETTINGS-SCREEN-EXPOSES-SMARTPHONE-NOTIFICATION-TOGGLES', async () =
   assert.ok(settingsScreen.includes('name="measurementVibrationEnabled"'));
   assert.ok(settingsScreen.includes('通知音を試す'));
   assert.ok(settingsScreen.includes('振動を試す'));
-  assert.ok(settingsScreen.includes('iPhoneなど振動APIに対応していない環境'));
+  assert.ok(settingsScreen.includes('iPhoneなど振動に対応していない環境'));
   assert.ok(!settingsScreen.includes('matchesMobileLayout'));
 });
 

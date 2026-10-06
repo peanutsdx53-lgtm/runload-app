@@ -25,7 +25,7 @@ function test(id, fn) {
 test('MEASUREMENT-IS-SMARTPHONE-SPECIFIC', () => {
   assert.ok(!sharedRegistry.includes('run-measurement'));
   assert.ok(desktopRegistry.includes('"run-measurement": renderRunMeasurementScreen'));
-  assert.ok(desktopFallback.includes('ランニング測定はスマホ版の機能です'));
+  assert.ok(desktopFallback.includes('この端末では測定を利用できません'));
   assert.ok(!desktopFallback.includes('data-measurement-active'));
   assert.ok(mobileRegistry.includes('"run-measurement": renderRunMeasurementScreen'));
   assert.ok(!screen.includes('matchesMobileLayout'));

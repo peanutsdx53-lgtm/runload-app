@@ -156,7 +156,7 @@ function activityLabel(activityId) {
 function savePanelMarkup(activityId) {
   return `<section class="mobile-extension-save" data-mobile-extension-save>
     <div><small>活動記録</small><strong>${activityLabel(activityId)}を保存</strong></div>
-    <p>スマホ版の活動記録として保存します。</p>
+    <p>活動記録として保存します。</p>
     <button type="button" data-mobile-extension-save-button>この記録を保存</button>
     <a href="#/home" data-mobile-extension-home-link hidden>ホームへ戻る</a>
     <span data-mobile-extension-save-status role="status" aria-live="polite"></span>

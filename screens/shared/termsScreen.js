@@ -9,7 +9,7 @@ export function renderTermsScreen({ context } = {}) {
       <section class="head"><p class="eyebrow">利用規約</p><h1>利用規約</h1><p>このアプリを利用する際の基本事項です。</p></section>
       <div class="terms-meta"><span>第1版</span><span>2026年9月30日</span></div>
 
-      <section class="terms-section"><h2>1. 本アプリについて</h2><p>RunLoadは、走行・休養・コース・身体の記録を整理し、自分の記録を振り返るためのアプリです。</p></section>
+      <section class="terms-section"><h2>1. 本アプリについて</h2><p>このアプリは、走行・休養・コース・身体の記録を整理し、自分の記録を振り返るためのアプリです。</p></section>
       <section class="terms-section"><h2>2. 医療・安全に関する位置づけ</h2><p>本アプリは、診断、原因の特定、危険度・傷害確率の判定、走行可否、受診要否、治療・運動処方を行いません。緊急時や体調に不安がある場合は、本アプリの表示だけで判断せず、公的な相談先や医療機関を利用してください。</p></section>
       <section class="terms-section"><h2>3. 記録と計算結果</h2><p>入力内容やGPS等から得た情報に基づき、記録・比較用の表示を作成します。表示値は実際の筋力、関節力、組織負荷等を直接測定した値ではありません。入力内容や利用環境により、記録や表示に差が生じる場合があります。</p></section>
       <section class="terms-section"><h2>4. データの扱い</h2><p>アプリ内の記録は端末内保存を基本とします。GPSは測定時に端末の許可を得て取得します。地図表示ではOpenStreetMapの地図画像を取得します。バックアップ、外部サイト、電話、共有等は利用者が操作した場合に実行されます。</p><p><a href="#/privacy?returnTo=%23%2Fterms">詳しいデータの扱いを確認</a></p></section>

@@ -34,6 +34,6 @@ test("mobile and desktop presentation remain file-level isolated", () => {
   assert.match(mobileShell, /renderPrimaryNavigation|mobile-topbar/);
   assert.match(desktopShell, /renderPrimaryNavigation/);
   assert.doesNotMatch(desktopShell, /mobile-topbar/);
-  assert.match(sharedShell, /<nav class="primary-navigation" aria-label="主要画面">/);
+  assert.match(sharedShell, /<nav class="primary-navigation" aria-label="主な機能">/);
   assert.match(desktopShell, /app-header--desktop|pc-global-back/);
 });

@@ -34,14 +34,14 @@ const html = renderBodyTimelineScreen({
   services: { workflows: { records: { loadAllExperiences: () => experiences } } },
   context: { parameters: new URLSearchParams("recordId=r2") },
 });
-assert.match(html, /BODY TIMELINE/);
+assert.match(html, /身体の推移/);
 assert.match(html, /data-current="true"/);
 assert.equal((html.match(/data-body-timeline-card/g) || []).length, 3);
 assert.match(html, /data-direction="above"/);
 assert.match(html, /data-direction="below"/);
 
 const resultSource = fs.readFileSync(new URL("../screens/mobile/resultScreen.js", import.meta.url), "utf8");
-assert.match(resultSource, /RUN FINGERPRINT/);
+assert.match(resultSource, /記録の形/);
 assert.match(resultSource, /#\/body-timeline\?recordId=/);
 assert.match(resultSource, /#\/run-route\?recordId=.*replay=1/);
 assert.match(resultSource, /if \(record\.activityType !== "run"\) return ""/);

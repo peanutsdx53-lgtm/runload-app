@@ -85,7 +85,7 @@ test('FULL-ANCHOR-DETAILS-AND-RIGHTS-ARE-IN-ABOUT-DETAILS', () => {
   assert.ok(moduleText.includes('aboutBody.append(createReferenceGuide())'));
   assert.ok(moduleText.includes('aboutBody.append(createRightsNote())'));
   assert.ok(moduleText.includes('正式な尺度配置'));
-  assert.ok(moduleText.includes('責任著者への確認に基づき原版ROFと同じ配置'));
+  assert.ok(moduleText.includes('責任著者への確認に基づき原版の疲労感尺度と同じ配置'));
   assert.ok(moduleText.includes('出典・ライセンス'));
 });
 
@@ -135,7 +135,7 @@ test('ATTRIBUTION-AND-LICENSE-ARE-EXPLICIT-BUT-NOT-PRIMARY-INPUT-CONTENT', () =>
   assert.ok(moduleText.includes('creativecommons.org/licenses/by-nc-nd/4.0/'));
   assert.ok(moduleText.includes('日本語表現は改変せず'));
   assert.ok(moduleText.includes('図自体は変更していません'));
-  assert.ok(moduleText.includes('ROF-J：Suzuki'));
+  assert.ok(moduleText.includes('疲労感尺度の日本語資料：Suzuki'));
   assert.ok(!moduleText.includes('heading.innerHTML = "<small>ROF-J'));
 });
 

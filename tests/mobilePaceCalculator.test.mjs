@@ -66,7 +66,7 @@ await test('PACE-TOOL-CALCULATES-LOCALLY-WITHOUT-STORAGE-OR-NETWORK', () => {
 await test('PACE-TOOL-SCREEN-HAS-PRESETS-AND-RESEARCH-BOUNDARY', () => {
   const screen = read('screens/mobile/paceCalculatorScreen.js');
   for (const value of ['3', '5', '10', '21.0975']) assert.ok(screen.includes(`data-pace-distance="${value}"`));
-  assert.ok(screen.includes('記録や研究計算には自動反映しません。'));
+  assert.ok(screen.includes('記録には自動反映しません。'));
 });
 
 await test('PACE-TOOL-MOBILE-STYLES-AND-PWA-ASSETS-ARE-REGISTERED', () => {

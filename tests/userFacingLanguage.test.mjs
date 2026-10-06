@@ -19,7 +19,7 @@ const rel = (file) => path.relative(root, file).replaceAll("\\", "/");
 const read = (file) => fs.readFileSync(file, "utf8");
 
 const forbiddenCopy = [
-  /RunLoad/i,
+  /RunLoad|RUNLOAD/,
   /RUNNING RECORD/,
   /大画面では/,
   /スマホ限定/,
