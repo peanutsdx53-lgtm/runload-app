@@ -1469,10 +1469,4 @@
     max-height: none !important;
     overflow: auto !important;
   }
-
-  .screen--consultation.screen-layout--consultation[data-share-prep]
-    .share-document-stage.is-expanded
-    .share-sheet-page {
-    display: block !important;
-  }
 }

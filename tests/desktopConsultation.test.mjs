@@ -34,7 +34,7 @@ assert.match(unified,/share-input-stack[\s\S]*grid-area: inputs !important/);
 assert.match(unified,/share-document-step[\s\S]*position: sticky !important/);
 assert.match(unified,/share-document-stage:not\(\.is-expanded\)[\s\S]*max-height: 30rem !important[\s\S]*overflow: auto !important/);
 assert.match(unified,/share-document-stage:not\(\.is-expanded\)[\s\S]*share-sheet-page ~ \.share-sheet-page[\s\S]*display: none !important/);
-assert.match(unified,/share-document-stage\.is-expanded[\s\S]*share-sheet-page[\s\S]*display: block !important/);
+assert.doesNotMatch(unified,/share-document-stage\.is-expanded[\s\S]{0,220}share-sheet-page[\s\S]{0,120}display: block !important/);
 assert.match(unified,/share-sheet-head h1[\s\S]*white-space: normal !important/);
 assert.match(unified,/share-sheet-head dl[\s\S]*width: 100% !important/);
 assert.match(shareCss,/@media print/);
