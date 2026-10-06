@@ -171,3 +171,120 @@
     transition: none !important;
   }
 }
+
+/* PC workflow modals: consultation and condition comparison are derived workspaces,
+ * like the Plan screen, not primary pages. These selectors intentionally outrank
+ * the older page-layout overrides in desktop-unification.css. */
+@media (min-width: 55rem) {
+  html body.secondary-derived-open:has(.screen--consultation.screen-layout--consultation.secondary-derived-screen),
+  html body:has(.screen--simulation.screen-layout--simulation.condition-compare) {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body.secondary-derived-open:has(.screen--consultation.screen-layout--consultation.secondary-derived-screen) #app,
+  html body.secondary-derived-open:has(.screen--consultation.screen-layout--consultation.secondary-derived-screen) #app > .app-shell:not(.app-shell--immersive),
+  html body.secondary-derived-open:has(.screen--consultation.screen-layout--consultation.secondary-derived-screen) #app > .app-shell:not(.app-shell--immersive) > .app-main,
+  html body:has(.screen--simulation.screen-layout--simulation.condition-compare) #app,
+  html body:has(.screen--simulation.screen-layout--simulation.condition-compare) #app > .app-shell:not(.app-shell--immersive),
+  html body:has(.screen--simulation.screen-layout--simulation.condition-compare) #app > .app-shell:not(.app-shell--immersive) > .app-main {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  html body.secondary-derived-open:has(.screen--consultation.screen-layout--consultation.secondary-derived-screen)::before,
+  html body:has(.screen--simulation.screen-layout--simulation.condition-compare)::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 69;
+    display: block !important;
+    pointer-events: none;
+    background: color-mix(in srgb, var(--color-ink) 54%, transparent) !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+  }
+
+  html body.secondary-derived-open .screen--consultation.screen-layout--consultation.secondary-derived-screen {
+    position: fixed !important;
+    top: 5.85rem !important;
+    right: auto !important;
+    bottom: 1.25rem !important;
+    left: 50% !important;
+    z-index: 70 !important;
+    width: min(86rem, calc(100vw - 2rem)) !important;
+    max-width: 86rem !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    transform: translateX(-50%) !important;
+    animation: none !important;
+    border: 2px solid var(--color-line) !important;
+    border-radius: 1.35rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-dialog, 0 1.4rem 3.5rem rgba(20, 36, 48, .22)) !important;
+  }
+
+  html body.secondary-derived-open .screen--consultation.screen-layout--consultation.secondary-derived-screen:not([data-share-prep]) {
+    width: min(74rem, calc(100vw - 2rem)) !important;
+    max-width: 74rem !important;
+  }
+
+  html body.secondary-derived-open .screen--consultation.screen-layout--consultation.secondary-derived-screen > .secondary-derived-head {
+    display: none !important;
+  }
+
+  html body.secondary-derived-open .screen--consultation.screen-layout--consultation.secondary-derived-screen > .secondary-derived-body {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 1rem 1.15rem 1.25rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable !important;
+    background: var(--color-surface) !important;
+  }
+
+  html body.secondary-derived-open .screen--consultation.screen-layout--consultation.secondary-derived-screen:not([data-share-prep]) > .secondary-derived-body {
+    display: grid !important;
+    align-content: start !important;
+  }
+
+  html body:has(.screen--simulation.screen-layout--simulation.condition-compare) .screen--simulation.screen-layout--simulation.condition-compare {
+    position: fixed !important;
+    top: 5.85rem !important;
+    right: auto !important;
+    bottom: 1.25rem !important;
+    left: 50% !important;
+    z-index: 70 !important;
+    width: min(86rem, calc(100vw - 2rem)) !important;
+    max-width: 86rem !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 1rem 1.15rem 1.25rem !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable !important;
+    transform: translateX(-50%) !important;
+    animation: none !important;
+    border: 2px solid var(--color-line) !important;
+    border-radius: 1.35rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-dialog, 0 1.4rem 3.5rem rgba(20, 36, 48, .22)) !important;
+  }
+
+  html body:has(.screen--simulation.screen-layout--simulation.condition-compare) .screen--simulation.screen-layout--simulation.condition-compare > .back-link,
+  html body:has(.screen--simulation.screen-layout--simulation.condition-compare) .screen--simulation.screen-layout--simulation.condition-compare > .condition-compare-hero {
+    display: none !important;
+  }
+}
