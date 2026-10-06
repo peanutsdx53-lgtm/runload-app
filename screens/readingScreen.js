@@ -168,13 +168,13 @@ const READING_ITEMS = Object.freeze([
 const READING_COPY = Object.freeze({
   "regional-three-views": Object.freeze({
     category: "結果の見方",
-    title: "12部位の目安は「その部位の100」と比べる",
-    summary: "12部位の数字は、部位どうしの順位ではありません。それぞれの部位で、自分自身の基準100からどれくらい変わったかを見ます。",
+    title: "12部位の数字は「その部位の100」で見る",
+    summary: "12部位の数字は、**部位どうしの順位ではありません**。見るのは、__その部位自身の基準100からどれくらい変わったか__です。",
     body: Object.freeze([
-      "結果画面では、12部位それぞれに基準100があります。たとえば膝の表示が128なら、その部位では基準100より28ポイント上という読み方です。腕の128と膝の128を比べて、どちらの負担が大きいと考えるものではありません。",
-      "同じ日に走っても、坂、ペース、歩数、路面などの条件によって、部位ごとの数字の動き方は変わります。まず数字だけを見るのではなく、その日にどんな条件で走ったかも一緒に思い出すと、結果を読みやすくなります。",
-      "距離は『何km走ったか』という別の記録です。距離が長いほど12部位の数字がそのまま大きくなる、という仕組みではありません。結果の数字と距離は、それぞれ別の情報として確認します。",
-      "履歴を見るときも同じです。最初に同じ部位の100との差を見て、そのあと前回の同じ部位、その日の距離やコース条件へ進むと、数字だけに引っぱられずに振り返れます。",
+      "たとえば膝が128なら、**膝の基準100より28ポイント上**という意味です。腕も128だからといって、腕と膝の負担が同じ、という読み方はしません。",
+      "数字が動く背景には、坂・ペース・歩数・路面など、その日の条件があります。__数字だけで結論を出さず__、まずは『どんな条件で走った日だったか』を一緒に見てみます。",
+      "距離は『何km走ったか』という別の記録です。**距離が長いほど12部位の数字がそのまま大きくなる仕組みではありません。**",
+      "履歴では、まず**同じ部位の100との差**を見ます。そのあと前回の同じ部位や、その日の距離・コースを見ていくと、変化を追いやすくなります。",
     ]),
   }),
   "history-compatible": Object.freeze({
@@ -267,6 +267,21 @@ const READING_COPY = Object.freeze({
   }),
 });
 
+function readingTitleMarkup(text = "") {
+  return escapeHtml(String(text || "")).replace(/「([^」]+)」/g, '<span class="reading-title-keep">「$1」</span>');
+}
+
+function readingRichText(text = "") {
+  const escaped = escapeHtml(String(text || ""));
+  return escaped
+    .replace(/\*\*([^*]+)\*\*/g, '<strong class="reading-emphasis">$1</strong>')
+    .replace(/__([^_]+)__/g, '<span class="reading-emphasis reading-emphasis--underline">$1</span>');
+}
+
+function readingPlainText(text = "") {
+  return String(text || "").replace(/\*\*|__/g, "");
+}
+
 function readingArticleCopy(article = {}) {
   const override = READING_COPY[article.id] || {};
   return Object.freeze({
@@ -280,8 +295,8 @@ function readingArticleCopy(article = {}) {
 
 function readingMinutes(copy = {}) {
   const text = [
-    copy.summary || "",
-    ...(copy.body || []),
+    readingPlainText(copy.summary || ""),
+    ...(copy.body || []).map(readingPlainText),
   ].join("");
   return Math.max(1, Math.ceil(text.length / 240));
 }
@@ -290,15 +305,15 @@ function readingSearchText(article = {}, copy = {}) {
   return [
     copy.category,
     copy.title,
-    copy.summary,
-    ...(copy.body || []),
+    readingPlainText(copy.summary),
+    ...(copy.body || []).map(readingPlainText),
     ...(article.tags || []),
   ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
 }
 
 function renderReadingSources(sources = []) {
   if (!sources.length) return "";
-  return `<section class="reading-sources"><div class="reading-section-head"><small>参考にした情報</small><h3>出典元</h3></div><div class="reading-source-list">${sources.map((source) => {
+  return `<section class="reading-sources"><div class="reading-section-head"><h3>出典元</h3></div><div class="reading-source-list">${sources.map((source) => {
     const organization = source.organization || source.sourceTypeLabel || "参考資料";
     const meta = [organization, source.year].filter(Boolean).join("・");
     const body = `<span><strong>${escapeHtml(source.title || organization)}</strong><small>${escapeHtml(meta)}</small></span>${source.url ? '<b aria-hidden="true">↗</b>' : ""}`;
@@ -332,7 +347,7 @@ function renderReadingArticle(article, filter, isFeatured = false, context = nul
   const copy = readingArticleCopy(article);
   const minutes = readingMinutes(copy);
   return `<article class="article-card" data-reading-card data-cat="${escapeHtml(filter)}" data-reading-search="${escapeHtml(readingSearchText(article, copy))}">
-    <div class="article-card__copy"><small>${escapeHtml(copy.category)}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(copy.summary)}</p></div>
+    <div class="article-card__copy"><small>${escapeHtml(copy.category)}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(readingPlainText(copy.summary))}</p></div>
     <div class="article-card__meta"><span>約${minutes}分</span>${isFeatured ? '<span class="article-card__recommended">おすすめ</span>' : ""}</div>
     <a class="article-card__open" href="${escapeHtml(readingArticleHref(article.id, context))}"><span>読む</span><b aria-hidden="true">→</b></a>
   </article>`;
@@ -359,17 +374,15 @@ function articleBackTarget(context) {
 
 function renderReadingArticleView(article, items, context) {
   const copy = readingArticleCopy(article);
-  const minutes = readingMinutes(copy);
   const related = relatedReadingItems(article, items);
   const back = articleBackTarget(context);
-  return `<div class="screen screen--reading-article screen-layout screen-layout--reading-article secondary-derived-screen" data-reading-article-screen>
-    <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(back.href)}">← ${escapeHtml(back.label)}</a><strong>読みもの</strong><span aria-hidden="true"></span></header>
+  return `<div class="screen screen--reading-article screen-layout screen-layout--reading-article" data-reading-article-screen>
     <main class="reading-article-page">
       <article class="reading-detail reading-detail--page">
         <div class="reading-detail__content">
-          <header class="reading-article-head"><div class="reading-detail__meta"><span>${escapeHtml(copy.category)}</span><span>約${minutes}分</span></div><h1>${escapeHtml(copy.title)}</h1></header>
-          <section class="reading-summary"><div class="reading-section-head"><small>まず知っておきたいこと</small><h2>要約</h2></div><p>${escapeHtml(copy.summary)}</p></section>
-          <section class="reading-body"><div class="reading-section-head"><small>もう少し詳しく</small><h2>本文</h2></div><div class="body-copy">${copy.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div></section>
+          <header class="reading-article-head"><h1>${readingTitleMarkup(copy.title)}</h1></header>
+          <section class="reading-summary" aria-labelledby="reading-summary-title"><h2 id="reading-summary-title">要約</h2><p>${readingRichText(copy.summary)}</p></section>
+          <section class="reading-body" aria-labelledby="reading-body-title"><h2 id="reading-body-title">本文</h2><div class="body-copy">${copy.body.map((paragraph) => `<p>${readingRichText(paragraph)}</p>`).join("")}</div></section>
           ${renderReadingSources(copy.sources)}
           ${related.length ? `<section class="reading-related"><div class="reading-related__head"><strong>続けて読む</strong><small>関連する記事</small></div><div class="reading-related__grid">${related.map((item) => {
             const relatedCopy = readingArticleCopy(item.article);
@@ -381,6 +394,7 @@ function renderReadingArticleView(article, items, context) {
     </main>
   </div>`;
 }
+
 
 export function renderReadingContent({ services, context, deferredArticleIds }) {
   const available = new Map(visibleArticles(services.column.list()).map((article) => [article.id, article]));

@@ -14,9 +14,10 @@ await test('READING-USES-KNOWLEDGE-FIRST-ARTICLE-STRUCTURE',()=>{
   assert.ok(source.includes('const READING_COPY = Object.freeze('));
   assert.ok(source.includes('ランニングを知る、記録を理解する'));
   assert.ok(source.includes('短い記事でまとめています'));
-  assert.ok(source.includes('まず知っておきたいこと'));
-  assert.ok(source.includes('<h2>要約</h2>'));
-  assert.ok(source.includes('<h2>本文</h2>'));
+  assert.ok(!source.includes('まず知っておきたいこと'));
+  assert.ok(!source.includes('もう少し詳しく'));
+  assert.ok(source.includes('<h2 id="reading-summary-title">要約</h2>'));
+  assert.ok(source.includes('<h2 id="reading-body-title">本文</h2>'));
   assert.ok(source.includes('<h3>出典元</h3>'));
   assert.ok(source.includes('renderReadingSources(copy.sources)'));
   assert.ok(source.includes('続けて読む'));
@@ -49,7 +50,7 @@ await test('READING-FILTER-HIDDEN-STATE-CANNOT-BE-OVERRIDDEN',()=>{
 await test('READING-COPY-USES-PLAIN-LANGUAGE',()=>{
   const source=read('screens/readingScreen.js');
   for(const phrase of [
-    '12部位の目安は「その部位の100」と比べる',
+    '12部位の数字は「その部位の100」で見る',
     '履歴は、比べられる記録だけをつなぐ',
     '予定と実際は、分けて残す',
     '暑い日は、気温だけを見ない',
@@ -86,23 +87,32 @@ await test('READING-ARTICLE-USES-DEDICATED-ROUTE-VIEW',()=>{
   assert.ok(source.includes('const requestedArticleId = publicArticleId(context.parameters.get("articleId") || "");'));
   assert.ok(source.includes('return renderReadingArticleView(article, items, context);'));
   assert.ok(source.includes('screen--reading-article'));
+  assert.ok(!source.includes('screen--reading-article screen-layout screen-layout--reading-article secondary-derived-screen'));
   assert.ok(source.includes('readingArticleHref(article.id, context)'));
   assert.ok(!source.includes('data-reading-drawer'));
   assert.ok(!source.includes('data-reading-close'));
   assert.ok(!interactions.includes('openArticle'));
   assert.ok(!interactions.includes('data-reading-drawer'));
+  const app=read('app.js');
+  assert.ok(app.includes('const readingArticleOpen = screenName === "reading"'));
+  assert.ok(app.includes('&& !readingArticleOpen'));
   assert.ok(mobile.includes('.screen-layout--reading-article .reading-article-page'));
   assert.ok(desktop.includes('.screen--reading-article.screen-layout--reading-article .reading-detail__content'));
+  assert.ok(desktop.includes('width:min(100%,64rem)'));
+  assert.ok(desktop.includes('padding:3rem 2.5rem 3.5rem'));
 });
 
 await test('READING-ARTICLE-KEEPS-KNOWLEDGE-SECTIONS-AND-SOURCES',()=>{
   const source=read('screens/readingScreen.js');
-  assert.ok(source.includes('<h2>要約</h2>'));
-  assert.ok(source.includes('<h2>本文</h2>'));
+  assert.ok(source.includes('<h2 id="reading-summary-title">要約</h2>'));
+  assert.ok(source.includes('<h2 id="reading-body-title">本文</h2>'));
   assert.ok(source.includes('<h3>出典元</h3>'));
   assert.ok(source.includes('renderReadingSources(copy.sources)'));
   assert.ok(source.includes('続けて読む'));
   assert.ok(source.includes('読みものへ戻る'));
+  assert.ok(!source.includes('参考にした情報'));
+  assert.ok(source.includes('readingRichText(copy.summary)'));
+  assert.ok(source.includes('reading-emphasis--underline'));
   const architecture=read('ui/screenArchitecture.js');
   assert.ok(architecture.includes('if (articleId) return { title: "読みもの", backHref: "#/reading", backLabel: "読みもの" };'));
 });
