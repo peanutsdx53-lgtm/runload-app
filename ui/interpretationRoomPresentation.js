@@ -535,16 +535,16 @@ function renderInterpretationContextContextFirst(output = {}, selfUnderstanding 
   </div>`;
 }
 
-function renderInterpretationFlowFirst(output = {}, selfUnderstanding = null, { compact = false } = {}) {
+function renderInterpretationFlowFirst(output = {}, selfUnderstanding = null, { compact = false, recommendationHistory = [] } = {}) {
   const candidate = selfUnderstanding?.primaryCandidate || null;
   if (!candidate || candidate.kind !== "BODY_OBSERVATION_PAIR") {
-    const contextCandidate = buildInterpretationContextCandidate(output);
+    const contextCandidate = buildInterpretationContextCandidate(output, { recommendationHistory });
     return contextCandidate ? renderInterpretationContextContextFirst(output, selfUnderstanding, contextCandidate, { compact }) : renderInterpretationFlowEmpty(output, selfUnderstanding, { compact });
   }
   const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
   const meta = interpretationFlowCandidateMeta(candidate);
   const materials = renderMaterialRows(output, selfUnderstanding);
-  const reference = selectInterpretationReferenceKnowledge(output, { bodyPair: true });
+  const reference = selectInterpretationReferenceKnowledge(output, { bodyPair: true, recommendationHistory });
   return `<div class="interpretation-room interpretation-flow-room interpretation-context-room ${compact ? "interpretation-flow-room--compact" : "interpretation-flow-room--wide"}" data-interpretation-room-state="interpretation-context-first" data-interpretation-flow-stage="focus">
     <header class="interpretation-flow-head"><div><small>${escapeHtml(date)}</small><h1>今回の自分を見ていく</h1><p>自分の体験を中心に、部位ごとの表示と参考情報を必要な順に確認します。</p></div>${renderInterpretationFlowStageGuide()}</header>
     <div class="interpretation-flow-layout"><main class="interpretation-flow-canvas"><div class="interpretation-flow-canvas-kicker" data-interpretation-flow-title-focus><small>今回、まず見るところ</small><h2>${escapeHtml(meta.observationLabel)}</h2><p>最初は自分で記録した内容だけを見ます。</p></div><div class="interpretation-flow-canvas-kicker" data-interpretation-flow-title-compare><small>考える材料を追加</small><h2>${escapeHtml(meta.observationLabel)}について別の情報も確認できます</h2><p>自分の感覚を中心に、別の情報を補助材料として並べます。</p></div>${renderInterpretationFlowBodyPair(candidate)}${renderInterpretationContextReferenceKnowledge(reference, output)}${materials.length ? `<details class="interpretation-flow-more-materials interpretation-context-secondary-materials" data-interpretation-flow-reveal="compare"><summary>補足の材料を見る <b>${materials.length}</b></summary>${renderInterpretationMaterialPanel(output, selfUnderstanding)}</details>` : ""}</main>${renderInterpretationFlowFirstRail(candidate)}</div>
@@ -579,16 +579,16 @@ function renderInterpretationFlowActiveRail(thread = {}) {
   </aside>`;
 }
 
-function renderInterpretationFlowActive(output = {}, selfUnderstanding = null, { compact = false } = {}) {
+function renderInterpretationFlowActive(output = {}, selfUnderstanding = null, { compact = false, recommendationHistory = [] } = {}) {
   const thread = selfUnderstanding?.activeThread || null;
-  if (!thread) return renderInterpretationFlowFirst(output, selfUnderstanding, { compact });
+  if (!thread) return renderInterpretationFlowFirst(output, selfUnderstanding, { compact, recommendationHistory });
   const date = output?.target?.date ? formatLocalDate(output.target.date) : "今回";
   const current = activeEpisodeForTarget(thread, output);
   const previous = [thread.sourceEpisode, ...(thread.eligibleEpisodes || [])].filter(Boolean).filter((episode) => String(episode.recordId || "") !== String(current?.recordId || ""));
   const isContextQuestion = thread.type === "CONTEXT_QUESTION";
   const reference = isContextQuestion
     ? getInterpretationReferenceKnowledgeById(thread.subject?.articleId || "")
-    : selectInterpretationReferenceKnowledge(output, { bodyPair: thread.type === "REGION_OBSERVATION_PAIR" });
+    : selectInterpretationReferenceKnowledge(output, { bodyPair: thread.type === "REGION_OBSERVATION_PAIR", recommendationHistory });
   const historyLabel = isContextQuestion ? "これまで確認した走行" : "比較できる記録";
   return `<div class="interpretation-room interpretation-flow-room interpretation-context-room ${compact ? "interpretation-flow-room--compact" : "interpretation-flow-room--wide"}" data-interpretation-room-state="interpretation-context-active" data-interpretation-flow-stage="focus">
     <header class="interpretation-flow-head"><div><small>${escapeHtml(date)}</small><h1>前回から見ていたこと</h1><p>${escapeHtml(thread.title || compactThreadTitle(thread))}</p></div>${renderInterpretationFlowStageGuide()}</header>
@@ -613,14 +613,14 @@ function renderInterpretationLoopDetails(output = {}, { compact = false } = {}) 
   return `<details class="interpretation-flow-technical-more interpretation-loop-more${compact ? " interpretation-loop-more--compact" : ""}"><summary>計算・条件・根拠を詳しく見る</summary><div>${detail}</div></details>`;
 }
 
-function renderCompactInterpretationLoop(output = {}, selfUnderstanding = null) {
-  if (selfUnderstanding?.activeThread) return renderInterpretationFlowActive(output, selfUnderstanding, { compact: true });
-  return renderInterpretationFlowFirst(output, selfUnderstanding, { compact: true });
+function renderCompactInterpretationLoop(output = {}, selfUnderstanding = null, recommendationHistory = []) {
+  if (selfUnderstanding?.activeThread) return renderInterpretationFlowActive(output, selfUnderstanding, { compact: true, recommendationHistory });
+  return renderInterpretationFlowFirst(output, selfUnderstanding, { compact: true, recommendationHistory });
 }
 
-function renderWideInterpretationLoop(output = {}, selfUnderstanding = null) {
-  if (selfUnderstanding?.activeThread) return renderInterpretationFlowActive(output, selfUnderstanding, { compact: false });
-  return renderInterpretationFlowFirst(output, selfUnderstanding, { compact: false });
+function renderWideInterpretationLoop(output = {}, selfUnderstanding = null, recommendationHistory = []) {
+  if (selfUnderstanding?.activeThread) return renderInterpretationFlowActive(output, selfUnderstanding, { compact: false, recommendationHistory });
+  return renderInterpretationFlowFirst(output, selfUnderstanding, { compact: false, recommendationHistory });
 }
 
 function publicConstructText(value = "") {
@@ -653,13 +653,13 @@ function renderAdvanced(output, region) {
   const sources = Array.isArray(evidence.sources) ? evidence.sources : [];
   return `${renderCalculationDetails(region)}<details class="interpretation-room-advanced"><summary>計算の考え方と根拠を詳しく見る</summary><div>${evidence.construct ? `<p><strong>この数値が表す内容</strong><br>${escapeHtml(publicConstructText(evidence.construct))}</p>` : ""}${sources.length ? `<p><strong>この計算の背景資料</strong></p><ul>${sources.map((source) => `<li>${escapeHtml(source.label || "参考資料")}${source.role ? ` — ${escapeHtml(publicSourceRoleText(source.role))}` : ""}</li>`).join("")}</ul>` : ""}<p class="interpretation-room-boundary-line">ここでは、選択した部位の計算に関係する情報を確認できます。</p></div></details>`;
 }
-export function renderInterpretationRoom({ output, selfUnderstanding = null, savedInterpretation = null, interpretationFocus = "", compactLayout = false } = {}) {
+export function renderInterpretationRoom({ output, selfUnderstanding = null, savedInterpretation = null, interpretationFocus = "", compactLayout = false, recommendationHistory = [] } = {}) {
   if (!output?.state?.targetAvailable) {
     return `<div class="interpretation-room interpretation-room--empty" data-interpretation-room-state="empty"><header class="interpretation-room-hero"><p>結果を整理する</p><h1>対象の保存記録がありません</h1></header><a class="interpretation-room-action interpretation-room-action--primary" href="#/record-input"><span class="interpretation-room-action__icon">${interpretationIcon("record")}</span><span class="interpretation-room-action__copy"><strong>記録を始める</strong></span><i aria-hidden="true">›</i></a></div>`;
   }
   if (output?.state?.support && output.state.support !== "NORMAL") return renderSupportPriority(output);
   if (output?.state?.regional === "REST") return renderRest(output);
 
-  if (!compactLayout) return renderWideInterpretationLoop(output, selfUnderstanding, savedInterpretation, interpretationFocus);
-  return renderCompactInterpretationLoop(output, selfUnderstanding, savedInterpretation, interpretationFocus);
+  if (!compactLayout) return renderWideInterpretationLoop(output, selfUnderstanding, recommendationHistory);
+  return renderCompactInterpretationLoop(output, selfUnderstanding, recommendationHistory);
 }

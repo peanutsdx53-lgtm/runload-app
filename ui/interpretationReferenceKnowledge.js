@@ -1,6 +1,10 @@
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { findReadingArticleById } from "../core/appCore.js";
 
+const RECENT_HISTORY_WINDOW = 6;
+const RECENCY_PENALTY_BY_POSITION = Object.freeze([28, 18, 10, 6, 3, 1]);
+const REPEAT_COUNT_PENALTY = 7;
+const UNSEEN_BONUS = 8;
 
 export function normalizeInterpretationConditionId(value = "") {
   const raw = String(value || "").trim();
@@ -24,8 +28,8 @@ function articleById(id = "") {
   return article;
 }
 
-export function getInterpretationReferenceKnowledgeById(id = "", matchReason = "確認中の問いに関連する一般情報です") {
-  const article = articleById(id);
+function referenceFromCandidate(candidate = null, selectionScore = null) {
+  const article = candidate ? articleById(candidate.id) : null;
   if (!article) return null;
   return Object.freeze({
     id: article.id,
@@ -35,9 +39,16 @@ export function getInterpretationReferenceKnowledgeById(id = "", matchReason = "
     caution: article.caution,
     sourceCount: Array.isArray(article.sources) ? article.sources.length : 0,
     sourceKinds: Object.freeze([...(article.sources || []).map((source) => source.sourceTypeLabel || source.sourceType || "参考資料")]),
-    matchReason,
+    matchReason: candidate.matchReason,
+    signalKey: candidate.signalKey,
+    baseScore: candidate.baseScore,
+    selectionScore: finite(selectionScore) ? Number(selectionScore) : candidate.baseScore,
     evidenceGovernance: article.evidenceGovernance || null,
   });
+}
+
+export function getInterpretationReferenceKnowledgeById(id = "", matchReason = "確認中の問いに関連する一般情報です") {
+  return referenceFromCandidate({ id, matchReason, signalKey: "saved-thread", baseScore: 0 }, 0);
 }
 
 function conditionIds(output = {}) {
@@ -62,63 +73,95 @@ function environmentContext(output = {}) {
   return Object.freeze({ temperatureC, environmentNote, available: temperatureC != null || Boolean(environmentNote) });
 }
 
-export function selectInterpretationReferenceKnowledge(output = {}, { bodyPair = false } = {}) {
+function supportRoute(output = {}) {
+  return String(output?.safety?.route || output?.state?.support || "normal").toLowerCase();
+}
+
+function addCandidate(map, candidate) {
+  if (!candidate?.id || !articleById(candidate.id)) return;
+  const existing = map.get(candidate.id);
+  if (!existing || Number(candidate.baseScore) > Number(existing.baseScore)) {
+    map.set(candidate.id, Object.freeze({ ...candidate }));
+  }
+}
+
+export function buildInterpretationReferenceCandidates(output = {}, { bodyPair = false } = {}) {
+  if (["urgent", "consult"].includes(supportRoute(output))) return Object.freeze([]);
+
   const ids = conditionIds(output);
   const uniqueIds = [...new Set(ids.filter((id) => ["distance", "duration", "pace", "grade", "surface", "cadence", "course", "running-format"].includes(id)))];
   const environment = environmentContext(output);
-  const supportRoute = String(output?.safety?.route || output?.state?.support || "normal").toLowerCase();
-  let articleId = "";
-  let matchReason = "";
-
-  // Safety and consultation routes are handled by the dedicated support layer.
-  // General reading must not compete with that action.
-  if (["urgent", "consult"].includes(supportRoute)) return null;
+  const candidates = new Map();
+  let order = 0;
+  const add = (id, baseScore, matchReason, signalKey) => addCandidate(candidates, { id, baseScore, matchReason, signalKey, order: order++ });
 
   if (bodyPair) {
-    articleId = "regional-six-eight-28";
-    matchReason = "自分の身体記録と12部位の参考表示を別の情報として確認するため";
-  } else if (hasSubjective(output)) {
-    articleId = "rof-j-how-to-read";
-    matchReason = "疲労感の0〜10を、自分の主観的な記録として読むため";
-  } else if (environment.temperatureC != null) {
-    articleId = "heat-not-temperature-only";
-    matchReason = "気温の記録があるため";
-  } else if (uniqueIds.length >= 2) {
-    articleId = "context-not-single-cause";
-    matchReason = "複数の走行条件が違うため、一つの原因に決めないため";
-  } else if (hasReflection(output)) {
-    articleId = "goals-and-recording-differ";
-    matchReason = "自分が残した振り返りを次の確認につなげるため";
-  } else if (ids.includes("grade")) {
-    articleId = "grade-and-coverage";
-    matchReason = "坂の条件に違いがあるため";
-  } else if (ids.includes("surface")) {
-    articleId = "surface-missingness";
-    matchReason = "路面の条件に違いがあるため";
-  } else if (ids.includes("pace")) {
-    articleId = "talk-test-as-subjective-cue";
-    matchReason = "走る速さを一つの数字だけで捉えないため";
-  } else if (ids.includes("distance") || ids.includes("duration")) {
-    articleId = "training-progression-no-universal-rule";
-    matchReason = "距離や時間の違いを一つの万能ルールで判断しないため";
-  } else if (String(output?.state?.regional || "") === "AVAILABLE") {
-    articleId = "regional-three-views";
-    matchReason = "12部位の数字をその部位自身の100と比べて読むため";
+    add("regional-six-eight-28", 100, "自分の身体記録と12部位の参考表示を別の情報として確認するため", "body-pair");
+    if (uniqueIds.length >= 2) add("context-not-single-cause", 88, "複数の走行条件が違うため、一つの原因に決めないため", "multi-conditions");
+    else if (environment.available) add("context-not-single-cause", 68, "その日の環境も含めて、一つの原因に決めないため", "environment");
+    add("model-limits", 82, "12部位の数字だけで良い・悪いを決めないため", "body-boundary");
+    if (String(output?.state?.regional || "") === "AVAILABLE") add("regional-three-views", 60, "12部位の数字をその部位自身の100と比べて読むため", "regional");
+    return Object.freeze([...candidates.values()]);
   }
 
-  const article = articleById(articleId);
-  if (!article) return null;
-  return Object.freeze({
-    id: article.id,
-    title: article.title,
-    lead: article.lead,
-    summary: article.summary,
-    caution: article.caution,
-    sourceCount: Array.isArray(article.sources) ? article.sources.length : 0,
-    sourceKinds: Object.freeze([...(article.sources || []).map((source) => source.sourceTypeLabel || source.sourceType || "参考資料")]),
-    matchReason,
-    evidenceGovernance: article.evidenceGovernance || null,
+  if (hasSubjective(output)) add("rof-j-how-to-read", 92, "疲労感の0〜10を、自分の主観的な記録として読むため", "fatigue");
+  if (uniqueIds.length >= 2) add("context-not-single-cause", 88, "複数の走行条件が違うため、一つの原因に決めないため", "multi-conditions");
+  if (ids.includes("grade")) add("grade-and-coverage", 84, "坂の条件に違いがあるため", "grade");
+  if (ids.includes("surface")) add("surface-missingness", 84, "路面の条件に違いがあるため", "surface");
+  if (ids.includes("pace")) add("talk-test-as-subjective-cue", 80, "走る速さを一つの数字だけで捉えないため", "pace");
+  if (ids.includes("distance") || ids.includes("duration")) add("training-progression-no-universal-rule", 78, "距離や時間の違いを一つの万能ルールで判断しないため", "volume");
+  if (hasReflection(output)) add("goals-and-recording-differ", 76, "自分が残した振り返りを次の確認につなげるため", "reflection");
+  if (ids.some((id) => ["course", "running-format", "cadence"].includes(id))) add("context-not-single-cause", 74, "走り方の条件が違うため、一つの原因に決めないため", "conditions");
+
+  // Temperature alone does not establish a heat condition. Until the app has a
+  // structured WBGT/heat input, environment facts feed the general context
+  // article rather than automatically selecting the heat-specific article.
+  if (environment.available) add("context-not-single-cause", 68, "その日の環境も含めて、一つの原因に決めないため", "environment");
+  if (String(output?.state?.regional || "") === "AVAILABLE") add("regional-three-views", 55, "12部位の数字をその部位自身の100と比べて読むため", "regional");
+
+  return Object.freeze([...candidates.values()]);
+}
+
+function normalizeRecommendationHistory(history = []) {
+  return (Array.isArray(history) ? history : [])
+    .map((entry) => Object.freeze({
+      recordId: String(entry?.recordId || ""),
+      articleId: String(entry?.articleId || ""),
+    }))
+    .filter((entry) => entry.recordId && entry.articleId);
+}
+
+function candidateSelectionScore(candidate, recentHistory = []) {
+  const positions = [];
+  recentHistory.forEach((entry, index) => {
+    if (entry.articleId === candidate.id) positions.push(index);
   });
+  const firstPosition = positions[0];
+  const recencyPenalty = Number.isInteger(firstPosition) ? Number(RECENCY_PENALTY_BY_POSITION[firstPosition] || 0) : 0;
+  const repeatPenalty = positions.length * REPEAT_COUNT_PENALTY;
+  const unseenBonus = positions.length === 0 ? UNSEEN_BONUS : 0;
+  return Number(candidate.baseScore) - recencyPenalty - repeatPenalty + unseenBonus;
+}
+
+export function selectInterpretationReferenceKnowledge(output = {}, { bodyPair = false, recommendationHistory = [] } = {}) {
+  const candidates = buildInterpretationReferenceCandidates(output, { bodyPair });
+  if (!candidates.length) return null;
+
+  const history = normalizeRecommendationHistory(recommendationHistory);
+  const currentRecordId = String(output?.target?.recordId || "");
+  const existingForRecord = currentRecordId ? history.find((entry) => entry.recordId === currentRecordId) : null;
+  if (existingForRecord) {
+    const pinned = candidates.find((candidate) => candidate.id === existingForRecord.articleId);
+    if (pinned) return referenceFromCandidate(pinned, candidateSelectionScore(pinned, history.filter((entry) => entry.recordId !== currentRecordId).slice(0, RECENT_HISTORY_WINDOW)));
+  }
+
+  const recentHistory = history.filter((entry) => entry.recordId !== currentRecordId).slice(0, RECENT_HISTORY_WINDOW);
+  const ranked = candidates.map((candidate) => Object.freeze({
+    candidate,
+    score: candidateSelectionScore(candidate, recentHistory),
+  })).sort((a, b) => b.score - a.score || b.candidate.baseScore - a.candidate.baseScore || a.candidate.order - b.candidate.order);
+
+  return referenceFromCandidate(ranked[0]?.candidate || null, ranked[0]?.score);
 }
 
 function firstConditionFact(output = {}) {
@@ -132,12 +175,16 @@ function firstConditionFact(output = {}) {
   });
 }
 
-export function buildInterpretationContextCandidate(output = {}) {
+function uniqueConditionCount(output = {}) {
+  return new Set(conditionIds(output).filter((id) => ["distance", "duration", "pace", "grade", "surface", "cadence", "course", "running-format"].includes(id))).size;
+}
+
+export function buildInterpretationContextCandidate(output = {}, { recommendationHistory = [] } = {}) {
   const subjective = output?.subjectiveContext || {};
   const reflection = String(output?.runFacts?.postRunReflection || "").trim();
   const environment = environmentContext(output);
   const condition = firstConditionFact(output);
-  const reference = selectInterpretationReferenceKnowledge(output, { bodyPair: false });
+  const reference = selectInterpretationReferenceKnowledge(output, { bodyPair: false, recommendationHistory });
 
   const hasMeaningfulMaterial = Boolean(condition || subjective?.pre?.available || subjective?.post?.available || reflection || environment.available);
   if (!hasMeaningfulMaterial || !reference) return null;
@@ -147,41 +194,59 @@ export function buildInterpretationContextCandidate(output = {}) {
   let focusValue = "今回の走り方に記録があります";
   let question = "次の走行でも、今回と走り方の条件がどう違うか確認する";
 
-  if (subjective?.post?.available && environment.temperatureC != null) {
-    focusKey = "POST_RUN_FATIGUE_ENVIRONMENT_CONTEXT";
+  if (reference.signalKey === "fatigue") {
+    focusKey = subjective?.post?.available ? "POST_RUN_FATIGUE_CONTEXT" : "PRE_RUN_FATIGUE_CONTEXT";
     focusLabel = "今回、自分で残した疲労感";
-    focusValue = `走行後 ${Number(subjective.post.value).toFixed(0)} / 10`;
-    question = "次の走行でも、走行後の疲労感と気温などの環境を別々に残して一緒に確認する";
-  } else if (subjective?.post?.available) {
-    focusKey = "POST_RUN_FATIGUE_CONTEXT";
-    focusLabel = "今回、自分で残した疲労感";
-    focusValue = `走行後 ${Number(subjective.post.value).toFixed(0)} / 10`;
-    question = "次の走行でも、走行後の疲労感とその日の走行条件を一緒に確認する";
-  } else if (reflection) {
+    if (subjective?.post?.available) {
+      focusValue = `走行後 ${Number(subjective.post.value).toFixed(0)} / 10`;
+      question = "次の走行でも、走行後の疲労感とその日の走行条件を一緒に確認する";
+    } else {
+      focusValue = `走る前 ${Number(subjective.pre.value).toFixed(0)} / 10`;
+      question = "次の走行でも、走る前の疲労感とその日の走行条件を一緒に確認する";
+    }
+  } else if (reference.signalKey === "reflection") {
     focusKey = "RUN_REFLECTION";
     focusLabel = "今回、自分で残したこと";
     focusValue = reflection;
     question = "次の走行でも、自分が気になったことを一つ残して今回と見比べる";
-  } else if (environment.temperatureC != null) {
+  } else if (reference.signalKey === "environment") {
     focusKey = "ENVIRONMENT_CONTEXT";
     focusLabel = "今回、自分で残した環境";
-    focusValue = `気温 ${Number(environment.temperatureC).toFixed(1).replace(/\.0$/, "")} ℃`;
-    question = "次の走行でも、気温などの環境を残して今回と見比べる";
-  } else if (condition?.id === "pace") {
+    focusValue = environment.temperatureC != null
+      ? `気温 ${Number(environment.temperatureC).toFixed(1).replace(/\.0$/, "")} ℃`
+      : "環境についての記録があります";
+    question = "次の走行でも、環境とほかの走行条件を分けて残して見比べる";
+  } else if (reference.signalKey === "multi-conditions" || reference.signalKey === "conditions") {
+    focusKey = "MULTI_CONDITION_CONTEXT";
+    focusLabel = "今回、変わった走行条件";
+    const count = Math.max(1, uniqueConditionCount(output));
+    focusValue = `${count}項目の条件に違いがあります`;
+    question = "次の走行でも、変わった条件を分けて残し、一つに決めず見比べる";
+  } else if (reference.signalKey === "pace") {
     focusKey = "PACE_CONTEXT";
     focusLabel = "今回、変わった走る速さ";
     focusValue = "走る速さに違いがあります";
     question = "次の走行でも、走る速さが今回とどう違うか確認する";
-  } else if (["distance", "duration"].includes(condition?.id)) {
+  } else if (reference.signalKey === "volume") {
     focusKey = "VOLUME_CONTEXT";
     focusLabel = "今回、変わった走行量";
-    focusValue = condition.id === "distance" ? "距離に違いがあります" : "走行時間に違いがあります";
+    focusValue = condition?.id === "duration" ? "走行時間に違いがあります" : "距離や時間に違いがあります";
     question = "次の走行でも、距離や時間が今回とどう違うか確認する";
-  } else if (["grade", "surface"].includes(condition?.id)) {
+  } else if (reference.signalKey === "grade") {
     focusKey = "COURSE_CONTEXT";
     focusLabel = "今回、変わったコース条件";
-    focusValue = condition.id === "grade" ? "坂の条件に違いがあります" : "路面の条件に違いがあります";
-    question = "次の走行でも、コース条件が今回とどう違うか確認する";
+    focusValue = "坂の条件に違いがあります";
+    question = "次の走行でも、坂の条件が今回とどう違うか確認する";
+  } else if (reference.signalKey === "surface") {
+    focusKey = "COURSE_CONTEXT";
+    focusLabel = "今回、変わったコース条件";
+    focusValue = "路面の条件に違いがあります";
+    question = "次の走行でも、路面の条件が今回とどう違うか確認する";
+  } else if (reference.signalKey === "regional") {
+    focusKey = "REGIONAL_REFERENCE_CONTEXT";
+    focusLabel = "今回の12部位の表示";
+    focusValue = "部位ごとの基準100との差を確認できます";
+    question = "次の走行でも、同じ部位の100との差と走行条件を分けて確認する";
   }
 
   return Object.freeze({
@@ -194,6 +259,21 @@ export function buildInterpretationContextCandidate(output = {}) {
     question,
     reference,
   });
+}
+
+export function resolveAutoInterpretationReferenceKnowledge(output = {}, selfUnderstanding = null, { recommendationHistory = [] } = {}) {
+  const activeThread = selfUnderstanding?.activeThread || null;
+  if (activeThread?.type === "CONTEXT_QUESTION") return null;
+  if (activeThread) {
+    return selectInterpretationReferenceKnowledge(output, {
+      bodyPair: activeThread.type === "REGION_OBSERVATION_PAIR",
+      recommendationHistory,
+    });
+  }
+  if (selfUnderstanding?.primaryCandidate?.kind === "BODY_OBSERVATION_PAIR") {
+    return selectInterpretationReferenceKnowledge(output, { bodyPair: true, recommendationHistory });
+  }
+  return buildInterpretationContextCandidate(output, { recommendationHistory })?.reference || null;
 }
 
 export function referenceReadingHref(reference = null, output = {}) {

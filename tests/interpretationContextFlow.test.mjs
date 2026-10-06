@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { renderInterpretationRoom } from '../ui/interpretationRoomPresentation.js';
 import {
   buildInterpretationContextCandidate,
+  getInterpretationReferenceKnowledgeById,
   selectInterpretationReferenceKnowledge,
 } from '../ui/interpretationReferenceKnowledge.js';
 import {
@@ -104,18 +105,19 @@ await check('ENVIRONMENT-FACT-REACHES-INTERPRETATION-WITHOUT-BECOMING-A-SCORE', 
   assert.doesNotMatch(serialized, /risk|safe|danger|score|readiness/i);
 });
 
-await check('GENERAL-KNOWLEDGE-CAN-USE-PUBLIC-GUIDANCE-NOT-ONLY-RESEARCH-PAPERS', () => {
-  const warm = output({ body: false, fatigue: false, conditions: false, temperature: 29 });
-  const ref = selectInterpretationReferenceKnowledge(warm, { bodyPair: false });
-  assert.equal(ref?.id, 'heat-not-temperature-only');
-  assert.ok(ref?.sourceKinds?.includes('公的資料'));
-  assert.equal(ref?.evidenceGovernance?.sourceIntegrity?.status, 'PASS');
-  const context = buildInterpretationContextCandidate(warm);
+await check('ENVIRONMENT-FACT-DOES-NOT-INFER-HEAT-BUT-HEAT-GUIDANCE-REMAINS-AVAILABLE', () => {
+  const environmentOnly = output({ body: false, fatigue: false, conditions: false, temperature: 29 });
+  const ref = selectInterpretationReferenceKnowledge(environmentOnly, { bodyPair: false });
+  assert.equal(ref?.id, 'context-not-single-cause');
+  assert.equal(ref?.signalKey, 'environment');
+  const context = buildInterpretationContextCandidate(environmentOnly);
   assert.equal(context?.focusKey, 'ENVIRONMENT_CONTEXT');
-  assert.match(context?.question || '', /気温などの環境/);
-  const html = renderInterpretationRoom({ output: warm, selfUnderstanding: { ...bodyCandidate(), primaryCandidate: null }, mobileLayout: true });
-  assert.match(html, /暑い日の走りは、気温だけで判断しない/);
-  assert.match(html, /公的資料/);
+  assert.match(context?.question || '', /環境とほかの走行条件/);
+  const heat = getInterpretationReferenceKnowledgeById('heat-not-temperature-only');
+  assert.ok(heat?.sourceKinds?.includes('公的資料'));
+  assert.equal(heat?.evidenceGovernance?.sourceIntegrity?.status, 'PASS');
+  const html = renderInterpretationRoom({ output: environmentOnly, selfUnderstanding: { ...bodyCandidate(), primaryCandidate: null }, mobileLayout: true });
+  assert.match(html, /走った日の背景を、一つの原因に決めない/);
   assert.doesNotMatch(html, /29℃だから危険|走るべきではない/);
 });
 
@@ -175,7 +177,7 @@ await check('SUPPLEMENTAL-MATERIALS-STAY-HIDDEN-UNTIL-COMPARE', () => {
 
 await check('REFERENCE-PRIORITY-MATCHES-READING-MASTER-V1-1', () => {
   const noFatigueHot = output({ body: false, fatigue: false, conditions: false, temperature: 29 });
-  assert.equal(selectInterpretationReferenceKnowledge(noFatigueHot)?.id, 'heat-not-temperature-only');
+  assert.equal(selectInterpretationReferenceKnowledge(noFatigueHot)?.id, 'context-not-single-cause');
 
   const multiple = output({ body: false, fatigue: false, conditions: false, temperature: null });
   multiple.state.regional = 'AVAILABLE';

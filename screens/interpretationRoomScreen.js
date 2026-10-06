@@ -1,6 +1,11 @@
 import { buildInterpretation } from "../core/interpretationCore.js";
 import { buildSelfUnderstandingView } from "../core/selfUnderstandingCore.js";
 import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
+import { resolveAutoInterpretationReferenceKnowledge } from "../ui/interpretationReferenceKnowledge.js";
+import {
+  loadInterpretationReferenceHistory,
+  rememberInterpretationReferenceSelection,
+} from "../ui/interpretationReferenceHistory.js";
 
 const ALLOWED_ORIGINS = new Set(["result", "history", "body-part-detail", "simulation", "home"]);
 
@@ -83,5 +88,10 @@ export function renderInterpretationRoomScreenWithPresentation({ services, conte
   }
 
   const savedInterpretation = services?.storage?.selfInterpretations?.findByRecordId?.(recordId) || null;
-  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, selfUnderstanding, savedInterpretation, interpretationFocus, compactLayout })}</section>`;
+  const storedReferenceHistory = loadInterpretationReferenceHistory(services?.storage?.gateway);
+  const autoReference = resolveAutoInterpretationReferenceKnowledge(output, selfUnderstanding, { recommendationHistory: storedReferenceHistory });
+  const recommendationHistory = autoReference?.id && recordId
+    ? rememberInterpretationReferenceSelection(services?.storage?.gateway, { recordId, articleId: autoReference.id })
+    : storedReferenceHistory;
+  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, selfUnderstanding, savedInterpretation, interpretationFocus, compactLayout, recommendationHistory })}</section>`;
 }
