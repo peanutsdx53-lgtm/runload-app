@@ -1,8 +1,492 @@
-/* Desktop-only settings action sizing. */
-@media (min-width: 55rem) {
-  .screen--settings [data-action="reset-update-state"] {
-    width: fit-content !important;
+/* Desktop settings: final PC information hierarchy and interaction layout. */
+@media (min-width: 80rem) {
+  body .screen--settings.screen-layout--settings.secondary-derived-screen > .secondary-derived-body {
+    padding: 1.35rem 1.75rem 1.8rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen > .secondary-derived-body > .head,
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .group,
+  body .screen--settings.screen-layout--settings.secondary-derived-screen [data-app-update-panel] {
+    width: min(100%, 68rem) !important;
+    max-width: 68rem !important;
+    margin-inline: auto !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen > .secondary-derived-body > .head {
+    margin-bottom: 1.15rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen #app-settings-form {
+    width: 100% !important;
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen #app-settings-form > .group,
+  body .screen--settings.screen-layout--settings.secondary-derived-screen > .secondary-derived-body > section.group,
+  body .screen--settings.screen-layout--settings.secondary-derived-screen [data-app-update-panel] {
+    margin-top: 1.25rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .group-title {
+    margin: 0 0 .55rem !important;
+    color: var(--color-muted) !important;
+    font-size: .78rem !important;
+    font-weight: 900 !important;
+    letter-spacing: .08em !important;
+  }
+
+  /* Display settings: three equal cards, with card-style choices when expanded. */
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting-list {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: .85rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting {
     min-width: 0 !important;
-    padding-inline: 1rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-soft) !important;
+    overflow: hidden !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting summary {
+    min-height: 4.5rem !important;
+    padding: .85rem .9rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting[open] summary {
+    border-bottom: 1px solid var(--color-line) !important;
+    background: color-mix(in srgb, var(--color-accent-soft) 38%, var(--color-surface)) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting__body {
+    padding: .75rem !important;
+    background: var(--color-surface) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-choice-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)) !important;
+    gap: .5rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-choice {
+    position: relative !important;
+    min-width: 0 !important;
+    min-height: 2.85rem !important;
+    padding: .62rem .7rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: .48rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .72rem !important;
+    background: var(--color-surface-muted) !important;
+    cursor: pointer !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-choice:has(input:checked) {
+    border-color: var(--color-accent) !important;
+    background: var(--color-accent-soft) !important;
+    color: var(--color-accent-strong) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-choice input {
+    position: absolute !important;
+    inline-size: 1px !important;
+    block-size: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-choice__dot {
+    width: 1rem !important;
+    height: 1rem !important;
+    flex: 0 0 1rem !important;
+    border: 2px solid var(--color-line-strong, var(--color-line)) !important;
+    border-radius: 50% !important;
+    background: var(--color-surface) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-choice:has(input:checked) .display-choice__dot {
+    border: .28rem solid var(--color-accent) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-choice__swatch {
+    width: 1.1rem !important;
+    height: 1.1rem !important;
+    flex: 0 0 1.1rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .32rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .display-choice strong {
+    min-width: 0 !important;
+    font-size: .82rem !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Shared profile: clear sections instead of one continuous form. */
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .disclosure {
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-soft) !important;
+    overflow: hidden !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .disclosure > summary {
+    min-height: 4.65rem !important;
+    padding: .85rem 1rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .disclosure[open] > summary {
+    border-bottom: 1px solid var(--color-line) !important;
+    background: color-mix(in srgb, var(--color-accent-soft) 28%, var(--color-surface)) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .disclosure-body {
+    padding: 1rem !important;
+    display: grid !important;
+    gap: .9rem !important;
+    background: var(--color-surface) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .boundary {
+    margin: 0 !important;
+    padding: .78rem .85rem !important;
+    display: grid !important;
+    gap: .18rem !important;
+    border: 1px solid color-mix(in srgb, var(--color-accent) 25%, var(--color-line)) !important;
+    border-radius: .78rem !important;
+    background: color-mix(in srgb, var(--color-accent-soft) 52%, var(--color-surface)) !important;
+    color: var(--color-muted) !important;
+    font-size: .8rem !important;
+    line-height: 1.5 !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .boundary strong {
+    color: var(--color-ink) !important;
+    font-size: .86rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .fields.two-fields {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .75rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .field {
+    min-width: 0 !important;
+    display: grid !important;
+    gap: .36rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .field > span {
+    color: var(--color-ink) !important;
+    font-size: .79rem !important;
+    font-weight: 850 !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .field :is(input, select) {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 2.85rem !important;
+    padding: .6rem .72rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .72rem !important;
+    background: var(--color-surface) !important;
+    color: var(--color-ink) !important;
+    font: inherit !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .field small {
+    color: var(--color-muted) !important;
+    font-size: .72rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .sub-section-head {
+    margin-top: .05rem !important;
+    display: grid !important;
+    gap: .18rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .sub-section-head small {
+    color: var(--color-muted) !important;
+    font-size: .72rem !important;
+    font-weight: 850 !important;
+    letter-spacing: .07em !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .sub-section-head strong {
+    font-size: .88rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .goal-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: .5rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .goal-grid label {
+    position: relative !important;
+    min-width: 0 !important;
+    min-height: 2.75rem !important;
+    padding: .62rem .7rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .72rem !important;
+    background: var(--color-surface-muted) !important;
+    cursor: pointer !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .goal-grid label:has(input:checked) {
+    border-color: var(--color-accent) !important;
+    background: var(--color-accent-soft) !important;
+    color: var(--color-accent-strong) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .goal-grid input {
+    position: absolute !important;
+    inline-size: 1px !important;
+    block-size: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .goal-grid span {
+    font-size: .8rem !important;
+    font-weight: 850 !important;
+    text-align: center !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .subdetails {
+    overflow: hidden !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .78rem !important;
+    background: var(--color-surface-muted) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .subdetails > summary {
+    min-height: 3.8rem !important;
+    padding: .72rem .82rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: .75rem !important;
+    list-style: none !important;
+    cursor: pointer !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .subdetails > summary span:first-child {
+    display: grid !important;
+    gap: .12rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .subdetails > summary strong {
+    font-size: .86rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .subdetails > summary small {
+    color: var(--color-muted) !important;
+    font-size: .72rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .subdetails-body {
+    padding: .85rem !important;
+    border-top: 1px solid var(--color-line) !important;
+    background: var(--color-surface) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .settings-empty-state {
+    padding: .75rem !important;
+    display: grid !important;
+    gap: .18rem !important;
+    border: 1px dashed var(--color-line) !important;
+    border-radius: .72rem !important;
+    color: var(--color-muted) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .settings-empty-state strong {
+    color: var(--color-ink) !important;
+    font-size: .84rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .action-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: .6rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .action-row :is(button, label, a) {
+    min-height: 2.8rem !important;
+    padding: 0 .9rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: .72rem !important;
+    font-size: .8rem !important;
+    font-weight: 850 !important;
+    text-decoration: none !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .action-row .primary,
+  body .screen--settings.screen-layout--settings.secondary-derived-screen [data-action="reset-update-state"] {
+    border: 1px solid var(--color-accent-strong) !important;
+    background: var(--color-accent-strong) !important;
+    color: var(--color-on-accent) !important;
+  }
+
+  /* Guide: two simple full-width rows. */
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .settings-guide-links {
+    width: 100% !important;
+    display: grid !important;
+    gap: 1px !important;
+    overflow: hidden !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 1rem !important;
+    background: var(--color-line) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .settings-guide-link {
+    min-height: 4rem !important;
+    padding: .68rem .9rem !important;
+    background: var(--color-surface) !important;
+  }
+
+  /* Data management: overview, normal backup actions, then a separated danger zone. */
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .data-overview {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: .55rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .data-overview > div {
+    min-width: 0 !important;
+    padding: .72rem .76rem !important;
+    display: grid !important;
+    gap: .16rem !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .72rem !important;
+    background: var(--color-surface-muted) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .data-overview small {
+    color: var(--color-muted) !important;
+    font-size: .7rem !important;
+    font-weight: 800 !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .data-overview strong {
+    font-size: 1rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .hidden-file {
+    display: none !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen label[for="restore-backup-file"] {
+    border: 1px solid var(--color-line) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-ink) !important;
+    cursor: pointer !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .restore-preview {
+    min-height: 4.6rem !important;
+    padding: .8rem !important;
+    display: grid !important;
+    align-content: center !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: .78rem !important;
+    background: var(--color-surface-muted) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .restore-preview .muted-text {
+    margin: 0 !important;
+    color: var(--color-muted) !important;
+    font-size: .8rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .danger-box {
+    margin-top: .25rem !important;
+    padding: .9rem !important;
+    display: grid !important;
+    gap: .62rem !important;
+    border: 1px solid var(--color-attention-border) !important;
+    border-radius: .82rem !important;
+    background: var(--color-attention-soft) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .danger-box > strong {
+    color: var(--color-attention) !important;
+    font-size: .9rem !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .danger-box > p {
+    margin: 0 !important;
+    color: var(--color-muted) !important;
+    font-size: .78rem !important;
+    line-height: 1.55 !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .danger-box .field {
+    width: min(100%, 18rem) !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .danger-box .danger {
+    border: 1px solid var(--color-attention-border) !important;
+    background: var(--color-surface) !important;
+    color: var(--color-attention) !important;
+  }
+
+  /* App status: compact final section, not a detached right column. */
+  body .screen--settings.screen-layout--settings.secondary-derived-screen [data-app-update-panel] {
+    padding-top: .1rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-areas:
+      "title title"
+      "boundary action"
+      "note note" !important;
+    gap: .55rem .8rem !important;
+    align-items: center !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen [data-app-update-panel] > .group-title {
+    grid-area: title !important;
+    margin-bottom: 0 !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen [data-app-update-panel] > .boundary {
+    grid-area: boundary !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen [data-app-update-panel] > .action-row {
+    grid-area: action !important;
+    justify-content: flex-end !important;
+  }
+
+  body .screen--settings.screen-layout--settings.secondary-derived-screen [data-app-update-panel] > .note {
+    grid-area: note !important;
+    margin: 0 !important;
+    color: var(--color-muted) !important;
+    font-size: .76rem !important;
+  }
+}
+
+@media (min-width: 80rem) and (max-width: 92rem) {
+  body .screen--settings.screen-layout--settings.secondary-derived-screen > .secondary-derived-body > .head,
+  body .screen--settings.screen-layout--settings.secondary-derived-screen .group,
+  body .screen--settings.screen-layout--settings.secondary-derived-screen [data-app-update-panel] {
+    width: min(100%, 64rem) !important;
+    max-width: 64rem !important;
   }
 }
