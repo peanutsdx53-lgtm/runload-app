@@ -613,7 +613,7 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
 
       <section class="section share-step share-document-step"><div class="section-head"><small>STEP 4</small><h2>完成資料を確認</h2><p>完成資料を確認し、必要に応じて印刷・PDF保存できます。印刷時はA4として改ページされます。</p></div>
         <div class="share-document-stage" data-consult-document-stage>
-          <div class="share-document-toolbar"><strong>A4共有記録シート</strong><button type="button" data-action="close-consult-viewer" aria-label="全画面表示を閉じる">×</button></div>
+          <div class="share-document-toolbar"><strong>A4共有記録シート</strong><button type="button" class="app-utility-button" data-action="close-consult-viewer" aria-label="全画面表示を閉じる"><span class="app-utility-button__close-symbol" aria-hidden="true">×</span></button></div>
           ${documentMarkup}
         </div>
         <div class="share-output-actions">

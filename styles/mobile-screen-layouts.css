@@ -214,7 +214,7 @@
 .screen-layout--result .grip{width:40px;height:4px;border-radius:999px;background:var(--line);margin:2px auto 13px}
 .screen-layout--result .sheet-head{display:flex;align-items:flex-start;justify-content:space-between}
 .screen-layout--result .sheet-head h2{font-size:21px;margin:3px 0 0}
-.screen-layout--result .sheet-head>button{width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px}
+.screen-layout--result .sheet-head>button:not(.app-utility-button){width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px}
 .screen-layout--result .sheet-tabs{position:sticky;top:-10px;z-index:3;display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:15px;padding:4px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(14px)}
 .screen-layout--result .sheet-tabs button{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:var(--type-label);font-weight:850}
 .screen-layout--result .sheet-tabs button.active{background:var(--surface);color:var(--accent-strong);box-shadow:0 3px 10px rgba(25,43,60,.08)}
@@ -460,7 +460,7 @@
 .screen-layout--history .grip{width:40px;height:4px;border-radius:999px;background:var(--line);margin:2px auto 13px}
 .screen-layout--history .sheet-head{display:flex;align-items:flex-start;justify-content:space-between}
 .screen-layout--history .sheet-head h2{margin:3px 0 0;font-size:21px}
-.screen-layout--history .sheet-head>button{width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px}
+.screen-layout--history .sheet-head>button:not(.app-utility-button){width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px}
 .screen-layout--history .region-options{display:grid;gap:7px;margin-top:14px}
 .screen-layout--history .region-option{min-height:48px;padding:8px 11px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);display:flex;align-items:center;justify-content:space-between;text-align:left}
 .screen-layout--history .region-option span{font-size:var(--type-label);font-weight:850}
@@ -756,7 +756,7 @@
 .screen-layout--reading .sheet-head small,.screen-layout--reading .sheet-head strong{display:block}
 .screen-layout--reading .sheet-head small{font-size:var(--type-label);color:var(--accent);font-weight:900}
 .screen-layout--reading .sheet-head strong{margin-top:3px;font-size:18px;line-height:1.35}
-.screen-layout--reading .close{width:38px;height:38px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font-size:18px}
+.screen-layout--reading .close:not(.app-utility-button){width:38px;height:38px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font-size:18px}
 .screen-layout--reading .lead{margin:10px 0 0;font-size:var(--type-label);color:var(--muted);line-height:1.6}
 .screen-layout--reading .body-copy{margin-top:14px;display:grid;gap:10px}
 .screen-layout--reading .body-copy p{margin:0;font-size:var(--type-label);line-height:1.7}
@@ -1856,19 +1856,6 @@
 }
 
 
-.screen-layout--record .rof-close-button {
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px;
-  min-height: 44px;
-  border: 2px solid color-mix(in srgb, var(--accent) 55%, var(--line)) !important;
-  background: var(--accent-soft) !important;
-  color: var(--accent2) !important;
-  font-size: 25px !important;
-  font-weight: 800;
-  line-height: 1;
-  box-shadow: 0 5px 14px color-mix(in srgb, var(--ink) 12%, transparent);
-}
 
 .screen-layout--record .rof-slider-wrap {
   margin-top: 14px;

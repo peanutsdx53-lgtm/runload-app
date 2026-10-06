@@ -101,11 +101,11 @@ await test('UI-FATIGUE-SLIDER-HAS-DIRECT-MANIPULATION-AFFORDANCE',()=>{
   const screen=read('screens/recordInputScreen.js') + read('screens/desktop/recordInputScreen.js');
   const interactions=read('ui/interactions/recordInputInteractions.js');
   const css=read('styles/mobile-screen-layouts.css');
-  assert.ok(screen.includes('class="rof-close-button"'));
+  assert.ok(screen.includes('class="rof-close-button app-utility-button"'));
   assert.ok(screen.includes('data-rof-slider-wrap'));
   assert.ok(interactions.includes('is-untouched'));
   assert.ok(css.includes('rof-thumb-hint'));
-  assert.ok(css.includes('width: 44px !important;'));
+  assert.ok(!css.includes('.screen-layout--record .rof-close-button {'));
 });
 
 await test('UI-RESULT-REMOVES-PERSISTENT-EXPLANATION-CLUTTER',()=>{

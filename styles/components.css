@@ -218,7 +218,8 @@
   flex: 0 0 auto;
   margin-left: auto;
 }
-.guide-dialog__close-symbol {
+.guide-dialog__close-symbol,
+.app-utility-button__close-symbol {
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1;

@@ -1,4 +1,4 @@
-export const APP_VERSION = "2026.10.06.14";
+export const APP_VERSION = "2026.10.06.15";
 export const APP_VERSION_LABEL = `v${APP_VERSION}`;
 
 // Keep this release identifier aligned with service-worker.js before publishing.

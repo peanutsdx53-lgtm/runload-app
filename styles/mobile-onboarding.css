@@ -6,7 +6,7 @@
 .mobile-onboarding__progress { display: flex; justify-content: center; gap: 7px; }
 .mobile-onboarding__progress i { width: 7px; height: 7px; border-radius: 999px; background: #adc1ce; transition: width .18s ease, background .18s ease; }
 .mobile-onboarding__progress i.is-current { width: 26px; background: #2f6f95; }
-.mobile-onboarding__close { width: 42px; height: 42px; border: 0; border-radius: 14px; background: rgba(255,255,255,.66); color: #294657; font-size: 24px; }
+.mobile-onboarding__close { justify-self: end; }
 .mobile-onboarding__top-spacer { width: 42px; height: 42px; }
 .mobile-onboarding__content { width: min(100%, 520px); margin: 0 auto; display: grid; align-items: center; padding: 20px 24px 26px; }
 .mobile-onboarding__step { animation: mobile-onboarding-in .24s ease both; }

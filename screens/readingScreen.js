@@ -391,7 +391,7 @@ function renderReadingDetail(article, items) {
   return `<article class="reading-detail" data-reading-detail="${escapeHtml(publicArticleId(article.id))}" hidden>
     <div class="sheet-head">
       <div><small>${escapeHtml(copy.category)}</small><strong id="articleTitle-${escapeHtml(publicArticleId(article.id))}">${escapeHtml(copy.title)}</strong><div class="reading-detail__meta"><span>約${minutes}分</span></div></div>
-      <button class="close" type="button" data-reading-close aria-label="閉じる">×</button>
+      <button class="close app-utility-button" type="button" data-reading-close aria-label="閉じる"><span class="app-utility-button__close-symbol" aria-hidden="true">×</span></button>
     </div>
     <p class="lead">${escapeHtml(copy.lead)}</p>
     ${copy.practicePoints.length ? `<section class="reading-keypoints"><strong>まずここだけ</strong><ul>${copy.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></section>` : ""}

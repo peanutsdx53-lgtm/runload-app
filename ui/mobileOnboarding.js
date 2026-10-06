@@ -81,7 +81,7 @@ export function renderMobileOnboarding({ open = false, replay = false, alreadyAc
       <header class="mobile-onboarding__top">
         <span class="mobile-onboarding__brand" aria-label="走行記録">記</span>
         <div class="mobile-onboarding__progress" aria-label="チュートリアルの進み具合">${STEPS.map((_, index) => `<i data-onboarding-dot="${index}" class="${index === currentIndex ? "is-current" : ""}"></i>`).join("")}</div>
-        ${replay ? '<button type="button" class="mobile-onboarding__close" data-onboarding-close aria-label="チュートリアルを閉じる">×</button>' : '<span class="mobile-onboarding__top-spacer" aria-hidden="true"></span>'}
+        ${replay ? '<button type="button" class="mobile-onboarding__close app-utility-button" data-onboarding-close aria-label="チュートリアルを閉じる"><span class="app-utility-button__close-symbol" aria-hidden="true">×</span></button>' : '<span class="mobile-onboarding__top-spacer" aria-hidden="true"></span>'}
       </header>
       <div class="mobile-onboarding__content">
         ${STEPS.map((step, index) => renderStep(step, index, currentIndex, { alreadyAccepted })).join("")}

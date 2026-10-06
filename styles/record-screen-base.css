@@ -103,7 +103,7 @@
 .screen-layout--record .grip{width:40px;height:4px;border-radius:999px;background:var(--line);margin:2px auto 13px}
 .screen-layout--record .sheet-head{display:flex;align-items:flex-start;justify-content:space-between}
 .screen-layout--record .sheet-head h2{margin:3px 0 0;font-size:21px}
-.screen-layout--record .sheet-head>button{width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px}
+.screen-layout--record .sheet-head>button:not(.app-utility-button){width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px}
 .screen-layout--record .secondary-action{width:100%;min-height:44px;margin-top:8px;border:1px solid var(--accent);border-radius:12px;background:var(--surface);color:var(--accent2);font-size:var(--type-label);font-weight:850}
 .screen-layout--record .text-action{width:100%;min-height:42px;margin-top:8px;border:0;background:transparent;color:var(--muted);font-size:var(--type-label);font-weight:800}
 .screen-layout--record .subscreen{position:fixed;top:0;left:0;right:0;bottom:calc(68px + env(safe-area-inset-bottom));z-index:100;background:var(--bg);overflow:auto}

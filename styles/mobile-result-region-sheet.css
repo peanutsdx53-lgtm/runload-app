@@ -65,33 +65,6 @@
     margin-top: 10px;
   }
 
-  .screen-layout--result .region-sheet .sheet-head button[data-action="close-result-region-sheet"] {
-    width: 44px;
-    min-width: 44px;
-    max-width: 44px;
-    height: 44px;
-    min-height: 44px;
-    max-height: 44px;
-    aspect-ratio: 1;
-    padding: 0;
-    display: grid;
-    place-items: center;
-    flex: 0 0 44px;
-    line-height: 1;
-  }
-
-  .screen-layout--result .sheet-head > button {
-    inline-size: 44px;
-    block-size: 44px;
-    min-inline-size: 44px;
-    min-block-size: 44px;
-    padding: 0;
-    aspect-ratio: 1;
-    flex: 0 0 44px;
-    display: grid;
-    place-items: center;
-    line-height: 1;
-  }
 
   .screen-layout--result .focus-summary {
     padding-block: 9px;
