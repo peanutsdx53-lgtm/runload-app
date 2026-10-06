@@ -21,6 +21,7 @@ assert.match(css, /secondary-derived-screen:not\(\[data-share-prep\]\)[\s\S]*min
 assert.match(css, /secondary-derived-screen:not\(\[data-share-prep\]\) > \.secondary-derived-body[\s\S]*place-items: center !important/);
 assert.match(css, /consultation-empty-state[\s\S]*width: min\(100%, 56rem\) !important[\s\S]*grid-template-columns: minmax\(0, 1fr\) auto !important/);
 assert.doesNotMatch(platformStyles, /desktop-consultation-empty-balance\.css/);
+assert.equal(fs.existsSync("styles/desktop-consultation-empty-balance.css"), false);
 
 assert.match(css, /screen--simulation\.screen-layout--simulation\.condition-compare[\s\S]*position: fixed !important[\s\S]*top: 5\.85rem !important[\s\S]*bottom: 1\.25rem !important/);
 assert.match(css, /screen--simulation\.screen-layout--simulation\.condition-compare[\s\S]*overflow-y: auto !important/);
