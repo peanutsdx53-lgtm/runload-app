@@ -1,7 +1,1 @@
-/* Desktop-only responsive rules extracted from styles/settings-navigation.css. */
-
-@media (min-width: 55rem) {
-  .screen--settings .group:has(.settings-guide-links) {
-    display: none !important;
-  }
-}
+/* Desktop keeps the Settings guide group visible; Terms and Privacy also remain directly accessible from More. */

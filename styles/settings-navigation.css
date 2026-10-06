@@ -1,4 +1,1 @@
-.screen--settings .settings-guide-link[href^="#/terms"],
-.screen--settings .settings-guide-link[href^="#/privacy"] {
-  display: none !important;
-}
+/* Terms and Privacy remain available from Settings as well as the direct More-menu routes. */
