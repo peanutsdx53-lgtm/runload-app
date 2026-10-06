@@ -3,7 +3,6 @@ import fs from "node:fs";
 
 const read = (path) => fs.readFileSync(path, "utf8");
 const css = read("styles/desktop-consultation.css");
-const emptyBalance = read("styles/desktop-consultation-empty-balance.css");
 const platformStyles = read("ui/platformStyles.js");
 const consultation = read("screens/consultationScreen.js");
 const simulation = read("screens/simulationScreen.js");
@@ -17,13 +16,11 @@ assert.match(css, /backdrop-filter: blur\(5px\) !important/);
 
 assert.match(css, /screen--consultation\.screen-layout--consultation\.secondary-derived-screen[\s\S]*position: fixed !important[\s\S]*top: 5\.85rem !important[\s\S]*bottom: 1\.25rem !important/);
 assert.match(css, /screen--consultation\.screen-layout--consultation\.secondary-derived-screen > \.secondary-derived-body[\s\S]*overflow-y: auto !important/);
-assert.match(css, /screen--consultation\.screen-layout--consultation\.secondary-derived-screen:not\(\[data-share-prep\]\)[\s\S]*max-width: 74rem !important/);
-
-assert.match(platformStyles, /desktop-consultation-empty-balance\.css/);
-assert.match(emptyBalance, /secondary-derived-screen:not\(\[data-share-prep\]\)[\s\S]*width: min\(66rem, calc\(100vw - 3rem\)\) !important/);
-assert.match(emptyBalance, /secondary-derived-screen:not\(\[data-share-prep\]\)[\s\S]*min-height: 20rem !important/);
-assert.match(emptyBalance, /secondary-derived-screen:not\(\[data-share-prep\]\) > \.secondary-derived-body[\s\S]*place-items: center !important/);
-assert.match(emptyBalance, /consultation-empty-state[\s\S]*width: min\(100%, 56rem\) !important[\s\S]*grid-template-columns: minmax\(0, 1fr\) auto !important/);
+assert.match(css, /secondary-derived-screen:not\(\[data-share-prep\]\)[\s\S]*width: min\(66rem, calc\(100vw - 3rem\)\) !important/);
+assert.match(css, /secondary-derived-screen:not\(\[data-share-prep\]\)[\s\S]*min-height: 20rem !important/);
+assert.match(css, /secondary-derived-screen:not\(\[data-share-prep\]\) > \.secondary-derived-body[\s\S]*place-items: center !important/);
+assert.match(css, /consultation-empty-state[\s\S]*width: min\(100%, 56rem\) !important[\s\S]*grid-template-columns: minmax\(0, 1fr\) auto !important/);
+assert.doesNotMatch(platformStyles, /desktop-consultation-empty-balance\.css/);
 
 assert.match(css, /screen--simulation\.screen-layout--simulation\.condition-compare[\s\S]*position: fixed !important[\s\S]*top: 5\.85rem !important[\s\S]*bottom: 1\.25rem !important/);
 assert.match(css, /screen--simulation\.screen-layout--simulation\.condition-compare[\s\S]*overflow-y: auto !important/);
