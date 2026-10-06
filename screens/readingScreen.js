@@ -169,167 +169,101 @@ const READING_COPY = Object.freeze({
   "regional-three-views": Object.freeze({
     category: "結果の見方",
     title: "12部位の目安は「その部位の100」と比べる",
-    lead: "数字は部位どうしの順位ではなく、同じ部位の基準100からどれくらい変わったかを見るためのものです。",
+    summary: "12部位の数字は、部位どうしの順位ではありません。それぞれの部位で、自分自身の基準100からどれくらい変わったかを見ます。",
     body: Object.freeze([
-      "結果では、12部位それぞれに基準100があります。たとえば128なら、その部位では基準より28ポイント上という意味です。",
-      "同じ日の中でも、部位ごとに数字の動き方は違います。腕と膝の128を同じ大きさとして比べるのではなく、それぞれの部位で100との差を見ます。",
-      "数字を見るときは、距離・ペース・坂・路面など、その日の走行条件も一緒に確認すると、前回との違いを理解しやすくなります。",
+      "結果画面では、12部位それぞれに基準100があります。たとえば膝の表示が128なら、その部位では基準100より28ポイント上という読み方です。腕の128と膝の128を比べて、どちらの負担が大きいと考えるものではありません。",
+      "同じ日に走っても、坂、ペース、歩数、路面などの条件によって、部位ごとの数字の動き方は変わります。まず数字だけを見るのではなく、その日にどんな条件で走ったかも一緒に思い出すと、結果を読みやすくなります。",
+      "距離は『何km走ったか』という別の記録です。距離が長いほど12部位の数字がそのまま大きくなる、という仕組みではありません。結果の数字と距離は、それぞれ別の情報として確認します。",
+      "履歴を見るときも同じです。最初に同じ部位の100との差を見て、そのあと前回の同じ部位、その日の距離やコース条件へ進むと、数字だけに引っぱられずに振り返れます。",
     ]),
-    practicePoints: Object.freeze(["まず100との差を見る。", "次に前回の同じ部位を見る。", "最後に距離やコース条件の違いを見る。"]),
-  }),
-  "regional-six-eight-28": Object.freeze({
-    category: "結果の見方",
-    title: "12部位の目安と身体の記録は、別の情報",
-    lead: "結果の数字と、自分が感じたことは分けて残すと、あとから見返しやすくなります。",
-    body: Object.freeze([
-      "12部位の目安は、距離や坂、ペース、路面などの走行条件から整理した数字です。痛みや疲れを感じた場所そのものを示すものではありません。",
-      "身体の記録には、感じた場所、左右、程度、気づいた時点を自分の情報として残せます。",
-      "数字と身体の記録が同じ方向でも違っていても、まずは別々の事実として見返します。",
-    ]),
-    practicePoints: Object.freeze(["結果は100との差を見る。", "身体の記録は場所・程度・時点を見る。", "一致したかどうかだけで結論を出さない。"]),
   }),
   "history-compatible": Object.freeze({
     category: "記録・履歴",
     title: "履歴は、比べられる記録だけをつなぐ",
-    lead: "走っていない日や、条件がそろわない記録を0として扱わず、同じ意味で比べられる記録だけを見ます。",
+    summary: "休養日や数値を出せない記録は0ではありません。同じ意味で比べられる記録だけをつないで見ます。",
     body: Object.freeze([
-      "休養日、未記録の日、結果を出せない記録は、数字の0ではありません。履歴では、数字がある記録と空白を分けて扱います。",
-      "部位の推移を見るときは、同じ部位を同じ意味で比べられる記録だけをつなぎます。",
-      "線が途切れている場所は、悪化や改善を示すのではなく、比べる数字がない区間として読みます。",
+      "履歴の空白にはいくつかの意味があります。走っていない日、記録していない日、その部位の数字を出せない日などです。どれも『0だった』という意味ではないので、0として線をつなぐと別の意味になってしまいます。",
+      "部位の推移では、同じ部位を同じ意味で比べられる記録だけをつなぎます。線が途中で切れていても、それだけで良くなった・悪くなったとは読みません。単に、その区間には比べる数字がない場合があります。",
+      "変化を見るときは、グラフの上下だけでなく、その日の距離、走った時間、坂や路面なども一緒に確認します。数字の変化と走行条件の変化を並べると、何が違った日なのかを整理しやすくなります。",
+      "疲労感や身体の記録は、12部位の数値とは別の情報です。同じ日に並んでいても、どちらかがもう一方の原因だと決めず、それぞれの記録として見返します。",
     ]),
-    practicePoints: Object.freeze(["空白を0として読まない。", "同じ部位の記録を見ているか確認する。", "線だけでなく、その日の距離や条件も見る。"]),
   }),
   "plan-facts-current": Object.freeze({
     category: "記録・履歴",
     title: "予定と実際は、分けて残す",
-    lead: "走る前に考えた予定と、実際に走った内容を分けると、あとから違いを振り返れます。",
+    summary: "走る前に考えた予定と、実際に走った内容は別の記録です。違いが出たこと自体も、次に振り返る材料になります。",
     body: Object.freeze([
-      "予定では、これから走る距離・時間・コースなどを整理します。走ったあとの記録とは別に残します。",
-      "実際には、時間やコースの状態、歩数などが予定と変わることがあります。違ったこと自体も振り返る材料です。",
-      "予定どおりだったかだけでなく、何が変わったかを見ると、次の予定を考えやすくなります。",
+      "走る前に決められるのは、距離、時間、コースなどの予定です。実際に走ると、思ったより短くしたり、時間が延びたり、コースを変えたりすることがあります。",
+      "予定どおりにできたかどうかだけで評価する必要はありません。何を予定して、実際にはどうなったかを分けて残すと、自分がどんな場面で予定を変えたのかを後から確認できます。",
+      "歩数や実際の走行時間、走った後の疲労感などは、走ったあとに分かる情報です。予定の段階で埋めるのではなく、実際の記録として残すことで、予定と実績が混ざりにくくなります。",
+      "次の予定を考えるときは、前回の予定だけを見るのではなく、実際に走った内容も並べてみます。予定との差は失敗ではなく、自分の走り方を知るための記録になります。",
     ]),
-    practicePoints: Object.freeze(["予定と実績を別々に確認する。", "距離・時間・コースのどこが変わったかを見る。", "変更や未実施も、そのまま記録として残す。"]),
   }),
   "training-progression-no-universal-rule": Object.freeze({
     category: "走りとのつき合い方",
     title: "練習量は「毎週○％」だけで決めない",
-    lead: "増やし方を一つの割合に固定せず、距離・時間・回数と自分の記録を合わせて見ます。",
+    summary: "毎週同じ割合で増やせば誰にでも合う、という万能なルールはありません。距離・時間・回数などを分けて見ます。",
     body: Object.freeze([
-      "練習量を毎週10％ずつ増やす考え方はよく知られていますが、誰にでも同じように当てはまる決まりではありません。",
-      "同じ割合でも、走る回数、距離、時間、コースが違えば、実際の練習内容は変わります。",
-      "予定を立てるときは、一つの割合だけではなく、最近の自分の記録を見ながら考える方が振り返りやすくなります。",
+      "ランニングでは『毎週10％ずつ増やす』という考え方を見かけます。ただ、初心者ランナーを対象にした研究でも、10％ずつ増やす方法なら誰でもけがを減らせる、とは確認されていません。",
+      "これは、急に練習量を増やしてよいという意味でもありません。大切なのは、一つの割合を全員共通の正解として使わないことです。",
+      "同じ10％でも、週に走る回数、1回の距離、走る時間、コースが違えば内容はかなり変わります。『何％増えたか』だけでなく、何がどのくらい変わったかを分けて見る方が、自分の記録を理解しやすくなります。",
+      "予定と実際の記録を何回か並べると、自分がどのくらい走ってきたかを具体的に振り返れます。次の予定を考えるときも、一つの数字だけではなく最近の記録全体を見る材料にできます。",
     ]),
-    practicePoints: Object.freeze(["割合だけでなく距離・時間・回数を見る。", "直前の一回だけで決めない。", "予定を変えた場合も、そのまま残す。"]),
   }),
   "context-not-single-cause": Object.freeze({
     category: "走りとのつき合い方",
     title: "走った日の背景は、ひとつに決めつけない",
-    lead: "暑さ、睡眠、コース、生活などは重なります。気になったことは分けて記録すると振り返りやすくなります。",
+    summary: "暑さ、睡眠、コース、生活、走った内容などは重なります。一回の記録だけで原因を決めず、分けて残して見返します。",
     body: Object.freeze([
-      "走った日の感じ方には、練習内容だけでなく、天候、睡眠、生活、過去の経験など複数のことが重なる場合があります。",
-      "一つだけを原因と決めるより、分かっていることを別々に残しておくと、何日か並べたときに違いを見つけやすくなります。",
-      "気づいたことは短い言葉で構いません。事実と自分の感じ方を分けて残すことがポイントです。",
+      "同じように走ったつもりでも、その日の感じ方は毎回同じとは限りません。走った内容だけでなく、暑さ、睡眠、休養、生活、コースなど、いくつもの背景が重なることがあります。",
+      "たとえば『暑い日に疲れた』という記録が一度あっても、それだけで暑さが原因だったとは決められません。その日は距離が長かったかもしれませんし、睡眠や生活の違いがあったかもしれません。",
+      "そこで、分かっている事実と自分の感じ方を分けて残します。気温、走行時間、コースは事実として、疲れた・走りにくかったといった感覚は自分の記録として残す、という考え方です。",
+      "何日か並べたときに似た場面があれば、次に確認したいことが見つかるかもしれません。一回の一致を答えにするのではなく、次に見るポイントを作るために記録を使います。",
     ]),
-    practicePoints: Object.freeze(["天候・睡眠・走った内容を分けて残す。", "自分の感じ方も別に書く。", "一回だけの一致で原因を決めない。"]),
   }),
   "cooldown-stretching-limits": Object.freeze({
     category: "走った後",
     title: "クールダウンやストレッチは、目的を分けて考える",
-    lead: "終わった後に何をしたかと、その後どう感じたかを分けて残します。",
+    summary: "行えば必ず筋肉痛やけがを防げる、というものではありません。何のために行ったかと、その後どう感じたかを分けます。",
     body: Object.freeze([
-      "クールダウンやストレッチは、行えば必ず筋肉痛を減らせる、というものではありません。",
-      "一方で、気持ちを切り替える、身体をゆっくり動かして終えるなど、自分なりの目的で行うことはできます。",
-      "何をしたかと、その後どう感じたかを別々に記録すると、自分にとっての使い方を見返しやすくなります。",
+      "走った後に軽く動くクールダウンは、よく行われています。ただ、研究をまとめた報告では、翌日以降の運動成績や筋肉痛への効果は小さいか、結果が一定していません。けがを防げることが確認されたわけでもありません。",
+      "運動後のストレッチも、何もしないで休んだ場合と比べて、筋肉痛や筋力の戻り方がはっきり良くなるとは確認されていません。『やれば必ず回復が早くなる』と考えるのは単純すぎます。",
+      "一方で、ゆっくり身体を動かして走り終える、気持ちを切り替えるなど、自分にとって別の目的があることはあります。効果が一つに決まらないからといって、行う意味が全くないという話でもありません。",
+      "振り返るときは、何をしたかと、その後どう感じたかを分けて残します。『ストレッチをしたから良かった』と先に決めず、自分の記録として見返せる形にしておくと扱いやすくなります。",
     ]),
-    practicePoints: Object.freeze(["行った内容を短く残す。", "その後の感じ方は別に記録する。", "やった・やらなかっただけで良し悪しを決めない。"]),
   }),
   "hydration-not-more-is-better": Object.freeze({
     category: "走った後",
     title: "水分補給は、量だけで考えない",
-    lead: "走った時間や暑さによって状況は変わります。飲んだ量だけでなく、その日の条件も一緒に見ます。",
+    summary: "必要な水分量は人や状況で変わります。多く飲んだことだけを安心材料にせず、走った時間や暑さも一緒に見ます。",
     body: Object.freeze([
-      "汗のかき方や走る時間、気温は人や日によって違います。全員に同じ量が当てはまるわけではありません。",
-      "長時間の運動では、必要以上に飲み続けることが問題になる場合もあります。量の多さだけを安心材料にしないことが大切です。",
-      "記録するときは、走った時間、天候、飲んだものを分けて残すと、その日の状況を思い出しやすくなります。",
+      "汗のかき方は人によって違い、同じ人でも走る時間や気温などで変わります。そのため、全員が同じ量を飲めばよい、という一つの数字だけでは考えられません。",
+      "長時間の運動では、必要以上に水分を取り続けることが問題になる場合もあります。運動に伴う低ナトリウム血症についてまとめた報告でも、飲み過ぎが重要な背景として扱われています。",
+      "振り返るときは、飲んだ量だけでなく、どのくらい走ったか、どんな天候だったか、何を飲んだかを分けて残すと、その日の状況を思い出しやすくなります。",
+      "『たくさん飲んだから大丈夫』『少なかったから必ず不足している』のように量だけで結論を出さず、その日の条件の一つとして見ます。",
     ]),
-    practicePoints: Object.freeze(["走った時間と天候を見る。", "飲んだものと量を記録する。", "量の多さだけで足りた・足りないを決めない。"]),
-  }),
-  "sleep-not-hours-only": Object.freeze({
-    category: "走る前",
-    title: "睡眠は、時間だけで振り返らない",
-    lead: "眠った長さだけでなく、眠れた感じや普段との違いも一緒に残すと見返しやすくなります。",
-    body: Object.freeze([
-      "同じ睡眠時間でも、途中で目が覚めた、寝つきが違ったなど、感じ方は変わることがあります。",
-      "一晩の長さだけを見るより、自分の普段の記録と比べると、その日の違いを捉えやすくなります。",
-      "時間と感じ方を分けて残しておくと、あとから走った日の背景と一緒に確認できます。",
-    ]),
-    practicePoints: Object.freeze(["睡眠時間を残す。", "眠れた感じを別に残す。", "自分の普段との違いを見る。"]),
   }),
   "heat-not-temperature-only": Object.freeze({
     category: "走る前",
     title: "暑い日は、気温だけを見ない",
-    lead: "湿度や日差しも含むWBGTを見ると、その時間・場所の暑さをより把握しやすくなります。",
+    summary: "暑さは気温だけでは分かりません。湿度や日差しも含むWBGTなど、その場所と時間の最新情報を確認します。",
     body: Object.freeze([
-      "同じ気温でも、湿度や日差しによって暑さの条件は変わります。気温だけでは分からない部分があります。",
-      "走る前は、その場所と時間に合った最新のWBGTや公的な暑さ情報を確認すると、環境を把握しやすくなります。",
-      "記録には、気温、天候、時間帯などを分けて残しておくと、あとからその日の環境を思い出しやすくなります。",
+      "同じ気温でも、湿度や日差しが違えば身体が受ける暑さは変わります。気温だけを見て『今日は大丈夫そう』と決めると、見落とす情報があります。",
+      "暑さを見る指標の一つがWBGT（暑さ指数）です。気温だけでなく、湿度や周囲から受ける熱なども含めて考えるため、スポーツ時の暑さを確認する公的な案内でも使われています。",
+      "走る前は、過去に同じ気温で走れたかではなく、その場所と時間の最新のWBGTや公的な暑さ情報を確認します。天候は変わるので、以前の記録だけでは今の状況は分かりません。",
+      "あとから振り返れるように、気温、天候、時間帯などを分けて残しておくと便利です。同じ距離でも環境が違った日を見分けやすくなります。",
     ]),
-    practicePoints: Object.freeze(["走る場所と時間の最新WBGTを見る。", "気温・天候・時間帯を分けて残す。", "過去の一回だけでなく、その日の情報を見る。"]),
   }),
   "consultation-prep": Object.freeze({
     category: "相談・共有",
     title: "共有するときは、事実と自分の言葉を分ける",
-    lead: "日付・距離・時間などの記録と、自分が感じたことを分けてまとめると、相手が確認しやすくなります。",
+    summary: "相談するときは、記録した事実、自分が感じたこと、相手に聞きたいことを分けると伝わりやすくなります。",
     body: Object.freeze([
-      "まず、日付、距離、走った時間、コースなど、記録した事実をまとめます。",
-      "次に、身体の記録や気になったことを、自分の言葉として分けて添えます。12部位の目安を入れる場合は、部位名と基準100との差が分かる形にします。",
-      "最後に、相手に確認してほしいことを一つ書くと、共有する目的が伝わりやすくなります。",
+      "相談するときは、最初に日付、距離、走った時間、コースなど、記録として確認できることをまとめます。相手が状況をつかむための土台になります。",
+      "次に、身体で気になったことや疲労感など、自分が感じたことを自分の言葉で添えます。事実と感覚を分けておくと、『記録にあること』と『自分が感じたこと』が混ざりにくくなります。",
+      "最後に、何を見てほしいのか、何を聞きたいのかを一つ書きます。情報をたくさん並べるより、相談したいことが分かる方が相手も確認しやすくなります。",
+      "共有する前には、必要な内容だけになっているかを自分で確認します。自分だけのメモなど、見せたくない情報が入っていないかを見ることも大切です。",
     ]),
-    practicePoints: Object.freeze(["記録した事実を先にまとめる。", "自分の感じ方は別に書く。", "確認してほしいことを一つ書く。"]),
-  }),
-  "slope-endpoints": Object.freeze({
-    category: "結果の見方",
-    title: "上りと下りでは、部位ごとの変化が違う",
-    lead: "坂では身体の使い方が変わりますが、すべての部位が同じ方向に動くわけではありません。",
-    body: Object.freeze([
-      "上りでは身体を前上方へ運ぶ動きが増え、下りでは着地しながら速度を調整する動きが増えます。",
-      "そのため、同じ坂でも部位によって数字の動き方が違うことがあります。",
-      "部位の数字を見るときは、その部位の基準100との差と、坂・ペース・歩数などの条件を一緒に確認します。",
-    ]),
-    practicePoints: Object.freeze(["上りと下りを分けて見る。", "部位ごとに100との差を見る。", "坂だけでなくペースや歩数も確認する。"]),
-  }),
-  "grade-and-coverage": Object.freeze({
-    category: "走りとのつき合い方",
-    title: "坂のある日は、上りと下りを分けて見る",
-    lead: "上りと下りでは身体の使われ方が変わるため、同じ「坂道」としてまとめずに振り返ります。",
-    body: Object.freeze([
-      "上りでは身体を持ち上げる動きが増え、下りでは着地しながら速度を調整する動きが増えます。",
-      "坂の傾きや区間の長さでも走り方は変わります。",
-      "コースを振り返るときは、上り・下りの割合や、どのくらい続いたかを分けて見ると理解しやすくなります。",
-    ]),
-    practicePoints: Object.freeze(["上りと下りを分ける。", "坂の長さも思い出す。", "同じコースでもペースの違いを見る。"]),
-  }),
-  "surface-missingness": Object.freeze({
-    category: "走りとのつき合い方",
-    title: "路面は、名前だけでなく実際の状態を見る",
-    lead: "同じ舗装路や芝でも、硬さ・凹凸・濡れ方が違えば走った感覚も変わります。",
-    body: Object.freeze([
-      "路面の硬さや凹凸が変わると、足のつき方や身体の動かし方も変わることがあります。",
-      "同じ名前の路面でも、乾いているか、濡れているか、平らかどうかで状態は違います。",
-      "よく分からないときは無理に決めず、分かる範囲だけ残す方が、あとから別の条件と取り違えにくくなります。",
-    ]),
-    practicePoints: Object.freeze(["硬さ・凹凸・乾湿を見る。", "足のつき方は分かる場合だけ残す。", "迷う条件は無理に決めない。"]),
-  }),
-  "personal-reference": Object.freeze({
-    category: "記録・履歴",
-    title: "前回比較は、同じ意味で比べられる記録だけ",
-    lead: "同じ部位を同じ基準で比べられる過去記録があるときだけ、前回との差を表示します。",
-    body: Object.freeze([
-      "前回比較では、同じ部位を同じ意味で比べられる記録を探します。",
-      "比べられる記録があれば、その中で直近の一回と今回を並べます。なければ無理に差を作りません。",
-      "差を見るときは、数字だけでなく、距離やコースなど今回と前回の条件も一緒に確認します。",
-    ]),
-    practicePoints: Object.freeze(["同じ部位の比較か確認する。", "前回との差を見る。", "今回と前回の走行条件も見る。"]),
   }),
 });
 
@@ -338,17 +272,16 @@ function readingArticleCopy(article = {}) {
   return Object.freeze({
     category: override.category || article.category || "読みもの",
     title: override.title || article.title || "読みもの",
-    lead: override.lead || article.lead || article.summary || "",
+    summary: override.summary || article.summary || article.lead || "",
     body: override.body || article.body || [],
-    practicePoints: override.practicePoints || article.practicePoints || [],
+    sources: article.sources || [],
   });
 }
 
 function readingMinutes(copy = {}) {
   const text = [
-    copy.lead || "",
+    copy.summary || "",
     ...(copy.body || []),
-    ...(copy.practicePoints || []),
   ].join("");
   return Math.max(1, Math.ceil(text.length / 240));
 }
@@ -357,11 +290,22 @@ function readingSearchText(article = {}, copy = {}) {
   return [
     copy.category,
     copy.title,
-    copy.lead,
+    copy.summary,
     ...(copy.body || []),
-    ...(copy.practicePoints || []),
     ...(article.tags || []),
   ].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+}
+
+function renderReadingSources(sources = []) {
+  if (!sources.length) return "";
+  return `<section class="reading-sources"><div class="reading-section-head"><small>参考にした情報</small><h3>出典元</h3></div><div class="reading-source-list">${sources.map((source) => {
+    const organization = source.organization || source.sourceTypeLabel || "参考資料";
+    const meta = [organization, source.year].filter(Boolean).join("・");
+    const body = `<span><strong>${escapeHtml(source.title || organization)}</strong><small>${escapeHtml(meta)}</small></span>${source.url ? '<b aria-hidden="true">↗</b>' : ""}`;
+    return source.url
+      ? `<a class="reading-source" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${body}</a>`
+      : `<div class="reading-source reading-source--internal">${body}</div>`;
+  }).join("")}</div></section>`;
 }
 
 function relatedReadingItems(article, items = []) {
@@ -378,7 +322,7 @@ function renderReadingArticle(article, filter, isFeatured = false) {
   const copy = readingArticleCopy(article);
   const minutes = readingMinutes(copy);
   return `<article class="article-card" data-reading-card data-cat="${escapeHtml(filter)}" data-reading-search="${escapeHtml(readingSearchText(article, copy))}">
-    <div class="article-card__copy"><small>${escapeHtml(copy.category)}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(copy.lead)}</p></div>
+    <div class="article-card__copy"><small>${escapeHtml(copy.category)}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(copy.summary)}</p></div>
     <div class="article-card__meta"><span>約${minutes}分</span>${isFeatured ? '<span class="article-card__recommended">おすすめ</span>' : ""}</div>
     <button class="article-card__open" type="button" data-reading-open="${escapeHtml(publicArticleId(article.id))}"><span>読む</span><b aria-hidden="true">→</b></button>
   </article>`;
@@ -389,18 +333,18 @@ function renderReadingDetail(article, items) {
   const minutes = readingMinutes(copy);
   const related = relatedReadingItems(article, items);
   return `<article class="reading-detail" data-reading-detail="${escapeHtml(publicArticleId(article.id))}" hidden>
-    <div class="sheet-head">
-      <div><small>${escapeHtml(copy.category)}</small><strong id="articleTitle-${escapeHtml(publicArticleId(article.id))}">${escapeHtml(copy.title)}</strong><div class="reading-detail__meta"><span>約${minutes}分</span></div></div>
-      <button class="close app-utility-button" type="button" data-reading-close aria-label="閉じる"><span class="app-utility-button__close-symbol" aria-hidden="true">×</span></button>
+    <div class="reading-detail__topbar"><strong>読みもの</strong><button class="close app-utility-button" type="button" data-reading-close aria-label="記事を閉じる"><span class="app-utility-button__close-symbol" aria-hidden="true">×</span></button></div>
+    <div class="reading-detail__content">
+      <header class="reading-article-head"><div class="reading-detail__meta"><span>${escapeHtml(copy.category)}</span><span>約${minutes}分</span></div><h2 id="articleTitle-${escapeHtml(publicArticleId(article.id))}">${escapeHtml(copy.title)}</h2></header>
+      <section class="reading-summary"><div class="reading-section-head"><small>まず知っておきたいこと</small><h3>要約</h3></div><p>${escapeHtml(copy.summary)}</p></section>
+      <section class="reading-body"><div class="reading-section-head"><small>もう少し詳しく</small><h3>本文</h3></div><div class="body-copy">${copy.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div></section>
+      ${renderReadingSources(copy.sources)}
+      ${related.length ? `<section class="reading-related"><div class="reading-related__head"><strong>続けて読む</strong><small>関連する記事</small></div><div class="reading-related__grid">${related.map((item) => {
+        const relatedCopy = readingArticleCopy(item.article);
+        return `<button class="reading-related-card" type="button" data-reading-open="${escapeHtml(publicArticleId(item.article.id))}"><span><small>${escapeHtml(relatedCopy.category)}</small><strong>${escapeHtml(relatedCopy.title)}</strong></span><b aria-hidden="true">→</b></button>`;
+      }).join("")}</div></section>` : ""}
+      <div class="reading-detail__footer"><button type="button" class="reading-detail__back" data-reading-close>記事一覧へ戻る</button></div>
     </div>
-    <p class="lead">${escapeHtml(copy.lead)}</p>
-    ${copy.practicePoints.length ? `<section class="reading-keypoints"><strong>まずここだけ</strong><ul>${copy.practicePoints.map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ul></section>` : ""}
-    <div class="body-copy">${copy.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>
-    ${related.length ? `<section class="reading-related"><div class="reading-related__head"><strong>続けて読む</strong><small>関連する記事</small></div><div class="reading-related__grid">${related.map((item) => {
-      const relatedCopy = readingArticleCopy(item.article);
-      return `<button class="reading-related-card" type="button" data-reading-open="${escapeHtml(publicArticleId(item.article.id))}"><span><small>${escapeHtml(relatedCopy.category)}</small><strong>${escapeHtml(relatedCopy.title)}</strong></span><b aria-hidden="true">→</b></button>`;
-    }).join("")}</div></section>` : ""}
-    <div class="reading-detail__footer"><button type="button" class="reading-detail__back" data-reading-close>記事一覧へ戻る</button></div>
   </article>`;
 }
 
@@ -431,6 +375,8 @@ export function renderReadingContent({ services, context, deferredArticleIds }) 
   }
   const detailArticles = new Map(items.map((item) => [item.article.id, item.article]));
   if (featured) detailArticles.set(featured.id, featured);
+  const initialArticle = initialArticleId ? available.get(initialArticleId) : null;
+  if (initialArticle) detailArticles.set(initialArticle.id, initialArticle);
   const filterCounts = items.reduce((counts, item) => {
     counts[item.filter] = (counts[item.filter] || 0) + 1;
     return counts;
@@ -439,8 +385,8 @@ export function renderReadingContent({ services, context, deferredArticleIds }) 
   return `<div class="screen screen--reading screen-layout screen-layout--reading secondary-derived-screen" data-reading-screen${initialArticleId ? ` data-reading-initial-article="${escapeHtml(initialArticleId)}"` : ""}>
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>読みもの</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
-    <section class="head reading-intro"><p class="eyebrow">読みもの</p><h1>記録を見返すヒント</h1><p>結果・履歴・走る前後の記録を、自分で読み解くための短いガイドです。</p></section>
-    ${featured ? (() => { const copy = readingArticleCopy(featured); return `<section class="recommend"><div class="recommend__copy"><small>${target.experience ? "この記録から" : "まず読むなら"}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(recommendation.reason || copy.lead)}</p><div class="recommend__meta"><span>${escapeHtml(copy.category)}</span><span>約${readingMinutes(copy)}分</span></div></div><button type="button" data-reading-open="${escapeHtml(publicArticleId(featured.id))}"><span>読む</span><b aria-hidden="true">→</b></button></section>`; })() : ""}
+    <section class="head reading-intro"><p class="eyebrow">読みもの</p><h1>ランニングを知る、記録を理解する</h1><p>走る前後の知識と、記録を見返すときに役立つ内容を短い記事でまとめています。</p></section>
+    ${featured ? (() => { const copy = readingArticleCopy(featured); return `<section class="recommend"><div class="recommend__copy"><small>${target.experience ? "この記録から" : "まず読むなら"}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(recommendation.reason || copy.summary)}</p><div class="recommend__meta"><span>${escapeHtml(copy.category)}</span><span>約${readingMinutes(copy)}分</span></div></div><button type="button" data-reading-open="${escapeHtml(publicArticleId(featured.id))}"><span>読む</span><b aria-hidden="true">→</b></button></section>`; })() : ""}
     <section class="reading-tools" aria-label="読みものを探す">
       <div class="reading-search" role="search"><span class="reading-search__icon" aria-hidden="true">⌕</span><input type="search" inputmode="search" autocomplete="off" placeholder="キーワードで探す　例：暑さ、睡眠、履歴" aria-label="読みものをキーワードで検索" data-reading-search><button type="button" data-reading-search-clear hidden>クリア</button></div>
       <div class="filter-strip"><div class="filter-strip-head"><span>テーマで絞る</span><small>横にスライド <b aria-hidden="true">→</b></small></div><div class="filters" role="group" aria-label="読みものをテーマで絞り込み">${filterButton("all","すべて")}${filterButton("result","結果")}${filterButton("record","記録・履歴")}${filterButton("running","走り方")}${filterButton("after","走った後")}${filterButton("before","走る前")}${filterButton("share","共有")}</div></div>

@@ -9,17 +9,19 @@ const read=(p)=>fs.readFileSync(path.join(root,p),'utf8');
 const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 
-await test('READING-USES-USER-FACING-COPY-LAYER',()=>{
+await test('READING-USES-KNOWLEDGE-FIRST-ARTICLE-STRUCTURE',()=>{
   const source=read('screens/readingScreen.js');
   assert.ok(source.includes('const READING_COPY = Object.freeze('));
-  assert.ok(source.includes('記録を見返すヒント'));
-  assert.ok(source.includes('自分で読み解くための短いガイド'));
-  assert.ok(source.includes('まずここだけ'));
+  assert.ok(source.includes('ランニングを知る、記録を理解する'));
+  assert.ok(source.includes('短い記事でまとめています'));
+  assert.ok(source.includes('まず知っておきたいこと'));
+  assert.ok(source.includes('<h3>要約</h3>'));
+  assert.ok(source.includes('<h3>本文</h3>'));
+  assert.ok(source.includes('<h3>出典元</h3>'));
+  assert.ok(source.includes('renderReadingSources(copy.sources)'));
   assert.ok(source.includes('続けて読む'));
-  assert.ok(!source.includes('Current App'));
-  assert.ok(!source.includes('公開資料・研究文献を背景にした一般情報'));
   assert.ok(!source.includes('class="caution"'));
-  assert.ok(!source.includes('class="source-note"'));
+  assert.ok(!source.includes('まずここだけ'));
 });
 
 await test('READING-HAS-SEARCH-FILTER-COUNTS-AND-EMPTY-STATE',()=>{
@@ -75,14 +77,26 @@ await test('READING-LAST-ODD-CARD-KEEPS-ACTION-ALIGNED',()=>{
   assert.ok(tail.includes('align-items:stretch !important'));
 });
 
-await test('READING-LAYOUT-HAS-SEARCH-LARGER-TYPE-AND-RELATED-CARDS',()=>{
+await test('READING-LAYOUT-HAS-SEARCH-FULLSCREEN-ARTICLE-AND-SOURCES',()=>{
+  const source=read('screens/readingScreen.js');
   const mobile=read('styles/mobile-screen-layouts.css');
   const desktop=read('styles/desktop-screen-layouts.css');
   assert.ok(mobile.includes('.reading-search'));
   assert.ok(mobile.includes('.reading-related-card'));
-  assert.ok(desktop.includes('font-size:1rem !important'));
-  assert.ok(desktop.includes('.reading-related__grid'));
-  assert.ok(desktop.includes('.reading-keypoints'));
+  assert.ok(mobile.includes('.reading-detail__topbar'));
+  assert.ok(mobile.includes('.reading-summary'));
+  assert.ok(mobile.includes('.reading-source-list'));
+  assert.ok(mobile.includes('height:100dvh'));
+  assert.ok(desktop.includes('.reading-detail__content'));
+  assert.ok(desktop.includes('height:100dvh !important'));
+  assert.ok(desktop.includes('.reading-source'));
+  assert.ok(source.includes('class="reading-source"'));
+});
+
+await test('READING-DIRECT-ARTICLE-LINKS-CAN-OPEN-EXISTING-CATALOG-ARTICLES',()=>{
+  const source=read('screens/readingScreen.js');
+  assert.ok(source.includes('const initialArticle = initialArticleId ? available.get(initialArticleId) : null;'));
+  assert.ok(source.includes('if (initialArticle) detailArticles.set(initialArticle.id, initialArticle);'));
 });
 
 const failed=results.filter((item)=>item.status==='FAIL');
