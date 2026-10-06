@@ -48,7 +48,7 @@ await test('PC-LINKS-USER-EXPERIENCE-AND-RUNLOAD-INFORMATION-WITHOUT-EQUATING-TH
   const html=renderInterpretationRoom({output:output(),selfUnderstanding,compactLayout:false});
   assert.match(html,/あなたの身体の記録/);
   assert.match(html,/股関節部の外側/);
-  assert.match(html,/RunLoadの部位表示/);
+  assert.match(html,/部位ごとの参考表示/);
   assert.match(html,/101\.9/);
   assert.match(html,/2つは別の情報です/);
   assert.match(html,/原因だという意味ではありません/);
