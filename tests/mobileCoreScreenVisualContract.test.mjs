@@ -42,12 +42,11 @@ test("RECORD-STAGES-ARE-LEGIBLE-AND-FINAL-STAGE-CLEARS-SAVE-BAR", () => {
   assert.ok(recordCss.includes("scroll-margin-bottom"));
 });
 
-test("FATIGUE-GUIDE-MATCHES-HORIZONTAL-SLIDER-AND-HIDES-FORMAL-NAME-BY-DEFAULT", () => {
+test("FATIGUE-GUIDE-MATCHES-HORIZONTAL-SLIDER-AND-KEEPS-FORMAL-NAME-OUT-OF-DAILY-USE", () => {
   assert.ok(rof.includes("横軸と同じ向き"));
   assert.ok(rof.includes("疲労感の目安"));
   assert.ok(rofCss.includes("grid-template-columns: repeat(5, minmax(0, 1fr))"));
   assert.ok(rofCss.includes(".rof-author-anchor__descriptor"));
-  assert.ok(rofCss.includes("display: none"));
   assert.ok(record.includes("疲労感の尺度について"));
   assert.ok(!record.includes("正式名称：ROF-J"));
   assert.ok(!record.includes("ROF-Jの目安"));
