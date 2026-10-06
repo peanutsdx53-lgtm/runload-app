@@ -590,6 +590,7 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
 
       ${confirmationTheme ? `<section class="consultation-confirmation-theme"><small>共有する内容</small><strong>次回見ること：${escapeHtml(confirmationTheme)}</strong><span>本人が次回も見ると決めた内容です。個人的な追加メモは含めません。</span></section>` : ""}
 
+      <div class="share-input-stack" data-consult-input-stack>
       <section class="section share-step share-purpose-step"><div class="section-head"><small>STEP 1</small><h2>何を見てほしいか</h2><p>助言してほしい内容を最初に明確にします。</p></div>
         <div class="share-choice-grid" role="group" aria-label="見てほしい内容の分類">${choiceMarkup(PURPOSE_OPTIONS, "data-consult-purpose-option")}</div>
         <label class="field share-question-field"><span>特に聞きたいこと <b>必須</b></span><textarea maxlength="300" placeholder="例：最近疲労感が強くなっています。次回の練習内容をどう調整すべきか見てほしいです。" data-consult-question required>${escapeHtml(initialQuestion)}</textarea><small>診断を求める欄ではなく、指導・助言してほしい内容を書きます。</small></label>
@@ -608,6 +609,7 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
         <label class="field share-region-field"><span>参考情報で表示する部位</span><select data-consult-region-selector>${regionChoices.options}</select><small>部位を変更すると、基準100・前回比較・推移・人体図も同じ部位に切り替わります。</small></label>
         <div class="share-source-list">${selector}</div>
       </section>
+      </div>
 
       <section class="section share-step share-document-step"><div class="section-head"><small>STEP 4</small><h2>完成資料を確認</h2><p>完成資料を確認し、必要に応じて印刷・PDF保存できます。印刷時はA4として改ページされます。</p></div>
         <div class="share-document-stage" data-consult-document-stage>

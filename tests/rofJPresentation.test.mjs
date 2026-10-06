@@ -66,6 +66,9 @@ test('DAILY-USE-VIEW-SHOWS-CORRECTED-HORIZONTAL-ANCHOR-GUIDE', () => {
   assert.ok(moduleText.includes('return "7〜8"'));
   assert.ok(desktopVisualCss.includes('white-space: nowrap'));
   assert.ok(desktopVisualCss.includes('grid-template-columns: repeat(5, minmax(0, 1fr))'));
+  assert.ok(desktopVisualCss.includes('width: 3.35rem'));
+  assert.ok(desktopVisualCss.includes('height: 2.85rem'));
+  assert.ok(desktopVisualCss.includes('max-width: 58%'));
   assert.ok(compactCss.includes('.rof-visual-guide--compact'));
 });
 

@@ -20,5 +20,6 @@ assert.doesNotMatch(versionPanel, /更新状態を初期化|キャッシュを�
 assert.match(unified, /PC information\/settings\/share workspace correction/);
 assert.match(unified, /screen--settings\.screen-layout--settings \.secondary-derived-body[\s\S]*grid-template-areas:/);
 assert.match(unified, /data-app-update-panel[\s\S]*position: sticky/);
+assert.match(unified, /screen--settings\.screen-layout--settings[\s\S]*max-width: 77rem !important/);
 
 console.log("desktopSettings.test.mjs: PASS");

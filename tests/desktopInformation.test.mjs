@@ -27,6 +27,7 @@ assert.doesNotMatch(privacy,/eyebrow: "BACKUP"/);
 assert.match(unified,/screen--privacy\.screen-layout--privacy \.icon svg[\s\S]*width: 1\.45rem/);
 assert.match(unified,/screen--support-guidance\.screen-layout--support \.notice[\s\S]*display: block/);
 assert.match(unified,/secondary-derived-open:has\(\.screen--settings, \.screen--privacy, \.screen--support-guidance, \.screen--consultation\)/);
+assert.match(unified,/screen--support-guidance\.screen-layout--support[\s\S]*max-width: 77rem !important/);
 assert.match(css,/@media \(min-width: 55rem\)/);
 assert.match(css,/screen--more\.screen-layout--more/);
 assert.match(css,/grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);

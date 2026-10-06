@@ -1271,3 +1271,132 @@
     grid-column: auto !important;
   }
 }
+
+
+/* ===== Reference-sized PC auxiliary workspaces ===== */
+@media screen and (min-width: 55rem) {
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support,
+    .screen--consultation.screen-layout--consultation
+  ).secondary-derived-screen {
+    box-sizing: border-box !important;
+    width: min(calc(100% - 2rem), 77rem) !important;
+    max-width: 77rem !important;
+    margin-inline: auto !important;
+    padding-inline: 1rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body {
+    grid-template-columns: minmax(0, 1.35fr) minmax(22rem, .72fr) !important;
+    grid-template-areas:
+      "source source"
+      "confirmation confirmation"
+      "inputs document"
+      "support support" !important;
+    gap: .85rem 1rem !important;
+    align-items: start !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-input-stack {
+    grid-area: inputs !important;
+    min-width: 0 !important;
+    display: grid !important;
+    gap: .75rem !important;
+    align-content: start !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-input-stack > .share-step {
+    margin: 0 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-document-step {
+    grid-area: document !important;
+    position: sticky !important;
+    top: 5.35rem !important;
+    align-self: start !important;
+    min-width: 0 !important;
+    max-height: calc(100dvh - 6.5rem) !important;
+    overflow: hidden !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-document-stage {
+    max-height: min(35rem, calc(100dvh - 17.5rem)) !important;
+    margin-top: .55rem !important;
+    overflow: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-print-document {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-sheet-page {
+    min-height: 0 !important;
+    padding: .85rem .85rem 2.25rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-output-actions {
+    margin-top: .55rem !important;
+    gap: .45rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-output-actions .output {
+    min-height: 3.55rem !important;
+    padding: .62rem .72rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-step {
+    padding: .85rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-step > .section-head {
+    margin-bottom: .62rem !important;
+    padding-bottom: .5rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-choice-grid {
+    gap: .45rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-question-field textarea,
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-context-card textarea {
+    min-height: 3.65rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-context-grid {
+    gap: .55rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-context-card {
+    padding: .7rem !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-source-list {
+    gap: .45rem !important;
+  }
+}
+
+@media screen and (min-width: 55rem) and (max-width: 68rem) {
+  .screen--consultation.screen-layout--consultation[data-share-prep] .secondary-derived-body {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas:
+      "source"
+      "confirmation"
+      "inputs"
+      "document"
+      "support" !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-document-step {
+    position: static !important;
+    max-height: none !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep] .share-document-stage {
+    max-height: 32rem !important;
+  }
+}
