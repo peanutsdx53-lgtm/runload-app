@@ -40,7 +40,7 @@ const services = {
 const context = { parameters: new URLSearchParams(`recordId=${current.record.id}&regionId=${REGION_ID}`) };
 
 const desktop = renderDesktopBodyPartDetail({ services, context });
-assert.match(desktop, /BODY REGION DETAIL/);
+assert.match(desktop, /部位詳細/);
 assert.match(desktop, /下腿後面/);
 assert.match(desktop, /trend-svg--pc/);
 assert.match(desktop, /前回からの変化 \+7/);
@@ -48,7 +48,7 @@ assert.match(desktop, /origin=body-part-detail&amp;regionId=|origin=body-part-de
 assert.doesNotMatch(desktop, /mobile-detail-reference|mobile-detail-metrics|mobile-trend-detail|trend-svg--mobile/);
 
 const mobile = renderMobileBodyPartDetail({ services, context });
-assert.match(mobile, /BODY REGION DETAIL/);
+assert.match(mobile, /部位詳細/);
 assert.match(mobile, /mobile-detail-reference/);
 assert.match(mobile, /mobile-detail-metrics/);
 assert.match(mobile, /trend-svg--mobile/);
