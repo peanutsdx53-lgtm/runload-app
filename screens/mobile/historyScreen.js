@@ -23,7 +23,7 @@ function renderModeSwitch(workspace) {
 }
 
 function renderEmpty() {
-  return `<section class="history-view"><div class="empty-records empty-records--initial mobile-history-empty"><small>HISTORY</small><strong>最初の記録を残すと、ここで変化を見返せます</strong><p>保存した記録はそのまま残し、比べられる記録だけを同じ部位でつなぎます。</p><div class="mobile-history-empty__preview" aria-label="記録が増えると確認できること"><span><b>1</b>保存記録を探す</span><span><b>2</b>同じ部位を比べる</span><span><b>3</b>前回との差を見る</span></div><a href="#/record-input">記録を始める</a></div></section>`;
+  return `<section class="history-view"><div class="empty-records empty-records--initial mobile-history-empty"><small>履歴</small><strong>最初の記録を残すと、ここで変化を見返せます</strong><p>保存した記録はそのまま残し、比べられる記録だけを同じ部位でつなぎます。</p><div class="mobile-history-empty__preview" aria-label="記録が増えると確認できること"><span><b>1</b>保存記録を探す</span><span><b>2</b>同じ部位を比べる</span><span><b>3</b>前回との差を見る</span></div><a href="#/record-input">記録を始める</a></div></section>`;
 }
 
 const MOBILE_HISTORY_PRESENTATION = Object.freeze({

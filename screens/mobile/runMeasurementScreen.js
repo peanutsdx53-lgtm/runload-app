@@ -21,7 +21,7 @@ function fatigueScaleMarkup(phase) {
         <div class="rof-slider-wrap" data-rof-slider-wrap><input type="range" min="0" max="10" step="1" value="5" data-record-rof-slider aria-label="${label} 0から10"><div class="rof-ticks" aria-hidden="true">${Array.from({ length: 11 }, (_, value) => `<span>${value}</span>`).join("")}</div></div>
         <span data-record-rof-anchor hidden></span>
       </div>
-      <details class="rof-about"><summary>尺度の出典・正式表現</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p><small>正式名称：ROF-J</small></div></details>
+      <details class="rof-about"><summary>疲労感の尺度について</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p></div></details>
     </div>
   </details>`;
 }
@@ -41,7 +41,7 @@ export function renderRunMeasurementScreen({ services, context }) {
       </header>
 
       <main class="run-measurement-prep__body">
-        <section class="run-measurement-prep__intro"><p class="eyebrow">MEASURE</p><h1>活動と測定方法</h1><p>活動と測定方法を選びます。</p></section>
+        <section class="run-measurement-prep__intro"><p class="eyebrow">測定</p><h1>活動と測定方法</h1><p>活動と測定方法を選びます。</p></section>
 
         <fieldset class="run-measurement-mode" data-measurement-mode-group>
           <legend>測定方法</legend>
@@ -136,7 +136,7 @@ export function renderRunMeasurementScreen({ services, context }) {
     <section class="run-measurement-post" data-measurement-post hidden>
       <header class="run-measurement__header"><span></span><strong>測定終了</strong><span></span></header>
       <main class="run-measurement-post__body">
-        <section class="run-measurement-post__summary"><p class="eyebrow">DONE</p><h1>測定が完了しました</h1><div class="run-measurement-post__facts run-measurement-post__facts--primary"><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span></div></section>
+        <section class="run-measurement-post__summary"><p class="eyebrow">測定完了</p><h1>測定が完了しました</h1><div class="run-measurement-post__facts run-measurement-post__facts--primary"><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span></div></section>
 
         <details class="run-measurement-post__auto-details">
           <summary><span><small>自動整理</small><strong>補助記録を確認</strong></span><b>歩数・コースなど</b></summary>

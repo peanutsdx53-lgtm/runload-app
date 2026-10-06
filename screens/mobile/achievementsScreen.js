@@ -33,7 +33,7 @@ function renderNextAchievement(achievement) {
   if (!achievement) return "";
   const progress = Math.round(achievement.progress * 100);
   return `<section class="achievement-next" aria-label="次の実績">
-    <div><small>NEXT</small><strong>${escapeHtml(achievement.title)}</strong><span>${escapeHtml(progressText(achievement))}</span></div>
+    <div><small>次の目標</small><strong>${escapeHtml(achievement.title)}</strong><span>${escapeHtml(progressText(achievement))}</span></div>
     <div class="achievement-next__meter" aria-label="進捗 ${progress}%"><span><i style="--progress:${progress}%"></i></span><b>${progress}%</b></div>
   </section>`;
 }
@@ -49,7 +49,7 @@ export function renderAchievementsScreen({ services }) {
   return `<div class="screen screen--achievements screen-layout secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="#/more">← その他へ戻る</a><strong>実績</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
-      <section class="achievement-hero"><div><small>ACHIEVEMENTS</small><h1>実績</h1></div><strong>${unlocked.length}<span> / ${achievements.length}</span></strong></section>
+      <section class="achievement-hero"><div><small>実績</small><h1>実績</h1></div><strong>${unlocked.length}<span> / ${achievements.length}</span></strong></section>
       ${renderNextAchievement(next)}
       <p class="achievement-policy">記録・予定・休養など、保存された事実を対象にします。</p>
       ${inProgress.length ? `<section class="achievement-section"><header><strong>進行中</strong><span>${inProgress.length}</span></header><div class="achievement-list">${inProgress.map(renderAchievement).join("")}</div></section>` : ""}

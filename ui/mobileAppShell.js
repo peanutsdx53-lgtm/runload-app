@@ -20,9 +20,9 @@ function renderHeader({ currentScreen, currentLocation, hasResult = false }) {
   const title = resolveHeaderTitle(currentScreen, currentLocation);
   const titleHtml = `<div class="mobile-topbar__brand mobile-topbar__screen-title"><strong>${escapeHtml(title)}</strong></div>`;
   if (context) {
-    return `<header class="mobile-topbar mobile-topbar--context"><a class="mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a>${titleHtml}<div class="mobile-topbar__actions" aria-label="画面操作">${help}${menu}</div></header>`;
+    return `<header class="mobile-topbar mobile-topbar--context"><a class="mobile-topbar__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a>${titleHtml}<div class="mobile-topbar__actions" aria-label="操作">${help}${menu}</div></header>`;
   }
-  return `<header class="mobile-topbar">${titleHtml}<div class="mobile-topbar__actions" aria-label="画面操作">${help}${menu}</div></header>`;
+  return `<header class="mobile-topbar">${titleHtml}<div class="mobile-topbar__actions" aria-label="操作">${help}${menu}</div></header>`;
 }
 
 export function resolvePlatformGuideReturnFocusSelector() {

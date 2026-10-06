@@ -96,7 +96,7 @@ export function buildRunFingerprint(record = {}, { measurement = null, fatigue =
 export function renderRunFingerprintSvg(fingerprint, { className = "run-fingerprint__svg" } = {}) {
   if (!fingerprint) return "";
   const id = String(fingerprint.identifier || "run-fingerprint").replace(/[^a-zA-Z0-9_-]/g, "");
-  return `<svg class="${className}" viewBox="0 0 240 240" role="img" aria-label="この記録から生成したRun Fingerprint">
+  return `<svg class="${className}" viewBox="0 0 240 240" role="img" aria-label="この記録から作った図形">
     <defs>
       <radialGradient id="${id}-glow" cx="50%" cy="42%" r="65%"><stop offset="0" stop-color="currentColor" stop-opacity=".28"></stop><stop offset="1" stop-color="currentColor" stop-opacity="0"></stop></radialGradient>
       <linearGradient id="${id}-line" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".96"></stop><stop offset="1" stop-color="currentColor" stop-opacity=".35"></stop></linearGradient>

@@ -12,7 +12,6 @@ import { renderEmbeddedPersonalSubflow, renderEmbeddedSubjectiveSubflow } from "
 export function renderRofJInlineAndOverlay({ services, linkedRunId = "", editing = false }) {
   if (!services?.fatigue) return "";
   const summary = linkedRunId ? services.fatigue.summarizeRun?.(linkedRunId) : null;
-  const entry = linkedRunId ? services.fatigue.repository?.loadByRunId?.(linkedRunId) : null;
   const preValue = summary?.preObservedValue;
   const postValue = summary?.postObservedValue;
   const hasPre = Number.isInteger(preValue);
@@ -23,9 +22,8 @@ export function renderRofJInlineAndOverlay({ services, linkedRunId = "", editing
   const actionText = editing ? "保存済み" : hasPost ? "記録済み" : hasPre ? "走った後を記録" : "記録する";
   const actionDisabled = editing || hasPost ? " disabled" : "";
   const phase = hasPre ? "after" : "before";
-  const sourceVersion = entry?.sourceVersion || "";
   return `<div class="fatigue-inline" data-fatigue-lifecycle data-run-id="${escapeHtml(linkedRunId)}"><div class="fatigue-inline__label"><small>任意</small><strong>${hasPre ? "走る前後の疲労感" : "走る前の疲労感"}</strong></div><div class="fatigue-inline__status"><small>記録状況</small><span data-record-rof-status>${escapeHtml(status)}</span></div><button type="button" data-action="open-record-rof" data-phase="${phase}"${actionDisabled}>${escapeHtml(actionText)}</button><p class="form-messages" data-fatigue-message hidden></p></div>
-  <div class="overlay" data-record-rof-overlay hidden aria-modal="true" role="dialog" aria-labelledby="record-rof-title"><section class="sheet rof-sheet"><div class="grip"></div><header class="sheet-head"><div><p class="eyebrow">疲労感の記録</p><h2 id="record-rof-title" data-record-rof-title>${phase === "after" ? "走った後の疲労感" : "走る前の疲労感"}</h2></div><button type="button" class="rof-close-button" data-action="close-record-rof" aria-label="閉じる">×</button></header><p class="rof-question" data-record-rof-question>今の疲労感を0〜10で選んでください。</p><div class="rof-scale-panel"><div class="rof-current"><span>選択値</span><strong data-record-rof-value>—</strong><em data-record-rof-descriptor>数値を選択</em></div><div class="rof-slider-wrap" data-rof-slider-wrap><input type="range" min="0" max="10" step="1" value="5" data-record-rof-slider aria-label="疲労感 0から10"><div class="rof-ticks" aria-hidden="true">${Array.from({ length: 11 }, (_, value) => `<span>${value}</span>`).join("")}</div></div><span data-record-rof-anchor hidden></span></div><button type="button" class="primary-sheet-action" data-action="record-rof-value" disabled>この値を記録</button><button type="button" class="text-action" data-action="record-rof-post-only"${phase === "after" ? " hidden" : ""}>すでに走り終えている場合：走った後だけ記録</button><details class="rof-about"><summary>尺度の出典・正式表現</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p>${sourceVersion ? `<small>正式名称：ROF-J</small>` : ""}</div></details></section></div>`;
+  <div class="overlay" data-record-rof-overlay hidden aria-modal="true" role="dialog" aria-labelledby="record-rof-title"><section class="sheet rof-sheet"><div class="grip"></div><header class="sheet-head"><div><p class="eyebrow">疲労感の記録</p><h2 id="record-rof-title" data-record-rof-title>${phase === "after" ? "走った後の疲労感" : "走る前の疲労感"}</h2></div><button type="button" class="rof-close-button" data-action="close-record-rof" aria-label="閉じる">×</button></header><p class="rof-question" data-record-rof-question>今の疲労感を0〜10で選んでください。</p><div class="rof-scale-panel"><div class="rof-current"><span>選択値</span><strong data-record-rof-value>—</strong><em data-record-rof-descriptor>数値を選択</em></div><div class="rof-slider-wrap" data-rof-slider-wrap><input type="range" min="0" max="10" step="1" value="5" data-record-rof-slider aria-label="疲労感 0から10"><div class="rof-ticks" aria-hidden="true">${Array.from({ length: 11 }, (_, value) => `<span>${value}</span>`).join("")}</div></div><span data-record-rof-anchor hidden></span></div><button type="button" class="primary-sheet-action" data-action="record-rof-value" disabled>この値を記録</button><button type="button" class="text-action" data-action="record-rof-post-only"${phase === "after" ? " hidden" : ""}>すでに走り終えている場合：走った後だけ記録</button><details class="rof-about"><summary>疲労感の尺度について</summary><div><p>0〜10で、その時点で自分が感じている疲労感を記録します。部位ごとの目安とは別の情報として扱います。</p></div></details></section></div>`;
 }
 
 const RUN_WALK_SURFACE_OPTIONS = Object.freeze([
@@ -163,7 +161,7 @@ function renderPlanCourseLibrarySaveOption(course = {}, { fromPlan = false, isRe
 function renderCourseEntry(course = {}, isRest = false, { fromPlan = false } = {}) {
   const selectedCourse = hasDetailedCourse(course);
   return `<div class="record-course-entry" data-run-fields${isRest ? " hidden" : ""}>
-    <div class="selected-course"${selectedCourse ? "" : " hidden"} data-record-selected-course><div><small>今回のコース</small><strong data-record-course-name>${escapeHtml(course.name || "名称なし")}</strong><span data-record-course-meta>${escapeHtml(course.modelSurfaceClass && course.modelSurfaceClass !== "UNKNOWN" ? course.modelSurfaceClass : "条件を保存")}</span></div><button type="button" data-action="clear-record-course">解除</button></div>
+    <div class="selected-course"${selectedCourse ? "" : " hidden"} data-record-selected-course><div><small>今回のコース</small><strong data-record-course-name>${escapeHtml(course.name || "名称なし")}</strong><span data-record-course-meta>${escapeHtml(course.modelSurfaceClass && course.modelSurfaceClass !== "UNKNOWN" ? "路面設定あり" : "条件を保存")}</span></div><button type="button" data-action="clear-record-course">解除</button></div>
     <button class="route-button" type="button" data-action="open-course-library"><span><small>保存コース</small><strong>コースを選ぶ・作る</strong></span><i>›</i></button>
     ${renderPlanCourseLibrarySaveOption(course, { fromPlan, isRest })}
   </div>`;
@@ -299,7 +297,7 @@ export function renderRecordInputScreenWithPresentation({ services, context }, p
   const carryFocus = renderCarryFocus(services, { editing, isRest });
 
   return `<div class="screen screen--record-input screen-layout screen-layout--record">
-    ${editing ? `<p class="parity-record-banner">保存済みの${escapeHtml(formatLocalDate(record.date))}の記録を更新します。</p>` : measurement ? `<p class="parity-record-banner">GPS測定結果から距離と時間を転記しています。必要なら保存前に修正できます。</p>` : selectedPlan ? `<p class="parity-record-banner">保存した予定から今回の記録へ転記しています。</p>` : savedDraft ? `<p class="parity-record-banner">入力途中の下書きから再開しています。</p>` : ""}
+    ${editing ? `<p class="parity-record-banner">保存済みの${escapeHtml(formatLocalDate(record.date))}の記録を更新します。</p>` : measurement ? `<p class="parity-record-banner">位置情報を使った測定結果から距離と時間を入力しています。必要なら保存前に修正できます。</p>` : selectedPlan ? `<p class="parity-record-banner">保存した予定から今回の記録へ転記しています。</p>` : savedDraft ? `<p class="parity-record-banner">入力途中の下書きから再開しています。</p>` : ""}
     <form id="record-input-form" class="record-form" data-editing="${editing ? "true" : "false"}" novalidate>
       <input type="hidden" name="recordId" value="${escapeHtml(effectiveRecordId)}"><input type="hidden" name="planId" value="${escapeHtml(selectedPlan?.id || "")}"><div class="form-messages" data-form-messages tabindex="-1" hidden></div>
       ${renderProgress({ isRest })}

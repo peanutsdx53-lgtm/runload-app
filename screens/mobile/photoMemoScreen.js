@@ -27,7 +27,7 @@ export function renderPhotoMemoScreen() {
       <p class="mobile-photo-memo-limit">最大${PHOTO_MEMO_MAX_COUNT}件。保存時に長辺${PHOTO_MEMO_MAX_DIMENSION}px以下・${megabytes(PHOTO_MEMO_MAX_BYTES)}以下へ調整します。</p>
     </form>
     <section class="mobile-tool-history" aria-labelledby="mobile-photo-history-title">
-      <div class="mobile-tool-section-head"><div><small>RECENT</small><h2 id="mobile-photo-history-title">最近の写真メモ</h2></div></div>
+      <div class="mobile-tool-section-head"><div><small>最近の記録</small><h2 id="mobile-photo-history-title">最近の写真メモ</h2></div></div>
       <div class="mobile-photo-memo-history" data-mobile-photo-memo-history><p class="mobile-tool-history__empty">写真メモを読み込んでいます。</p></div>
     </section>
     <p class="mobile-tool-local-note">写真とメモは、この端末のブラウザ内にのみ保存します。自動送信はしません。ブラウザの保存データを削除すると写真も削除されます。</p>

@@ -27,7 +27,7 @@ export function renderPlatformHeader({ currentScreen, currentLocation, hasResult
   const backControl = back
     ? `<a class="app-header__back pc-global-back" href="${escapeHtml(back.backHref)}" aria-label="${escapeHtml(back.backLabel)}へ戻る"><span aria-hidden="true">←</span><span>${escapeHtml(back.backLabel)}</span></a>`
     : `<span class="app-header__back-placeholder" aria-hidden="true"></span>`;
-  return `<header class="app-header app-header--desktop app-header--viewport-fixed"><div class="app-header__leading">${backControl}</div><strong class="app-header__brand app-header__screen-title">${escapeHtml(title)}</strong><div class="app-header__actions" aria-label="画面操作">${renderContextHelpButton(currentScreen)}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}</div></header>`;
+  return `<header class="app-header app-header--desktop app-header--viewport-fixed"><div class="app-header__leading">${backControl}</div><strong class="app-header__brand app-header__screen-title">${escapeHtml(title)}</strong><div class="app-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen)}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}</div></header>`;
 }
 
 export function renderPlatformShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {}, onboardingMarkup = "" }) {

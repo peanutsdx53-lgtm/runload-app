@@ -11,7 +11,7 @@ const SCREEN_TUTORIALS = Object.freeze({
     ]),
   }),
   home: Object.freeze({
-    title: "Homeの使い方",
+    title: "ホームの使い方",
     lead: "今日の操作と直近の記録をまとめて確認します。",
     steps: Object.freeze([
       Object.freeze({ title: "今日の操作を選ぶ", body: "記録を始める、入力を再開する、GPSで測定する操作へ進めます。" }),
@@ -56,7 +56,7 @@ const SCREEN_TUTORIALS = Object.freeze({
     ]),
   }),
   result: Object.freeze({
-    title: "結果画面の使い方",
+    title: "結果の見方",
     lead: "保存した記録と12部位の目安を順に確認します。",
     steps: Object.freeze([
       Object.freeze({ title: "今回の記録を見る", body: "距離、時間、コースなど、保存した走行内容を確認します。" }),
@@ -78,7 +78,7 @@ const SCREEN_TUTORIALS = Object.freeze({
     lead: "GPS測定で保存した走行軌跡を確認します。",
     steps: Object.freeze([
       Object.freeze({ title: "地図で軌跡を見る", body: "保存した走行ルートを地図上で確認します。" }),
-      Object.freeze({ title: "今回の結果へ戻る", body: "確認後は結果画面へ戻り、同じ記録の内容を続けて見られます。" }),
+      Object.freeze({ title: "今回の結果へ戻る", body: "確認後は結果へ戻り、同じ記録の内容を続けて見られます。" }),
     ]),
   }),
   history: Object.freeze({
@@ -132,7 +132,7 @@ const SCREEN_TUTORIALS = Object.freeze({
     steps: Object.freeze([
       Object.freeze({ title: "共有の目的を選ぶ", body: "何を伝えたいかを選びます。" }),
       Object.freeze({ title: "見せる情報を選ぶ", body: "保存記録から、相手に見せる項目だけを選びます。" }),
-      Object.freeze({ title: "見せ方を選ぶ", body: "画面表示、印刷・PDF、テキストコピーから選べます。" }),
+      Object.freeze({ title: "見せ方を選ぶ", body: "大きく表示、印刷・PDF、テキストコピーから選べます。" }),
     ]),
   }),
   "support-guidance": Object.freeze({
@@ -158,7 +158,7 @@ const SCREEN_TUTORIALS = Object.freeze({
     steps: Object.freeze([
       Object.freeze({ title: "保存される内容を見る", body: "記録、設定、GPS軌跡など、端末内に保存する内容を確認します。" }),
       Object.freeze({ title: "外部機能を使う場面を見る", body: "地図、外部ページ、電話など、端末外の機能を開く場面を確認します。" }),
-      Object.freeze({ title: "データ管理へ進む", body: "バックアップや削除は設定画面から操作できます。" }),
+      Object.freeze({ title: "データ管理へ進む", body: "バックアップや削除は設定から操作できます。" }),
     ]),
   }),
   settings: Object.freeze({
@@ -171,11 +171,11 @@ const SCREEN_TUTORIALS = Object.freeze({
     ]),
   }),
   more: Object.freeze({
-    title: "その他画面の使い方",
+    title: "その他の使い方",
     lead: "補助機能と設定への入口です。",
     steps: Object.freeze([
       Object.freeze({ title: "目的の機能を選ぶ", body: "設定、共有用整理、公的サポート、プライバシー、読みものを開けます。" }),
-      Object.freeze({ title: "各画面の「?」を使う", body: "開いた画面では、その画面専用の使い方を確認できます。" }),
+      Object.freeze({ title: "「?」から使い方を見る", body: "「?」を押すと、その場所の使い方を確認できます。" }),
     ]),
   }),
 });

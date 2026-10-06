@@ -63,13 +63,13 @@ function renderFuelHistory(entries) {
 function renderShell({ tool, eyebrow, title, description, form, historyTitle, history }) {
   return `<div class="screen screen-layout screen-layout--mobile-tool mobile-tool-screen" data-mobile-tool="${escapeHtml(tool)}">
     <section class="mobile-tool-head">
-      <p class="eyebrow">SMARTPHONE TOOL</p>
+      <p class="eyebrow">便利な機能</p>
       <h1>${escapeHtml(title)}</h1>
       <p>${escapeHtml(description)}</p>
     </section>
     ${form}
     <section class="mobile-tool-history" aria-labelledby="mobile-tool-history-title">
-      <div class="mobile-tool-section-head"><div><small>RECENT</small><h2 id="mobile-tool-history-title">${escapeHtml(historyTitle)}</h2></div></div>
+      <div class="mobile-tool-section-head"><div><small>最近の記録</small><h2 id="mobile-tool-history-title">${escapeHtml(historyTitle)}</h2></div></div>
       <div class="mobile-tool-history__list">${history}</div>
     </section>
     <p class="mobile-tool-local-note">この機能の内容は、この端末のブラウザ内に保存します。自動送信はしません。</p>

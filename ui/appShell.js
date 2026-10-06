@@ -42,7 +42,7 @@ export function renderContextHelpButton(currentScreen, className = "") {
   const classes = ["context-help-button", "app-utility-button", className].filter(Boolean).join(" ");
   const content = '<span class="app-utility-button__question" aria-hidden="true">?</span>';
   if (tutorialId) {
-    return `<button type="button" class="${classes}" data-screen-tutorial-start="${escapeHtml(tutorialId)}" aria-label="この画面の操作ガイドを開く">${content}</button>`;
+    return `<button type="button" class="${classes}" data-screen-tutorial-start="${escapeHtml(tutorialId)}" aria-label="使い方を見る">${content}</button>`;
   }
   return `<button type="button" class="${classes}" data-open-guide="first-use" aria-label="アプリ説明を開く">${content}</button>`;
 }
@@ -101,7 +101,7 @@ export function renderPrimaryNavigation({ currentScreen, currentLocation, hasRes
     if (current) return `<span class="${className}" data-navigation-screen="${escapeHtml(item.screen)}" aria-current="page">${content}</span>`;
     return `<a class="${className}" href="#/${escapeHtml(item.screen)}" data-navigation-screen="${escapeHtml(item.screen)}">${content}</a>`;
   }).join("");
-  return `<nav class="primary-navigation" aria-label="主要画面">${items}</nav>`;
+  return `<nav class="primary-navigation" aria-label="主な機能">${items}</nav>`;
 }
 
 export function resolveCurrentPrimaryScreen(currentScreen, currentLocation = null) {
@@ -133,7 +133,7 @@ export function resolveCurrentPrimaryScreen(currentScreen, currentLocation = nul
 function renderFeatureMenuLink(item, currentScreen, currentLocation, hasResult) {
   const current = item.screen === currentScreen;
   const status = item.requiresRecord && !hasResult ? "記録後" : "";
-  const description = current ? "現在の画面" : status || item.description || "";
+  const description = current ? "開いています" : status || item.description || "";
   const labelHtml = `<span class="feature-menu__item-title">${escapeHtml(item.label)}</span><span class="feature-menu__item-description">${escapeHtml(description)}</span>`;
   const itemClass = item.primaryNavigationDuplicate ? " feature-menu__link--primary-duplicate" : "";
   if (current) {
@@ -156,15 +156,15 @@ export function renderFeatureMenu({ currentScreen, currentLocation, hasResult, i
   const panelId = `feature-menu-panel-${idSuffix}`;
   const titleId = `feature-menu-title-${idSuffix}`;
   const groupedDestinations = FEATURE_DESTINATION_GROUPS.map((group) => renderFeatureMenuGroup(group.label, group.items, currentScreen, currentLocation, hasResult)).join("");
-  const guideEntry = `<section class="feature-menu__group feature-menu__group--guide" aria-label="説明"><p class="feature-menu__group-label">HELP</p><div class="feature-menu__links"><button type="button" class="feature-menu__link feature-menu__link--button" data-open-guide="first-use"><span class="feature-menu__item-title">アプリ説明</span><span class="feature-menu__item-description">使い方・結果・履歴・限界を確認</span></button></div></section>`;
-  return `<div class="feature-menu" data-feature-menu><button type="button" id="${escapeHtml(buttonId)}" class="app-menu-button app-utility-button" aria-label="画面メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="${escapeHtml(panelId)}">${menuIcon()}<span class="visually-hidden">メニュー</span></button><div id="${escapeHtml(panelId)}" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="${escapeHtml(titleId)}" hidden><header class="feature-menu__header"><p>画面メニュー</p><strong id="${escapeHtml(titleId)}">補助画面を開く</strong></header><nav class="feature-menu__nav" aria-label="補助画面">${groupedDestinations}${guideEntry}</nav></div></div>`;
+  const guideEntry = `<section class="feature-menu__group feature-menu__group--guide" aria-label="説明"><p class="feature-menu__group-label">使い方</p><div class="feature-menu__links"><button type="button" class="feature-menu__link feature-menu__link--button" data-open-guide="first-use"><span class="feature-menu__item-title">アプリ説明</span><span class="feature-menu__item-description">使い方・結果・履歴・限界を確認</span></button></div></section>`;
+  return `<div class="feature-menu" data-feature-menu><button type="button" id="${escapeHtml(buttonId)}" class="app-menu-button app-utility-button" aria-label="メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="${escapeHtml(panelId)}">${menuIcon()}<span class="visually-hidden">メニュー</span></button><div id="${escapeHtml(panelId)}" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="${escapeHtml(titleId)}" hidden><header class="feature-menu__header"><p>メニュー</p><strong id="${escapeHtml(titleId)}">移動先を選ぶ</strong></header><nav class="feature-menu__nav" aria-label="その他の機能">${groupedDestinations}${guideEntry}</nav></div></div>`;
 }
 
 
 export function renderImmersiveHeader({ currentScreen, currentLocation, hasResult = false }) {
   const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { backHref: "#/home", backLabel: "ホーム", title: "今回を見比べる" };
   const title = resolveHeaderTitle(currentScreen, currentLocation);
-  return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(title)}</strong><div class="interpretation-room-header__actions" aria-label="画面操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "immersive" })}</div></header>`;
+  return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(title)}</strong><div class="interpretation-room-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "immersive" })}</div></header>`;
 }
 
 export function renderShellLayers({ currentScreen, guide = {}, onboardingMarkup = "" }) {

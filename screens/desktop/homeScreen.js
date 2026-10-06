@@ -27,7 +27,7 @@ function renderPcFocus(experience, draft) {
     eyebrow = "入力途中";
     title = "入力途中の記録があります";
     body = hasCarriedNextCheck ? carriedNextCheckText : "保存前の入力を続きから再開できます";
-    sourceText = "保存済み記録とは分けて扱います";
+    sourceText = "この記録はまだ保存されていません";
     badge = "下書き";
     actions = `<a class="primary" href="#/record-input">入力を再開する</a>`;
   } else if (state === "saved-run") {
@@ -56,7 +56,7 @@ function renderLatestRecord(experience) {
   }
   const record = experience.record;
   if (record.activityType === "rest") {
-    return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">REST</span></div><div class="plan"><strong>休養</strong></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>記録を開く</span><span>›</span></a></article>`;
+    return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">休養</span></div><div class="plan"><strong>休養</strong></div><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>記録を開く</span><span>›</span></a></article>`;
   }
   return `<article class="card"><div class="card-head"><div><small>保存記録</small><strong>${escapeHtml(shortDate(record.date))}</strong></div><span class="pill">${activityPill(record)}</span></div><div class="metrics"><div><strong>${escapeHtml(formatNumber(record.distanceKm, 2))} km</strong><small>距離</small></div><div><strong>${escapeHtml(formatNumber(record.durationMinutes, 0))}分</strong><small>実際に走った時間</small></div><div><strong>${escapeHtml(paceLabel(record))}</strong><small>/km</small></div></div><div class="card-actions"><a class="card-link" href="#/result?recordId=${encodeURIComponent(record.id)}"><span>結果を見る</span><span>›</span></a><a class="card-link card-link--understanding" href="#/interpretation-room?recordId=${encodeURIComponent(record.id)}&origin=home"><span>今回を見比べる</span><span>›</span></a></div></article>`;
 }

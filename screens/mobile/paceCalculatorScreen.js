@@ -32,7 +32,7 @@ export function renderPaceCalculatorScreen() {
     </form>
 
     <section class="mobile-pace-result" data-mobile-pace-result hidden aria-live="polite">
-      <div class="mobile-tool-section-head"><div><small>RESULT</small><h2>換算結果</h2></div></div>
+      <div class="mobile-tool-section-head"><div><small>換算結果</small><h2>換算結果</h2></div></div>
       <div class="mobile-pace-summary">
         <article><small>平均ペース</small><strong data-mobile-pace-average>--</strong><span>/km</span></article>
         <article><small>平均速度</small><strong data-mobile-pace-speed>--</strong><span>km/h</span></article>
@@ -43,6 +43,6 @@ export function renderPaceCalculatorScreen() {
       </div>
     </section>
 
-    <p class="mobile-tool-local-note">この換算結果は目安です。記録や研究計算には自動反映しません。</p>
+    <p class="mobile-tool-local-note">この換算結果は目安です。記録には自動反映しません。</p>
   </div>`;
 }

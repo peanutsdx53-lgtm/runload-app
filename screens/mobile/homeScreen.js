@@ -94,7 +94,7 @@ function renderOverviewChallenge(services) {
 }
 
 function renderMobileOverviewPage({ services, latestExperience }) {
-  return `<section class="mobile-home-overview" aria-label="記録概要"><header class="mobile-home-overview__header"><button type="button" class="mobile-home-overview__back" data-home-hub-target="0" aria-label="アプリ一覧へ戻る">‹ アプリ</button><div><small>RUNLOAD</small><h1>記録概要</h1></div><span aria-hidden="true"></span></header><div class="mobile-home-overview-grid">${renderOverviewWeek(services)}<div class="mobile-home-overview-pair">${renderOverviewPlan(services)}${renderOverviewLatest(latestExperience)}</div>${renderOverviewChallenge(services)}${renderOverviewChange(services)}${renderOverviewAchievements(services)}</div></section>`;
+  return `<section class="mobile-home-overview" aria-label="記録概要"><header class="mobile-home-overview__header"><button type="button" class="mobile-home-overview__back" data-home-hub-target="0" aria-label="アプリ一覧へ戻る">‹ アプリ</button><div><small>記録のまとめ</small><h1>記録概要</h1></div><span aria-hidden="true"></span></header><div class="mobile-home-overview-grid">${renderOverviewWeek(services)}<div class="mobile-home-overview-pair">${renderOverviewPlan(services)}${renderOverviewLatest(latestExperience)}</div>${renderOverviewChallenge(services)}${renderOverviewChange(services)}${renderOverviewAchievements(services)}</div></section>`;
 }
 
 function renderMobileLauncherItem({ href, label, emoji, tone = "blue", dock = false }) {
@@ -175,10 +175,10 @@ function renderMobileHomeOs({ services, latestExperience, draft, confirmationThe
     { href: "#/history", label: "履歴", emoji: "🕘", tone: "indigo" },
     { href: "#/course-library?returnTo=%23%2Fhome", label: "コース", emoji: "🗺️", tone: "green" },
   ];
-  return `<section class="mobile-home-os" aria-label="スマホホーム">
+  return `<section class="mobile-home-os" aria-label="ホーム">
     <header class="mobile-home-os__header">
-      <div><small>RUNNING RECORD</small><h1>走行記録</h1></div>
-      <div class="mobile-home-os__header-actions"><button type="button" class="mobile-home-overview-open" data-home-hub-target="1" aria-label="記録概要を開く">概要</button><span class="mobile-home-os__status" aria-label="ホーム">Home</span></div>
+      <div><small>今日の記録</small><h1>走行記録</h1></div>
+      <div class="mobile-home-os__header-actions"><button type="button" class="mobile-home-overview-open" data-home-hub-target="1" aria-label="記録概要を開く">概要</button><span class="mobile-home-os__status" aria-label="ホーム">ホーム</span></div>
     </header>
     ${renderMobileConfirmationBanner(confirmationTheme)}
     <div class="mobile-home-widgets" aria-label="ウィジェット">

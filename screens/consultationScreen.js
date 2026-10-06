@@ -351,7 +351,7 @@ function consultationShareItems({ facts, fatigue, bodyRecord, regional, next, pl
     { key: "next", label: "次に確認したいこと", value: next, note: "本人が記録した確認点", checked: next !== "未記録", available: next !== "未記録" },
     { key: "plan", label: "次の予定", value: plan || "未設定", note: "保存済みの次回方針", checked: hasPlan, available: hasPlan },
     { key: "recent", label: "最近の経過", value: `直近${recentCount}件`, note: "今回までの保存記録を時系列で確認", checked: recentCount > 1, available: recentCount > 0 },
-    { key: "regional", label: "RunLoad参考情報", value: regional.copyValue, note: "選択部位・基準100・前回比較・推移", checked: regional.available, available: regional.available, regional },
+    { key: "regional", label: "部位ごとの参考情報", value: regional.copyValue, note: "選択部位・基準100・前回比較・推移", checked: regional.available, available: regional.available, regional },
     { key: "profile", label: "共有用プロフィール", value: profile.value, note: "任意。共有すると選んだ場合だけ表示", checked: false, available: profile.available },
   ];
 }
@@ -423,7 +423,7 @@ function compactDate(value = "") {
 }
 
 function pageHeader(pageNumber, createdDate, recordDate) {
-  return `<header class="share-sheet-head"><div><small>RUNLOAD</small><h1>共有記録シート</h1></div><dl><div><dt>対象日</dt><dd>${escapeHtml(compactDate(recordDate))}</dd></div><div><dt>作成日</dt><dd>${escapeHtml(compactDate(createdDate))}</dd></div><div><dt>ページ</dt><dd><span data-consult-page-number>${pageNumber}</span> / <span data-consult-page-count>2</span></dd></div></dl></header>`;
+  return `<header class="share-sheet-head"><div><small>共有記録</small><h1>共有記録シート</h1></div><dl><div><dt>対象日</dt><dd>${escapeHtml(compactDate(recordDate))}</dd></div><div><dt>作成日</dt><dd>${escapeHtml(compactDate(createdDate))}</dd></div><div><dt>ページ</dt><dd><span data-consult-page-number>${pageNumber}</span> / <span data-consult-page-count>2</span></dd></div></dl></header>`;
 }
 
 function shareDocumentMarkup({
@@ -492,7 +492,7 @@ function shareDocumentMarkup({
         </div>
       </section>
 
-      <footer class="share-sheet-footer"><span>本人の記録を第三者に共有し、助言を得るための整理資料です。</span><span>RunLoad</span></footer>
+      <footer class="share-sheet-footer"><span>本人の記録を第三者に共有し、助言を得るための整理資料です。</span><span>共有記録</span></footer>
     </section>
 
     <section class="share-sheet-page share-sheet-page--secondary" data-consult-document-page="secondary" data-has-body-details="${detailsOnSecondPage ? "true" : "false"}">
@@ -503,7 +503,7 @@ function shareDocumentMarkup({
       </section>
 
       <section class="share-sheet-section share-sheet-block share-sheet-region" data-consult-document-key="regional"${regional.available ? "" : " hidden"}>
-        <div class="share-sheet-section-title"><span>10</span><div><small>アプリの参考情報</small><h2>RunLoad参考情報</h2></div></div>
+        <div class="share-sheet-section-title"><span>10</span><div><small>部位ごとの参考情報</small><h2>部位ごとの参考情報</h2></div></div>
         <div class="share-sheet-region-summary"><div><small>対象部位</small><strong data-consult-regional-name>${escapeHtml(regional.regionName)}</strong></div><div><small>今回</small><strong data-consult-regional-current>${escapeHtml(regional.current)}</strong></div><div><small>前回比較</small><strong data-consult-regional-previous>${escapeHtml(regional.previous)}</strong></div></div>
         <p class="share-sheet-region-relation" data-consult-regional-relation>${escapeHtml(regional.relation)}</p>
         <div class="share-sheet-region-visual" data-consult-region-visual>${regionalVisual}</div>
@@ -520,7 +520,7 @@ function shareDocumentMarkup({
         <p>${escapeHtml(profile.value)}</p>
       </section>
 
-      <footer class="share-sheet-footer"><span>主観記録・走行事実・RunLoad参考情報を分けて表示しています。</span><span>RunLoad</span></footer>
+      <footer class="share-sheet-footer"><span>主観記録・走行事実・部位ごとの参考情報を分けて表示しています。</span><span>共有記録</span></footer>
     </section>
 
     ${hasBodyDetailsPage ? `<section class="share-sheet-page share-sheet-page--details" data-consult-document-page="details" data-consult-conditional-page="body-details">
@@ -529,14 +529,14 @@ function shareDocumentMarkup({
         <div class="share-sheet-section-title"><span>13</span><div><small>詳細</small><h2>身体の記録一覧</h2></div></div>
         <table class="share-sheet-detail-table"><thead><tr><th>部位</th><th>本人の記録</th></tr></thead><tbody>${detailedRows.map((item) => `<tr><td>${escapeHtml(item.label)}</td><td>${escapeHtml(item.detail)}</td></tr>`).join("")}</tbody></table>
       </section>
-      <footer class="share-sheet-footer"><span>入力された身体の記録をそのまま整理して表示しています。</span><span>RunLoad</span></footer>
+      <footer class="share-sheet-footer"><span>入力された身体の記録をそのまま整理して表示しています。</span><span>共有記録</span></footer>
     </section>` : ""}
   </article>`;
 }
 
 function renderConsultationContent({ services, experience, plan, regionId = "", confirmationThread = null, backHref = "#/more", backLabel = "その他へ戻る", selfHref = "#/consultation" }) {
   if (!experience?.record) {
-    return `<div class="screen screen--consultation screen-layout screen-layout--consultation secondary-derived-screen"><header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>共有用にまとめる</strong><span aria-hidden="true"></span></header><div class="secondary-derived-body"><section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel consultation-empty-state"><div class="consultation-empty-state__copy"><small>RECORD</small><strong>共有できる記録はまだありません</strong><p>走行または休養を保存すると、共有する内容をここで整理できます。</p></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div></div>`;
+    return `<div class="screen screen--consultation screen-layout screen-layout--consultation secondary-derived-screen"><header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>共有用にまとめる</strong><span aria-hidden="true"></span></header><div class="secondary-derived-body"><section class="head"><p class="eyebrow">共有準備</p><h1>共有用にまとめる</h1><p>保存した記録があると、指導者などに見せる内容を整理できます。</p></section><section class="panel consultation-empty-state"><div class="consultation-empty-state__copy"><small>記録</small><strong>共有できる記録はまだありません</strong><p>走行または休養を保存すると、共有する内容をここで整理できます。</p></div><div class="actions"><a class="button button--primary" href="#/record-input">記録を始める</a></div></section></div></div>`;
   }
 
   const record = experience.record;
@@ -584,7 +584,7 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
   return `<div class="screen screen--consultation screen-layout screen-layout--consultation secondary-derived-screen" data-consultation-screen data-share-prep>
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>共有用にまとめる</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
-      <section class="head"><p class="eyebrow">SHARE PREP</p><h1>共有用にまとめる</h1><p>指導者や助言者が状況を短時間で把握できるよう、今回の記録・本人の状態・最近の経過を整理します。</p></section>
+      <section class="head"><p class="eyebrow">共有準備</p><h1>共有用にまとめる</h1><p>指導者や助言者が状況を短時間で把握できるよう、今回の記録・本人の状態・最近の経過を整理します。</p></section>
 
       <section class="source"><div><small>対象の記録</small><strong>${escapeHtml(formatLocalDate(record.date))}</strong><span>${escapeHtml(facts)}</span></div><a href="#/result?recordId=${encodeURIComponent(record.id)}">結果を確認</a></section>
 
@@ -604,12 +604,12 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
         </div>
       </section>
 
-      <section class="section share-step share-source-step"><div class="section-head"><small>STEP 3</small><h2>共有する情報を選ぶ</h2><p>本人の主観、走行事実、RunLoad参考情報を分けたまま必要な項目だけ選びます。</p></div>
-        <label class="field share-region-field"><span>RunLoad参考情報で表示する部位</span><select data-consult-region-selector>${regionChoices.options}</select><small>部位を変更すると、基準100・前回比較・推移・人体図も同じ部位に切り替わります。</small></label>
+      <section class="section share-step share-source-step"><div class="section-head"><small>STEP 3</small><h2>共有する情報を選ぶ</h2><p>本人の主観、走行事実、部位ごとの参考情報を分けたまま必要な項目だけ選びます。</p></div>
+        <label class="field share-region-field"><span>参考情報で表示する部位</span><select data-consult-region-selector>${regionChoices.options}</select><small>部位を変更すると、基準100・前回比較・推移・人体図も同じ部位に切り替わります。</small></label>
         <div class="share-source-list">${selector}</div>
       </section>
 
-      <section class="section share-step share-document-step"><div class="section-head"><small>STEP 4</small><h2>完成資料を確認</h2><p>画面表示と印刷・PDFで同じ情報構成を使います。印刷時はA4として改ページされます。</p></div>
+      <section class="section share-step share-document-step"><div class="section-head"><small>STEP 4</small><h2>完成資料を確認</h2><p>完成資料を確認し、必要に応じて印刷・PDF保存できます。印刷時はA4として改ページされます。</p></div>
         <div class="share-document-stage" data-consult-document-stage>
           <div class="share-document-toolbar"><strong>A4共有記録シート</strong><button type="button" data-action="close-consult-viewer" aria-label="全画面表示を閉じる">×</button></div>
           ${documentMarkup}
@@ -624,7 +624,7 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
       <textarea id="consultation-report-text" class="visually-hidden" readonly></textarea>
       <div class="consultation-region-templates" hidden>${regionChoices.templates}</div>
 
-      <p class="boundary">共有する内容は本人が選びます。RunLoad参考情報は、診断・安全性・けがの危険性・原因・走行可否を判定するものではありません。</p>
+      <p class="boundary">共有する内容は本人が選びます。部位ごとの参考情報は、診断・安全性・けがの危険性・原因・走行可否を判定するものではありません。</p>
       <a class="support-link" href="#/support-guidance?recordId=${encodeURIComponent(record.id)}&returnTo=${encodeURIComponent(selfHref)}"><span><small>症状や体調について公的な案内を確認したい場合</small><strong>公的サポートを確認</strong></span><i>›</i></a>
     </div>
   </div>`;

@@ -52,7 +52,7 @@ function renderFirstUse() {
 }
 
 function renderRecordGuide() {
-  return `<div class="guide-lead"><p>必須項目を前面に置き、任意項目は必要なときだけ別画面で追加します。</p></div><div class="guide-card-grid">
+  return `<div class="guide-lead"><p>必須項目を先に入力し、任意項目は必要なときだけ追加します。</p></div><div class="guide-card-grid">
     <article><h3>必須の走行量</h3><p>走行日には距離と実際に走った時間が必要です。休養日は走行による12部位の目安を作成しません。</p></article>
     <article><h3>歩数・走り方</h3><p>分かる場合だけ入力します。歩数は取得方法も一緒に残し、後から同じような記録を見分けやすくします。</p></article>
     <article><h3>坂と路面</h3><p>上り・下りや路面の違いは、身体の使われ方を振り返る手掛かりになります。分からない場合は「不明」のまま残せます。</p></article>
@@ -63,7 +63,7 @@ function renderRecordGuide() {
 }
 
 function renderResultGuide() {
-  return `<div class="guide-lead"><p>結果画面では、目的の違う情報を分けて表示します。</p></div><ol class="guide-reading-order">
+  return `<div class="guide-lead"><p>結果では、目的の違う情報を分けて表示します。</p></div><ol class="guide-reading-order">
     <li><strong>12部位の目安</strong><span>各部位を、その部位自身の基準に対して確認します。異なる部位どうしの大小順位には使いません。</span></li>
     <li><strong>距離</strong><span>距離は走行事実として別に表示します。部位の目安へ自動的に掛け合わせません。</span></li>
     <li><strong>表示できない条件</strong><span>資料上扱えない条件や不足情報は、0や100へ置き換えず、表示できない情報として残します。</span></li>

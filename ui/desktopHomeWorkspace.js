@@ -17,7 +17,7 @@ function createAccessibleTitle() {
 function createHeading() {
   const section = document.createElement("section");
   section.className = "pc-home-heading";
-  section.innerHTML = `<div><p class="eyebrow">RUNLOAD</p><p>記録、結果、予定を一画面で確認し、次に見る内容を整理します。</p></div><a class="pc-home-heading__action" href="#/record-input">記録を開く <span aria-hidden="true">→</span></a>`;
+  section.innerHTML = `<div><p class="eyebrow">走行記録</p><p>記録、結果、予定を確認し、次に見る内容を整理できます。</p></div><a class="pc-home-heading__action" href="#/record-input">記録を開く <span aria-hidden="true">→</span></a>`;
   return section;
 }
 
@@ -25,7 +25,7 @@ function createOverview() {
   const section = document.createElement("section");
   section.className = "pc-home-overview";
   section.setAttribute("aria-label", "主要機能");
-  section.innerHTML = `<div class="section-head"><div><small>WORKSPACE</small><h2>主要機能</h2></div><p>大画面では、よく使う機能へ直接移動できます。</p></div><nav class="pc-home-shortcuts" aria-label="主要機能">${shortcut("#/history", "履歴", "保存した記録を比較")}${shortcut("#/simulation?from=home", "条件比較", "条件を変えて確認")}${shortcut("#/course-library?returnTo=%23%2Fhome", "コース設定", "保存コースを確認")}${shortcut("#/consultation?from=home", "共有用にまとめる", "見せる内容を整理")}</nav>`;
+  section.innerHTML = `<div class="section-head"><div><small>よく使う機能</small><h2>主要機能</h2></div><p>履歴や条件比較などへすぐ移動できます。</p></div><nav class="pc-home-shortcuts" aria-label="主要機能">${shortcut("#/history", "履歴", "保存した記録を比較")}${shortcut("#/simulation?from=home", "条件比較", "条件を変えて確認")}${shortcut("#/course-library?returnTo=%23%2Fhome", "コース設定", "保存コースを確認")}${shortcut("#/consultation?from=home", "共有用にまとめる", "見せる内容を整理")}</nav>`;
   return section;
 }
 

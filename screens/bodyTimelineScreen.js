@@ -62,12 +62,12 @@ export function renderBodyTimelineScreen({ services, context }) {
   const experiences = services.workflows.records.loadAllExperiences();
   const timeline = selectTimeline(experiences, recordId);
   if (!timeline.length) {
-    return `<div class="screen screen--body-timeline screen-layout screen-layout--body-timeline"><section class="body-timeline-empty"><p class="eyebrow">BODY TIMELINE</p><h1>身体の推移</h1><p>表示できる走行記録がまだありません。</p></section></div>`;
+    return `<div class="screen screen--body-timeline screen-layout screen-layout--body-timeline"><section class="body-timeline-empty"><p class="eyebrow">身体の推移</p><h1>身体の推移</h1><p>表示できる走行記録がまだありません。</p></section></div>`;
   }
   const selected = timeline.find((entry) => entry.target) || timeline.at(-1);
   return `<div class="screen screen--body-timeline screen-layout screen-layout--body-timeline" data-body-timeline data-target-index="${timeline.indexOf(selected)}">
     <section class="body-timeline-hero">
-      <div><p class="eyebrow">BODY TIMELINE</p><h1>身体の推移</h1></div>
+      <div><p class="eyebrow">身体の推移</p><h1>身体の推移</h1></div>
       <p>左右にスワイプして保存記録を見比べます。</p>
     </section>
     <div class="body-timeline-rail" data-body-timeline-rail>

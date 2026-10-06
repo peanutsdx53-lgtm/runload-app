@@ -81,7 +81,7 @@ function createReferenceGuide() {
   const title = document.createElement("strong");
   title.textContent = "正式な尺度配置";
   const note = document.createElement("small");
-  note.textContent = "公開補足資料の数値位置について、責任著者への確認に基づき原版ROFと同じ配置を採用しています。2.5・7.5を新しい選択値として追加するものではありません。";
+  note.textContent = "公開補足資料の数値位置について、責任著者への確認に基づき原版の疲労感尺度と同じ配置を採用しています。2.5・7.5を新しい選択値として追加するものではありません。";
 
   const list = document.createElement("div");
   list.className = "rof-about-reference__list";
@@ -105,8 +105,8 @@ function createRightsNote() {
   wrapper.dataset.rofRightsNote = "";
   wrapper.innerHTML = `
     <p><strong>出典・ライセンス</strong></p>
-    <p>ROF-J：Suzuki &amp; Arai (2026)。日本語表現は改変せず、尺度上の配置は責任著者への確認に基づき原版ROFと同じ位置で表示しています。<a href="${ROF_J_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">ROF-J原典</a>・<a href="${ROF_J_LICENSE_URL}" target="_blank" rel="noopener noreferrer">CC BY-NC-ND 4.0</a></p>
-    <p>図：Micklewright et al. (2017)。原版ROFの図部分を切り出し、各図を原版と同じ尺度位置に対応させて表示しています。図自体は変更していません。<a href="${ORIGINAL_ROF_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">ROF原典</a>・<a href="${ORIGINAL_ROF_LICENSE_URL}" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></p>`;
+    <p>疲労感尺度の日本語資料：Suzuki &amp; Arai (2026)。日本語表現は改変せず、尺度上の配置は責任著者への確認に基づき原版と同じ位置で表示しています。<a href="${ROF_J_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">出典を開く</a>・<a href="${ROF_J_LICENSE_URL}" target="_blank" rel="noopener noreferrer">利用条件</a></p>
+    <p>図：Micklewright et al. (2017)。原版の図部分を切り出し、各図を原版と同じ尺度位置に対応させて表示しています。図自体は変更していません。<a href="${ORIGINAL_ROF_ARTICLE_URL}" target="_blank" rel="noopener noreferrer">出典を開く</a>・<a href="${ORIGINAL_ROF_LICENSE_URL}" target="_blank" rel="noopener noreferrer">利用条件</a></p>`;
   return wrapper;
 }
 

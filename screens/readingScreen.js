@@ -439,7 +439,7 @@ export function renderReadingContent({ services, context, deferredArticleIds }) 
   return `<div class="screen screen--reading screen-layout screen-layout--reading secondary-derived-screen" data-reading-screen${initialArticleId ? ` data-reading-initial-article="${escapeHtml(initialArticleId)}"` : ""}>
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>読みもの</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
-    <section class="head reading-intro"><p class="eyebrow">READING</p><h1>記録を見返すヒント</h1><p>結果・履歴・走る前後の記録を、自分で読み解くための短いガイドです。</p></section>
+    <section class="head reading-intro"><p class="eyebrow">読みもの</p><h1>記録を見返すヒント</h1><p>結果・履歴・走る前後の記録を、自分で読み解くための短いガイドです。</p></section>
     ${featured ? (() => { const copy = readingArticleCopy(featured); return `<section class="recommend"><div class="recommend__copy"><small>${target.experience ? "この記録から" : "まず読むなら"}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(recommendation.reason || copy.lead)}</p><div class="recommend__meta"><span>${escapeHtml(copy.category)}</span><span>約${readingMinutes(copy)}分</span></div></div><button type="button" data-reading-open="${escapeHtml(publicArticleId(featured.id))}"><span>読む</span><b aria-hidden="true">→</b></button></section>`; })() : ""}
     <section class="reading-tools" aria-label="読みものを探す">
       <div class="reading-search" role="search"><span class="reading-search__icon" aria-hidden="true">⌕</span><input type="search" inputmode="search" autocomplete="off" placeholder="キーワードで探す　例：暑さ、睡眠、履歴" aria-label="読みものをキーワードで検索" data-reading-search><button type="button" data-reading-search-clear hidden>クリア</button></div>

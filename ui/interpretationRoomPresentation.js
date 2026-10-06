@@ -113,7 +113,7 @@ const ACTION_COPY = Object.freeze({
   record: Object.freeze({ title: "新しい記録を始める", note: "新しい走行記録を入力します。", icon: "record" }),
 });
 function actionCopy(action) {
-  return ACTION_COPY[action?.actionId] || Object.freeze({ title: "次の画面へ進む", note: "今回の内容を引き継いで確認します。", icon: "flag" });
+  return ACTION_COPY[action?.actionId] || Object.freeze({ title: "次へ進む", note: "今回の内容を引き継いで確認します。", icon: "flag" });
 }
 function renderAction(action, output, { primary = false } = {}) {
   if (!action || action.enabled === false) return "";
@@ -440,7 +440,7 @@ function interpretationFlowCandidateMeta(candidate = {}) {
 }
 
 function renderInterpretationFlowStageGuide() {
-  return `<nav class="interpretation-flow-stage-guide" aria-label="この画面の流れ"><span data-interpretation-flow-step="focus"><i>1</i>記録</span><b aria-hidden="true">→</b><span data-interpretation-flow-step="compare"><i>2</i>見比べる</span><b aria-hidden="true">→</b><span data-interpretation-flow-step="decision"><i>3</i>次へ</span></nav>`;
+  return `<nav class="interpretation-flow-stage-guide" aria-label="確認の流れ"><span data-interpretation-flow-step="focus"><i>1</i>記録</span><b aria-hidden="true">→</b><span data-interpretation-flow-step="compare"><i>2</i>見比べる</span><b aria-hidden="true">→</b><span data-interpretation-flow-step="decision"><i>3</i>次へ</span></nav>`;
 }
 
 function renderInterpretationFlowBodyPair(candidate = {}, { active = false } = {}) {
@@ -453,7 +453,7 @@ function renderInterpretationFlowBodyPair(candidate = {}, { active = false } = {
     </article>
     <div class="interpretation-flow-relation" data-interpretation-flow-reveal="compare"><span></span><b>同じ部位</b><span></span></div>
     <article class="interpretation-flow-source-card interpretation-flow-source-card--model interpretation-context-model-secondary" data-interpretation-flow-reveal="compare">
-      <header><span class="interpretation-flow-source-mark">R</span><div><small>考える材料・RunLoadの部位表示</small><strong>${escapeHtml(meta.regionLabel)}</strong></div></header>
+      <header><span class="interpretation-flow-source-mark">R</span><div><small>考える材料・部位ごとの参考表示</small><strong>${escapeHtml(meta.regionLabel)}</strong></div></header>
       <div class="interpretation-context-model-value"><span>部位内の比較</span><strong>${escapeHtml(meta.value)}</strong></div>
       <p>${escapeHtml(meta.direction)}。この値は身体の感覚そのものではありません。</p>
     </article>
@@ -465,7 +465,7 @@ function renderInterpretationFlowFirstRail(candidate = {}) {
   const meta = interpretationFlowCandidateMeta(candidate);
   return `<aside class="interpretation-flow-rail" aria-label="今回の操作">
     <section class="interpretation-flow-rail-step" data-interpretation-flow-only-stage="focus">
-      <small>最初にすること</small><h2>自分の記録から見ます</h2><p>まず今回、自分で記録した内容を選びます。次にRunLoad側の同じ部位の情報を表示します。</p>
+      <small>最初にすること</small><h2>自分の記録から見ます</h2><p>まず今回、自分で記録した内容を選びます。次に同じ部位の参考表示を確認します。</p>
       <button type="button" class="interpretation-flow-primary" data-action="interpretation-flow-flow-stage" data-next-stage="compare">対応する情報を見る</button>
     </section>
     <section class="interpretation-flow-rail-step" data-interpretation-flow-only-stage="compare">
@@ -476,14 +476,14 @@ function renderInterpretationFlowFirstRail(candidate = {}) {
     </section>
     <section class="interpretation-flow-rail-step" data-interpretation-flow-only-stage="decision">
       <small>自分で選ぶ</small><h2>次に自分で確かめること</h2><div class="interpretation-flow-question"><span aria-hidden="true">?</span><strong>${escapeHtml(meta.question)}</strong></div>
-      <p>RunLoadは答えを決めません。次回は自分の感じ方を中心に、同じ部位の表示や走行条件を補助材料として確認できます。</p>
+      <p>このアプリは答えを決めません。次回は自分の感じ方を中心に、同じ部位の表示や走行条件を補助材料として確認できます。</p>
       <details class="interpretation-flow-note"><summary>今回のメモを残す（任意）</summary><textarea data-self-understanding-note maxlength="500" rows="2" placeholder="自分の言葉で残したいことだけ"></textarea></details>
       <div class="interpretation-flow-decision-actions">
         <button type="button" class="interpretation-flow-primary" data-action="create-self-understanding-thread" data-thread-type="REGION_OBSERVATION_PAIR" data-region-id="${escapeHtml(meta.regionId)}" data-body-area-id="${escapeHtml(meta.bodyAreaId)}" data-next-label="${escapeHtml(meta.question)}">この問いを次も確かめる</button>
         <button type="button" class="interpretation-flow-secondary" data-action="interpretation-flow-finish-this-time" data-interpretation-flow-done-kind="this-time">今回はここまで</button>
         <button type="button" class="interpretation-flow-text-button" data-action="interpretation-flow-finish-this-time" data-interpretation-flow-done-kind="undecided">まだ決めない</button>
       </div>
-      <button type="button" class="interpretation-flow-text-button" data-action="interpretation-flow-flow-stage" data-next-stage="compare">見比べる画面に戻る</button>
+      <button type="button" class="interpretation-flow-text-button" data-action="interpretation-flow-flow-stage" data-next-stage="compare">見比べる段階に戻る</button>
     </section>
     <section class="interpretation-flow-rail-step" data-interpretation-flow-only-stage="done">
       <div data-interpretation-flow-completion-only="saved"><small>次回へ</small><h2>確認する問いとして残しました</h2><p class="interpretation-flow-saved-question">${escapeHtml(meta.question)}</p><p>保存したのは、この問いを次も見るというあなたの選択です。数値の意味や原因を確定したものではありません。</p><button type="button" class="interpretation-flow-text-button" data-action="interpretation-flow-undo-created-thread">確認中から外す</button><a class="interpretation-flow-secondary interpretation-flow-link-button" href="#/history?view=checks">確認してきたことを見る</a></div>
@@ -546,7 +546,7 @@ function renderInterpretationFlowFirst(output = {}, selfUnderstanding = null, { 
   const materials = renderMaterialRows(output, selfUnderstanding);
   const reference = selectInterpretationReferenceKnowledge(output, { bodyPair: true });
   return `<div class="interpretation-room interpretation-flow-room interpretation-context-room ${compact ? "interpretation-flow-room--compact" : "interpretation-flow-room--wide"}" data-interpretation-room-state="interpretation-context-first" data-interpretation-flow-stage="focus">
-    <header class="interpretation-flow-head"><div><small>${escapeHtml(date)}</small><h1>今回の自分を見ていく</h1><p>自分の体験を主役にして、RunLoadの情報と参考情報を必要な順に確認します。</p></div>${renderInterpretationFlowStageGuide()}</header>
+    <header class="interpretation-flow-head"><div><small>${escapeHtml(date)}</small><h1>今回の自分を見ていく</h1><p>自分の体験を中心に、部位ごとの表示と参考情報を必要な順に確認します。</p></div>${renderInterpretationFlowStageGuide()}</header>
     <div class="interpretation-flow-layout"><main class="interpretation-flow-canvas"><div class="interpretation-flow-canvas-kicker" data-interpretation-flow-title-focus><small>今回、まず見るところ</small><h2>${escapeHtml(meta.observationLabel)}</h2><p>最初は自分で記録した内容だけを見ます。</p></div><div class="interpretation-flow-canvas-kicker" data-interpretation-flow-title-compare><small>考える材料を追加</small><h2>${escapeHtml(meta.observationLabel)}について別の情報も確認できます</h2><p>自分の感覚を中心に、別の情報を補助材料として並べます。</p></div>${renderInterpretationFlowBodyPair(candidate)}${renderInterpretationContextReferenceKnowledge(reference, output)}${materials.length ? `<details class="interpretation-flow-more-materials interpretation-context-secondary-materials" data-interpretation-flow-reveal="compare"><summary>補足の材料を見る <b>${materials.length}</b></summary>${renderInterpretationMaterialPanel(output, selfUnderstanding)}</details>` : ""}</main>${renderInterpretationFlowFirstRail(candidate)}</div>
     ${renderInterpretationLoopDetails(output, { compact })}
   </div>`;
@@ -575,7 +575,7 @@ function renderInterpretationFlowActiveRail(thread = {}) {
     <section class="interpretation-flow-rail-step" data-interpretation-flow-only-stage="focus"><small>前回から</small><h2>今回の新しい記録を見ます</h2><p>以前、自分で続けると決めた問いに、今回の比較材料が加わりました。</p><button type="button" class="interpretation-flow-primary" data-action="interpretation-flow-flow-stage" data-next-stage="compare">これまでと見比べる</button></section>
     <section class="interpretation-flow-rail-step" data-interpretation-flow-only-stage="compare"><small>見比べる</small><h2>結論を決める必要はありません</h2><p>並びは事実として確認します。改善・悪化・原因・安全性は判定しません。</p><button type="button" class="interpretation-flow-primary" data-action="interpretation-flow-flow-stage" data-next-stage="decision">この問いをどうするか決める</button><button type="button" class="interpretation-flow-text-button" data-action="interpretation-flow-flow-stage" data-next-stage="focus">今回の記録に戻る</button></section>
     <section class="interpretation-flow-rail-step" data-interpretation-flow-only-stage="decision"><small>自分で選ぶ</small><h2>この問いを続けますか？</h2><div class="interpretation-flow-question"><span aria-hidden="true">?</span><strong>${escapeHtml(thread.title || compactThreadTitle(thread))}</strong></div><details class="interpretation-flow-note"><summary>今回のメモを残す（任意）</summary><textarea data-self-understanding-note maxlength="500" rows="2" placeholder="自分の言葉で残したいことだけ"></textarea></details><div class="interpretation-flow-decision-actions"><button type="button" class="interpretation-flow-primary" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="KEEP_WATCHING">このまま続ける</button><button type="button" class="interpretation-flow-secondary" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="CLOSE">ここで終える</button><button type="button" class="interpretation-flow-text-button" data-action="review-self-understanding-thread" data-thread-id="${escapeHtml(thread.id)}" data-thread-decision="PAUSE">いったん休止する</button></div></section>
-    <section class="interpretation-flow-rail-step" data-interpretation-flow-only-stage="done"><small>更新しました</small><h2>今回の確認を残しました</h2><p>選んだ状態だけを記録しました。RunLoadが傾向や結論を確定したわけではありません。</p><a class="interpretation-flow-secondary interpretation-flow-link-button" href="#/history?view=checks">確認してきたことを見る</a></section>
+    <section class="interpretation-flow-rail-step" data-interpretation-flow-only-stage="done"><small>更新しました</small><h2>今回の確認を残しました</h2><p>選んだ状態だけを記録しました。このアプリが傾向や結論を確定したわけではありません。</p><a class="interpretation-flow-secondary interpretation-flow-link-button" href="#/history?view=checks">確認してきたことを見る</a></section>
   </aside>`;
 }
 

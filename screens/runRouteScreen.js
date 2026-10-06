@@ -18,7 +18,7 @@ export function renderRunRouteScreen({ services, context }) {
   if (!record || !measurement || !Array.isArray(measurement.track) || measurement.track.length < 2) {
     return `<div class="screen screen--run-route screen-layout screen-layout--result">
       <section class="run-route-view run-route-view--empty">
-        <p class="eyebrow">RUN ROUTE</p>
+        <p class="eyebrow">走行軌跡</p>
         <h1>走行軌跡</h1>
         <p>この記録には保存したGPS走行軌跡がありません。</p>
         <a href="#/result${recordId ? `?recordId=${encodeURIComponent(recordId)}` : ""}">結果へ戻る</a>
@@ -29,7 +29,7 @@ export function renderRunRouteScreen({ services, context }) {
   return `<div class="screen screen--run-route screen-layout screen-layout--result" data-run-route data-record-id="${escapeHtml(recordId)}">
     <section class="run-route-view">
       <div class="run-route-view__heading">
-        <div><p class="eyebrow">RUN ROUTE</p><h1>走行軌跡</h1></div>
+        <div><p class="eyebrow">走行軌跡</p><h1>走行軌跡</h1></div>
         <span>${escapeHtml(formatLocalDate(record.date || ""))}</span>
       </div>
       <div class="run-route-view__map-wrap">
@@ -45,7 +45,7 @@ export function renderRunRouteScreen({ services, context }) {
         <div><small>保存地点</small><strong>${Number(measurement.track.length)}点</strong></div>
       </div>
       <section class="run-route-replay" data-run-route-replay>
-        <div class="run-route-replay__head"><span><small>RUN REPLAY</small><strong>走行を再生</strong></span><button type="button" data-action="toggle-route-replay" aria-pressed="false">再生</button></div>
+        <div class="run-route-replay__head"><span><small>再生</small><strong>走行を再生</strong></span><button type="button" data-action="toggle-route-replay" aria-pressed="false">再生</button></div>
         <input type="range" min="0" max="1000" value="0" step="1" data-route-replay-progress aria-label="走行再生位置">
         <div class="run-route-replay__facts"><span>経過 <b data-route-replay-time>0:00</b></span><span>距離 <b data-route-replay-distance>0.00 km</b></span></div>
       </section>

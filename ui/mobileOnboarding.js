@@ -21,30 +21,30 @@ export function withMobileOnboardingComplete(settings = {}, { acceptedAt = new D
 const STEPS = Object.freeze([
   Object.freeze({
     key: "overview",
-    eyebrow: "WELCOME",
+    eyebrow: "はじめに",
     title: "記録から、次の判断へ",
-    body: "RunLoadは、走行・休養を記録し、結果と履歴を振り返るためのアプリです。",
+    body: "このアプリは、走行・休養を記録し、結果と履歴を振り返るためのアプリです。",
     visual: `<div class="mobile-onboarding__flow" aria-hidden="true"><span>記録</span><i>›</i><span>結果</span><i>›</i><span>振り返り</span></div>`,
   }),
   Object.freeze({
     key: "home",
-    eyebrow: "HOME",
+    eyebrow: "ホーム",
     title: "アプリ一覧＋記録概要",
     body: "アプリ一覧を中心に使います。横へ動かすと、今週の記録や次の予定を確認できます。",
     visual: `<div class="mobile-onboarding__home-demo" aria-hidden="true"><span><b>▦</b><small>アプリ一覧</small></span><i>›</i><span><b>12.3</b><small>記録概要</small></span></div>`,
   }),
   Object.freeze({
     key: "privacy",
-    eyebrow: "YOUR DATA",
+    eyebrow: "データの扱い",
     title: "記録は端末内が基本",
-    body: "GPSは測定時だけ取得します。地図表示ではOpenStreetMapの地図画像を取得します。",
+    body: "位置情報（GPS）は測定時だけ取得します。地図表示ではOpenStreetMapの地図画像を取得します。",
     visual: `<div class="mobile-onboarding__privacy-grid" aria-hidden="true"><span><b>▣</b><small>端末内保存</small></span><span><b>◎</b><small>GPSは測定時</small></span><span><b>↗</b><small>共有は自分で選択</small></span></div>`,
   }),
   Object.freeze({
     key: "agreement",
-    eyebrow: "START",
+    eyebrow: "利用開始",
     title: "確認して利用開始",
-    body: "RunLoadは医療診断や走行可否の判定を行うものではありません。",
+    body: "このアプリは医療診断や走行可否の判定を行うものではありません。",
     visual: "",
   }),
 ]);
@@ -79,7 +79,7 @@ export function renderMobileOnboarding({ open = false, replay = false, alreadyAc
     <div class="mobile-onboarding__backdrop" aria-hidden="true"></div>
     <section class="mobile-onboarding__panel" role="dialog" aria-modal="true" aria-labelledby="mobile-onboarding-title-0" tabindex="-1">
       <header class="mobile-onboarding__top">
-        <span class="mobile-onboarding__brand" aria-label="RunLoad">R</span>
+        <span class="mobile-onboarding__brand" aria-label="走行記録">記</span>
         <div class="mobile-onboarding__progress" aria-label="チュートリアルの進み具合">${STEPS.map((_, index) => `<i data-onboarding-dot="${index}" class="${index === currentIndex ? "is-current" : ""}"></i>`).join("")}</div>
         ${replay ? '<button type="button" class="mobile-onboarding__close" data-onboarding-close aria-label="チュートリアルを閉じる">×</button>' : '<span class="mobile-onboarding__top-spacer" aria-hidden="true"></span>'}
       </header>

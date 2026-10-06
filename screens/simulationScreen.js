@@ -64,7 +64,7 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
   const roomBack=`#/interpretation-room?recordId=${encodeURIComponent(recordId)}&origin=${encodeURIComponent(safeRoomOrigin)}`;
   const planBack=returnTo.startsWith("#/plan")?returnTo:"#/plan";
   const back=from==="plan"?planBack:from==="interpretation-room"?roomBack:"#/home";
-  const backLabel=from==="plan"?"予定へ戻る":from==="interpretation-room"?"結果の整理へ戻る":"Homeへ戻る";
+  const backLabel=from==="plan"?"予定へ戻る":from==="interpretation-room"?"結果の整理へ戻る":"ホームへ戻る";
 
   const recent=sourceRun(services,recordId);
   const sourceExperience=recent?.id&&services?.workflows?.records?.loadExperience
@@ -108,7 +108,7 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
   return `<div class="screen screen--simulation screen-layout screen-layout--simulation condition-compare">
     <a class="back-link" data-context-back-duplicate href="${escapeHtml(back)}">‹ ${escapeHtml(backLabel)}</a>
     <section class="intro condition-compare-hero">
-      <div class="condition-compare-hero__copy">${recordDate?`<time>${escapeHtml(recordDate)}</time>`:""}<p class="eyebrow">CONDITION COMPARE</p><h1>${escapeHtml(comparisonTitle)}</h1><p>保存された記録を基準に、変更した条件だけで12部位を再計算し、元の記録との差を整理します。</p></div>
+      <div class="condition-compare-hero__copy">${recordDate?`<time>${escapeHtml(recordDate)}</time>`:""}<p class="eyebrow">条件比較</p><h1>${escapeHtml(comparisonTitle)}</h1><p>保存された記録を基準に、条件を変えた場合の12部位の表示と元の記録との差を整理します。</p></div>
       <div class="condition-compare-hero__mark"><span>${simulationScreenIcon("compare")}</span><div><strong>条件比較</strong><small>条件差と部位差を分けて確認</small></div></div>
     </section>
     ${previousCheckNote?`<section class="carry-card condition-compare-carry" aria-label="今回から引き継いだ内容"><span>${simulationScreenIcon("flag")}</span><div><small>今回の記録から</small><strong>次に確認したいこと</strong><p>${escapeHtml(previousCheckNote)}</p></div></section>`:""}
@@ -128,9 +128,9 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
       <input type="hidden" name="sourceConditionJson" value="${escapeHtml(JSON.stringify(sourceCondition))}">
       <input type="hidden" name="courseJson" value="${escapeHtml(JSON.stringify(course))}">
       <section class="condition-panel condition-compare-condition" aria-labelledby="conditionTitle">
-        <div class="panel-head"><div><small>CHANGE CONDITIONS</small><h2 id="conditionTitle">条件を変更</h2></div><span>元の記録を初期値に使用</span></div>
+        <div class="panel-head"><div><small>条件を変更</small><h2 id="conditionTitle">条件を変更</h2></div><span>元の記録を初期値に使用</span></div>
         <div class="condition-body">
-          <p class="condition-compare-condition__lead">変更した項目だけを使って再計算します。入力すると比較結果が自動で更新されます。</p>
+          <p class="condition-compare-condition__lead">変更した項目を使った結果を表示します。入力すると比較結果が自動で更新されます。</p>
           ${renderConditionPicker()}
           <div class="measure-grid">
             <label class="measure-field" data-simulation-condition-section="distance"><span>距離</span><div><input name="distanceKm" type="number" inputmode="decimal" min="0.01" max="100" step="0.01" value="${distance.toFixed(1)}" aria-label="距離"><b>km</b></div><small class="condition-compare-adjust"><button type="button" data-simulation-adjust="distanceKm:-0.5">−0.5</button><button type="button" data-simulation-adjust="distanceKm:0.5">＋0.5</button></small></label>
@@ -144,7 +144,7 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
         </div>
       </section>
       <section class="preview-panel condition-compare-preview" aria-labelledby="previewTitle">
-        <div class="preview-head"><div><small>READ THE DIFFERENCE</small><h2 id="previewTitle">元の記録と変更後を読み比べる</h2></div><span class="calc-state">計算中</span></div>
+        <div class="preview-head"><div><small>比較結果</small><h2 id="previewTitle">元の記録と変更後を読み比べる</h2></div><span class="calc-state">計算中</span></div>
         <div class="condition-compare" aria-label="元の記録と変更後の条件比較">
           <article class="condition-snapshot previous"><small>${escapeHtml(sourceLabel)}（基準）</small><strong>${recent?`${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分`:"記録なし"}</strong><span>${recent?`${escapeHtml(pace(recent.distanceKm,recent.durationMinutes))}・${escapeHtml(recent.course?.name||"コース未選択")}`:"比較対象なし"}</span></article>
           <i aria-hidden="true">→</i>
@@ -152,7 +152,7 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
         </div>
         <div class="assumption-chips" data-simulation-assumption-chips aria-label="変更した条件"></div>
         <div class="simulation-multi-warning" data-simulation-multi-warning hidden role="status"><strong>複数の条件を変更しています</strong><span>どの条件による差かを分けて見るには、1項目ずつ変更して確認してください。</span></div>
-        <div class="semantic-note condition-compare-compare-note"><strong>比較の見方</strong><span>元の保存記録と変更後の再計算結果を、同じ12部位・同じ計算方法で比較します。</span></div>
+        <div class="semantic-note condition-compare-compare-note"><strong>比較の見方</strong><span>元の保存記録と変更後の結果を、同じ12部位・同じ基準で比較します。</span></div>
         <div id="simulation-result" class="simulation-result simulation-result--comparison" aria-live="polite"></div>
         <div class="rof-boundary condition-compare-subjective-note"><span>本人の記録</span><p>走る前後の疲労感は条件変更から推定せず、本人が実際に記録した値だけを扱います。</p></div>
       </section>
@@ -163,7 +163,7 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
         <a href="${escapeHtml(roomBack)}"><span>${simulationScreenIcon("compare")}</span><div><strong>元の結果整理へ戻る</strong><small>今回の整理と条件比較を並べて確認します。</small></div><i>›</i></a>
         <button type="reset" form="simulation-form"><span>${simulationScreenIcon("conditions")}</span><div><strong>元の条件で再確認</strong><small>変更をすべて戻して、元の表示を確認します。</small></div><i>›</i></button>
         <a href="#/record-input"><span>${simulationScreenIcon("record")}</span><div><strong>この条件を見ながら記録を始める</strong><small>比較した条件を参考に、新しい記録へ進みます。</small></div><i>›</i></a>
-        ${recordId?`<a href="${escapeHtml(shareHref)}"><span>${simulationScreenIcon("share")}</span><div><strong>共有用に整理する</strong><small>元の記録と今回の整理内容を共有画面で確認します。</small></div><i>›</i></a>`:""}
+        ${recordId?`<a href="${escapeHtml(shareHref)}"><span>${simulationScreenIcon("share")}</span><div><strong>共有用に整理する</strong><small>元の記録と今回の整理内容を共有用の内容として確認します。</small></div><i>›</i></a>`:""}
       </div>
     </section>
   </div>`;

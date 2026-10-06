@@ -1,10 +1,10 @@
 export function renderRunMeasurementScreen() {
   return `<div class="screen screen--run-measurement-unavailable run-launch">
     <main class="run-launch__panel">
-      <p class="eyebrow">MEASURE</p>
-      <h1>ランニング測定はスマホ版の機能です</h1>
-      <p class="run-launch__lead">PC版では記録・結果・履歴・予定の確認と入力を利用できます。</p>
-      <a class="run-launch__choice run-launch__choice--app" href="#/home"><small>APP</small><strong>アプリへ戻る</strong><span>PC版のホームを開く</span></a>
+      <p class="eyebrow">測定</p>
+      <h1>この端末では測定を利用できません</h1>
+      <p class="run-launch__lead">走行内容は記録画面から手入力できます。</p>
+      <a class="run-launch__choice run-launch__choice--app" href="#/home"><small>ホーム</small><strong>ホームへ戻る</strong><span>記録や履歴を確認できます</span></a>
     </main>
   </div>`;
 }

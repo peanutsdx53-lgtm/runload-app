@@ -6,7 +6,7 @@ export function renderTermsScreen({ context } = {}) {
   return `<div class="screen screen--terms screen-layout secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${backHref}">← ${backLabel}へ戻る</a><strong>利用規約</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body terms-body">
-      <section class="head"><p class="eyebrow">TERMS</p><h1>利用規約</h1><p>RunLoadを利用する際の基本事項です。</p></section>
+      <section class="head"><p class="eyebrow">利用規約</p><h1>利用規約</h1><p>このアプリを利用する際の基本事項です。</p></section>
       <div class="terms-meta"><span>第1版</span><span>2026年9月30日</span></div>
 
       <section class="terms-section"><h2>1. 本アプリについて</h2><p>RunLoadは、走行・休養・コース・身体の記録を整理し、自分の記録を振り返るためのアプリです。</p></section>

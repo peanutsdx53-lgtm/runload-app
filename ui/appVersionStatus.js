@@ -1,4 +1,4 @@
-export const APP_VERSION = "2026.10.06.3";
+export const APP_VERSION = "2026.10.06.4";
 export const APP_VERSION_LABEL = `v${APP_VERSION}`;
 
 // Keep this release identifier aligned with service-worker.js before publishing.
@@ -14,7 +14,7 @@ function createSettingsUpdatePanel() {
   section.className = "group";
   section.dataset.appUpdatePanel = "";
   section.innerHTML = `
-    <p class="group-title">APP</p>
+    <p class="group-title">アプリ</p>
     <div class="boundary">
       <strong data-app-version="${APP_VERSION}">バージョン ${APP_VERSION_LABEL}</strong>
       <span>表示中のアプリ更新を確認できます。</span>
