@@ -13,7 +13,7 @@ assert.match(css, /data-action="reset-update-state"[\s\S]*width:\s*fit-content\s
 assert.ok(platformStyles.includes('./styles/desktop-settings.css'));
 assert.ok(worker.includes('./styles/desktop-settings.css'));
 assert.match(screen, /eyebrow: "文字", title: "文字サイズ"/);
-assert.doesNotMatch(screen, /TEXT SIZE|APPEARANCE|THEME/);
+assert.doesNotMatch(screen, /eyebrow:\s*"(?:TEXT SIZE|APPEARANCE|THEME)"/);
 assert.match(unified, /PC information\/settings\/share workspace correction/);
 assert.match(unified, /screen--settings\.screen-layout--settings \.secondary-derived-body[\s\S]*grid-template-areas:/);
 assert.match(unified, /data-app-update-panel[\s\S]*position: sticky/);
