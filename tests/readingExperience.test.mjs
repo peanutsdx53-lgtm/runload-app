@@ -15,8 +15,8 @@ await test('READING-USES-KNOWLEDGE-FIRST-ARTICLE-STRUCTURE',()=>{
   assert.ok(source.includes('ランニングを知る、記録を理解する'));
   assert.ok(source.includes('短い記事でまとめています'));
   assert.ok(source.includes('まず知っておきたいこと'));
-  assert.ok(source.includes('<h3>要約</h3>'));
-  assert.ok(source.includes('<h3>本文</h3>'));
+  assert.ok(source.includes('<h2>要約</h2>'));
+  assert.ok(source.includes('<h2>本文</h2>'));
   assert.ok(source.includes('<h3>出典元</h3>'));
   assert.ok(source.includes('renderReadingSources(copy.sources)'));
   assert.ok(source.includes('続けて読む'));
@@ -58,13 +58,14 @@ await test('READING-COPY-USES-PLAIN-LANGUAGE',()=>{
   assert.ok(!source.includes('旧形式の走行全体スコア'));
 });
 
-await test('READING-INTERACTIONS-PRESERVE-CONTEXT',()=>{
+await test('READING-INTERACTIONS-KEEP-FILTER-AND-SEARCH-STATE-LOCAL',()=>{
   const source=read('ui/interactions/readingInteractions.js');
-  assert.ok(source.includes('returnFocus'));
-  assert.ok(source.includes('const alreadyOpen = !drawer.hidden'));
-  assert.ok(source.includes('event.key === "Escape"'));
   assert.ok(source.includes('setAttribute("aria-pressed"'));
   assert.ok(source.includes('count.textContent'));
+  assert.ok(source.includes('normalize(card.dataset.readingSearch'));
+  assert.ok(!source.includes('returnFocus'));
+  assert.ok(!source.includes('drawer.hidden'));
+  assert.ok(!source.includes('event.key === "Escape"'));
 });
 
 await test('READING-LAST-ODD-CARD-KEEPS-ACTION-ALIGNED',()=>{
@@ -77,26 +78,33 @@ await test('READING-LAST-ODD-CARD-KEEPS-ACTION-ALIGNED',()=>{
   assert.ok(tail.includes('align-items:stretch !important'));
 });
 
-await test('READING-LAYOUT-HAS-SEARCH-FULLSCREEN-ARTICLE-AND-SOURCES',()=>{
+await test('READING-ARTICLE-USES-DEDICATED-ROUTE-VIEW',()=>{
   const source=read('screens/readingScreen.js');
+  const interactions=read('ui/interactions/readingInteractions.js');
   const mobile=read('styles/mobile-screen-layouts.css');
   const desktop=read('styles/desktop-screen-layouts.css');
-  assert.ok(mobile.includes('.reading-search'));
-  assert.ok(mobile.includes('.reading-related-card'));
-  assert.ok(mobile.includes('.reading-detail__topbar'));
-  assert.ok(mobile.includes('.reading-summary'));
-  assert.ok(mobile.includes('.reading-source-list'));
-  assert.ok(mobile.includes('height:100dvh'));
-  assert.ok(desktop.includes('.reading-detail__content'));
-  assert.ok(desktop.includes('height:100dvh !important'));
-  assert.ok(desktop.includes('.reading-source'));
-  assert.ok(source.includes('class="reading-source"'));
+  assert.ok(source.includes('const requestedArticleId = publicArticleId(context.parameters.get("articleId") || "");'));
+  assert.ok(source.includes('return renderReadingArticleView(article, items, context);'));
+  assert.ok(source.includes('screen--reading-article'));
+  assert.ok(source.includes('readingArticleHref(article.id, context)'));
+  assert.ok(!source.includes('data-reading-drawer'));
+  assert.ok(!source.includes('data-reading-close'));
+  assert.ok(!interactions.includes('openArticle'));
+  assert.ok(!interactions.includes('data-reading-drawer'));
+  assert.ok(mobile.includes('.screen-layout--reading-article .reading-article-page'));
+  assert.ok(desktop.includes('.screen--reading-article.screen-layout--reading-article .reading-detail__content'));
 });
 
-await test('READING-DIRECT-ARTICLE-LINKS-CAN-OPEN-EXISTING-CATALOG-ARTICLES',()=>{
+await test('READING-ARTICLE-KEEPS-KNOWLEDGE-SECTIONS-AND-SOURCES',()=>{
   const source=read('screens/readingScreen.js');
-  assert.ok(source.includes('const initialArticle = initialArticleId ? available.get(initialArticleId) : null;'));
-  assert.ok(source.includes('if (initialArticle) detailArticles.set(initialArticle.id, initialArticle);'));
+  assert.ok(source.includes('<h2>要約</h2>'));
+  assert.ok(source.includes('<h2>本文</h2>'));
+  assert.ok(source.includes('<h3>出典元</h3>'));
+  assert.ok(source.includes('renderReadingSources(copy.sources)'));
+  assert.ok(source.includes('続けて読む'));
+  assert.ok(source.includes('読みものへ戻る'));
+  const architecture=read('ui/screenArchitecture.js');
+  assert.ok(architecture.includes('if (articleId) return { title: "読みもの", backHref: "#/reading", backLabel: "読みもの" };'));
 });
 
 const failed=results.filter((item)=>item.status==='FAIL');

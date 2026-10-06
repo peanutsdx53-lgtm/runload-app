@@ -1,4 +1,4 @@
-const APP_VERSION_LABEL = "v2026.10.06.16";
+const APP_VERSION_LABEL = "v2026.10.06.17";
 
 export function renderAboutScreen() {
   return `<div class="screen screen--about screen-layout secondary-derived-screen">

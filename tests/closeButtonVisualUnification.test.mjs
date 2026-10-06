@@ -7,7 +7,6 @@ const guide = read("ui/guideContent.js");
 const record = read("screens/recordInputScreen.js");
 const result = read("screens/mobile/resultScreen.js");
 const history = read("screens/historyScreen.js");
-const reading = read("screens/readingScreen.js");
 const consultation = read("screens/consultationScreen.js");
 const onboarding = read("ui/mobileOnboarding.js");
 const components = read("styles/components.css");
@@ -21,11 +20,10 @@ assert.ok(guide.includes('class="guide-dialog__close app-utility-button"'));
 assert.ok(record.includes('class="rof-close-button app-utility-button" data-action="close-record-rof"'));
 assert.ok(result.includes('class="app-utility-button" data-action="close-result-region-sheet"'));
 assert.ok(history.includes('class="app-utility-button" data-action="close-history-region-picker"'));
-assert.ok(reading.includes('class="close app-utility-button" type="button" data-reading-close'));
 assert.ok(consultation.includes('class="app-utility-button" data-action="close-consult-viewer"'));
 assert.ok(onboarding.includes('class="mobile-onboarding__close app-utility-button" data-onboarding-close'));
 
-for (const source of [record, result, history, reading, consultation, onboarding]) {
+for (const source of [record, result, history, consultation, onboarding]) {
   assert.ok(source.includes('class="app-utility-button__close-symbol" aria-hidden="true">×</span>'));
 }
 
@@ -47,7 +45,6 @@ assert.ok(components.includes("font-weight: 700;"));
 assert.ok(recordBase.includes(".sheet-head>button:not(.app-utility-button)"));
 assert.ok(mobileLayouts.includes(".screen-layout--result .sheet-head>button:not(.app-utility-button)"));
 assert.ok(mobileLayouts.includes(".screen-layout--history .sheet-head>button:not(.app-utility-button)"));
-assert.ok(mobileLayouts.includes(".screen-layout--reading .close:not(.app-utility-button)"));
 assert.ok(!mobileLayouts.includes(".screen-layout--record .rof-close-button {"));
 assert.ok(!resultSheet.includes('button[data-action="close-result-region-sheet"]'));
 assert.ok(onboardingCss.includes(".mobile-onboarding__close { justify-self: end; }"));

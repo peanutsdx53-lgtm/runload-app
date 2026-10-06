@@ -184,9 +184,9 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "reading") {
     const origin = parameter("origin");
     const regionId = parameter("regionId");
+    const articleId = parameter("articleId");
     const interpretationReturn = interpretationReturnContext(parameter, recordId);
     if (interpretationReturn) return { ...interpretationReturn, title: "読みもの" };
-    if (origin === "home") return { title: "読みもの", backHref: "#/home", backLabel: "ホーム" };
     if (origin === "result-condition" && recordId && regionId) {
       return {
         title: "読みもの",
@@ -194,6 +194,8 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
         backLabel: "部位結果",
       };
     }
+    if (articleId) return { title: "読みもの", backHref: "#/reading", backLabel: "読みもの" };
+    if (origin === "home") return { title: "読みもの", backHref: "#/home", backLabel: "ホーム" };
     return { title: "読みもの", backHref: "#/more", backLabel: "その他" };
   }
 

@@ -318,34 +318,68 @@ function relatedReadingItems(article, items = []) {
   return [...sameTheme, ...fallback].slice(0, 2);
 }
 
-function renderReadingArticle(article, filter, isFeatured = false) {
+function readingArticleHref(articleId, context) {
+  const query = new URLSearchParams();
+  query.set("articleId", publicArticleId(articleId));
+  ["origin", "recordId", "regionId", "from", "roomOrigin"].forEach((key) => {
+    const value = context?.parameters?.get?.(key) || "";
+    if (value) query.set(key, value);
+  });
+  return `#/reading?${query.toString()}`;
+}
+
+function renderReadingArticle(article, filter, isFeatured = false, context = null) {
   const copy = readingArticleCopy(article);
   const minutes = readingMinutes(copy);
   return `<article class="article-card" data-reading-card data-cat="${escapeHtml(filter)}" data-reading-search="${escapeHtml(readingSearchText(article, copy))}">
     <div class="article-card__copy"><small>${escapeHtml(copy.category)}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(copy.summary)}</p></div>
     <div class="article-card__meta"><span>約${minutes}分</span>${isFeatured ? '<span class="article-card__recommended">おすすめ</span>' : ""}</div>
-    <button class="article-card__open" type="button" data-reading-open="${escapeHtml(publicArticleId(article.id))}"><span>読む</span><b aria-hidden="true">→</b></button>
+    <a class="article-card__open" href="${escapeHtml(readingArticleHref(article.id, context))}"><span>読む</span><b aria-hidden="true">→</b></a>
   </article>`;
 }
 
-function renderReadingDetail(article, items) {
+function articleBackTarget(context) {
+  const origin = context.parameters.get("origin") || "";
+  const recordId = context.parameters.get("recordId") || "";
+  const regionId = context.parameters.get("regionId") || "";
+  const from = context.parameters.get("from") || "";
+  const roomOrigin = context.parameters.get("roomOrigin") || "result";
+  if (from === "interpretation-room") {
+    const roomQuery = new URLSearchParams();
+    if (recordId) roomQuery.set("recordId", recordId);
+    roomQuery.set("origin", roomOrigin);
+    if (regionId) roomQuery.set("regionId", regionId);
+    return Object.freeze({ href: `#/interpretation-room?${roomQuery.toString()}`, label: "結果の整理へ戻る" });
+  }
+  if (origin === "result-condition" && recordId && regionId) {
+    return Object.freeze({ href: `#/body-part-detail?recordId=${encodeURIComponent(recordId)}&regionId=${encodeURIComponent(regionId)}`, label: "部位結果へ戻る" });
+  }
+  return Object.freeze({ href: "#/reading", label: "読みものへ戻る" });
+}
+
+function renderReadingArticleView(article, items, context) {
   const copy = readingArticleCopy(article);
   const minutes = readingMinutes(copy);
   const related = relatedReadingItems(article, items);
-  return `<article class="reading-detail" data-reading-detail="${escapeHtml(publicArticleId(article.id))}" hidden>
-    <div class="reading-detail__topbar"><strong>読みもの</strong><button class="close app-utility-button" type="button" data-reading-close aria-label="記事を閉じる"><span class="app-utility-button__close-symbol" aria-hidden="true">×</span></button></div>
-    <div class="reading-detail__content">
-      <header class="reading-article-head"><div class="reading-detail__meta"><span>${escapeHtml(copy.category)}</span><span>約${minutes}分</span></div><h2 id="articleTitle-${escapeHtml(publicArticleId(article.id))}">${escapeHtml(copy.title)}</h2></header>
-      <section class="reading-summary"><div class="reading-section-head"><small>まず知っておきたいこと</small><h3>要約</h3></div><p>${escapeHtml(copy.summary)}</p></section>
-      <section class="reading-body"><div class="reading-section-head"><small>もう少し詳しく</small><h3>本文</h3></div><div class="body-copy">${copy.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div></section>
-      ${renderReadingSources(copy.sources)}
-      ${related.length ? `<section class="reading-related"><div class="reading-related__head"><strong>続けて読む</strong><small>関連する記事</small></div><div class="reading-related__grid">${related.map((item) => {
-        const relatedCopy = readingArticleCopy(item.article);
-        return `<button class="reading-related-card" type="button" data-reading-open="${escapeHtml(publicArticleId(item.article.id))}"><span><small>${escapeHtml(relatedCopy.category)}</small><strong>${escapeHtml(relatedCopy.title)}</strong></span><b aria-hidden="true">→</b></button>`;
-      }).join("")}</div></section>` : ""}
-      <div class="reading-detail__footer"><button type="button" class="reading-detail__back" data-reading-close>記事一覧へ戻る</button></div>
-    </div>
-  </article>`;
+  const back = articleBackTarget(context);
+  return `<div class="screen screen--reading-article screen-layout screen-layout--reading-article secondary-derived-screen" data-reading-article-screen>
+    <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(back.href)}">← ${escapeHtml(back.label)}</a><strong>読みもの</strong><span aria-hidden="true"></span></header>
+    <main class="reading-article-page">
+      <article class="reading-detail reading-detail--page">
+        <div class="reading-detail__content">
+          <header class="reading-article-head"><div class="reading-detail__meta"><span>${escapeHtml(copy.category)}</span><span>約${minutes}分</span></div><h1>${escapeHtml(copy.title)}</h1></header>
+          <section class="reading-summary"><div class="reading-section-head"><small>まず知っておきたいこと</small><h2>要約</h2></div><p>${escapeHtml(copy.summary)}</p></section>
+          <section class="reading-body"><div class="reading-section-head"><small>もう少し詳しく</small><h2>本文</h2></div><div class="body-copy">${copy.body.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div></section>
+          ${renderReadingSources(copy.sources)}
+          ${related.length ? `<section class="reading-related"><div class="reading-related__head"><strong>続けて読む</strong><small>関連する記事</small></div><div class="reading-related__grid">${related.map((item) => {
+            const relatedCopy = readingArticleCopy(item.article);
+            return `<a class="reading-related-card" href="${escapeHtml(readingArticleHref(item.article.id, context))}"><span><small>${escapeHtml(relatedCopy.category)}</small><strong>${escapeHtml(relatedCopy.title)}</strong></span><b aria-hidden="true">→</b></a>`;
+          }).join("")}</div></section>` : ""}
+          <div class="reading-detail__footer"><a class="reading-detail__back" href="${escapeHtml(back.href)}">${escapeHtml(back.label)}</a></div>
+        </div>
+      </article>
+    </main>
+  </div>`;
 }
 
 export function renderReadingContent({ services, context, deferredArticleIds }) {
@@ -355,7 +389,11 @@ export function renderReadingContent({ services, context, deferredArticleIds }) 
   const target = resolveColumnTargetExperience(services, context);
   const recommendation = buildColumnRecommendation(services, target.experience, allExperiences, context, deferredArticleIds);
   const featured = recommendation.article && available.has(recommendation.article.id) ? recommendation.article : available.get("regional-three-views") || items[0]?.article || null;
-  const initialArticleId = publicArticleId(context.parameters.get("articleId") || "");
+  const requestedArticleId = publicArticleId(context.parameters.get("articleId") || "");
+  if (requestedArticleId) {
+    const article = available.get(requestedArticleId);
+    if (article) return renderReadingArticleView(article, items, context);
+  }
   const origin = context.parameters.get("origin") || "";
   const recordId = context.parameters.get("recordId") || "";
   const regionId = context.parameters.get("regionId") || "";
@@ -373,28 +411,23 @@ export function renderReadingContent({ services, context, deferredArticleIds }) 
     backHref = `#/interpretation-room?${roomQuery.toString()}`;
     backLabel = "結果の整理へ戻る";
   }
-  const detailArticles = new Map(items.map((item) => [item.article.id, item.article]));
-  if (featured) detailArticles.set(featured.id, featured);
-  const initialArticle = initialArticleId ? available.get(initialArticleId) : null;
-  if (initialArticle) detailArticles.set(initialArticle.id, initialArticle);
   const filterCounts = items.reduce((counts, item) => {
     counts[item.filter] = (counts[item.filter] || 0) + 1;
     return counts;
   }, { all: items.length });
   const filterButton = (id, label) => `<button${id === "all" ? ' class="active"' : ""} type="button" aria-pressed="${id === "all" ? "true" : "false"}" data-reading-filter="${id}"><span>${label}</span><b class="filter-count">${filterCounts[id] || 0}</b></button>`;
-  return `<div class="screen screen--reading screen-layout screen-layout--reading secondary-derived-screen" data-reading-screen${initialArticleId ? ` data-reading-initial-article="${escapeHtml(initialArticleId)}"` : ""}>
+  return `<div class="screen screen--reading screen-layout screen-layout--reading secondary-derived-screen" data-reading-screen>
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${escapeHtml(backLabel)}</a><strong>読みもの</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="head reading-intro"><p class="eyebrow">読みもの</p><h1>ランニングを知る、記録を理解する</h1><p>走る前後の知識と、記録を見返すときに役立つ内容を短い記事でまとめています。</p></section>
-    ${featured ? (() => { const copy = readingArticleCopy(featured); return `<section class="recommend"><div class="recommend__copy"><small>${target.experience ? "この記録から" : "まず読むなら"}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(recommendation.reason || copy.summary)}</p><div class="recommend__meta"><span>${escapeHtml(copy.category)}</span><span>約${readingMinutes(copy)}分</span></div></div><button type="button" data-reading-open="${escapeHtml(publicArticleId(featured.id))}"><span>読む</span><b aria-hidden="true">→</b></button></section>`; })() : ""}
+    ${featured ? (() => { const copy = readingArticleCopy(featured); return `<section class="recommend"><div class="recommend__copy"><small>${target.experience ? "この記録から" : "まず読むなら"}</small><strong>${escapeHtml(copy.title)}</strong><p>${escapeHtml(recommendation.reason || copy.summary)}</p><div class="recommend__meta"><span>${escapeHtml(copy.category)}</span><span>約${readingMinutes(copy)}分</span></div></div><a href="${escapeHtml(readingArticleHref(featured.id, context))}"><span>読む</span><b aria-hidden="true">→</b></a></section>`; })() : ""}
     <section class="reading-tools" aria-label="読みものを探す">
       <div class="reading-search" role="search"><span class="reading-search__icon" aria-hidden="true">⌕</span><input type="search" inputmode="search" autocomplete="off" placeholder="キーワードで探す　例：暑さ、睡眠、履歴" aria-label="読みものをキーワードで検索" data-reading-search><button type="button" data-reading-search-clear hidden>クリア</button></div>
       <div class="filter-strip"><div class="filter-strip-head"><span>テーマで絞る</span><small>横にスライド <b aria-hidden="true">→</b></small></div><div class="filters" role="group" aria-label="読みものをテーマで絞り込み">${filterButton("all","すべて")}${filterButton("result","結果")}${filterButton("record","記録・履歴")}${filterButton("running","走り方")}${filterButton("after","走った後")}${filterButton("before","走る前")}${filterButton("share","共有")}</div></div>
     </section>
     <div class="reading-list-head"><strong>記事</strong><span data-reading-count aria-live="polite">${items.length}件</span></div>
-    <div class="grid">${items.map((item) => renderReadingArticle(item.article, item.filter, featured?.id === item.article.id)).join("")}</div>
+    <div class="grid">${items.map((item) => renderReadingArticle(item.article, item.filter, featured?.id === item.article.id, context)).join("")}</div>
     <div class="reading-empty" data-reading-empty hidden><strong>該当する記事がありません</strong><p>別のキーワードやテーマで探してみてください。</p><button type="button" data-reading-reset>すべての記事を表示</button></div>
-    <div class="drawer" data-reading-drawer hidden><section class="sheet" role="dialog" aria-modal="true" aria-label="読みもの本文">${[...detailArticles.values()].map((article) => renderReadingDetail(article, items)).join("")}</section></div>
     </div>
   </div>`;
 }
