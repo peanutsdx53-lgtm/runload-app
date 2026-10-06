@@ -20,9 +20,10 @@ assert.match(css, /top: 5\.85rem !important/);
 assert.match(css, /bottom: 1\.25rem !important/);
 assert.match(css, /max-width: 74rem !important/);
 assert.match(css, /border: 2px solid var\(--color-line\) !important/);
-assert.match(css, /display: block !important;[\s\S]*background: color-mix\(in srgb, var\(--color-ink\) 60%, transparent\) !important;[\s\S]*backdrop-filter: blur\(5px\) !important/);
-assert.match(css, /grid-template-rows: auto minmax\(0, 1fr\) !important/);
-assert.match(css, /overflow-y: auto !important/);
+assert.match(css, /backdrop-filter: blur\(5px\) !important/);
+assert.match(css, /grid-template-rows: minmax\(0, 1fr\) !important/);
+assert.match(css, /secondary-derived-screen > \.secondary-derived-head[\s\S]*display: none !important/);
+assert.match(css, /secondary-derived-screen > \.secondary-derived-body[\s\S]*overflow-y: auto !important/);
 assert.match(css, /secondary-derived-screen > \.secondary-derived-body > \.head[\s\S]*display: block !important/);
 
 assert.match(css, /screen--settings\.screen-layout--settings\.secondary-derived-screen \.display-setting-list[\s\S]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\) !important/);
