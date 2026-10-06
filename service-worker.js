@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.06.11";
+const CACHE_NAME = "running-record-app-runtime-2026.10.06.12";
 const CACHE_PREFIX = "running-record-app-";
 const COMMON_PRECACHE_URLS = [
   "./shared/valueUtilities.js",
@@ -310,6 +310,7 @@ const DESKTOP_PLATFORM_URLS = [
   "./styles/desktop-about.css",
   "./styles/desktop-settings.css",
   "./styles/desktop-unification.css",
+  "./styles/desktop-auxiliary-reference.css",
   "./styles/desktop-interpretation-details.css",
   "./styles/desktop-components-responsive.css",
   "./styles/desktop-consultation-share-responsive.css",

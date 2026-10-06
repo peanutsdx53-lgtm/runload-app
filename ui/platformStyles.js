@@ -137,6 +137,7 @@ const DESKTOP_STYLE_GROUPS = Object.freeze([
     "./styles/desktop-settings-navigation-responsive.css",
     "./styles/desktop-history-state.css",
     "./styles/desktop-unification.css",
+    "./styles/desktop-auxiliary-reference.css",
     "./styles/desktop-course.css",
     "./styles/desktop-course-editor.css",
     "./styles/desktop-interpretation-details.css",

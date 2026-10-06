@@ -1,0 +1,362 @@
+/* Reference ZIP parity for desktop auxiliary screens.
+ * Settings, Privacy, and Public Support are fixed derived panels over the app.
+ */
+@media (min-width: 80rem) {
+  body:has(:is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ).secondary-derived-screen) {
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  body:has(:is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ).secondary-derived-screen)::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 69;
+    pointer-events: none;
+    background: color-mix(in srgb, var(--color-ink) 16%, transparent);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  body:has(:is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ).secondary-derived-screen) #app,
+  body:has(:is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ).secondary-derived-screen) #app > .app-shell:not(.app-shell--immersive),
+  body:has(:is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ).secondary-derived-screen) #app > .app-shell:not(.app-shell--immersive) > .app-main {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ).secondary-derived-screen {
+    position: fixed !important;
+    top: 5.85rem !important;
+    bottom: 1.25rem !important;
+    left: calc(var(--pc-content-left) + 0.7rem) !important;
+    right: max(1.25rem, var(--pc-content-right)) !important;
+    z-index: 70 !important;
+    width: min(72rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 2rem)) !important;
+    max-width: 72rem !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    margin-inline: auto !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    overflow: hidden !important;
+    transform: none !important;
+    border: 2px solid var(--color-line) !important;
+    border-radius: 1.35rem !important;
+    background: var(--color-surface) !important;
+    box-shadow: var(--shadow-dialog, 0 1.4rem 3.5rem rgba(20, 36, 48, .22)) !important;
+  }
+
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ) .secondary-derived-head {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 4rem !important;
+    min-height: 4rem !important;
+    padding: 0.7rem 1.05rem !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+    gap: 0.9rem !important;
+    align-items: center !important;
+    border-bottom: 1px solid var(--color-line) !important;
+    background: var(--color-surface) !important;
+  }
+
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ) .secondary-derived-head > strong {
+    justify-self: center !important;
+    min-width: 0 !important;
+    color: var(--color-ink) !important;
+    font-size: 1rem !important;
+    line-height: 1.2 !important;
+    font-weight: 900 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ) .secondary-derived-head > span:last-child {
+    justify-self: end !important;
+  }
+
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ) .secondary-derived-head .secondary-derived-back {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    min-height: 2.45rem !important;
+    margin: 0 !important;
+    padding: 0 0.8rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-self: start !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 0.7rem !important;
+    background: var(--color-surface-muted) !important;
+    color: var(--color-accent-strong) !important;
+    font-size: 0.84rem !important;
+    line-height: 1.2 !important;
+    font-weight: 850 !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+  }
+
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ) > .secondary-derived-body {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 1.15rem 1.35rem 1.5rem !important;
+    display: block !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-gutter: stable !important;
+    background: var(--color-surface) !important;
+  }
+
+  :is(
+    .screen--settings.screen-layout--settings,
+    .screen--privacy.screen-layout--privacy,
+    .screen--support-guidance.screen-layout--support
+  ) > .secondary-derived-body > :first-child {
+    margin-top: 0 !important;
+  }
+
+  .screen--settings.screen-layout--settings #app-settings-form {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 1rem !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .screen--settings.screen-layout--settings .group,
+  .screen--settings.screen-layout--settings [data-app-update-panel] {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 1rem 0 0 !important;
+    padding: 0 !important;
+    position: static !important;
+    top: auto !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting-list {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.8rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
+    grid-column: auto !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting,
+  .screen--settings.screen-layout--settings .disclosure {
+    border-radius: 1rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting summary,
+  .screen--settings.screen-layout--settings .disclosure summary {
+    min-height: 4.2rem !important;
+    padding: 0.8rem 0.9rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting__title small,
+  .screen--settings.screen-layout--settings .disclosure summary small,
+  .screen--settings.screen-layout--settings .sub-section-head small,
+  .screen--settings.screen-layout--settings .subdetails summary small,
+  .screen--settings.screen-layout--settings .shoe small,
+  .screen--settings.screen-layout--settings .data-overview small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting__title strong,
+  .screen--settings.screen-layout--settings .disclosure summary strong {
+    font-size: 0.96rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .display-setting__current {
+    font-size: 0.76rem !important;
+  }
+
+  .screen--settings.screen-layout--settings .disclosure summary span,
+  .screen--settings.screen-layout--settings .boundary,
+  .screen--settings.screen-layout--settings .field small,
+  .screen--settings.screen-layout--settings .note,
+  .screen--settings.screen-layout--settings .restore-preview,
+  .screen--settings.screen-layout--settings .danger-box p {
+    font-size: 0.78rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--settings.screen-layout--settings .goal-grid,
+  .screen--settings.screen-layout--settings .data-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .screen--settings.screen-layout--settings .settings-guide-links {
+    width: 100% !important;
+  }
+
+  .screen--settings.screen-layout--settings .action-row :is(button, label, a) {
+    min-height: 2.75rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .lead {
+    margin-top: 0.85rem !important;
+    padding: 1rem 1.05rem !important;
+    border-radius: 1rem !important;
+    font-size: 0.86rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .list {
+    margin-top: 0.9rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item {
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    border-radius: 1rem !important;
+    background: var(--color-surface) !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item[open] {
+    grid-column: 1 / -1 !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item summary {
+    min-height: 4.9rem !important;
+    padding: 0.82rem 0.9rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .icon {
+    width: 2.8rem !important;
+    height: 2.8rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .icon svg {
+    width: 1.45rem !important;
+    height: 1.45rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item[open] .body {
+    columns: 2 !important;
+    column-gap: 2rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item[open] .body > * {
+    break-inside: avoid !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .warning,
+  .screen--privacy.screen-layout--privacy .actions {
+    grid-column: 1 / -1 !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .notice {
+    margin-top: 1rem !important;
+    padding: 0.9rem 1rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .cards {
+    margin-top: 0.9rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.8rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card {
+    min-width: 0 !important;
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card:first-child {
+    grid-column: 1 / -1 !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card small {
+    font-size: 0.74rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card strong {
+    margin-top: 0.2rem !important;
+    font-size: 1rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card p {
+    margin-top: 0.4rem !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .screen--support-guidance.screen-layout--support .card a {
+    min-height: 2.8rem !important;
+    margin-top: 0.7rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .screen--support-guidance.screen-layout--support > .secondary-derived-body > .back[data-context-back-duplicate] {
+    display: none !important;
+  }
+}
