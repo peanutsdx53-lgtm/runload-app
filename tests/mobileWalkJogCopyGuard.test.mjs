@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 const source = fs.readFileSync("ui/mobileWalkJogCopyGuard.js", "utf8");
 const screen = fs.readFileSync("screens/mobile/runMeasurementScreen.js", "utf8");
+const versionPanel = fs.readFileSync("ui/appVersionStatus.js", "utf8");
 const results = [];
 
 function test(id, fn) {
@@ -29,6 +30,11 @@ test("PREP-SCREEN-USES-UNIVERSAL-COPY", () => {
     assert.ok(screen.includes(text), `missing ${text}`);
   }
   assert.ok(!screen.includes("今日はどう走りますか"));
+});
+
+test("SHARED-UPDATE-COPY-IS-PLAIN-LANGUAGE", () => {
+  assert.ok(versionPanel.includes("最新版を再読み込み"));
+  assert.ok(!versionPanel.includes("更新状態を初期化"));
 });
 
 test("COPY-GUARD-DOES-NOT-IMPORT-PRIMARY-ENGINE", () => {

@@ -89,6 +89,8 @@ test('VERSION-AND-PWA-CACHE-MATCH', () => {
   assert.match(version, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
   assert.ok(worker.includes(`running-record-app-runtime-${version}`));
   assert.ok(worker.includes('"./ui/mobileHomeDefaultLayout.js"'));
+  assert.ok(versionModule.includes("最新版を再読み込み"));
+  assert.ok(!versionModule.includes("更新状態を初期化"));
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');
