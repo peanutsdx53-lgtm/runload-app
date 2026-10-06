@@ -94,9 +94,9 @@ test("current runtime has no historical generation or temporary filenames", () =
   assert.deepEqual(temporary, [], `temporary current files: ${temporary.join(", ")}`);
 });
 
-test("current runtime contains no legacy implementation marker", () => {
-  const marked = [...runtimeFiles, ...styleFiles].filter((rel) => /\blegacy\b/i.test(read(rel)));
-  assert.deepEqual(marked, [], `legacy implementation markers: ${marked.join(", ")}`);
+test("current runtime contains no legacy implementation marker or identifier", () => {
+  const marked = [...runtimeFiles, ...styleFiles].filter((rel) => /\blegacy(?:\b|[A-Z_])/i.test(read(rel)));
+  assert.deepEqual(marked, [], `legacy implementation markers or identifiers: ${marked.join(", ")}`);
 });
 
 test("all runtime relative imports resolve to current files", () => {

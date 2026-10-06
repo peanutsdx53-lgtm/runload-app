@@ -21,7 +21,7 @@ function servicesFor(record) {
 
 {
   const record = {
-    id: "legacy-carry",
+    id: "carried-next-check",
     date: "2026-10-04",
     activityType: "run",
     distanceKm: 5,
@@ -51,7 +51,7 @@ function servicesFor(record) {
 
 {
   const record = {
-    id: "legacy-reflection",
+    id: "carried-next-check-reflection",
     date: "2026-10-04",
     activityType: "run",
     distanceKm: 5,
@@ -61,7 +61,7 @@ function servicesFor(record) {
   record.date = "2026-10-26";
   const challenge = buildPersonalChallenge(servicesFor(record), { now: new Date(2026, 9, 26, 12, 0, 0, 0) });
   assert.equal(challenge.id, "reflection-2");
-  assert.equal(challenge.value, 1, "legacy reflection data must remain valid for the mobile Home reflection challenge");
+  assert.equal(challenge.value, 1, "carried next-check data must remain valid for the mobile Home reflection challenge");
 }
 
 {

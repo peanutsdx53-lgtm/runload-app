@@ -7,7 +7,7 @@ import { renderRecordInputScreen as renderMobileRecordInput } from "../screens/m
 import { BODY_OBSERVATION_INTENSITY_OPTIONS, bodyObservationIntensityDisplay } from "../ui/subjectivePresentation.js";
 
 const previousRecord = {
-  id: "record-legacy-reflection",
+  id: "record-existing-reflection",
   date: "2026-10-04",
   activityType: "run",
   distanceKm: 5,

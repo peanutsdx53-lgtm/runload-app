@@ -6,14 +6,14 @@ import { activityPill, homeConfirmationTheme, homeState, nextPlan, paceLabel, sh
 function renderPcFocus(experience, draft) {
   const record = experience?.record || null;
   const state = homeState(experience, draft);
-  const legacyCarry = recordedNextCheckText(experience);
-  const hasLegacyCarry = Boolean(legacyCarry);
+  const carriedNextCheckText = recordedNextCheckText(experience);
+  const hasCarriedNextCheck = Boolean(carriedNextCheckText);
   const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
 
-  let eyebrow = hasLegacyCarry ? "前回から引き継いだ内容" : "今日の入口";
+  let eyebrow = hasCarriedNextCheck ? "前回から引き継いだ内容" : "今日の入口";
   let title = "次のランで確認したいこと";
-  let body = hasLegacyCarry ? legacyCarry : "今日の記録から、次回も見るテーマを選べます";
-  let sourceText = hasLegacyCarry ? `${sourceDate}の記録で自分が残した内容` : "今日の記録から次回へ引き継げます";
+  let body = hasCarriedNextCheck ? carriedNextCheckText : "今日の記録から、次回も見るテーマを選べます";
+  let sourceText = hasCarriedNextCheck ? `${sourceDate}の記録で自分が残した内容` : "今日の記録から次回へ引き継げます";
   let badge = "次回へ引継ぎ";
   let actions = `<a class="primary" href="#/record-input">今日の記録を始める</a>`;
 
@@ -26,7 +26,7 @@ function renderPcFocus(experience, draft) {
   } else if (state === "draft") {
     eyebrow = "入力途中";
     title = "入力途中の記録があります";
-    body = hasLegacyCarry ? legacyCarry : "保存前の入力を続きから再開できます";
+    body = hasCarriedNextCheck ? carriedNextCheckText : "保存前の入力を続きから再開できます";
     sourceText = "保存済み記録とは分けて扱います";
     badge = "下書き";
     actions = `<a class="primary" href="#/record-input">入力を再開する</a>`;
