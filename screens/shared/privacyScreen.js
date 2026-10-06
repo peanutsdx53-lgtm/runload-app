@@ -23,10 +23,10 @@ export function renderPrivacyScreen({ context } = {}) {
   return `<div class="screen screen--privacy screen-layout screen-layout--privacy secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${backHref}">← ${backLabel}へ戻る</a><strong>データの扱い</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
-    <section class="head"><p class="eyebrow">データの扱い</p><h1>データの扱い</h1><p>何を端末に保存し、いつ外部機能を開くかを確認します。</p></section><p class="visually-hidden">ほかの版で保存したデータは、このアプリでは読み込みません。バックアップファイルは、このアプリによるパスワード保護や暗号化を行いません。</p>
-    <section class="lead"><strong>記録と保存した位置情報（GPS）の走行軌跡は、この端末のブラウザー内で扱う設計です。</strong> 位置情報（GPS）の測定を開始した場合だけ端末の位置情報を取得します。地図表示ではOpenStreetMapの地図画像を取得しますが、保存したアプリ内の記録を外部解析サービスへ自動送信しません。</section>
+    <section class="head"><p class="eyebrow">データの扱い</p><h1>データの扱い</h1><p>何を端末に保存し、いつ外部機能を開くかを確認します。</p></section><p class="visually-hidden">バックアップファイルは、このアプリによるパスワード保護や暗号化を行いません。</p>
+    <section class="lead"><strong>記録と保存した位置情報（GPS）の走行軌跡は、この端末のブラウザーに保存します。</strong> 位置情報（GPS）の測定を開始した場合だけ端末の位置情報を取得します。地図表示ではOpenStreetMapの地図画像を取得しますが、保存したアプリ内の記録を外部解析サービスへ自動送信しません。</section>
     <div class="list">
-      ${item({ type: "local", eyebrow: "保存", title: "端末内に保存する", description: "記録・結果・予定・設定・保存コース・位置情報の走行軌跡", body: '<p>走行・休養記録、保存済み結果、身体の記録、予定、プロフィール、設定、保存コースに加え、GPS測定で保存を選んだ走行軌跡を同じ端末・同じブラウザーで扱います。</p><p>このアプリで作成した記録だけを扱います。ほかの版で保存した記録は読み込みません。</p>' })}
+      ${item({ type: "local", eyebrow: "保存", title: "端末内に保存する", description: "記録・結果・予定・設定・保存コース・位置情報の走行軌跡", body: '<p>走行・休養記録、保存済み結果、身体の記録、予定、プロフィール、設定、保存コースに加え、GPS測定で保存を選んだ走行軌跡を同じ端末・同じブラウザーで扱います。</p><p>このアプリで保存した記録を表示します。</p>' })}
       ${item({ type: "temporary", eyebrow: "入力途中", title: "入力途中だけ一時保持する", description: "補助画面から戻るための内容", body: '<p>コース、身体記録、シューズなどの補助画面を往復する間だけ、入力途中の内容を一時的に保持します。</p><p>保存完了、入力フロー終了、端末内データ削除などで消去する設計です。</p>' })}
       ${item({ type: "external", eyebrow: "外部通信", title: "GPSと外部通信", description: "GPSは測定時だけ取得・地図画像はOpenStreetMapから取得", body: '<ul><li>GPS測定を開始した場合だけ、ブラウザーの許可を得て端末の位置情報を取得します。</li><li>保存を選んだGPS走行軌跡は端末内へ保存し、このアプリのバックアップ対象に含めます。</li><li>地図表示ではOpenStreetMapの地図タイルを取得するため外部通信が発生します。表示地域に対応する地図画像の要求はOpenStreetMap側へ送られます。</li><li>相談文、保存記録、GPS走行軌跡を外部解析サービスへ自動アップロードしません。</li><li>ルートファイル（GPX）は端末内で読み取ります。</li></ul>' })}
       ${item({ type: "link", eyebrow: "外部機能", title: "外部サイト・電話を開くとき", description: "本人が選んだときだけ別機能へ移動", body: '<p>公的案内、参考資料、電話リンクなどを選ぶとこのアプリとは別の機能を開きます。このアプリの端末内記録をリンク先へ自動で付け加えません。</p><p>外部サイトでは、そのサイト側の通信やデータ保存、プライバシー方針が適用されます。</p>' })}

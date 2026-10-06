@@ -1,4 +1,4 @@
-export const APP_VERSION = "2026.10.06.7";
+export const APP_VERSION = "2026.10.06.8";
 export const APP_VERSION_LABEL = `v${APP_VERSION}`;
 
 // Keep this release identifier aligned with service-worker.js before publishing.
@@ -17,12 +17,12 @@ function createSettingsUpdatePanel() {
     <p class="group-title">アプリ</p>
     <div class="boundary">
       <strong data-app-version="${APP_VERSION}">バージョン ${APP_VERSION_LABEL}</strong>
-      <span>表示中のアプリ更新を確認できます。</span>
+      <span>必要な場合に最新版を読み込み直せます。</span>
     </div>
     <div class="action-row">
-      <button type="button" class="primary" data-action="reset-update-state">更新状態を初期化</button>
+      <button type="button" class="primary" data-action="reset-update-state">最新版を再読み込み</button>
     </div>
-    <p class="note">アプリのキャッシュを削除して最新版を再読み込みします。記録、予定、保存コース、プロフィール、設定は削除しません。</p>
+    <p class="note">記録、予定、保存コース、プロフィール、設定を残したまま最新版を読み込み直します。</p>
     <p class="visually-hidden" data-update-reset-status role="status" aria-live="polite"></p>`;
   return section;
 }
@@ -59,26 +59,26 @@ async function requestServiceWorkerUpdate() {
 
 async function resetUpdateState(button) {
   if (resetting) return;
-  if (!window.confirm("記録などの保存データは残したまま、アプリのキャッシュを初期化して最新版を再読み込みしますか？")) return;
+  if (!window.confirm("記録などの保存データは残したまま、最新版を再読み込みしますか？")) return;
   resetting = true;
   const status = document.querySelector("[data-update-reset-status]");
   if (button) {
     button.disabled = true;
-    button.textContent = "初期化しています…";
+    button.textContent = "確認しています…";
   }
-  if (status) status.textContent = "更新状態を初期化しています。";
+  if (status) status.textContent = "最新版を確認しています。";
   try {
     await deleteAppCaches();
     await requestServiceWorkerUpdate();
-    if (status) status.textContent = "初期化しました。最新版を再読み込みします。";
+    if (status) status.textContent = "最新版を再読み込みします。";
     window.setTimeout(() => window.location.reload(), 80);
   } catch {
     resetting = false;
     if (button) {
       button.disabled = false;
-      button.textContent = "更新状態を初期化";
+      button.textContent = "最新版を再読み込み";
     }
-    if (status) status.textContent = "更新状態を初期化できませんでした。通常の再読み込みをお試しください。";
+    if (status) status.textContent = "最新版を読み込み直せませんでした。通常の再読み込みをお試しください。";
   }
 }
 
