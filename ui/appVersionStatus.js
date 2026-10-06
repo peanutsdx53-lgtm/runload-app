@@ -1,4 +1,4 @@
-export const APP_VERSION = "2026.10.06.9";
+export const APP_VERSION = "2026.10.06.10";
 export const APP_VERSION_LABEL = `v${APP_VERSION}`;
 
 // Keep this release identifier aligned with service-worker.js before publishing.
@@ -30,10 +30,8 @@ function createSettingsUpdatePanel() {
 function addSettingsUpdatePanel() {
   const body = document.querySelector(".screen--settings .secondary-derived-body");
   if (!body || body.querySelector("[data-app-update-panel]")) return;
-  const head = body.querySelector(":scope > .head");
   const panel = createSettingsUpdatePanel();
-  if (head) head.after(panel);
-  else body.prepend(panel);
+  body.append(panel);
 }
 
 async function deleteAppCaches() {

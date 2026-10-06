@@ -18,8 +18,10 @@ assert.doesNotMatch(screen, /eyebrow:\s*"(?:TEXT SIZE|APPEARANCE|THEME)"/);
 assert.match(versionPanel, /最新版を再読み込み/);
 assert.doesNotMatch(versionPanel, /更新状態を初期化|キャッシュを初期化/);
 assert.match(unified, /PC information\/settings\/share workspace correction/);
-assert.match(unified, /screen--settings\.screen-layout--settings \.secondary-derived-body[\s\S]*grid-template-areas:/);
-assert.match(unified, /data-app-update-panel[\s\S]*position: sticky/);
+assert.match(unified, /Reference-content alignment: settings, privacy, share preview/);
+assert.match(unified, /screen--settings\.screen-layout--settings \.secondary-derived-body[\s\S]*grid-template-columns: minmax\(0, 1fr\) !important/);
+assert.match(unified, /data-app-update-panel[\s\S]*position: static !important/);
+assert.match(versionPanel, /body\.append\(panel\)/);
 assert.match(unified, /screen--settings\.screen-layout--settings[\s\S]*max-width: 77rem !important/);
 
 console.log("desktopSettings.test.mjs: PASS");

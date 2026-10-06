@@ -1400,3 +1400,79 @@
     max-height: 32rem !important;
   }
 }
+
+
+/* ===== Reference-content alignment: settings, privacy, share preview ===== */
+@media screen and (min-width: 55rem) {
+  /* Settings follows the reference ZIP: one vertical information flow. */
+  .screen--settings.screen-layout--settings .secondary-derived-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: none !important;
+    gap: .85rem !important;
+    align-items: start !important;
+  }
+
+  .screen--settings.screen-layout--settings #app-settings-form,
+  .screen--settings.screen-layout--settings [data-app-update-panel],
+  .screen--settings.screen-layout--settings .secondary-derived-body > section.group {
+    grid-area: auto !important;
+    grid-column: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    position: static !important;
+    top: auto !important;
+    margin: 0 !important;
+  }
+
+  .screen--settings.screen-layout--settings #app-settings-form {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: .85rem !important;
+  }
+
+  .screen--settings.screen-layout--settings [data-app-update-panel] {
+    max-width: none !important;
+  }
+
+  /* Privacy remains the reference two-column disclosure grid. */
+  .screen--privacy.screen-layout--privacy .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .75rem !important;
+  }
+
+  .screen--privacy.screen-layout--privacy .item[open] {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Embedded share preview shows one page only; expanded viewer/print keeps all pages. */
+  .screen--consultation.screen-layout--consultation[data-share-prep]
+    .share-document-stage:not(.is-expanded) {
+    max-height: 30rem !important;
+    overflow: auto !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep]
+    .share-document-stage:not(.is-expanded)
+    .share-sheet-page ~ .share-sheet-page {
+    display: none !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep]
+    .share-document-stage:not(.is-expanded)
+    .share-print-document {
+    gap: 0 !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep]
+    .share-document-stage.is-expanded {
+    max-height: none !important;
+    overflow: auto !important;
+  }
+
+  .screen--consultation.screen-layout--consultation[data-share-prep]
+    .share-document-stage.is-expanded
+    .share-sheet-page {
+    display: block !important;
+  }
+}
