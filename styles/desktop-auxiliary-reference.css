@@ -168,7 +168,7 @@
     margin-top: 0 !important;
   }
 
-  .screen--settings.screen-layout--settings #app-settings-form {
+  .screen--settings.screen-layout--settings.secondary-derived-screen #app-settings-form {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     gap: 1rem !important;
@@ -176,8 +176,8 @@
     margin: 0 !important;
   }
 
-  .screen--settings.screen-layout--settings .group,
-  .screen--settings.screen-layout--settings [data-app-update-panel] {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .group,
+  .screen--settings.screen-layout--settings.secondary-derived-screen [data-app-update-panel] {
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
@@ -191,70 +191,70 @@
     box-shadow: none !important;
   }
 
-  .screen--settings.screen-layout--settings .display-setting-list {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting-list {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 0.8rem !important;
   }
 
-  .screen--settings.screen-layout--settings .display-setting:nth-child(3) {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting:nth-child(3) {
     grid-column: auto !important;
   }
 
-  .screen--settings.screen-layout--settings .display-setting,
-  .screen--settings.screen-layout--settings .disclosure {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .disclosure {
     border-radius: 1rem !important;
   }
 
-  .screen--settings.screen-layout--settings .display-setting summary,
-  .screen--settings.screen-layout--settings .disclosure summary {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting summary,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .disclosure summary {
     min-height: 4.2rem !important;
     padding: 0.8rem 0.9rem !important;
   }
 
-  .screen--settings.screen-layout--settings .display-setting__title small,
-  .screen--settings.screen-layout--settings .disclosure summary small,
-  .screen--settings.screen-layout--settings .sub-section-head small,
-  .screen--settings.screen-layout--settings .subdetails summary small,
-  .screen--settings.screen-layout--settings .shoe small,
-  .screen--settings.screen-layout--settings .data-overview small {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting__title small,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .disclosure summary small,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .sub-section-head small,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .subdetails summary small,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .shoe small,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .data-overview small {
     font-size: 0.74rem !important;
   }
 
-  .screen--settings.screen-layout--settings .display-setting__title strong,
-  .screen--settings.screen-layout--settings .disclosure summary strong {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting__title strong,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .disclosure summary strong {
     font-size: 0.96rem !important;
   }
 
-  .screen--settings.screen-layout--settings .display-setting__current {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .display-setting__current {
     font-size: 0.76rem !important;
   }
 
-  .screen--settings.screen-layout--settings .disclosure summary span,
-  .screen--settings.screen-layout--settings .boundary,
-  .screen--settings.screen-layout--settings .field small,
-  .screen--settings.screen-layout--settings .note,
-  .screen--settings.screen-layout--settings .restore-preview,
-  .screen--settings.screen-layout--settings .danger-box p {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .disclosure summary span,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .boundary,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .field small,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .note,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .restore-preview,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .danger-box p {
     font-size: 0.78rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--settings.screen-layout--settings .goal-grid,
-  .screen--settings.screen-layout--settings .data-overview {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .goal-grid,
+  .screen--settings.screen-layout--settings.secondary-derived-screen .data-overview {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
-  .screen--settings.screen-layout--settings .settings-guide-links {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .settings-guide-links {
     width: 100% !important;
   }
 
-  .screen--settings.screen-layout--settings .action-row :is(button, label, a) {
+  .screen--settings.screen-layout--settings.secondary-derived-screen .action-row :is(button, label, a) {
     min-height: 2.75rem !important;
     font-size: 0.8rem !important;
   }
 
-  .screen--privacy.screen-layout--privacy .lead {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .lead {
     margin-top: 0.85rem !important;
     padding: 1rem 1.05rem !important;
     border-radius: 1rem !important;
@@ -262,14 +262,14 @@
     line-height: 1.55 !important;
   }
 
-  .screen--privacy.screen-layout--privacy .list {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .list {
     margin-top: 0.9rem !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.75rem !important;
   }
 
-  .screen--privacy.screen-layout--privacy .item {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .item {
     min-width: 0 !important;
     margin: 0 !important;
     overflow: hidden !important;
@@ -277,40 +277,40 @@
     background: var(--color-surface) !important;
   }
 
-  .screen--privacy.screen-layout--privacy .item[open] {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .item[open] {
     grid-column: 1 / -1 !important;
   }
 
-  .screen--privacy.screen-layout--privacy .item summary {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .item summary {
     min-height: 4.9rem !important;
     padding: 0.82rem 0.9rem !important;
   }
 
-  .screen--privacy.screen-layout--privacy .icon {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .icon {
     width: 2.8rem !important;
     height: 2.8rem !important;
   }
 
-  .screen--privacy.screen-layout--privacy .icon svg {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .icon svg {
     width: 1.45rem !important;
     height: 1.45rem !important;
   }
 
-  .screen--privacy.screen-layout--privacy .item[open] .body {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .item[open] .body {
     columns: 2 !important;
     column-gap: 2rem !important;
   }
 
-  .screen--privacy.screen-layout--privacy .item[open] .body > * {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .item[open] .body > * {
     break-inside: avoid !important;
   }
 
-  .screen--privacy.screen-layout--privacy .warning,
-  .screen--privacy.screen-layout--privacy .actions {
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .warning,
+  .screen--privacy.screen-layout--privacy.secondary-derived-screen .actions {
     grid-column: 1 / -1 !important;
   }
 
-  .screen--support-guidance.screen-layout--support .notice {
+  .screen--support-guidance.screen-layout--support.secondary-derived-screen .notice {
     margin-top: 1rem !important;
     padding: 0.9rem 1rem !important;
     font-size: 0.82rem !important;
@@ -318,45 +318,45 @@
     border-radius: 0.9rem !important;
   }
 
-  .screen--support-guidance.screen-layout--support .cards {
+  .screen--support-guidance.screen-layout--support.secondary-derived-screen .cards {
     margin-top: 0.9rem !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.8rem !important;
   }
 
-  .screen--support-guidance.screen-layout--support .card {
+  .screen--support-guidance.screen-layout--support.secondary-derived-screen .card {
     min-width: 0 !important;
     padding: 1rem !important;
     border-radius: 1rem !important;
   }
 
-  .screen--support-guidance.screen-layout--support .card:first-child {
+  .screen--support-guidance.screen-layout--support.secondary-derived-screen .card:first-child {
     grid-column: 1 / -1 !important;
   }
 
-  .screen--support-guidance.screen-layout--support .card small {
+  .screen--support-guidance.screen-layout--support.secondary-derived-screen .card small {
     font-size: 0.74rem !important;
   }
 
-  .screen--support-guidance.screen-layout--support .card strong {
+  .screen--support-guidance.screen-layout--support.secondary-derived-screen .card strong {
     margin-top: 0.2rem !important;
     font-size: 1rem !important;
   }
 
-  .screen--support-guidance.screen-layout--support .card p {
+  .screen--support-guidance.screen-layout--support.secondary-derived-screen .card p {
     margin-top: 0.4rem !important;
     font-size: 0.82rem !important;
     line-height: 1.5 !important;
   }
 
-  .screen--support-guidance.screen-layout--support .card a {
+  .screen--support-guidance.screen-layout--support.secondary-derived-screen .card a {
     min-height: 2.8rem !important;
     margin-top: 0.7rem !important;
     font-size: 0.82rem !important;
   }
 
-  .screen--support-guidance.screen-layout--support > .secondary-derived-body > .back[data-context-back-duplicate] {
+  .screen--support-guidance.screen-layout--support.secondary-derived-screen > .secondary-derived-body > .back[data-context-back-duplicate] {
     display: none !important;
   }
 }
