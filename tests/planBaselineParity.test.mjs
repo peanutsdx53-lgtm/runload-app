@@ -7,7 +7,7 @@ const results=[];
 async function test(id,fn){try{await fn();results.push({id,status:'PASS'});}catch(error){results.push({id,status:'FAIL',message:error?.stack||String(error)});}}
 const context=(query='')=>({parameters:new URLSearchParams(query)});
 
-function servicesWithPreviousCheck(){
+function servicesWithRetiredPreviousCheck(){
   const services=createApplicationServices({storage:createMemoryStorage()});
   const record={
     id:'run-prev',date:'2026-10-04',createdAt:'2026-10-04T08:00:00Z',activityType:'run',
@@ -21,28 +21,25 @@ function servicesWithPreviousCheck(){
   return services;
 }
 
-await test('PC-RESTORES-BASELINE-PREVIOUS-CHECK-DISPLAY-WITHOUT-OLD-LOGIC',()=>{
-  const services=servicesWithPreviousCheck();
+await test('PC-DROPS-RETIRED-PREVIOUS-CHECK-DISPLAY',()=>{
+  const services=servicesWithRetiredPreviousCheck();
   const html=renderDesktop({services,context:context('sourceRecordId=run-prev')});
-  assert.match(html,/今回の記録から引き継いだ内容/);
-  assert.match(html,/以前に残した確認メモ/);
-  assert.match(html,/序盤のペースを確認/);
+  assert.doesNotMatch(html,/以前に残した確認メモ|序盤のペースを確認|nextCheckPoint/);
   assert.doesNotMatch(html,/plan-mobile-review-button|plan-mobile-edit-button|plan-mobile-saved-success/);
 });
 
-await test('MOBILE-KEEPS-BASELINE-REVIEW-FLOW-AND-PREVIOUS-CHECK-DISPLAY',()=>{
-  const services=servicesWithPreviousCheck();
+await test('MOBILE-KEEPS-REVIEW-FLOW-WITHOUT-RETIRED-PREVIOUS-CHECK',()=>{
+  const services=servicesWithRetiredPreviousCheck();
   const html=renderMobile({services,context:context('sourceRecordId=run-prev')});
-  assert.match(html,/以前に残した確認メモ/);
-  assert.match(html,/序盤のペースを確認/);
+  assert.doesNotMatch(html,/以前に残した確認メモ|序盤のペースを確認|nextCheckPoint/);
   assert.match(html,/plan-mobile-review-button/);
   assert.match(html,/data-action="plan-review"/);
   assert.match(html,/plan-mobile-edit-button/);
   assert.match(html,/data-plan-confirm/);
 });
 
-await test('NEW-SELF-UNDERSTANDING-THREAD-UI-REMAINS-SEPARATE-FROM-PREVIOUS-NOTE',()=>{
-  const services=servicesWithPreviousCheck();
+await test('SELF-UNDERSTANDING-THREAD-UI-IS-THE-CURRENT-CARRY-PATH',()=>{
+  const services=servicesWithRetiredPreviousCheck();
   const html=renderDesktop({services,context:context('sourceRecordId=run-prev')});
   assert.doesNotMatch(html,/USER_DEFINED_LEGACY|legacyOrigin/);
   assert.match(html,/入力後に変更できます。自動提案ではありません。/);

@@ -50,13 +50,11 @@ await test('LATEST-RUN-FALLBACK-IS-KEPT-ON-BOTH-LAYOUTS',()=>{
   }
 });
 
-await test('PREVIOUS-CHECK-IS-READ-ONLY-CARRY-CONTEXT-NOT-ACTIVE-INTERPRETATION',()=>{
+await test('RETIRED-PREVIOUS-CHECK-IS-NOT-RENDERED',()=>{
   const services=setup();
   for(const render of [renderDesktop,renderMobile]){
     const html=render({services,context:context('recordId=r1')});
-    assert.match(html,/condition-compare-carry/);
-    assert.match(html,/次に確認したいこと/);
-    assert.match(html,/序盤のペースを見る/);
+    assert.doesNotMatch(html,/condition-compare-carry|次に確認したいこと|序盤のペースを見る|nextCheckPoint/);
     assert.doesNotMatch(html,/USER_DEFINED_LEGACY|legacyOrigin/);
   }
 });

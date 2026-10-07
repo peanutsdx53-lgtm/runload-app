@@ -51,16 +51,14 @@ assert.ok(desktopStage1Index >= 0 && desktopStage4Index > desktopStage1Index && 
 
 for (const [platform, render] of [["desktop", renderDesktopRecordInput], ["mobile", renderMobileRecordInput]]) {
   const html = render({ services: servicesFor(previousRecord), context });
-  assert.match(html, /name="perceivedDifference" value="いつもより脚が重かった"/, `${platform}: previous perceivedDifference must be retained in the edit form`);
-  assert.match(html, /name="nextCheckPoint" value="次回は序盤のペースを確認"/, `${platform}: previous nextCheckPoint must be retained in the edit form`);
-  assert.match(html, /以前の振り返り記録を確認/, `${platform}: existing previous reflection must remain inspectable`);
-  assert.match(html, /以前の内容はそのまま保存します。自動で新しい意味に読み替えません。/, `${platform}: previous values must not be reinterpreted`);
+  assert.match(html, /textarea name="postRunReflection"[^>]*>後半で呼吸が乱れた<\/textarea>/, `${platform}: Current reflection memo must remain editable`);
+  assert.doesNotMatch(html, /perceivedDifference|nextCheckPoint|以前の振り返り記録を確認/, `${platform}: retired reflection fields must not be rendered`);
 }
 
 const normalized = internalModules.inputValidation.normalizeRunningRecord(previousRecord, { nowIso: "2026-10-05T00:00:00.000Z", existingIds: [] });
 assert.equal(normalized.reflectionContext.postRunReflection, previousRecord.reflectionContext.postRunReflection);
-assert.equal(normalized.reflectionContext.perceivedDifference, previousRecord.reflectionContext.perceivedDifference);
-assert.equal(normalized.reflectionContext.nextCheckPoint, previousRecord.reflectionContext.nextCheckPoint);
+assert.equal(Object.hasOwn(normalized.reflectionContext, "perceivedDifference"), false);
+assert.equal(Object.hasOwn(normalized.reflectionContext, "nextCheckPoint"), false);
 
 
 const recordInteractionSource = fs.readFileSync(new URL("../ui/interactions/recordInputInteractions.js", import.meta.url), "utf8");

@@ -1,4 +1,4 @@
-import { compareExperienceRecordChronology as recordChronology, recordedNextCheckText } from "../shared/recordUtilities.js";
+import { compareExperienceRecordChronology as recordChronology } from "../shared/recordUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
 import { bodyRegionFormalName, PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
@@ -342,13 +342,12 @@ function consultationRegionVisual(summary, report) {
   return `<div class="share-sheet-region-visual-grid"><div class="share-sheet-body-map">${regionLocatorSvg(summary.regionId)}</div><div class="share-sheet-trend"><small>比較可能な記録の推移</small>${consultationTrendSvg(report, summary)}</div></div>`;
 }
 
-function consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan, profile, recentCount }) {
+function consultationShareItems({ facts, fatigue, bodyRecord, regional, plan, profile, recentCount }) {
   const hasPlan = Boolean(plan && plan !== "未設定");
   return [
     { key: "run", label: "今回の走行", value: facts, note: "距離・時間・ペース・コース", checked: true, available: true },
     { key: "fatigue", label: "疲労感", value: fatigue.label, note: "走る前と走った後", checked: fatigue.label !== "未記録", available: fatigue.label !== "未記録" },
     { key: "body", label: "身体の記録", value: bodyRecord, note: "本人が入力した部位・左右・程度・感覚", checked: bodyRecord !== "未記録", available: bodyRecord !== "未記録" },
-    { key: "next", label: "次に確認したいこと", value: next, note: "本人が記録した確認点", checked: next !== "未記録", available: next !== "未記録" },
     { key: "plan", label: "次の予定", value: plan || "未設定", note: "保存済みの次回方針", checked: hasPlan, available: hasPlan },
     { key: "recent", label: "最近の経過", value: `直近${recentCount}件`, note: "今回までの保存記録を時系列で確認", checked: recentCount > 1, available: recentCount > 0 },
     { key: "regional", label: "部位ごとの参考情報", value: regional.copyValue, note: "選択部位・基準100・前回比較・推移", checked: regional.available, available: regional.available, regional },
@@ -434,7 +433,6 @@ function shareDocumentMarkup({
   fatigue,
   bodyRows,
   automaticChanges,
-  next,
   planValue,
   recentRows,
   regional,
@@ -483,13 +481,9 @@ function shareDocumentMarkup({
         </div>
       </section>
 
-      <section class="share-sheet-two-column share-sheet-block share-sheet-next-plan" data-consult-pair="next-plan">
-        <div class="share-sheet-subsection share-sheet-next" data-consult-document-key="next"${next === "未記録" ? " hidden" : ""}>
-          <small>07</small><h2>次に確認したいこと</h2><strong>${escapeHtml(next)}</strong>
-        </div>
-        <div class="share-sheet-subsection share-sheet-plan" data-consult-document-key="plan"${planValue === "未設定" ? " hidden" : ""}>
-          <small>08</small><h2>次の予定</h2><strong>${escapeHtml(planValue)}</strong>
-        </div>
+      <section class="share-sheet-section share-sheet-block share-sheet-plan" data-consult-document-key="plan"${planValue === "未設定" ? " hidden" : ""}>
+        <div class="share-sheet-section-title"><span>07</span><div><small>保存済み予定</small><h2>次の予定</h2></div></div>
+        <strong>${escapeHtml(planValue)}</strong>
       </section>
 
       <footer class="share-sheet-footer"><span>本人の記録を第三者に共有し、助言を得るための整理資料です。</span><span>共有記録</span></footer>
@@ -558,10 +552,9 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
     ? `${plan.scheduledDate ? formatLocalDate(plan.scheduledDate) : "日付未設定"}・${planSummary(plan)}`
     : "未設定";
   const confirmationTheme = confirmationThread ? selfUnderstandingThreadTitle(confirmationThread, allExperiences) : "";
-  const next = recordedNextCheckText(experience, { includeFeedback: true }) || "未記録";
   const recentRows = consultationRecentRows({ services, allExperiences, experience, regionId: selectedRegionId });
   const automaticChanges = consultationAutomaticChanges(allExperiences, experience);
-  const items = consultationShareItems({ facts, fatigue, bodyRecord, regional, next, plan: planValue, profile, recentCount: recentRows.length });
+  const items = consultationShareItems({ facts, fatigue, bodyRecord, regional, plan: planValue, profile, recentCount: recentRows.length });
   const regionChoices = consultationRegionChoices({ services, experience, allExperiences, decision });
   const initialQuestion = confirmationTheme;
   const selector = consultationShareSelector(items);
@@ -573,7 +566,6 @@ function renderConsultationContent({ services, experience, plan, regionId = "", 
     fatigue,
     bodyRows,
     automaticChanges,
-    next,
     planValue,
     recentRows,
     regional,

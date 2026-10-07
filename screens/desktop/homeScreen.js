@@ -1,20 +1,17 @@
 import { escapeHtml } from "../../ui/commonComponents.js";
 import { formatNumber } from "../../ui/recordPresentation.js";
-import { recordedNextCheckText } from "../../shared/recordUtilities.js";
 import { activityPill, homeConfirmationTheme, homeState, nextPlan, paceLabel, shortDate } from "../shared/homeScreenSupport.js";
 
 function renderPcFocus(experience, draft) {
   const record = experience?.record || null;
   const state = homeState(experience, draft);
-  const carriedNextCheckText = recordedNextCheckText(experience);
-  const hasCarriedNextCheck = Boolean(carriedNextCheckText);
   const sourceDate = record?.date ? shortDate(record.date) : "まだ記録なし";
 
-  let eyebrow = hasCarriedNextCheck ? "前回から引き継いだ内容" : "今日の入口";
-  let title = "次のランで確認したいこと";
-  let body = hasCarriedNextCheck ? carriedNextCheckText : "今日の記録から、次回も見るテーマを選べます";
-  let sourceText = hasCarriedNextCheck ? `${sourceDate}の記録で自分が残した内容` : "今日の記録から次回へ引き継げます";
-  let badge = "次回へ引継ぎ";
+  let eyebrow = "今日の入口";
+  let title = "今日の記録を始める";
+  let body = "走行または休養を記録し、保存後に結果と振り返りを確認できます";
+  let sourceText = "";
+  let badge = "記録";
   let actions = `<a class="primary" href="#/record-input">今日の記録を始める</a>`;
 
   if (state === "first") {
@@ -26,7 +23,7 @@ function renderPcFocus(experience, draft) {
   } else if (state === "draft") {
     eyebrow = "入力途中";
     title = "入力途中の記録があります";
-    body = hasCarriedNextCheck ? carriedNextCheckText : "保存前の入力を続きから再開できます";
+    body = "保存前の入力を続きから再開できます";
     sourceText = "この記録はまだ保存されていません";
     badge = "下書き";
     actions = `<a class="primary" href="#/record-input">入力を再開する</a>`;

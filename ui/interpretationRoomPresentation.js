@@ -637,6 +637,7 @@ function publicConstructText(value = "") {
 
 function publicSourceRoleText(value = "") {
   return String(value || "")
+    .replace(/保存原典Figure 3のCurrent独立再デジタイズ中央値とTable 3係数による筋活動経路/gi, "保存した原典の図3を再計測した中央値と表3の係数から再現した筋活動の関係")
     .replace(/保存原典Figure 3とTable 3から再現した筋活動経路/gi, "保存原典の図3と表3から再現した筋活動の関係")
     .replace(/Table 3係数と2\.5 m\/s正規化で再現した下腿後面筋活動経路/gi, "表3の係数を使い、2.5 m/sを基準にそろえて再現した下腿後面の筋活動の関係")
     .replace(/Figure\s*([0-9]+)/gi, "図$1")

@@ -164,59 +164,13 @@ internalModules.inputSafety = moduleExports;
 const moduleExports = Object.create(null);
 const { normalizePlainText, normalizeSingleLineText } = internalModules.inputSafety;
 const PERSONAL_CONTEXT_SCHEMA_VERSION = 1;
-const SHOE_TYPE_OPTIONS = Object.freeze([
-  Object.freeze({ value: "", label: "未設定" }),
-  Object.freeze({ value: "usual_training", label: "いつもの練習用" }),
-  Object.freeze({ value: "soft", label: "やわらかめ" }),
-  Object.freeze({ value: "light", label: "軽め" }),
-  Object.freeze({ value: "race", label: "レース用" }),
-  Object.freeze({ value: "trail", label: "山道・不整地向け" }),
-  Object.freeze({ value: "other", label: "その他" }),
-]);
-const SHOE_SOFTNESS_OPTIONS = Object.freeze([
-  Object.freeze({ value: "", label: "未設定" }),
-  Object.freeze({ value: "soft", label: "やわらかめ" }),
-  Object.freeze({ value: "normal", label: "ふつう" }),
-  Object.freeze({ value: "firm", label: "かため" }),
-  Object.freeze({ value: "unknown", label: "わからない" }),
-]);
-const FOOT_PLACEMENT_OPTIONS = Object.freeze([
-  Object.freeze({ value: "", label: "未設定" }),
-  Object.freeze({ value: "unknown", label: "よくわからない" }),
-  Object.freeze({ value: "heel", label: "かかとからついた感じ" }),
-  Object.freeze({ value: "full_sole", label: "足裏全体でついた感じ" }),
-  Object.freeze({ value: "forefoot", label: "つま先寄りでついた感じ" }),
-  Object.freeze({ value: "varies", label: "日によって違う" }),
-]);
-const RHYTHM_STRIDE_OPTIONS = Object.freeze([
-  Object.freeze({ value: "", label: "未設定" }),
-  Object.freeze({ value: "usual", label: "いつも通り" }),
-  Object.freeze({ value: "small_step", label: "歩幅を小さくした" }),
-  Object.freeze({ value: "rhythm_focus", label: "テンポよく足を動かした" }),
-  Object.freeze({ value: "long_step", label: "歩幅を大きくした" }),
-  Object.freeze({ value: "unknown", label: "よくわからない" }),
-]);
-const EQUIPMENT_TAG_OPTIONS = Object.freeze([
-  Object.freeze({ value: "phone", label: "スマートフォン" }),
-  Object.freeze({ value: "watch", label: "ランニングウォッチ" }),
-  Object.freeze({ value: "bottle", label: "ボトル・給水" }),
-  Object.freeze({ value: "bag", label: "バッグ・ポーチ" }),
-  Object.freeze({ value: "support", label: "サポーター等" }),
-  Object.freeze({ value: "other", label: "その他" }),
-]);
 const FOCUS_TAG_OPTIONS = Object.freeze([
   Object.freeze({ value: "relax", label: "力を抜いた" }),
   Object.freeze({ value: "small_step", label: "歩幅を小さくした" }),
   Object.freeze({ value: "rhythm", label: "テンポよく足を動かした" }),
   Object.freeze({ value: "posture", label: "背すじを起こした" }),
   Object.freeze({ value: "quiet_landing", label: "足音を小さくした" }),
-  Object.freeze({ value: "uphill_easy", label: "上りで無理しなかった" }),
-  Object.freeze({ value: "downhill_slow", label: "下りをゆっくり走った" }),
 ]);
-function allowedValue(value, options) {
-  const text = normalizeSingleLineText(value, 80);
-  return options.some((option) => option.value === text) ? text : "";
-}
 function normalizeTagList(value, options) {
   const source = Array.isArray(value) ? value : String(value || "").split(",");
   const allowed = new Set(options.map((option) => option.value));
@@ -225,7 +179,7 @@ function normalizeTagList(value, options) {
 function normalizeFocusTags(value) { return normalizeTagList(value, FOCUS_TAG_OPTIONS); }
 function hasPersonalContextInput(context = {}) {
   if (!context || typeof context !== "object") return false;
-  return Boolean(context.shoeId || context.shoeLabel || context.shoeType || context.shoeSoftness || context.footPlacement || context.rhythmStride || (Array.isArray(context.focusTags) && context.focusTags.length) || (Array.isArray(context.equipmentTags) && context.equipmentTags.length) || context.equipmentNote || context.freeNote);
+  return Boolean(context.shoeId || context.shoeLabel || (Array.isArray(context.focusTags) && context.focusTags.length));
 }
 function normalizePersonalContext(input = {}) {
   const source = input && typeof input === "object" ? input : {};
@@ -233,38 +187,20 @@ function normalizePersonalContext(input = {}) {
     schemaVersion: PERSONAL_CONTEXT_SCHEMA_VERSION,
     shoeId: normalizeSingleLineText(source.shoeId, 100),
     shoeLabel: normalizeSingleLineText(source.shoeLabel, 80),
-    shoeType: allowedValue(source.shoeType, SHOE_TYPE_OPTIONS),
-    shoeSoftness: allowedValue(source.shoeSoftness, SHOE_SOFTNESS_OPTIONS),
-    footPlacement: allowedValue(source.footPlacement, FOOT_PLACEMENT_OPTIONS),
-    rhythmStride: allowedValue(source.rhythmStride, RHYTHM_STRIDE_OPTIONS),
     focusTags: normalizeFocusTags(source.focusTags),
-    equipmentTags: normalizeTagList(source.equipmentTags, EQUIPMENT_TAG_OPTIONS),
-    equipmentNote: normalizePlainText(source.equipmentNote, 240),
-    freeNote: normalizePlainText(source.freeNote, 240),
   });
   return hasPersonalContextInput(normalized) ? normalized : null;
 }
 function labelForOption(value, options) { return options.find((option) => option.value === value)?.label || ""; }
 function summarizePersonalContext(context = {}) {
   const normalized = normalizePersonalContext(context);
-  if (!normalized) return Object.freeze({ hasInput: false, label: "未入力", description: "今日のシューズ・走り方は未入力です。", items: [] });
+  if (!normalized) return Object.freeze({ hasInput: false, label: "未入力", description: "今日のシューズ・意識したことは未入力です。", items: [] });
   const items = [];
-  if (normalized.shoeLabel) items.push(`シューズ：${normalized.shoeLabel}`); else if (normalized.shoeType) items.push(`シューズ：${labelForOption(normalized.shoeType, SHOE_TYPE_OPTIONS)}`);
-  if (normalized.shoeSoftness) items.push(`やわらかさ：${labelForOption(normalized.shoeSoftness, SHOE_SOFTNESS_OPTIONS)}`);
-  if (normalized.footPlacement) items.push(`足のつき方：${labelForOption(normalized.footPlacement, FOOT_PLACEMENT_OPTIONS)}`);
-  if (normalized.rhythmStride) items.push(`歩幅・テンポ：${labelForOption(normalized.rhythmStride, RHYTHM_STRIDE_OPTIONS)}`);
-  if (normalized.focusTags.length) items.push(`今日やったこと：${normalized.focusTags.map((tag) => FOCUS_TAG_OPTIONS.find((option) => option.value === tag)?.label || tag).join("、")}`);
-  if (normalized.equipmentTags.length) items.push(`装備：${normalized.equipmentTags.map((tag) => EQUIPMENT_TAG_OPTIONS.find((option) => option.value === tag)?.label || tag).join("、")}`);
-  if (normalized.equipmentNote) items.push("装備メモあり");
-  if (normalized.freeNote) items.push("走り方メモあり");
-  return Object.freeze({ hasInput: true, label: "入力あり", description: items.slice(0, 3).join("・") + (items.length > 3 ? ` ほか${items.length - 3}件` : ""), items });
+  if (normalized.shoeLabel) items.push(`シューズ：${normalized.shoeLabel}`);
+  if (normalized.focusTags.length) items.push(`今日意識したこと：${normalized.focusTags.map((tag) => FOCUS_TAG_OPTIONS.find((option) => option.value === tag)?.label || tag).join("、")}`);
+  return Object.freeze({ hasInput: true, label: "入力あり", description: items.join("・"), items });
 }
 moduleExports["PERSONAL_CONTEXT_SCHEMA_VERSION"] = PERSONAL_CONTEXT_SCHEMA_VERSION;
-moduleExports["SHOE_TYPE_OPTIONS"] = SHOE_TYPE_OPTIONS;
-moduleExports["SHOE_SOFTNESS_OPTIONS"] = SHOE_SOFTNESS_OPTIONS;
-moduleExports["FOOT_PLACEMENT_OPTIONS"] = FOOT_PLACEMENT_OPTIONS;
-moduleExports["RHYTHM_STRIDE_OPTIONS"] = RHYTHM_STRIDE_OPTIONS;
-moduleExports["EQUIPMENT_TAG_OPTIONS"] = EQUIPMENT_TAG_OPTIONS;
 moduleExports["FOCUS_TAG_OPTIONS"] = FOCUS_TAG_OPTIONS;
 moduleExports["hasPersonalContextInput"] = hasPersonalContextInput;
 moduleExports["normalizePersonalContext"] = normalizePersonalContext;
@@ -463,7 +399,7 @@ function validateRunningRecordInput(input = {}) {
       }
     }
     const stepsProvenance = String(input.stepsProvenance || "UNKNOWN").toUpperCase();
-    if (!["DEVICE_MEASURED", "DEVICE_SYNCED", "ESTIMATED", "UNKNOWN"].includes(stepsProvenance)) errors.push({ field: "stepsProvenance", code: "INVALID_STEPS_PROVENANCE", message: "歩数の取得方法を選び直してください。" });
+    if (!["DEVICE_MEASURED", "ESTIMATED", "UNKNOWN"].includes(stepsProvenance)) errors.push({ field: "stepsProvenance", code: "INVALID_STEPS_PROVENANCE", message: "歩数の取得方法を選び直してください。" });
     const rawCourse = input.course && typeof input.course === "object" ? input.course : {};
     const providedSurfaces = SURFACE_FIELDS.map(({ recordKey }) => rawCourse[recordKey]).filter((value) => value !== undefined);
     if (providedSurfaces.length && providedSurfaces.some((value) => Number(value) !== 0)) {
@@ -510,9 +446,8 @@ function normalizeRunningRecord(input = {}, options = {}) {
       gradeDirection: ["FLAT","UPHILL","DOWNHILL"].includes(String(section?.gradeDirection || "").toUpperCase()) ? String(section.gradeDirection).toUpperCase() : "UNKNOWN",
       surfaceComponents: Object.freeze((Array.isArray(section?.surfaceComponents) ? section.surfaceComponents : []).map((item) => Object.freeze({ componentId: normalizeSingleLineText(item?.componentId, 80), sharePercent: Number(item?.sharePercent), userCategory: normalizeSingleLineText(item?.userCategory, 80).toUpperCase() }))),
     }))),
-    stepsProvenance: isRest ? "NOT_APPLICABLE" : ["DEVICE_MEASURED", "DEVICE_SYNCED", "ESTIMATED", "UNKNOWN"].includes(String(input.stepsProvenance || "UNKNOWN").toUpperCase()) ? String(input.stepsProvenance || "UNKNOWN").toUpperCase() : "UNKNOWN",
+    stepsProvenance: isRest ? "NOT_APPLICABLE" : ["DEVICE_MEASURED", "ESTIMATED", "UNKNOWN"].includes(String(input.stepsProvenance || "UNKNOWN").toUpperCase()) ? String(input.stepsProvenance || "UNKNOWN").toUpperCase() : "UNKNOWN",
     course: normalizeCourse(input.course),
-    memo: normalizePlainText(input.memo, 500),
     bodyProfileSnapshot: normalizeBodyProfileSnapshot(input.bodyProfileSnapshot || {}),
     planOutcome: Object.freeze({
       status: normalizeSingleLineText(planOutcomeSource.status, 40),
@@ -525,7 +460,7 @@ function normalizeRunningRecord(input = {}, options = {}) {
     }),
     personalContext: normalizePersonalContext(input.personalContext || {}),
     environmentContext: normalizeContextObject(input.environmentContext, { temperatureC: "number", environmentNote: 500 }),
-    reflectionContext: normalizeContextObject(input.reflectionContext, { postRunReflection: 500, perceivedDifference: 500, nextCheckPoint: 500 }),
+    reflectionContext: normalizeContextObject(input.reflectionContext, { postRunReflection: 500 }),
     regionalModelSnapshot: normalizeRegionalModelSnapshot(input.regionalModelSnapshot),
     createdAt: normalizeSingleLineText(input.createdAt, 50) || nowIso,
     updatedAt: nowIso,

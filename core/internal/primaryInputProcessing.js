@@ -209,11 +209,7 @@ function resolveSurfaceSelections(selections) {
   return success({ knowledge: normalized.length === 1 ? "DOMINANT_ONLY" : "MIXTURE_KNOWN", components: normalized, dominant });
 }
 
-function isStandardShoeCandidate(shoeType, softness) {
-  return shoeType === "TRAINING" && softness === "NORMAL";
-}
 moduleExports["resolveSurfaceSelections"] = resolveSurfaceSelections;
-moduleExports["isStandardShoeCandidate"] = isStandardShoeCandidate;
 internalModules.surfacePresets = moduleExports;
 }
 
@@ -227,8 +223,6 @@ function surfaceComponentsFromCourse(course={}){const defs=[['pavedPercent','ASP
 function runSettingFromCourse(course={}){const t=Number(course?.treadmillPercent||0),other=['pavedPercent','trackPercent','soilPercent','trailPercent','naturalGrassPercent','artificialTurfPercent','sandPercent'].reduce((s,k)=>s+Number(course?.[k]||0),0);if(t>0&&other===0)return 'TREADMILL';if(other>0&&t===0)return 'OUTDOOR_ROUTE';if(t>0&&other>0)return 'MIXED_SETTING';return null;}
 function sectionGradePercent(s={}){const g=Math.abs(Number(s.gradePercent||0));const d=String(s.gradeDirection||'FLAT').toUpperCase();if(d==='UPHILL')return g;if(d==='DOWNHILL')return -g;return 0;}
 function mapSections(items=[]){return (Array.isArray(items)?items:[]).map(s=>({sharePercent:s.sharePercent??null,distanceKm:s.distanceKm??null,durationMinutes:s.durationMinutes??null,gradePercent:sectionGradePercent(s),surfaceComponents:(Array.isArray(s.surfaceComponents)?s.surfaceComponents:[]).map(c=>({category:normalizeSurfaceCategory(c.userCategory||c.category),sharePercent:Number(c.sharePercent||0)})),runSetting:null}));}
-function strikeObservation(record={}){const raw=String(record.personalContext?.footPlacement||'').toUpperCase();let value=null;if(['HEEL','RFS','REARFOOT'].includes(raw))value='RFS';else if(['FOREFOOT','FFS'].includes(raw))value='FFS';else if(['MIDFOOT','MFS'].includes(raw))value='MFS';return value?{value,provenance:'SELF_REPORTED'}:null;}
-
 function personalHabitualCadenceReference(record={},allRecords=[]){
   if(String(record.runningFormat||'').toUpperCase()!=='CONTINUOUS_RUN')return {value:null,state:'REFERENCE_BUILDING',eligibleCount:0};
   const currentSpeed=speedOf(record);if(!(currentSpeed>0))return {value:null,state:'REFERENCE_BUILDING',eligibleCount:0};
@@ -237,7 +231,7 @@ function personalHabitualCadenceReference(record={},allRecords=[]){
   const cadences=[];
   for(const r of prior){
     if(String(r.activityType||'').toLowerCase()!=='run'||String(r.runningFormat||'').toUpperCase()!=='CONTINUOUS_RUN')continue;
-    if(!['DEVICE_MEASURED','DEVICE_SYNCED'].includes(String(r.stepsProvenance||'').toUpperCase()))continue;
+    if(!['DEVICE_MEASURED'].includes(String(r.stepsProvenance||'').toUpperCase()))continue;
     const sp=speedOf(r),steps=Number(r.steps),dur=Number(r.durationMinutes);if(!(sp>0&&steps>0&&dur>0))continue;
     if(Math.abs(sp-currentSpeed)>0.10+1e-12)continue;
     cadences.push(steps/dur);
@@ -256,7 +250,7 @@ function adaptCurrentRecordToPrimaryRegionalV2({record,allRecords=[]}={}){
     runningDurationMinutes:runWalk?Number(record.runWalkRunningDurationMinutes)||null:null,
     steps:Number(record.steps)||null,
     stepsProvenance:record.stepsProvenance||'UNKNOWN',
-    averageCadenceSpm:(!runWalk&&['DEVICE_MEASURED','DEVICE_SYNCED'].includes(String(record.stepsProvenance||'').toUpperCase())&&Number(record.steps)>0&&Number(record.durationMinutes)>0)?Number(record.steps)/Number(record.durationMinutes):null,
+    averageCadenceSpm:(!runWalk&&['DEVICE_MEASURED'].includes(String(record.stepsProvenance||'').toUpperCase())&&Number(record.steps)>0&&Number(record.durationMinutes)>0)?Number(record.steps)/Number(record.durationMinutes):null,
     personalHabitualCadenceSpm:ref.value,
     personalHabitualCadenceReferenceState:ref.state,
     personalHabitualCadenceEligibleCount:ref.eligibleCount,
@@ -268,7 +262,6 @@ function adaptCurrentRecordToPrimaryRegionalV2({record,allRecords=[]}={}){
     surfaceComponents:sections.length?null:surfaceComponentsFromCourse(course),
     runSetting:runSettingFromCourse(course),
     runSettingProvenance:'SURFACE_DERIVED',
-    footStrikeObservation:strikeObservation(record),
     allowR12GrassEnvelope:false,
   };
   return target;

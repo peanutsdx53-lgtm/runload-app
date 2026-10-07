@@ -76,10 +76,10 @@ await test('ADVANCED-COPY-HIDES-INTERNAL-REFERENCE-LABEL',()=>{
 
 await test('ADVANCED-COPY-TRANSLATES-RESEARCH-INTERNALS-BEFORE-DISPLAY',()=>{
   const out=baseOutput({selected:true});
-  out.advanced.evidence.regions['BA-DISP-014']={construct:'膝蓋大腿関節stress力積に基づく部位内Reference-100',sources:[{label:'Gazendam & Hof 2007',role:'保存原典Figure 3とTable 3から再現した筋活動経路'},{label:'Gazendam & Hof 2007',role:'Table 3係数と2.5 m/s正規化で再現した下腿後面筋活動経路'},{label:'Hagen et al. 2023',role:'膝蓋大腿関節の速度・相対cadence応答'},{label:'Van Hooren et al. 2024',role:'脛骨・アキレス腱の速度/条件応答'}]};
+  out.advanced.evidence.regions['BA-DISP-014']={construct:'膝蓋大腿関節stress力積に基づく部位内Reference-100',sources:[{label:'Gazendam & Hof 2007',role:'保存原典Figure 3のCurrent独立再デジタイズ中央値とTable 3係数による筋活動経路'},{label:'Gazendam & Hof 2007',role:'Table 3係数と2.5 m/s正規化で再現した下腿後面筋活動経路'},{label:'Hagen et al. 2023',role:'膝蓋大腿関節の速度・相対cadence応答'},{label:'Van Hooren et al. 2024',role:'脛骨・アキレス腱の速度/条件応答'}]};
   const html=renderMobile({output:out,selfUnderstanding:selfUnderstanding()});
   assert.match(html,/膝蓋大腿関節の応力の積み重なりを表す指標に基づく部位内基準100/);
-  assert.match(html,/保存原典の図3と表3から再現した筋活動の関係/);
+  assert.match(html,/保存した原典の図3を再計測した中央値と表3の係数から再現した筋活動の関係/);
   assert.match(html,/相対ピッチ応答/);
   assert.doesNotMatch(html,/stress力積|Figure 3|cadence|Reference-100/i);
 });

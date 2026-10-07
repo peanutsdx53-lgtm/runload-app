@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
-import { recordedNextCheckText } from "../shared/recordUtilities.js";
 
 const read = (path) => fs.readFileSync(path, "utf8");
 const screen = read("screens/consultationScreen.js");
@@ -23,15 +22,8 @@ test("consultation shared visual foundation is loaded once for both platforms", 
   assert.match(mobileCss, /\.screen-layout--consultation/);
 });
 
-test("recorded next-check text remains a display-only source separate from confirmation theme", () => {
-  const experience = {
-    record: { reflectionContext: { nextCheckPoint: "左ふくらはぎを次回も確認" } },
-    feedback: { nextCheckPoint: "feedback fallback" },
-  };
-  assert.equal(recordedNextCheckText(experience, { includeFeedback: true }), "左ふくらはぎを次回も確認");
-  assert.equal(recordedNextCheckText({ record: { reflectionContext: {} }, feedback: { nextCheckPoint: "feedback fallback" } }, { includeFeedback: true }), "feedback fallback");
-  assert.match(screen, /const next = recordedNextCheckText\(experience, \{ includeFeedback: true \}\) \|\| "未記録";/);
+test("retired next-check field is absent while formal confirmation theme remains separate", () => {
+  assert.doesNotMatch(screen, /recordedNextCheckText|nextCheckPoint|本人が記録した確認点|data-share-key="next"/);
   assert.match(screen, /const confirmationTheme = confirmationThread \? selfUnderstandingThreadTitle/);
-  assert.match(screen, /本人が記録した確認点/);
-  assert.doesNotMatch(screen, /const next = confirmationTheme \|\| "未記録"/);
+  assert.match(screen, /initialQuestion = confirmationTheme/);
 });

@@ -39,7 +39,6 @@ function recordHasReflection(record = {}) {
   const reflection = record?.reflectionContext || {};
   return [
     reflection.postRunReflection,
-    reflection.nextCheckPoint,
     reflection.whatWentWell,
     reflection.noticed,
     reflection.recoveryMemo,

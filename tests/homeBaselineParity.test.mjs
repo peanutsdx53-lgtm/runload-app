@@ -29,9 +29,9 @@ function servicesFor(record) {
     reflectionContext: { nextCheckPoint: "左膝の違和感を確認" },
   };
   const html = renderDesktopHome({ services: servicesFor(record) });
-  assert.match(html, /前回から引き継いだ内容/);
-  assert.match(html, /左膝の違和感を確認/);
-  assert.match(html, /10月4日の記録で自分が残した内容/);
+  assert.match(html, /今日の入口/);
+  assert.match(html, /今日の記録を始める/);
+  assert.doesNotMatch(html, /左膝の違和感を確認|前回から引き継いだ内容|nextCheckPoint/);
 }
 
 {
@@ -61,7 +61,7 @@ function servicesFor(record) {
   record.date = "2026-10-26";
   const challenge = buildPersonalChallenge(servicesFor(record), { now: new Date(2026, 9, 26, 12, 0, 0, 0) });
   assert.equal(challenge.id, "reflection-2");
-  assert.equal(challenge.value, 1, "carried next-check data must remain valid for the mobile Home reflection challenge");
+  assert.equal(challenge.value, 0, "retired next-check data must not count as a Current reflection");
 }
 
 {

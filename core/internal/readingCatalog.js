@@ -64,16 +64,6 @@ const NUCKOLS_2020 = Object.freeze({
   lastChecked: "2026-07-31",
 });
 
-const YAMIN_2021 = Object.freeze({
-  sourceId: "APP-COL-YAMIN",
-  title: "Effects of Surface Stiffness on Plantar Pressure and Lower-Limb Muscle Activity during Running",
-  organization: "BioMed Research International",
-  year: "2021",
-  url: "https://doi.org/10.1155/2021/8842591",
-  sourceType: "primaryStudy",
-  sourceTypeLabel: "参考資料",
-  lastChecked: "2026-08-05",
-});
 
 const VOLOSHINA_2015 = Object.freeze({
   sourceId: "APP-COL-VOLOSHINA",

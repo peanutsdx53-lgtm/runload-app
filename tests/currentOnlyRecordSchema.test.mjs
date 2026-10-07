@@ -228,6 +228,17 @@ test('DEAD-FORMAL-INPUT-SYSTEM-IS-RETIRED-WHILE-SURFACE-PRESETS-REMAIN', () => {
 });
 
 
+test('RETIRED-DEVICE-SYNCED-PROVENANCE-IS-ABSENT', () => {
+  assert.ok(!inputSupport.includes('DEVICE_SYNCED'));
+  assert.ok(!applicationDomain.includes('DEVICE_SYNCED'));
+  assert.ok(!primaryInputProcessing.includes('DEVICE_SYNCED'));
+});
+
+test('RETIRED-YAMIN-READING-SOURCE-DECLARATION-IS-ABSENT', () => {
+  assert.ok(!readingCatalog.includes('APP-COL-YAMIN'));
+  assert.ok(!evidenceData.includes('APP-COL-YAMIN'));
+});
+
 test('ACTIVE-READING-AND-EVIDENCE-NAMING-HAS-NO-RETIRED-V27-PATH', () => {
   assert.ok(!applicationDomain.toLowerCase().includes('model/v27'));
   assert.ok(!applicationDomain.includes('A4_OR_V27'));
@@ -239,6 +250,45 @@ test('ACTIVE-READING-AND-EVIDENCE-NAMING-HAS-NO-RETIRED-V27-PATH', () => {
   assert.ok(!architectureDoc.includes('V27 may remain'));
   assert.ok(readingCatalog.includes('id: "consultation-prep"'));
   assert.ok(readingCatalog.includes('id: "model-limits"'));
+});
+
+
+
+test('RETIRED-HIDDEN-INPUT-AND-REFLECTION-FIELDS-ARE-ABSENT-FROM-ACTIVE-RUNTIME', () => {
+  const roots = ['core', 'ui', 'screens', 'shared'];
+  const retiredTokens = [
+    'perceivedDifference',
+    'nextCheckPoint',
+    'subjectiveDetailType',
+    'recordedNextCheckText',
+    'personalShoeType',
+    'personalShoeSoftness',
+    'personalFreeNote',
+    'shoeType',
+    'shoeSoftness',
+    'footPlacement',
+    'rhythmStride',
+    'equipmentTags',
+    'equipmentNote',
+    'freeNote',
+    'uphill_easy',
+    'downhill_slow',
+  ];
+  const files = [];
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const path = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) walk(path);
+      else if (/\.(?:js|mjs)$/.test(entry.name)) files.push(path);
+    }
+  };
+  for (const root of roots) walk(root);
+  for (const path of files) {
+    const source = fs.readFileSync(path, 'utf8');
+    for (const token of retiredTokens) {
+      assert.ok(!source.includes(token), `${token} remains in ${path}`);
+    }
+  }
 });
 
 const failed = results.filter((item) => item.status !== 'PASS');

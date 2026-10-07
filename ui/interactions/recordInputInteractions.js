@@ -285,7 +285,7 @@ function updateOptionalInputStatus(form, platformEnhancement = {}) {
     hasFatigue
     || !["", "deferred", "not_asked"].includes(String(subjective.status || ""))
     || personal.hasInput
-    || ["postRunReflection", "perceivedDifference", "nextCheckPoint"].some((name) => String(formData.get(name) || "").trim())
+    || String(formData.get("postRunReflection") || "").trim()
   );
   const states = { course: hasCourse, compare: hasCompare, reflection: hasReflection };
   Object.entries(states).forEach(([key, hasInput]) => {
@@ -555,7 +555,7 @@ function applySavedShoeToEmbedded(form, services) {
   const settings = services.storage.settings.load();
   const preset = (Array.isArray(settings.savedShoes) ? settings.savedShoes : []).find((item) => item.id === id);
   if (!preset) return;
-  for (const [name, value] of [["personalShoeLabel", preset.label], ["personalShoeType", preset.type], ["personalShoeSoftness", preset.softness]]) {
+  for (const [name, value] of [["personalShoeLabel", preset.label]]) {
     const control = form.elements.namedItem(name);
     if (control) control.value = String(value || "");
   }
@@ -569,7 +569,7 @@ function saveEmbeddedShoePreset(form, services) {
   const saved = Array.isArray(current.savedShoes) ? [...current.savedShoes] : [];
   const currentId = String(form.elements.namedItem("personalShoeId")?.value || "");
   const id = currentId || `shoe-${Date.now()}`;
-  const preset = { id, label, type: String(form.elements.namedItem("personalShoeType")?.value || ""), softness: String(form.elements.namedItem("personalShoeSoftness")?.value || "") };
+  const preset = { id, label };
   const index = saved.findIndex((item) => item.id === id);
   if (index >= 0) saved[index] = preset; else saved.push(preset);
   const result = services.storage.settings.save({ ...current, savedShoes: saved });
@@ -645,9 +645,7 @@ export function readSubjectiveFeedback(formData) {
     consultationFactsActive ? booleanValue(formData, `safety_${flag}`) : false,
   ]));
   const hasSafetyFlag = Object.values(safetyFlags).some(Boolean);
-  const checkStatus = primaryStatus === "body_reported"
-    ? String(formData.get("subjectiveDetailType") || "")
-    : primaryStatus;
+  const checkStatus = primaryStatus;
   const bodyObservationTiming = String(formData.get("bodyObservationTiming") || "UNKNOWN");
   const bodyObservationSensation = String(formData.get("bodyObservationSensation") || "NOT_SELECTED");
   const bodyObservationNote = String(formData.get("bodyObservationNote") || "").trim().slice(0, 240);
@@ -744,15 +742,12 @@ function readRecordInput(formData, services) {
     runWalkRunningSections: readRunWalkRunningSections(formData),
     stepsProvenance: String(formData.get("stepsProvenance") || "UNKNOWN"),
     course: readCourse(formData, distanceKm),
-    memo: String(formData.get("memo") || ""),
     environmentContext: {
       temperatureC: optionalNumberValue(formData, "temperatureC"),
       environmentNote: String(formData.get("environmentNote") || ""),
     },
     reflectionContext: {
       postRunReflection: String(formData.get("postRunReflection") || ""),
-      perceivedDifference: String(formData.get("perceivedDifference") || ""),
-      nextCheckPoint: String(formData.get("nextCheckPoint") || ""),
     },
     planOutcome: plan ? {
       status: plan.outcomeStatus || "completed",
@@ -804,7 +799,7 @@ function validateSubjectiveFeedback(feedback, formData) {
     && feedback.bodyAreaObservations.length > 0;
   const hasSafetyInformation = Object.values(feedback.safetyFlags || {}).some(Boolean);
   const primaryStatus = String(formData.get("subjectiveStatus") || "");
-  const requiresBodyDetail = primaryStatus === "body_reported" || ["discomfort_reported", "strong_reported"].includes(feedback.checkStatus);
+  const requiresBodyDetail = ["discomfort_reported", "strong_reported"].includes(feedback.checkStatus);
   if (requiresBodyDetail && !feedback.checkStatus) messages.push("身体の記録を残す場合は、内容を選んでください。");
   if (requiresBodyDetail && feedback.checkStatus === "discomfort_reported" && !hasBodyAreaObservation) messages.push("気になる部位を残す場合は、少なくとも1部位の程度を1以上にしてください。");
   if (requiresBodyDetail && feedback.checkStatus === "strong_reported" && !(hasSafetyInformation || hasBodyAreaObservation)) messages.push("相談したい内容を残す場合は、当てはまる内容または部位の程度を入力してください。");

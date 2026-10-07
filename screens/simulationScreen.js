@@ -1,5 +1,4 @@
 import { escapeHtml } from "../ui/commonComponents.js";
-import { recordedNextCheckText } from "../shared/recordUtilities.js";
 import { peekCourseSelection } from "../ui/flowSessionState.js";
 import { primarySurfaceSummary, slopeSummary } from "../ui/coursePresentation.js";
 
@@ -86,7 +85,6 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
   const runningFormat=runningFormatValue(recent);
   const runningDistance=Number(recent?.runningDistanceKm)>0?Number(recent.runningDistanceKm):Math.max(.1,distance*.8);
   const runningDuration=Number(recent?.runningDurationMinutes)>0?Number(recent.runningDurationMinutes):Math.max(1,Math.round(duration*.8));
-  const previousCheckNote=recordedNextCheckText(recent);
   const sourceLabel=recordId?"選択した記録":"直近の記録";
   const comparisonTitle=recordId?"保存記録を基準に条件を比べる":"直近記録を基準に条件を比べる";
   const recordDate=dateLabel(recent?.date||"");
@@ -111,7 +109,6 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
       <div class="condition-compare-hero__copy">${recordDate?`<time>${escapeHtml(recordDate)}</time>`:""}<p class="eyebrow">条件比較</p><h1>${escapeHtml(comparisonTitle)}</h1><p>保存された記録を基準に、条件を変えた場合の12部位の表示と元の記録との差を整理します。</p></div>
       <div class="condition-compare-hero__mark"><span>${simulationScreenIcon("compare")}</span><div><strong>条件比較</strong><small>条件差と部位差を分けて確認</small></div></div>
     </section>
-    ${previousCheckNote?`<section class="carry-card condition-compare-carry" aria-label="今回から引き継いだ内容"><span>${simulationScreenIcon("flag")}</span><div><small>今回の記録から</small><strong>次に確認したいこと</strong><p>${escapeHtml(previousCheckNote)}</p></div></section>`:""}
     <section class="condition-compare-overview" aria-labelledby="simulationOverviewTitle">
       <div class="condition-compare-section-head"><div><small>比較の要約</small><h2 id="simulationOverviewTitle">今回の比較で見えること</h2></div><p>条件を変更した結果を、元の記録との差として整理します。</p></div>
       <div class="condition-compare-overview-idle" hidden><span>${simulationScreenIcon("conditions")}</span><div><strong>条件を1項目変更すると比較が始まります</strong><p>右側で距離・時間・コースなどを変更すると、元の保存記録との差だけを表示します。</p></div></div>

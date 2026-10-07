@@ -116,7 +116,7 @@ function createHistoryWorkflow({
         if (!query) return true;
         const searchable = [
           record.date,
-          record.memo,
+          record.reflectionContext?.postRunReflection,
           record.course?.name,
           feedback?.consultationNote,
           ...(feedback?.bodyAreaObservations || []).map((item) => item?.label || item?.areaId || ""),

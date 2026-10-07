@@ -34,7 +34,7 @@ const { PRIMARY_REGIONAL_V2_REGION_DEFS } = internalModules.primaryRegionalRegio
 
 const PRIMARY_REGIONAL_V2_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
 const PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION = "runload-primary-regional-reference100-output-v3.0";
-const PRIMARY_REGIONAL_V2_AUTHORITY_VERSION = "RunLoad-Calculation-Engine-V1.2Plus-20260916";
+const PRIMARY_REGIONAL_V2_AUTHORITY_VERSION = "RunLoad-Calculation-Engine-Current-20261007-Gazendam-Reproducible";
 const PRIMARY_REGIONAL_V2_BUILD_ID = BUILD_ID;
 const PRIMARY_REGIONAL_V2_ROUTE_TRACE_VERSION = "primary-regional-route-trace-v1";
 
@@ -43,7 +43,7 @@ const DEF_BY_R = new Map(REGION_DEFS.map((d) => [d.id, d]));
 const BASE_SOURCE_BY_R = Object.freeze(Object.fromEntries(REGION_DEFS.map((d) => [d.id, d.baselineSource])));
 const SOURCE_REGISTRY = Object.freeze({
   FUKUCHI_2017: { label: "Fukuchi et al. 2017", role: "股関節・足関節の速度応答" },
-  GAZENDAM_HOF_2007_FIGURE3_DIGITIZED: { label: "Gazendam & Hof 2007", role: "保存原典Figure 3とTable 3から再現した筋活動経路" },
+  GAZENDAM_HOF_2007_FIGURE3_DIGITIZED: { label: "Gazendam & Hof 2007", role: "保存原典Figure 3のCurrent独立再デジタイズ中央値とTable 3係数による筋活動経路" },
   GAZENDAM_HOF_2007_TABLE3_NORMALIZED: { label: "Gazendam & Hof 2007", role: "Table 3係数と2.5 m/s正規化で再現した下腿後面筋活動経路" },
   HAGEN_2023: { label: "Hagen et al. 2023", role: "膝蓋大腿関節の速度・相対cadence応答" },
   VAN_HOOREN_2024: { label: "Van Hooren et al. 2024", role: "脛骨・アキレス腱の速度/条件応答" },

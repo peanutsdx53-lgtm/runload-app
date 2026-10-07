@@ -9,7 +9,7 @@ const moduleExports = Object.create(null);
 
 const MODEL_VERSION = 'runload-primary-regional-reference100-v3.0';
 const OUTPUT_SEMANTIC_VERSION = 'runload-primary-regional-reference100-output-v3.0';
-const BUILD_ID = 'primary-reference100-v3-20260917-authority-v1.2plus';
+const BUILD_ID = 'primary-reference100-v3-20261007-gazendam-current-redigitization';
 
 const REGION_DEFS = Object.freeze([
   {id:'R01',name:'股関節部',referenceSpeedMps:2.50,domain:[2.50,4.50],construct:'股関節の機械的仕事に基づく部位内Reference-100',baselineSource:'FUKUCHI_2017',outputSemantic:'REFERENCE_100_CONDITION_RESPONSE'},
@@ -27,10 +27,12 @@ const REGION_DEFS = Object.freeze([
 ]);
 const DEF = new Map(REGION_DEFS.map(x=>[x.id,x]));
 
-// Gazendam & Hof (2007) Table 3 coefficients are combined with relative FF areas
-// reproducibly digitized from the saved Figure 3 image. Absolute FF areas are not
-// required after 2.5 m/s normalization; R07 uses FF1 only, so its FF1 area cancels exactly.
-const GAZENDAM_FF_RELATIVE_AREA=Object.freeze({1:1,2:1,3:0.4931059271592576,4:1,5:0.48108493932905066,6:1,7:0.8195583596214511,8:0.9756871035940803});
+// Gazendam & Hof (2007) Table 3 coefficients are combined with relative FF areas.
+// The FF ratios below are the medians of the Current-contained independent re-digitization
+// sensitivity grid (540 declared conditions) applied to the fixed Figure 3 raster. No parameter
+// is fitted to predecessor project values. Absolute FF areas are unnecessary after 2.5 m/s
+// normalization; R07 uses FF1 only, so its FF1 area cancels exactly.
+const GAZENDAM_FF_RELATIVE_AREA=Object.freeze({1:1,2:1,3:0.5013636028598806,4:1,5:0.5018188525800675,6:1,7:0.82269996179627,8:0.9892532188841201});
 const EMG_COEFFS={
   SO:{1:[0.15,0.63,-0.24]}, GM:{1:[0.54,0.28,0]}, GL:{1:[0.06,1.11,-0.37]},
   VM:{2:[0.59,0,0]}, VL:{2:[0.46,0.17,0]}, RF:{2:[-0.17,0.64,0.018],3:[0.16,-0.37,0.50]},
@@ -296,13 +298,6 @@ const SURFACE_KEY_BY_RECORD_KEY = Object.freeze(Object.fromEntries(
   SURFACE_FIELDS.map(({ recordKey, modelKey }) => [recordKey, modelKey]),
 ));
 
-const SHOE_TYPE = Object.freeze({
-  usual_training: "TRAINING", soft: "TRAINING_SOFT", light: "LIGHTWEIGHT",
-  race: "RACING", trail: "TRAIL", other: "OTHER",
-});
-const SHOE_SOFTNESS = Object.freeze({ soft: "SOFT", normal: "NORMAL", firm: "FIRM", unknown: "UNKNOWN" });
-const FOOT_PLACEMENT = Object.freeze({ heel: "RFS", full_sole: "MFS", forefoot: "FFS", varies: "VARIABLE", unknown: "UNKNOWN" });
-const RHYTHM_STRIDE = Object.freeze({ usual: "USUAL", small_step: "SMALLER_STRIDE_SELF_REPORT", rhythm_focus: "CADENCE_FOCUS_SELF_REPORT", long_step: "LARGER_STRIDE_SELF_REPORT", unknown: "UNKNOWN" });
 
 const BODY_AREA_TO_PRIMARY_REGIONAL_V2 = Object.freeze({
   "BFR-200-ING": "BA-DISP-014", "BFR-200-COX": "BA-DISP-014",
@@ -420,7 +415,6 @@ function adaptStoredRecordToPrimaryRegionalV2Input(record = {}, feedback = {}) {
     steps: record.activityType === "run" && Number(record.steps) > 0 ? Number(record.steps) : null,
     stepsProvenance: record.stepsProvenance === "ESTIMATED" ? "ESTIMATED" : (record.stepsProvenance || "UNKNOWN"),
     runningFormat: record.activityType === "run" ? (record.runningFormat || "UNKNOWN") : null,
-    memo: record.memo || "",
     course: {
       courseId: record.course?.id || null,
       courseName: record.course?.name || "",
@@ -435,12 +429,7 @@ function adaptStoredRecordToPrimaryRegionalV2Input(record = {}, feedback = {}) {
     shoeAndStyle: {
       shoeId: personal.shoeId || null,
       shoeLabel: personal.shoeLabel || null,
-      shoeType: SHOE_TYPE[personal.shoeType] || "UNKNOWN",
-      shoeSoftness: SHOE_SOFTNESS[personal.shoeSoftness] || "UNKNOWN",
-      footPlacement: FOOT_PLACEMENT[personal.footPlacement] || "UNKNOWN",
-      rhythmStride: RHYTHM_STRIDE[personal.rhythmStride] || "UNKNOWN",
       focusTags: personal.focusTags || [],
-      note: personal.freeNote || "",
     },
     bodyReview: {
       status: reviewStatus(feedback, observations),

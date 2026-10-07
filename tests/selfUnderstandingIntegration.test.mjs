@@ -17,10 +17,7 @@ check("RECORD-BURDEN-ONE-VISIBLE-RAW-MEMO", () => {
   const observationBlock = screen.match(/function renderRunObservationMemo[\s\S]*?\n}\n/)?.[0] || "";
   assert.match(observationBlock, /textarea name="postRunReflection"/);
   assert.equal((observationBlock.match(/<textarea/g) || []).length, 1);
-  assert.match(observationBlock, /type="hidden" name="perceivedDifference"/);
-  assert.match(observationBlock, /type="hidden" name="nextCheckPoint"/);
-  assert.match(observationBlock, /previous-reflection-note/);
-  assert.match(observationBlock, /以前の内容はそのまま保存します。自動で新しい意味に読み替えません。/);
+  assert.doesNotMatch(observationBlock, /perceivedDifference|nextCheckPoint|previous-reflection-note/);
   assert.match(observationBlock, /結果を見る前の自分の観察/);
 });
 
@@ -48,11 +45,17 @@ check("REST-PLAN-DOES-NOT-PRESENT-RUN-CONFIRMATION-CARRY", () => {
   assert.match(plan, /selectedThreadId&&planType==="run"/);
 });
 
-check("PREVIOUS-REFLECTION-DATA-IS-PRESERVED-BUT-NOT-REINTERPRETED", () => {
-  const recordScreen = read("screens/recordInputScreen.js");
-  assert.match(recordScreen, /name="perceivedDifference"/);
-  assert.match(recordScreen, /name="nextCheckPoint"/);
-  assert.match(recordScreen, /自動で新しい意味に読み替えません/);
+check("RETIRED-REFLECTION-FIELDS-ARE-REMOVED-FROM-CURRENT-RUNTIME", () => {
+  const runtime = [
+    "screens/recordInputScreen.js",
+    "ui/interactions/recordInputInteractions.js",
+    "core/internal/inputSupport.js",
+    "screens/planScreen.js",
+    "screens/simulationScreen.js",
+    "screens/consultationScreen.js",
+    "screens/desktop/homeScreen.js",
+  ].map(read).join("\n");
+  assert.doesNotMatch(runtime, /nextCheckPoint|perceivedDifference|subjectiveDetailType/);
   const activeInterpretation = [
     "ui/interactions/interpretationRoomInteractions.js",
     "ui/interpretationRoomPresentation.js",

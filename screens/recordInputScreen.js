@@ -116,24 +116,16 @@ export function hasReflectionInfo(record = {}, feedback = {}) {
     !["", "deferred", "not_asked"].includes(subjectiveStatus)
     || personalContextSummary(record).hasInput
     || String(reflection.postRunReflection || "").trim()
-    || String(reflection.perceivedDifference || "").trim()
-    || String(reflection.nextCheckPoint || "").trim()
   );
 }
 
 function renderRunObservationMemo(record = {}, { isRest = false } = {}) {
   const reflection = record.reflectionContext || {};
-  const perceivedDifference = String(reflection.perceivedDifference || "");
-  const nextCheckPoint = String(reflection.nextCheckPoint || "");
-  const hasPreviousReflection = Boolean(perceivedDifference.trim() || nextCheckPoint.trim());
   const memoLabel = isRest ? "今回のメモ" : "走ったときのメモ";
   const memoPlaceholder = isRest ? "休養中に覚えておきたいことがあれば残します" : "走っていて覚えておきたいことがあれば残します";
   const memoHelp = isRest ? "今回の自分の観察として保存します。空欄でも問題ありません。" : "結果を見る前の自分の観察として保存します。空欄でも問題ありません。";
   return `<div class="reflection-fields reflection-fields--v2">
     <label class="field"><span>${escapeHtml(memoLabel)} <b>任意</b></span><textarea name="postRunReflection" maxlength="500" rows="2" placeholder="${escapeHtml(memoPlaceholder)}">${escapeHtml(reflection.postRunReflection || "")}</textarea><small>${escapeHtml(memoHelp)}</small></label>
-    <input type="hidden" name="perceivedDifference" value="${escapeHtml(perceivedDifference)}">
-    <input type="hidden" name="nextCheckPoint" value="${escapeHtml(nextCheckPoint)}">
-    ${hasPreviousReflection ? `<details class="previous-reflection-note"><summary>以前の振り返り記録を確認</summary><div>${perceivedDifference.trim() ? `<p><small>いつもとの違い</small><strong>${escapeHtml(perceivedDifference)}</strong></p>` : ""}${nextCheckPoint.trim() ? `<p><small>次回確認したいこと</small><strong>${escapeHtml(nextCheckPoint)}</strong></p>` : ""}<span>以前の内容はそのまま保存します。自動で新しい意味に読み替えません。</span></div></details>` : ""}
   </div>`;
 }
 
@@ -247,7 +239,6 @@ export function renderRecordInputScreenWithPresentation({ services, context }, p
     runningFormat: plannedSession.runningFormat || "UNKNOWN",
     stepsProvenance: "UNKNOWN",
     course: plannedSession.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
-    memo: selectedPlan?.memo || "",
   } : null;
   const record = existingExperience?.record || measuredRecord || (selectedPlan ? {
     id: "",
@@ -259,7 +250,6 @@ export function renderRecordInputScreenWithPresentation({ services, context }, p
     runningFormat: plannedSession.runningFormat || "UNKNOWN",
     stepsProvenance: plannedSession.stepsProvenance || "UNKNOWN",
     course: plannedSession.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
-    memo: selectedPlan.memo || "",
   } : {
     id: draftRecord.id || "",
     date: draftRecord.date || context?.parameters?.get("date") || localToday(),
@@ -270,7 +260,6 @@ export function renderRecordInputScreenWithPresentation({ services, context }, p
     runningFormat: draftRecord.runningFormat || "UNKNOWN",
     stepsProvenance: draftRecord.stepsProvenance || "UNKNOWN",
     course: draftRecord.course || { gradeKnowledge: "UNKNOWN", modelSurfaceClass: "UNKNOWN" },
-    memo: draftRecord.memo || "",
   });
   const pendingRuns = !editing ? (services.fatigue?.listPendingRuns?.() || []) : [];
   const requestedRunId = !editing ? String(context?.parameters?.get("runId") || "") : "";
@@ -315,7 +304,7 @@ export function renderRecordInputScreenWithPresentation({ services, context }, p
 
         <details class="stage-card" data-record-stage="3" data-run-fields${isRest ? " hidden" : ""}><summary><span class="stage-icon">3</span><span class="summary-copy"><small>任意</small><strong>比較しやすくする情報</strong><em data-optional-status="compare">${optionalInputStatus(hasComparisonInfo(record))}</em></span><i>⌄</i></summary><div class="stage-body"><div class="two-fields"><label class="field"><span>歩数</span><input name="steps" type="number" inputmode="numeric" min="0" max="10000000" step="1" value="${escapeHtml(record.steps || "")}" placeholder="例：6000"></label><label class="field"><span>歩数の取得方法</span><select name="stepsProvenance"><option value="UNKNOWN"${selected(record.stepsProvenance, "UNKNOWN")}>不明・未設定</option><option value="DEVICE_MEASURED"${selected(record.stepsProvenance, "DEVICE_MEASURED")}>端末・時計で計測</option><option value="ESTIMATED"${selected(record.stepsProvenance, "ESTIMATED")}>手入力・おおよそ</option></select></label></div><label class="field field--running-format"><span>${escapeHtml(runningFormatLabel)}</span><select name="runningFormat"><option value="UNKNOWN"${selected(record.runningFormat, "UNKNOWN")}>${escapeHtml(runningFormatOptions.unknown)}</option><option value="CONTINUOUS_RUN"${selected(record.runningFormat, "CONTINUOUS_RUN")}>${escapeHtml(runningFormatOptions.continuous)}</option><option value="RUN_WALK"${selected(record.runningFormat, "RUN_WALK")}>${escapeHtml(runningFormatOptions.runWalk)}</option></select></label><div class="nested-panel" data-run-walk-container${String(record.runningFormat || "UNKNOWN").toUpperCase() === "RUN_WALK" ? "" : " hidden"}>${renderRunWalkDetails(record, { durationStep: runWalkDurationStep })}</div>${renderEnvironmentContext(record)}</div></details>
 
-        <details class="stage-card" data-record-stage="4"><summary><span class="stage-icon">4</span><span class="summary-copy"><small>任意</small><strong data-record-reflection-label>${isRest ? "身体・休養時の記録" : "身体・走ったときの記録"}</strong><em data-optional-status="reflection">${optionalInputStatus(hasReflectionInfo(record, feedback))}</em></span><i>⌄</i></summary><div class="stage-body">${carryFocus}${renderReflectionLead({ services, linkedRunId, editing, isRest })}<div class="linked-records"><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="subjective"><span class="linked-icon">＋</span><span><small>身体の記録</small><strong>今回の身体記録</strong><em data-subjective-summary-status>${escapeHtml(subjectiveSummaryFromFields(subjectiveFieldsFromFeedback(feedback)).label)}</em></span><i>›</i></button><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="personal"><span class="linked-icon">＋</span><span><small>使用したもの</small><strong>今回のシューズ</strong><em data-personal-summary-status>${escapeHtml(personalContextSummary(record).hasInput ? personalContextSummary(record).description : "未選択")}</em></span><i>›</i></button></div>${renderRunObservationMemo(record, { isRest })}<input type="hidden" name="memo" value=""></div></details>
+        <details class="stage-card" data-record-stage="4"><summary><span class="stage-icon">4</span><span class="summary-copy"><small>任意</small><strong data-record-reflection-label>${isRest ? "身体・休養時の記録" : "身体・走ったときの記録"}</strong><em data-optional-status="reflection">${optionalInputStatus(hasReflectionInfo(record, feedback))}</em></span><i>⌄</i></summary><div class="stage-body">${carryFocus}${renderReflectionLead({ services, linkedRunId, editing, isRest })}<div class="linked-records"><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="subjective"><span class="linked-icon">＋</span><span><small>身体の記録</small><strong>今回の身体記録</strong><em data-subjective-summary-status>${escapeHtml(subjectiveSummaryFromFields(subjectiveFieldsFromFeedback(feedback)).label)}</em></span><i>›</i></button><button type="button" class="linked-card" data-action="open-record-subflow" data-subflow="personal"><span class="linked-icon">＋</span><span><small>使用したもの</small><strong>今回のシューズ</strong><em data-personal-summary-status>${escapeHtml(personalContextSummary(record).hasInput ? personalContextSummary(record).description : "未選択")}</em></span><i>›</i></button></div>${renderRunObservationMemo(record, { isRest })}</div></details>
       </section>
       ${renderBottomClearance()}
 

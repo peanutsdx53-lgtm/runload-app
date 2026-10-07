@@ -463,7 +463,7 @@ function normalizeSession(session = {}, planType = "run") {
         : "UNKNOWN",
     ...(hasSteps ? {
       steps: Math.round(Math.min(INPUT_LIMITS.steps, Number(rawSteps))),
-      stepsProvenance: ["DEVICE_MEASURED", "DEVICE_SYNCED", "ESTIMATED", "UNKNOWN"].includes(
+      stepsProvenance: ["DEVICE_MEASURED", "ESTIMATED", "UNKNOWN"].includes(
         String(source.stepsProvenance || "UNKNOWN").toUpperCase(),
       )
         ? String(source.stepsProvenance || "UNKNOWN").toUpperCase()

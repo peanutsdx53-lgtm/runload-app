@@ -172,7 +172,7 @@ function buildConsultationReport(experience, allExperiences = [], options = {}) 
     date: experience.record.date,
     activity: activitySummary(experience.record),
     courseName: experience.record.course?.name || "",
-    memo: experience.record.memo || "",
+    memo: experience.record.reflectionContext?.postRunReflection || "",
     rawFacts: rawFacts(experience.record),
     personalContextItems: personal.hasInput ? personal.items : [],
     subjectiveStatus: feedback.checkStatus || "not_asked",
