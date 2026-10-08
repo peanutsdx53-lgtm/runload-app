@@ -62,6 +62,21 @@ function restorePlanReferences(currentPlan, previousPlan, recordId) {
   };
 }
 
+// The Reading history is user data linked to a record. A record deletion must
+// remove its presentation entry in the same transaction as the record itself.
+// Do not silently overwrite a malformed or unreadable history on delete/undo.
+function readReadingHistoryForMutation(gateway) {
+  const read = gateway?.readJsonResult?.(STORAGE_KEYS.readingReferenceHistory, { version: 1, entries: [] });
+  if (!read?.ok) return { ok: false, code: "HISTORY_SOURCE_READ_FAILED", sourceName: "readingReferenceHistory", sourceCode: read?.code || "READ_FAILED" };
+  const value = read.value;
+  if (!value || typeof value !== "object" || Array.isArray(value)
+    || value.version !== 1 || !Array.isArray(value.entries)
+    || value.entries.some((item) => !item || typeof item.recordId !== "string" || typeof item.articleId !== "string")) {
+    return { ok: false, code: "HISTORY_READING_REFERENCE_INVALID", sourceName: "readingReferenceHistory" };
+  }
+  return { ok: true, envelope: value, exists: read.exists };
+}
+
 function createHistoryWorkflow({
   gateway,
   recordsRepository,
@@ -181,6 +196,15 @@ function createHistoryWorkflow({
     if (!interpretationsRead.ok) return interpretationsRead;
     const removedSelfInterpretation = cloneValue(interpretationsRead.items.find((item) => item.recordId === recordId) || null);
     const nextSelfInterpretations = interpretationsRead.items.filter((item) => item.recordId !== recordId);
+    const readingRead = readReadingHistoryForMutation(gateway);
+    if (!readingRead.ok) return readingRead;
+    const readingEntries = readingRead.envelope.entries;
+    const readingIndex = readingEntries.findIndex((item) => item.recordId === recordId);
+    const removedReadingEntry = readingIndex < 0 ? null : cloneValue(readingEntries[readingIndex]);
+    const nextReadingHistory = readingIndex < 0 ? null : {
+      ...readingRead.envelope,
+      entries: readingEntries.filter((item) => item.recordId !== recordId),
+    };
     const undoEntry = {
       version: 9,
       deletedAt: new Date().toISOString(),
@@ -191,6 +215,7 @@ function createHistoryWorkflow({
       rofJLifecycle: removedRofJLifecycle,
       runMeasurement: removedRunMeasurement,
       selfInterpretation: removedSelfInterpretation,
+      readingReferenceHistory: removedReadingEntry ? { entry: removedReadingEntry, index: readingIndex } : null,
       affectedPlans,
     };
     const operations = [
@@ -201,6 +226,7 @@ function createHistoryWorkflow({
       { key: STORAGE_KEYS.runMeasurements, value: runMeasurements.filter((item) => item?.recordId !== recordId) },
       ...(selfInterpretationsRepository ? [{ key: STORAGE_KEYS.selfInterpretations, value: nextSelfInterpretations }] : []),
       { key: STORAGE_KEYS.historyUndo, value: undoEntry },
+      ...(nextReadingHistory ? [{ key: STORAGE_KEYS.readingReferenceHistory, value: nextReadingHistory }] : []),
     ];
     if (rofJRepository) operations.push({
       key: STORAGE_KEYS.rofJ,
@@ -298,6 +324,20 @@ function createHistoryWorkflow({
     const nextSelfInterpretations = interpretationsRead.items.filter((item) => item.recordId !== recordId);
     if (entry.selfInterpretation) nextSelfInterpretations.push(cloneValue(entry.selfInterpretation));
 
+    let restoredReadingHistory = null;
+    if (entry.readingReferenceHistory?.entry) {
+      const readingRead = readReadingHistoryForMutation(gateway);
+      if (!readingRead.ok) return readingRead;
+      const restoredReadingEntry = entry.readingReferenceHistory.entry;
+      if (restoredReadingEntry.recordId !== recordId || typeof restoredReadingEntry.articleId !== "string") {
+        return { ok: false, code: "HISTORY_UNDO_READING_REFERENCE_INVALID" };
+      }
+      const items = readingRead.envelope.entries.filter((item) => item.recordId !== recordId);
+      const index = Math.max(0, Math.min(items.length, Number.isInteger(entry.readingReferenceHistory.index) ? entry.readingReferenceHistory.index : 0));
+      items.splice(index, 0, restoredReadingEntry);
+      restoredReadingHistory = { ...readingRead.envelope, entries: items.slice(0, 24) };
+    }
+
     const operations = [
       { key: STORAGE_KEYS.records, value: records },
       { key: STORAGE_KEYS.subjectiveFeedback, value: feedbackItems },
@@ -306,6 +346,7 @@ function createHistoryWorkflow({
       { key: STORAGE_KEYS.runMeasurements, value: nextRunMeasurements },
       ...(selfInterpretationsRepository ? [{ key: STORAGE_KEYS.selfInterpretations, value: nextSelfInterpretations }] : []),
       { key: STORAGE_KEYS.historyUndo, remove: true },
+      ...(restoredReadingHistory ? [{ key: STORAGE_KEYS.readingReferenceHistory, value: restoredReadingHistory }] : []),
     ];
     if (rofJRepository && hasRofJUndo) operations.push({
       key: STORAGE_KEYS.rofJ,
