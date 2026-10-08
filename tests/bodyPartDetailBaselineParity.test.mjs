@@ -65,4 +65,26 @@ for (const renderer of [renderDesktopBodyPartDetail, renderMobileBodyPartDetail]
   assert.match(html, /不足する条件を0や100で補いません/);
 }
 
+// R11 has a project-defined composite metric, not a direct measurement of the medial arch.
+for (const renderer of [renderDesktopBodyPartDetail, renderMobileBodyPartDetail]) {
+  const regionId = "BA-DISP-028";
+  const r11 = experience("r11-note", "2026-10-05", 103);
+  r11.regionalV2Result.regions[0].regionId = regionId;
+  r11.regionalV2Result.regions[0].primaryRegionId = "R11";
+  r11.regionalV2Result.regions[0].regionName = "足底中部・内側縦足弓";
+  r11.regionalV2ResultRecord.comparison_signatures = {
+    [regionId]: { ...SIGNATURE, regionId, constructId: "C-R11", referenceId: "REF-R11" },
+  };
+  const r11Services = {
+    workflows: { records: {
+      loadExperience: (id) => id === "r11-note" ? r11 : null,
+      loadAllExperiences: () => [r11],
+    } },
+  };
+  const r11Html = renderer({ services: r11Services, context: { parameters: new URLSearchParams("recordId=r11-note&regionId=BA-DISP-028") } });
+  assert.match(r11Html, /data-scientific-boundary="r11"/);
+  assert.match(r11Html, /内側・外側中足部ピーク圧/);
+  assert.match(r11Html, /内側縦足弓を直接測定した値ではありません/);
+  assert.doesNotMatch(renderer({ services, context }), /data-scientific-boundary="r11"/);
+}
 console.log("bodyPartDetailBaselineParity: ok");
