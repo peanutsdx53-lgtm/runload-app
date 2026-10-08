@@ -3,6 +3,29 @@ import {
   selfUnderstandingCourseIdentity,
   selfUnderstandingRegionSignature,
 } from "../../core/selfUnderstandingCore.js";
+import {
+  loadInterpretationReferenceHistory,
+  rememberInterpretationReferenceSelectionResult,
+} from "../interpretationReferenceHistory.js";
+
+function rememberVisibleInterpretationReference(screen, room, services, context) {
+  const articleId = String(screen?.dataset?.interpretationAutoReadingId || "");
+  const visibleArticle = room?.querySelector?.(".interpretation-context-reference[data-interpretation-reference-article-id]");
+  if (!articleId || String(visibleArticle?.dataset?.interpretationReferenceArticleId || "") !== articleId) return;
+  const recordId = String(targetExperience(services, context)?.record?.id || "");
+  if (!recordId) return;
+  const gateway = services?.storage?.gateway;
+  const history = loadInterpretationReferenceHistory(gateway);
+  const first = history.find((entry) => entry.recordId === recordId);
+  if (first?.articleId === articleId) return;
+  const result = rememberInterpretationReferenceSelectionResult(gateway, { recordId, articleId });
+  const warning = screen.querySelector?.("[data-interpretation-history-save-warning]");
+  if (result.ok) {
+    warning?.remove?.();
+    return;
+  }
+  if (!warning) screen.insertAdjacentHTML?.("afterbegin", '<p role="status" class="input-warning" data-interpretation-history-save-warning>関連情報の提示履歴を保存できませんでした。今回の表示は保存済み履歴に反映されていません。</p>');
+}
 
 function targetExperience(services, context) {
   const recordId = String(context?.parameters?.get?.("recordId") || "");
@@ -148,7 +171,12 @@ export function bindInterpretationRoom({ root = document, services, context, rer
     const flowButton = event.target.closest?.('[data-action="interpretation-flow-flow-stage"]');
     if (flowButton && screen.contains(flowButton)) {
       event.preventDefault();
-      setInterpretationFlowStage(screen, flowButton.dataset.nextStage || "focus");
+      const stage = flowButton.dataset.nextStage || "focus";
+      const revealed = setInterpretationFlowStage(screen, stage);
+      if (revealed && stage === "compare") {
+        const room = screen?.matches?.(".interpretation-flow-room") ? screen : screen?.querySelector?.(".interpretation-flow-room");
+        rememberVisibleInterpretationReference(screen, room, services, context);
+      }
       return;
     }
 

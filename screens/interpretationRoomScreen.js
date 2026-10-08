@@ -1,13 +1,13 @@
 import { buildInterpretation } from "../core/interpretationCore.js";
 import { buildSelfUnderstandingView } from "../core/selfUnderstandingCore.js";
 import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
+import { escapeHtml } from "../ui/commonComponents.js";
 import {
   canPresentAutomaticInterpretationReference,
   resolveAutoInterpretationReferenceKnowledge,
 } from "../ui/interpretationReferenceKnowledge.js";
 import {
   loadInterpretationReferenceHistory,
-  rememberInterpretationReferenceSelectionResult,
 } from "../ui/interpretationReferenceHistory.js";
 
 const ALLOWED_ORIGINS = new Set(["result", "history", "body-part-detail", "simulation", "home"]);
@@ -95,11 +95,8 @@ export function renderInterpretationRoomScreenWithPresentation({ services, conte
   const autoReference = canPresentAutomaticInterpretationReference(output)
     ? resolveAutoInterpretationReferenceKnowledge(output, selfUnderstanding, { recommendationHistory: storedReferenceHistory })
     : null;
-  const saveResult = autoReference?.id && recordId
-    ? rememberInterpretationReferenceSelectionResult(services?.storage?.gateway, { recordId, articleId: autoReference.id })
-    : { ok: true, entries: storedReferenceHistory };
-  const saveWarning = !saveResult.ok
-    ? '<p role="status" class="input-warning">関連情報の提示履歴を保存できませんでした。今回の表示は保存済み履歴に反映されていません。</p>'
-    : "";
-  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${saveWarning}${renderInterpretationRoom({ output, selfUnderstanding, savedInterpretation, interpretationFocus, compactLayout, recommendationHistory: saveResult.entries })}</section>`;
+  // At the initial "focus" stage the Reading card is hidden by CSS. Merely
+  // rendering this screen must not count as presenting the article. Persist the
+  // selected ID only when the user moves to the visible "compare" stage.
+  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}" data-interpretation-auto-reading-id="${escapeHtml(autoReference?.id || "")}">${renderInterpretationRoom({ output, selfUnderstanding, savedInterpretation, interpretationFocus, compactLayout, recommendationHistory: storedReferenceHistory })}</section>`;
 }

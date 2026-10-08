@@ -390,7 +390,7 @@ function renderInterpretationContextReferenceKnowledge(reference = null, output 
   const kinds = [...new Set(Array.isArray(reference.sourceKinds) ? reference.sourceKinds.filter(Boolean) : [])];
   const kindLabel = kinds.length ? kinds.slice(0, 3).join("・") : "確認済み資料";
   const sourceLabel = reference.sourceCount ? `${kindLabel} / ${reference.sourceCount}件` : kindLabel;
-  return `<aside class="interpretation-context-reference${compact ? " interpretation-context-reference--compact" : ""}" data-interpretation-flow-reveal="compare" aria-label="参考情報">
+  return `<aside class="interpretation-context-reference${compact ? " interpretation-context-reference--compact" : ""}" data-interpretation-flow-reveal="compare" data-interpretation-reference-article-id="${escapeHtml(reference.id)}" aria-label="参考情報">
     <div class="interpretation-context-reference__icon">${interpretationIcon("book")}</div>
     <div class="interpretation-context-reference__copy"><small>参考情報・あなたへの判定ではありません</small><strong>${escapeHtml(reference.title)}</strong><p>${escapeHtml(reference.summary || reference.lead || "")}</p><span>${escapeHtml(reference.matchReason || "今回の記録に関連する一般情報です")}・${escapeHtml(sourceLabel)}</span></div>
     <a href="${escapeHtml(referenceReadingHref(reference, output))}">根拠と全文を見る</a>

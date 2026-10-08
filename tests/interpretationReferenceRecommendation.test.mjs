@@ -150,9 +150,12 @@ function remember(history, recordId, articleId) {
 
 {
   const screen = fs.readFileSync("screens/interpretationRoomScreen.js", "utf8");
+  const interactions = fs.readFileSync("ui/interactions/interpretationRoomInteractions.js", "utf8");
   const presentation = fs.readFileSync("ui/interpretationRoomPresentation.js", "utf8");
   assert.ok(screen.includes("loadInterpretationReferenceHistory"));
-  assert.ok(screen.includes("rememberInterpretationReferenceSelection"));
+  assert.ok(!screen.includes("rememberInterpretationReferenceSelectionResult"), "hidden initial stage must not store article history");
+  assert.ok(interactions.includes("rememberInterpretationReferenceSelectionResult"), "visible compare stage persists article history");
+  assert.ok(interactions.includes('stage === "compare"'));
   assert.ok(screen.includes("resolveAutoInterpretationReferenceKnowledge"));
   assert.ok(presentation.includes("recommendationHistory"));
 }

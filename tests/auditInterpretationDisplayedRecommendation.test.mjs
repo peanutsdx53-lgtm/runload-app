@@ -56,9 +56,12 @@ for (const [route, activityType, shouldRecord, screen] of scenarios) {
   assert.equal(canPresentAutomaticInterpretationReference(output), shouldRecord);
   assert.equal(buildInterpretationReferenceCandidates(output).length > 0, shouldRecord);
   assert.equal(Boolean(selectInterpretationReferenceKnowledge(output)), shouldRecord);
-  assert.equal(history.length, shouldRecord ? 1 : 0);
-  assert.equal(writes, shouldRecord ? 1 : 0);
-  if (shouldRecord) assert.match(html, /articleId=goals-and-recording-differ/);
+  assert.equal(history.length, 0, 'opening the hidden focus stage does not present Reading');
+  assert.equal(writes, 0, 'screen rendering must not mutate presentation history');
+  if (shouldRecord) {
+    assert.match(html, /data-interpretation-auto-reading-id="goals-and-recording-differ"/);
+    assert.match(html, /articleId=goals-and-recording-differ/);
+  }
   else assert.doesNotMatch(html, /articleId=goals-and-recording-differ/);
 }
 
