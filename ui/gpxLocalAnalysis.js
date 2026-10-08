@@ -1,5 +1,8 @@
 function finite(value) { return Number.isFinite(Number(value)); }
-function toNumber(value) { return finite(value) ? Number(value) : null; }
+function toNumber(value) {
+  if (value == null || (typeof value === "string" && !value.trim())) return null;
+  return finite(value) ? Number(value) : null;
+}
 function haversine(a, b) {
   const R = 6371000;
   const p1 = a.lat * Math.PI / 180, p2 = b.lat * Math.PI / 180;
@@ -11,7 +14,7 @@ function text(node, selector) { return node.querySelector(selector)?.textContent
 function parsePoint(node) {
   const lat = toNumber(node.getAttribute("lat"));
   const lon = toNumber(node.getAttribute("lon"));
-  if (lat == null || lon == null) return null;
+  if (lat == null || lon == null || Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
   return { lat, lon, ele: toNumber(text(node, "ele")) };
 }
 export function parseGpxText(xmlText = "") {
@@ -47,17 +50,17 @@ export function analyzeGpx(parsed = {}, { fallbackName = "GPXコース" } = {}) 
   }
   if (!(totalM>0)) throw new Error("GPX_DISTANCE_REQUIRED");
   const elevationCoverage = elevationCoverageM / totalM;
-  const gradeKnown = elevationCoverage >= 0.8;
+  const gradeKnown = elevationCoverageM > 0 && elevationCoverage >= 0.8 - 1e-9;
   const round = (v,d=1) => Number(Number(v).toFixed(d));
   return Object.freeze({
     name: String(parsed.name || fallbackName || "GPXコース").slice(0,80),
     distanceKm: round(totalM/1000,2),
-    elevationGainM: round(gainM,0), elevationLossM: round(lossM,0), elevationCoverage: round(elevationCoverage,3),
+    elevationGainM: gradeKnown ? round(gainM,0) : null, elevationLossM: gradeKnown ? round(lossM,0) : null, elevationCoverage: round(elevationCoverage,3),
     gradeKnowledge: gradeKnown ? "KNOWN_PROFILE" : "UNKNOWN",
     gradeInputMode: gradeKnown ? "SUMMARY" : "UNKNOWN",
-    upPercent: gradeKnown ? round(upM/totalM*100,1) : 0,
-    downPercent: gradeKnown ? round(downM/totalM*100,1) : 0,
-    flatPercent: gradeKnown ? round(Math.max(0,100-(upM+downM)/totalM*100),1) : null,
+    upPercent: gradeKnown ? round(upM/elevationCoverageM*100,1) : 0,
+    downPercent: gradeKnown ? round(downM/elevationCoverageM*100,1) : 0,
+    flatPercent: gradeKnown ? round(flatM/elevationCoverageM*100,1) : null,
     upGradePercent: gradeKnown ? round(weightedMedian(uphillGrades) || 0,1) : 0,
     downGradePercent: gradeKnown ? round(weightedMedian(downhillGrades) || 0,1) : 0,
     surfaceInputMode: "UNKNOWN", modelSurfaceClass: "UNKNOWN", modelSurfaceProfile: [],
