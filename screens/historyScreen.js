@@ -90,7 +90,9 @@ export function buildWorkspace(services, context, { normalizeView = normalizedVi
     experience.record.date >= startDate && experience.record.date <= endDate
   ));
   const rows = periodExperiences.map((experience) => {
-    const resultRecord = regionalByRecord.get(experience.record.id) || experience.regionalV2ResultRecord || null;
+    // The experience layer validates and may transiently reconstruct a damaged saved result.
+    // Never override that repaired view with the raw, potentially invalid repository entry.
+    const resultRecord = experience.regionalV2ResultRecord || regionalByRecord.get(experience.record.id) || null;
     const row = resultRow(resultRecord, regionId);
     return Object.freeze({
       experience,
