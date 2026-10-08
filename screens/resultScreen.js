@@ -3,7 +3,7 @@ import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate, formatLocalTime } from "../ui/recordPresentation.js";
 import { courseSummaryText } from "../ui/coursePresentation.js";
 import { bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/appCore.js";
-import { officialRofJDescriptor } from "../core/rofJCore.js";
+import { rofJSelectionDescriptor } from "../core/rofJAuthorConfirmedScale.js";
 import { findSavedRunMeasurement } from "../ui/runMeasurementState.js";
 
 const FRONT = '<circle cx="150" cy="36" r="20"></circle><path d="M110 78 C120 66 135 60 150 60 C165 60 180 66 190 78 L204 126 C208 138 204 150 196 160 L182 176 L188 212 C192 228 190 246 184 262 L172 308 C168 324 166 340 166 356 L166 400 C166 410 158 418 148 418 C138 418 130 410 130 400 L130 356 C130 340 128 324 124 308 L112 262 C106 246 104 228 108 212 L114 176 L100 160 C92 150 88 138 92 126 Z"></path>';
@@ -128,12 +128,12 @@ export function renderFatigue(services, record = {}) {
   const postPos = finite(post) ? Number(post) * 10 : 0;
   const rofLabel = (value) => {
     if (!finite(value)) return "未記録";
-    const descriptor = officialRofJDescriptor(Number(value));
+    const descriptor = rofJSelectionDescriptor(Number(value));
     return `${fmt(value, 0)} / 10${descriptor ? ` — ${descriptor}` : ""}`;
   };
   const preLabel = finite(pre) ? fmt(pre, 0) : "—";
   const postLabel = finite(post) ? fmt(post, 0) : "—";
-  const descriptor = finite(post) ? officialRofJDescriptor(post) : "";
+  const descriptor = finite(post) ? rofJSelectionDescriptor(post) : "";
   const deltaLabel = finite(delta) ? signed(delta, 0) : "—";
   return `<section class="fatigue-section"><div class="fatigue-inner"><div class="section-heading"><span class="section-index">02</span><div><small>疲労感</small><h2>疲労感の変化から見る</h2></div></div><div class="fatigue-card"><div class="fatigue-values"><div><small>走る前</small><strong>${preLabel}</strong></div><div class="delta"><span></span><strong>${deltaLabel}</strong><small>変化</small></div><div class="post"><small>走った後</small><strong>${postLabel}</strong></div></div><div class="fatigue-track">${finite(pre) && finite(post) ? `<i class="fatigue-range" style="--pre:${prePos}%;--post:${postPos}%"></i><b class="pre" style="left:${prePos}%"><em>前</em></b><b class="post-point" style="left:${postPos}%"><em>後</em></b>` : ""}</div><div class="fatigue-axis"><span>0</span><span>5</span><span>10</span></div>${descriptor ? `<p class="candidate-note" data-rof-result-guidance>走った後：${escapeHtml(descriptor)}</p>` : ""}</div><dl class="visually-hidden"><div><dt>走る前</dt><dd>${escapeHtml(rofLabel(pre))}</dd></div><div><dt>走った後</dt><dd>${escapeHtml(rofLabel(post))}</dd></div><div><dt>走った後 − 走る前</dt><dd>${escapeHtml(deltaLabel)}</dd></div></dl><p class="visually-hidden">0〜10の疲労感尺度は、その時点で自分が感じている疲労感の記録です。部位の目安とは別に扱い、回復度・安全性・走行可否の判定には使いません。</p></div></section>`;
 }

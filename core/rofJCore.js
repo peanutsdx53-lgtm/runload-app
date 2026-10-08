@@ -1,3 +1,4 @@
+import { ROF_J_AUTHOR_CONFIRMED_ANCHORS, isValidRofJSelection } from "./rofJAuthorConfirmedScale.js";
 import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
 import { STORAGE_KEYS } from "./appCore.js";
 import {
@@ -22,13 +23,6 @@ const ROF_J_CAPTURE_ROUTES = Object.freeze({
   directPreRun: "DIRECT_PRE_RUN",
   directFinishFlow: "DIRECT_FINISH_FLOW",
   retrospective: "RETROSPECTIVE_NONCANONICAL",
-});
-export const ROF_J_DESCRIPTOR_MAP = Object.freeze({
-  2: "まったく疲れていない",
-  4: "少し疲れている",
-  6: "中程度に疲れている",
-  8: "とても疲れている",
-  10: "完全な疲労困憊（何も残っていない状態）",
 });
 
 const DIRECTION_LABELS = Object.freeze({ UP: "上昇", SAME: "変化なし", DOWN: "低下" });
@@ -63,14 +57,13 @@ function initialRevision(measurement) {
 }
 
 function isValidRofJValue(value) {
-  return Number.isInteger(value) && value >= 0 && value <= 10;
+  return isValidRofJSelection(value);
 }
 
 export function officialRofJDescriptor(value) {
   if (!isValidRofJValue(value)) return null;
-  return Object.prototype.hasOwnProperty.call(ROF_J_DESCRIPTOR_MAP, value)
-    ? ROF_J_DESCRIPTOR_MAP[value]
-    : null;
+  // Only an integer-selectable position with an exact canonical anchor has an official label.
+  return ROF_J_AUTHOR_CONFIRMED_ANCHORS.find((anchor) => anchor.position === value)?.descriptor ?? null;
 }
 
 function calculateRofJDelta(preValue, postValue) {

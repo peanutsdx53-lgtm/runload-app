@@ -1,6 +1,6 @@
 import { SURFACE_FIELDS, hasTreadmillOutdoorSurfaceMixFromCourse, hasTreadmillOutdoorSurfaceMixFromComponents, BODY_AREA_LATERALITY, BODY_AREA_LATERALITY_LABELS, BODY_AREA_TAXONOMY, SAFETY_FLAG_KEYS } from "../../core/appCore.js";
 
-import { ROF_J_DESCRIPTOR_MAP } from "../../core/rofJCore.js";
+import { rofJGuidanceForSelection, rofJSelectionDescriptor } from "../../core/rofJAuthorConfirmedScale.js";
 import { booleanValue, numberValue, optionalNumberValue, setHidden, showFormMessages } from "./formUtilities.js";
 import { primarySurfaceSummary, slopeSummary } from "../coursePresentation.js";
 import { beginRecordInputJourney, clearRecordInputWorkspace, refreshActiveRecordInputWorkspace, restoreRecordInputWorkspace, saveRecordInputWorkspace } from "../recordInputWorkspace.js";
@@ -332,16 +332,7 @@ function lifecycleNavigationParameters(context, runId) {
 }
 
 function rofAnchorText(value) {
-  const anchors = [2, 4, 6, 8, 10];
-  if (value === 0) return "0・まったく疲労感がない ／ 2・" + ROF_J_DESCRIPTOR_MAP[2];
-  if (ROF_J_DESCRIPTOR_MAP[value]) return `${value}・${ROF_J_DESCRIPTOR_MAP[value]}`;
-  if (value < 2) return `0・まったく疲労感がない ／ 2・${ROF_J_DESCRIPTOR_MAP[2]}`;
-  for (let index = 0; index < anchors.length - 1; index += 1) {
-    const lower = anchors[index];
-    const upper = anchors[index + 1];
-    if (value > lower && value < upper) return `${lower}・${ROF_J_DESCRIPTOR_MAP[lower]} ／ ${upper}・${ROF_J_DESCRIPTOR_MAP[upper]}`;
-  }
-  return `8・${ROF_J_DESCRIPTOR_MAP[8]} ／ 10・${ROF_J_DESCRIPTOR_MAP[10]}`;
+  return rofJGuidanceForSelection(value);
 }
 
 function bindFatigueLifecycle(form, { services, router, context }) {
@@ -365,13 +356,13 @@ function bindFatigueLifecycle(form, { services, router, context }) {
     if (!touched) {
       valueOutput.textContent = "—";
       descriptor.textContent = "数値を選択";
-      anchor.textContent = `2・${ROF_J_DESCRIPTOR_MAP[2]} ／ 4・${ROF_J_DESCRIPTOR_MAP[4]}`;
+      anchor.textContent = rofJGuidanceForSelection(null);
       recordAction.disabled = true;
       return;
     }
     const value = Number(slider.value);
     valueOutput.textContent = String(value);
-    descriptor.textContent = value === 0 ? "まったく疲労感がない" : (ROF_J_DESCRIPTOR_MAP[value] || "");
+    descriptor.textContent = rofJSelectionDescriptor(value);
     anchor.textContent = rofAnchorText(value);
     recordAction.disabled = false;
   };

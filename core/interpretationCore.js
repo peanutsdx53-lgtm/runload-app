@@ -9,13 +9,14 @@ import {
   referenceDirection,
 } from "./interpretationBase.js";
 import { officialRofJDescriptor } from "./rofJCore.js";
+import { ROF_J_AUTHOR_CONFIRMED_ANCHORS, isValidRofJSelection, rofJSelectionDescriptor } from "./rofJAuthorConfirmedScale.js";
 
 export const INTERPRETATION_CORE_VERSION = "interpretation-core-v4.0";
 export const INTERPRETATION_OUTPUT_SCHEMA_VERSION = "INTERPRETATION_OUTPUT_V4";
 const INTERPRETATION_ROUTE_RESOLVER_VERSION = "persisted-calculation-route-trace-v1";
 
 const CURRENT_PRIMARY_MODEL_VERSION = "runload-primary-regional-reference100-v3.0";
-const ROF_ANCHORS = Object.freeze([2, 4, 6, 8, 10]);
+const ROF_ANCHORS = Object.freeze([...ROF_J_AUTHOR_CONFIRMED_ANCHORS].sort((a,b)=>a.position-b.position));
 
 function frozenArray(items = []) {
   return Object.freeze(items.map((item) => Object.freeze(item)));
@@ -84,31 +85,26 @@ function historyProjection(comparison = {}) {
 }
 
 export function buildRofValueMeaning(value) {
-  if (!finite(value)) {
+  if (!isValidRofJSelection(value)) {
     return Object.freeze({ available: false, value: null, descriptorType: "NONE", descriptor: "", lowerAnchor: null, upperAnchor: null });
   }
-  const numeric = Number(value);
-  const exact = officialRofJDescriptor(numeric);
+  const exact = officialRofJDescriptor(value);
   if (exact) {
     return Object.freeze({
-      available: true,
-      value: numeric,
-      descriptorType: "EXACT",
-      descriptor: exact,
-      lowerAnchor: null,
-      upperAnchor: null,
+      available: true, value, descriptorType: "EXACT", descriptor: exact, lowerAnchor: null, upperAnchor: null,
     });
   }
-  const lower = [...ROF_ANCHORS].reverse().find((anchor) => anchor < numeric);
-  const upper = ROF_ANCHORS.find((anchor) => anchor > numeric);
-  const anchor = (anchorValue) => anchorValue == null ? null : Object.freeze({ value: anchorValue, descriptor: officialRofJDescriptor(anchorValue) || "" });
+  const lower = [...ROF_ANCHORS].reverse().find((anchor) => anchor.position < value);
+  const upper = ROF_ANCHORS.find((anchor) => anchor.position > value);
+  const isNear = [2, 3, 7, 8].includes(value);
+  const anchorView = (anchor) => anchor == null ? null : Object.freeze({
+    value: anchor.position, positionLabel: anchor.positionLabel, descriptor: anchor.descriptor,
+  });
   return Object.freeze({
-    available: true,
-    value: numeric,
-    descriptorType: lower != null && upper != null ? "BETWEEN_ANCHORS" : "POSITION_ONLY",
-    descriptor: "",
-    lowerAnchor: anchor(lower),
-    upperAnchor: anchor(upper),
+    available: true, value,
+    descriptorType: isNear ? "NEAR_ANCHOR" : "BETWEEN_ANCHORS",
+    descriptor: rofJSelectionDescriptor(value),
+    lowerAnchor: anchorView(lower), upperAnchor: anchorView(upper),
   });
 }
 

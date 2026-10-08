@@ -2,7 +2,7 @@ import { escapeHtml } from "../../ui/commonComponents.js";
 import { formatLocalDate, formatLocalTime } from "../../ui/recordPresentation.js";
 import { SELF_UNDERSTANDING_BODY_AREA_TO_DISPLAY_REGION } from "../../core/selfUnderstandingCore.js";
 import { bodyRegionFormalName } from "../../core/appCore.js";
-import { officialRofJDescriptor } from "../../core/rofJCore.js";
+import { rofJSelectionDescriptor } from "../../core/rofJAuthorConfirmedScale.js";
 import {
   bodyMap,
   finite,
@@ -140,7 +140,7 @@ function renderPcInsights(resultRecord, allExperiences, infos, selectedInfo) {
 function renderPcFatigue(snapshot) {
   const prePos = finite(snapshot.pre) ? Math.max(0, Math.min(100, snapshot.pre * 10)) : 0;
   const postPos = finite(snapshot.post) ? Math.max(0, Math.min(100, snapshot.post * 10)) : 0;
-  const descriptor = finite(snapshot.post) ? officialRofJDescriptor(snapshot.post) : "";
+  const descriptor = finite(snapshot.post) ? rofJSelectionDescriptor(snapshot.post) : "";
   return `<section class="pc-result-fatigue" aria-label="運動前後の疲労度"><header><div><small>疲労感</small><h3>運動前後の疲労度</h3></div></header><div class="pc-fatigue-journey"><div class="pc-fatigue-node is-pre"><small>運動前</small><strong>${finite(snapshot.pre) ? escapeHtml(fmt(snapshot.pre,0)) : "—"}</strong></div><div class="pc-fatigue-bridge"><span></span><div><small>変化</small><strong>${finite(snapshot.delta) ? escapeHtml(signed(snapshot.delta,0)) : "—"}</strong></div><i>→</i></div><div class="pc-fatigue-node is-post"><small>運動後</small><strong>${finite(snapshot.post) ? escapeHtml(fmt(snapshot.post,0)) : "—"}</strong></div></div><div class="pc-fatigue-scale"><span class="pc-fatigue-scale__range" style="--pre:${prePos}%;--post:${postPos}%"></span>${finite(snapshot.pre) ? `<i class="pc-fatigue-scale__point is-pre" style="left:${prePos}%"><b>前</b></i>` : ""}${finite(snapshot.post) ? `<i class="pc-fatigue-scale__point is-post" style="left:${postPos}%"><b>後</b></i>` : ""}</div><div class="pc-fatigue-scale__axis"><span>0</span><span>5</span><span>10</span></div>${descriptor ? `<p data-rof-result-guidance>${escapeHtml(descriptor)}</p>` : ""}</section>`;
 }
 

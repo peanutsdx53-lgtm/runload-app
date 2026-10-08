@@ -51,7 +51,7 @@ test('ROFJ-AUTHOR-CONFIRMED-ANCHORS-ARE-CANONICAL-PRESENTATION', () => {
 test('SELECTABLE-SCORES-REMAIN-INTEGER-ZERO-THROUGH-TEN', () => {
   assert.ok(scaleDefinition.includes('Number.isInteger(value) && value >= 0 && value <= 10'));
   assert.ok(!scaleDefinition.includes('step: 0.5'));
-  assert.ok(core.includes('Number.isInteger(value) && value >= 0 && value <= 10'));
+  assert.ok(core.includes('return isValidRofJSelection(value);'));
 });
 
 test('DAILY-USE-VIEW-SHOWS-FULL-FIGURES-AND-DESCRIPTORS-ALIGNED-TO-AXIS', () => {

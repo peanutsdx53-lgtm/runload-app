@@ -128,33 +128,38 @@ await test('COMPATIBLE-PREVIOUS-RECORD-IS-EXPOSED-AS-CONTEXT',()=>{
   assert.equal(out.selectedRegion.personalHistory.comparableCount,1);
 });
 
-await test('ROF-EXACT-DESCRIPTOR-IS-PRESERVED',()=>{
-  const m=buildRofValueMeaning(6);
-  assert.equal(m.descriptorType,'EXACT');
-  assert.equal(m.descriptor,'中程度に疲れている');
-});
-
-await test('ROF-UNLABELED-VALUE-USES-ANCHORS-NOT-INVENTED-DESCRIPTOR',()=>{
-  const m=buildRofValueMeaning(3);
-  assert.equal(m.descriptorType,'BETWEEN_ANCHORS');
-  assert.equal(m.descriptor,'');
-  assert.equal(m.lowerAnchor.value,2);
-  assert.equal(m.upperAnchor.value,4);
-});
-
-await test('ROF-LOW-END-VALUE-USES-POSITION-ONLY',()=>{
-  const m=buildRofValueMeaning(0);
-  assert.equal(m.descriptorType,'POSITION_ONLY');
-  assert.equal(m.descriptor,'');
-  assert.equal(m.lowerAnchor,null);
-  assert.equal(m.upperAnchor.value,2);
+await test('ROF-CANONICAL-ALL-SELECTABLE-VALUES',()=>{
+  const expectation=[
+    [0,'EXACT','まったく疲れていない'],
+    [1,'BETWEEN_ANCHORS','目安の間の値'],
+    [2,'NEAR_ANCHOR','少し疲れている付近'],
+    [3,'NEAR_ANCHOR','少し疲れている付近'],
+    [4,'BETWEEN_ANCHORS','目安の間の値'],
+    [5,'EXACT','中程度に疲れている'],
+    [6,'BETWEEN_ANCHORS','目安の間の値'],
+    [7,'NEAR_ANCHOR','とても疲れている付近'],
+    [8,'NEAR_ANCHOR','とても疲れている付近'],
+    [9,'BETWEEN_ANCHORS','目安の間の値'],
+    [10,'EXACT','完全な疲労困憊（何も残っていない状態）'],
+  ];
+  for (const [value,type,descriptor] of expectation){
+    const meaning=buildRofValueMeaning(value);
+    assert.equal(meaning.descriptorType,type,`value=${value}`);
+    assert.equal(meaning.descriptor,descriptor,`value=${value}`);
+  }
+  const near=buildRofValueMeaning(3);
+  assert.equal(near.lowerAnchor.value,2.5);
+  assert.equal(near.upperAnchor.value,5);
+  assert.equal(buildRofValueMeaning(0).lowerAnchor,null);
+  assert.equal(buildRofValueMeaning(5).lowerAnchor,null);
+  assert.equal(buildRofValueMeaning(1.5).available,false);
 });
 
 await test('ROF-PAIR-IS-SEPARATE-SUBJECTIVE-CONTEXT',()=>{
   const out=build({rofSummary:{available:true,pre:4,post:6,delta:2,direction:'UP',directionLabel:'上昇'}});
   assert.equal(out.state.subjective,'PAIR');
-  assert.equal(out.subjectiveContext.pre.descriptor,'少し疲れている');
-  assert.equal(out.subjectiveContext.post.descriptor,'中程度に疲れている');
+  assert.equal(out.subjectiveContext.pre.descriptor,'目安の間の値');
+  assert.equal(out.subjectiveContext.post.descriptor,'目安の間の値');
   assert.ok(out.subjectiveContext.boundaryTokens.includes('ROF_SEPARATE_FROM_REFERENCE100'));
 });
 
