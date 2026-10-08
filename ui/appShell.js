@@ -130,7 +130,7 @@ export function resolveCurrentPrimaryScreen(currentScreen, currentLocation = nul
   return PRIMARY_SECTION_BY_SCREEN[currentScreen] || currentScreen;
 }
 
-function renderFeatureMenuLink(item, currentScreen, currentLocation, hasResult) {
+function renderFeatureMenuLink(item, currentScreen, hasResult) {
   const current = item.screen === currentScreen;
   const status = item.requiresRecord && !hasResult ? "記録後" : "";
   const description = current ? "開いています" : status || item.description || "";
@@ -145,17 +145,17 @@ function renderFeatureMenuLink(item, currentScreen, currentLocation, hasResult) 
   return `<a class="feature-menu__link${itemClass}" href="${escapeHtml(navigationHref(item))}" data-navigation-screen="${escapeHtml(item.screen)}" aria-label="${escapeHtml(`${item.label}: ${item.description || ""}`)}">${labelHtml}</a>`;
 }
 
-function renderFeatureMenuGroup(label, items, currentScreen, currentLocation, hasResult, extraClass = "") {
+function renderFeatureMenuGroup(label, items, currentScreen, hasResult, extraClass = "") {
   const primaryClass = items.every((item) => item.primaryNavigationDuplicate) ? " feature-menu__group--primary-duplicate-only" : "";
   const groupClass = `${primaryClass}${extraClass ? ` ${extraClass}` : ""}`;
-  return `<section class="feature-menu__group${groupClass}" aria-label="${escapeHtml(label)}"><p class="feature-menu__group-label">${escapeHtml(label)}</p><div class="feature-menu__links">${items.map((item) => renderFeatureMenuLink(item, currentScreen, currentLocation, hasResult)).join("")}</div></section>`;
+  return `<section class="feature-menu__group${groupClass}" aria-label="${escapeHtml(label)}"><p class="feature-menu__group-label">${escapeHtml(label)}</p><div class="feature-menu__links">${items.map((item) => renderFeatureMenuLink(item, currentScreen, hasResult)).join("")}</div></section>`;
 }
 
-export function renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix = "global" }) {
+export function renderFeatureMenu({ currentScreen, hasResult, idSuffix = "global" }) {
   const buttonId = `feature-menu-button-${idSuffix}`;
   const panelId = `feature-menu-panel-${idSuffix}`;
   const titleId = `feature-menu-title-${idSuffix}`;
-  const groupedDestinations = FEATURE_DESTINATION_GROUPS.map((group) => renderFeatureMenuGroup(group.label, group.items, currentScreen, currentLocation, hasResult)).join("");
+  const groupedDestinations = FEATURE_DESTINATION_GROUPS.map((group) => renderFeatureMenuGroup(group.label, group.items, currentScreen, hasResult)).join("");
   const guideEntry = `<section class="feature-menu__group feature-menu__group--guide" aria-label="説明"><p class="feature-menu__group-label">使い方</p><div class="feature-menu__links"><button type="button" class="feature-menu__link feature-menu__link--button" data-open-guide="first-use"><span class="feature-menu__item-title">アプリ説明</span><span class="feature-menu__item-description">使い方・結果・履歴・限界を確認</span></button></div></section>`;
   return `<div class="feature-menu" data-feature-menu><button type="button" id="${escapeHtml(buttonId)}" class="app-menu-button app-utility-button" aria-label="メニューを開く" aria-haspopup="true" aria-expanded="false" aria-controls="${escapeHtml(panelId)}">${menuIcon()}<span class="visually-hidden">メニュー</span></button><div id="${escapeHtml(panelId)}" class="feature-menu__panel" role="dialog" aria-modal="false" aria-labelledby="${escapeHtml(titleId)}" hidden><header class="feature-menu__header"><p>メニュー</p><strong id="${escapeHtml(titleId)}">移動先を選ぶ</strong></header><nav class="feature-menu__nav" aria-label="その他の機能">${groupedDestinations}${guideEntry}</nav></div></div>`;
 }
@@ -164,7 +164,7 @@ export function renderFeatureMenu({ currentScreen, currentLocation, hasResult, i
 export function renderImmersiveHeader({ currentScreen, currentLocation, hasResult = false }) {
   const context = resolveScreenContextNavigation(currentScreen, currentLocation) || { backHref: "#/home", backLabel: "ホーム", title: "今回を見比べる" };
   const title = resolveHeaderTitle(currentScreen, currentLocation);
-  return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(title)}</strong><div class="interpretation-room-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "immersive" })}</div></header>`;
+  return `<header class="interpretation-room-header"><a class="interpretation-room-header__back" href="${escapeHtml(context.backHref)}">‹ ${escapeHtml(context.backLabel)}</a><strong class="interpretation-room-header__title">${escapeHtml(title)}</strong><div class="interpretation-room-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen, "context-help-button--immersive")}${renderFeatureMenu({ currentScreen, hasResult, idSuffix: "immersive" })}</div></header>`;
 }
 
 export function renderShellLayers({ currentScreen, guide = {}, onboardingMarkup = "" }) {

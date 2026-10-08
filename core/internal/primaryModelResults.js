@@ -39,7 +39,6 @@ const PRIMARY_REGIONAL_V2_BUILD_ID = BUILD_ID;
 const PRIMARY_REGIONAL_V2_ROUTE_TRACE_VERSION = "primary-regional-route-trace-v1";
 
 const DISPLAY_BY_R = new Map(PRIMARY_REGIONAL_V2_REGION_DEFS.map((d) => [d.id, d]));
-const DEF_BY_R = new Map(REGION_DEFS.map((d) => [d.id, d]));
 const BASE_SOURCE_BY_R = Object.freeze(Object.fromEntries(REGION_DEFS.map((d) => [d.id, d.baselineSource])));
 const SOURCE_REGISTRY = Object.freeze({
   FUKUCHI_2017: { label: "Fukuchi et al. 2017", role: "股関節・足関節の速度応答" },
@@ -112,7 +111,7 @@ function comparisonSignatures(record={}){return Object.freeze(Object.fromEntries
 function buildPrimaryRegionalV2ComparisonSignature(resultRecord={},rowOrRegionId=null){const id=typeof rowOrRegionId==="string"?rowOrRegionId:rowOrRegionId?.regionId;return resultRecord?.comparison_signatures?.[id]||null;}
 function comparePrimaryRegionalV2Signatures(a,b){const same=Boolean(a&&b&&a.modelVersion===b.modelVersion&&a.outputSemanticVersion===b.outputSemanticVersion&&a.regionId===b.regionId&&a.constructId===b.constructId&&a.referenceId===b.referenceId);return Object.freeze({directDeltaAllowed:same,status:same?"COMPARABLE":"INCOMPATIBLE",reason:same?"SAME_REGION_SEMANTIC":"SEMANTIC_OR_MODEL_MISMATCH"});}
 
-function createPrimaryRegionalV2ResultRecord({record,feedback={},sessionSequence=1,allRecords=[]}={}){
+function createPrimaryRegionalV2ResultRecord({record,allRecords=[]}={}){
   const common={id:`primary-reference100-v3-result-${sanitize(record.id)}-${sanitize(revision(record))}`,record_id:record.id,source_record_revision:revision(record),generated_at:new Date().toISOString(),model_version:PRIMARY_REGIONAL_V2_MODEL_VERSION,authority_version:PRIMARY_REGIONAL_V2_AUTHORITY_VERSION,engine_build_version:PRIMARY_REGIONAL_V2_BUILD_ID,output_semantic_version:PRIMARY_REGIONAL_V2_OUTPUT_SEMANTIC_VERSION,route_trace_version:PRIMARY_REGIONAL_V2_ROUTE_TRACE_VERSION,source_registry:SOURCE_REGISTRY};
   if(String(record.activityType||"").toLowerCase()==="rest") return {ok:true,resultRecord:Object.freeze({...common,state:"REST",engine_input_snapshot:null,result:null,body_map_payload:Object.freeze({version:"primary-reference100-v3-bodymap-1.0",regions:Object.freeze([])}),comparison_signatures:Object.freeze({})})};
   const engineInput=adaptCurrentRecordToPrimaryRegionalV2({record,allRecords});

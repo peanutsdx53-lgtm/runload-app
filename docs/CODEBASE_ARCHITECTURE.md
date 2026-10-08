@@ -169,3 +169,11 @@ Before merging runtime changes:
 - protected scientific cores are compared against the intended scientific baseline when they are not part of the change.
 
 Temporary audit workflows must be removed before merge.
+
+## Current-only code policy (2026-10-08)
+
+- The current source tree is the execution and documentation starting point. Historical release diaries remain recoverable through Git history and audited Current archives, not inside the active app tree.
+- Do not retain numbered temporary source filenames, unused executable constants, or compatibility shims solely to read superseded record schemas. A storage key or semantic version that is **still the current contract** is not a legacy shim.
+- Record comparison compatibility means *scientific comparability between two current-contract records*; it must not be confused with backward compatibility for older storage formats.
+- Preserve the scientific source archives, authority boundaries, and regression evidence outside the live executable tree. Never silently delete a user's saved current-contract records during an application upgrade.
+- The external map requires a deliberate user request; core local measurements and their saved history remain available without fetching map tiles.

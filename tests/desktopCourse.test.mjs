@@ -6,7 +6,6 @@ const index = fs.readFileSync("index.html", "utf8");
 const platformStyles = fs.readFileSync("ui/platformStyles.js", "utf8");
 const version = fs.readFileSync("ui/appVersionStatus.js", "utf8");
 const worker = fs.readFileSync("service-worker.js", "utf8");
-const history = fs.readFileSync("docs/MOBILE_RELEASE_HISTORY.md", "utf8");
 
 assert.match(css, /@media \(min-width: 55rem\)/, "PC refinement must be desktop-scoped");
 assert.match(css, /screen--course-editor[\s\S]*#course-editor-form[\s\S]*grid-template-columns/, "editor must use desktop width");
@@ -19,6 +18,5 @@ const currentVersion = version.match(/APP_VERSION = "([^"]+)"/)?.[1] || "";
 assert.match(currentVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/, "visible app version must use the current version format");
 assert.ok(worker.includes(`running-record-app-runtime-${currentVersion}`), "PWA cache must match the current app version");
 assert.match(worker, /\.\/styles\/desktop-course\.css/, "desktop course stylesheet must be precached");
-assert.match(history, /APP v2026\.09\.30\.17 — PC Course Refinement 1/, "release history must preserve the historical PC refinement entry");
 
 console.log("desktopCourse.test.mjs: PASS");

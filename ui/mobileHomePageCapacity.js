@@ -181,7 +181,7 @@ function syncPassivePageIndicator(root) {
 
   indicator.hidden = false;
   indicator.replaceChildren();
-  pages.forEach((page, index) => {
+  pages.forEach((_, index) => {
     const dot = document.createElement("button");
     dot.type = "button";
     dot.className = "mobile-home-page-dot";
@@ -213,7 +213,7 @@ function persistDom(root) {
   });
 }
 
-function visiblePlacementsOnPage(page, ignoredElement, sizes, visible) {
+function visiblePlacementsOnPage(page, ignoredElement, visible) {
   return [...page.querySelectorAll("[data-home-item-id], [data-home-widget-id]")].flatMap((item) => {
     if (item === ignoredElement || item.hidden) return [];
     const itemToken = tokenForElement(item);
@@ -227,7 +227,7 @@ function placeOverflowItem(root, element, token, startPage, sizes, visible) {
 
   for (let pageIndex = startPage; pageIndex < pages.length; pageIndex += 1) {
     const page = pages[pageIndex];
-    const placement = firstFree(visiblePlacementsOnPage(page, element, sizes, visible), token, sizes, visible);
+    const placement = firstFree(visiblePlacementsOnPage(page, element, visible), token, sizes, visible);
     if (!placement) continue;
     page.querySelector(".mobile-home-grid")?.append(element);
     applyPlacement(element, placement, token, sizes);

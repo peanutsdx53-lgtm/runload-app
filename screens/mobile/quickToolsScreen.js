@@ -60,7 +60,7 @@ function renderFuelHistory(entries) {
   }).join("");
 }
 
-function renderShell({ tool, eyebrow, title, description, form, historyTitle, history }) {
+function renderShell({ tool, title, description, form, historyTitle, history }) {
   return `<div class="screen screen-layout screen-layout--mobile-tool mobile-tool-screen" data-mobile-tool="${escapeHtml(tool)}">
     <section class="mobile-tool-head">
       <p class="eyebrow">便利な機能</p>
@@ -91,7 +91,6 @@ export function renderLocationNoteScreen() {
   </form>`;
   return renderShell({
     tool: "location",
-    eyebrow: "SMARTPHONE TOOL",
     title: "地点メモ",
     description: "走っている場所で気づいたことを、その地点と一緒に残します。",
     form,
@@ -112,7 +111,6 @@ export function renderQuickNoteScreen() {
   </form>`;
   return renderShell({
     tool: "quick",
-    eyebrow: "SMARTPHONE TOOL",
     title: "1分メモ",
     description: "うまくいったこと、気づき、次に確認することを短く残します。",
     form,
@@ -133,7 +131,6 @@ export function renderGearNoteScreen() {
   </form>`;
   return renderShell({
     tool: "gear",
-    eyebrow: "SMARTPHONE TOOL",
     title: "装備メモ",
     description: "シューズやウェアなど、その日に使った装備を後から振り返れるように残します。",
     form,
@@ -151,7 +148,7 @@ export function renderDepartureCheckScreen() {
     <p class="mobile-tool-form-status" data-mobile-tool-form-status aria-live="polite"></p>
     <button type="submit" class="primary mobile-tool-save">確認内容を保存</button>
   </form>`;
-  return renderShell({ tool: "departure", eyebrow: "SMARTPHONE TOOL", title: "出発チェック", description: "持ち物や準備を確認して、その時点の内容を残します。", form, historyTitle: "最近の出発チェック", history: renderDepartureHistory(state.departureChecks) });
+  return renderShell({ tool: "departure", title: "出発チェック", description: "持ち物や準備を確認して、その時点の内容を残します。", form, historyTitle: "最近の出発チェック", history: renderDepartureHistory(state.departureChecks) });
 }
 
 export function renderFuelNoteScreen() {
@@ -164,5 +161,5 @@ export function renderFuelNoteScreen() {
     <p class="mobile-tool-form-status" data-mobile-tool-form-status aria-live="polite"></p>
     <button type="submit" class="primary mobile-tool-save">補給メモを保存</button>
   </form>`;
-  return renderShell({ tool: "fuel", eyebrow: "SMARTPHONE TOOL", title: "補給メモ", description: "水分、補給、休憩を時刻付きで短く残します。", form, historyTitle: "最近の補給メモ", history: renderFuelHistory(state.fuelNotes) });
+  return renderShell({ tool: "fuel", title: "補給メモ", description: "水分、補給、休憩を時刻付きで短く残します。", form, historyTitle: "最近の補給メモ", history: renderFuelHistory(state.fuelNotes) });
 }

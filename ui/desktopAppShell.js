@@ -31,7 +31,7 @@ export function renderPlatformHeader({ currentScreen, currentLocation, hasResult
   const titleControl = readingArticleOpen
     ? `<span class="app-header__brand app-header__screen-title" aria-hidden="true"></span>`
     : `<strong class="app-header__brand app-header__screen-title">${escapeHtml(title)}</strong>`;
-  return `<header class="app-header app-header--desktop app-header--viewport-fixed"><div class="app-header__leading">${backControl}</div>${titleControl}<div class="app-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen)}${renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "desktop" })}</div></header>`;
+  return `<header class="app-header app-header--desktop app-header--viewport-fixed"><div class="app-header__leading">${backControl}</div>${titleControl}<div class="app-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen)}${renderFeatureMenu({ currentScreen, hasResult, idSuffix: "desktop" })}</div></header>`;
 }
 
 export function renderPlatformShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {}, onboardingMarkup = "" }) {

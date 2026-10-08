@@ -251,10 +251,3 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
   }),
 ]);
 
-function route(screen, values = {}) {
-  const query = new URLSearchParams();
-  Object.entries(values).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") query.set(key, String(value));
-  });
-  return `#/${screen}${query.size ? `?${query.toString()}` : ""}`;
-}

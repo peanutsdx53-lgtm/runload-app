@@ -11,7 +11,7 @@ import {
 
 
 function renderHeader({ currentScreen, currentLocation, hasResult = false }) {
-  const menu = renderFeatureMenu({ currentScreen, currentLocation, hasResult, idSuffix: "mobile" });
+  const menu = renderFeatureMenu({ currentScreen, hasResult, idSuffix: "mobile" });
   const help = renderContextHelpButton(currentScreen);
   const context = resolveScreenContextNavigation(currentScreen, currentLocation)
     || (["record-input", "result", "history"].includes(currentScreen)

@@ -162,7 +162,7 @@ internalModules.inputSafety = moduleExports;
 // ===== core/personal/personalContext.js =====
 {
 const moduleExports = Object.create(null);
-const { normalizePlainText, normalizeSingleLineText } = internalModules.inputSafety;
+const { normalizeSingleLineText } = internalModules.inputSafety;
 const PERSONAL_CONTEXT_SCHEMA_VERSION = 1;
 const FOCUS_TAG_OPTIONS = Object.freeze([
   Object.freeze({ value: "relax", label: "力を抜いた" }),

@@ -145,7 +145,7 @@ export function bindHome(context = {}) {
     const pages = pageElements(root);
     pageIndicator.hidden = false;
     pageIndicator.replaceChildren();
-    pages.forEach((page, index) => {
+    pages.forEach((_, index) => {
       const dot = document.createElement("button");
       dot.type = "button";
       dot.className = "mobile-home-page-dot";

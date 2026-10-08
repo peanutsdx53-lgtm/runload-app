@@ -260,3 +260,8 @@ test("stylesheets contain no exact cross-file duplicate rules", () => {
     .map(([signature, files]) => `${[...files].join(", ")} :: ${signature}`);
   assert.deepEqual(duplicates, [], `exact duplicate CSS rules: ${duplicates.join("\n")}`);
 });
+
+// Historical release diaries are preserved in Git history, not distributed as live source.
+test("current source contains no historical release diary", () => {
+  assert.equal(fs.existsSync(path.join(root, "docs/MOBILE_RELEASE_HISTORY.md")), false);
+});

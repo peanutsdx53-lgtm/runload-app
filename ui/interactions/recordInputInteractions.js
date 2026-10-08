@@ -784,14 +784,12 @@ function validateUiRecord(record) {
   return messages;
 }
 
-function validateSubjectiveFeedback(feedback, formData) {
+function validateSubjectiveFeedback(feedback) {
   const messages = [];
   const hasBodyAreaObservation = Array.isArray(feedback.bodyAreaObservations)
     && feedback.bodyAreaObservations.length > 0;
   const hasSafetyInformation = Object.values(feedback.safetyFlags || {}).some(Boolean);
-  const primaryStatus = String(formData.get("subjectiveStatus") || "");
   const requiresBodyDetail = ["discomfort_reported", "strong_reported"].includes(feedback.checkStatus);
-  if (requiresBodyDetail && !feedback.checkStatus) messages.push("身体の記録を残す場合は、内容を選んでください。");
   if (requiresBodyDetail && feedback.checkStatus === "discomfort_reported" && !hasBodyAreaObservation) messages.push("気になる部位を残す場合は、少なくとも1部位の程度を1以上にしてください。");
   if (requiresBodyDetail && feedback.checkStatus === "strong_reported" && !(hasSafetyInformation || hasBodyAreaObservation)) messages.push("相談したい内容を残す場合は、当てはまる内容または部位の程度を入力してください。");
   return messages;
@@ -912,7 +910,7 @@ export function bindRecordInput({ services, router, context, returnState = null 
     const formData = new FormData(form);
     const recordInput = readRecordInput(formData, services);
     const subjectiveFeedback = readSubjectiveFeedback(formData);
-    const uiMessages = [...validateUiRecord(recordInput), ...validateSubjectiveFeedback(subjectiveFeedback, formData)];
+    const uiMessages = [...validateUiRecord(recordInput), ...validateSubjectiveFeedback(subjectiveFeedback)];
     if (uiMessages.length) {
       showFormMessages(form, uiMessages);
       restoreSubmitButtons();

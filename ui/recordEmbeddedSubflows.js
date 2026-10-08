@@ -24,7 +24,6 @@ export const RECORD_REGIONAL_SUBJECTIVE_AREAS = Object.freeze([
 ]);
 
 const AREA_BY_ID = Object.freeze(Object.fromEntries(BODY_AREA_TAXONOMY.map((area) => [area.id, area])));
-const REGIONAL_AREA_IDS = new Set(RECORD_REGIONAL_SUBJECTIVE_AREAS.map((item) => item.areaId));
 const CONSULTATION_FLAG_KEYS = Object.freeze([
   "severePain",
   "significantSwelling",

@@ -54,7 +54,6 @@ export function bindConsultation() {
   const copySource = root.querySelector("#consultation-report-text");
   const regionSelector = root.querySelector("[data-consult-region-selector]");
   const documentStage = root.querySelector("[data-consult-document-stage]");
-  const shareDocument = root.querySelector("[data-consult-share-document]");
   const requiredStatus = root.querySelector("[data-consult-required-status]");
   const questionRequirement = question?.closest(".share-question-field")?.querySelector("span b");
   if (questionRequirement) questionRequirement.textContent = "推奨";

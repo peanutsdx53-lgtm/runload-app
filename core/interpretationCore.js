@@ -465,7 +465,7 @@ function conditionProjection(base = {}, selectedRegion = null) {
   });
 }
 
-function nextCheckProjection(base = {}, selectedRegionId = "", attention = null) {
+function nextCheckProjection(base = {}, selectedRegionId = "") {
   const conditions = Array.isArray(base?.comparison?.conditionDifferences) ? base.comparison.conditionDifferences : [];
   return Object.freeze({
     code: "DESCRIPTIVE_ONLY",
@@ -475,7 +475,7 @@ function nextCheckProjection(base = {}, selectedRegionId = "", attention = null)
   });
 }
 
-function nextProjection(base = {}, selectedRegionId = "") {
+function nextProjection(base = {}) {
   const actions = Array.isArray(base?.actions) ? base.actions : [];
   const enabled = actions.filter((action) => action?.enabled !== false);
   if (base?.safety?.route && base.safety.route !== "normal") {
@@ -527,7 +527,7 @@ export function buildInterpretation({
   const subjectiveContext = buildSubjectiveContext(base?.current?.rof || {});
   const attention = buildAttentionOverview(base);
   const conditions = conditionProjection(base, selectedRegion);
-  const nextCheck = nextCheckProjection(base, selectedRegionId, attention);
+  const nextCheck = nextCheckProjection(base, selectedRegionId);
 
   return Object.freeze({
     schemaVersion: INTERPRETATION_OUTPUT_SCHEMA_VERSION,
@@ -564,7 +564,7 @@ export function buildInterpretation({
       boundaryCodes: base?.interpretation?.limitationCodes || Object.freeze([]),
     }),
     nextCheck,
-    next: nextProjection(base, selectedRegionId),
+    next: nextProjection(base),
     advanced: Object.freeze({ evidence: base?.evidence || null }),
     safety: base?.safety || Object.freeze({ route: "normal", reasons: Object.freeze([]), blocks: Object.freeze([]), nextActions: Object.freeze([]) }),
     provenance: Object.freeze({

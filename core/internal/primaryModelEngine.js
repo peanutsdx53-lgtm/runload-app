@@ -60,15 +60,9 @@ function interpKnots(xs,ys,x){if(x<xs[0]-1e-12||x>xs.at(-1)+1e-12)return null;fo
 const VH_GRADE={R05:{'-6':962,'-3':850,'0':787,'3':733,'6':703},R06:{'-6':13275,'-3':12401,'0':12424,'3':12553,'6':13171},R09:{'-6':324,'-3':367,'0':439,'3':516,'6':611}};
 const R09_CAD={'-10':398,'0':374,'10':370};
 const HO_HEEL_GRADE={'0':170.7,'5':161.4,'10':142.6,'15':124.1};
-const HORIGUCHI={
-  R10:{RFS:{'-6':371.0,'0':280.8,'6':212.5},FFS:{'-6':99.9,'0':72.1,'6':41.4}},
-  R12:{RFS:{'-6':329.1,'0':375.7,'6':370.1},FFS:{'-6':504.7,'0':524.9,'6':528.2}}
-};
-const GRASS_R10=299.5/347.7;
 const R12_GRASS_ENVELOPE=[0.895910642027,0.914520670558];
 const HAGEN_REL_DEC={8:-.08,10:-.07,12:-.06,14:-.06,16:-.05};
 const HAGEN_REL_INC={8:.10,10:.11,12:.11,14:.11,16:.10};
-const VERIFIED_PROVENANCE=new Set(['VIDEO_VERIFIED','DEVICE_VERIFIED','INSTRUMENT_VERIFIED','LAB_VERIFIED']);
 const PRIMARY_REGIONAL_GRADE_DIRECT_MAX_ABS_DEGREES=6;
 const PRIMARY_REGIONAL_GRADE_COMMON_DIRECT_MAX_ABS_PERCENT=Math.tan(PRIMARY_REGIONAL_GRADE_DIRECT_MAX_ABS_DEGREES*Math.PI/180)*100;
 const PRIMARY_REGIONAL_GRADE_UPHILL_DIRECT_MAX_PERCENT=15;
@@ -138,7 +132,7 @@ function r05CadenceJoint(speed,cadence,personalRef){
   return {active:true,ratio:raw/hagH(2.78*3.6),state:(near(rel,0)?'SOURCE_DEFINED_MODEL':'SOURCE_BOUNDED_INTERPOLATION'),relativeCadence:rel,sourceHull:[lo,hi],sourceFamily:'HAGEN_2023_SPEED_RELATIVE_CADENCE'};
 }
 function r09CadenceAbsolute(delta){const raw=interp(R09_CAD,delta);return raw==null?null:raw/VAN_SPEED.R09[2.78]}
-function evaluateRegionSegment(regionId,{distanceKm,speedMps,gradePercent=null,cadenceSpm=null,personalHabitualCadenceSpm=null,surfaceComponents=null,runSetting=null,footStrikeObservation=null,allowR12GrassEnvelope=false}={}){
+function evaluateRegionSegment(regionId,{distanceKm,speedMps,gradePercent=null,cadenceSpm=null,personalHabitualCadenceSpm=null,surfaceComponents=null,footStrikeObservation=null}={}){
   const d=Number(distanceKm),v=Number(speedMps); if(!(d>=0&&v>0))return {regionId,state:'INVALID_SEGMENT_FACT'};
   const b=baselineResponse(regionId,v); const trace={baseline:b,components:[],states:[b.evidenceState],interactionState:'NO_UNRESOLVED_INTERACTION',unquantified:[]};
   if(b.ratio==null)return {regionId,state:'EVIDENCE_INSUFFICIENT',ratio:null,value:null,valueEnvelope:null,distanceKm:d,speedMps:v,evidenceState:'EVIDENCE_INSUFFICIENT',trace};

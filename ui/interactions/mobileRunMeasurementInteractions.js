@@ -200,7 +200,6 @@ export function bindRunMeasurement({ router, services }) {
   let pendingPayload = null;
   let handoffToRecord = false;
   let energyBodyMassKg = null;
-  let latestEnergyEstimate = null;
 
   function setMessage(node, message, error = false) {
     if (!node) return;
@@ -244,7 +243,6 @@ export function bindRunMeasurement({ router, services }) {
 
   function updateEnergy(elapsed = activeElapsedMs()) {
     const result = calculateEnergy(elapsed);
-    latestEnergyEstimate = result.ok ? result : null;
     if (energyValueNode) energyValueNode.textContent = result.ok ? String(Math.round(result.estimatedKcal)) : "—";
     if (energyStatusNode) energyStatusNode.textContent = energyStatusText(result);
     return result;
@@ -494,7 +492,6 @@ export function bindRunMeasurement({ router, services }) {
 
     const profile = services.storage.profile.load();
     energyBodyMassKg = Number(profile?.weightKg);
-    latestEnergyEstimate = null;
     startedAtMs = Date.now();
     startedAtIso = new Date(startedAtMs).toISOString();
     if (fatigueRunId) {

@@ -6,7 +6,7 @@ import { internalModules } from "./modules.js";
 {
 const moduleExports = Object.create(null);
 const { createBodyProfileSnapshot, normalizeBodyProfile } = internalModules.bodyProfileAdjustment;
-const { isPrimaryRegionalV2Record, stampCurrentRegionalModel } = internalModules.primaryRegionalSnapshot;
+const { stampCurrentRegionalModel } = internalModules.primaryRegionalSnapshot;
 const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInput } = internalModules.inputValidation;
 const { normalizeSubjectiveFeedback } = internalModules.subjectiveFeedback;
 const { evaluateSupportDecision } = internalModules.supportDecision;

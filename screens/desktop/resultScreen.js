@@ -48,7 +48,6 @@ function pcRegionGroups(infos, selectedId) {
     const selected = row.regionId === selectedId ? " is-selected" : "";
     const stateLabel = state === "above" ? "基準より上" : state === "below" ? "基準より下" : state === "reference" ? "基準付近" : "表示なし";
     const changeState = !finite(info.delta) ? "unavailable" : Number(info.delta) > 0 ? "up" : Number(info.delta) < 0 ? "down" : "same";
-    const changeLabel = changeState === "up" ? "前回より上" : changeState === "down" ? "前回より下" : changeState === "same" ? "前回と同じ" : "前回比較なし";
     const viewLabel = viewByRegion.get(row.regionId) || "部位";
     const overviewPos = state === "above" ? 76 : state === "below" ? 24 : 50;
     const overviewMeter = finite(row.value)
@@ -171,7 +170,7 @@ function renderPcRestResultConsole({ record, feedback = null }) {
   </section>`;
 }
 
-function renderPcResultConsole({ services, record, resultRecord, allExperiences, feedback = null, savedInterpretation = null }) {
+function renderPcResultConsole({ services, record, resultRecord, allExperiences, feedback = null }) {
   if (record.activityType === "rest") return renderPcRestResultConsole({ record, feedback });
   if (!modelCurrent(resultRecord) || record.activityType !== "run") return "";
   const infos = regionRows(resultRecord).map((row, index) => rowInfo(resultRecord, allExperiences, row, index));
@@ -199,6 +198,6 @@ function renderPcResultConsole({ services, record, resultRecord, allExperiences,
 export function renderResultScreen(args) {
   const state = prepareResultScreenState(args);
   if (state.empty) return renderEmptyResultScreen();
-  const { services, record, regionalV2ResultRecord, allExperiences, experience, savedInterpretation } = state;
-  return `<div class="screen screen--result screen-layout screen-layout--result">${renderPcResultConsole({ services, record, resultRecord: regionalV2ResultRecord, allExperiences, feedback: experience.feedback, savedInterpretation })}</div>`;
+  const { services, record, regionalV2ResultRecord, allExperiences, experience } = state;
+  return `<div class="screen screen--result screen-layout screen-layout--result">${renderPcResultConsole({ services, record, resultRecord: regionalV2ResultRecord, allExperiences, feedback: experience.feedback })}</div>`;
 }

@@ -338,7 +338,7 @@ function action(actionId, labelToken, destination, parameters = {}, enabled = tr
   return Object.freeze({ actionId, labelToken, destination, parameters: Object.freeze({ ...parameters }), enabled, blockedReason });
 }
 
-function resolveInterpretationActions({ targetExperience = null, availability = {}, safety = {}, origin = "", selectedRegionId = "" } = {}) {
+function resolveInterpretationActions({ targetExperience = null, safety = {}, origin = "", selectedRegionId = "" } = {}) {
   const recordId = String(targetExperience?.record?.id || "");
   const common = { recordId, origin: "interpretation-room" };
   const normalPlanBlocked = safety.blocks.includes(NORMAL_PLAN_BLOCK);
@@ -568,7 +568,6 @@ export function buildMeaningFrame({ targetExperience = null, currentRegions = []
 
   const resolvedSafety = safety || { route: "normal" };
   const resolvedAvailability = availability || {};
-  const semanticState = String(targetExperience?.regionalSemanticState || "");
   const differenceIds = regionalDifferenceIds(currentRegions, regionalById);
   const hasRegionalDifference = differenceIds.length > 0;
   const hasRofDifference = finite(rof?.delta) && Math.abs(Number(rof.delta)) >= 1;
@@ -623,7 +622,7 @@ export function buildMeaningFrame({ targetExperience = null, currentRegions = []
   });
 }
 
-function limitationCodes(targetExperience, evidence) {
+function limitationCodes(evidence) {
   const codes = [
     "NO_DIAGNOSIS",
     "NO_INJURY_RISK",
@@ -738,7 +737,7 @@ export function buildBaseInterpretation({ targetExperience = null, allExperience
       summaryCodes,
       summaryTokens,
       selectedRegionIds: ctx.selectedRegionIds,
-      limitationCodes: limitationCodes(targetExperience, ctx.evidence),
+      limitationCodes: limitationCodes(ctx.evidence),
       meaning: ctx.meaning,
     }),
     evidence: ctx.evidence,

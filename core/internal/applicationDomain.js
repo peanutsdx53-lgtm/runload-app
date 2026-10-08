@@ -208,7 +208,6 @@ function evaluateSupportDecision(input = {}) {
   }
 
   const reviewReasons = [];
-  const subjectiveStatus = String(feedback.subjectiveCheck?.status || feedback.checkStatus || "");
 
   let route = "normal";
   let routeReasons = ["no_subjective_concern"];

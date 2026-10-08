@@ -23,7 +23,7 @@ await test('LEGACY-ACTIVATION-ALIAS-REMOVED',()=>{
 await test('GLOBAL-FEATURE-MENU-DOES-NOT-DUPLICATE-UNDERSTANDING-ENTRY',()=>{
   const architecture=read('ui/screenArchitecture.js');
   const start=architecture.indexOf('export const FEATURE_DESTINATION_GROUPS');
-  const end=architecture.indexOf('function route(',start);
+  const end=architecture.indexOf(']);',start)+3;
   const block=architecture.slice(start,end);
   assert.ok(start>=0 && end>start);
   assert.doesNotMatch(block,/screen:\s*"interpretation-room"|label:\s*"結果を理解する"/);

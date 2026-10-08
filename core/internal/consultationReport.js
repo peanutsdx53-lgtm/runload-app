@@ -74,7 +74,6 @@ function regionalReference(experience, regionId) {
   const region = REGION_BY_ID.get(regionId);
   const resultRecord = experience?.regionalV2ResultRecord || null;
   const distanceKm = modelDistanceKm(resultRecord || {}, experience?.record || {});
-  const referenceValue = 100;
   const base = {
     regionId,
     regionLabel: region?.name || regionId,

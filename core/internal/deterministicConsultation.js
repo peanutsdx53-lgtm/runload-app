@@ -290,9 +290,8 @@ function appendSection(lines, heading, items) {
 }
 
 function regionalCurrentLine(regional) {
-  if (regional.displayIndex === null) return `${regional.regionLabel}：${regional.isPrimaryRegionalV2 ? "部位の目安" : "部位の目安"}の数値なし`;
+  if (regional.displayIndex === null) return `${regional.regionLabel}：部位の目安の数値なし`;
   if (regional.isPrimaryRegionalV2) {
-    const ref = finite(regional.referenceValue) ? Number(regional.referenceValue) : null;
     const delta = finite(regional.displayDeltaPoints) ? Number(regional.displayDeltaPoints) : null;
     return `${regional.regionLabel}：部位の目安 ${displayNumber(regional.displayIndex, 1)}（基準100${delta === null ? "" : `、差 ${delta >= 0 ? "+" : ""}${displayNumber(delta, 1)}`}）`;
   }

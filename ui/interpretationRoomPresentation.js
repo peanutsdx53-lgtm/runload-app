@@ -443,7 +443,7 @@ function renderInterpretationFlowStageGuide() {
   return `<nav class="interpretation-flow-stage-guide" aria-label="確認の流れ"><span data-interpretation-flow-step="focus"><i>1</i>記録</span><b aria-hidden="true">→</b><span data-interpretation-flow-step="compare"><i>2</i>見比べる</span><b aria-hidden="true">→</b><span data-interpretation-flow-step="decision"><i>3</i>次へ</span></nav>`;
 }
 
-function renderInterpretationFlowBodyPair(candidate = {}, { active = false } = {}) {
+function renderInterpretationFlowBodyPair(candidate = {}) {
   const meta = interpretationFlowCandidateMeta(candidate);
   return `<section class="interpretation-flow-pair" aria-label="今回見比べられる2つの情報">
     <article class="interpretation-flow-source-card interpretation-flow-source-card--user" data-interpretation-flow-focus-card>
@@ -654,7 +654,7 @@ function renderAdvanced(output, region) {
   const sources = Array.isArray(evidence.sources) ? evidence.sources : [];
   return `${renderCalculationDetails(region)}<details class="interpretation-room-advanced"><summary>計算の考え方と根拠を詳しく見る</summary><div>${evidence.construct ? `<p><strong>この数値が表す内容</strong><br>${escapeHtml(publicConstructText(evidence.construct))}</p>` : ""}${sources.length ? `<p><strong>この計算の背景資料</strong></p><ul>${sources.map((source) => `<li>${escapeHtml(source.label || "参考資料")}${source.role ? ` — ${escapeHtml(publicSourceRoleText(source.role))}` : ""}</li>`).join("")}</ul>` : ""}<p class="interpretation-room-boundary-line">ここでは、選択した部位の計算に関係する情報を確認できます。</p></div></details>`;
 }
-export function renderInterpretationRoom({ output, selfUnderstanding = null, savedInterpretation = null, interpretationFocus = "", compactLayout = false, recommendationHistory = [] } = {}) {
+export function renderInterpretationRoom({ output, selfUnderstanding = null, compactLayout = false, recommendationHistory = [] } = {}) {
   if (!output?.state?.targetAvailable) {
     return `<div class="interpretation-room interpretation-room--empty" data-interpretation-room-state="empty"><header class="interpretation-room-hero"><p>結果を整理する</p><h1>対象の保存記録がありません</h1></header><a class="interpretation-room-action interpretation-room-action--primary" href="#/record-input"><span class="interpretation-room-action__icon">${interpretationIcon("record")}</span><span class="interpretation-room-action__copy"><strong>記録を始める</strong></span><i aria-hidden="true">›</i></a></div>`;
   }

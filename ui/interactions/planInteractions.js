@@ -10,7 +10,7 @@ function updateVisibility(form){
   form.querySelectorAll('[data-plan-rest-fields]').forEach((el)=>setHidden(el,!rest));
   form.querySelectorAll('[data-plan-type-button]').forEach((button)=>button.classList.toggle('active', button.dataset.planTypeButton===(rest?'rest':'run')));
   const data=new FormData(form); const date=String(data.get('scheduledDate')||''); const distance=String(data.get('distanceKm')||''); const duration=String(data.get('durationMinutes')||'');
-  const course=courseFromForm(data); const dateLabel=date?date.replace(/^(\d{4})-(\d{2})-(\d{2})$/,(_,y,m,d)=>`${Number(m)}月${Number(d)}日`):'未設定';
+  const course=courseFromForm(data); const dateLabel=date?date.replace(/^\d{4}-(\d{2})-(\d{2})$/,(_,m,d)=>`${Number(m)}月${Number(d)}日`):'未設定';
   const set=(sel,text)=>{const el=form.querySelector(sel);if(el)el.textContent=text;};
   set('[data-plan-date-display]', date?date.replaceAll('-','/'):'未設定');
   set('[data-plan-summary-kind]', rest?'休養予定':'走行予定'); set('[data-plan-summary-date]',dateLabel);

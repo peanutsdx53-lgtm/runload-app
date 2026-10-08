@@ -20,7 +20,7 @@ test("all share outputs remain available when question is empty", () => {
 
 test("consultation binding does not shadow the browser document", () => {
   assert.ok(!interactions.includes("const document = root.querySelector"));
-  assert.ok(interactions.includes("const shareDocument = root.querySelector"));
+  assert.ok(!interactions.includes("const shareDocument = root.querySelector"), "unused DOM query must be removed");
   assert.ok(interactions.includes("globalThis.document.documentElement"));
 });
 
