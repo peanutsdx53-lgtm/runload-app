@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { renderBodyPartDetailScreen as renderDesktopBodyPartDetail } from "../screens/desktop/bodyPartDetailScreen.js";
+import { trendSvg } from "../screens/bodyPartDetailScreen.js";
 import { renderBodyPartDetailScreen as renderMobileBodyPartDetail } from "../screens/mobile/bodyPartDetailScreen.js";
 import { PRIMARY_REGIONAL_V2_MODEL_VERSION } from "../core/appCore.js";
 
@@ -113,4 +114,8 @@ assert.equal(emptyCss.split(emptyStateSelector).length - 1, 6);
 assert.doesNotMatch(emptyCss.replaceAll(emptyStateSelector, ""), /\.detail-main:has\(> \.compact-boundary\)/);
 assert.match(desktop, /class="detail-hero"/);
 assert.match(renderDesktopBodyPartDetail({ services, context: missingContext }), /この部位の数値を表示できません/);
+// Baseline=100 is conveyed by the boundary text and dashed line; avoid a duplicate chart label overlapping the first point value of 100.
+const baselineTrend = trendSvg([{ row: { value: 100 } }, { row: { value: 104 } }], { annotated: true });
+assert.match(baselineTrend, /class="baseline"/);
+assert.equal((baselineTrend.match(/>100<\/text>/g) || []).length, 1);
 console.log("bodyPartDetailBaselineParity: ok");

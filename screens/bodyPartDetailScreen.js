@@ -54,7 +54,7 @@ export function trendSvg(rows, { annotated = false } = {}) {
   const y = (v) => 120 - (Number(v) - min) / Math.max(1, max - min) * 92;
   const points = rows.map((item, i) => `${xs[i]},${y(item.row.value)}`).join(" ");
   const baseline = y(100);
-  const base = `<line class="grid" x1="20" y1="28" x2="300" y2="28"></line><line class="grid" x1="20" y1="74" x2="300" y2="74"></line><line class="grid" x1="20" y1="120" x2="300" y2="120"></line><line class="baseline" x1="20" y1="${baseline}" x2="300" y2="${baseline}"></line><text x="22" y="${baseline - 5}">100</text>${rows.length > 1 ? `<polyline class="trend-line" points="${points}"></polyline>` : ""}`;
+  const base = `<line class="grid" x1="20" y1="28" x2="300" y2="28"></line><line class="grid" x1="20" y1="74" x2="300" y2="74"></line><line class="grid" x1="20" y1="120" x2="300" y2="120"></line><line class="baseline" x1="20" y1="${baseline}" x2="300" y2="${baseline}"></line>${rows.length > 1 ? `<polyline class="trend-line" points="${points}"></polyline>` : ""}`;
   if (annotated) return `${base}${rows.map((item, i) => `<circle class="trend-point${i === rows.length - 1 ? " current" : ""}" cx="${xs[i]}" cy="${y(item.row.value)}" r="5"></circle><text x="${xs[i]}" y="${Math.max(12, y(item.row.value) - 10)}" text-anchor="middle">${fmt(item.row.value, 1)}</text>`).join("")}`;
   return `${base}${rows.map((item, i) => {
     const record = item.experience?.record || {};
