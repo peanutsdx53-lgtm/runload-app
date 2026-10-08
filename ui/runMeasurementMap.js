@@ -44,9 +44,19 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
 
   const attribution = createElement("div", "run-map__attribution");
   attribution.innerHTML = '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>';
-  container.append(tileLayer, overlay, attribution);
+  // External map tiles reveal the viewed area to the tile provider. Keep the
+  // route overlay local until the person explicitly requests map imagery.
+  const tileConsent = createElement("div", "run-map__tile-consent");
+  const tileConsentButton = createElement("button", "run-map__tile-consent-button");
+  tileConsentButton.type = "button";
+  tileConsentButton.textContent = "地図画像を読み込む";
+  const tileConsentText = createElement("small", "run-map__tile-consent-description");
+  tileConsentText.textContent = "外部の地図提供元に、表示位置周辺の情報が伝わる可能性があります。地図画像なしでも軌跡を確認できます。";
+  tileConsent.append(tileConsentButton, tileConsentText);
+  container.append(tileLayer, overlay, attribution, tileConsent);
 
   const tileNodes = new Map();
+  let externalTilesEnabled = false;
   let zoom = clamp(initialZoom, MIN_ZOOM, MAX_ZOOM);
   let center = null;
   let markerPoint = null;
@@ -60,7 +70,8 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
   }
 
   function renderTiles() {
-    if (!center) return;
+    // Do not create external image requests before consent, or while offline.
+    if (!externalTilesEnabled || globalThis.navigator?.onLine === false || !center) return;
     const { width, height } = dimensions();
     const centerPixel = worldPixel(center.lat, center.lon, zoom);
     const left = centerPixel.x - width / 2;
@@ -98,6 +109,16 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
       tileNodes.delete(key);
     }
   }
+
+  tileConsentButton.addEventListener("click", () => {
+    if (globalThis.navigator?.onLine === false) {
+      tileConsentText.textContent = "オフラインのため地図画像を取得できません。軌跡は端末内で表示できます。";
+      return;
+    }
+    externalTilesEnabled = true;
+    tileConsent.hidden = true;
+    renderTiles();
+  });
 
   function renderOverlay() {
     if (!center) return;
