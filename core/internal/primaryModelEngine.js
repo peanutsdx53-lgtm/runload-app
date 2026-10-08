@@ -9,7 +9,7 @@ const moduleExports = Object.create(null);
 
 const MODEL_VERSION = 'runload-primary-regional-reference100-v3.0';
 const OUTPUT_SEMANTIC_VERSION = 'runload-primary-regional-reference100-output-v3.0';
-const BUILD_ID = 'primary-reference100-v3-20261007-gazendam-current-redigitization';
+const BUILD_ID = 'primary-reference100-v3-20261008-missing-segment-evidence-boundary';
 
 const REGION_DEFS = Object.freeze([
   {id:'R01',name:'股関節部',referenceSpeedMps:2.50,domain:[2.50,4.50],construct:'股関節の機械的仕事に基づく部位内Reference-100',baselineSource:'FUKUCHI_2017',outputSemantic:'REFERENCE_100_CONDITION_RESPONSE'},
@@ -22,7 +22,7 @@ const REGION_DEFS = Object.freeze([
   {id:'R08',name:'足関節部',referenceSpeedMps:2.50,domain:[2.50,4.50],construct:'足関節の機械的仕事に基づく部位内Reference-100',baselineSource:'FUKUCHI_2017',outputSemantic:'REFERENCE_100_CONDITION_RESPONSE'},
   {id:'R09',name:'アキレス腱部',referenceSpeedMps:2.78,domain:[2.78,5.00],construct:'アキレス腱strain力積に基づく部位内Reference-100',baselineSource:'VAN_HOOREN_2024',outputSemantic:'REFERENCE_100_CONDITION_RESPONSE'},
   {id:'R10',name:'後足部',referenceSpeedMps:2.50,domain:[1.50,2.50],construct:'後足部ピーク足底圧に基づく部位内Reference-100',baselineSource:'HO_2010',outputSemantic:'REFERENCE_100_CONDITION_RESPONSE'},
-  {id:'R11',name:'足底中部・内側縦足弓',referenceSpeedMps:2.50,domain:[1.50,2.50],construct:'中足部ピーク足底圧に基づく部位内Reference-100',baselineSource:'HO_2010',outputSemantic:'REFERENCE_100_CONDITION_RESPONSE_PROJECT_COMPOSITE'},
+  {id:'R11',name:'足底中部・内側縦足弓',referenceSpeedMps:2.50,domain:[1.50,2.50],construct:'中足部の内側・外側ピーク足底圧を研究内で合成したReference-100（内側縦足弓そのものの直接測定値ではない）',baselineSource:'HO_2010',outputSemantic:'REFERENCE_100_CONDITION_RESPONSE_PROJECT_COMPOSITE'},
   {id:'R12',name:'前足部',referenceSpeedMps:2.50,domain:[1.50,2.50],construct:'前足部ピーク足底圧に基づく部位内Reference-100',baselineSource:'HO_2010',outputSemantic:'REFERENCE_100_CONDITION_RESPONSE_PROJECT_COMPOSITE'},
 ]);
 const DEF = new Map(REGION_DEFS.map(x=>[x.id,x]));
@@ -195,17 +195,31 @@ function deriveRunningExposure(record){
 }
 function resolveSegments(record,exposure){
   const segs=Array.isArray(record.segments)?record.segments:[]; if(!segs.length)return {state:'NONE',segments:[]};
-  const out=[];let total=0;
+  const out=[];let total=0,knownDurationMinutes=0;
   for(const [i,s] of segs.entries()){
-    let d=Number(s.distanceKm);if(!(d>=0)&&s.sharePercent!=null)d=exposure.distanceKm*Number(s.sharePercent)/100;
-    if(!(d>=0))return {state:'INVALID_SEGMENT_DISTANCE',index:i}; total+=d;
-    let speed=Number(s.speedMps);let speedProv='OBSERVED_OR_SEGMENT_DERIVED';
-    if(!(speed>0)&&Number(s.durationMinutes)>0&&d>0)speed=d*1000/(Number(s.durationMinutes)*60);
-    if(!(speed>0)){speed=exposure.speedMps;speedProv='MODEL_DERIVED_SEGMENT_SPEED_FALLBACK';}
+    let d=s.distanceKm==null?NaN:Number(s.distanceKm);
+    if(!(d>=0)&&s.sharePercent!=null)d=exposure.distanceKm*Number(s.sharePercent)/100;
+    if(!(Number.isFinite(d)&&d>=0))return {state:'INVALID_SEGMENT_DISTANCE',index:i};
+    total+=d;
+    const hasDuration=s.durationMinutes!=null&&s.durationMinutes!=='';
+    const duration=hasDuration?Number(s.durationMinutes):null;
+    if(hasDuration&&!(Number.isFinite(duration)&&duration>0))return {state:'INVALID_SEGMENT_DURATION',index:i};
+    if(hasDuration)knownDurationMinutes+=duration;
+    const explicit=s.speedMps==null||s.speedMps===''?null:Number(s.speedMps);
+    if(explicit!=null&&!(Number.isFinite(explicit)&&explicit>0))return {state:'INVALID_SEGMENT_SPEED',index:i};
+    if(explicit!=null&&duration!=null&&d>0){
+      const derived=d*1000/(duration*60);
+      if(Math.abs(explicit-derived)>Math.max(0.01,derived*0.01))return {state:'SEGMENT_SPEED_DURATION_CONFLICT',index:i};
+    }
+    const derived=duration!=null&&d>0?d*1000/(duration*60):null;
+    const speed=explicit??derived;
+    const speedProv=explicit!=null?'EXPLICIT_SEGMENT_SPEED':derived!=null?'SEGMENT_DISTANCE_DURATION_DERIVED':'MISSING_SEGMENT_SPEED';
+    // Never assign the whole-run mean speed to a section lacking section-level evidence.
     out.push({...s,distanceKm:d,speedMps:speed,speedProvenance:speedProv});
   }
   if(total>exposure.distanceKm+1e-8)return {state:'SEGMENT_EXPOSURE_EXCEEDS_RUNNING_DISTANCE',segmentDistanceKm:total,runningDistanceKm:exposure.distanceKm};
-  if(total<exposure.distanceKm-1e-8)out.push({distanceKm:exposure.distanceKm-total,speedMps:exposure.speedMps,speedProvenance:'MODEL_DERIVED_SEGMENT_SPEED_FALLBACK',remainderState:'UNKNOWN_REMAINDER'});
+  if(knownDurationMinutes>exposure.durationMinutes+1e-8)return {state:'SEGMENT_DURATION_EXCEEDS_RUNNING_DURATION',knownDurationMinutes,runningDurationMinutes:exposure.durationMinutes};
+  if(total<exposure.distanceKm-1e-8)out.push({distanceKm:exposure.distanceKm-total,speedMps:null,speedProvenance:'MISSING_REMAINDER_SPEED',remainderState:'UNKNOWN_REMAINDER'});
   return {state:'OK',segments:out,segmentDistanceKm:total,remainderDistanceKm:Math.max(0,exposure.distanceKm-total)};
 }
 function summarizeRegions(segResults){
@@ -224,8 +238,10 @@ function summarizeRegions(segResults){
       return {
         segmentIndex:Number.isInteger(segment.index)?segment.index:index,
         distanceKm:Number(x.distanceKm||0),
-        speedMps:Number.isFinite(Number(x.speedMps))?Number(x.speedMps):null,
+        speedMps:x.speedMps!=null&&Number.isFinite(Number(x.speedMps))?Number(x.speedMps):null,
         speedProvenance:segment.speedProvenance||null,
+        sourceConditionClass:x.evidenceState==='DIRECT'?'SOURCE_DIRECT_RANGE':x.evidenceState||'EVIDENCE_INSUFFICIENT',
+        projectDerivationMethod:r.id==='R11'?'HO_MEDIAL_LATERAL_MIDFOOT_PEAK_PRESSURE_NORMALIZED_50_50':r.id==='R12'?'HO_FOREFOOT_COMPONENT_PEAK_PRESSURE_NORMALIZED_1_3':r.id==='R01'||r.id==='R08'?'FUKUCHI_POSITIVE_NEGATIVE_WORK_PER_STRIDE_NORMALIZED_50_50':null,
         remainderState:segment.remainderState||null,
         calculationState:x.state||'EVIDENCE_INSUFFICIENT',
         evidenceState:x.evidenceState||'EVIDENCE_INSUFFICIENT',
@@ -244,8 +260,23 @@ function gradeAxisSegments(record,exposure){
   if(u<0||d<0||u+d>100+1e-8||gu<0||gd<0)return null;
   const a=[];if(u>0)a.push({distanceKm:exposure.distanceKm*u/100,speedMps:exposure.speedMps,gradePercent:gu,axis:'GRADE_UP'});if(d>0)a.push({distanceKm:exposure.distanceKm*d/100,speedMps:exposure.speedMps,gradePercent:-gd,axis:'GRADE_DOWN'});if(f>0)a.push({distanceKm:exposure.distanceKm*f/100,speedMps:exposure.speedMps,gradePercent:0,axis:'GRADE_FLAT'});return a;
 }
-function evalSegments(segments,record,{useWholeCadence=false}={}){return segments.map((s,i)=>({index:i,remainderState:s.remainderState||null,speedProvenance:s.speedProvenance||null,regionResults:Object.fromEntries(REGION_DEFS.map(r=>[r.id,evaluateRegionSegment(r.id,{...s,cadenceSpm:s.cadenceSpm??(useWholeCadence?record.averageCadenceSpm:null),personalHabitualCadenceSpm:s.personalHabitualCadenceSpm??(useWholeCadence?record.personalHabitualCadenceSpm:null),runSetting:s.runSetting??record.runSetting,footStrikeObservation:s.footStrikeObservation??record.footStrikeObservation,allowR12GrassEnvelope:record.allowR12GrassEnvelope===true})]))}))}
-
+function evalSegments(segments,record,{useWholeCadence=false}={}){
+  return segments.map((s,i)=>({
+    index:i,remainderState:s.remainderState||null,speedProvenance:s.speedProvenance||null,
+    regionResults:Object.fromEntries(REGION_DEFS.map(r=>{
+      if(!(Number.isFinite(s.speedMps)&&s.speedMps>0))return [r.id,{
+        regionId:r.id,state:'EVIDENCE_INSUFFICIENT',evidenceState:'EVIDENCE_INSUFFICIENT',
+        distanceKm:s.distanceKm,speedMps:null,value:null,ratio:null,
+        trace:{baseline:null,components:[],unquantified:[{axis:'SEGMENT_SPEED',state:'EVIDENCE_INSUFFICIENT',reason:'NO_SEGMENT_LEVEL_SPEED_EVIDENCE'}],interactionState:null},
+      }];
+      return [r.id,evaluateRegionSegment(r.id,{...s,
+        cadenceSpm:s.cadenceSpm??(useWholeCadence?record.averageCadenceSpm:null),
+        personalHabitualCadenceSpm:s.personalHabitualCadenceSpm??(useWholeCadence?record.personalHabitualCadenceSpm:null),
+        runSetting:s.runSetting??record.runSetting,footStrikeObservation:s.footStrikeObservation??record.footStrikeObservation,
+        allowR12GrassEnvelope:record.allowR12GrassEnvelope===true})];
+    })),
+  }));
+}
 function calculateRun(record={}){
   const exposure=deriveRunningExposure(record);if(exposure.state!=='OK')return {state:exposure.state,modelVersion:MODEL_VERSION,outputSemanticVersion:OUTPUT_SEMANTIC_VERSION};
   const seg=resolveSegments(record,exposure);

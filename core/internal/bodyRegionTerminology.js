@@ -17,7 +17,7 @@ const ENTRIES = Object.freeze([
   Object.freeze({ id: "BA-DISP-024", formalJa: "足関節部", familiarJa: "足首まわり", plainMeaningJa: "足関節部の動きに関する目安", english: "Ankle joint region" }),
   Object.freeze({ id: "BA-DISP-025", formalJa: "アキレス腱部", familiarJa: "足首の後ろ・アキレス腱周辺", plainMeaningJa: "アキレス腱部の走行条件による変化の目安", english: "Achilles tendon region" }),
   Object.freeze({ id: "BA-DISP-027", formalJa: "後足部", familiarJa: "かかと・足裏の後ろ", plainMeaningJa: "後足部の足底圧に関する目安", english: "Rearfoot region" }),
-  Object.freeze({ id: "BA-DISP-028", formalJa: "足底中部・内側縦足弓", familiarJa: "土踏まず・足裏の中央", plainMeaningJa: "足底中部・内側縦足弓の足底圧に関する目安", english: "Mid-plantar and medial longitudinal arch region" }),
+  Object.freeze({ id: "BA-DISP-028", formalJa: "足底中部・内側縦足弓", familiarJa: "土踏まず・足裏の中央", plainMeaningJa: "中足部の内外側足底圧から研究内で合成した目安。内側縦足弓を直接測定した値ではありません", english: "Mid-plantar and medial longitudinal arch region" }),
   Object.freeze({ id: "BA-DISP-029", formalJa: "前足部", familiarJa: "足裏の前・母趾球周辺", plainMeaningJa: "前足部の足底圧に関する目安", english: "Forefoot region" }),
 ]);
 
