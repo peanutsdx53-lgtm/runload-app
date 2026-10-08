@@ -87,55 +87,6 @@ function firstFree(page, token, sizes, visibleWidgets) {
   return null;
 }
 
-function migrateStoredPositions() {
-  const stored = readJson(POSITION_STORAGE_KEY);
-  if (!stored || !Array.isArray(stored.pages)) return;
-  const { sizes, visible } = widgetState();
-  const output = Array.from({ length: Math.min(MAX_PAGES, Math.max(1, stored.pages.length)) }, () => []);
-  const seen = new Set();
-
-  stored.pages.slice(0, MAX_PAGES).forEach((entries, originalPage) => {
-    const ordered = Array.isArray(entries) ? [...entries].sort((a, b) => (Number(a?.row) || 1) - (Number(b?.row) || 1) || (Number(a?.col) || 1) - (Number(b?.col) || 1)) : [];
-    ordered.forEach((entry) => {
-      const token = String(entry?.token || "");
-      if (!token || seen.has(token)) return;
-      seen.add(token);
-
-      if (!tokenIsVisible(token, visible)) {
-        output[Math.min(originalPage, output.length - 1)].push({ token, ...normalizedPlacement(entry, token, sizes) });
-        return;
-      }
-
-      let placed = false;
-      for (let pageIndex = originalPage; pageIndex < MAX_PAGES && !placed; pageIndex += 1) {
-        while (output.length <= pageIndex) output.push([]);
-        const desired = pageIndex === originalPage ? normalizedPlacement(entry, token, sizes) : { row: 1, col: 1 };
-        const placement = freeOnPage(output[pageIndex], token, desired, sizes, visible)
-          || firstFree(output[pageIndex], token, sizes, visible);
-        if (!placement) continue;
-        output[pageIndex].push({ token, ...placement });
-        placed = true;
-      }
-    });
-  });
-
-  while (output.length > 1 && output.at(-1).length === 0) output.pop();
-  writeJson(POSITION_STORAGE_KEY, { version: 1, pages: output });
-
-  const layout = readJson(LAYOUT_STORAGE_KEY);
-  if (!layout || !Array.isArray(layout.pages)) return;
-  const pageByToken = new Map();
-  output.forEach((entries, pageIndex) => entries.forEach((entry) => pageByToken.set(entry.token, pageIndex)));
-  const pageCount = Math.max(1, output.length);
-  const pages = Array.from({ length: pageCount }, () => []);
-  layout.pages.flat().forEach((token) => {
-    const text = String(token || "");
-    const target = Math.min(pageCount - 1, pageByToken.get(text) ?? 0);
-    if (text && !pages[target].includes(text)) pages[target].push(text);
-  });
-  writeJson(LAYOUT_STORAGE_KEY, { ...layout, pages, activePage: Math.min(Number(layout.activePage) || 0, pageCount - 1) });
-}
-
 function applyPlacement(element, placement, token, sizes) {
   const size = footprint(token, sizes);
   element.dataset.homeRow = String(placement.row);
@@ -295,7 +246,6 @@ function queueRepair() {
   requestAnimationFrame(repairDomCapacity);
 }
 
-migrateStoredPositions();
 const appRoot = document.getElementById("app");
 if (appRoot && typeof MutationObserver === "function") {
   new MutationObserver(queueRepair).observe(appRoot, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-home-row", "data-home-col", "data-home-widget-size", "hidden"] });

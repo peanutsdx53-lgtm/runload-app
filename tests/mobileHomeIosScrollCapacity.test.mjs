@@ -117,11 +117,11 @@ test('WIDGET-FOOTPRINTS-SHARE-THE-THREE-ROW-BUDGET', () => {
   assert.ok(capacity.includes('return { columns: 2, rows: 1 };'));
 });
 
-test('OLD-FOURTH-ROW-CONTENT-MIGRATES-TO-LATER-PAGES', () => {
-  assert.ok(capacity.includes('migrateStoredPositions();'));
-  assert.ok(capacity.includes('for (let pageIndex = originalPage; pageIndex < MAX_PAGES'));
-  assert.ok(capacity.includes('while (output.length <= pageIndex) output.push([]);'));
-  assert.ok(capacity.includes('pageByToken'));
+test('STARTUP-DOES-NOT-MIGRATE-PRIOR-RELEASE-HOME-LAYOUTS', () => {
+  assert.doesNotMatch(capacity, /migrateStoredPositions|pageByToken/);
+  assert.ok(capacity.includes('new MutationObserver(queueRepair)'));
+  assert.ok(capacity.includes('function repairDomCapacity()'));
+  assert.ok(capacity.includes('persistDom(root);'));
 });
 
 test('INITIAL-AND-FUTURE-OVERFLOW-CREATES-A-PAGE-WITHOUT-EDIT-MODE', () => {
