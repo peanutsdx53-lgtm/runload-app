@@ -1,7 +1,10 @@
 import { buildInterpretation } from "../core/interpretationCore.js";
 import { buildSelfUnderstandingView } from "../core/selfUnderstandingCore.js";
 import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.js";
-import { resolveAutoInterpretationReferenceKnowledge } from "../ui/interpretationReferenceKnowledge.js";
+import {
+  canPresentAutomaticInterpretationReference,
+  resolveAutoInterpretationReferenceKnowledge,
+} from "../ui/interpretationReferenceKnowledge.js";
 import {
   loadInterpretationReferenceHistory,
   rememberInterpretationReferenceSelectionResult,
@@ -89,7 +92,9 @@ export function renderInterpretationRoomScreenWithPresentation({ services, conte
 
   const savedInterpretation = services?.storage?.selfInterpretations?.findByRecordId?.(recordId) || null;
   const storedReferenceHistory = loadInterpretationReferenceHistory(services?.storage?.gateway);
-  const autoReference = resolveAutoInterpretationReferenceKnowledge(output, selfUnderstanding, { recommendationHistory: storedReferenceHistory });
+  const autoReference = canPresentAutomaticInterpretationReference(output)
+    ? resolveAutoInterpretationReferenceKnowledge(output, selfUnderstanding, { recommendationHistory: storedReferenceHistory })
+    : null;
   const saveResult = autoReference?.id && recordId
     ? rememberInterpretationReferenceSelectionResult(services?.storage?.gateway, { recordId, articleId: autoReference.id })
     : { ok: true, entries: storedReferenceHistory };

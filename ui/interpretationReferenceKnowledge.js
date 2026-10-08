@@ -77,6 +77,18 @@ function supportRoute(output = {}) {
   return String(output?.safety?.route || output?.state?.support || "normal").toLowerCase();
 }
 
+// The recommendation history represents articles actually offered on the ordinary
+// interpretation screen. Support-priority, rest, and missing-record screens never
+// display an automatic Reading reference and must not influence diversification.
+export function canPresentAutomaticInterpretationReference(output = {}) {
+  const state = output?.state || {};
+  if (state.targetAvailable === false) return false;
+  if (String(state.regional || "").toUpperCase() === "REST") return false;
+  if (String(output?.target?.activityType || "").toLowerCase() === "rest") return false;
+  if (String(state.support || "normal").toLowerCase() !== "normal") return false;
+  return supportRoute(output) === "normal";
+}
+
 function addCandidate(map, candidate) {
   if (!candidate?.id || !articleById(candidate.id)) return;
   const existing = map.get(candidate.id);
@@ -86,7 +98,7 @@ function addCandidate(map, candidate) {
 }
 
 export function buildInterpretationReferenceCandidates(output = {}, { bodyPair = false } = {}) {
-  if (["urgent", "consult"].includes(supportRoute(output))) return Object.freeze([]);
+  if (!canPresentAutomaticInterpretationReference(output)) return Object.freeze([]);
 
   const ids = conditionIds(output);
   const uniqueIds = [...new Set(ids.filter((id) => ["distance", "duration", "pace", "grade", "surface", "cadence", "course", "running-format"].includes(id)))];
