@@ -18,9 +18,9 @@ const { PRIMARY_REGIONAL_V2_MODEL_VERSION, validatePrimaryRegionalV2ResultRecord
 const { INPUT_LIMITS } = internalModules.inputSafety;
 const { validateRunningRecordInput, normalizeRunningRecord, validateRunningRecord } = internalModules.inputValidation;
 const { validateCoursePresetInput } = internalModules.courseRepository;
-const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = internalModules.storageKeys;
+const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS, USER_ARRAY_STORAGE_KEYS } = internalModules.storageKeys;
 
-const RESTORE_INSPECTION_VERSION = "restore-inspection-v1";
+const RESTORE_INSPECTION_VERSION = "restore-inspection-v2";
 const RESTORE_STATUS = Object.freeze({
   supported: "SUPPORTED",
   review: "REVIEW_REQUIRED",
@@ -212,6 +212,16 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
       "バックアップに必要な保存項目がありません。データ消失を防ぐため、復元を中止してください。",
       "",
       { missingKeys },
+    ));
+  }
+
+  const invalidCollections = USER_ARRAY_STORAGE_KEYS.filter((key) =>
+    Object.prototype.hasOwnProperty.call(snapshot.data, key) && !Array.isArray(snapshot.data[key]));
+  if (invalidCollections.length) {
+    issues.push(issue(
+      "BLOCKING", "BACKUP_COLLECTION_REQUIRED", "backup",
+      "保存記録の一覧形式が正しくありません。復元前にバックアップの内容を確認してください。",
+      "", { invalidCollections },
     ));
   }
 

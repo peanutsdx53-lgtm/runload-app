@@ -6,9 +6,9 @@ import { internalModules } from "./modules.js";
 const moduleExports = Object.create(null);
 const { INPUT_LIMITS, parseJsonText } = internalModules.inputSafety;
 const { inspectBackupSnapshot, RESTORE_STATUS } = internalModules.restoreInspection;
-const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS } = internalModules.storageKeys;
+const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS, USER_ARRAY_STORAGE_KEYS } = internalModules.storageKeys;
 
-const BACKUP_FORMAT_VERSION = "runner-load-app-new-backup-v1";
+const BACKUP_FORMAT_VERSION = "runner-load-app-new-backup-v2";
 
 function blockedInspection(code, message, details = {}) {
   return Object.freeze({
@@ -54,7 +54,21 @@ function createBackupService(gateway) {
           cause: result,
         };
       }
-      data[key] = result.value;
+      // No previous-format normalization is required; new backups explicitly
+      // distinguish an empty collection ([]) from an invalid null collection.
+      if (USER_ARRAY_STORAGE_KEYS.includes(key) && result.value == null) {
+        if (result.exists) {
+          return {
+            ok: false,
+            code: "BACKUP_SOURCE_COLLECTION_INVALID",
+            message: "保存記録の一覧形式が正しくないため、バックアップを作成できません。",
+            key,
+          };
+        }
+        data[key] = [];
+      } else {
+        data[key] = result.value;
+      }
     }
     return {
       ok: true,
@@ -136,7 +150,7 @@ function createBackupService(gateway) {
   }
 
   function restoreInspectedBackup(inspection, options = {}) {
-    if (!inspection || inspection.inspectionVersion !== "restore-inspection-v1" || !inspection.snapshot) {
+    if (!inspection || inspection.inspectionVersion !== "restore-inspection-v2" || !inspection.snapshot) {
       return { ok: false, code: "RESTORE_INSPECTION_REQUIRED", message: "復元前の検査をやり直してください。" };
     }
     const freshInspection = inspectBackupSnapshot(inspection.snapshot, BACKUP_FORMAT_VERSION);

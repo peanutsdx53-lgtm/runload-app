@@ -72,8 +72,9 @@ function enabled(value, fallback = true) {
 
 export function normalizeAppSettings(settings = {}) {
   const source = settings && typeof settings === "object" ? settings : {};
+  // Only explicitly supported settings survive; no stale/unknown keys are
+  // propagated into the current application or newly exported backups.
   return Object.freeze({
-    ...source,
     appearanceMode: pick(source.appearanceMode, APPEARANCE_VALUES, DEFAULT_APP_SETTINGS.appearanceMode),
     colorTheme: pick(source.colorTheme, COLOR_VALUES, DEFAULT_APP_SETTINGS.colorTheme),
     textSize: pick(source.textSize, TEXT_SIZE_VALUES, DEFAULT_APP_SETTINGS.textSize),

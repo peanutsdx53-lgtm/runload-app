@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {normalizeAppSettings,mergeAppSettings,DEFAULT_APP_SETTINGS} from '../ui/appSettings.js';
+const source={...DEFAULT_APP_SETTINGS,oldTheme:'blue',retiredLayout:'legacy',__shadowSetting:'payload',appearanceMode:'dark'};
+const normalized=normalizeAppSettings(source);
+for(const key of ['oldTheme','retiredLayout','__shadowSetting'])assert.equal(Object.hasOwn(normalized,key),false,key);
+assert.equal(normalized.appearanceMode,'dark');
+assert.equal(mergeAppSettings(source,{textSize:'large',obsoleteOption:99}).textSize,'large');
+assert.equal(Object.hasOwn(mergeAppSettings(source,{textSize:'large',obsoleteOption:99}),'obsoleteOption'),false);
+assert.deepEqual(Object.keys(normalizeAppSettings({})).sort(),Object.keys(DEFAULT_APP_SETTINGS).sort());
+console.log('auditCurrentSettingsNoUnknownKeys: PASS; unknown settings discarded and current options kept');

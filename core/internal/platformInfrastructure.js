@@ -128,6 +128,18 @@ const STORAGE_KEYS = Object.freeze({
   readingReferenceHistory: `${STORAGE_NAMESPACE}-reading-reference-history-v1`,
 });
 
+// Current-format backups encode empty record collections as [] (never null).
+const USER_ARRAY_STORAGE_KEYS = Object.freeze([
+  STORAGE_KEYS.records,
+  STORAGE_KEYS.modelResultsRegionalV2,
+  STORAGE_KEYS.subjectiveFeedback,
+  STORAGE_KEYS.plans,
+  STORAGE_KEYS.courses,
+  STORAGE_KEYS.runMeasurements,
+  STORAGE_KEYS.selfUnderstandingThreads,
+  STORAGE_KEYS.selfInterpretations,
+]);
+
 const USER_DATA_STORAGE_KEYS = Object.freeze([
   STORAGE_KEYS.records,
   STORAGE_KEYS.modelResultsRegionalV2,
@@ -163,6 +175,7 @@ const CURRENT_APP_REMOVABLE_STORAGE_KEYS = Object.freeze([
 moduleExports["STORAGE_NAMESPACE"] = STORAGE_NAMESPACE;
 moduleExports["STORAGE_KEYS"] = STORAGE_KEYS;
 moduleExports["USER_DATA_STORAGE_KEYS"] = USER_DATA_STORAGE_KEYS;
+moduleExports["USER_ARRAY_STORAGE_KEYS"] = USER_ARRAY_STORAGE_KEYS;
 moduleExports["INTERNAL_RECOVERY_STORAGE_KEYS"] = INTERNAL_RECOVERY_STORAGE_KEYS;
 moduleExports["CURRENT_APP_REMOVABLE_STORAGE_KEYS"] = CURRENT_APP_REMOVABLE_STORAGE_KEYS;
 internalModules.storageKeys = moduleExports;
