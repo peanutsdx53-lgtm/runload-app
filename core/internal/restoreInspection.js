@@ -201,6 +201,19 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
   if (unexpectedKeys.length) {
     issues.push(issue("BLOCKING", "BACKUP_UNKNOWN_STORAGE_KEY", "backup", "バックアップに現在のアプリで扱えない保存領域があります。"));
   }
+  // A current-format backup contains every known key, including keys with a null value.
+  // Missing properties must not be interpreted as empty data: restoration removes absent keys.
+  const missingKeys = USER_DATA_STORAGE_KEYS.filter((key) => !Object.prototype.hasOwnProperty.call(snapshot.data, key));
+  if (missingKeys.length) {
+    issues.push(issue(
+      "BLOCKING",
+      "BACKUP_REQUIRED_STORAGE_KEY_MISSING",
+      "backup",
+      "バックアップに必要な保存項目がありません。データ消失を防ぐため、復元を中止してください。",
+      "",
+      { missingKeys },
+    ));
+  }
 
   const records = collection(snapshot, STORAGE_KEYS.records, []);
   const regionalResults = collection(snapshot, STORAGE_KEYS.modelResultsRegionalV2, []);
