@@ -1,6 +1,8 @@
 export function writeMobileLocalJson(key, value) {
   try {
-    globalThis.localStorage?.setItem(key, JSON.stringify(value));
+    const storage = globalThis.localStorage;
+    if (typeof storage?.setItem !== "function") return false;
+    storage.setItem(key, JSON.stringify(value));
     return true;
   } catch {
     return false;

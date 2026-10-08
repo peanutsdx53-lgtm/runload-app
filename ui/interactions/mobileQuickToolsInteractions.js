@@ -29,6 +29,9 @@ function bindLocationCapture(root) {
   if (!button || !status || !form) return () => {};
 
   const handleCapture = () => {
+    form.elements.latitude.value = "";
+    form.elements.longitude.value = "";
+    form.elements.accuracy.value = "";
     if (!globalThis.navigator?.geolocation) {
       status.textContent = "この端末では位置情報を利用できません。";
       status.dataset.state = "error";
@@ -37,29 +40,46 @@ function bindLocationCapture(root) {
     button.disabled = true;
     status.textContent = "現在地を取得しています…";
     status.dataset.state = "loading";
-    globalThis.navigator.geolocation.getCurrentPosition((position) => {
-      const latitude = Number(position.coords.latitude);
-      const longitude = Number(position.coords.longitude);
-      const accuracy = Number(position.coords.accuracy || 0);
-      form.elements.latitude.value = String(latitude);
-      form.elements.longitude.value = String(longitude);
-      form.elements.accuracy.value = String(accuracy);
-      status.textContent = `取得しました（精度 約${Math.max(1, Math.round(accuracy))}m）`;
-      status.dataset.state = "success";
-      button.disabled = false;
-    }, (error) => {
-      status.textContent = locationErrorMessage(error);
+    try {
+      globalThis.navigator.geolocation.getCurrentPosition((position) => {
+        const latitude = position?.coords?.latitude;
+        const longitude = position?.coords?.longitude;
+        const accuracy = Number(position?.coords?.accuracy || 0);
+        if (!validCoordinates(latitude, longitude)) {
+          status.textContent = "現在地を取得できませんでした。";
+          status.dataset.state = "error";
+          button.disabled = false;
+          return;
+        }
+        form.elements.latitude.value = String(latitude);
+        form.elements.longitude.value = String(longitude);
+        form.elements.accuracy.value = String(accuracy);
+        status.textContent = `取得しました（精度 約${Math.max(1, Math.round(Number.isFinite(accuracy) ? accuracy : 0))}m）`;
+        status.dataset.state = "success";
+        button.disabled = false;
+      }, (error) => {
+        status.textContent = locationErrorMessage(error);
+        status.dataset.state = "error";
+        button.disabled = false;
+      }, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 15000,
+      });
+    } catch {
+      status.textContent = "現在地を取得できませんでした。";
       status.dataset.state = "error";
       button.disabled = false;
-    }, {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 15000,
-    });
+    }
   };
 
   button.addEventListener("click", handleCapture);
   return () => button.removeEventListener("click", handleCapture);
+}
+
+function validCoordinates(latitude, longitude) {
+  return Number.isFinite(latitude) && latitude >= -90 && latitude <= 90
+    && Number.isFinite(longitude) && longitude >= -180 && longitude <= 180;
 }
 
 function formValues(form) {
@@ -68,9 +88,11 @@ function formValues(form) {
 
 function saveLocation(form, root) {
   const values = formValues(form);
-  const latitude = Number(values.latitude);
-  const longitude = Number(values.longitude);
-  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+  const latitudeText = String(values.latitude ?? "").trim();
+  const longitudeText = String(values.longitude ?? "").trim();
+  const latitude = Number(latitudeText);
+  const longitude = Number(longitudeText);
+  if (!latitudeText || !longitudeText || !validCoordinates(latitude, longitude)) {
     setFormStatus(root, "先に「現在地を取得」を押してください。", "error");
     return false;
   }
