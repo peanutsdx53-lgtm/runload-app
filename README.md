@@ -33,6 +33,14 @@ Runtime implementation is vanilla JavaScript, CSS, and HTML. The Web Manifest an
 
 Application data is stored locally in the browser. GPX analysis is local-only. Smartphone GPS measurement is processed in the browser; OpenStreetMap map images are the primary external network dependency during map display.
 
+## ローカル起動（VS Code + Live Server）
+
+1. このフォルダーをVS Codeで開きます。
+2. VS CodeのLive Serverで `index.html` を開きます（HTML/CSS/JavaScriptのビルドやnpmのインストールは不要です）。
+3. 初回表示後に走行記録・履歴を確認します。ブラウザのローカル保存を使用します。
+4. `file://` から直接開くとES ModulesやService Workerが正常動作しないため、HTTP/HTTPS環境で利用してください。
+5. オフライン対応はPWAの対応ブラウザ・初回キャッシュ登録に依存します。Live Serverのローカル起動だけで完全オフライン試験が完了するわけではありません。
+
 ## Distribution boundary
 
 A runtime-only distribution can be produced without the development/reference material.

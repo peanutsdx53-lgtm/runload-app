@@ -1,3 +1,4 @@
+import { escapeHtml } from "./commonComponents.js";
 import { matchesMobileLayout } from "./deviceLayout.js";
 
 let queued = false;
@@ -16,7 +17,7 @@ function selectorMarkup(cards, selectedIndex) {
       ${cards.map((card, index) => {
         const summary = cardSummary(card, index);
         const active = index === selectedIndex;
-        return `<button type="button" role="tab" data-desktop-body-timeline-select="${index}" aria-selected="${active ? "true" : "false"}"${active ? ' class="is-active"' : ""}><small>${summary.current ? "今回" : `記録 ${index + 1}`}</small><strong>${summary.date}</strong><span>${summary.facts}</span></button>`;
+        return `<button type="button" role="tab" data-desktop-body-timeline-select="${index}" aria-selected="${active ? "true" : "false"}"${active ? ' class="is-active"' : ""}><small>${summary.current ? "今回" : `記録 ${index + 1}`}</small><strong>${escapeHtml(summary.date)}</strong><span>${escapeHtml(summary.facts)}</span></button>`;
       }).join("")}
     </div>
   </section>`;

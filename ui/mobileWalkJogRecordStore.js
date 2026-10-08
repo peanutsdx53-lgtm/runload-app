@@ -234,7 +234,7 @@ function ensureSavePanel(root, activityId) {
       button.disabled = true;
       button.textContent = "保存しました";
     }
-    if (status) status.textContent = `活動別記録 ${saved.record.id} を端末内に保存しました。`;
+    if (status) status.textContent = "活動別記録を端末内に保存しました。";
     if (home) home.hidden = false;
   });
 }

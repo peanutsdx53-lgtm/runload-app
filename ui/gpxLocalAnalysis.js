@@ -28,7 +28,23 @@ export function parseGpxText(xmlText = "") {
   if (doc.querySelector("parsererror")) throw new Error("GPX_XML_PARSE_ERROR");
   const nodes = doc.querySelectorAll("trkpt, rtept");
   if (nodes.length > GPX_MAX_POINTS) throw new Error("GPX_TOO_MANY_POINTS");
-  const points = Array.from(nodes, parsePoint).filter(Boolean);
+  // GPX can contain several independent track segments/routes. A missing or
+  // invalid coordinate also breaks continuity: never infer a straight path
+  // across a gap simply because invalid points were discarded.
+  const points = [];
+  let segmentIndex = 0;
+  let previousParent = null;
+  let hadPreviousNode = false;
+  let previousValid = false;
+  for (const node of nodes) {
+    const parent = node.closest?.("trkseg, rte") || node.parentElement || null;
+    if (hadPreviousNode && (parent !== previousParent || !previousValid)) segmentIndex++;
+    const point = parsePoint(node);
+    if (point) points.push({ ...point, segmentIndex });
+    previousParent = parent;
+    previousValid = Boolean(point);
+    hadPreviousNode = true;
+  }
   if (points.length < 2) throw new Error("GPX_POINTS_REQUIRED");
   return { name: text(doc, "trk > name") || text(doc, "rte > name") || "", points };
 }
@@ -45,7 +61,9 @@ export function analyzeGpx(parsed = {}, { fallbackName = "GPXコース" } = {}) 
   const uphillGrades = [], downhillGrades = [];
   let elevationCoverageM = 0;
   for (let i=1;i<points.length;i++) {
-    const a=points[i-1], b=points[i]; const d=haversine(a,b); if (!(d>0)) continue; totalM += d;
+    const a=points[i-1], b=points[i];
+    if ((a.segmentIndex ?? 0) !== (b.segmentIndex ?? 0)) continue;
+    const d=haversine(a,b); if (!(d>0)) continue; totalM += d;
     if (a.ele == null || b.ele == null) continue;
     elevationCoverageM += d;
     const rise = b.ele - a.ele; const grade = rise / d * 100;

@@ -2,7 +2,37 @@ import { analyzeGpx, parseGpxText, GPX_MAX_TEXT_CHARS } from "../gpxLocalAnalysi
 import { saveGpxCandidate } from "../flowSessionState.js";
 const GPX_MAX_BYTES = GPX_MAX_TEXT_CHARS;
 function pct(v){return Number.isFinite(Number(v))?`${Number(v).toFixed(1).replace(/\.0$/,"")}%`:"—";}
-function profileSvg(points=[]){const valid=points.filter((p)=>p.ele!=null&&String(p.ele).trim()!==""&&Number.isFinite(Number(p.ele)));if(valid.length<2)return'<text x="380" y="110" text-anchor="middle">標高データが不足しています</text>';const sample=valid.filter((_,i)=>i%Math.max(1,Math.floor(valid.length/120))===0);if(sample.at(-1)!==valid.at(-1))sample.push(valid.at(-1));const vals=sample.map((p)=>Number(p.ele));const min=Math.min(...vals),max=Math.max(...vals),span=Math.max(1,max-min);const pts=sample.map((p,i)=>`${20+i*(720/Math.max(1,sample.length-1))},${190-(Number(p.ele)-min)/span*150}`).join(" ");return`<line x1="20" y1="190" x2="740" y2="190" class="grid"></line><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"></polyline><text x="20" y="25">${Math.round(max)} m</text><text x="20" y="207">${Math.round(min)} m</text>`;}
+function profileSvg(points = []) {
+  const valid = points.filter((point) => point.ele != null && String(point.ele).trim() !== "" && Number.isFinite(Number(point.ele)));
+  if (valid.length < 2) return '<text x="380" y="110" text-anchor="middle">標高データが不足しています</text>';
+  const heights = valid.map((point) => Number(point.ele));
+  const min = Math.min(...heights), max = Math.max(...heights), span = Math.max(1, max - min);
+  const groups = [];
+  let current = [];
+  let previousSegment = null;
+  for (let i = 0; i < points.length; i++) {
+    const point = points[i];
+    const validElevation = point.ele != null && String(point.ele).trim() !== "" && Number.isFinite(Number(point.ele));
+    const segment = point.segmentIndex ?? 0;
+    if (!validElevation || (current.length && segment !== previousSegment)) {
+      if (current.length) groups.push(current);
+      current = [];
+    }
+    if (validElevation) { current.push({ i, elevation: Number(point.ele) }); previousSegment = segment; }
+  }
+  if (current.length) groups.push(current);
+  const paths = groups.filter((group) => group.length >= 2).map((group) => {
+    const stride = Math.max(1, Math.floor(group.length / 120));
+    const sample = group.filter((_, i) => i % stride === 0);
+    if (sample.at(-1) !== group.at(-1)) sample.push(group.at(-1));
+    const coordinates = sample.map(({ i, elevation }) =>
+      `${20 + i * 720 / Math.max(1, points.length - 1)},${190 - (elevation - min) / span * 150}`
+    ).join(" ");
+    return `<polyline points="${coordinates}" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"></polyline>`;
+  });
+  if (!paths.length) return '<text x="380" y="110" text-anchor="middle">連続する標高データが不足しています</text>';
+  return `<line x1="20" y1="190" x2="740" y2="190" class="grid"></line>${paths.join("")}<text x="20" y="25">${Math.round(max)} m</text><text x="20" y="207">${Math.round(min)} m</text>`;
+}
 export function bindGpxAnalysis(){
   const file=document.getElementById("gpx-file"),status=document.getElementById("gpx-status"),area=document.getElementById("gpx-result-area"),apply=document.getElementById("gpx-apply"),ret=document.getElementById("gpx-return-to");if(!file||!apply)return;let candidate=null;
   const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text;};

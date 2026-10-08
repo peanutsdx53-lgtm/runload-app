@@ -46,20 +46,24 @@ function activityLabel(activityId) {
 }
 
 function formatNumber(value, digits = 2) {
+  if (value == null || (typeof value === "string" && !value.trim())) return "—";
   const number = Number(value);
   return Number.isFinite(number) ? number.toFixed(digits) : "—";
 }
 
 function formatDurationMinutes(value) {
+  if (value == null || (typeof value === "string" && !value.trim())) return "—";
   const minutes = Number(value);
   if (!Number.isFinite(minutes) || minutes < 0) return "—";
-  if (minutes < 60) return `${Math.round(minutes)}分`;
-  const hours = Math.floor(minutes / 60);
-  const remainder = Math.round(minutes - hours * 60);
+  const totalMinutes = Math.round(minutes);
+  if (totalMinutes < 60) return `${totalMinutes}分`;
+  const hours = Math.floor(totalMinutes / 60);
+  const remainder = totalMinutes % 60;
   return remainder ? `${hours}時間${remainder}分` : `${hours}時間`;
 }
 
 function formatSegmentDuration(seconds) {
+  if (seconds == null || (typeof seconds === "string" && !seconds.trim())) return "—";
   const value = Number(seconds);
   if (!Number.isFinite(value) || value < 0) return "—";
   const total = Math.round(value);
@@ -95,10 +99,10 @@ function evidenceLabel(region) {
 function regionRows(coverage) {
   if (!Array.isArray(coverage?.regions)) return "";
   return coverage.regions.map((region) => {
-    const value = Number.isFinite(Number(region?.index)) ? Number(region.index).toFixed(1) : "—";
+    const value = formatNumber(region?.index, 1);
     const label = REGION_LABELS[region?.regionId] || region?.regionId || "部位";
     return `<div class="mobile-activity-region-row">
-      <span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(region?.regionId || "")}</small></span>
+      <span><strong>${escapeHtml(label)}</strong></span>
       <b>${escapeHtml(value)}</b>
       <em>${escapeHtml(evidenceLabel(region))}</em>
     </div>`;
@@ -136,7 +140,7 @@ function recordDetail(record) {
   return `<section class="mobile-activity-history-full mobile-activity-history-detail">
     <header class="mobile-activity-history-head">
       <a href="#/history?mobileActivity=1">‹ 活動別履歴へ</a>
-      <div><small>SMARTPHONE ACTIVITY</small><h2>${escapeHtml(activityLabel(record.activityId))}</h2></div>
+      <div><small>活動別記録</small><h2>${escapeHtml(activityLabel(record.activityId))}</h2></div>
     </header>
     <section class="mobile-activity-detail-summary">
       <time>${escapeHtml(formatDateTime(record.createdAt))}</time>
@@ -148,7 +152,7 @@ function recordDetail(record) {
     </section>
     <p class="mobile-activity-boundary-note">異なる運動様式・異なる構成概念の12部位値は、合算・平均しません。数値は部位ごとの独立指標です。</p>
     <div class="mobile-activity-segments">${segments.map(segmentMarkup).join("") || '<p>区間データはありません。</p>'}</div>
-    <footer class="mobile-activity-history-footer"><small>スマホ拡張専用記録</small><span>既存ランニングCurrentとは分離して保存されています。</span></footer>
+    <footer class="mobile-activity-history-footer"><small>スマホ拡張専用記録</small><span>ランニング記録とは分けて保存されています。</span></footer>
   </section>`;
 }
 
@@ -167,7 +171,7 @@ function fullList(records) {
   return `<section class="mobile-activity-history-full">
     <header class="mobile-activity-history-head">
       <a href="#/history">‹ 通常の履歴へ</a>
-      <div><small>SMARTPHONE ACTIVITY</small><h2>活動別履歴</h2><p>ウォーキング・ジョギング・走り＋歩きを、ランニング記録とは分けて確認します。</p></div>
+      <div><small>活動別記録</small><h2>活動別履歴</h2><p>ウォーキング・ジョギング・走り＋歩きを、ランニング記録とは分けて確認します。</p></div>
     </header>
     <p class="mobile-activity-boundary-note">異なる運動様式・異なる構成概念の12部位値は、合算・平均しません。</p>
     <div class="mobile-activity-record-list">${records.length
@@ -179,7 +183,7 @@ function fullList(records) {
 function compactEntry(records) {
   const latest = records[0] || null;
   return `<section class="mobile-activity-history-entry">
-    <div><small>SMARTPHONE ACTIVITY</small><strong>活動別記録</strong><p>ウォーキング・ジョギング・走り＋歩きは、既存ランニング履歴と分けて保存しています。</p></div>
+    <div><small>活動別記録</small><strong>活動別記録</strong><p>ウォーキング・ジョギング・走り＋歩きは、既存ランニング履歴と分けて保存しています。</p></div>
     <span class="mobile-activity-history-count">${records.length}件</span>
     ${latest ? `<small>最新：${escapeHtml(activityLabel(latest.activityId))}・${escapeHtml(formatDateTime(latest.createdAt))}</small>` : ""}
     <a href="#/history?mobileActivity=1">活動別履歴を開く</a>
