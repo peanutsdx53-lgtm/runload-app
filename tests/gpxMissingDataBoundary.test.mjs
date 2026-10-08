@@ -28,7 +28,7 @@ function pointsWith(invalidPoint) {
 }
 const gpxUI = readFileSync(new URL('../ui/interactions/gpxAnalysisInteractions.js', import.meta.url), 'utf8');
 const withoutImport = gpxUI.replace(/^import\s+[^\n]+\n/gm, '').replaceAll('export function bindGpxAnalysis', 'function bindGpxAnalysis');
-const sandbox = {};
+const sandbox = { GPX_MAX_TEXT_CHARS: 10_000_000 };
 vm.runInNewContext(withoutImport + '\n globalThis.profileSvgForTest = profileSvg;', sandbox, { filename: 'gpxAnalysisInteractions.js' });
 const profileSvg = sandbox.profileSvgForTest;
 

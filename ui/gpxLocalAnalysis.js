@@ -1,3 +1,6 @@
+export const GPX_MAX_TEXT_CHARS = 10_000_000;
+export const GPX_MAX_POINTS = 100_000;
+
 function finite(value) { return Number.isFinite(Number(value)); }
 function toNumber(value) {
   if (value == null || (typeof value === "string" && !value.trim())) return null;
@@ -18,11 +21,14 @@ function parsePoint(node) {
   return { lat, lon, ele: toNumber(text(node, "ele")) };
 }
 export function parseGpxText(xmlText = "") {
+  const source = String(xmlText || "");
+  if (source.length > GPX_MAX_TEXT_CHARS) throw new Error("GPX_TOO_LARGE");
   if (typeof DOMParser === "undefined") throw new Error("DOMParser is unavailable");
-  const doc = new DOMParser().parseFromString(String(xmlText || ""), "application/xml");
+  const doc = new DOMParser().parseFromString(source, "application/xml");
   if (doc.querySelector("parsererror")) throw new Error("GPX_XML_PARSE_ERROR");
-  const nodes = [...doc.querySelectorAll("trkpt, rtept")];
-  const points = nodes.map(parsePoint).filter(Boolean);
+  const nodes = doc.querySelectorAll("trkpt, rtept");
+  if (nodes.length > GPX_MAX_POINTS) throw new Error("GPX_TOO_MANY_POINTS");
+  const points = Array.from(nodes, parsePoint).filter(Boolean);
   if (points.length < 2) throw new Error("GPX_POINTS_REQUIRED");
   return { name: text(doc, "trk > name") || text(doc, "rte > name") || "", points };
 }
