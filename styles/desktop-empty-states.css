@@ -74,7 +74,7 @@
     font-style: normal;
   }
 
-  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) {
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary):not(:has(> .detail-hero)) {
     width: min(100%, 54rem) !important;
     min-height: 21rem;
     margin: 2rem auto 0 !important;
@@ -89,24 +89,24 @@
     box-shadow: var(--shadow-card);
   }
 
-  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) .detail-title {
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary):not(:has(> .detail-hero)) .detail-title {
     margin: 0 !important;
   }
 
-  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) .detail-title h1 {
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary):not(:has(> .detail-hero)) .detail-title h1 {
     margin-top: 0.35rem !important;
     font-size: clamp(2rem, 3vw, 3rem) !important;
     line-height: 1.08 !important;
   }
 
-  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) .detail-title p:last-child {
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary):not(:has(> .detail-hero)) .detail-title p:last-child {
     margin-top: 0.7rem !important;
     color: var(--color-muted);
     font-size: 0.95rem !important;
     line-height: 1.6 !important;
   }
 
-  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) > .compact-boundary {
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary):not(:has(> .detail-hero)) > .compact-boundary {
     margin: 0 !important;
     padding: 1.2rem 1.3rem !important;
     border: 1px solid color-mix(in srgb, var(--color-line) 88%, var(--color-accent));
@@ -163,7 +163,7 @@
 
 @media (min-width: 55rem) and (max-width: 72rem) {
   .screen--result.screen-layout--result > .intro:has(> p + a),
-  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary) {
+  .screen--body-part-detail.screen-layout--result .detail-main:has(> .compact-boundary):not(:has(> .detail-hero)) {
     grid-template-columns: 1fr !important;
   }
 

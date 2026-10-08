@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { renderBodyPartDetailScreen as renderDesktopBodyPartDetail } from "../screens/desktop/bodyPartDetailScreen.js";
 import { renderBodyPartDetailScreen as renderMobileBodyPartDetail } from "../screens/mobile/bodyPartDetailScreen.js";
 import { PRIMARY_REGIONAL_V2_MODEL_VERSION } from "../core/appCore.js";
@@ -105,4 +106,11 @@ for (const renderer of [renderDesktopBodyPartDetail, renderMobileBodyPartDetail]
   assert.match(html, /前回からの変化 \+4/);
   assert.doesNotMatch(html, /999/);
 }
+// The unavailable-value empty-state CSS must never override ordinary numeric detail pages.
+const emptyCss = readFileSync(new URL("../styles/desktop-empty-states.css", import.meta.url), "utf8");
+const emptyStateSelector = ".detail-main:has(> .compact-boundary):not(:has(> .detail-hero))";
+assert.equal(emptyCss.split(emptyStateSelector).length - 1, 6);
+assert.doesNotMatch(emptyCss.replaceAll(emptyStateSelector, ""), /\.detail-main:has\(> \.compact-boundary\)/);
+assert.match(desktop, /class="detail-hero"/);
+assert.match(renderDesktopBodyPartDetail({ services, context: missingContext }), /この部位の数値を表示できません/);
 console.log("bodyPartDetailBaselineParity: ok");
