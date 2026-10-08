@@ -37,8 +37,10 @@ function upsertById(items, item, getId) {
 
 function storedRegionalResultForRecord(repository, record = {}) {
   const rows = repository?.loadForRecord?.(record.id) || [];
-  return [...rows]
-    .filter((item) => item?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
+  const currentRevision = String(record.updatedAt || record.createdAt || "");
+  const candidates = rows.filter((item) => item?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION);
+  const matching = candidates.filter((item) => String(item.source_record_revision || "") === currentRevision);
+  return [...(matching.length ? matching : candidates)]
     .sort((left, right) => (
       String(right.source_record_revision || "").localeCompare(String(left.source_record_revision || ""))
       || String(right.generated_at || "").localeCompare(String(left.generated_at || ""))
@@ -65,7 +67,8 @@ function createModelExperience(
     const primaryValidation = validatePrimaryRegionalV2ResultRecord(storedRegionalV2ResultRecord);
     const bodyMapRegions = storedRegionalV2ResultRecord.body_map_payload?.regions;
     const bodyMapValid = storedRegionalV2ResultRecord.state === "REST" || (Array.isArray(bodyMapRegions) && bodyMapRegions.length === 12);
-    if (!primaryValidation.valid || !bodyMapValid) {
+    const sourceRevisionMatches = String(storedRegionalV2ResultRecord.source_record_revision || "") === String(record.updatedAt || record.createdAt || "");
+    if (!primaryValidation.valid || !bodyMapValid || !sourceRevisionMatches) {
       const sessionSequence = sortedRecords
         .filter((item) => item.date === record.date)
         .findIndex((item) => item.id === record.id) + 1;
@@ -87,6 +90,7 @@ function createModelExperience(
           issueCodes: Object.freeze([
             ...primaryValidation.issues,
             ...(bodyMapValid ? [] : ["BODY_MAP_INVALID"]),
+            ...(sourceRevisionMatches ? [] : ["SOURCE_RECORD_REVISION_MISMATCH"]),
           ]),
         });
       } else {
@@ -96,6 +100,7 @@ function createModelExperience(
           issueCodes: Object.freeze([
             ...primaryValidation.issues,
             ...(bodyMapValid ? [] : ["BODY_MAP_INVALID"]),
+            ...(sourceRevisionMatches ? [] : ["SOURCE_RECORD_REVISION_MISMATCH"]),
             recovered.code || "RECONSTRUCTION_FAILED",
           ]),
         });
