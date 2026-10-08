@@ -79,6 +79,29 @@ function withinCollectionLimit(value, maximum, area, label, issues) {
   return false;
 }
 
+// GPS points are imported from portable JSON. Number(null), Number(false), and
+// Number("") all equal zero, but none represents a measured coordinate or time.
+// Retain explicitly numeric text values to avoid silently discarding older
+// records, while rejecting whitespace, booleans, arrays, and non-decimal text.
+function finiteGpsValue(value) {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value !== "string") return null;
+  const text = value.trim();
+  if (!text || !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(text)) return null;
+  const number = Number(text);
+  return Number.isFinite(number) ? number : null;
+}
+
+function isValidStoredGpsPoint(point) {
+  if (!isObject(point)) return false;
+  const latitude = finiteGpsValue(point.lat);
+  const longitude = finiteGpsValue(point.lon);
+  const timestamp = finiteGpsValue(point.timestamp);
+  return latitude !== null && latitude >= -90 && latitude <= 90
+    && longitude !== null && longitude >= -180 && longitude <= 180
+    && timestamp !== null;
+}
+
 function addDuplicateIssues(items, getId, area, label, issues) {
   const seen = new Set();
   const duplicates = new Set();
@@ -377,16 +400,7 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
         issues.push(issue("BLOCKING", "RUN_MEASUREMENT_TRACK_INVALID", "runMeasurements", "GPS走行軌跡の地点数を確認できません。", itemId));
         return;
       }
-      const invalidPoint = track.some((point) => (
-        !isObject(point)
-        || !Number.isFinite(Number(point.lat))
-        || Number(point.lat) < -90
-        || Number(point.lat) > 90
-        || !Number.isFinite(Number(point.lon))
-        || Number(point.lon) < -180
-        || Number(point.lon) > 180
-        || !Number.isFinite(Number(point.timestamp))
-      ));
+      const invalidPoint = track.some((point) => !isValidStoredGpsPoint(point));
       if (invalidPoint) {
         issues.push(issue("BLOCKING", "RUN_MEASUREMENT_POINT_INVALID", "runMeasurements", "GPS走行軌跡に読み取れない地点があります。", itemId));
       }

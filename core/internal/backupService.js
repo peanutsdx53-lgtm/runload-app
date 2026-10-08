@@ -4,7 +4,7 @@ import { internalModules } from "./modules.js";
 // ===== core/storage/backupService.js =====
 {
 const moduleExports = Object.create(null);
-const { INPUT_LIMITS, parseJsonText } = internalModules.inputSafety;
+const { INPUT_LIMITS, byteLength, parseJsonText } = internalModules.inputSafety;
 const { inspectBackupSnapshot, inspectReadingReferenceHistory, RESTORE_STATUS } = internalModules.restoreInspection;
 const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS, USER_ARRAY_STORAGE_KEYS } = internalModules.storageKeys;
 
@@ -104,8 +104,32 @@ function createBackupService(gateway) {
   function tryExportBackupText() {
     const result = tryCreateBackupSnapshot();
     if (!result.ok) return result;
+    // The source storage may have been corrupted outside this workflow.
+    // Refuse a backup which this application's own restore validator rejects.
+    const inspection = inspectBackupSnapshot(result.snapshot, BACKUP_FORMAT_VERSION);
+    if (!inspection.canRestore) {
+      return {
+        ok: false,
+        code: "BACKUP_EXPORT_SOURCE_INVALID",
+        message: "復元できない形式の保存データがあるため、バックアップ作成を中止しました。",
+        issues: inspection.issues,
+      };
+    }
     try {
-      return { ok: true, snapshot: result.snapshot, text: JSON.stringify(result.snapshot, null, 2) };
+      const text = JSON.stringify(result.snapshot, null, 2);
+      // Portable backups must be readable by the same application's importer.
+      // Reject exports exceeding the importer limit rather than giving the user
+      // a seemingly successful file which cannot subsequently be restored.
+      const bytes = byteLength(text);
+      if (bytes > INPUT_LIMITS.backupBytes) {
+        return {
+          ok: false,
+          code: "BACKUP_EXPORT_TOO_LARGE",
+          message: "保存データが大きすぎるため、復元できないバックアップの作成を中止しました。",
+          details: { bytes, maximumBytes: INPUT_LIMITS.backupBytes },
+        };
+      }
+      return { ok: true, snapshot: result.snapshot, text };
     } catch (error) {
       return {
         ok: false,
