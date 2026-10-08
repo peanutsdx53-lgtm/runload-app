@@ -87,4 +87,22 @@ for (const renderer of [renderDesktopBodyPartDetail, renderMobileBodyPartDetail]
   assert.match(r11Html, /内側縦足弓を直接測定した値ではありません/);
   assert.doesNotMatch(renderer({ services, context }), /data-scientific-boundary="r11"/);
 }
+// Multiple records on one day use date, createdAt and record ID; later records never become prior records.
+const sameDay = [
+  experience("same-future", "2026-10-05", 999),
+  experience("same-prior", "2026-10-05", 102),
+  experience("same-focus", "2026-10-05", 106),
+];
+sameDay[0].record.createdAt = "2026-10-05T10:00:00.000Z";
+sameDay[1].record.createdAt = "2026-10-05T08:00:00.000Z";
+sameDay[2].record.createdAt = "2026-10-05T09:00:00.000Z";
+const sameDayServices = { workflows: { records: {
+  loadExperience: (id) => sameDay.find((item) => item.record.id === id) || null,
+  loadAllExperiences: () => sameDay,
+} } };
+for (const renderer of [renderDesktopBodyPartDetail, renderMobileBodyPartDetail]) {
+  const html = renderer({ services: sameDayServices, context: { parameters: new URLSearchParams("recordId=same-focus&regionId=BA-DISP-023") } });
+  assert.match(html, /前回からの変化 \+4/);
+  assert.doesNotMatch(html, /999/);
+}
 console.log("bodyPartDetailBaselineParity: ok");

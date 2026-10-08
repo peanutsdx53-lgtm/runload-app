@@ -1,4 +1,5 @@
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
+import { compareExperienceRecordChronology as recordChronology } from "../shared/recordUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
 import {
@@ -36,10 +37,10 @@ function comparableHistory(experience, regionId, allExperiences) {
   if (!signature) return [];
   return allExperiences
     .filter((item) => item?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
-    .filter((item) => String(item.record?.date || "") <= String(experience.record?.date || ""))
+    .filter((item) => recordChronology(item, experience) <= 0)
     .map((item) => ({ experience: item, row: item.regionalV2Result?.regions?.find((candidate) => candidate.regionId === regionId), signature: signatureFor(item.regionalV2ResultRecord, regionId) }))
     .filter((item) => item.row && finite(item.row.value) && sameSignature(signature, item.signature))
-    .sort((a, b) => String(a.experience.record?.date || "").localeCompare(String(b.experience.record?.date || "")))
+    .sort((a, b) => recordChronology(a.experience, b.experience))
     .slice(-5);
 }
 
