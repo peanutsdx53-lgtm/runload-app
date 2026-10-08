@@ -277,6 +277,7 @@ function evalSegments(segments,record,{useWholeCadence=false}={}){
     })),
   }));
 }
+
 function calculateRun(record={}){
   const exposure=deriveRunningExposure(record);if(exposure.state!=='OK')return {state:exposure.state,modelVersion:MODEL_VERSION,outputSemanticVersion:OUTPUT_SEMANTIC_VERSION};
   const seg=resolveSegments(record,exposure);
