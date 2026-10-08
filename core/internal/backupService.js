@@ -5,7 +5,7 @@ import { internalModules } from "./modules.js";
 {
 const moduleExports = Object.create(null);
 const { INPUT_LIMITS, parseJsonText } = internalModules.inputSafety;
-const { inspectBackupSnapshot, RESTORE_STATUS } = internalModules.restoreInspection;
+const { inspectBackupSnapshot, inspectReadingReferenceHistory, RESTORE_STATUS } = internalModules.restoreInspection;
 const { STORAGE_KEYS, USER_DATA_STORAGE_KEYS, USER_ARRAY_STORAGE_KEYS } = internalModules.storageKeys;
 
 const BACKUP_FORMAT_VERSION = "runner-load-app-new-backup-v2";
@@ -69,6 +69,18 @@ function createBackupService(gateway) {
       } else {
         data[key] = result.value;
       }
+    }
+    const recordIds = new Set((Array.isArray(data[STORAGE_KEYS.records]) ? data[STORAGE_KEYS.records] : [])
+      .map((record) => String(record?.id || "")).filter(Boolean));
+    const readingIssues = inspectReadingReferenceHistory(data[STORAGE_KEYS.readingReferenceHistory], recordIds);
+    if (readingIssues.length) {
+      return {
+        ok: false,
+        code: "BACKUP_SOURCE_READING_REFERENCE_INVALID",
+        message: "関連情報の提示履歴に不正なデータがあるため、バックアップを作成できません。",
+        key: STORAGE_KEYS.readingReferenceHistory,
+        issues: readingIssues,
+      };
     }
     return {
       ok: true,

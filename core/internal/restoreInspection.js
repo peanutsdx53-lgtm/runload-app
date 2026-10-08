@@ -35,6 +35,35 @@ function issue(severity, code, area, message, itemId = "", details = {}) {
   return Object.freeze({ severity, code, area, message, itemId: String(itemId || ""), details: Object.freeze({ ...details }) });
 }
 
+// A malformed Reading history must never be silently reduced to an empty list
+// during backup restoration. These are presented-article IDs linked to records,
+// not proof that the article was read. Null represents a never-created history.
+function inspectReadingReferenceHistory(value, validRecordIds = null) {
+  if (value == null) return Object.freeze([]);
+  const area = "readingReferenceHistory";
+  const invalid = (code, recordId = "") => Object.freeze([
+    issue("BLOCKING", code, area, "関連情報の提示履歴に不正なデータがあります。復元・書き出しは中止しました。", recordId),
+  ]);
+  if (!isObject(value) || value.version !== 1 || !Array.isArray(value.entries) || value.entries.length > 24) {
+    return invalid("READING_REFERENCE_HISTORY_INVALID");
+  }
+  const seen = new Set();
+  for (const entry of value.entries) {
+    if (!isObject(entry) || typeof entry.recordId !== "string" || typeof entry.articleId !== "string") {
+      return invalid("READING_REFERENCE_ENTRY_INVALID");
+    }
+    const { recordId, articleId } = entry;
+    if (!recordId.trim() || !articleId.trim() || recordId !== recordId.trim() || articleId !== articleId.trim()
+      || recordId.length > 160 || articleId.length > 160) {
+      return invalid("READING_REFERENCE_ENTRY_INVALID", recordId);
+    }
+    if (seen.has(recordId)) return invalid("READING_REFERENCE_DUPLICATE_RECORD", recordId);
+    seen.add(recordId);
+    if (validRecordIds && !validRecordIds.has(recordId)) return invalid("READING_REFERENCE_RECORD_MISSING", recordId);
+  }
+  return Object.freeze([]);
+}
+
 
 function withinCollectionLimit(value, maximum, area, label, issues) {
   if (!Array.isArray(value)) return false;
@@ -324,6 +353,10 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
 
   if (recordsWithinLimit) inspectRecords(records, issues);
   const recordIds = new Set(recordsWithinLimit ? records.map((item) => String(item?.id || "")).filter(Boolean) : []);
+  issues.push(...inspectReadingReferenceHistory(
+    snapshot.data[STORAGE_KEYS.readingReferenceHistory],
+    recordsWithinLimit ? recordIds : null,
+  ));
   if (regionalWithinLimit) inspectRegionalResults(regionalResults, recordIds, issues);
   if (feedbackWithinLimit) inspectFeedback(feedback, recordIds, issues);
   if (plansWithinLimit) inspectPlans(plans, recordIds, issues);
@@ -425,5 +458,6 @@ function inspectBackupSnapshot(snapshot, backupFormatVersion) {
 moduleExports["RESTORE_INSPECTION_VERSION"] = RESTORE_INSPECTION_VERSION;
 moduleExports["RESTORE_STATUS"] = RESTORE_STATUS;
 moduleExports["inspectBackupSnapshot"] = inspectBackupSnapshot;
+moduleExports["inspectReadingReferenceHistory"] = inspectReadingReferenceHistory;
 internalModules.restoreInspection = moduleExports;
 }
