@@ -43,6 +43,13 @@ async function recoverStalledBoot() {
     return;
   }
 
+  // While offline, removing the service worker or cached app files can make
+  // recovery impossible. Preserve the last usable offline installation.
+  if (navigator.onLine === false) {
+    setBootMessage("オフラインで起動できません。接続後に一度アプリを開いてください。");
+    return;
+  }
+
   let alreadyAttempted = false;
   try {
     alreadyAttempted = sessionStorage.getItem(BOOT_RECOVERY_SESSION_KEY) === "1";

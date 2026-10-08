@@ -1,4 +1,4 @@
-export const APP_VERSION = "2026.10.08.31";
+export const APP_VERSION = "2026.10.08.32";
 export const APP_VERSION_LABEL = `v${APP_VERSION}`;
 
 // Keep this release identifier aligned with service-worker.js before publishing.
@@ -57,6 +57,11 @@ async function requestServiceWorkerUpdate() {
 
 async function resetUpdateState(button) {
   if (resetting) return;
+  if (navigator.onLine === false) {
+    const status = document.querySelector("[data-update-reset-status]");
+    if (status) status.textContent = "オフラインでは更新できません。通信できるときに実行してください。";
+    return;
+  }
   if (!window.confirm("記録などの保存データは残したまま、最新版を再読み込みしますか？")) return;
   resetting = true;
   const status = document.querySelector("[data-update-reset-status]");
