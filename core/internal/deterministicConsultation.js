@@ -1,4 +1,5 @@
 import { isPresentFiniteNumber as finite } from "../../shared/valueUtilities.js";
+import { compareExperienceRecordChronology } from "../../shared/recordUtilities.js";
 import "./bodyRegionTerminology.js";
 import { internalModules } from "./modules.js";
 
@@ -201,13 +202,10 @@ function primaryPreviousComparable(experience, allExperiences, regionId, current
   if (!finite(currentRow?.value)) return Object.freeze({ status: "CURRENT_CONDITION_UNAVAILABLE" });
   const currentSignature = buildPrimaryRegionalV2ComparisonSignature(experience?.regionalV2ResultRecord, currentRow);
   if (!currentSignature) return Object.freeze({ status: "CURRENT_CONDITION_UNAVAILABLE" });
-  const currentDate = String(experience?.record?.date || "");
-  const currentCreatedAt = String(experience?.record?.createdAt || "");
-  const earlier = (allExperiences || []).filter((item) => item?.record?.id && item.record.id !== experience?.record?.id).filter((item) => {
-    const date = String(item.record.date || "");
-    if (date < currentDate) return true;
-    return date === currentDate && String(item.record.createdAt || "") < currentCreatedAt;
-  }).sort((a,b)=>String(a.record.date||"").localeCompare(String(b.record.date||"")) || String(a.record.createdAt||"").localeCompare(String(b.record.createdAt||"")));
+  const earlier = (allExperiences || [])
+    .filter((item) => item?.record?.id && item.record.id !== experience?.record?.id)
+    .filter((item) => compareExperienceRecordChronology(item, experience) < 0)
+    .sort(compareExperienceRecordChronology);
   let sawRegion = false;
   for (const prior of earlier.reverse()) {
     const priorRecord = prior?.regionalV2ResultRecord;

@@ -4,7 +4,7 @@ import { renderInterpretationRoom } from "../ui/interpretationRoomPresentation.j
 import { resolveAutoInterpretationReferenceKnowledge } from "../ui/interpretationReferenceKnowledge.js";
 import {
   loadInterpretationReferenceHistory,
-  rememberInterpretationReferenceSelection,
+  rememberInterpretationReferenceSelectionResult,
 } from "../ui/interpretationReferenceHistory.js";
 
 const ALLOWED_ORIGINS = new Set(["result", "history", "body-part-detail", "simulation", "home"]);
@@ -90,8 +90,11 @@ export function renderInterpretationRoomScreenWithPresentation({ services, conte
   const savedInterpretation = services?.storage?.selfInterpretations?.findByRecordId?.(recordId) || null;
   const storedReferenceHistory = loadInterpretationReferenceHistory(services?.storage?.gateway);
   const autoReference = resolveAutoInterpretationReferenceKnowledge(output, selfUnderstanding, { recommendationHistory: storedReferenceHistory });
-  const recommendationHistory = autoReference?.id && recordId
-    ? rememberInterpretationReferenceSelection(services?.storage?.gateway, { recordId, articleId: autoReference.id })
-    : storedReferenceHistory;
-  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${renderInterpretationRoom({ output, selfUnderstanding, savedInterpretation, interpretationFocus, compactLayout, recommendationHistory })}</section>`;
+  const saveResult = autoReference?.id && recordId
+    ? rememberInterpretationReferenceSelectionResult(services?.storage?.gateway, { recordId, articleId: autoReference.id })
+    : { ok: true, entries: storedReferenceHistory };
+  const saveWarning = !saveResult.ok
+    ? '<p role="status" class="input-warning">関連情報の提示履歴を保存できませんでした。今回の表示は保存済み履歴に反映されていません。</p>'
+    : "";
+  return `<section class="screen screen--interpretation-room" data-interpretation-room data-origin="${origin}">${saveWarning}${renderInterpretationRoom({ output, selfUnderstanding, savedInterpretation, interpretationFocus, compactLayout, recommendationHistory: saveResult.entries })}</section>`;
 }

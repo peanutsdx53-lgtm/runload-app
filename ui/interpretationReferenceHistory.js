@@ -30,12 +30,28 @@ export function loadInterpretationReferenceHistory(gateway) {
 }
 
 export function rememberInterpretationReferenceSelection(gateway, { recordId = "", articleId = "" } = {}) {
+  return rememberInterpretationReferenceSelectionResult(gateway, { recordId, articleId }).entries;
+}
+
+// Keep the existing list-returning API for existing callers, while providing an
+// explicit storage outcome for screens that must not claim a failed write succeeded.
+export function rememberInterpretationReferenceSelectionResult(gateway, { recordId = "", articleId = "" } = {}) {
   const entry = normalizeEntry({ recordId, articleId });
-  if (!entry || !gateway?.writeJson) return loadInterpretationReferenceHistory(gateway);
   const current = loadInterpretationReferenceHistory(gateway);
+  if (!entry || !gateway?.writeJson) {
+    return Object.freeze({ ok: false, code: "READING_HISTORY_INVALID_OR_UNAVAILABLE", entries: current });
+  }
   const entries = [entry, ...current.filter((item) => item.recordId !== entry.recordId)].slice(0, MAX_HISTORY_ENTRIES);
-  gateway.writeJson(STORAGE_KEYS.readingReferenceHistory, { version: HISTORY_VERSION, entries });
-  return Object.freeze(entries.map((item) => Object.freeze({ ...item })));
+  let saved;
+  try {
+    saved = gateway.writeJson(STORAGE_KEYS.readingReferenceHistory, { version: HISTORY_VERSION, entries });
+  } catch {
+    return Object.freeze({ ok: false, code: "READING_HISTORY_WRITE_FAILED", entries: current });
+  }
+  if (saved?.ok !== true) {
+    return Object.freeze({ ok: false, code: saved?.code || "READING_HISTORY_WRITE_FAILED", entries: current });
+  }
+  return Object.freeze({ ok: true, code: "READING_HISTORY_SAVED", entries: Object.freeze(entries.map((item) => Object.freeze({ ...item }))) });
 }
 
 export const INTERPRETATION_REFERENCE_HISTORY_LIMIT = MAX_HISTORY_ENTRIES;

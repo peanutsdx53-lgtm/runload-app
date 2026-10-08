@@ -33,7 +33,7 @@ function latestRun(services){
 
 function sourceRun(services,recordId=""){
   const requested=recordId?services?.storage?.records?.findById?.(recordId):null;
-  return requested?.activityType==="run"?requested:latestRun(services);
+  return recordId ? (requested?.activityType === "run" ? requested : null) : latestRun(services);
 }
 
 function pace(distance,duration){
@@ -66,6 +66,17 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
   const backLabel=from==="plan"?"予定へ戻る":from==="interpretation-room"?"結果の整理へ戻る":"ホームへ戻る";
 
   const recent=sourceRun(services,recordId);
+  if (!recent) {
+    const missingRequested = Boolean(recordId);
+    const message = missingRequested
+      ? "指定した走行記録が見つかりません。別の記録を選び直してください。"
+      : "比較できる走行記録がまだありません。最初に走行記録を保存してください。";
+    return `<div class="screen screen--simulation screen-layout screen-layout--simulation condition-compare">
+      <a class="back-link" href="${escapeHtml(back)}">‹ ${escapeHtml(backLabel)}</a>
+      <section class="intro condition-compare-hero"><div class="condition-compare-hero__copy"><p class="eyebrow">条件比較</p><h1>比較元の記録がありません</h1><p role="status">${message}</p>
+      <a class="secondary-action" href="${missingRequested ? "#/history" : "#/record-input"}">${missingRequested ? "履歴から選び直す" : "走行記録を入力する"}</a></div></section>
+    </div>`;
+  }
   const sourceExperience=recent?.id&&services?.workflows?.records?.loadExperience
     ? services.workflows.records.loadExperience(recent.id)
     : null;

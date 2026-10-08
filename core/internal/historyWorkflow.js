@@ -1,4 +1,5 @@
 import { cloneJsonValue as cloneValue } from "../../shared/valueUtilities.js";
+import { compareExperienceRecordChronology } from "../../shared/recordUtilities.js";
 import "./recordWorkflow.js";
 import { internalModules } from "./modules.js";
 import {
@@ -123,7 +124,7 @@ function createHistoryWorkflow({
         ];
         return searchable.some((value) => includesText(value, query));
       })
-      .sort((left, right) => right.date.localeCompare(left.date) || right.id.localeCompare(left.id));
+      .sort((left, right) => compareExperienceRecordChronology({ record: right }, { record: left }));
 
     return records.map((record) => ({
       record: cloneValue(record),
