@@ -1,6 +1,7 @@
 import { getSessionStorage as safeSessionStorage } from "./mobileStorageUtilities.js";
 import { toFiniteNumber as finiteNumber } from "../shared/valueUtilities.js";
 import { matchesMobileLayout } from "./deviceLayout.js";
+import { escapeHtml } from "./commonComponents.js";
 import {
   STRICT_ALL12_BANDS,
   summarizeMobileWalkJogCoverage,
@@ -140,10 +141,11 @@ function formatSpeed(speedMps) {
 }
 
 function regionDetails(coverage) {
-  if (!coverage?.regions) return "";
+  if (!Array.isArray(coverage?.regions)) return "";
   return `<details><summary>12部位の計算結果</summary><div class="mobile-gait-region-list">${coverage.regions.map((region) => {
     const index = Number.isFinite(region?.index) ? region.index.toFixed(1) : "—";
-    return `<span><b>${region.regionId}</b><strong>${index}</strong><small>${region.outputStatus === "NO_OUTPUT" ? "根拠範囲外" : region.evidenceTier}</small></span>`;
+    const evidence = region?.outputStatus === "NO_OUTPUT" ? "根拠範囲外" : (region?.evidenceTier || "根拠未確認");
+    return `<span><b>${escapeHtml(region?.regionId || "")}</b><strong>${index}</strong><small>${escapeHtml(evidence)}</small></span>`;
   }).join("")}</div></details>`;
 }
 
@@ -157,8 +159,8 @@ function segmentCard(segment, index) {
         ? `${coverage.availableRegionCount}/12部位を根拠範囲内で計算`
         : "距離・時間不足";
   return `<article class="mobile-gait-segment-result">
-    <div><small>区間 ${index + 1}</small><strong>${ACTIVITY_LABELS[segment.gaitId] || segment.gaitId}</strong></div>
-    <p>${segment.distanceKm.toFixed(2)} km・${formatSpeed(segment.speedMps)}・${status}</p>
+    <div><small>区間 ${index + 1}</small><strong>${escapeHtml(ACTIVITY_LABELS[segment.gaitId] || segment.gaitId || "活動不明")}</strong></div>
+    <p>${Number.isFinite(segment.distanceKm) ? segment.distanceKm.toFixed(2) : "—"} km・${formatSpeed(segment.speedMps)}・${escapeHtml(status)}</p>
     ${regionDetails(coverage)}
   </article>`;
 }
@@ -180,7 +182,7 @@ function renderPostResult(root, payload) {
     : payload.activityId === "RUNNING_CURRENT"
       ? "既存のランニング計算経路をそのまま使用します。"
       : "12部位は独立した指標として計算し、共通倍率は使用しません。";
-  panel.innerHTML = `<div class="mobile-gait-analysis-result__head"><small>活動別計算</small><strong>${ACTIVITY_LABELS[payload.activityId] || payload.activityId}</strong></div>
+  panel.innerHTML = `<div class="mobile-gait-analysis-result__head"><small>活動別計算</small><strong>${escapeHtml(ACTIVITY_LABELS[payload.activityId] || payload.activityId || "活動不明")}</strong></div>
     <p>${note}</p>
     <div class="mobile-gait-analysis-result__segments">${segments.map(segmentCard).join("")}</div>`;
 }
