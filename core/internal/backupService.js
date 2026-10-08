@@ -197,7 +197,10 @@ function createBackupService(gateway) {
       return { ok: false, code: "BACKUP_REVIEW_ACK_REQUIRED", message: "要確認の内容を確認してください。", inspection: freshInspection };
     }
 
-    const previousResult = tryCreateBackupSnapshot();
+    // The automatic pre-restore copy must itself be restorable. A source
+    // snapshot which fails the export contract is not a safe undo point.
+    // Validate and size-check before performing any destructive transaction.
+    const previousResult = tryExportBackupText();
     if (!previousResult.ok) {
       return {
         ok: false,
