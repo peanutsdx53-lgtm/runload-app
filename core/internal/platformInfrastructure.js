@@ -340,15 +340,38 @@ function createStorageGateway(storage) {
   }
 
   function transact(changes = []) {
-    const normalizedChanges = changes.map((change) => ({
-      key: String(change.key),
-      remove: Boolean(change.remove),
-      rawValue: change.remove
-        ? null
-        : Object.prototype.hasOwnProperty.call(change, "rawValue")
-          ? String(change.rawValue)
-          : JSON.stringify(change.value),
-    }));
+    // Serialize every proposed value before touching storage. JSON.stringify may
+    // throw (BigInt / cycles), or produce undefined (functions / undefined).
+    // Neither outcome may be reported as a successful, readable JSON save.
+    let normalizedChanges;
+    try {
+      if (!Array.isArray(changes)) throw new TypeError("Invalid storage changes");
+      normalizedChanges = changes.map((change) => {
+        if (!change || typeof change !== "object") throw new TypeError("Invalid storage change");
+        // An implicit key such as undefined must never become a persisted
+        // string key through coercion. All current callers use named keys.
+        if (typeof change.key !== "string" || !change.key.trim()) {
+          throw new TypeError("Storage key must be a non-empty string");
+        }
+        const remove = Boolean(change.remove);
+        const hasRawValue = Object.prototype.hasOwnProperty.call(change, "rawValue");
+        const rawValue = remove ? null : hasRawValue
+          ? change.rawValue
+          : JSON.stringify(change.value);
+        if (!remove) {
+          if (typeof rawValue !== "string") {
+            throw new TypeError("Storage value is not serializable JSON");
+          }
+          // Transactions back JSON data. Raw non-JSON values belong to the
+          // explicit writeRaw API; otherwise a subsequent readJson fails.
+          JSON.parse(rawValue);
+        }
+        return { key: change.key, remove, rawValue };
+      });
+    } catch (error) {
+      lastFailure = createFailure("serialize", "", error);
+      return { ...cloneValue(lastFailure), committedCount: 0 };
+    }
     const keys = normalizedChanges.map((change) => change.key);
     if (new Set(keys).size !== keys.length) {
       lastFailure = {
@@ -371,7 +394,21 @@ function createStorageGateway(storage) {
         else targetStorage.setItem(change.key, change.rawValue);
         committedCount += 1;
       } catch (error) {
-        const rollback = restoreSnapshot(snapshot.items.slice(0, committedCount));
+        // An adapter might mutate the failing key before throwing. Restore it
+        // only if its raw value changed: trying to rewrite an unchanged key can
+        // itself fail permanently under a full/quota-limited storage backend.
+        const rollbackItems = snapshot.items.slice(0, committedCount);
+        const failedItem = snapshot.items[committedCount];
+        try {
+          const rawAfterFailure = targetStorage.getItem(change.key);
+          if (rawAfterFailure !== (failedItem.existed ? failedItem.rawValue : null)) {
+            rollbackItems.push(failedItem);
+          }
+        } catch {
+          // The state is unknown. Attempt restoration and report its failures.
+          rollbackItems.push(failedItem);
+        }
+        const rollback = restoreSnapshot(rollbackItems);
         lastFailure = {
           ...createFailure(change.remove ? "remove" : "write", change.key, error),
           rollback,
