@@ -161,12 +161,7 @@ function renderMobileHomeOs({ services, latestExperience, draft, confirmationThe
     { href: "#/settings?from=home", label: "設定", emoji: "⚙️", tone: "gray" },
   ];
   const optionalApps = [
-    { href: "#/location-note", label: "地点メモ", emoji: "📍", tone: "cyan", optional: true },
-    { href: "#/quick-note", label: "1分メモ", emoji: "📝", tone: "violet", optional: true },
-    { href: "#/gear-note", label: "装備メモ", emoji: "🎒", tone: "orange", optional: true },
     { href: "#/departure-check", label: "出発チェック", emoji: "✅", tone: "green", optional: true },
-    { href: "#/fuel-note", label: "補給メモ", emoji: "💧", tone: "cyan", optional: true },
-    { href: "#/photo-note", label: "写真メモ", emoji: "📷", tone: "gray", optional: true },
     { href: "#/pace-tool", label: "ペース換算", emoji: "🧮", tone: "violet", optional: true },
   ];
   const dock = [

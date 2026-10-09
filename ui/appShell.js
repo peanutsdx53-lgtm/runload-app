@@ -68,9 +68,6 @@ const PRIMARY_SECTION_BY_SCREEN = Object.freeze({
   terms: "more",
   about: "more",
   settings: "more",
-  "location-note": "home",
-  "quick-note": "home",
-  "gear-note": "home",
 });
 
 function navigationHref(item) {

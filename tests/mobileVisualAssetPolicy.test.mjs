@@ -55,7 +55,7 @@ await test('BUNDLED-IMAGE-ASSETS-ARE-EXPLICITLY-ACCOUNTED-FOR', () => {
 
 await test('SMARTPHONE-HOME-LAUNCHERS-USE-UNICODE-EMOJI', () => {
   const home = read('screens/mobile/homeScreen.js');
-  for (const emoji of ['⚖️', '📅', '📖', '📤', '⚙️', '📒', '⏱️', '🕘', '🗺️', '📍', '📝', '🎒', '✅', '💧', '📷', '🧮']) {
+  for (const emoji of ['⚖️', '📅', '📖', '📤', '⚙️', '📒', '⏱️', '🕘', '🗺️', '✅', '🧮']) {
     assert.ok(home.includes(`emoji: "${emoji}"`), `missing emoji ${emoji}`);
   }
   assert.ok(!home.includes('function mobileHomeIcon'));
@@ -66,10 +66,9 @@ await test('QUICK-TOOL-DELETIONS-REQUIRE-CONFIRMATION', () => {
   const interactions = read('ui/interactions/mobileQuickToolsInteractions.js');
   assert.ok(interactions.includes('function confirmDelete(tool)'));
   assert.ok(interactions.includes('globalThis.confirm(`${label}を削除しますか？`)'));
-  assert.ok(interactions.includes('if (!confirmDelete(tool)) return;'));
-  for (const label of ['地点メモ', '1分メモ', '装備メモ', '出発チェック', '補給メモ']) {
-    assert.ok(interactions.includes(`"${label}"`));
-  }
+  assert.ok(interactions.includes('tool !== "departure" || !confirmDelete(tool)'));
+  assert.ok(interactions.includes('"出発チェック"'));
+  for (const label of ['地点メモ', '1分メモ', '装備メモ', '補給メモ']) assert.ok(!interactions.includes(`"${label}"`));
 });
 
 const failed = results.filter((item) => item.status === 'FAIL');

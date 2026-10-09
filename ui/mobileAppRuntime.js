@@ -41,6 +41,7 @@ export function notifyScreenRendered(screenName = "") {
 
 export function bindPlatformShell(root) { return bindMobileHomeReturnTransitions(root); }
 export async function clearPlatformUserData() {
-  await clearAllPhotoMemos();
-  try { globalThis.localStorage?.removeItem("running-record-mobile-home-last-launch-v1"); } catch {}
+  if (!await clearAllPhotoMemos()) return false;
+  try { globalThis.localStorage?.removeItem("running-record-mobile-home-last-launch-v1"); } catch { return false; }
+  return true;
 }

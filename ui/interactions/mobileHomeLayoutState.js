@@ -8,7 +8,6 @@ import {
   placementIsFree,
   usedRowCount,
 } from "./mobileHomeGridModel.js";
-import { loadMobileQuickTools } from "../mobileQuickToolsStore.js";
 import { buildSelfUnderstandingView } from "../../core/selfUnderstandingCore.js";
 
 export const MAX_HOME_PAGES = 4;
@@ -51,12 +50,7 @@ export const HOME_APP_CATALOG = Object.freeze([
   Object.freeze({ id: "measure", label: "測定", description: "GPSで走行を測定" }),
   Object.freeze({ id: "history", label: "履歴", description: "保存した記録を確認" }),
   Object.freeze({ id: "course", label: "コース", description: "コースを保存・確認" }),
-  Object.freeze({ id: "location-note", label: "地点メモ", description: "現在地と短いメモを保存" }),
-  Object.freeze({ id: "quick-note", label: "1分メモ", description: "気づきを短く残す" }),
-  Object.freeze({ id: "gear-note", label: "装備メモ", description: "その日の装備を保存" }),
   Object.freeze({ id: "departure-check", label: "出発チェック", description: "出発前の準備を確認" }),
-  Object.freeze({ id: "fuel-note", label: "補給メモ", description: "水分や補給を時刻付きで記録" }),
-  Object.freeze({ id: "photo-note", label: "写真メモ", description: "自分の写真と短いメモを端末内に保存" }),
   Object.freeze({ id: "pace-tool", label: "ペース換算", description: "距離と時間からペースを換算" }),
 ]);
 
@@ -66,12 +60,7 @@ const ITEM_ID_BY_HREF = Object.freeze([
   ["#/reading", "reading"],
   ["#/consultation", "share"],
   ["#/settings", "settings"],
-  ["#/location-note", "location-note"],
-  ["#/quick-note", "quick-note"],
-  ["#/gear-note", "gear-note"],
   ["#/departure-check", "departure-check"],
-  ["#/fuel-note", "fuel-note"],
-  ["#/photo-note", "photo-note"],
   ["#/pace-tool", "pace-tool"],
   ["#/record-input", "record"],
   ["#/run-measurement", "measure"],
@@ -507,21 +496,18 @@ export function createCheckpointWidget(services) {
   const view = buildSelfUnderstandingView({ allExperiences: experiences, threads: services?.storage?.selfUnderstandingThreads?.loadAll?.() || [], rofSummariesByRecordId: rofMap });
   const themeWithNew = view.watching.find((item) => item.hasNewEligibleData) || null;
   const theme = themeWithNew || view.watching[0] || null;
-  const quickCheckpoint = loadMobileQuickTools().quickNotes
-    .map((item) => String(item?.next || "").trim())
-    .find(Boolean) || "";
-  const checkpoint = theme?.title || quickCheckpoint;
-  const source = theme ? "theme" : quickCheckpoint ? "quick" : "none";
+  const checkpoint = theme?.title || "";
+  const source = theme ? "theme" : "none";
   const anchor = document.createElement("a");
   anchor.className = `mobile-home-widget mobile-home-widget--checkpoint${checkpoint ? " has-checkpoint" : " is-empty"}`;
   anchor.dataset.checkpointSource = source;
-  anchor.href = source === "theme" ? "#/history?view=checks" : source === "quick" ? "#/quick-note" : "#/history?view=checks";
+  anchor.href = "#/history?view=checks";
   const small = document.createElement("small");
   small.textContent = "確認中";
   const strong = document.createElement("strong");
   strong.textContent = checkpoint || "未設定";
   const span = document.createElement("span");
-  span.textContent = source === "theme" ? (theme.hasNewEligibleData ? `新しい記録 ${theme.newCount}件` : `比較できる記録 ${theme.eligibleCount}件`) : source === "quick" ? "1分メモの内容" : "結果を整理して、続けて見る点だけを残せます";
+  span.textContent = source === "theme" ? (theme.hasNewEligibleData ? `新しい記録 ${theme.newCount}件` : `比較できる記録 ${theme.eligibleCount}件`) : "結果を整理して、続けて見る点だけを残せます";
   anchor.append(small, strong, span);
   return anchor;
 }

@@ -17,12 +17,7 @@ assert.deepEqual(achievements, {
 });
 
 const mobileTools = [
-  ['location-note', '地点メモ'],
-  ['quick-note', '1分メモ'],
-  ['gear-note', '装備メモ'],
   ['departure-check', '出発チェック'],
-  ['fuel-note', '補給メモ'],
-  ['photo-note', '写真メモ'],
   ['pace-tool', 'ペース換算'],
 ];
 

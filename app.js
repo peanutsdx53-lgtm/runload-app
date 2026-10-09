@@ -67,7 +67,7 @@ function renderCurrentLocation({ focusHeading = true, focusSelector = "" } = {})
   document.body.classList.toggle("course-derived-open", ["course-library", "course-editor", "gpx-analysis"].includes(screenName));
   document.body.classList.toggle("run-standalone-open", screenName === "run-measurement");
   const readingArticleOpen = screenName === "reading" && Boolean(currentLocation.parameters.get("articleId"));
-  document.body.classList.toggle("secondary-derived-open", ["plan", "consultation", "support-guidance", "reading", "privacy", "terms", "settings", "location-note", "quick-note", "gear-note", "departure-check", "fuel-note", "photo-note", "pace-tool", "achievements"].includes(screenName) && !readingArticleOpen);
+  document.body.classList.toggle("secondary-derived-open", ["plan", "consultation", "support-guidance", "reading", "privacy", "terms", "settings", "departure-check", "pace-tool", "achievements"].includes(screenName) && !readingArticleOpen);
   const recordInputReturnState = screenName === "record-input"
     ? resolveRecordInputReturnState(currentLocation)
     : null;

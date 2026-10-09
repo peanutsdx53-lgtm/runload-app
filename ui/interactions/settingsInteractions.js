@@ -57,6 +57,19 @@ function saveSettingsAndProfile(services, settingsUpdate, profileUpdate) {
   return { ok: true, settings: nextSettings, profile: nextProfile };
 }
 
+// Perform the fallible IndexedDB cleanup first. A rejected photo-store removal
+// must not erase the ordinary records kept in localStorage. These two stores
+// cannot share one atomic transaction; report a later localStorage failure.
+export async function clearAppDataAcrossStores({ services, platformRuntime }) {
+  let platformCleared = true;
+  try { platformCleared = await platformRuntime?.clearPlatformUserData?.(); }
+  catch { platformCleared = false; }
+  if (platformCleared === false) return { ok: false, stage: "PLATFORM" };
+  const result = services.dataManagement.clearAllUserData();
+  if (!result.ok) return { ...result, ok: false, stage: "PRIMARY" };
+  return { ok: true };
+}
+
 function bindDataManagement({ services, router, rerender, platformRuntime }) {
   let pendingRestoreInspection = null;
   const previewHost = document.querySelector("[data-restore-preview-host]");
@@ -137,13 +150,18 @@ function bindDataManagement({ services, router, rerender, platformRuntime }) {
       return;
     }
     if (!window.confirm("このアプリの端末内データをすべて削除しますか？")) return;
-    const result = services.dataManagement.clearAllUserData();
-    if (result.ok) {
-      await platformRuntime?.clearPlatformUserData?.();
-      clearRecordInputWorkspace();
-      router.navigateToScreen("home");
+    const result = await clearAppDataAcrossStores({ services, platformRuntime });
+    if (!result.ok) {
+      showDataMessage(
+        result.stage === "PLATFORM"
+          ? "写真などの保存領域を削除できませんでした。通常の記録は削除していません。"
+          : "写真などの保存領域を削除した後、通常の記録を削除できませんでした。端末内データを確認してください。",
+        "error",
+      );
+      return;
     }
-    else showDataMessage("データを削除できませんでした。", "error");
+    clearRecordInputWorkspace();
+    router.navigateToScreen("home");
   });
 }
 function bindSavedShoeManagement({ services, router }) {

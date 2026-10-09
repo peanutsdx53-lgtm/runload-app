@@ -23,16 +23,8 @@ await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
   const homeLayout = read('ui/interactions/mobileHomeLayoutState.js');
   const homeEdit = read('ui/interactions/mobileHomeEditPresentation.js');
   assert.ok(home.includes('data-home-app-catalog'));
-  assert.ok(home.includes('href: "#/location-note"'));
-  assert.ok(home.includes('href: "#/quick-note"'));
-  assert.ok(home.includes('href: "#/gear-note"'));
   assert.ok(home.includes('href: "#/departure-check"'));
-  assert.ok(home.includes('href: "#/fuel-note"'));
-  assert.ok(home.includes('emoji: "📍"'));
-  assert.ok(home.includes('emoji: "📝"'));
-  assert.ok(home.includes('emoji: "🎒"'));
   assert.ok(home.includes('emoji: "✅"'));
-  assert.ok(home.includes('emoji: "💧"'));
   for (const emoji of ['⚖️', '📅', '📖', '📤', '⚙️', '📒', '⏱️', '🕘', '🗺️']) assert.ok(home.includes(`emoji: "${emoji}"`));
   assert.ok(!home.includes('function mobileHomeIcon'));
   assert.ok(!home.includes('<svg viewBox="0 0 24 24"'));
@@ -92,7 +84,7 @@ await test('MOBILE-QUICK-TOOLS-HAVE-ROUTES-AND-HOME-BACK-NAVIGATION', () => {
   const registry = read('screens/mobileScreenRegistry.js');
   const architecture = read('ui/screenArchitecture.js');
   const binders = read('ui/mobileScreenInteractionBinders.js');
-  for (const route of ['location-note', 'quick-note', 'gear-note', 'departure-check', 'fuel-note']) {
+  for (const route of ['departure-check']) {
     assert.ok(registry.includes(`"${route}":`));
     assert.ok(binders.includes(`"${route}": bindMobileQuickTool`));
     assert.ok(architecture.includes(`screen === "${route}"`));
@@ -110,13 +102,12 @@ await test('MOBILE-QUICK-TOOLS-STORE-IS-LOCAL-ONLY', () => {
   assert.ok(!store.includes('XMLHttpRequest'));
 });
 
-await test('MOBILE-QUICK-TOOLS-SCREENS-COVER-THREE-TOOLS', () => {
+await test('MOBILE-QUICK-TOOLS-RETIRED-MEMOS-REMOVED', () => {
   const screens = read('screens/mobile/quickToolsScreen.js');
-  assert.ok(screens.includes('export function renderLocationNoteScreen'));
-  assert.ok(screens.includes('export function renderQuickNoteScreen'));
-  assert.ok(screens.includes('export function renderGearNoteScreen'));
+  for (const removed of ['renderLocationNoteScreen', 'renderQuickNoteScreen', 'renderGearNoteScreen', 'renderFuelNoteScreen']) {
+    assert.ok(!screens.includes(removed), `retired memo implementation ${removed} must be removed`);
+  }
   assert.ok(screens.includes('export function renderDepartureCheckScreen'));
-  assert.ok(screens.includes('export function renderFuelNoteScreen'));
   assert.ok(screens.includes('この端末のブラウザ内に保存します。自動送信はしません。'));
 });
 

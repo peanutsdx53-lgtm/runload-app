@@ -21,8 +21,11 @@ assert.doesNotMatch(worker, /screens\/mobile\/moreScreen\.js/);
 assert.match(repair, /startsWith\("#\/more"\)/);
 assert.match(repair, /globalThis\.location\.hash = "#\/home"/);
 
-for (const route of ["location-note", "quick-note", "gear-note", "departure-check", "fuel-note", "photo-note", "pace-tool"]) {
+for (const route of ["departure-check", "pace-tool"]) {
   assert.ok(home.includes(`href: "#/${route}"`), `missing optional Home app ${route}`);
+}
+for (const route of ["location-note", "quick-note", "gear-note", "fuel-note", "photo-note"]) {
+  assert.ok(!home.includes(`href: "#/${route}"`), `retired memo Home app ${route} remains`);
 }
 assert.ok(home.includes('href="#/achievements"'));
 assert.match(settings, /利用規約/);

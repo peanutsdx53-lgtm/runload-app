@@ -22,7 +22,7 @@ const patterns = [
   ['Slack token', /\bxox[baprs]-[A-Za-z0-9-]{12,}\b/],
 ];
 let checks=0;
-assert.equal(files.length,333,'runtime asset inventory must match distribution'); checks++;
+assert.equal(files.length,332,'runtime asset inventory must match distribution'); checks++;
 for (const file of files) {
   assert.ok(!file.startsWith('tests/') && !file.startsWith('docs/'));checks++;
   const bytes=fs.readFileSync(file);

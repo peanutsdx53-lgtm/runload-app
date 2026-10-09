@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.09.59";
+const CACHE_NAME = "running-record-app-runtime-2026.10.09.60";
 const CACHE_PREFIX = "running-record-app-";
 const COMMON_PRECACHE_URLS = [
   "./shared/valueUtilities.js",
@@ -96,6 +96,7 @@ const COMMON_PRECACHE_URLS = [
   "./styles/tokens.css",
   "./styles/run-measurement.css",
   "./ui/platformBootstrap.js",
+  "./ui/singleEditorSession.js",
   "./ui/legalAcceptance.js",
   "./ui/bootRecovery.js",
   "./ui/appVersionStatus.js",
@@ -156,7 +157,6 @@ const MOBILE_PLATFORM_URLS = [
   "./ui/interactions/mobileHomeEditPresentation.js",
   "./ui/interactions/mobileHomeGridModel.js",
   "./ui/interactions/mobileQuickToolsInteractions.js",
-  "./ui/interactions/mobilePhotoMemoInteractions.js",
   "./ui/interactions/mobilePaceCalculatorInteractions.js",
   "./ui/interactions/mobilePlanInteractions.js",
   "./ui/interactions/mobileSimulationInteractions.js",
@@ -185,7 +185,6 @@ const MOBILE_PLATFORM_URLS = [
   "./screens/mobile/runMeasurementScreen.js",
   "./screens/mobile/gpxAnalysisScreen.js",
   "./screens/mobile/quickToolsScreen.js",
-  "./screens/mobile/photoMemoScreen.js",
   "./screens/mobile/paceCalculatorScreen.js",
   "./screens/mobileScreenRegistry.js",
   "./styles/mobile-screen-layouts.css",
