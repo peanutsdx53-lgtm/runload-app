@@ -129,6 +129,25 @@ function createBackupService(gateway) {
           details: { bytes, maximumBytes: INPUT_LIMITS.backupBytes },
         };
       }
+      // The earlier domain inspection receives only snapshot.data values.
+      // The portable importer inspects the *whole* JSON envelope, so its
+      // limits include the extra envelope depth, node count, and string/key
+      // restrictions. Reject a file here if this very importer cannot read it.
+      const importerCheck = parseJsonText(text);
+      if (!importerCheck.ok) {
+        return {
+          ok: false,
+          code: "BACKUP_EXPORT_SOURCE_INVALID",
+          message: "復元できない形式の保存データがあるため、バックアップ作成を中止しました。",
+          issues: [Object.freeze({
+            severity: "BLOCKING",
+            code: importerCheck.code,
+            area: "backup",
+            message: importerCheck.message,
+            details: Object.freeze({ ...importerCheck.details }),
+          })],
+        };
+      }
       return { ok: true, snapshot: result.snapshot, text };
     } catch (error) {
       return {
