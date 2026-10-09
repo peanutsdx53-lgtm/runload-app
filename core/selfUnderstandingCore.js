@@ -1,5 +1,6 @@
 import { normalizeIsoText as iso, sanitizeText as text } from "../shared/textUtilities.js";
 import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
+import { compareExperienceRecordChronology, compareStableRecordKeys } from "../shared/recordUtilities.js";
 // RunLoad self-understanding memory layer.
 // This module never recalculates or redefines the scientific numeric model.
 
@@ -365,7 +366,7 @@ function episodeEvidence(thread, experience, rofSummariesByRecordId) {
 
 function eligibleEpisode(thread, experience, rofSummariesByRecordId) {
   const episode = episodeEvidence(thread, experience, rofSummariesByRecordId);
-  if (!episode || episode.stableRecordKey <= String(thread.createdFromStableRecordKey || "")) return null;
+  if (!episode || compareStableRecordKeys(episode.stableRecordKey, thread.createdFromStableRecordKey) <= 0) return null;
   return episode;
 }
 
@@ -428,7 +429,7 @@ export function buildSelfUnderstandingView({
   supportDecision = null,
 } = {}) {
   const experiences = (Array.isArray(allExperiences) ? allExperiences : []).filter(Boolean)
-    .sort((a, b) => stableRecordKeyFromRecord(a.record).localeCompare(stableRecordKeyFromRecord(b.record)));
+    .sort(compareExperienceRecordChronology);
   const normalizedThreads = (Array.isArray(threads) ? threads : []).map(normalizeSelfUnderstandingThread).filter(Boolean);
   const regionLabels = regionLabelsFromExperiences(experiences);
   const threadViews = normalizedThreads.map((thread) => {
@@ -436,7 +437,7 @@ export function buildSelfUnderstandingView({
     const sourceEpisode = sourceExperience ? episodeEvidence(thread, sourceExperience, rofSummariesByRecordId) : null;
     const episodes = experiences.map((experience) => eligibleEpisode(thread, experience, rofSummariesByRecordId)).filter(Boolean);
     const newEpisodes = thread.userState === SELF_UNDERSTANDING_STATES.watching
-      ? episodes.filter((episode) => episode.stableRecordKey > String(thread.lastReviewedStableRecordKey || thread.createdFromStableRecordKey || ""))
+      ? episodes.filter((episode) => compareStableRecordKeys(episode.stableRecordKey, thread.lastReviewedStableRecordKey || thread.createdFromStableRecordKey) > 0)
       : [];
     return Object.freeze({
       ...thread,

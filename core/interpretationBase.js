@@ -1,4 +1,5 @@
 import { cloneJsonValue as clone, isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
+import { compareExperienceRecordChronology } from "../shared/recordUtilities.js";
 // Result interpretation base
 // Deterministic, read-only interpretation of persisted calculation outputs.
 // This module does not calculate or modify Primary Regional Reference-100 or ROF-J values.
@@ -167,11 +168,10 @@ function projectCurrentRegions(experience = null) {
 }
 
 function eligiblePastExperiences(targetExperience, allExperiences = []) {
-  const targetKey = stableRecordKey(targetExperience?.record || {});
   return (Array.isArray(allExperiences) ? allExperiences : [])
     .filter((experience) => experience?.record?.id && experience.record.id !== targetExperience?.record?.id)
-    .filter((experience) => stableRecordKey(experience.record) < targetKey)
-    .sort((a, b) => stableRecordKey(a.record).localeCompare(stableRecordKey(b.record)));
+    .filter((experience) => compareExperienceRecordChronology(experience, targetExperience) < 0)
+    .sort(compareExperienceRecordChronology);
 }
 
 function comparableRegionalHistory(targetExperience, allExperiences, regionId) {
