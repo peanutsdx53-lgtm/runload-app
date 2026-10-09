@@ -121,14 +121,36 @@ function addDuplicateIssues(items, getId, area, label, issues) {
 }
 
 function deepFiniteNumbers(value, path = "", issues = [], area = "data", itemId = "") {
-  if (typeof value === "number" && !Number.isFinite(value)) {
-    issues.push(issue("BLOCKING", "NONFINITE_NUMBER", area, "有限でない数値が含まれています。", itemId, { path }));
-    return issues;
-  }
-  if (Array.isArray(value)) {
-    value.forEach((item, index) => deepFiniteNumbers(item, `${path}[${index}]`, issues, area, itemId));
-  } else if (isObject(value)) {
-    Object.entries(value).forEach(([key, item]) => deepFiniteNumbers(item, path ? `${path}.${key}` : key, issues, area, itemId));
+  // Local-storage reads use JSON.parse directly and bypass parseJsonText's
+  // depth limit. Inspect iteratively so a malformed, deeply nested saved
+  // value cannot overflow the call stack during export or restore inspection.
+  // Do not impose the importer's string-length or alias restrictions here:
+  // large existing values need to retain the BACKUP_EXPORT_TOO_LARGE contract,
+  // and domain checks (e.g. duplicate references) must still be reported.
+  const pending = [{ value, path, depth: 0 }];
+  while (pending.length) {
+    const current = pending.pop();
+    if (current.depth > INPUT_LIMITS.jsonDepth) {
+      issues.push(issue(
+        "BLOCKING", "JSON_TOO_DEEP", area,
+        "保存データの入れ子が深すぎます。", itemId,
+        { path: current.path, maximumDepth: INPUT_LIMITS.jsonDepth },
+      ));
+      break;
+    }
+    if (typeof current.value === "number" && !Number.isFinite(current.value)) {
+      issues.push(issue("BLOCKING", "NONFINITE_NUMBER", area, "有限でない数値が含まれています。", itemId, { path: current.path }));
+      continue;
+    }
+    if (Array.isArray(current.value)) {
+      for (let i = current.value.length - 1; i >= 0; i--) {
+        pending.push({ value: current.value[i], path: `${current.path}[${i}]`, depth: current.depth + 1 });
+      }
+    } else if (isObject(current.value)) {
+      for (const [key, child] of Object.entries(current.value)) {
+        pending.push({ value: child, path: current.path ? `${current.path}.${key}` : key, depth: current.depth + 1 });
+      }
+    }
   }
   return issues;
 }
