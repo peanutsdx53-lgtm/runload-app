@@ -3,7 +3,14 @@
  * Keep this module free of DOM, storage, routing, and domain-model behavior.
  */
 export function isPresentFiniteNumber(value) {
-  return value !== null && value !== "" && Number.isFinite(Number(value));
+  // Keep legitimate zero, including a numeric string, but never coerce
+  // missing whitespace, booleans, arrays, or objects into artificial zeros.
+  if (typeof value === "number") return Number.isFinite(value);
+  if (typeof value === "string") {
+    const normalized = value.trim();
+    return normalized !== "" && Number.isFinite(Number(normalized));
+  }
+  return false;
 }
 
 export function isFiniteNumericValue(value) {
