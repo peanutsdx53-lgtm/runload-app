@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.09.53";
+const CACHE_NAME = "running-record-app-runtime-2026.10.09.54";
 const CACHE_PREFIX = "running-record-app-";
 const COMMON_PRECACHE_URLS = [
   "./shared/valueUtilities.js",
@@ -354,13 +354,26 @@ self.addEventListener("install", (event) => {
   );
 });
 
+// Keep the latest previous version until the new platform assets are completely cached.
+// The shared install alone cannot boot a platform offline after an interrupted update.
+function previousCacheNames(keys) {
+  return keys.filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME);
+}
+
+async function previousVersionMatch(request) {
+  const keys = previousCacheNames(await caches.keys());
+  if (!keys.length) return null;
+  const previous = await caches.open(keys[keys.length - 1]);
+  return previous.match(request, { ignoreSearch: true });
+}
+
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys
-        .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
-        .map((key) => caches.delete(key))))
-      .then(() => self.clients.claim())
+    caches.keys().then(async (keys) => {
+      // Keep only the newest predecessor; older versions may be safely retired.
+      const previous = previousCacheNames(keys);
+      await Promise.all(previous.slice(0, -1).map((key) => caches.delete(key)));
+    }).then(() => self.clients.claim())
   );
 });
 
@@ -371,7 +384,8 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
-    event.respondWith(fetch(request, { cache: "no-store" }).catch(() => caches.match("./index.html")));
+    event.respondWith(fetch(request, { cache: "no-store" }).catch(async () =>
+      (await previousVersionMatch("./index.html")) || caches.match("./index.html")));
     return;
   }
 
@@ -385,7 +399,9 @@ self.addEventListener("fetch", (event) => {
         }
         return response;
       } catch {
-        return (await cache.match(request, { ignoreSearch: true })) || Response.error();
+        // Prefer the coherent previous version while the platform update is incomplete.
+        return (await previousVersionMatch(request))
+          || (await cache.match(request, { ignoreSearch: true })) || Response.error();
       }
     })
   );
@@ -401,6 +417,11 @@ self.addEventListener("message", (event) => {
   const platformUrls = PLATFORM_URLS[event.data?.platform];
   if (!platformUrls) return;
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(platformUrls))
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // addAll is atomic for the platform set: keep the predecessor if a request fails.
+      await cache.addAll(platformUrls);
+      const previous = previousCacheNames(await caches.keys());
+      await Promise.all(previous.map((key) => caches.delete(key)));
+    })
   );
 });
