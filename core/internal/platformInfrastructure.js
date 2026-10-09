@@ -355,16 +355,25 @@ function createStorageGateway(storage) {
         }
         const remove = Boolean(change.remove);
         const hasRawValue = Object.prototype.hasOwnProperty.call(change, "rawValue");
+        const assertFiniteNumber = (_name, item) => {
+          // JSON.stringify silently turns NaN/Infinity into null; JSON.parse
+          // accepts overflowing numeric literals as Infinity. Never convert
+          // a supplied measurement into an apparently valid null/number.
+          if (typeof item === "number" && !Number.isFinite(item)) {
+            throw new TypeError("Storage value contains a non-finite number");
+          }
+          return item;
+        };
         const rawValue = remove ? null : hasRawValue
           ? change.rawValue
-          : JSON.stringify(change.value);
+          : JSON.stringify(change.value, assertFiniteNumber);
         if (!remove) {
           if (typeof rawValue !== "string") {
             throw new TypeError("Storage value is not serializable JSON");
           }
           // Transactions back JSON data. Raw non-JSON values belong to the
           // explicit writeRaw API; otherwise a subsequent readJson fails.
-          JSON.parse(rawValue);
+          JSON.parse(rawValue, assertFiniteNumber);
         }
         return { key: change.key, remove, rawValue };
       });
