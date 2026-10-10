@@ -137,7 +137,9 @@ export async function deletePhotoMemo(id) {
 }
 
 export async function clearAllPhotoMemos() {
-  if (!globalThis.indexedDB) return true;
+  // The API can be temporarily blocked while an older photo database persists.
+  // Never report a full cross-store deletion as successful without verifying it.
+  if (!globalThis.indexedDB) return false;
   try {
     if (databasePromise) {
       try {
