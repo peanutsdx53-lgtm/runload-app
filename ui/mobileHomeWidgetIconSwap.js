@@ -2,6 +2,7 @@ import {
   homeGridPlacementOf as placementOf,
   homeGridTokenForElement as gridToken,
   matchesMobileHomeLayout as mobileLayoutMatches,
+  writeMobileHomeBatch,
 } from "./mobileHomeGridUtilities.js";
 
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
@@ -113,18 +114,16 @@ function persist(homeRoot) {
     ])),
   };
 
-  try {
-    globalThis.localStorage?.setItem(POSITION_STORAGE_KEY, JSON.stringify({ version: 1, pages: positionPages }));
-    globalThis.localStorage?.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
+  writeMobileHomeBatch([
+    [POSITION_STORAGE_KEY, { version: 1, pages: positionPages }],
+    [LAYOUT_STORAGE_KEY, {
       version: 3,
       pages: layoutPages.length ? layoutPages : [[]],
       dock,
       activePage: Math.max(0, Math.min(Math.max(0, pages.length - 1), activePageIndex(homeRoot))),
-    }));
-    globalThis.localStorage?.setItem(WIDGET_STORAGE_KEY, JSON.stringify(widgetLayout));
-  } catch {
-    // Persistence is optional; the current layout remains usable for this session.
-  }
+    }],
+    [WIDGET_STORAGE_KEY, widgetLayout],
+  ]);
 }
 
 function resetTracking() {

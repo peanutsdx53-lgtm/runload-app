@@ -74,8 +74,9 @@ test('PWA-CACHE-INCLUDES-COORDINATOR-AND-CURRENT-VERSION', () => {
 test('ATOMIC-SWAP-PERSISTS-ORDER-AND-PLACEMENT-TOGETHER', () => {
   assert.ok(coordinator.includes('const LAYOUT_STORAGE_KEY = "running-record-mobile-home-layout-v1";'));
   assert.ok(coordinator.includes('const layoutPages = pageElements.map'));
-  assert.ok(coordinator.includes('globalThis.localStorage?.setItem(POSITION_STORAGE_KEY'));
-  assert.ok(coordinator.includes('globalThis.localStorage?.setItem(LAYOUT_STORAGE_KEY'));
+  assert.ok(coordinator.includes('[POSITION_STORAGE_KEY, { version: 1, pages: positionPages }]'));
+  assert.ok(coordinator.includes('[LAYOUT_STORAGE_KEY, {'));
+  assert.ok(coordinator.includes('writeMobileHomeBatch(['));
   assert.ok(coordinator.includes('activePage: activePageIndex(root, pageElements.length)'));
 });
 

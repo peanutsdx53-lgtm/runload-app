@@ -4,6 +4,7 @@ import {
   homeGridPlacementOf as placementOf,
   homeGridTokenForElement as gridTokenForElement,
   matchesMobileHomeLayout as mobileLayoutMatches,
+  writeMobileHomeBatch,
 } from "./mobileHomeGridUtilities.js";
 
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
@@ -59,17 +60,15 @@ function persistHomePositions(root) {
   const dock = [...root.querySelectorAll(".mobile-home-dock [data-home-item-id]")]
     .map((item) => item.dataset.homeItemId)
     .filter(Boolean);
-  try {
-    globalThis.localStorage?.setItem(POSITION_STORAGE_KEY, JSON.stringify({ version: 1, pages: positionPages }));
-    globalThis.localStorage?.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
+  writeMobileHomeBatch([
+    [POSITION_STORAGE_KEY, { version: 1, pages: positionPages }],
+    [LAYOUT_STORAGE_KEY, {
       version: 3,
       pages: layoutPages.length ? layoutPages : [[]],
       dock,
       activePage: activePageIndex(root, pageElements.length),
-    }));
-  } catch {
-    // Persistence is optional; the current layout remains usable.
-  }
+    }],
+  ]);
 }
 
 function swapDomPositions(source, target) {
