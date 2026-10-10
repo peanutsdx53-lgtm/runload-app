@@ -55,11 +55,13 @@ test('A-04: model/version/reference/construct spoofing all blocks deltas (48 cou
  assert.equal(count,48);
 });
 
-test('A-04: unquantified or unavailable region values are not substituted with a zero',()=>{
- const rows=result.result.regions;
- for(const row of rows){
-  if(row.calculationState==='NOT_CALCULABLE' || row.calculationState==='PARTIAL'){
-    assert.equal(row.value,null,row.regionId);
-  }
- }
+test('A-04: out-of-coverage region values remain missing rather than numeric zero',()=>{
+ const insufficient= { ...record,id:'a04-out-of-coverage',distanceKm:5,durationMinutes:12 };
+ const outcome=svc.workflows.records.saveRecordAndFeedback(insufficient,feedback);
+ assert.equal(outcome.ok,true,JSON.stringify(outcome));
+ const result2=svc.workflows.records.loadExperience(insufficient.id).regionalV2ResultRecord;
+ const rows=result2.result.regions;
+ assert.equal(rows.length,12);
+ assert.equal(rows.filter(row=>row.calculationState==='PARTIAL'||row.calculationState==='NOT_CALCULABLE').length,12);
+ for(const row of rows){assert.equal(row.value,null,row.regionId);}
 });
