@@ -42,6 +42,7 @@ async function audit(browser, origin, viewport) {
       const restore = await import('/ui/restorePreviewPresentation.js');
       const course = await import('/screens/shared/courseEditorScreen.js');
       const forms = await import('/ui/interactions/formUtilities.js');
+      const support = await import('/screens/shared/supportGuidanceScreen.js');
       let checks = 0;
       const errors = [];
       const host = document.createElement('div');
@@ -79,15 +80,26 @@ async function audit(browser, origin, viewport) {
         if (dataMsg.querySelector('img, svg, iframe, script,[onerror],[onload],[onfocus]')) errors.push('showDataMessage: active markup');
         if (!dataMsg.textContent.includes(input)) errors.push('showDataMessage: source text missing');
         checks += 2;
+        const returnTo = '#/consultation?from='+input;
+        host.innerHTML = support.renderSupportGuidanceScreen({context:{parameters:new URLSearchParams({returnTo})}});
+        const backLinks = [...host.querySelectorAll('a.secondary-derived-back, a[data-context-back-duplicate]')];
+        if (backLinks.length !== 2) errors.push('supportGuidanceScreen: unexpected link count');
+        if (backLinks.some(a => a.getAttribute('href') !== returnTo)) errors.push('supportGuidanceScreen: internal href mismatch');
+        if (host.querySelector('script,iframe,img,svg,[onclick],[onfocus],[onload],[onerror],[autofocus],a[href^="javascript:"]')) errors.push('supportGuidanceScreen: malicious returnTo produced active markup');
+        if (window.__runloadInjected !== undefined) errors.push('supportGuidanceScreen: script executed');
+        checks += 4;
       }
+      host.innerHTML = support.renderSupportGuidanceScreen({context:{parameters:new URLSearchParams({returnTo:'#/record-input"><img src="https://tile.openstreetmap.org/0/0/0.png" onerror="window.__runloadInjected=1">'})}});
+      if (host.querySelector('img,[onerror]')) errors.push('supportGuidanceScreen: forced map tile request from URL fragment');
+      checks += 1;
       host.remove();
       return {checks, errors, executed: window.__runloadInjected===1};
     },ATTACKS);
     assert.deepEqual(result.errors,[],JSON.stringify({viewport,...result}));
     assert.equal(result.executed,false);
-    assert.equal(result.checks, ATTACKS.length * (7 * 3 + 4));
+    assert.equal(result.checks, ATTACKS.length * (7 * 3 + 8) + 1);
     assert.equal(outgoing.length,0,'Live DOM test must not transmit test values off-origin');
-    console.log(JSON.stringify({viewport,checks:result.checks,externalRequests:outgoing.length,status:'PASS',scope:'restore/course/form DOM sinks, not all 43'}));
+    console.log(JSON.stringify({viewport,checks:result.checks,externalRequests:outgoing.length,status:'PASS',scope:'restore/course/form/support navigation DOM sinks, not all 43'}));
   } finally { await context.close(); }
 }
 (async()=>{
