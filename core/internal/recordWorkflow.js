@@ -44,7 +44,13 @@ function storedRegionalResultForRecord(repository, record = {}) {
   const supported = rows.filter((item) => item?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION
     || item?.model_version === PREVIOUS_REGIONAL_V3_MODEL_VERSION);
   const matching = supported.filter((item) => String(item.source_record_revision || "") === currentRevision);
-  const available = matching.length ? matching : supported.filter((item) => item.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION);
+  // Even when a historical result no longer matches the record revision,
+  // retain its provenance as an explicit read-only incompatibility. Returning
+  // no source here would silently hide the reason that the old model is unusable.
+  const available = matching.length ? matching
+    : supported.some((item) => item.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
+      ? supported.filter((item) => item.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
+      : supported.filter((item) => item.model_version === PREVIOUS_REGIONAL_V3_MODEL_VERSION);
   return available.sort((left, right) => (
     Number(right.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION) - Number(left.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
     || String(right.source_record_revision || "").localeCompare(String(left.source_record_revision || ""))
