@@ -1,0 +1,44 @@
+name: G01 E02 D04 Browser, Privacy and Persistence Audit
+on:
+  pull_request:
+    paths:
+      - "tests/g01E02D04RealBrowser.test.cjs"
+      - "tests/e02NetworkSurfaceAudit.test.mjs"
+      - ".github/workflows/g01-e02-d04-browser.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tests/g01E02D04RealBrowser.test.cjs"
+      - "tests/e02NetworkSurfaceAudit.test.mjs"
+      - ".github/workflows/g01-e02-d04-browser.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static network egress source inventory
+        run: node --test tests/e02NetworkSurfaceAudit.test.mjs
+      - name: Full nonbrowser regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          passed=0
+          for f in tests/*.test.mjs; do
+            if [[ "$f" == *mobileWalkJogBrowserFlow.test.mjs ]]; then continue; fi
+            node "$f" > /tmp/one.log 2>&1 || { echo "FAIL $f"; cat /tmp/one.log; exit 1; }
+            passed=$((passed+1))
+          done
+          echo "Non-browser files PASS: $passed"
+      - name: Install isolated Chromium browser
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Multi-tab save/reload, privacy and offline fallback
+        run: node tests/g01E02D04RealBrowser.test.cjs
