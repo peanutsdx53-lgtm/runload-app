@@ -166,8 +166,19 @@ await test('ENERGY-ESTIMATE-IS-STORED-ONLY-AFTER-CONTINUOUS-RUN-CONFIRMATION', a
     bodyMassKg: 60, averageSpeedKmh: 10, durationMinutes: 30,
   };
 
-  clearPendingRunMeasurement();
-  let pending = savePendingRunMeasurement({
+  // Persistence must be exercised against a concrete localStorage implementation.
+  // The production code must reject absent/inaccessible storage rather than
+  // pretending an in-memory fallback has durably saved a GPS route.
+  const originalLocal = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const records = new Map();
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: {
+    getItem: (key) => records.has(key) ? records.get(key) : null,
+    setItem: (key, value) => records.set(key, String(value)),
+    removeItem: (key) => records.delete(key),
+  } });
+  try {
+    clearPendingRunMeasurement();
+    let pending = savePendingRunMeasurement({
     runId: 'energy-continuous', distanceKm: 5, durationMinutes: 30,
     energyEstimate, track, saveRoute: true,
   });
@@ -194,6 +205,10 @@ await test('ENERGY-ESTIMATE-IS-STORED-ONLY-AFTER-CONTINUOUS-RUN-CONFIRMATION', a
   committed = commitPendingRunMeasurement('energy-unknown-record', { runningFormat: 'UNKNOWN' });
   assert.equal(committed.ok, true);
   assert.equal(findSavedRunMeasurement('energy-unknown-record')?.energyEstimate, null);
+  } finally {
+    if (originalLocal) Object.defineProperty(globalThis, 'localStorage', originalLocal);
+    else Reflect.deleteProperty(globalThis, 'localStorage');
+  }
 });
 
 await test('SMARTPHONE-UI-SHOWS-AUTO-FACTS-AND-KEEPS-SURFACE-MANUAL', async () => {
