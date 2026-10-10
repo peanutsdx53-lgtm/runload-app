@@ -1,0 +1,119 @@
+name: H01 Comprehensive Release Regression
+
+on:
+  pull_request:
+    paths:
+      - 'app.js'
+      - 'core/**'
+      - 'ui/**'
+      - 'screens/**'
+      - 'shared/**'
+      - 'styles/**'
+      - 'tests/**'
+      - 'index.html'
+      - 'service-worker.js'
+      - '.github/workflows/h01-comprehensive-regression.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'app.js'
+      - 'core/**'
+      - 'ui/**'
+      - 'screens/**'
+      - 'shared/**'
+      - 'styles/**'
+      - 'tests/**'
+      - 'index.html'
+      - 'service-worker.js'
+      - '.github/workflows/h01-comprehensive-regression.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax of all JS and MJS
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            node --check "$file" >/dev/null
+            count=$((count+1))
+          done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0)
+          echo "JS_MJS_SYNTAX_PASS=${count}"
+      - name: Complete nonbrowser test module regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          passed=0
+          for file in tests/*.test.mjs; do
+            if [[ "$file" == *mobileWalkJogBrowserFlow.test.mjs ]]; then continue; fi
+            node "$file" >/tmp/h01-last-test.log 2>&1 || { echo "FAIL ${file}"; cat /tmp/h01-last-test.log; exit 1; }
+            passed=$((passed+1))
+          done
+          echo "NON_BROWSER_MODULE_PASS=${passed}"
+      - name: Prepare isolated real Chromium/Playwright runner
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Browser persistence, privacy, CSP, and mobile walk-jog regressions
+        run: |
+          node tests/g01E02D04RealBrowser.test.cjs
+          node tests/e03BrowserCspNetwork.test.cjs
+          node tests/mobileWalkJogBrowserFlow.test.mjs
+      - name: Desktop interpretation/browser layout and keyboard smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 >/tmp/runload-h01-server.log 2>&1 &
+          for attempt in {1..30}; do
+            curl -fsS http://127.0.0.1:4173/tests/fixtures/desktop-interpretation-compare.html >/dev/null && break
+            sleep 1
+          done
+          node <<'NODE'
+          const assert=require('node:assert/strict');
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            try{
+              for(const width of [1440,1024]){
+                const page=await browser.newPage({viewport:{width,height:900}});
+                await page.goto('http://127.0.0.1:4173/tests/fixtures/desktop-interpretation-compare.html',{waitUntil:'domcontentloaded'});
+                await page.addStyleTag({url:'http://127.0.0.1:4173/styles/desktop-interpretation-details.css'});
+                await page.evaluate(()=>document.body.classList.add('screen--interpretation-room'));
+                const details=page.locator('.interpretation-flow-technical-more.interpretation-loop-more').first();
+                assert.equal(await details.count(),1,'missing expanded technical context');
+                await details.evaluate(node=>{node.open=true});
+                const result=await page.evaluate(()=>{
+                  const labels=[...document.querySelectorAll('.interpretation-room-region-chips .region-chip__copy strong')];
+                  const grid=document.querySelector('.interpretation-room-region-chips');
+                  const details=document.querySelector('.interpretation-flow-technical-more.interpretation-loop-more');
+                  return{labels:labels.length,clipped:labels.filter(e=>e.scrollWidth>e.clientWidth+1||e.scrollHeight>e.clientHeight+1).length,
+                    gridColumns:getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length,
+                    bodyOverflow:document.body.scrollWidth>window.innerWidth+1,
+                    detailOverflow:details.scrollWidth>details.clientWidth+1};
+                });
+                assert.ok(result.labels>0,JSON.stringify(result));
+                assert.equal(result.clipped,0,JSON.stringify(result));
+                assert.equal(result.gridColumns,2,JSON.stringify(result));
+                assert.equal(result.bodyOverflow,false,JSON.stringify(result));
+                assert.equal(result.detailOverflow,false,JSON.stringify(result));
+                const summary=await details.locator('summary').first().evaluate(node=>({height:node.getBoundingClientRect().height,font:parseFloat(getComputedStyle(node).fontSize)}));
+                assert.ok(summary.height>=56&&summary.font>=16,JSON.stringify(summary));
+                await page.keyboard.press('Tab');
+                assert.equal(await page.evaluate(()=>Boolean(document.activeElement)),true);
+                console.log('H01_DESKTOP_BROWSER_PASS',width,JSON.stringify(result));
+                await page.close();
+              }
+            }finally{await browser.close()}
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
