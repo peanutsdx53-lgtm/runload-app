@@ -180,6 +180,27 @@ function listSavedRunMeasurements() {
   return Array.isArray(value) ? value.map(clone) : [];
 }
 
+// The display reader above may return an empty list when a browser denies
+// storage access or the stored route JSON is damaged. Never reuse that
+// display fallback for writes: it would erase existing GPS measurements or
+// claim an ephemeral in-memory write was safely persisted.
+function readSavedRunMeasurementsForCommit() {
+  try {
+    const target = globalThis.localStorage;
+    if (typeof target?.getItem !== "function" || typeof target?.setItem !== "function") {
+      return { ok: false, code: "RUN_MEASUREMENT_STORAGE_READ_FAILED" };
+    }
+    const raw = target.getItem(RUN_MEASUREMENT_STORAGE_KEY);
+    const parsed = raw == null ? [] : JSON.parse(raw);
+    if (!Array.isArray(parsed) || !parsed.every((item) => item && typeof item === "object" && !Array.isArray(item) && typeof item.recordId === "string" && Array.isArray(item.track))) {
+      return { ok: false, code: "RUN_MEASUREMENT_STORAGE_READ_FAILED" };
+    }
+    return { ok: true, target, items: parsed };
+  } catch {
+    return { ok: false, code: "RUN_MEASUREMENT_STORAGE_READ_FAILED" };
+  }
+}
+
 export function findSavedRunMeasurement(recordId = "") {
   return listSavedRunMeasurements().find((item) => item.recordId === String(recordId || "")) || null;
 }
@@ -197,7 +218,9 @@ export function commitPendingRunMeasurement(recordId = "", options = {}) {
     return { ...cleared, saved: false, reason: "ROUTE_NOT_SAVED" };
   }
 
-  const current = listSavedRunMeasurements();
+  const prior = readSavedRunMeasurementsForCommit();
+  if (!prior.ok) return { ok: false, saved: false, code: prior.code };
+  const current = prior.items;
   const item = Object.freeze({
     version: 1,
     id: `measurement-${id}`,
@@ -220,7 +243,7 @@ export function commitPendingRunMeasurement(recordId = "", options = {}) {
     track: simplifyTrackForStorage(pending.track),
   });
   const next = [...current.filter((entry) => entry.recordId !== id), item];
-  const write = writeJson(storage("local"), RUN_MEASUREMENT_STORAGE_KEY, next);
+  const write = writeJson(prior.target, RUN_MEASUREMENT_STORAGE_KEY, next);
   if (!write.ok) return { ...write, saved: false };
   clearPendingRunMeasurement();
   return { ok: true, saved: true, item: clone(item) };
