@@ -11,7 +11,7 @@ Use the existing `escapeHtml()` on the `backHref` value at **both** HTML attribu
 ## Independent verification
 
 - Before fix: 5/5 deterministic Node regression cases failed (malicious `returnTo` and ordinary route attr fidelity) using original `supportGuidanceScreen.js`.
-- After fix: the same 5/5 pass; real headless Chromium DOM parser verifies three hostile paths produce exactly two intact internal back-links and zero unexpected images, SVG, event-handler attributes or attack attributes.
+- After fix: the same 5/5 pass; real headless Chromium DOM parser verifies three hostile paths produce exactly two intact internal back-links and zero unexpected images, SVG, event-handler attributes or attack attributes. The already-required H-01 browser regression also exercises hostile support-navigation parameters in both 1440px and 390px viewports, including an attempted forced OpenStreetMap tile request (none permitted).
 - Complete Node suite: 493 PASS, 0 FAIL, 1 SKIP (494 total). JS/MJS syntax 407/407 PASS. Browser/GitHub CI gates required before merge and formal Current synchronization.
 
 ## Acceptance limitations
