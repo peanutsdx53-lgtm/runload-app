@@ -1,3 +1,5 @@
+import { escapeHtml } from "../../ui/commonComponents.js";
+
 function supportReturnTarget(context) {
   const recordId = String(context?.parameters?.get?.("recordId") || "");
   const returnTo = String(context?.parameters?.get?.("returnTo") || "");
@@ -18,7 +20,7 @@ export function renderSupportGuidanceScreen({ context } = {}) {
       ? "共有用の整理へ戻る"
       : "その他へ戻る";
   return `<div class="screen screen--support-guidance screen-layout screen-layout--support secondary-derived-screen">
-    <header class="secondary-derived-head"><a class="secondary-derived-back" href="${backHref}">← ${backLabel}</a><strong>公的サポート</strong><span aria-hidden="true"></span></header>
+    <header class="secondary-derived-head"><a class="secondary-derived-back" href="${escapeHtml(backHref)}">← ${backLabel}</a><strong>公的サポート</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">公的サポート</p><h1>公的サポート</h1><p>症状や体調について、このアプリとは別の公的な窓口を確認します。</p></section>
     <p class="notice">部位ごとの目安や疲労感の値から緊急性を判断する機能ではありません。</p><p class="visually-hidden">このアプリの数値表示ではなく、本人の症状や体調をもとに公的窓口を選びます。このアプリは緊急性、診断、受診要否を判定しません。</p>
@@ -27,7 +29,7 @@ export function renderSupportGuidanceScreen({ context } = {}) {
       <article class="card warn"><small>判断に迷うとき</small><strong>救急車や受診の判断を相談する</strong><p>#7119は、実施地域で救急車を呼ぶべきか、すぐ受診すべきか迷う場合の電話相談窓口です。利用可否は地域によって異なります。</p><a href="https://www.fdma.go.jp/mission/enrichment/appropriate/appropriate007.html" target="_blank" rel="noreferrer"><span>#7119の案内を確認</span><span>›</span></a></article>
       <article class="card"><small>医療機関を探す</small><strong>医療情報ネット（ナビイ）</strong><p>厚生労働省の全国医療機関検索です。診療科目、場所、受付日時などから検索できます。</p><a href="https://www.iryou.teikyouseido.mhlw.go.jp/znk-web/juminkanja/S2300/initialize" target="_blank" rel="noreferrer"><span>医療機関を探す</span><span>›</span></a></article>
     </div>
-    <a class="back" data-context-back-duplicate href="${backHref}">‹ ${backLabel}</a>
+    <a class="back" data-context-back-duplicate href="${escapeHtml(backHref)}">‹ ${backLabel}</a>
     </div>
   </div>`;
 }
