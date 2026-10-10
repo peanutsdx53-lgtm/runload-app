@@ -1,5 +1,12 @@
 name: E03 Browser CSP and Privacy Boundary
 on:
+  push:
+    branches: [main]
+    paths:
+      - "tests/e03BrowserCspNetwork.test.cjs"
+      - ".github/workflows/e03-browser-csp.yml"
+      - "ui/runMeasurementMap.js"
+      - "index.html"
   pull_request:
     paths:
       - "tests/e03BrowserCspNetwork.test.cjs"
