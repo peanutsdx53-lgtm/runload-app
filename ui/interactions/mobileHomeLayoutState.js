@@ -184,12 +184,43 @@ export function readPositionLayout(root) {
   }
 }
 
+// Browsing a damaged home preference uses a safe visual fallback, but saving
+// must not treat that fallback as permission to overwrite the original bytes.
+// The non-UI guard intentionally refuses unknown/corrupt stored envelopes.
+function writableHomePreferenceStore(key, expectedShape) {
+  try {
+    const storage = globalThis.localStorage;
+    if (!storage || typeof storage.getItem !== "function" || typeof storage.setItem !== "function") return null;
+    const raw = storage.getItem(key);
+    if (raw !== null) {
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed) || !expectedShape(parsed)) return null;
+    }
+    return storage;
+  } catch {
+    return null;
+  }
+}
+
+const isStoredPageLayout = (entry) => Array.isArray(entry.pages)
+  && entry.pages.every(Array.isArray) && Array.isArray(entry.dock);
+const isStoredPositionLayout = (entry) => Array.isArray(entry.pages)
+  && entry.pages.every(Array.isArray);
+const isStoredWidgetLayout = (entry) => ["order", "visible", "sizes", "pageById"].some((k) => k in entry)
+  && (entry.order === undefined || Array.isArray(entry.order))
+  && (entry.visible === undefined || Array.isArray(entry.visible))
+  && (entry.sizes === undefined || (entry.sizes && typeof entry.sizes === "object" && !Array.isArray(entry.sizes)))
+  && (entry.pageById === undefined || (entry.pageById && typeof entry.pageById === "object" && !Array.isArray(entry.pageById)));
+
 export function writePositionLayout(root) {
   const layout = { version: 1, pages: pageElements(root).map(placementsForPage) };
+  const storage = writableHomePreferenceStore(POSITION_STORAGE_KEY, isStoredPositionLayout);
+  if (!storage) return false;
   try {
-    globalThis.localStorage?.setItem(POSITION_STORAGE_KEY, JSON.stringify(layout));
+    storage.setItem(POSITION_STORAGE_KEY, JSON.stringify(layout));
+    return true;
   } catch {
-    // Position persistence is optional; ordered layout remains a fallback.
+    return false; // Preserve the previous bytes on denied or failed writes.
   }
 }
 
@@ -371,10 +402,13 @@ export function writeLayout(root, dockContainer, activePage = 0) {
     dock: [...dockContainer.querySelectorAll("[data-home-item-id]")].map((item) => item.dataset.homeItemId),
     activePage: Math.max(0, Math.min(Math.max(0, pages.length - 1), Number(activePage) || 0)),
   };
+  const storage = writableHomePreferenceStore(STORAGE_KEY, isStoredPageLayout);
+  if (!storage) return false;
   try {
-    globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(layout));
+    storage.setItem(STORAGE_KEY, JSON.stringify(layout));
+    return true;
   } catch {
-    // Layout persistence is optional; navigation remains usable without storage.
+    return false; // Navigation stays available, but damaged stored bytes survive.
   }
 }
 
@@ -387,10 +421,13 @@ export function writeWidgetLayout(root) {
     sizes: Object.fromEntries(widgets.map((item) => [item.dataset.homeWidgetId, item.dataset.homeWidgetSize || DEFAULT_WIDGET_SIZES[item.dataset.homeWidgetId] || "small"])),
     pageById: Object.fromEntries(widgets.map((item) => [item.dataset.homeWidgetId, Number(item.closest(".mobile-home-page")?.dataset.homePageIndex || 0)])),
   };
+  const storage = writableHomePreferenceStore(WIDGET_STORAGE_KEY, isStoredWidgetLayout);
+  if (!storage) return false;
   try {
-    globalThis.localStorage?.setItem(WIDGET_STORAGE_KEY, JSON.stringify(layout));
+    storage.setItem(WIDGET_STORAGE_KEY, JSON.stringify(layout));
+    return true;
   } catch {
-    // Widget persistence is optional; the default home remains usable.
+    return false; // Do not overwrite a corrupt older collection with defaults.
   }
 }
 

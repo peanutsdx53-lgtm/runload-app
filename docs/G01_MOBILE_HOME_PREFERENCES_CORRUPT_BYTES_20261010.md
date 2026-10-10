@@ -1,0 +1,7 @@
+# G-01 mobile-home persistent preferences: malformed read must not authorize overwrite
+
+Three localStorage keys store app/dock page order, widget layout, and manually assigned grid positions. Their user-facing read functions appropriately return a safe in-memory default when JSON is missing or damaged. The persistence functions previously wrote that temporary default back without checking the original stored bytes. A later edit or routine pagination thus could silently and permanently destroy malformed/partial historical user preferences. Storage read denial also left save silently ignored, with no diagnostic distinction.
+
+Real exported write functions are tested against storage mocks including malformed JSON, nonobject values, unexpected object shape and a throwing read. RED before repair: **9 failures of 13**; after repair the original 13 cases plus compatibility tests pass (16 total). All three write functions now require an available persistent storage object and a read/parse/shape check of the currently stored envelope before invoking setItem. Missing keys are still created normally; valid current and supported legacy partial records still save. Failure preserves raw older bytes and returns `false`; visual fallbacks remain and no UI element/label/style is changed.
+
+This is a narrow local preference data-conservation guarantee, NOT a claim of atomicity between tabs, full backup compatibility, actual iOS storage testing, or complete G-01 PASS. Research calculations, originals and previously stored runner records are unchanged.
