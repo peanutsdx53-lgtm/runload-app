@@ -19,8 +19,18 @@ function openDatabase() {
   if (!globalThis.indexedDB) return Promise.reject(new Error("IndexedDB is unavailable"));
   if (databasePromise) return databasePromise;
 
-  databasePromise = new Promise((resolve, reject) => {
-    const request = globalThis.indexedDB.open(DB_NAME, DB_VERSION);
+  // Do not cache a rejected open permanently (the API may recover later).
+  // onblocked is not cancellation; close a late success rather than retaining
+  // an orphaned handle after the caller has been told the open failed.
+  const pending = new Promise((resolve, reject) => {
+    let request;
+    let blocked = false;
+    try {
+      request = globalThis.indexedDB.open(DB_NAME, DB_VERSION);
+    } catch (error) {
+      reject(error);
+      return;
+    }
     request.onupgradeneeded = () => {
       const database = request.result;
       if (!database.objectStoreNames.contains(STORE_NAME)) {
@@ -30,21 +40,27 @@ function openDatabase() {
     };
     request.onsuccess = () => {
       const database = request.result;
+      if (blocked) {
+        database.close();
+        return;
+      }
       database.onversionchange = () => {
         database.close();
         databasePromise = null;
       };
       resolve(database);
     };
-    request.onerror = () => {
-      databasePromise = null;
-      reject(request.error || new Error("IndexedDB open failed"));
-    };
+    request.onerror = () => reject(request.error || new Error("IndexedDB open failed"));
     request.onblocked = () => {
-      databasePromise = null;
+      blocked = true;
       reject(new Error("IndexedDB open blocked"));
     };
   });
+  const guarded = pending.catch((error) => {
+    if (databasePromise === guarded) databasePromise = null;
+    throw error;
+  });
+  databasePromise = guarded;
 
   return databasePromise;
 }
@@ -137,23 +153,19 @@ export async function deletePhotoMemo(id) {
 }
 
 export async function clearAllPhotoMemos() {
-  // The API can be temporarily blocked while an older photo database persists.
-  // Never report a full cross-store deletion as successful without verifying it.
+  // IndexedDB deleteDatabase.onblocked is not a cancellation: its request can
+  // silently complete much later after another tab closes, deleting photos
+  // that were added *after* the caller was told cleanup failed. Clearing the
+  // records in a committed readwrite transaction has a definitive completion
+  // boundary, including when another tab still holds an open database handle.
+  // Retain the empty schema; removing all personal rows is the user operation.
   if (!globalThis.indexedDB) return false;
   try {
-    if (databasePromise) {
-      try {
-        const database = await databasePromise;
-        database?.close?.();
-      } catch {}
-    }
-    databasePromise = null;
-    await new Promise((resolve, reject) => {
-      const request = globalThis.indexedDB.deleteDatabase(DB_NAME);
-      request.onsuccess = () => resolve(true);
-      request.onerror = () => reject(request.error || new Error("IndexedDB delete failed"));
-      request.onblocked = () => reject(new Error("IndexedDB delete blocked"));
-    });
+    const database = await openDatabase();
+    const transaction = database.transaction(STORE_NAME, "readwrite");
+    const done = transactionDone(transaction);
+    transaction.objectStore(STORE_NAME).clear();
+    await done;
     return true;
   } catch {
     return false;

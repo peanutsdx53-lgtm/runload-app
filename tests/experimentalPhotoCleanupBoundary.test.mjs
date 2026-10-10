@@ -13,12 +13,12 @@ test("experimental photos remain in local IndexedDB unchanged", () => {
   assert.match(store, /export async function clearAllPhotoMemos/);
 });
 
-test("platform clear returns false when IndexedDB deletion is refused", async () => {
+test("platform clear returns false when IndexedDB store opening is refused", async () => {
   const previous = globalThis.indexedDB;
   try {
-    globalThis.indexedDB = { deleteDatabase() {
+    globalThis.indexedDB = { open() {
       const request = {};
-      queueMicrotask(() => { request.error = new Error("injected error"); request.onerror?.(); });
+      queueMicrotask(() => { request.error = new Error("injected open error"); request.onerror?.(); });
       return request;
     }};
     assert.equal(await clearPlatformUserData(), false);

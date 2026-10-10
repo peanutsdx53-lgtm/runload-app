@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.10.64";
+const CACHE_NAME = "running-record-app-runtime-2026.10.10.65";
 const CACHE_PREFIX = "running-record-app-";
 const COMMON_PRECACHE_URLS = [
   "./shared/valueUtilities.js",

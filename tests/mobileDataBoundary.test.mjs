@@ -13,5 +13,6 @@ assert.match(infra, /mobileHomeLayout/);
 assert.doesNotMatch(settings, /mobilePhotoMemoStore|clearAllPhotoMemos/);
 assert.match(settings, /clearPlatformUserData/);
 assert.match(mobileRuntime, /clearAllPhotoMemos/);
-assert.match(photo, /deleteDatabase\(DB_NAME\)/);
+assert.match(photo, /transaction\.objectStore\(STORE_NAME\)\.clear\(\)/);
+assert.doesNotMatch(photo.split("export async function clearAllPhotoMemos()")[1], /indexedDB\.deleteDatabase\(/);
 console.log("PASS mobile data boundary");
