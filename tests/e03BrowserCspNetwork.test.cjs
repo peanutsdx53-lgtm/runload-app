@@ -55,6 +55,11 @@ async function audit(browser,origin,viewport){
   assert.deepEqual(outbound,[],'Unexpected third-party request on initial page load');
   assert.deepEqual(brokenAssets,[],'Missing startup dependency');
   assert.equal(await page.locator('meta[http-equiv="Content-Security-Policy"]').count(),1);
+  const policy=await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');
+  assert(policy.includes("script-src 'self'")&&!policy.includes("script-src 'self' 'unsafe-inline'"),'script-src must allow local scripts only');
+  assert(policy.includes("style-src 'self' 'unsafe-inline'"),'Limited inline CSS boot fallback intentionally supported');
+  assert(policy.includes("object-src 'none'")&&policy.includes("base-uri 'none'"),'unsafe object and base-uri policy missing');
+  assert(policy.includes("connect-src 'self' ws://127.0.0.1:* ws://localhost:*"),'localhost ws exception must be explicitly bounded');
   const dynamic=await page.evaluate(async()=>{
    const {createRunMeasurementMap}=await import('/ui/runMeasurementMap.js');
    const container=document.createElement('div');container.id='e03-audit-map';container.style.width='320px';container.style.height='360px';document.body.append(container);
@@ -70,7 +75,10 @@ async function audit(browser,origin,viewport){
   assert(outbound.length>0,'Map consent did not generate tile requests');
   assert(outbound.every(x=>x.type==='image'&&/^https:\/\/tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png$/.test(x.url)),`Unexpected external request with consent: ${JSON.stringify(outbound)}`);
   assert.equal(await page.locator('#e03-audit-map .run-map__tile-consent').evaluate(e=>e.hidden),true);
-  assert(await page.locator('#e03-audit-map img.run-map__tile').count()>0,'Missing rendered map tile assets');
+  assert(await page.locator('#e03-audit-map img.run-map__tile').count()>0,'Missing map tiles');
+  await page.waitForFunction(()=>[...document.querySelectorAll('#e03-audit-map img.run-map__tile')].some(img=>img.complete&&img.naturalWidth>0),null,{timeout:7000}).catch(()=>{});
+  const decoded=await page.locator('#e03-audit-map img.run-map__tile').evaluateAll(nodes=>nodes.some(img=>img.complete&&img.naturalWidth>0));
+  assert(decoded,'CSP accepted tile URLs but no image decoded; not a render PASS');
   // Explicitly probe CSP defenses; the script and network attempts MUST be blocked.
   // Live Server's development-only ws://localhost CSP exception must work,
   // without enabling off-origin WebSocket destinations.
