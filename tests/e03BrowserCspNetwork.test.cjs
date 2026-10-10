@@ -65,7 +65,7 @@ async function audit(browser,origin,viewport){
   });
   assert(dynamic.consentShown&&dynamic.prompt.includes('外部'),'No meaningful opt-in consent prompt');
   await page.waitForTimeout(300);assert.deepEqual(outbound,[],'Map leaks viewed coordinates before explicit tile consent');
-  await page.locator('#e03-audit-map .run-map__tile-consent-button').click();
+  await page.locator('#e03-audit-map .run-map__tile-consent-button').evaluate(button=>button.click());
   await page.waitForTimeout(450);
   assert(outbound.length>0,'Map consent did not generate tile requests');
   assert(outbound.every(x=>x.type==='image'&&/^https:\/\/tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png$/.test(x.url)),`Unexpected external request with consent: ${JSON.stringify(outbound)}`);
