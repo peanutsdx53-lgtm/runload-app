@@ -70,13 +70,17 @@ export async function clearAppDataAcrossStores({ services, platformRuntime }) {
   return { ok: true };
 }
 
-function bindDataManagement({ services, router, rerender, platformRuntime }) {
+export function bindDataManagement({ services, router, rerender, platformRuntime }) {
   let pendingRestoreInspection = null;
+  let pendingRestoreFile = null;
+  let restoreInspectionGeneration = 0;
   const previewHost = document.querySelector("[data-restore-preview-host]");
   const fileInput = document.querySelector('[data-action="restore-backup"]');
 
   function clearRestorePreview() {
+    restoreInspectionGeneration += 1;
     pendingRestoreInspection = null;
+    pendingRestoreFile = null;
     if (fileInput) fileInput.value = "";
     if (previewHost) {
       previewHost.innerHTML = '<p class="muted-text">ファイルを選ぶと、保存内容と件数を確認してから復元できます。</p>';
@@ -91,7 +95,7 @@ function bindDataManagement({ services, router, rerender, platformRuntime }) {
     });
     previewHost?.querySelector('[data-action="cancel-restore-preview"]')?.addEventListener("click", clearRestorePreview);
     confirmButton?.addEventListener("click", () => {
-      if (!pendingRestoreInspection) {
+      if (!pendingRestoreInspection || pendingRestoreFile !== fileInput?.files?.[0]) {
         showDataMessage("復元前の検査をやり直してください。", "error");
         return;
       }
@@ -125,10 +129,26 @@ function bindDataManagement({ services, router, rerender, platformRuntime }) {
     showDataMessage("バックアップファイルを作成しました。");
   });
   fileInput?.addEventListener("change", async (event) => {
+    // Every new selection invalidates the previous approval immediately. File
+    // reading is asynchronous and may complete out of selection order.
+    const generation = ++restoreInspectionGeneration;
+    pendingRestoreInspection = null;
+    pendingRestoreFile = null;
     const file = event.target.files?.[0];
-    if (!file) return;
-    const inspection = await services.storage.backup.inspectBackupFile(file);
+    if (!file) { clearRestorePreview(); return; }
+    if (previewHost) previewHost.textContent = "バックアップを検査しています。";
+    let inspection;
+    try {
+      inspection = await services.storage.backup.inspectBackupFile(file);
+    } catch {
+      if (generation === restoreInspectionGeneration && fileInput?.files?.[0] === file) {
+        showDataMessage("バックアップの検査に失敗しました。別のファイルを選択してください。", "error");
+      }
+      return;
+    }
+    if (generation !== restoreInspectionGeneration || fileInput?.files?.[0] !== file) return;
     pendingRestoreInspection = inspection.canRestore ? inspection : null;
+    pendingRestoreFile = inspection.canRestore ? file : null;
     if (previewHost) {
       previewHost.innerHTML = renderRestoreInspection(inspection, file.name);
       previewHost.querySelector("[tabindex]")?.focus();
