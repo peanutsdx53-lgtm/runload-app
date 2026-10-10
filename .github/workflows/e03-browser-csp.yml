@@ -1,0 +1,36 @@
+name: E03 Browser CSP and Privacy Boundary
+on:
+  pull_request:
+    paths:
+      - "tests/e03BrowserCspNetwork.test.cjs"
+      - ".github/workflows/e03-browser-csp.yml"
+      - "ui/runMeasurementMap.js"
+      - "index.html"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and complete nonbrowser regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check tests/e03BrowserCspNetwork.test.cjs
+          while IFS= read -r -d '' f; do node --check "$f" >/dev/null; done < <(find . -type f \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -print0)
+          for f in tests/*.test.mjs; do
+            [[ "$f" == *mobileWalkJogBrowserFlow.test.mjs ]] && continue
+            node "$f" > /tmp/e03-test.log 2>&1 || { cat /tmp/e03-test.log; echo "FAIL $f"; exit 1; }
+          done
+      - name: Install isolated browser testing support
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Live CSP, external request and localhost WebSocket audit
+        run: node tests/e03BrowserCspNetwork.test.cjs
