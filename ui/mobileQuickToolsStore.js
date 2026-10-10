@@ -55,6 +55,38 @@ export function loadMobileQuickTools() {
   }
 }
 
+// Fail closed for mutations. loadMobileQuickTools() deliberately masks broken
+// or inaccessible storage for rendering, but saving through that fallback
+// would silently replace the user's original notes with a fresh archive.
+function loadMobileQuickToolsForWrite() {
+  try {
+    const storage = globalThis.localStorage;
+    if (typeof storage?.getItem !== "function" || typeof storage?.setItem !== "function") return null;
+    const raw = storage.getItem(STORAGE_KEY);
+    if (raw == null) return emptyState();
+    const parsed = JSON.parse(raw);
+    // Earlier app builds kept partial memo collections without a version.
+    // They must remain writable without discarding their archival fields.
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    if (parsed.version != null && parsed.version !== 1) return null;
+    const collections = {};
+    for (const collection of Object.values(COLLECTION_BY_TOOL)) {
+      const existing = parsed[collection];
+      if (existing === undefined) {
+        collections[collection] = [];
+        continue;
+      }
+      if (!Array.isArray(existing)) return null;
+      if (!existing.every((entry) => entry && typeof entry === "object" && !Array.isArray(entry) && String(entry.id || "").trim())) return null;
+      // Do not rewrite historical entries in collections unrelated to this save.
+      collections[collection] = existing;
+    }
+    return { ...parsed, version: 1, ...collections };
+  } catch {
+    return null;
+  }
+}
+
 function createId(prefix) {
   const uuid = globalThis.crypto?.randomUUID?.();
   if (uuid) return `${prefix}-${uuid}`;
@@ -64,7 +96,8 @@ function createId(prefix) {
 export function addMobileQuickToolEntry(tool, values = {}) {
   const collection = COLLECTION_BY_TOOL[tool];
   if (!collection) return null;
-  const current = loadMobileQuickTools();
+  const current = loadMobileQuickToolsForWrite();
+  if (!current) return null;
   const entry = {
     ...values,
     id: createId(tool),
@@ -80,7 +113,8 @@ export function addMobileQuickToolEntry(tool, values = {}) {
 export function removeMobileQuickToolEntry(tool, id) {
   const collection = COLLECTION_BY_TOOL[tool];
   if (!collection) return false;
-  const current = loadMobileQuickTools();
+  const current = loadMobileQuickToolsForWrite();
+  if (!current) return false;
   const nextCollection = current[collection].filter((entry) => entry.id !== String(id || ""));
   if (nextCollection.length === current[collection].length) return false;
   return writeMobileLocalJson(STORAGE_KEY, { ...current, [collection]: nextCollection });
