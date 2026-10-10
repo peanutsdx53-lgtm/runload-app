@@ -69,6 +69,7 @@ jobs:
         run: |
           node tests/g01E02D04RealBrowser.test.cjs
           node tests/e03BrowserCspNetwork.test.cjs
+          node tests/e01LiveDomInjectionRegression.test.cjs
           node tests/mobileWalkJogBrowserFlow.test.mjs
       - name: Desktop interpretation/browser layout and keyboard smoke
         shell: bash
