@@ -48,7 +48,7 @@ const FUKUCHI={
 const VAN_SPEED={R06:{2.78:12424,3.00:11624,3.33:10551,4.00:9362,5.00:7802},R09:{2.78:439,3.00:413,3.33:374,4.00:325,5.00:266}};
 const HO={He:{1.5:143.6,2.0:170.7,2.5:191.3},MM:{1.5:154.1,2.0:172.9,2.5:178.2},LM:{1.5:130.3,2.0:149.5,2.5:162.3},MF:{1.5:339.8,2.0:360.7,2.5:377.8},CF:{1.5:223.8,2.0:244.5,2.5:266.5},LF:{1.5:172.7,2.0:189.0,2.5:203.9}};
 const HO_REGIONS={R10:['He'],R11:['MM','LM'],R12:['MF','CF','LF']};
-// Candidate P2 (NOT APPROVED): Jin (2018), Table 3.2, stance phase work, J/kg.
+// Research-defined P2 bridge: Jin (2018), Table 3.2, stance phase work, J/kg.
 // Published mean at 2.2 and 2.6 m/s; both 2.25 and 2.50 m/s are project interpolations.
 const JIN_STANCE_WORK=Object.freeze({
   R01:{pos:{2.2:0.05,2.6:0.13},neg:{2.2:0.12,2.6:0.13}},
