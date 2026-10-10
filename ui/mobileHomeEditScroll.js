@@ -4,6 +4,7 @@ import {
   homeGridPlacementOf as placementOf,
   homeGridTokenForElement as homeGridToken,
   matchesMobileHomeLayout as mobileLayoutMatches,
+  writeMobileHomeBatch,
 } from "./mobileHomeGridUtilities.js";
 
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
@@ -205,11 +206,8 @@ function persistHomePositions(homeRoot) {
     if (!token) return [];
     return [{ token, ...placementOf(element) }];
   }));
-  try {
-    globalThis.localStorage?.setItem(POSITION_STORAGE_KEY, JSON.stringify({ version: 1, pages }));
-  } catch {
-    // Position persistence is optional; the current edited layout remains visible.
-  }
+  // A damaged stored layout must not be replaced by this editing fallback.
+  writeMobileHomeBatch([[POSITION_STORAGE_KEY, { version: 1, pages }]]);
 }
 
 function iconSwapCandidate(event) {
