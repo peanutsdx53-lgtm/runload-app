@@ -28,7 +28,14 @@ function openDatabase() {
         store.createIndex("createdAt", "createdAt", { unique: false });
       }
     };
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      const database = request.result;
+      database.onversionchange = () => {
+        database.close();
+        databasePromise = null;
+      };
+      resolve(database);
+    };
     request.onerror = () => {
       databasePromise = null;
       reject(request.error || new Error("IndexedDB open failed"));
@@ -70,13 +77,19 @@ export async function listPhotoMemos() {
 }
 
 export async function savePhotoMemo({ blob, note = "", width = 0, height = 0 } = {}) {
-  if (!(blob instanceof Blob) || !blob.size) return { ok: false, reason: "image" };
+  if (!(blob instanceof Blob) || !blob.size || blob.type !== "image/jpeg") {
+    return { ok: false, reason: "image" };
+  }
   if (blob.size > PHOTO_MEMO_MAX_BYTES) return { ok: false, reason: "size" };
+  const imageWidth = Number(width);
+  const imageHeight = Number(height);
+  if (!Number.isInteger(imageWidth) || !Number.isInteger(imageHeight)
+      || imageWidth < 1 || imageHeight < 1
+      || imageWidth > PHOTO_MEMO_MAX_DIMENSION || imageHeight > PHOTO_MEMO_MAX_DIMENSION) {
+    return { ok: false, reason: "image" };
+  }
 
   try {
-    const current = await listPhotoMemos();
-    if (current.length >= PHOTO_MEMO_MAX_COUNT) return { ok: false, reason: "limit" };
-
     const imageBytes = await blob.arrayBuffer();
     const record = {
       id: createId(),
@@ -85,13 +98,24 @@ export async function savePhotoMemo({ blob, note = "", width = 0, height = 0 } =
       imageBytes,
       mimeType: "image/jpeg",
       byteSize: blob.size,
-      width: Number(width) || 0,
-      height: Number(height) || 0,
+      width: imageWidth,
+      height: imageHeight,
     };
     const database = await openDatabase();
+    // A separate list + write transaction permits parallel callers to all
+    // observe an old count and exceed the 20-photo quota. Count and insert
+    // under one readwrite transaction so they serialize across tabs.
     const transaction = database.transaction(STORE_NAME, "readwrite");
-    transaction.objectStore(STORE_NAME).put(record);
-    await transactionDone(transaction);
+    const done = transactionDone(transaction);
+    const store = transaction.objectStore(STORE_NAME);
+    const count = await requestResult(store.count());
+    if (count >= PHOTO_MEMO_MAX_COUNT) {
+      transaction.abort();
+      await done.catch(() => {});
+      return { ok: false, reason: "limit" };
+    }
+    store.add(record);
+    await done;
     return { ok: true, record };
   } catch (error) {
     return { ok: false, reason: saveFailureReason(error) };
