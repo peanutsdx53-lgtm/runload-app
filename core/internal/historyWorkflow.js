@@ -261,8 +261,12 @@ function createHistoryWorkflow({
     const recordId = entry.record.id;
     const recordsRead = readCollectionForMutation(recordsRepository, "records");
     if (!recordsRead.ok) return recordsRead;
-    const records = recordsRead.items.filter((item) => item.id !== recordId);
-    records.push(entry.record);
+    // A record can be re-created after deletion. Restoring the earlier record
+    // must not overwrite the newer record or its linked entries.
+    if (recordsRead.items.some((item) => item.id === recordId)) {
+      return { ok: false, code: "HISTORY_UNDO_RECORD_CONFLICT" };
+    }
+    const records = [...recordsRead.items, entry.record];
     const feedbackRead = readCollectionForMutation(subjectiveFeedbackRepository, "subjectiveFeedback");
     if (!feedbackRead.ok) return feedbackRead;
     const feedbackItems = feedbackRead.items.filter((item) => item.recordId !== recordId);
@@ -332,10 +336,19 @@ function createHistoryWorkflow({
       if (restoredReadingEntry.recordId !== recordId || typeof restoredReadingEntry.articleId !== "string") {
         return { ok: false, code: "HISTORY_UNDO_READING_REFERENCE_INVALID" };
       }
-      const items = readingRead.envelope.entries.filter((item) => item.recordId !== recordId);
-      const index = Math.max(0, Math.min(items.length, Number.isInteger(entry.readingReferenceHistory.index) ? entry.readingReferenceHistory.index : 0));
-      items.splice(index, 0, restoredReadingEntry);
-      restoredReadingHistory = { ...readingRead.envelope, entries: items.slice(0, 24) };
+      // Do not truncate a different record's reading history to make room for
+      // the undone record. Keep the undo point available for a safe retry.
+      const items = readingRead.envelope.entries;
+      if (items.some((item) => item.recordId === recordId)) {
+        return { ok: false, code: "HISTORY_UNDO_READING_HISTORY_CONFLICT" };
+      }
+      if (items.length >= 24) {
+        return { ok: false, code: "HISTORY_UNDO_READING_HISTORY_FULL" };
+      }
+      const restoredItems = [...items];
+      const index = Math.max(0, Math.min(restoredItems.length, Number.isInteger(entry.readingReferenceHistory.index) ? entry.readingReferenceHistory.index : 0));
+      restoredItems.splice(index, 0, restoredReadingEntry);
+      restoredReadingHistory = { ...readingRead.envelope, entries: restoredItems };
     }
 
     const operations = [
