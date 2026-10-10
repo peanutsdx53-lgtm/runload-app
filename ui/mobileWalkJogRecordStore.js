@@ -9,6 +9,7 @@ import {
 import { suppressRegionalCoverageForGpsQuality } from "./mobileWalkJogGpsQuality.js";
 
 const RECORDS_KEY = "runner-load-app-mobile-walk-jog-records-v1.3";
+export { RECORDS_KEY as MOBILE_EXTENSION_RECORDS_STORAGE_KEY };
 const PENDING_MEASUREMENT_KEY = "runner-load-app-flow-session-v1-run-measurement-v1";
 const MAX_RECORDS = 100;
 const BOUND_ROOTS = new WeakSet();
@@ -134,7 +135,7 @@ export function listMobileExtensionRecords(storage = safeStorage("local")) {
 
 export function findMobileExtensionRecord(recordId, storage = safeStorage("local")) {
   const id = String(recordId || "");
-  return listMobileExtensionRecords(storage).find((record) => record.id === id) || null;
+  return listMobileExtensionRecords(storage).find((record) => record && typeof record === "object" && !Array.isArray(record) && record.id === id) || null;
 }
 
 // A read-only history view may show no records when storage is corrupted or

@@ -464,11 +464,19 @@ export function bindRunMeasurement({ router, services }) {
 
   function beginWatch() {
     if (!navigator.geolocation || watchId != null || paused || !measurementStarted) return;
-    watchId = navigator.geolocation.watchPosition(handlePosition, handlePositionError, {
-      enableHighAccuracy: true,
-      maximumAge: 1000,
-      timeout: 15000,
-    });
+    try {
+      watchId = navigator.geolocation.watchPosition(handlePosition, handlePositionError, {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 15000,
+      });
+    } catch (error) {
+      // Some browser or device policies reject the request synchronously.
+      // Preserve the existing error path rather than leaving an unhandled
+      // rejection in start(), resume(), or the save-retry path.
+      watchId = null;
+      handlePositionError(error);
+    }
   }
 
   async function start() {

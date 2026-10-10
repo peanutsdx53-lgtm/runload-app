@@ -3,6 +3,7 @@ import { matchesMobileLayout } from "./deviceLayout.js";
 import {
   findMobileExtensionRecord,
   listMobileExtensionRecords,
+  MOBILE_EXTENSION_RECORDS_STORAGE_KEY,
 } from "./mobileWalkJogRecordStore.js";
 
 const REGION_LABELS = Object.freeze({
@@ -28,6 +29,9 @@ const ACTIVITY_LABELS = Object.freeze({
 });
 
 let scanQueued = false;
+// Cache the exact generated markup, not only the first row metadata.
+// A restored or updated archive can retain IDs/timestamps while changing values.
+const RENDERED_MARKUP = new WeakMap();
 
 function routeState() {
   const hash = String(globalThis.location?.hash || "");
@@ -167,6 +171,29 @@ function recordCard(record) {
   </article>`;
 }
 
+// Stored rows may be valid JSON but contain malformed fields. Do not let one
+// damaged row stop the read-only history, and never rewrite the raw archive.
+function isDisplayableRecord(record) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) return false;
+  if (typeof record.id !== "string" || !record.id) return false;
+  if (typeof record.createdAt !== "string" || typeof record.activityId !== "string") return false;
+  try {
+    recordCard(record);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function safeRecordDetail(record) {
+  if (!record) return null;
+  try {
+    return recordDetail(record);
+  } catch {
+    return null;
+  }
+}
+
 function fullList(records) {
   return `<section class="mobile-activity-history-full">
     <header class="mobile-activity-history-head">
@@ -217,7 +244,9 @@ function renderIntoHistory() {
   const screen = document.querySelector(".screen-layout--history");
   if (!screen) return;
 
-  const records = listMobileExtensionRecords();
+  // A damaged archive may contain null or non-record rows. Keep the raw
+  // storage untouched; only omit invalid rows from the read-only view.
+  const records = listMobileExtensionRecords().filter(isDisplayableRecord);
   let panel = screen.querySelector(":scope > [data-mobile-activity-history]");
   if (!panel) {
     panel = document.createElement("section");
@@ -228,21 +257,17 @@ function renderIntoHistory() {
     if (!panel.parentElement) screen.prepend(panel);
   }
 
-  const selected = state.recordId ? findMobileExtensionRecord(state.recordId) : null;
-  const renderKey = JSON.stringify([
-    state.full,
-    state.recordId,
-    records.length,
-    records[0]?.id || "",
-    records[0]?.createdAt || "",
-  ]);
-  if (panel.dataset.renderKey !== renderKey) {
-    panel.dataset.renderKey = renderKey;
-    panel.innerHTML = state.full
-      ? selected
-        ? recordDetail(selected)
-        : fullList(records)
-      : compactEntry(records);
+  const found = state.recordId ? findMobileExtensionRecord(state.recordId) : null;
+  const selected = isDisplayableRecord(found) ? found : null;
+  const detailMarkup = state.full ? safeRecordDetail(selected) : null;
+  const markup = state.full
+    ? detailMarkup || fullList(records)
+    : compactEntry(records);
+  // Comparing rendered strings avoids stale values and prevents the
+  // MutationObserver from causing redundant DOM replacements.
+  if (RENDERED_MARKUP.get(panel) !== markup) {
+    panel.innerHTML = markup;
+    RENDERED_MARKUP.set(panel, markup);
   }
 
   if (state.full) hideCanonicalChildren(screen, panel);
@@ -260,10 +285,18 @@ export function installMobileWalkJogHistoryUi() {
   const observer = new MutationObserver(queueScan);
   observer.observe(document.body, { childList: true, subtree: true });
   globalThis.addEventListener?.("hashchange", queueScan);
+  // Writes in another same-origin tab emit `storage` here without a DOM
+  // mutation. Refresh only for this archive (or a storage.clear() event).
+  // This is read-only: never rewrite the source archive during a refresh.
+  const onStorageChanged = (event) => {
+    if (event?.key === MOBILE_EXTENSION_RECORDS_STORAGE_KEY || event?.key === null) queueScan();
+  };
+  globalThis.addEventListener?.("storage", onStorageChanged);
   queueScan();
   return () => {
     observer.disconnect();
     globalThis.removeEventListener?.("hashchange", queueScan);
+    globalThis.removeEventListener?.("storage", onStorageChanged);
   };
 }
 
