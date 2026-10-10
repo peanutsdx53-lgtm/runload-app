@@ -9,7 +9,7 @@ const REGION_ID = "BA-DISP-023";
 const SIGNATURE = Object.freeze({
   regionId: REGION_ID,
   modelVersion: PRIMARY_REGIONAL_V2_MODEL_VERSION,
-  outputSemanticVersion: "runload-primary-regional-reference100-output-v3.0",
+  outputSemanticVersion: "runload-primary-regional-reference100-output-v3.1",
   constructId: "C-CALF",
   referenceId: "REF-CALF",
 });

@@ -7,9 +7,9 @@ const moduleExports = Object.create(null);
 // Primary regional calculation engine.
 // Current public baseline for records created from this release onward.
 
-const MODEL_VERSION = 'runload-primary-regional-reference100-v3.0';
-const OUTPUT_SEMANTIC_VERSION = 'runload-primary-regional-reference100-output-v3.0';
-const BUILD_ID = 'primary-reference100-v3-20261008-missing-segment-evidence-boundary';
+const MODEL_VERSION = 'runload-primary-regional-reference100-v3.1';
+const OUTPUT_SEMANTIC_VERSION = 'runload-primary-regional-reference100-output-v3.1';
+const BUILD_ID = 'primary-reference100-v3.1-20261010-jin-p2-reproducible';
 
 const REGION_DEFS = Object.freeze([
   {id:'R01',name:'股関節部',referenceSpeedMps:2.50,domain:[2.50,4.50],construct:'股関節の機械的仕事に基づく部位内Reference-100',baselineSource:'FUKUCHI_2017',outputSemantic:'REFERENCE_100_CONDITION_RESPONSE'},
@@ -48,7 +48,24 @@ const FUKUCHI={
 const VAN_SPEED={R06:{2.78:12424,3.00:11624,3.33:10551,4.00:9362,5.00:7802},R09:{2.78:439,3.00:413,3.33:374,4.00:325,5.00:266}};
 const HO={He:{1.5:143.6,2.0:170.7,2.5:191.3},MM:{1.5:154.1,2.0:172.9,2.5:178.2},LM:{1.5:130.3,2.0:149.5,2.5:162.3},MF:{1.5:339.8,2.0:360.7,2.5:377.8},CF:{1.5:223.8,2.0:244.5,2.5:266.5},LF:{1.5:172.7,2.0:189.0,2.5:203.9}};
 const HO_REGIONS={R10:['He'],R11:['MM','LM'],R12:['MF','CF','LF']};
-const JIN_FUKUCHI_LOW_BRIDGE=Object.freeze({R01:{2.25:0.8715948738593665,2.50:1.0},R08:{2.25:1.1167426394595865,2.50:1.0}});
+// Candidate P2 (NOT APPROVED): Jin (2018), Table 3.2, stance phase work, J/kg.
+// Published mean at 2.2 and 2.6 m/s; both 2.25 and 2.50 m/s are project interpolations.
+const JIN_STANCE_WORK=Object.freeze({
+  R01:{pos:{2.2:0.05,2.6:0.13},neg:{2.2:0.12,2.6:0.13}},
+  R08:{pos:{2.2:0.51,2.6:0.46},neg:{2.2:0.31,2.6:0.31}}
+});
+function jinRelativeStanceWork(regionId,speedMps){
+  const a=JIN_STANCE_WORK[regionId];
+  const pos=interp(a.pos,speedMps)/interp(a.pos,2.50);
+  const neg=interp(a.neg,speedMps)/interp(a.neg,2.50);
+  return 0.5*(pos+neg);
+}
+// This is an independently reproducible proposed alternative to historical hardcoded
+// 2.25 endpoints, not evidence that the original authors endorsed cross-study bridging.
+const JIN_FUKUCHI_LOW_BRIDGE=Object.freeze({
+  R01:{2.25:jinRelativeStanceWork('R01',2.25),2.50:1.0},
+  R08:{2.25:jinRelativeStanceWork('R08',2.25),2.50:1.0}
+});
 const LI_HO_HIGH_BRIDGE=Object.freeze({
   speed:[2.5,2.7777777777777777,3.0555555555555554,3.333333333333333],
   R10:[1.0,1.0324343257443083,1.124413309982487,1.1342206654991243],
@@ -235,7 +252,7 @@ function summarizeRegions(segResults){
         speedMps:x.speedMps!=null&&Number.isFinite(Number(x.speedMps))?Number(x.speedMps):null,
         speedProvenance:segment.speedProvenance||null,
         sourceConditionClass:x.evidenceState==='DIRECT'?'SOURCE_DIRECT_RANGE':x.evidenceState||'EVIDENCE_INSUFFICIENT',
-        projectDerivationMethod:r.id==='R11'?'HO_MEDIAL_LATERAL_MIDFOOT_PEAK_PRESSURE_NORMALIZED_50_50':r.id==='R12'?'HO_FOREFOOT_COMPONENT_PEAK_PRESSURE_NORMALIZED_1_3':r.id==='R01'||r.id==='R08'?'FUKUCHI_POSITIVE_NEGATIVE_WORK_PER_STRIDE_NORMALIZED_50_50':null,
+        projectDerivationMethod:r.id==='R11'?'HO_MEDIAL_LATERAL_MIDFOOT_PEAK_PRESSURE_NORMALIZED_50_50':r.id==='R12'?'HO_FOREFOOT_COMPONENT_PEAK_PRESSURE_NORMALIZED_1_3':r.id==='R01'||r.id==='R08'?(x.evidenceState==='P2_CROSS_SOURCE_BRIDGE'?'JIN_STANCE_POS_NEG_WORK_NORMALIZED_50_50_BOUNDARY250':'FUKUCHI_POSITIVE_NEGATIVE_WORK_PER_STRIDE_NORMALIZED_50_50'):null,
         remainderState:segment.remainderState||null,
         calculationState:x.state||'EVIDENCE_INSUFFICIENT',
         evidenceState:x.evidenceState||'EVIDENCE_INSUFFICIENT',

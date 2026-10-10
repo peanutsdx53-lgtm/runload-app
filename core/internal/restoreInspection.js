@@ -14,7 +14,7 @@ import { normalizeSelfInterpretation } from "../selfInterpretationCore.js";
 {
 const moduleExports = Object.create(null);
 const { PERSONAL_PROFILE_SCHEMA_VERSION } = internalModules.bodyProfileAdjustment;
-const { PRIMARY_REGIONAL_V2_MODEL_VERSION, validatePrimaryRegionalV2ResultRecord } = internalModules.primaryRegionalResultService;
+const { PRIMARY_REGIONAL_V2_MODEL_VERSION, PREVIOUS_REGIONAL_V3_MODEL_VERSION, validatePrimaryRegionalV2ResultRecord } = internalModules.primaryRegionalResultService;
 const { INPUT_LIMITS } = internalModules.inputSafety;
 const { validateRunningRecordInput, normalizeRunningRecord, validateRunningRecord } = internalModules.inputValidation;
 const { validateCoursePresetInput } = internalModules.courseRepository;
@@ -187,14 +187,14 @@ function inspectRegionalResults(results, recordIds, issues) {
       issues.push(issue("BLOCKING", "REGIONAL_RESULT_ID_REQUIRED", "regionalResults", "部位別の保存済み結果の識別情報が不足しています。", itemId));
       return;
     }
-    if (item.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION) {
+    if (item.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION && item.model_version !== PREVIOUS_REGIONAL_V3_MODEL_VERSION) {
       issues.push(issue("BLOCKING", "REGIONAL_VERSION_UNSUPPORTED", "regionalResults", "このアプリで作成された部位別結果ではありません。", itemId));
     }
     if (!recordIds.has(String(item.record_id))) {
       issues.push(issue("BLOCKING", "REGIONAL_RECORD_REFERENCE_MISSING", "regionalResults", "部位別結果が参照する記録がバックアップ内にありません。", itemId));
     }
-    if (item.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION) {
-      const outputValidation = validatePrimaryRegionalV2ResultRecord(item);
+    if (item.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION || item.model_version === PREVIOUS_REGIONAL_V3_MODEL_VERSION) {
+      const outputValidation = validatePrimaryRegionalV2ResultRecord(item, {allowLegacy:true});
       if (!outputValidation.valid) issues.push(issue("BLOCKING", "PRIMARY_REGIONAL_V2_OUTPUT_INVALID", "regionalResults", "部位別比較値の12部位・計算結果を確認できません。", itemId, { issueCodes: outputValidation.issues.slice(0, 20) }));
     }
     deepFiniteNumbers(item, "", issues, "regionalResults", itemId);

@@ -11,7 +11,7 @@ const { normalizeRunningRecord, validateRunningRecord, validateRunningRecordInpu
 const { normalizeSubjectiveFeedback } = internalModules.subjectiveFeedback;
 const { evaluateSupportDecision } = internalModules.supportDecision;
 const { STORAGE_KEYS } = internalModules.storageKeys;
-const { createPrimaryRegionalV2ResultRecord, upsertPrimaryRegionalV2ResultRecord, validatePrimaryRegionalV2ResultRecord, PRIMARY_REGIONAL_V2_MODEL_VERSION } = internalModules.primaryRegionalResultService;
+const { createPrimaryRegionalV2ResultRecord, upsertPrimaryRegionalV2ResultRecord, validatePrimaryRegionalV2ResultRecord, PRIMARY_REGIONAL_V2_MODEL_VERSION, PREVIOUS_REGIONAL_V3_MODEL_VERSION } = internalModules.primaryRegionalResultService;
 
 
 function sortRecords(records = []) {
@@ -38,14 +38,19 @@ function upsertById(items, item, getId) {
 function storedRegionalResultForRecord(repository, record = {}) {
   const rows = repository?.loadForRecord?.(record.id) || [];
   const currentRevision = String(record.updatedAt || record.createdAt || "");
-  const candidates = rows.filter((item) => item?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION);
-  const matching = candidates.filter((item) => String(item.source_record_revision || "") === currentRevision);
-  return [...(matching.length ? matching : candidates)]
-    .sort((left, right) => (
-      String(right.source_record_revision || "").localeCompare(String(left.source_record_revision || ""))
-      || String(right.generated_at || "").localeCompare(String(left.generated_at || ""))
-      || String(right.id || "").localeCompare(String(left.id || ""))
-    ))[0] || null;
+  // A prior semantic version is a read-only historical result. Never replace it
+  // with a newly calculated value under the old name or select it in preference
+  // to the current model for the same revision.
+  const supported = rows.filter((item) => item?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION
+    || item?.model_version === PREVIOUS_REGIONAL_V3_MODEL_VERSION);
+  const matching = supported.filter((item) => String(item.source_record_revision || "") === currentRevision);
+  const available = matching.length ? matching : supported.filter((item) => item.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION);
+  return available.sort((left, right) => (
+    Number(right.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION) - Number(left.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
+    || String(right.source_record_revision || "").localeCompare(String(left.source_record_revision || ""))
+    || String(right.generated_at || "").localeCompare(String(left.generated_at || ""))
+    || String(right.id || "").localeCompare(String(left.id || ""))
+  ))[0] || null;
 }
 
 function createModelExperience(
@@ -64,11 +69,20 @@ function createModelExperience(
   let regionalV2Recovery = null;
 
   if (storedRegionalV2ResultRecord) {
-    const primaryValidation = validatePrimaryRegionalV2ResultRecord(storedRegionalV2ResultRecord);
+    const isPriorResult = storedRegionalV2ResultRecord.model_version === PREVIOUS_REGIONAL_V3_MODEL_VERSION;
+    const primaryValidation = validatePrimaryRegionalV2ResultRecord(storedRegionalV2ResultRecord, {allowLegacy:isPriorResult});
     const bodyMapRegions = storedRegionalV2ResultRecord.body_map_payload?.regions;
     const bodyMapValid = storedRegionalV2ResultRecord.state === "REST" || (Array.isArray(bodyMapRegions) && bodyMapRegions.length === 12);
     const sourceRevisionMatches = String(storedRegionalV2ResultRecord.source_record_revision || "") === String(record.updatedAt || record.createdAt || "");
-    if (!primaryValidation.valid || !bodyMapValid || !sourceRevisionMatches) {
+    if (isPriorResult && (!primaryValidation.valid || !bodyMapValid || !sourceRevisionMatches)) {
+      // Never silently replace a damaged historic calculation with the new
+      // model's numbers. Keep the stored record in the repository as evidence.
+      regionalV2ResultRecord = null;
+      regionalV2Recovery = Object.freeze({status:"HISTORIC_ARCHIVE_UNAVAILABLE",sourceResultId:storedRegionalV2ResultRecord.id,
+        issueCodes:Object.freeze([...primaryValidation.issues,
+          ...(bodyMapValid?[]:["BODY_MAP_INVALID"]),
+          ...(sourceRevisionMatches?[]:["SOURCE_RECORD_REVISION_MISMATCH"])])});
+    } else if (!primaryValidation.valid || !bodyMapValid || !sourceRevisionMatches) {
       const sessionSequence = sortedRecords
         .filter((item) => item.date === record.date)
         .findIndex((item) => item.id === record.id) + 1;
@@ -117,7 +131,8 @@ function createModelExperience(
     regionalV2Result: cloneValue(regionalV2ResultRecord?.result || null),
     bodyMapV2: cloneValue(regionalV2ResultRecord?.body_map_payload || null),
     regionalV2Recovery: cloneValue(regionalV2Recovery),
-    regionalSemanticState: regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION ? "REFERENCE100_V3" : "NONE",
+    regionalSemanticState: regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION ? "REFERENCE100_V3"
+      : regionalV2ResultRecord?.model_version === PREVIOUS_REGIONAL_V3_MODEL_VERSION ? "REFERENCE100_V3_HISTORIC_READ_ONLY" : "NONE",
     supportDecision: cloneValue(supportDecision),
   });
 }

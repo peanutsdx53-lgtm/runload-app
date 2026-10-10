@@ -1,0 +1,1998 @@
+{
+  "snapshot": {
+    "formatVersion": "runner-load-app-new-backup-v2",
+    "createdAt": "2026-10-10T00:15:28.113Z",
+    "data": {
+      "runner-load-app-new-v1-records-v1": [
+        {
+          "id": "old-version-proof",
+          "date": "2026-10-09",
+          "activityType": "run",
+          "distanceKm": 5.4,
+          "durationMinutes": 40,
+          "steps": 0,
+          "runningFormat": "CONTINUOUS_RUN",
+          "runWalkRunningDistanceKm": null,
+          "runWalkRunningDurationMinutes": null,
+          "runWalkRunningSections": [],
+          "stepsProvenance": "UNKNOWN",
+          "course": {
+            "id": "",
+            "name": "",
+            "routePattern": "UNKNOWN",
+            "surfaceWetSlipState": "UNKNOWN",
+            "gradeInputMode": "UNKNOWN",
+            "surfaceInputMode": "UNKNOWN",
+            "gradeKnowledge": "UNKNOWN",
+            "upPercent": 0,
+            "downPercent": 0,
+            "upGradePercent": 0,
+            "downGradePercent": 0,
+            "modelSurfaceClass": "UNKNOWN",
+            "pavedPercent": 0,
+            "trackPercent": 0,
+            "treadmillPercent": 0,
+            "soilPercent": 0,
+            "trailPercent": 0,
+            "naturalGrassPercent": 0,
+            "artificialTurfPercent": 0,
+            "sandPercent": 0
+          },
+          "bodyProfileSnapshot": {
+            "schemaVersion": 2,
+            "numericUse": "CONTEXT_ONLY_NO_PRIMARY_MODEL_COEFFICIENT",
+            "sex": "",
+            "ageBand": "",
+            "heightCm": 100,
+            "weightKg": 25,
+            "runningStartDateOrBand": "",
+            "experienceSelfAssessment": "",
+            "runningGoalTags": [],
+            "recordedAt": "2026-10-10T00:15:28.103Z"
+          },
+          "planOutcome": {
+            "status": "",
+            "reason": "",
+            "reasonNote": "",
+            "plannedDistanceKm": 0,
+            "plannedDurationMinutes": 0,
+            "plannedCourseSnapshot": null,
+            "planNote": ""
+          },
+          "personalContext": null,
+          "environmentContext": {
+            "temperatureC": null,
+            "environmentNote": ""
+          },
+          "reflectionContext": {
+            "postRunReflection": ""
+          },
+          "regionalModelSnapshot": {
+            "snapshotId": "PRIMARY_REGIONAL_REFERENCE100_V3",
+            "modelVersion": "runload-primary-regional-reference100-v3.0",
+            "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+            "authorityVersion": "RunLoad Calculation Engine V1.2+ 2026-09-16"
+          },
+          "createdAt": "2026-10-09T00:00:00.000Z",
+          "updatedAt": "2026-10-10T00:15:28.103Z"
+        }
+      ],
+      "runner-load-app-new-v1-model-results-regional-v2": [
+        {
+          "id": "primary-reference100-v3-result-old-version-proof-2026-10-10T00_15_28.103Z",
+          "record_id": "old-version-proof",
+          "source_record_revision": "2026-10-10T00:15:28.103Z",
+          "generated_at": "2026-10-10T00:15:28.106Z",
+          "model_version": "runload-primary-regional-reference100-v3.0",
+          "authority_version": "RunLoad-Calculation-Engine-Current-20261007-Gazendam-Reproducible",
+          "engine_build_version": "primary-reference100-v3-20261008-missing-segment-evidence-boundary",
+          "output_semantic_version": "runload-primary-regional-reference100-output-v3.0",
+          "route_trace_version": "primary-regional-route-trace-v1",
+          "source_registry": {
+            "FUKUCHI_2017": {
+              "label": "Fukuchi et al. 2017",
+              "role": "股関節・足関節の速度応答"
+            },
+            "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED": {
+              "label": "Gazendam & Hof 2007",
+              "role": "保存原典Figure 3のCurrent独立再デジタイズ中央値とTable 3係数による筋活動経路"
+            },
+            "GAZENDAM_HOF_2007_TABLE3_NORMALIZED": {
+              "label": "Gazendam & Hof 2007",
+              "role": "Table 3係数と2.5 m/s正規化で再現した下腿後面筋活動経路"
+            },
+            "HAGEN_2023": {
+              "label": "Hagen et al. 2023",
+              "role": "膝蓋大腿関節の速度・相対cadence応答"
+            },
+            "VAN_HOOREN_2024": {
+              "label": "Van Hooren et al. 2024",
+              "role": "脛骨・アキレス腱の速度/条件応答"
+            },
+            "HO_2010": {
+              "label": "Ho et al. 2010",
+              "role": "足底ピーク圧の速度/上り応答"
+            },
+            "JIN_2018": {
+              "label": "Jin 2018",
+              "role": "股関節部・足関節部の低速側で用いる限定的な資料間接続"
+            },
+            "LI_2020": {
+              "label": "Li 2020",
+              "role": "後足部・足底中部・前足部の高速側で用いる限定的な資料間接続"
+            }
+          },
+          "state": "RUN",
+          "engine_input_snapshot": {
+            "runningFormat": "RUN",
+            "distanceKm": 5.4,
+            "durationMinutes": 40,
+            "runningDistanceKm": null,
+            "runningDurationMinutes": null,
+            "steps": null,
+            "stepsProvenance": "UNKNOWN",
+            "averageCadenceSpm": null,
+            "personalHabitualCadenceSpm": null,
+            "personalHabitualCadenceReferenceState": "REFERENCE_BUILDING",
+            "personalHabitualCadenceEligibleCount": 0,
+            "segments": null,
+            "uphillSharePercent": 0,
+            "downhillSharePercent": 0,
+            "uphillGradePercent": 0,
+            "downhillGradePercent": 0,
+            "surfaceComponents": [],
+            "runSetting": null,
+            "runSettingProvenance": "SURFACE_DERIVED",
+            "allowR12GrassEnvelope": false
+          },
+          "result": {
+            "state": "OK",
+            "courseState": "WHOLE_RUN_ONLY",
+            "combinedConditionState": null,
+            "model_version": "runload-primary-regional-reference100-v3.0",
+            "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+            "exposure": {
+              "state": "OK",
+              "distanceKm": 5.4,
+              "durationMinutes": 40,
+              "speedMps": 2.25,
+              "format": "RUN"
+            },
+            "regions": [
+              {
+                "regionId": "BA-DISP-014",
+                "primaryRegionId": "R01",
+                "regionName": "股関節部",
+                "value": 87.15948738593666,
+                "indexValue": 87.15948738593666,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "P2_CROSS_SOURCE_BRIDGE",
+                "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+                "evidenceStates": [
+                  "P2_CROSS_SOURCE_BRIDGE"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "股関節の機械的仕事に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R01_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R01_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.5,
+                "sourceIds": [
+                  "FUKUCHI_2017",
+                  "JIN_2018"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "P2_CROSS_SOURCE_BRIDGE",
+                    "projectDerivationMethod": "FUKUCHI_POSITIVE_NEGATIVE_WORK_PER_STRIDE_NORMALIZED_50_50",
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+                    "baseline": {
+                      "ratio": 0.8715948738593665,
+                      "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+                      "sourceFamily": "JIN_2018_TO_FUKUCHI_2017",
+                      "routeId": "S-R01-LOW",
+                      "flags": [
+                        "BOUNDED_SPEED_BRIDGE"
+                      ]
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-015",
+                "primaryRegionId": "R02",
+                "regionName": "殿部",
+                "value": 104.10979200666377,
+                "indexValue": 104.10979200666377,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "DIRECT",
+                "evidenceState": "DIRECT",
+                "evidenceStates": [
+                  "DIRECT"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "殿部筋活動に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R02_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R02_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.5,
+                "sourceIds": [
+                  "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+                    "projectDerivationMethod": null,
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "DIRECT",
+                    "baseline": {
+                      "ratio": 1.0410979200666377,
+                      "evidenceState": "DIRECT",
+                      "sourceFamily": "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED",
+                      "routeId": "DIRECT-R02-SPEED",
+                      "flags": []
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-016",
+                "primaryRegionId": "R03",
+                "regionName": "大腿前面",
+                "value": 104.53046808875172,
+                "indexValue": 104.53046808875172,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "DIRECT",
+                "evidenceState": "DIRECT",
+                "evidenceStates": [
+                  "DIRECT"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "大腿前面筋活動に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R03_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R03_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.5,
+                "sourceIds": [
+                  "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+                    "projectDerivationMethod": null,
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "DIRECT",
+                    "baseline": {
+                      "ratio": 1.045304680887517,
+                      "evidenceState": "DIRECT",
+                      "sourceFamily": "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED",
+                      "routeId": "DIRECT-R03-SPEED",
+                      "flags": []
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-018",
+                "primaryRegionId": "R04",
+                "regionName": "大腿後面",
+                "value": 106.83209094446508,
+                "indexValue": 106.83209094446508,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "DIRECT",
+                "evidenceState": "DIRECT",
+                "evidenceStates": [
+                  "DIRECT"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "大腿後面筋活動に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R04_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R04_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.5,
+                "sourceIds": [
+                  "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+                    "projectDerivationMethod": null,
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "DIRECT",
+                    "baseline": {
+                      "ratio": 1.0683209094446509,
+                      "evidenceState": "DIRECT",
+                      "sourceFamily": "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED",
+                      "routeId": "DIRECT-R04-SPEED",
+                      "flags": []
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-019",
+                "primaryRegionId": "R05",
+                "regionName": "膝蓋大腿関節部",
+                "value": 112.2800498467233,
+                "indexValue": 112.2800498467233,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "DIRECT",
+                "evidenceState": "DIRECT",
+                "evidenceStates": [
+                  "DIRECT"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "膝蓋大腿関節stress力積に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R05_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R05_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.78,
+                "sourceIds": [
+                  "HAGEN_2023",
+                  "VAN_HOOREN_2024"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+                    "projectDerivationMethod": null,
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "DIRECT",
+                    "baseline": {
+                      "ratio": 1.122800498467233,
+                      "evidenceState": "DIRECT",
+                      "sourceFamily": "HAGEN_2023",
+                      "routeId": "DIRECT-R05-SPEED",
+                      "flags": []
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-021",
+                "primaryRegionId": "R06",
+                "regionName": "脛骨部",
+                "value": 108.84842537661616,
+                "indexValue": 108.84842537661616,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "P1_SOURCE_MODEL_EXTENSION",
+                "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+                "evidenceStates": [
+                  "P1_SOURCE_MODEL_EXTENSION"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "脛骨stress力積に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R06_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R06_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.78,
+                "sourceIds": [
+                  "VAN_HOOREN_2024"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "P1_SOURCE_MODEL_EXTENSION",
+                    "projectDerivationMethod": null,
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+                    "baseline": {
+                      "ratio": 1.0884842537661616,
+                      "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+                      "sourceFamily": "VAN_HOOREN_2024_PUBLISHED_SPEED_MODEL",
+                      "routeId": "S-R06-LOW",
+                      "flags": [
+                        "BOUNDED_LOW_SIDE_SPEED_EXTENSION"
+                      ]
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-023",
+                "primaryRegionId": "R07",
+                "regionName": "下腿後面",
+                "value": 106.17860124824557,
+                "indexValue": 106.17860124824557,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "DIRECT",
+                "evidenceState": "DIRECT",
+                "evidenceStates": [
+                  "DIRECT"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "下腿後面筋活動に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R07_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R07_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.5,
+                "sourceIds": [
+                  "GAZENDAM_HOF_2007_TABLE3_NORMALIZED"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+                    "projectDerivationMethod": null,
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "DIRECT",
+                    "baseline": {
+                      "ratio": 1.0617860124824556,
+                      "evidenceState": "DIRECT",
+                      "sourceFamily": "GAZENDAM_HOF_2007_TABLE3_NORMALIZED",
+                      "routeId": "DIRECT-R07-SPEED",
+                      "flags": []
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-024",
+                "primaryRegionId": "R08",
+                "regionName": "足関節部",
+                "value": 111.67426394595866,
+                "indexValue": 111.67426394595866,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "P2_CROSS_SOURCE_BRIDGE",
+                "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+                "evidenceStates": [
+                  "P2_CROSS_SOURCE_BRIDGE"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "足関節の機械的仕事に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R08_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R08_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.5,
+                "sourceIds": [
+                  "FUKUCHI_2017",
+                  "JIN_2018"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "P2_CROSS_SOURCE_BRIDGE",
+                    "projectDerivationMethod": "FUKUCHI_POSITIVE_NEGATIVE_WORK_PER_STRIDE_NORMALIZED_50_50",
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+                    "baseline": {
+                      "ratio": 1.1167426394595865,
+                      "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+                      "sourceFamily": "JIN_2018_TO_FUKUCHI_2017",
+                      "routeId": "S-R08-LOW",
+                      "flags": [
+                        "BOUNDED_SPEED_BRIDGE"
+                      ]
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-025",
+                "primaryRegionId": "R09",
+                "regionName": "アキレス腱部",
+                "value": 109.45444840857374,
+                "indexValue": 109.45444840857374,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "P1_SOURCE_MODEL_EXTENSION",
+                "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+                "evidenceStates": [
+                  "P1_SOURCE_MODEL_EXTENSION"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "アキレス腱strain力積に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R09_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R09_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.78,
+                "sourceIds": [
+                  "VAN_HOOREN_2024"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "P1_SOURCE_MODEL_EXTENSION",
+                    "projectDerivationMethod": null,
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+                    "baseline": {
+                      "ratio": 1.0945444840857375,
+                      "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+                      "sourceFamily": "VAN_HOOREN_2024_PUBLISHED_SPEED_MODEL",
+                      "routeId": "S-R09-LOW",
+                      "flags": [
+                        "BOUNDED_LOW_SIDE_SPEED_EXTENSION"
+                      ]
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-027",
+                "primaryRegionId": "R10",
+                "regionName": "後足部",
+                "value": 94.6157867224255,
+                "indexValue": 94.6157867224255,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "DIRECT",
+                "evidenceState": "DIRECT",
+                "evidenceStates": [
+                  "DIRECT"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "後足部ピーク足底圧に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R10_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R10_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.5,
+                "sourceIds": [
+                  "HO_2010"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+                    "projectDerivationMethod": null,
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "DIRECT",
+                    "baseline": {
+                      "ratio": 0.946157867224255,
+                      "evidenceState": "DIRECT",
+                      "sourceFamily": "HO_2010",
+                      "routeId": "DIRECT-R10-SPEED",
+                      "flags": []
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": false,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-028",
+                "primaryRegionId": "R11",
+                "regionName": "足底中部・内側縦足弓",
+                "value": 97.2847959985976,
+                "indexValue": 97.2847959985976,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "DIRECT",
+                "evidenceState": "DIRECT",
+                "evidenceStates": [
+                  "DIRECT"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "中足部の内側・外側ピーク足底圧を研究内で合成したReference-100（内側縦足弓そのものの直接測定値ではない）",
+                "constructId": "PRIMARY_R11_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R11_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.5,
+                "sourceIds": [
+                  "HO_2010"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+                    "projectDerivationMethod": "HO_MEDIAL_LATERAL_MIDFOOT_PEAK_PRESSURE_NORMALIZED_50_50",
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "DIRECT",
+                    "baseline": {
+                      "ratio": 0.9728479599859761,
+                      "evidenceState": "DIRECT",
+                      "sourceFamily": "HO_2010",
+                      "routeId": "DIRECT-R11-SPEED",
+                      "flags": [
+                        "PROJECT_DEFINED_COMPONENT_COMPOSITE"
+                      ]
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": true,
+                "fallback": []
+              },
+              {
+                "regionId": "BA-DISP-029",
+                "primaryRegionId": "R12",
+                "regionName": "前足部",
+                "value": 96.65185541768892,
+                "indexValue": 96.65185541768892,
+                "valueEnvelope": null,
+                "calculationState": "CALCULATED",
+                "provenance": "DIRECT",
+                "evidenceState": "DIRECT",
+                "evidenceStates": [
+                  "DIRECT"
+                ],
+                "unsupportedDistanceKm": 0,
+                "construct": "前足部ピーク足底圧に基づく部位内Reference-100",
+                "constructId": "PRIMARY_R12_CONSTRUCT_V2",
+                "referenceId": "PRIMARY_R12_REFERENCE_V2",
+                "referenceAmountKm": null,
+                "referenceSpeedMps": 2.5,
+                "sourceIds": [
+                  "HO_2010"
+                ],
+                "routeTrace": [
+                  {
+                    "segmentIndex": 0,
+                    "distanceKm": 5.4,
+                    "speedMps": 2.25,
+                    "speedProvenance": null,
+                    "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+                    "projectDerivationMethod": "HO_FOREFOOT_COMPONENT_PEAK_PRESSURE_NORMALIZED_1_3",
+                    "remainderState": null,
+                    "calculationState": "OK",
+                    "evidenceState": "DIRECT",
+                    "baseline": {
+                      "ratio": 0.9665185541768891,
+                      "evidenceState": "DIRECT",
+                      "sourceFamily": "HO_2010",
+                      "routeId": "DIRECT-R12-SPEED",
+                      "flags": [
+                        "PROJECT_DEFINED_COMPONENT_COMPOSITE"
+                      ]
+                    },
+                    "appliedConditions": [],
+                    "notAppliedConditions": [],
+                    "interactionState": "NO_UNRESOLVED_INTERACTION"
+                  }
+                ],
+                "axisEstimates": [],
+                "optionalApplied": [],
+                "coverageProportion": 1,
+                "supportedDistanceKm": 5.4,
+                "projectCompositeFlag": true,
+                "fallback": []
+              }
+            ],
+            "axisEstimates": {},
+            "rawEngineState": "OK"
+          },
+          "body_map_payload": {
+            "version": "primary-reference100-v3-bodymap-1.0",
+            "regions": [
+              {
+                "regionId": "BA-DISP-014",
+                "primaryRegionId": "R01",
+                "regionName": "股関節部",
+                "value": 87.15948738593666,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-015",
+                "primaryRegionId": "R02",
+                "regionName": "殿部",
+                "value": 104.10979200666377,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-016",
+                "primaryRegionId": "R03",
+                "regionName": "大腿前面",
+                "value": 104.53046808875172,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-018",
+                "primaryRegionId": "R04",
+                "regionName": "大腿後面",
+                "value": 106.83209094446508,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-019",
+                "primaryRegionId": "R05",
+                "regionName": "膝蓋大腿関節部",
+                "value": 112.2800498467233,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-021",
+                "primaryRegionId": "R06",
+                "regionName": "脛骨部",
+                "value": 108.84842537661616,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-023",
+                "primaryRegionId": "R07",
+                "regionName": "下腿後面",
+                "value": 106.17860124824557,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-024",
+                "primaryRegionId": "R08",
+                "regionName": "足関節部",
+                "value": 111.67426394595866,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-025",
+                "primaryRegionId": "R09",
+                "regionName": "アキレス腱部",
+                "value": 109.45444840857374,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-027",
+                "primaryRegionId": "R10",
+                "regionName": "後足部",
+                "value": 94.6157867224255,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-028",
+                "primaryRegionId": "R11",
+                "regionName": "足底中部・内側縦足弓",
+                "value": 97.2847959985976,
+                "calculationState": "CALCULATED"
+              },
+              {
+                "regionId": "BA-DISP-029",
+                "primaryRegionId": "R12",
+                "regionName": "前足部",
+                "value": 96.65185541768892,
+                "calculationState": "CALCULATED"
+              }
+            ]
+          },
+          "comparison_signatures": {
+            "BA-DISP-014": {
+              "regionId": "BA-DISP-014",
+              "primaryRegionId": "R01",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R01_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R01_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-015": {
+              "regionId": "BA-DISP-015",
+              "primaryRegionId": "R02",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R02_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R02_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-016": {
+              "regionId": "BA-DISP-016",
+              "primaryRegionId": "R03",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R03_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R03_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-018": {
+              "regionId": "BA-DISP-018",
+              "primaryRegionId": "R04",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R04_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R04_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-019": {
+              "regionId": "BA-DISP-019",
+              "primaryRegionId": "R05",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R05_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R05_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-021": {
+              "regionId": "BA-DISP-021",
+              "primaryRegionId": "R06",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R06_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R06_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-023": {
+              "regionId": "BA-DISP-023",
+              "primaryRegionId": "R07",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R07_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R07_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-024": {
+              "regionId": "BA-DISP-024",
+              "primaryRegionId": "R08",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R08_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R08_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-025": {
+              "regionId": "BA-DISP-025",
+              "primaryRegionId": "R09",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R09_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R09_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-027": {
+              "regionId": "BA-DISP-027",
+              "primaryRegionId": "R10",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R10_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R10_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-028": {
+              "regionId": "BA-DISP-028",
+              "primaryRegionId": "R11",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R11_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R11_REFERENCE_V2",
+              "directDeltaAllowed": true
+            },
+            "BA-DISP-029": {
+              "regionId": "BA-DISP-029",
+              "primaryRegionId": "R12",
+              "modelVersion": "runload-primary-regional-reference100-v3.0",
+              "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+              "constructId": "PRIMARY_R12_CONSTRUCT_V2",
+              "referenceId": "PRIMARY_R12_REFERENCE_V2",
+              "directDeltaAllowed": true
+            }
+          }
+        }
+      ],
+      "runner-load-app-new-v1-subjective-feedback-v1": [
+        {
+          "recordId": "old-version-proof",
+          "date": "2026-10-09",
+          "checkStatus": "deferred",
+          "checkedAt": "2026-10-10T00:15:28.103Z",
+          "bodyAreaObservations": [],
+          "consultationNote": "",
+          "safetyFlags": {
+            "severePain": false,
+            "significantSwelling": false,
+            "cannotBearWeight": false,
+            "movementDifficulty": false,
+            "numbnessOrWeakness": false,
+            "coldPaleBlueLimb": false,
+            "deformityOrMajorTrauma": false,
+            "painAtRestOrNight": false,
+            "chestPainOrPressure": false,
+            "breathingDifficulty": false,
+            "faintingOrConfusion": false,
+            "heavyBleeding": false
+          },
+          "safetyCheck": {
+            "status": "not_asked",
+            "checkedAt": ""
+          },
+          "supportDecisionSnapshot": {
+            "route": "normal",
+            "reasons": [
+              "no_subjective_concern",
+              "safety_check_not_asked"
+            ],
+            "routeReasons": [
+              "no_subjective_concern"
+            ],
+            "contextReasons": [
+              "safety_check_not_asked"
+            ],
+            "blocks": [],
+            "nextActions": [
+              "continue_normal_flow"
+            ],
+            "safetyCheckStatus": "not_asked",
+            "activeSafetyFlags": [],
+            "ruleVersion": "support-rules-v2",
+            "modelInputUsed": false,
+            "qaSupportAffectsDecision": false
+          }
+        }
+      ],
+      "runner-load-app-new-v1-plans-v1": [],
+      "runner-load-app-new-v1-profile-v1": null,
+      "runner-load-app-new-v1-settings-v1": null,
+      "runner-load-app-new-v1-draft-v1": null,
+      "runner-load-app-new-v1-courses-v1": [],
+      "runner-load-app-new-v1-run-measurements-v1": [],
+      "runner-load-app-new-v1-second-pillar-rof-j-v1": null,
+      "runner-load-app-new-v1-second-pillar-rof-j-lifecycle-v1": null,
+      "running-record-mobile-quick-tools-v1": null,
+      "running-record-mobile-achievements-v1": null,
+      "running-record-mobile-home-positions-v1": null,
+      "running-record-mobile-home-layout-v1": null,
+      "running-record-mobile-home-widgets-v1": null,
+      "runner-load-app-new-v1-self-understanding-threads-v2": [],
+      "runner-load-app-new-v1-self-interpretations-v1": [],
+      "runner-load-app-new-v1-reading-reference-history-v1": null
+    }
+  },
+  "originalResult": {
+    "id": "primary-reference100-v3-result-old-version-proof-2026-10-10T00_15_28.103Z",
+    "record_id": "old-version-proof",
+    "source_record_revision": "2026-10-10T00:15:28.103Z",
+    "generated_at": "2026-10-10T00:15:28.106Z",
+    "model_version": "runload-primary-regional-reference100-v3.0",
+    "authority_version": "RunLoad-Calculation-Engine-Current-20261007-Gazendam-Reproducible",
+    "engine_build_version": "primary-reference100-v3-20261008-missing-segment-evidence-boundary",
+    "output_semantic_version": "runload-primary-regional-reference100-output-v3.0",
+    "route_trace_version": "primary-regional-route-trace-v1",
+    "source_registry": {
+      "FUKUCHI_2017": {
+        "label": "Fukuchi et al. 2017",
+        "role": "股関節・足関節の速度応答"
+      },
+      "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED": {
+        "label": "Gazendam & Hof 2007",
+        "role": "保存原典Figure 3のCurrent独立再デジタイズ中央値とTable 3係数による筋活動経路"
+      },
+      "GAZENDAM_HOF_2007_TABLE3_NORMALIZED": {
+        "label": "Gazendam & Hof 2007",
+        "role": "Table 3係数と2.5 m/s正規化で再現した下腿後面筋活動経路"
+      },
+      "HAGEN_2023": {
+        "label": "Hagen et al. 2023",
+        "role": "膝蓋大腿関節の速度・相対cadence応答"
+      },
+      "VAN_HOOREN_2024": {
+        "label": "Van Hooren et al. 2024",
+        "role": "脛骨・アキレス腱の速度/条件応答"
+      },
+      "HO_2010": {
+        "label": "Ho et al. 2010",
+        "role": "足底ピーク圧の速度/上り応答"
+      },
+      "JIN_2018": {
+        "label": "Jin 2018",
+        "role": "股関節部・足関節部の低速側で用いる限定的な資料間接続"
+      },
+      "LI_2020": {
+        "label": "Li 2020",
+        "role": "後足部・足底中部・前足部の高速側で用いる限定的な資料間接続"
+      }
+    },
+    "state": "RUN",
+    "engine_input_snapshot": {
+      "runningFormat": "RUN",
+      "distanceKm": 5.4,
+      "durationMinutes": 40,
+      "runningDistanceKm": null,
+      "runningDurationMinutes": null,
+      "steps": null,
+      "stepsProvenance": "UNKNOWN",
+      "averageCadenceSpm": null,
+      "personalHabitualCadenceSpm": null,
+      "personalHabitualCadenceReferenceState": "REFERENCE_BUILDING",
+      "personalHabitualCadenceEligibleCount": 0,
+      "segments": null,
+      "uphillSharePercent": 0,
+      "downhillSharePercent": 0,
+      "uphillGradePercent": 0,
+      "downhillGradePercent": 0,
+      "surfaceComponents": [],
+      "runSetting": null,
+      "runSettingProvenance": "SURFACE_DERIVED",
+      "allowR12GrassEnvelope": false
+    },
+    "result": {
+      "state": "OK",
+      "courseState": "WHOLE_RUN_ONLY",
+      "combinedConditionState": null,
+      "model_version": "runload-primary-regional-reference100-v3.0",
+      "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+      "exposure": {
+        "state": "OK",
+        "distanceKm": 5.4,
+        "durationMinutes": 40,
+        "speedMps": 2.25,
+        "format": "RUN"
+      },
+      "regions": [
+        {
+          "regionId": "BA-DISP-014",
+          "primaryRegionId": "R01",
+          "regionName": "股関節部",
+          "value": 87.15948738593666,
+          "indexValue": 87.15948738593666,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "P2_CROSS_SOURCE_BRIDGE",
+          "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+          "evidenceStates": [
+            "P2_CROSS_SOURCE_BRIDGE"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "股関節の機械的仕事に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R01_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R01_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.5,
+          "sourceIds": [
+            "FUKUCHI_2017",
+            "JIN_2018"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "P2_CROSS_SOURCE_BRIDGE",
+              "projectDerivationMethod": "FUKUCHI_POSITIVE_NEGATIVE_WORK_PER_STRIDE_NORMALIZED_50_50",
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+              "baseline": {
+                "ratio": 0.8715948738593665,
+                "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+                "sourceFamily": "JIN_2018_TO_FUKUCHI_2017",
+                "routeId": "S-R01-LOW",
+                "flags": [
+                  "BOUNDED_SPEED_BRIDGE"
+                ]
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-015",
+          "primaryRegionId": "R02",
+          "regionName": "殿部",
+          "value": 104.10979200666377,
+          "indexValue": 104.10979200666377,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "DIRECT",
+          "evidenceState": "DIRECT",
+          "evidenceStates": [
+            "DIRECT"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "殿部筋活動に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R02_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R02_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.5,
+          "sourceIds": [
+            "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+              "projectDerivationMethod": null,
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "DIRECT",
+              "baseline": {
+                "ratio": 1.0410979200666377,
+                "evidenceState": "DIRECT",
+                "sourceFamily": "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED",
+                "routeId": "DIRECT-R02-SPEED",
+                "flags": []
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-016",
+          "primaryRegionId": "R03",
+          "regionName": "大腿前面",
+          "value": 104.53046808875172,
+          "indexValue": 104.53046808875172,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "DIRECT",
+          "evidenceState": "DIRECT",
+          "evidenceStates": [
+            "DIRECT"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "大腿前面筋活動に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R03_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R03_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.5,
+          "sourceIds": [
+            "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+              "projectDerivationMethod": null,
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "DIRECT",
+              "baseline": {
+                "ratio": 1.045304680887517,
+                "evidenceState": "DIRECT",
+                "sourceFamily": "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED",
+                "routeId": "DIRECT-R03-SPEED",
+                "flags": []
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-018",
+          "primaryRegionId": "R04",
+          "regionName": "大腿後面",
+          "value": 106.83209094446508,
+          "indexValue": 106.83209094446508,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "DIRECT",
+          "evidenceState": "DIRECT",
+          "evidenceStates": [
+            "DIRECT"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "大腿後面筋活動に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R04_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R04_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.5,
+          "sourceIds": [
+            "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+              "projectDerivationMethod": null,
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "DIRECT",
+              "baseline": {
+                "ratio": 1.0683209094446509,
+                "evidenceState": "DIRECT",
+                "sourceFamily": "GAZENDAM_HOF_2007_FIGURE3_DIGITIZED",
+                "routeId": "DIRECT-R04-SPEED",
+                "flags": []
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-019",
+          "primaryRegionId": "R05",
+          "regionName": "膝蓋大腿関節部",
+          "value": 112.2800498467233,
+          "indexValue": 112.2800498467233,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "DIRECT",
+          "evidenceState": "DIRECT",
+          "evidenceStates": [
+            "DIRECT"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "膝蓋大腿関節stress力積に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R05_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R05_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.78,
+          "sourceIds": [
+            "HAGEN_2023",
+            "VAN_HOOREN_2024"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+              "projectDerivationMethod": null,
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "DIRECT",
+              "baseline": {
+                "ratio": 1.122800498467233,
+                "evidenceState": "DIRECT",
+                "sourceFamily": "HAGEN_2023",
+                "routeId": "DIRECT-R05-SPEED",
+                "flags": []
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-021",
+          "primaryRegionId": "R06",
+          "regionName": "脛骨部",
+          "value": 108.84842537661616,
+          "indexValue": 108.84842537661616,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "P1_SOURCE_MODEL_EXTENSION",
+          "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+          "evidenceStates": [
+            "P1_SOURCE_MODEL_EXTENSION"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "脛骨stress力積に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R06_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R06_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.78,
+          "sourceIds": [
+            "VAN_HOOREN_2024"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "P1_SOURCE_MODEL_EXTENSION",
+              "projectDerivationMethod": null,
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+              "baseline": {
+                "ratio": 1.0884842537661616,
+                "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+                "sourceFamily": "VAN_HOOREN_2024_PUBLISHED_SPEED_MODEL",
+                "routeId": "S-R06-LOW",
+                "flags": [
+                  "BOUNDED_LOW_SIDE_SPEED_EXTENSION"
+                ]
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-023",
+          "primaryRegionId": "R07",
+          "regionName": "下腿後面",
+          "value": 106.17860124824557,
+          "indexValue": 106.17860124824557,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "DIRECT",
+          "evidenceState": "DIRECT",
+          "evidenceStates": [
+            "DIRECT"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "下腿後面筋活動に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R07_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R07_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.5,
+          "sourceIds": [
+            "GAZENDAM_HOF_2007_TABLE3_NORMALIZED"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+              "projectDerivationMethod": null,
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "DIRECT",
+              "baseline": {
+                "ratio": 1.0617860124824556,
+                "evidenceState": "DIRECT",
+                "sourceFamily": "GAZENDAM_HOF_2007_TABLE3_NORMALIZED",
+                "routeId": "DIRECT-R07-SPEED",
+                "flags": []
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-024",
+          "primaryRegionId": "R08",
+          "regionName": "足関節部",
+          "value": 111.67426394595866,
+          "indexValue": 111.67426394595866,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "P2_CROSS_SOURCE_BRIDGE",
+          "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+          "evidenceStates": [
+            "P2_CROSS_SOURCE_BRIDGE"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "足関節の機械的仕事に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R08_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R08_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.5,
+          "sourceIds": [
+            "FUKUCHI_2017",
+            "JIN_2018"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "P2_CROSS_SOURCE_BRIDGE",
+              "projectDerivationMethod": "FUKUCHI_POSITIVE_NEGATIVE_WORK_PER_STRIDE_NORMALIZED_50_50",
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+              "baseline": {
+                "ratio": 1.1167426394595865,
+                "evidenceState": "P2_CROSS_SOURCE_BRIDGE",
+                "sourceFamily": "JIN_2018_TO_FUKUCHI_2017",
+                "routeId": "S-R08-LOW",
+                "flags": [
+                  "BOUNDED_SPEED_BRIDGE"
+                ]
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-025",
+          "primaryRegionId": "R09",
+          "regionName": "アキレス腱部",
+          "value": 109.45444840857374,
+          "indexValue": 109.45444840857374,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "P1_SOURCE_MODEL_EXTENSION",
+          "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+          "evidenceStates": [
+            "P1_SOURCE_MODEL_EXTENSION"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "アキレス腱strain力積に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R09_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R09_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.78,
+          "sourceIds": [
+            "VAN_HOOREN_2024"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "P1_SOURCE_MODEL_EXTENSION",
+              "projectDerivationMethod": null,
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+              "baseline": {
+                "ratio": 1.0945444840857375,
+                "evidenceState": "P1_SOURCE_MODEL_EXTENSION",
+                "sourceFamily": "VAN_HOOREN_2024_PUBLISHED_SPEED_MODEL",
+                "routeId": "S-R09-LOW",
+                "flags": [
+                  "BOUNDED_LOW_SIDE_SPEED_EXTENSION"
+                ]
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-027",
+          "primaryRegionId": "R10",
+          "regionName": "後足部",
+          "value": 94.6157867224255,
+          "indexValue": 94.6157867224255,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "DIRECT",
+          "evidenceState": "DIRECT",
+          "evidenceStates": [
+            "DIRECT"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "後足部ピーク足底圧に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R10_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R10_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.5,
+          "sourceIds": [
+            "HO_2010"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+              "projectDerivationMethod": null,
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "DIRECT",
+              "baseline": {
+                "ratio": 0.946157867224255,
+                "evidenceState": "DIRECT",
+                "sourceFamily": "HO_2010",
+                "routeId": "DIRECT-R10-SPEED",
+                "flags": []
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": false,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-028",
+          "primaryRegionId": "R11",
+          "regionName": "足底中部・内側縦足弓",
+          "value": 97.2847959985976,
+          "indexValue": 97.2847959985976,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "DIRECT",
+          "evidenceState": "DIRECT",
+          "evidenceStates": [
+            "DIRECT"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "中足部の内側・外側ピーク足底圧を研究内で合成したReference-100（内側縦足弓そのものの直接測定値ではない）",
+          "constructId": "PRIMARY_R11_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R11_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.5,
+          "sourceIds": [
+            "HO_2010"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+              "projectDerivationMethod": "HO_MEDIAL_LATERAL_MIDFOOT_PEAK_PRESSURE_NORMALIZED_50_50",
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "DIRECT",
+              "baseline": {
+                "ratio": 0.9728479599859761,
+                "evidenceState": "DIRECT",
+                "sourceFamily": "HO_2010",
+                "routeId": "DIRECT-R11-SPEED",
+                "flags": [
+                  "PROJECT_DEFINED_COMPONENT_COMPOSITE"
+                ]
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": true,
+          "fallback": []
+        },
+        {
+          "regionId": "BA-DISP-029",
+          "primaryRegionId": "R12",
+          "regionName": "前足部",
+          "value": 96.65185541768892,
+          "indexValue": 96.65185541768892,
+          "valueEnvelope": null,
+          "calculationState": "CALCULATED",
+          "provenance": "DIRECT",
+          "evidenceState": "DIRECT",
+          "evidenceStates": [
+            "DIRECT"
+          ],
+          "unsupportedDistanceKm": 0,
+          "construct": "前足部ピーク足底圧に基づく部位内Reference-100",
+          "constructId": "PRIMARY_R12_CONSTRUCT_V2",
+          "referenceId": "PRIMARY_R12_REFERENCE_V2",
+          "referenceAmountKm": null,
+          "referenceSpeedMps": 2.5,
+          "sourceIds": [
+            "HO_2010"
+          ],
+          "routeTrace": [
+            {
+              "segmentIndex": 0,
+              "distanceKm": 5.4,
+              "speedMps": 2.25,
+              "speedProvenance": null,
+              "sourceConditionClass": "SOURCE_DIRECT_RANGE",
+              "projectDerivationMethod": "HO_FOREFOOT_COMPONENT_PEAK_PRESSURE_NORMALIZED_1_3",
+              "remainderState": null,
+              "calculationState": "OK",
+              "evidenceState": "DIRECT",
+              "baseline": {
+                "ratio": 0.9665185541768891,
+                "evidenceState": "DIRECT",
+                "sourceFamily": "HO_2010",
+                "routeId": "DIRECT-R12-SPEED",
+                "flags": [
+                  "PROJECT_DEFINED_COMPONENT_COMPOSITE"
+                ]
+              },
+              "appliedConditions": [],
+              "notAppliedConditions": [],
+              "interactionState": "NO_UNRESOLVED_INTERACTION"
+            }
+          ],
+          "axisEstimates": [],
+          "optionalApplied": [],
+          "coverageProportion": 1,
+          "supportedDistanceKm": 5.4,
+          "projectCompositeFlag": true,
+          "fallback": []
+        }
+      ],
+      "axisEstimates": {},
+      "rawEngineState": "OK"
+    },
+    "body_map_payload": {
+      "version": "primary-reference100-v3-bodymap-1.0",
+      "regions": [
+        {
+          "regionId": "BA-DISP-014",
+          "primaryRegionId": "R01",
+          "regionName": "股関節部",
+          "value": 87.15948738593666,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-015",
+          "primaryRegionId": "R02",
+          "regionName": "殿部",
+          "value": 104.10979200666377,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-016",
+          "primaryRegionId": "R03",
+          "regionName": "大腿前面",
+          "value": 104.53046808875172,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-018",
+          "primaryRegionId": "R04",
+          "regionName": "大腿後面",
+          "value": 106.83209094446508,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-019",
+          "primaryRegionId": "R05",
+          "regionName": "膝蓋大腿関節部",
+          "value": 112.2800498467233,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-021",
+          "primaryRegionId": "R06",
+          "regionName": "脛骨部",
+          "value": 108.84842537661616,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-023",
+          "primaryRegionId": "R07",
+          "regionName": "下腿後面",
+          "value": 106.17860124824557,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-024",
+          "primaryRegionId": "R08",
+          "regionName": "足関節部",
+          "value": 111.67426394595866,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-025",
+          "primaryRegionId": "R09",
+          "regionName": "アキレス腱部",
+          "value": 109.45444840857374,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-027",
+          "primaryRegionId": "R10",
+          "regionName": "後足部",
+          "value": 94.6157867224255,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-028",
+          "primaryRegionId": "R11",
+          "regionName": "足底中部・内側縦足弓",
+          "value": 97.2847959985976,
+          "calculationState": "CALCULATED"
+        },
+        {
+          "regionId": "BA-DISP-029",
+          "primaryRegionId": "R12",
+          "regionName": "前足部",
+          "value": 96.65185541768892,
+          "calculationState": "CALCULATED"
+        }
+      ]
+    },
+    "comparison_signatures": {
+      "BA-DISP-014": {
+        "regionId": "BA-DISP-014",
+        "primaryRegionId": "R01",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R01_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R01_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-015": {
+        "regionId": "BA-DISP-015",
+        "primaryRegionId": "R02",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R02_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R02_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-016": {
+        "regionId": "BA-DISP-016",
+        "primaryRegionId": "R03",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R03_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R03_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-018": {
+        "regionId": "BA-DISP-018",
+        "primaryRegionId": "R04",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R04_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R04_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-019": {
+        "regionId": "BA-DISP-019",
+        "primaryRegionId": "R05",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R05_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R05_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-021": {
+        "regionId": "BA-DISP-021",
+        "primaryRegionId": "R06",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R06_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R06_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-023": {
+        "regionId": "BA-DISP-023",
+        "primaryRegionId": "R07",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R07_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R07_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-024": {
+        "regionId": "BA-DISP-024",
+        "primaryRegionId": "R08",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R08_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R08_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-025": {
+        "regionId": "BA-DISP-025",
+        "primaryRegionId": "R09",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R09_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R09_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-027": {
+        "regionId": "BA-DISP-027",
+        "primaryRegionId": "R10",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R10_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R10_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-028": {
+        "regionId": "BA-DISP-028",
+        "primaryRegionId": "R11",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R11_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R11_REFERENCE_V2",
+        "directDeltaAllowed": true
+      },
+      "BA-DISP-029": {
+        "regionId": "BA-DISP-029",
+        "primaryRegionId": "R12",
+        "modelVersion": "runload-primary-regional-reference100-v3.0",
+        "outputSemanticVersion": "runload-primary-regional-reference100-output-v3.0",
+        "constructId": "PRIMARY_R12_CONSTRUCT_V2",
+        "referenceId": "PRIMARY_R12_REFERENCE_V2",
+        "directDeltaAllowed": true
+      }
+    }
+  }
+}

@@ -21,7 +21,7 @@ const LABEL_BY_PRIMARY=Object.freeze({
 
 function signature(primary='R01'){
   const regionId=DISPLAY_BY_PRIMARY[primary];
-  return {regionId,modelVersion:'runload-primary-regional-reference100-v3.0',outputSemanticVersion:'runload-primary-regional-reference100-output-v3.0',constructId:`C-${primary}`,referenceId:`REF-${primary}`};
+  return {regionId,modelVersion:'runload-primary-regional-reference100-v3.1',outputSemanticVersion:'runload-primary-regional-reference100-output-v3.1',constructId:`C-${primary}`,referenceId:`REF-${primary}`};
 }
 function row(primary='R01',value=112,{calculationState='CALCULATED'}={}){
   const regionId=DISPLAY_BY_PRIMARY[primary];
@@ -66,7 +66,7 @@ function fakeExperience({
   if(activityType==='rest'){
     return {
       record:{id,date,createdAt,activityType:'rest'},
-      regionalV2ResultRecord:{id:`result-${id}`,record_id:id,model_version:'runload-primary-regional-reference100-v3.0',output_semantic_version:'runload-primary-regional-reference100-output-v3.0',result:null,comparison_signatures:{},source_registry:{}},
+      regionalV2ResultRecord:{id:`result-${id}`,record_id:id,model_version:'runload-primary-regional-reference100-v3.1',output_semantic_version:'runload-primary-regional-reference100-output-v3.1',result:null,comparison_signatures:{},source_registry:{}},
       regionalSemanticState:semantic,supportDecision,
     };
   }
@@ -76,7 +76,7 @@ function fakeExperience({
   return {
     record:{id,date,createdAt,activityType:'run',distanceKm,durationMinutes,runningFormat,course},
     regionalV2ResultRecord:{
-      id:`result-${id}`,record_id:id,model_version:'runload-primary-regional-reference100-v3.0',output_semantic_version:'runload-primary-regional-reference100-output-v3.0',engine_build_version:'B',authority_version:'A',route_trace_version:'primary-regional-route-trace-v1',
+      id:`result-${id}`,record_id:id,model_version:'runload-primary-regional-reference100-v3.1',output_semantic_version:'runload-primary-regional-reference100-output-v3.1',engine_build_version:'B',authority_version:'A',route_trace_version:'primary-regional-route-trace-v1',
       engine_input_snapshot:engine,
       result:{state:'OK',courseState:Array.isArray(engine.segments)&&engine.segments.length?'SEGMENTED_COLOCATED':'WHOLE_RUN_ONLY',exposure:{distanceKm:engine.runningFormat==='RUN_WALK'?engine.runningDistanceKm:engine.distanceKm,durationMinutes:engine.runningFormat==='RUN_WALK'?engine.runningDurationMinutes:engine.durationMinutes,speedMps:3},regions:[rr]},
       comparison_signatures:{[display]:signature(primary)},source_registry:{SRC:{label:'Source',role:'baseline'}},

@@ -24,7 +24,7 @@ function resultRecord(recordId, values) {
   const comparison_signatures = Object.fromEntries(REGION_IDS.map((regionId, index) => [regionId, {
     regionId,
     modelVersion: PRIMARY_REGIONAL_V2_MODEL_VERSION,
-    outputSemanticVersion: "runload-primary-regional-reference100-output-v3.0",
+    outputSemanticVersion: "runload-primary-regional-reference100-output-v3.1",
     constructId: `C-${index + 1}`,
     referenceId: `REF-${index + 1}`,
   }]));
@@ -32,7 +32,7 @@ function resultRecord(recordId, values) {
     id: `result-${recordId}`,
     record_id: recordId,
     model_version: PRIMARY_REGIONAL_V2_MODEL_VERSION,
-    output_semantic_version: "runload-primary-regional-reference100-output-v3.0",
+    output_semantic_version: "runload-primary-regional-reference100-output-v3.1",
     result: { regions },
     comparison_signatures,
   };
