@@ -137,11 +137,32 @@ export function findMobileExtensionRecord(recordId, storage = safeStorage("local
   return listMobileExtensionRecords(storage).find((record) => record.id === id) || null;
 }
 
+// A read-only history view may show no records when storage is corrupted or
+// permission-denied, but a *write* must not mistake that view fallback for an
+// empty archive. Otherwise the next valid save silently destroys the old raw
+// user data. Keep the original value untouched until the user can recover it.
+function readMobileRecordsForWrite(storage) {
+  if (!storage || typeof storage.getItem !== "function") {
+    return { ok: false, code: "MOBILE_ACTIVITY_RECORD_WRITE_FAILED" };
+  }
+  try {
+    const raw = storage.getItem(RECORDS_KEY);
+    if (raw === null) return { ok: true, records: [] };
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return { ok: false, code: "MOBILE_ACTIVITY_RECORD_READ_FAILED" };
+    return { ok: true, records: parsed };
+  } catch {
+    return { ok: false, code: "MOBILE_ACTIVITY_RECORD_READ_FAILED" };
+  }
+}
+
 export function saveMobileExtensionRecord({ analysis, pending, fatigue = null, storage = safeStorage("local") } = {}) {
   const record = normalizeMobileExtensionRecord({ analysis, pending, fatigue });
   if (!record) return { ok: false, code: "MOBILE_ACTIVITY_RECORD_INVALID" };
-  const current = listMobileExtensionRecords(storage);
-  const next = [record, ...current.filter((item) => item.id !== record.id)].slice(0, MAX_RECORDS);
+  const prior = readMobileRecordsForWrite(storage);
+  if (!prior.ok) return prior;
+  const current = prior.records;
+  const next = [record, ...current.filter((item) => item?.id !== record.id)].slice(0, MAX_RECORDS);
   if (!writeJson(storage, RECORDS_KEY, next)) return { ok: false, code: "MOBILE_ACTIVITY_RECORD_WRITE_FAILED" };
   return { ok: true, record: clone(record) };
 }
