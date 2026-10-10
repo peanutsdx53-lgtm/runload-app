@@ -663,3 +663,4 @@ export function applyWidgetLayout(root, layout = readWidgetLayout()) {
     applyWidgetSize(widget, layout.sizes?.[id]);
   });
 }
+
