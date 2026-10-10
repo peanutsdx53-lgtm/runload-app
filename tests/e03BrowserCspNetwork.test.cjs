@@ -79,6 +79,13 @@ async function audit(browser,origin,viewport){
   await page.waitForFunction(()=>[...document.querySelectorAll('#e03-audit-map img.run-map__tile')].some(img=>img.complete&&img.naturalWidth>0),null,{timeout:7000}).catch(()=>{});
   const decoded=await page.locator('#e03-audit-map img.run-map__tile').evaluateAll(nodes=>nodes.some(img=>img.complete&&img.naturalWidth>0));
   assert(decoded,'CSP accepted tile URLs but no image decoded; not a render PASS');
+  // The intentionally allowed inline boot-style fallback must actually render.
+  const inlineStyle=await page.evaluate(()=>{
+    const style=document.createElement('style');style.textContent='.e03-inline-probe{color:rgb(1, 2, 3)}';document.head.append(style);
+    const probe=document.createElement('span');probe.className='e03-inline-probe';document.body.append(probe);
+    return getComputedStyle(probe).color;
+  });
+  assert.equal(inlineStyle,'rgb(1, 2, 3)','Allowed inline style did not apply');
   // Explicitly probe CSP defenses; the script and network attempts MUST be blocked.
   // Live Server's development-only ws://localhost CSP exception must work,
   // without enabling off-origin WebSocket destinations.
