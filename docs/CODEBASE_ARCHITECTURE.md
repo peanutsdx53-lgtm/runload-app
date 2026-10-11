@@ -210,3 +210,16 @@ classes, markup returned by template renderers, descendant selectors and
 platform-only branches must be reviewed before removal. Function-call and
 selector-level proof across all deferred routes and states is not yet complete;
 B-01/B-05 must remain PARTIAL pending that proof.
+
+## Storage recovery evidence boundary (G-01)
+
+`core/internal/platformInfrastructure.js` preserves malformed stored JSON as a
+secondary, bounded recovery record without rewriting the original key. When
+that recovery register itself is invalid, non-array, or already at its 20-entry
+limit, the app preserves existing bytes and declines to add a new entry. An
+identical repeat is not duplicated. A second-tab change between the first
+read and the write is rejected, but this check is **not** an atomic cross-tab
+transaction. The primary read still reports a parsing failure even when
+secondary recovery storage is inaccessible. The negative cases are exercised
+by `tests/g01CorruptEvidenceFailClosedIndependent.test.mjs`; a PASS does not
+imply all browser crash/quota and simultaneous edit sequences are proved.
