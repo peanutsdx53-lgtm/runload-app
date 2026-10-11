@@ -2,35 +2,37 @@
 // Real Chromium startup with production-like .localhost origin, SW-controlled offline reload.
 // Does NOT claim to execute the VS Code Live Server extension or test a physical handset.
 const assert=require('node:assert/strict');
-const fs=require('node:fs/promises'),path=require('node:path'),http=require('node:http'),https=require('node:https'),os=require('node:os');
-const {execFileSync}=require('node:child_process');
+const fs=require('node:fs/promises'),path=require('node:path'),http=require('node:http');
 const {chromium}=require('playwright');
 const ROOT=path.resolve(__dirname,'..');
 const MIME={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.png':'image/png','.svg':'image/svg+xml','.webmanifest':'application/manifest+json; charset=utf-8','.json':'application/json; charset=utf-8'};
 async function serve(){
  const handler=async(req,res)=>{
-  try{let p=decodeURIComponent(new URL(req.url,'https://runload.test').pathname);if(!p.startsWith('/runload-app/')){res.writeHead(404).end();return}
+  try{let p=decodeURIComponent(new URL(req.url,'http://127.0.0.2').pathname);if(!p.startsWith('/runload-app/')){res.writeHead(404).end();return}
    p=p.slice('/runload-app'.length);if(p==='/')p='/index.html';const f=path.resolve(ROOT,'.'+p);if(!f.startsWith(ROOT+path.sep)){res.writeHead(403).end();return}
    const body=await fs.readFile(f);res.writeHead(200,{'content-type':MIME[path.extname(f)]||'application/octet-stream','cache-control':'no-store'}).end(body);
   }catch{res.writeHead(404).end('Not Found')}
  };
- const directory=await fs.mkdtemp(path.join(os.tmpdir(),'runload-round4-https-'));
- const key=path.join(directory,'key.pem'),cert=path.join(directory,'cert.pem');
- execFileSync('openssl',['req','-x509','-newkey','rsa:2048','-nodes','-keyout',key,'-out',cert,'-days','1','-subj','/CN=runload.test','-addext','subjectAltName=DNS:runload.test'],{stdio:'ignore'});
- const server=http.createServer(handler),secureServer=https.createServer({key:await fs.readFile(key),cert:await fs.readFile(cert)},handler);
- await Promise.all([new Promise(ok=>server.listen(0,'127.0.0.1',ok)),new Promise(ok=>secureServer.listen(0,'127.0.0.1',ok))]);
- return{server,secureServer,directory,httpPort:server.address().port,httpsPort:secureServer.address().port};
+ // Separate trustworthy loopback origins: 127.0.0.1 follows development opt-out;
+ // 127.0.0.2 exercises the unmodified production SW registration branch.
+ const localServer=http.createServer(handler),prodServer=http.createServer(handler);
+ await Promise.all([new Promise(ok=>localServer.listen(0,'127.0.0.1',ok)),new Promise(ok=>prodServer.listen(0,'127.0.0.2',ok))]);
+ return{localServer,prodServer,httpPort:localServer.address().port,prodPort:prodServer.address().port};
 }
 async function round(browser,origin,width){
- const context=await browser.newContext({viewport:{width,height:880},ignoreHTTPSErrors:true});const page=await context.newPage();
+ const context=await browser.newContext({viewport:{width,height:880}});const page=await context.newPage();
  const localErrors=[],requestErrors=[];page.on('pageerror',e=>localErrors.push(e.message));page.on('response',r=>{if(r.url().startsWith(origin)&&r.status()>=400)requestErrors.push(r.url()+' '+r.status())});
  const sentinel='round4-private-local-only-'+width;
  try{
   const first=await page.goto(origin+'index.html',{waitUntil:'domcontentloaded',timeout:40000});assert.equal(first.status(),200);
   await page.waitForFunction(()=>!document.querySelector('#app > .app-boot'),null,{timeout:35000});
   const security=await page.evaluate(()=>({isSecureContext,hostname:location.hostname,swAvailable:'serviceWorker' in navigator,swController:!!navigator.serviceWorker?.controller}));
-  assert.equal(security.isSecureContext,true,'HTTPS origin is not secure: '+JSON.stringify(security));
-  await page.waitForFunction(()=>navigator.serviceWorker?.controller&&Boolean(document.querySelector('#app')),null,{timeout:40000});
+  assert.equal(security.isSecureContext,true,'Trustworthy loopback origin is not secure: '+JSON.stringify(security));
+  await page.waitForTimeout(1500);
+  const diag=await page.evaluate(async()=>({ready:document.readyState,secure:isSecureContext,hostname:location.hostname,
+    controller:!!navigator.serviceWorker?.controller,caches:await caches.keys(),registrations:(await navigator.serviceWorker.getRegistrations()).map(r=>({scope:r.scope,active:r.active?.state,installing:r.installing?.state,waiting:r.waiting?.state}))}));
+  console.log('B04_PROD_PWA_DIAG',JSON.stringify(diag));
+  await page.waitForFunction(()=>navigator.serviceWorker?.controller&&Boolean(document.querySelector('#app')),null,{timeout:25000});
   await page.evaluate((s)=>localStorage.setItem('runload.audit.round4',s),sentinel);
   const data=await page.evaluate(()=>({app:!!document.querySelector('#app'),secure:isSecureContext,worker:!!navigator.serviceWorker.controller,cacheNames:[]}));
   assert.equal(data.secure,true,'Production-like origin is not secure');assert(data.worker,'SW must control the app');
@@ -50,7 +52,7 @@ async function round(browser,origin,width){
   assert.equal(offline.sentinel,sentinel,'Persistent local data altered/lost after offline reload');assert.equal(offline.controlled,true);assert.equal(offline.reg,true);
   assert.equal(offline.js,200,'Cached app.js unavailable offline');assert.equal(offline.css,200,'Cached CSS unavailable offline');
   assert.deepEqual(requestErrors,[],'Required runtime file missing');assert.deepEqual(localErrors,[],'Uncaught browser error');
-  console.log('B04_B05_C04_PRODUCTION_LIKE_OFFLINE_PASS',JSON.stringify({width,offline,originClass:'*.localhost path /runload-app'}));
+  console.log('B04_B05_C04_PRODUCTION_LIKE_OFFLINE_PASS',JSON.stringify({width,offline,originClass:'127.0.0.2 trusted loopback path /runload-app'}));
  }finally{await context.setOffline(false);await context.close()}
 }
 async function localLiveServerContrast(browser,port){
@@ -62,10 +64,10 @@ async function localLiveServerContrast(browser,port){
   console.log('C04_LOCAL_HTTP_NO_PWA_INTENTIONAL_PASS',JSON.stringify(result));
  }finally{await context.close()}
 }
-(async()=>{const {server,secureServer,directory,httpPort,httpsPort}=await serve();let browser;
- try{browser=await chromium.launch({headless:true,args:['--no-sandbox','--host-resolver-rules=MAP runload.test 127.0.0.1']});
+(async()=>{const {localServer,prodServer,httpPort,prodPort}=await serve();let browser;
+ try{browser=await chromium.launch({headless:true,args:['--no-sandbox']});
   await localLiveServerContrast(browser,httpPort);
-  const origin=`https://runload.test:${httpsPort}/runload-app/`;
+  const origin=`http://127.0.0.2:${prodPort}/runload-app/`;
   for(const width of [390,1440])await round(browser,origin,width);
- }finally{await browser?.close();await Promise.all([new Promise(ok=>server.close(ok)),new Promise(ok=>secureServer.close(ok))]);await fs.rm(directory,{recursive:true,force:true})}
+ }finally{await browser?.close();await Promise.all([new Promise(ok=>localServer.close(ok)),new Promise(ok=>prodServer.close(ok))])}
 })().catch(e=>{console.error(e);process.exitCode=1});
