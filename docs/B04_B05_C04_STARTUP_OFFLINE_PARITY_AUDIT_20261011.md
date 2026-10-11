@@ -9,7 +9,7 @@
 ## Distinguish these environments explicitly
 1. Ordinary development HTTP (`127.0.0.1`, `localhost`), including **Live Server-equivalent** static serving: `core/internal/platformInfrastructure.js` intentionally opts out of SW registration and unregisters existing local SW. Local startup does not prove a cold offline PWA reload.
 2. Real VS Code + Ritwick Dey Live Server extension: **not installed/executed in this CI or container**; actual extension integration and operating-system GUI checks remain unverified.
-3. Production-like loopback secure origin `runload.localhost` mapped to `127.0.0.1` by Chromium, served at a GitHub Pages-like `/runload-app/` path: SW registration, platform cache, real browser offline reload and localStorage retention are validated by the added browser test. This is a *simulation*, not a test of the real GitHub Pages domain or handset.
+3. Production-like self-signed HTTPS origin `runload.test` mapped to `127.0.0.1` by Chromium (certificate error ignored for CI only), served at a GitHub Pages-like `/runload-app/` path: SW registration, platform cache, real browser offline reload and localStorage retention are validated by the added browser test. This is a *simulation*, not a test of the real GitHub Pages domain or handset.
 4. Physical device offline, GPS, app-installed launch, platform-specific permissions and mobile Safari remain separate D-01/D-02.
 
 ## Independently reproducible commands
