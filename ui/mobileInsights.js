@@ -215,7 +215,7 @@ export function renderRunCapsule(services, record = {}, { measurement = null, fa
   const fingerprint = buildRunFingerprint(record, { measurement, fatigue });
   const pace = paceSeconds(record);
   const fatiguePair = `${finite(fatigue?.pre) ? Number(fatigue.pre) : "—"} → ${finite(fatigue?.post) ? Number(fatigue.post) : "—"}`;
-  const energy = Number(measurement?.energyEstimate?.estimatedKcal);
+  const energy = measurement?.energyEstimate?.estimatedKcal;
   return `<section class="run-capsule" aria-labelledby="run-capsule-title">
     <header><div><small>RUN CAPSULE</small><h2 id="run-capsule-title">今回の記録</h2></div><time datetime="${escapeHtml(record.date || "")}">${escapeHtml(formatLocalDate(record.date))}</time></header>
     <div class="run-capsule__body">
@@ -226,6 +226,6 @@ export function renderRunCapsule(services, record = {}, { measurement = null, fa
         <span><small>ペース</small><strong>${escapeHtml(paceLabel(pace))}<em>/km</em></strong></span>
       </div>
     </div>
-    <footer><span><small>疲労感</small><strong>${escapeHtml(fatiguePair)}</strong></span>${Number.isFinite(energy) && energy >= 0 ? `<span><small>推定消費</small><strong>${escapeHtml(String(Math.round(energy)))} kcal</strong></span>` : ""}<span><small>実績</small><strong>${summary.unlockedCount} / ${summary.totalCount}</strong></span></footer>
+    <footer><span><small>疲労感</small><strong>${escapeHtml(fatiguePair)}</strong></span>${typeof energy === "number" && Number.isFinite(energy) && energy >= 0 ? `<span><small>推定消費</small><strong>${escapeHtml(String(Math.round(energy)))} kcal</strong></span>` : ""}<span><small>実績</small><strong>${summary.unlockedCount} / ${summary.totalCount}</strong></span></footer>
   </section>`;
 }
