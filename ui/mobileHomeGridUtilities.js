@@ -82,6 +82,14 @@ export function writeMobileHomeJson(key, value) {
   return writeMobileHomeBatch([[key, value]]);
 }
 
+// Keep the DOM page index and accessibility label in sync in one place.
+export function syncMobileHomePageIndices(root) {
+  [...root.querySelectorAll(".mobile-home-page")].forEach((page, index) => {
+    page.dataset.homePageIndex = String(index);
+    page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);
+  });
+}
+
 export function clearHomeGridPlacement(element) {
   if (!element) return;
   element.style.removeProperty("grid-row");
