@@ -50,13 +50,13 @@ function activityLabel(activityId) {
 }
 
 function formatNumber(value, digits = 2) {
-  if (value == null || (typeof value === "string" && !value.trim())) return "—";
+  if ((typeof value !== "number" && typeof value !== "string") || String(value).trim() === "") return "—";
   const number = Number(value);
   return Number.isFinite(number) ? number.toFixed(digits) : "—";
 }
 
 function formatDurationMinutes(value) {
-  if (value == null || (typeof value === "string" && !value.trim())) return "—";
+  if ((typeof value !== "number" && typeof value !== "string") || String(value).trim() === "") return "—";
   const minutes = Number(value);
   if (!Number.isFinite(minutes) || minutes < 0) return "—";
   const totalMinutes = Math.round(minutes);
@@ -67,7 +67,7 @@ function formatDurationMinutes(value) {
 }
 
 function formatSegmentDuration(seconds) {
-  if (seconds == null || (typeof seconds === "string" && !seconds.trim())) return "—";
+  if ((typeof seconds !== "number" && typeof seconds !== "string") || String(seconds).trim() === "") return "—";
   const value = Number(seconds);
   if (!Number.isFinite(value) || value < 0) return "—";
   const total = Math.round(value);
