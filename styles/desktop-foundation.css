@@ -106,9 +106,6 @@
   }
 }
 
-@media (min-width: 55rem) and (max-width: 79.99rem) {
-}
-
 /* Home: PC-only adaptive dashboard. */
 @media (min-width: 80rem) {
   .screen--home.screen-layout--home {
@@ -1575,10 +1572,6 @@
   .screen--consultation.screen-layout--consultation .share-region-field select {
     text-align: center;
     text-align-last: center;
-  }
-
-  .screen--consultation.screen-layout--consultation .share-viewer-shell {
-    width: min(100%, 45rem);
   }
 
   .screen--reading.screen-layout--reading {

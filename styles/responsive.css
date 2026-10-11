@@ -198,21 +198,6 @@ input, select, textarea {
 }
 .screen-guide > summary { min-height: 52px; padding: 10px 12px; }
 
-.workspace-navigation {
-  gap: 6px;
-  padding: 4px;
-  border: 1px solid var(--color-line);
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--color-surface) 70%, var(--color-paper));
-}
-.workspace-navigation__link {
-  min-height: 48px;
-  padding: 7px 9px;
-  border-radius: 10px;
-  box-shadow: none;
-}
-.workspace-navigation__link.is-current { background: var(--color-surface); }
-
 /* --- Home fidelity --- */
 .screen--home { width: min(100%, 1030px); margin-inline: auto; gap: 30px; }
 
