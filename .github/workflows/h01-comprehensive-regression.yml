@@ -68,6 +68,7 @@ jobs:
       - name: Browser persistence, privacy, CSP, and mobile walk-jog regressions
         run: |
           node tests/g01E02D04RealBrowser.test.cjs
+          node tests/b04B05C04ColdOfflineRealBrowser.test.cjs
           node tests/g01CrossTabRealStorageEventBrowser.test.cjs
           node tests/e03BrowserCspNetwork.test.cjs
           node tests/e01LiveDomInjectionRegression.test.cjs
