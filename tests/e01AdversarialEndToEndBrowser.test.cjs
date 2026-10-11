@@ -52,6 +52,7 @@ function server(){
         if(!root.textContent.includes(expected))problems.push(label+': text missing');
         if(window.__xss)problems.push(label+': code executed');
       };
+      const planScreens=await Promise.all([import('/screens/mobile/planScreen.js'),import('/screens/desktop/planScreen.js')]);
       const sim=await import('/ui/interactions/simulationInteractions.js');
       const restore=await import('/ui/restorePreviewPresentation.js');
       const {installMobileWalkJogHistoryUi}=await import('/ui/mobileWalkJogHistoryUi.js');
@@ -60,6 +61,21 @@ function server(){
       root.append(form);
       let historyDispose=null;
       for(const attack of attacks){
+        // A saved plan's attacker-controlled course name travels through both
+        // platform presentation wrappers and the delegated app.js HTML sink.
+        const savedPlan={id:'e01-plan',scheduledDate:'2026-10-12',planType:'run',
+          plannedSession:{activityType:'run',distanceKm:5,durationMinutes:30,
+            course:{name:attack,gradeKnowledge:'UNKNOWN',modelSurfaceClass:'UNKNOWN'}}};
+        const services={storage:{plans:{findById:()=>savedPlan,loadAll:()=>[savedPlan]},
+          records:{loadAll:()=>[],findById:()=>null},
+          selfUnderstandingThreads:{loadAll:()=>[],findById:()=>null}},
+          workflows:{records:{loadAllExperiences:()=>[]}}};
+        for(const renderer of planScreens){
+          root.innerHTML=renderer.renderPlanScreen({services,context:{parameters:new URLSearchParams('planId=e01-plan')}});
+          const line=root.querySelector('[data-plan-summary-line]');
+          if(!line||line.children.length||!line.textContent.includes(attack))problems.push('plan: unsafe saved course HTML');
+          if(window.__xss)problems.push('plan: script executed');
+        }
         root.innerHTML=restore.renderRestoreInspection({status:'blocked',issues:[{severity:'BLOCKING',message:attack,itemId:attack}],counts:{},canRestore:false},`file-${attack}.json`);
         check('restore-filename-and-message',attack);
         form.elements.courseJson.value=JSON.stringify({name:attack});
