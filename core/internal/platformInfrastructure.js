@@ -487,7 +487,9 @@ function createStorageGateway(storage) {
     const writeResult = writeRaw(probeKey, value);
     if (!writeResult.ok) return writeResult;
     const matched = readRaw(probeKey, "") === value;
-    const rollback = restoreSnapshot(snapshot.items);
+    // The probe key is shared across tabs. Restore our original snapshot only
+    // while the value still belongs to this probe, not another tab's write.
+    const rollback = restoreSnapshot(snapshot.items, new Map([[probeKey, value]]));
     if (!matched || !rollback.ok) {
       lastFailure = {
         ok: false,

@@ -137,7 +137,8 @@ await test('UI-PC-RESULT-USES-TIME-AWARE-CHRONOLOGY-AND-STATE-LINKED-COLOR',()=>
   const audit=css;
 
   assert.ok(screen.includes('function recordChronology(left = {}, right = {})'));
-  assert.ok(screen.includes('String(left.createdAt || "").localeCompare(String(right.createdAt || ""))'));
+  assert.ok(screen.includes('return compareRecordChronology(left, right)'));
+  assert.ok(read('shared/recordUtilities.js').includes('String(left?.createdAt || "").localeCompare(String(right?.createdAt || ""))'));
   assert.ok(screen.includes('recordChronology(experience?.record || {}, currentRecord) <= 0'));
   assert.ok(screen.includes('.sort((a, b) => recordChronology(a.experience?.record || {}, b.experience?.record || {}))'));
   assert.ok(screen.includes('function historyAxisLabel(point, points = [])'));

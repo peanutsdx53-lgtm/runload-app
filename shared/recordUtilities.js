@@ -3,10 +3,16 @@ export function stableRecordKey(record = {}) {
   return `${String(record.date || "")}|${String(record.createdAt || "")}|${String(record.id || "")}`;
 }
 
+// Canonical comparison of record fields; callers must not infer chronology
+// from a concatenated key because locale collation of separators can differ.
+export function compareRecordChronology(left = {}, right = {}) {
+  return String(left?.date || "").localeCompare(String(right?.date || ""))
+    || String(left?.createdAt || "").localeCompare(String(right?.createdAt || ""))
+    || String(left?.id || "").localeCompare(String(right?.id || ""));
+}
+
 export function compareExperienceRecordChronology(left, right) {
-  return String(left?.record?.date || "").localeCompare(String(right?.record?.date || ""))
-    || String(left?.record?.createdAt || "").localeCompare(String(right?.record?.createdAt || ""))
-    || String(left?.record?.id || "").localeCompare(String(right?.record?.id || ""));
+  return compareRecordChronology(left?.record, right?.record);
 }
 
 // Stable keys are persisted as date|createdAt|id. Compare each field by the

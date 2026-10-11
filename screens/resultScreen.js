@@ -1,3 +1,4 @@
+import { compareRecordChronology } from "../shared/recordUtilities.js";
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate, formatLocalTime } from "../ui/recordPresentation.js";
@@ -40,9 +41,7 @@ export function signaturesComparable(a, b) { return Boolean(a && b && a.modelVer
 export function formatPace(record = {}) { const distance = Number(record.distanceKm); const duration = Number(record.durationMinutes); if (!(distance > 0) || !(duration > 0)) return "—"; const seconds = Math.round(duration * 60 / distance); return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; }
 export function runFormatLabel(record = {}) { return String(record.runningFormat || "").toUpperCase() === "RUN_WALK" ? "走り＋歩き" : "連続して走った"; }
 export function recordChronology(left = {}, right = {}) {
-  return String(left.date || "").localeCompare(String(right.date || ""))
-    || String(left.createdAt || "").localeCompare(String(right.createdAt || ""))
-    || String(left.id || "").localeCompare(String(right.id || ""));
+  return compareRecordChronology(left, right);
 }
 export function recordMomentLabel(record = {}) {
   const time = formatLocalTime(record.createdAt);
