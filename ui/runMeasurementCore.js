@@ -8,8 +8,21 @@ const DEFAULT_OPTIONS = Object.freeze({
   maximumStoredPoints: 2000,
 });
 
+// Persisted tracks and restored JSON are less trustworthy than browser Position objects.
+// Null, blank, and boolean values must not be coerced to geographic zero.
 function finite(value) {
-  return Number.isFinite(Number(value));
+  return (typeof value === "number" || (typeof value === "string" && value.trim() !== ""))
+    && Number.isFinite(Number(value));
+}
+
+function geographic(value, limit) {
+  return finite(value) && Math.abs(Number(value)) <= limit;
+}
+
+export function isValidRecordedTrackPoint(point) {
+  return point !== null && typeof point === "object" && !Array.isArray(point)
+    && geographic(point.lat, 90) && geographic(point.lon, 180)
+    && finite(point.timestamp) && Number(point.timestamp) >= 0;
 }
 
 function round(value, digits = 0) {
@@ -22,7 +35,8 @@ function toRadians(degrees) {
 }
 
 export function haversineDistanceMeters(a = {}, b = {}) {
-  if (![a.lat, a.lon, b.lat, b.lon].every(finite)) return Number.NaN;
+  if (!geographic(a?.lat, 90) || !geographic(a?.lon, 180)
+    || !geographic(b?.lat, 90) || !geographic(b?.lon, 180)) return Number.NaN;
   const radiusM = 6371000;
   const lat1 = toRadians(a.lat);
   const lat2 = toRadians(b.lat);
@@ -64,7 +78,9 @@ export function normalizeGeolocationPosition(position) {
 
 export function evaluateTrackPoint(previousPoint, currentPoint, options = {}) {
   const limits = { ...DEFAULT_OPTIONS, ...options };
-  if (!currentPoint || !finite(currentPoint.lat) || !finite(currentPoint.lon) || !finite(currentPoint.timestamp)) {
+  if (!isValidRecordedTrackPoint(currentPoint)
+    || (currentPoint?.accuracyM != null
+      && (!finite(currentPoint.accuracyM) || Number(currentPoint.accuracyM) < 0))) {
     return Object.freeze({ accepted: false, reason: "INVALID_POSITION", distanceDeltaM: 0, derivedSpeedMps: null });
   }
   if (finite(currentPoint.accuracyM) && Number(currentPoint.accuracyM) > limits.maximumAccuracyM) {
@@ -176,7 +192,7 @@ export function formatElapsed(activeElapsedMs) {
 }
 
 export function simplifyTrackForStorage(points = [], maximumPoints = DEFAULT_OPTIONS.maximumStoredPoints) {
-  const rows = Array.isArray(points) ? points.filter((point) => finite(point?.lat) && finite(point?.lon) && finite(point?.timestamp)) : [];
+  const rows = Array.isArray(points) ? points.filter(isValidRecordedTrackPoint) : [];
   if (!rows.length) return Object.freeze([]);
   const limit = Math.max(2, Math.floor(Number(maximumPoints) || DEFAULT_OPTIONS.maximumStoredPoints));
   const selected = rows.length <= limit
@@ -186,8 +202,8 @@ export function simplifyTrackForStorage(points = [], maximumPoints = DEFAULT_OPT
     lat: round(point.lat, 6),
     lon: round(point.lon, 6),
     timestamp: Math.round(Number(point.timestamp)),
-    accuracyM: finite(point.accuracyM) ? round(point.accuracyM, 1) : null,
+    accuracyM: finite(point.accuracyM) && Number(point.accuracyM) >= 0 ? round(point.accuracyM, 1) : null,
     altitudeM: finite(point.altitudeM) ? round(point.altitudeM, 1) : null,
-    altitudeAccuracyM: finite(point.altitudeAccuracyM) ? round(point.altitudeAccuracyM, 1) : null,
+    altitudeAccuracyM: finite(point.altitudeAccuracyM) && Number(point.altitudeAccuracyM) >= 0 ? round(point.altitudeAccuracyM, 1) : null,
   })));
 }

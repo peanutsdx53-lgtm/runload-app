@@ -22,3 +22,7 @@ Baseline formal Current V2.70; GitHub `main` `e9f8482efed56728beb70ebf62de1233b7
 ## Release gate
 
 No earlier audit condition is auto-promoted to PASS by these narrower checks. Do not change hosting/privacy architecture, encrypted backup design, UI/UX or saved user data without consultation. New tests run as part of H01 non-browser regression and production app is cross-checked by existing Chromium browser regression. Independently verify GitHub commit/tree, source/public 332 parity, ZIP Manifest, byte-identical scientific/protected files, and CI **before** formal Current promotion.
+
+## Addendum — persisted GPS route data after 2026.10.11.78
+
+Independent RED tests demonstrated that the measurement core and saved-route replay still coerced null/blank/boolean coordinates and null timestamps to zero, even though browser Position normalization and map rendering were already guarded. `simplifyTrackForStorage` could persist a synthetic (0,139) coordinate and an absent accuracy value as `0 m`. The new D-05/G-01 test covers the previously vulnerable core, Haversine, route replay, storage simplification, genuine zero coordinates, and historic numeric strings. The strict predicate is shared by measurement and route replay; no saved record or schema is migrated or rewritten. This is a scoped software-safety repair, not a physical GPS validity proof. D-05/G-01 remain PARTIAL pending full remaining gate evidence.
