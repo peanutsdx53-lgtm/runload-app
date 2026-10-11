@@ -56,7 +56,8 @@ function normalizedRegionalDisplay(value) {
 
 
 function resultRow(resultRecord, regionId) {
-  return resultRecord?.result?.regions?.find((row) => row.regionId === regionId) || null;
+  const rows=resultRecord?.result?.regions;
+  return (Array.isArray(rows) ? rows : []).find((row) => row && typeof row === "object" && row.regionId === regionId) || null;
 }
 
 function subjectiveKey(areaId = "", laterality = "") {

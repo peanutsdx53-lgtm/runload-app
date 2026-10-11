@@ -46,7 +46,7 @@ function engineInput(data){
   }
   return {input,course};
 }
-function sourceValues(services,recordId=""){const x=recordId?services.workflows.records.loadExperience(recordId):services.workflows.records.loadLatestExperience();const rows=x?.regionalV2ResultRecord?.result?.regions||x?.regionalV2Result?.regions||[];return new Map(rows.map((r)=>[r.regionId,r.value]));}
+function sourceValues(services,recordId=""){const x=recordId?services.workflows.records.loadExperience(recordId):services.workflows.records.loadLatestExperience();const primary=x?.regionalV2ResultRecord?.result?.regions;const fallback=x?.regionalV2Result?.regions;const rows=Array.isArray(primary)?primary:Array.isArray(fallback)?fallback:[];return new Map(rows.filter((r)=>r&&typeof r==="object").map((r)=>[r.regionId,r.value]));}
 function sameNumber(a,b,tolerance=.001){return finite(a)&&finite(b)&&Math.abs(Number(a)-Number(b))<=tolerance;}
 export function changedConditionItems(data){
   const source=sourceConditionFrom(data);
