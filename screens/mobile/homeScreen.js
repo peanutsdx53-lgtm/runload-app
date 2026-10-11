@@ -1,5 +1,6 @@
 import { mondayOfWeekAtNoon as mondayOfWeek } from "../../ui/mobileDateUtilities.js";
 import { escapeHtml } from "../../ui/commonComponents.js";
+import { isPresentFiniteNumber as finite } from "../../shared/valueUtilities.js";
 import { formatNumber } from "../../ui/recordPresentation.js";
 import { findSavedRunMeasurement } from "../../ui/runMeasurementState.js";
 import { achievementSummary } from "../../ui/mobileAchievements.js";
@@ -47,7 +48,7 @@ function recentDistanceChange(services) {
   if (runs.length < 2) return null;
   const latest = runs[0];
   const previous = runs[1];
-  const delta = Number(latest.distanceKm || 0) - Number(previous.distanceKm || 0);
+  const delta = finite(latest.distanceKm) && finite(previous.distanceKm) ? Number(latest.distanceKm) - Number(previous.distanceKm) : null;
   return { latest, previous, delta };
 }
 
@@ -77,7 +78,8 @@ function renderOverviewChange(services) {
   const change = recentDistanceChange(services);
   if (!change) return `<a class="mobile-home-overview-card mobile-home-overview-card--wide" href="#/history"><span class="mobile-home-overview-card__label">前回との距離差</span><strong>—</strong><span class="mobile-home-overview-card__note">2回目の走行記録から表示</span></a>`;
   const sign = change.delta > 0 ? "+" : "";
-  return `<a class="mobile-home-overview-card mobile-home-overview-card--wide" href="#/history"><span class="mobile-home-overview-card__label">前回との距離差</span><strong>${escapeHtml(`${sign}${formatNumber(change.delta, 1)} km`)}</strong><span class="mobile-home-overview-card__note">${escapeHtml(shortDate(change.previous.date))} → ${escapeHtml(shortDate(change.latest.date))}</span></a>`;
+  const display = finite(change.delta) ? `${sign}${formatNumber(change.delta, 1)} km` : "—";
+  return `<a class="mobile-home-overview-card mobile-home-overview-card--wide" href="#/history"><span class="mobile-home-overview-card__label">前回との距離差</span><strong>${escapeHtml(display)}</strong><span class="mobile-home-overview-card__note">${escapeHtml(shortDate(change.previous.date))} → ${escapeHtml(shortDate(change.latest.date))}</span></a>`;
 }
 
 function renderOverviewAchievements(services) {
