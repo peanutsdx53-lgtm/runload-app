@@ -1,4 +1,4 @@
-import { haversineDistanceMeters } from "../runMeasurementCore.js";
+import { haversineDistanceMeters, isValidRecordedTrackPoint } from "../runMeasurementCore.js";
 import { createRunMeasurementMap } from "../runMeasurementMap.js";
 import { findSavedRunMeasurement } from "../runMeasurementState.js";
 
@@ -29,7 +29,8 @@ export function bindRunRoute({ context }) {
   const mapContainer = root.querySelector("#run-route-map");
   if (!measurement?.track?.length || !mapContainer) return undefined;
 
-  const track = measurement.track.filter((point) => Number.isFinite(Number(point?.lat)) && Number.isFinite(Number(point?.lon)) && Number.isFinite(Number(point?.timestamp)));
+  const track = measurement.track.filter(isValidRecordedTrackPoint);
+  if (!track.length) return undefined;
   const map = createRunMeasurementMap(mapContainer, { initialZoom: 16 });
   map?.fitTrack(track);
 
