@@ -35,7 +35,7 @@ function showUpdateNotice(registration) {
 }
 
 function isLocalLiveServerDevelopment() {
-  return window.location.protocol === "http"
+  return window.location.protocol === "http:"
     && LOCAL_DEVELOPMENT_HOSTS.has(window.location.hostname);
 }
 
@@ -54,17 +54,28 @@ async function clearLocalPwaDeliveryState() {
   }
 }
 
+// Dynamic platform entry modules may finish *after* window.load has fired.
+// In that case a newly attached load handler would never run, silently
+// disabling production offline installation (or local SW cleanup).
+function afterDocumentLoad(callback) {
+  if (document.readyState === "complete") {
+    queueMicrotask(callback);
+  } else {
+    window.addEventListener("load", callback, { once: true });
+  }
+}
+
 function registerPwaServiceWorker({ platform = "" } = {}) {
   if (!("serviceWorker" in navigator) || !window.isSecureContext) return;
 
   if (isLocalLiveServerDevelopment()) {
-    window.addEventListener("load", () => {
+    afterDocumentLoad(() => {
       clearLocalPwaDeliveryState().catch(() => {});
-    }, { once: true });
+    });
     return;
   }
 
-  window.addEventListener("load", async () => {
+  afterDocumentLoad(async () => {
     try {
       const registration = await navigator.serviceWorker.register("./service-worker.js", { updateViaCache: "none" });
       await registration.update();

@@ -2,8 +2,8 @@
 
 ## Scope and authority
 - Base: Current V2.69 / Git tree `90c756e2f2ec54577a7558796e25fdf770564534`.
-- No runtime source, scientific model, research archive, user records, cryptography, hosting topology, or UI layout changed in this round.
-- B-04: No files removed in Round 3, so source/runtime behavior is invariant **by byte identity** for all existing source runtime assets; test additions are not a deletion-compatibility experiment.
+- Only essential runtime startup-control files changed following a reproduced failure: `core/internal/platformInfrastructure.js` and the three aligned version/cache labels. No scientific model, research archive, user records, cryptography, hosting topology, or UI layout changed.
+- B-04: No files removed in Round 3. Round 4 intentionally fixes a late-load Service Worker registration defect, and therefore existing startup code is no longer byte-identical. All other runtime files preserve SHA except startup helper and aligned version labels. This is not a deletion-compatibility experiment.
 - B-05: Responsibility structure is documented at `docs/CODEBASE_ARCHITECTURE.md`; 209 page modules plus SW are reachable, but function/handler level duplicate and CSS selector audit remains pending.
 
 ## Distinguish these environments explicitly
@@ -24,3 +24,10 @@
 - GitHub Pages paths on same origin can access the same origin localStorage; these tests do not prove storage confidentiality.
 - Offline availability does not guarantee map tiles or geolocation, which are outside self-hosted offline resources.
 - Required B-05 audits at symbol, dynamic handler, CSS selector specificity and duplication depth are still incomplete; keep PARTIAL unless full gate evidence arrives.
+
+## RED -> GREEN discovery and narrow repair
+- H01 browser initially timed out waiting for the production-like Service Worker to control the app. This led to a direct real-production-source VM regression (`tests/b04PwaLateLoadRegistrationIndependent.test.mjs`): **RED 1/3 PASS, 2 FAIL**.
+- `registerPwaServiceWorker()` attached a `window.load` listener even when the page had already finished loading after asynchronous ESM bootstrap; late registration never runs.
+- The local development guard incorrectly compared `location.protocol` against `"http"` rather than `"http:"`, so it could not detect a normal loopback HTTP URL.
+- Fix: dispatch registration/cleanup from `queueMicrotask` when `document.readyState === 'complete'`, otherwise keep existing one-shot `window.load` scheduling; correct `http:` comparison. GREEN 3/3 PASS, no app data or scientific model modifications.
+- Synchronized cache and version from 2026.10.11.73 to 2026.10.11.74 so repaired startup code is not silently mixed with stale installed assets.
