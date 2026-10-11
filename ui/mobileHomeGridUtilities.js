@@ -119,3 +119,12 @@ export function homeGridTokenForElement(element) {
   const widgetId = element?.dataset?.homeWidgetId || "";
   return widgetId ? `widget:${widgetId}` : "";
 }
+
+// Shared DOM swap behavior, with independent existing caller marker labels.
+export function swapMobileHomeSiblingElements(source, target, markerLabel = "mobile-home-owned-swap") {
+  if (!source || !target || source === target || source.parentNode !== target.parentNode) return;
+  const marker = document.createComment(markerLabel);
+  source.replaceWith(marker);
+  target.replaceWith(source);
+  marker.replaceWith(target);
+}

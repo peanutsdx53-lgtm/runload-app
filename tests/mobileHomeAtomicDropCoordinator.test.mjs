@@ -30,7 +30,7 @@ test('HOME-ICON-SWAP-USES-ONLY-TWO-ORIGINAL-POSITIONS', () => {
   assert.ok(coordinator.includes('targetPlacement: placementOf(target)'));
   assert.ok(coordinator.includes('applyIconPlacement(source, targetPlacement);'));
   assert.ok(coordinator.includes('applyIconPlacement(target, sourcePlacement);'));
-  assert.ok(coordinator.includes('swapDomPositions(source, target);'));
+  assert.ok(coordinator.includes('swapMobileHomeSiblingElements(source, target, "mobile-home-owned-swap");'));
 });
 
 test('DIRECT-SWAP-CANCELS-BASE-DRAG-PATH', () => {

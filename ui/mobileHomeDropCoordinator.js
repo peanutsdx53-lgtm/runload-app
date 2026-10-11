@@ -5,6 +5,7 @@ import {
   homeGridTokenForElement as gridTokenForElement,
   matchesMobileHomeLayout as mobileLayoutMatches,
   writeMobileHomeBatch,
+  swapMobileHomeSiblingElements,
 } from "./mobileHomeGridUtilities.js";
 
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
@@ -71,13 +72,7 @@ function persistHomePositions(root) {
   ]);
 }
 
-function swapDomPositions(source, target) {
-  if (!source || !target || source === target || source.parentNode !== target.parentNode) return;
-  const marker = document.createComment("mobile-home-owned-swap");
-  source.replaceWith(marker);
-  target.replaceWith(source);
-  marker.replaceWith(target);
-}
+
 
 function resetTracking() {
   trackedPointerId = null;
@@ -172,7 +167,7 @@ function finalizeSwap(candidate) {
     && !source.closest(".mobile-home-dock")
     && !target.closest(".mobile-home-dock");
   if (!stillSamePage) return;
-  swapDomPositions(source, target);
+  swapMobileHomeSiblingElements(source, target, "mobile-home-owned-swap");
   applyIconPlacement(source, targetPlacement);
   applyIconPlacement(target, sourcePlacement);
   persistHomePositions(root);

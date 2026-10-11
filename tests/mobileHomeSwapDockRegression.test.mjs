@@ -27,8 +27,8 @@ test('ICON-SWAP-FINALIZES-AFTER-CORE-POINTERUP-HANDLER', () => {
 });
 
 test('ICON-SWAP-KEEPS-DOM-ORDER-CONSISTENT', () => {
-  assert.ok(support.includes('function swapDomPositions(source, target)'));
-  assert.ok(support.includes('swapDomPositions(source, target);'));
+  assert.ok(support.includes('swapMobileHomeSiblingElements,'));
+  assert.ok(support.includes('swapMobileHomeSiblingElements(source, target, "mobile-home-icon-swap");'));
 });
 
 test('DOCK-REMOVES-HOME-GRID-PLACEMENT', () => {
