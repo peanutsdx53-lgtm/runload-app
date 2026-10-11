@@ -101,21 +101,6 @@
     text-align: center;
   }
 
-  .run-measurement-fatigue .rof-anchor-guide {
-    display: grid;
-    gap: 4px;
-    margin: 0;
-    padding: 9px 10px;
-    border-radius: 10px;
-    background: var(--color-surface-muted);
-  }
-
-  .run-measurement-fatigue .rof-anchor-guide small {
-    color: var(--color-muted);
-    font-size: var(--type-label);
-    font-weight: 800;
-  }
-
   .run-measurement-fatigue [data-record-rof-anchor] {
     min-width: 0;
     font-size: 12px;
@@ -659,13 +644,6 @@
   }
   .run-measurement-fatigue .rof-ticks span:first-child { text-align: left; }
   .run-measurement-fatigue .rof-ticks span:last-child { text-align: right; }
-  .run-measurement-fatigue .rof-anchor-guide {
-    display: grid; gap: 0; margin: 8px 0 0; padding: 8px 9px;
-    border-radius: 12px; background: var(--accent-soft);
-  }
-  .run-measurement-fatigue .rof-anchor-guide small {
-    color: var(--muted); font-size: var(--type-label); font-weight: 850;
-  }
   .run-measurement-fatigue [data-record-rof-anchor] {
     min-width: 0; min-height: 3em; margin-top: 4px; display: flex; align-items: flex-start;
     color: var(--accent2); font-size: var(--type-label); font-weight: 800; line-height: 1.5; overflow-wrap: normal;

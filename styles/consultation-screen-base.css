@@ -146,7 +146,6 @@
 .screen-layout--consultation .share-preview>header small{color:var(--muted);font-size:var(--type-label);font-weight:850}
 .screen-layout--consultation .share-preview>header strong{margin-top:2px;font-size:13px}
 .screen-layout--consultation .share-preview>header span{margin-top:4px;color:var(--muted);font-size:var(--type-label);line-height:1.45}
-.screen-layout--consultation .share-preview-grid{display:grid}
 .screen-layout--consultation .share-card{
   padding:11px 14px;
   border-top:1px solid var(--line);
@@ -156,9 +155,6 @@
 .screen-layout--consultation .share-card strong{display:block}
 .screen-layout--consultation .share-card small{color:var(--muted);font-size:var(--type-label);font-weight:850}
 .screen-layout--consultation .share-card strong{margin-top:3px;font-size:var(--type-label);line-height:1.5}
-.screen-layout--consultation .share-card--regional .share-region-detail{margin-top:7px}
-.screen-layout--consultation .share-card--regional .share-region-detail b{font-size:var(--type-label)}
-.screen-layout--consultation .share-card--regional .share-region-detail span{font-size:var(--type-label)}
 .screen-layout--consultation .share-output-actions{margin-top:11px;display:grid;gap:8px}
 .screen-layout--consultation .share-output-actions .output{
   width:100%;
@@ -187,7 +183,5 @@ html.consult-viewer-open{overflow:hidden}
 
 @media (min-width:760px){
   .screen-layout--consultation .share-source-list{grid-template-columns:1fr 1fr}
-  .screen-layout--consultation .share-preview-grid{grid-template-columns:1fr 1fr}
-  .screen-layout--consultation .share-preview-grid .share-card--regional{grid-column:1/-1}
   .screen-layout--consultation .share-output-actions{grid-template-columns:repeat(3,1fr)}
 }

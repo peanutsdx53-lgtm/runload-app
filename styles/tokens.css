@@ -206,57 +206,7 @@ html.rl-appearance-dark {
 
 
 @media (prefers-color-scheme: dark) {
-  html.rl-appearance-system {
-    color-scheme: dark;
-    --color-paper: #0d110f;
-    --color-surface: #1c231f;
-    --color-ink: #f1f6f2;
-    --color-muted: #bac8bf;
-    --color-line: #505850;
-    --color-accent: #8bc7aa;
-    --color-accent-strong: #c0edd4;
-    --color-accent-soft: #1f3a30;
-    --color-on-accent: #102019;
-    --color-on-ink: #101614;
-    --color-info: #a8c7dc;
-    --color-info-soft: #223441;
-    --color-neutral-soft: #202821;
-    --color-success: #a7d6b5;
-    --color-success-border: #78a98a;
-    --color-success-soft: #203429;
-    --color-model: #cab6e5;
-    --color-model-soft: #30243d;
-    --color-on-model: #241a30;
-    --color-attention: #efb08f;
-    --color-attention-border: #d09572;
-    --color-attention-soft: #3e2a20;
-    --color-danger: #f0aa92;
-    --color-on-danger: #24110b;
-    --color-danger-border: #d28a73;
-    --color-danger-soft: #3f241e;
-    --color-danger-line: #7c4a3d;
-    --color-achievement: #f1c66d;
-    --color-achievement-soft: #3b301d;
-  --color-weekend-saturday: #d8a58f;
-  --color-weekend-sunday: #d8a58f;
-    --color-surface-warm: #211d17;
-    --color-surface-warm-strong: #2b251e;
-    --color-map-silhouette: #26302b;
-    --color-map-line: #4a5650;
-    --color-map-low: #22342f;
-    --color-map-middle: #4f8b76;
-    --color-map-high: #9bd6bb;
-    --color-meter-track: #303b34;
-    --color-rest: #a4c6a7;
-    --color-focus: #9ed2ff;
-    --shadow-card: 0 12px 30px rgba(0, 0, 0, 0.34);
-    --shadow-dialog: 0 24px 70px rgba(0, 0, 0, 0.56);
-    --overlay-dialog: rgba(0, 0, 0, 0.68);
-  }
   
   
   
 }
-
-html.rl-text-large { font-size: 17.5px; }
-html.rl-text-standard { font-size: 16px; }

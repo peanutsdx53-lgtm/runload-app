@@ -381,8 +381,7 @@
   .screen-layout--simulation .condition-compare-hero,
   .screen-layout--simulation .condition-compare-overview,
   .screen-layout--simulation .condition-panel,
-  .screen-layout--simulation .preview-panel,
-  .screen-layout--simulation .carry-card {
+  .screen-layout--simulation .preview-panel {
     border-radius: 22px;
     box-shadow: 0 9px 26px rgba(25, 43, 60, .055);
   }

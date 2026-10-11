@@ -272,10 +272,6 @@
     -webkit-backdrop-filter: blur(12px);
   }
 
-  .screen-layout--history .chart-wrap .chart-svg--pc {
-    display: none;
-  }
-
   .screen-layout--history .mobile-history-mode a {
     min-height: 42px;
     display: grid;

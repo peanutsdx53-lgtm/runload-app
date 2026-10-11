@@ -10,12 +10,6 @@
 .screen-layout--simulation .intro-row{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}
 .screen-layout--simulation .intro h1{margin:4px 0 0;font-size:clamp(29px,4vw,39px);letter-spacing:-.045em}
 .screen-layout--simulation .intro p:last-child{max-width:680px;margin:8px 0 0;color:var(--muted);font-size:var(--type-label);line-height:1.6}
-.screen-layout--simulation .carry-card{margin-top:18px;padding:11px 13px;border:1px solid color-mix(in srgb,var(--model) 24%,var(--line));border-radius:15px;background:linear-gradient(135deg,var(--model-soft),var(--surface));display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
-.screen-layout--simulation .carry-card>i{width:11px;height:11px;border-radius:50%;background:var(--model);box-shadow:0 0 0 5px color-mix(in srgb,var(--model) 12%,transparent)}
-.screen-layout--simulation .carry-card small,.screen-layout--simulation .carry-card strong{display:block}
-.screen-layout--simulation .carry-card small{font-size:var(--type-label);color:var(--muted);font-weight:850}
-.screen-layout--simulation .carry-card strong{margin-top:2px;font-size:var(--type-label);color:var(--model)}
-.screen-layout--simulation .carry-card p{margin:3px 0 0;font-size:var(--type-label);line-height:1.45}
 .screen-layout--simulation .workspace{margin-top:16px;display:grid;gap:12px}
 .screen-layout--simulation .condition-panel,.screen-layout--simulation .preview-panel{border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
 .screen-layout--simulation .panel-head,.screen-layout--simulation .preview-head{padding:14px 15px 12px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -68,7 +62,6 @@
 .screen-layout--simulation .region-path[data-direction="below"]{fill:var(--color-info);stroke:color-mix(in srgb,var(--color-info) 78%,var(--surface))}
 .screen-layout--simulation .region-path[data-direction="unavailable"]{fill:var(--neutral);stroke:var(--muted);stroke-dasharray:7 5}
 .screen-layout--simulation .map-note{margin:7px 2px 0;color:var(--muted);font-size:var(--type-label);line-height:1.45}
-.screen-layout--simulation .region-panel{min-width:0}
 .screen-layout--simulation .region-list{border:1px solid var(--line);border-radius:13px;overflow:hidden}
 .screen-layout--simulation .region-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;padding:8px 9px;border-bottom:1px solid var(--line);background:var(--surface)}
 .screen-layout--simulation .region-row:last-child{border-bottom:0}
@@ -124,7 +117,6 @@
 /* Shared Simulation refinements retained from the baseline cascade. */
 .screen-layout--simulation .back-link,
 .screen-layout--simulation .eyebrow,
-.screen-layout--simulation .carry-card small,
 .screen-layout--simulation .panel-head small,
 .screen-layout--simulation .preview-head small,
 .screen-layout--simulation .panel-head > span,
@@ -149,12 +141,10 @@
 }
 
 .screen-layout--simulation .intro p:last-child,
-.screen-layout--simulation .carry-card p,
 .screen-layout--simulation .selected-course span {
   font-size: 0.86rem;
 }
 
-.screen-layout--simulation .carry-card strong,
 .screen-layout--simulation .details summary strong,
 .screen-layout--simulation .derived-pace strong,
 .screen-layout--simulation .selected-course strong,

@@ -381,42 +381,6 @@
 
 
 @media (max-width: 54.99rem) {
-  html.is-mobile-home-return-transition::view-transition-group(root) {
-    animation-duration: 420ms;
-    animation-timing-function: cubic-bezier(.18, .82, .2, 1);
-  }
-
-  html.is-mobile-home-return-transition::view-transition-old(root) {
-    z-index: 2;
-    transform-origin: top left;
-    overflow: clip;
-    animation: mobile-home-ios-return-old 420ms cubic-bezier(.18, .82, .2, 1) both;
-  }
-
-  html.is-mobile-home-return-transition::view-transition-new(root) {
-    z-index: 1;
-    transform-origin: 50% 42%;
-    animation: mobile-home-ios-return-new 420ms cubic-bezier(.18, .82, .2, 1) both;
-  }
-
-  .mobile-home-return-surface {
-    position: fixed;
-    z-index: 10000;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100dvh;
-    border-radius: 0;
-    background: var(--color-paper);
-    pointer-events: none;
-    opacity: 0;
-    animation: mobile-home-return-fallback-cover 80ms ease-out both;
-    will-change: left, top, width, height, border-radius, opacity;
-  }
-
-  .mobile-home-return-surface.is-closing {
-    animation: mobile-home-return-fallback-close 400ms cubic-bezier(.18, .82, .2, 1) both;
-  }
 
   @keyframes mobile-home-ios-return-old {
     0% {
