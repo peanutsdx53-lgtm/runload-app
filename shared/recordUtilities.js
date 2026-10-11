@@ -1,3 +1,5 @@
+import { isPresentFiniteNumber } from "./valueUtilities.js";
+
 /** Canonical persisted record identity used by interpretation and history. */
 export function stableRecordKey(record = {}) {
   return `${String(record.date || "")}|${String(record.createdAt || "")}|${String(record.id || "")}`;
@@ -35,3 +37,10 @@ export function recordCourseKey(record = {}) {
   if (!name || name === "未設定" || name === "コース名なし") return "";
   return `name:${name.toLocaleLowerCase("ja-JP")}`;
 }
+
+// A single Reference-100 presentation/signature contract shared by result and
+// region detail screens. Both screens retain their existing public exports.
+export function fmt(value, digits = 1) { return isPresentFiniteNumber(value) ? Number(value).toFixed(digits).replace(/\.0$/, "") : "—"; }
+export function signed(value, digits = 1) { if (!isPresentFiniteNumber(value)) return "—"; const n = Number(value); return `${n > 0 ? "+" : ""}${fmt(n, digits)}`; }
+export function signatureFor(record = {}, regionId = "") { return record?.comparison_signatures?.[regionId] || null; }
+export function signaturesComparable(a, b) { return Boolean(a && b && a.modelVersion === b.modelVersion && a.outputSemanticVersion === b.outputSemanticVersion && a.regionId === b.regionId && a.constructId === b.constructId && a.referenceId === b.referenceId); }
