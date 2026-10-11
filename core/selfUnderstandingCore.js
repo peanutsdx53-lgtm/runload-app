@@ -1,5 +1,5 @@
 import { normalizeIsoText as iso, sanitizeText as text, normalizeOneLine } from "../shared/textUtilities.js";
-import { cloneJsonValue as clone, sortByUpdatedAt } from "../shared/valueUtilities.js";
+import { cloneJsonValue as clone, sortByUpdatedAt, isPresentFiniteNumber } from "../shared/valueUtilities.js";
 import { compareExperienceRecordChronology, compareStableRecordKeys, stableRecordKey as stableRecordKeyFromRecord } from "../shared/recordUtilities.js";
 // RunLoad self-understanding memory layer.
 // This module never recalculates or redefines the scientific numeric model.
@@ -277,17 +277,17 @@ function courseIdentity(record = {}) {
 
 function rofPost(rofSummariesByRecordId, recordId) {
   const summary = rofSummariesByRecordId?.get?.(recordId) || rofSummariesByRecordId?.[recordId] || null;
-  return Number.isFinite(Number(summary?.post)) ? Number(summary.post) : null;
+  return isPresentFiniteNumber(summary?.post) ? Number(summary.post) : null;
 }
 
 function runContextFromRecord(record = {}) {
-  const distanceKm = Number.isFinite(Number(record.distanceKm)) ? Number(record.distanceKm) : null;
-  const durationMinutes = Number.isFinite(Number(record.durationMinutes)) ? Number(record.durationMinutes) : null;
+  const distanceKm = isPresentFiniteNumber(record.distanceKm) ? Number(record.distanceKm) : null;
+  const durationMinutes = isPresentFiniteNumber(record.durationMinutes) ? Number(record.durationMinutes) : null;
   const runningFormat = normalizeOneLine(record.runningFormat, 60);
   const course = courseIdentity(record);
   const gradeKnowledge = normalizeOneLine(record?.course?.gradeKnowledge || record?.gradeKnowledge, 60);
   const reflection = text(record?.reflectionContext?.postRunReflection, 500).trim();
-  const temperatureC = Number.isFinite(Number(record?.environmentContext?.temperatureC)) ? Number(record.environmentContext.temperatureC) : null;
+  const temperatureC = isPresentFiniteNumber(record?.environmentContext?.temperatureC) ? Number(record.environmentContext.temperatureC) : null;
   const environmentNote = text(record?.environmentContext?.environmentNote, 500).trim();
   return Object.freeze({ distanceKm, durationMinutes, runningFormat, course, gradeKnowledge, reflection, environment: Object.freeze({ temperatureC, environmentNote }) });
 }
@@ -317,7 +317,7 @@ function episodeEvidence(thread, experience, rofSummariesByRecordId) {
   if (thread.type === SELF_UNDERSTANDING_TYPES.regionObservationPair) {
     const row = resultRow(experience, thread.subject.regionId);
     const currentSignature = signatureFor(experience, thread.subject.regionId);
-    if (!row || !Number.isFinite(Number(row.value)) || !signaturesCompatible(thread.semanticConstraints.regionSignature, currentSignature)) return null;
+    if (!row || !isPresentFiniteNumber(row.value) || !signaturesCompatible(thread.semanticConstraints.regionSignature, currentSignature)) return null;
     const observation = bodyObservationForSubject(experience, thread.subject);
     if (!observation) return null;
     return Object.freeze({ kind: thread.type, recordId: record.id, stableRecordKey: stableKey, date: record.date, row: clone(row), observation: clone(observation), runContext: runContextFromRecord(record), postRofJ: rofPost(rofSummariesByRecordId, record.id) });
@@ -326,7 +326,7 @@ function episodeEvidence(thread, experience, rofSummariesByRecordId) {
   if (thread.type === SELF_UNDERSTANDING_TYPES.regionWatch) {
     const row = resultRow(experience, thread.subject.regionId);
     const currentSignature = signatureFor(experience, thread.subject.regionId);
-    if (!row || !Number.isFinite(Number(row.value)) || !signaturesCompatible(thread.semanticConstraints.regionSignature, currentSignature)) return null;
+    if (!row || !isPresentFiniteNumber(row.value) || !signaturesCompatible(thread.semanticConstraints.regionSignature, currentSignature)) return null;
     return Object.freeze({ kind: thread.type, recordId: record.id, stableRecordKey: stableKey, date: record.date, row: clone(row), runContext: runContextFromRecord(record), postRofJ: rofPost(rofSummariesByRecordId, record.id) });
   }
 
@@ -385,7 +385,7 @@ function currentPairCandidate(targetExperience) {
     const exactRegionId = SELF_UNDERSTANDING_BODY_AREA_TO_DISPLAY_REGION[bodyAreaId] || "";
     if (!exactRegionId) return null;
     const row = rows.find((candidate) => String(candidate?.regionId || "") === exactRegionId);
-    if (!row || !Number.isFinite(Number(row.value))) return null;
+    if (!row || !isPresentFiniteNumber(row.value)) return null;
     const signature = signatureFor(targetExperience, row.regionId);
     if (!signature) return null;
     return { observation, row, signature, bodyAreaId, index, intensity: Number(observation.intensity) };

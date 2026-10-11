@@ -53,8 +53,8 @@ function renderHighlights({ services, record, resultRecord, allExperiences }) {
   }
   if (!modelCurrent(resultRecord)) return "";
   const infos = regionRows(resultRecord).map((row, index) => rowInfo(resultRecord, allExperiences, row, index));
-  const availableCount = infos.filter((info) => Number.isFinite(Number(info.row.value))).length;
-  const comparableCount = infos.filter((info) => Number.isFinite(Number(info.delta))).length;
+  const availableCount = infos.filter((info) => finite(info.row.value)).length;
+  const comparableCount = infos.filter((info) => finite(info.delta)).length;
   const fatigue = fatigueSnapshot(services, record);
   const items = [
     { title: "12部位の目安", detail: `${availableCount} / 12部位に数値があります。各部位自身の基準100と比べます。` },
@@ -62,7 +62,7 @@ function renderHighlights({ services, record, resultRecord, allExperiences }) {
       ? { title: "前回と比べられる", detail: `${comparableCount} / 12部位で、同じ意味の前回記録と比較できます。` }
       : { title: "今回が比較点", detail: "比較できる前回がない部位は、今回を次回以降の比較点として使えます。" },
   ];
-  if (Number.isFinite(Number(fatigue.pre)) || Number.isFinite(Number(fatigue.post))) items.push({ title: "疲労感の記録", detail: `走る前 ${Number.isFinite(Number(fatigue.pre)) ? fmt(fatigue.pre, 0) : "—"} → 走った後 ${Number.isFinite(Number(fatigue.post)) ? fmt(fatigue.post, 0) : "—"}` });
+  if (finite(fatigue.pre) || finite(fatigue.post)) items.push({ title: "疲労感の記録", detail: `走る前 ${finite(fatigue.pre) ? fmt(fatigue.pre, 0) : "—"} → 走った後 ${finite(fatigue.post) ? fmt(fatigue.post, 0) : "—"}` });
   else items.push({ title: "次に1つ確認", detail: "結果を整理して、次回も見るテーマを1つ選べます。" });
   return `<section class="mobile-result-highlights" aria-labelledby="mobile-result-highlights-title"><div class="mobile-result-highlights__head"><small>今回の確認</small><h2 id="mobile-result-highlights-title">見るポイント</h2></div><div class="mobile-result-highlights__grid">${items.slice(0, 3).map((item, index) => `<article><span>${index + 1}</span><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.detail)}</small></div></article>`).join("")}</div><p>数値は危険度や部位の順位を示すものではありません。</p></section>`;
 }
