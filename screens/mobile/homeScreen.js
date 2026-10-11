@@ -31,8 +31,9 @@ function weeklySummary(services) {
   let estimatedKcal = 0;
   let kcalCount = 0;
   records.forEach((record) => {
-    const kcal = Number(findSavedRunMeasurement(record.id)?.energyEstimate?.estimatedKcal);
-    if (!Number.isFinite(kcal) || kcal < 0) return;
+    const kcal = findSavedRunMeasurement(record.id)?.energyEstimate?.estimatedKcal;
+    // An absent/invalid estimate is not a measured zero. Keep genuine numeric 0.
+    if (typeof kcal !== "number" || !Number.isFinite(kcal) || kcal < 0) return;
     estimatedKcal += kcal;
     kcalCount += 1;
   });
