@@ -183,23 +183,27 @@ const SCREEN_TUTORIALS = Object.freeze({
 function readSeenMap() {
   try {
     const parsed = JSON.parse(window.localStorage.getItem(SCREEN_TUTORIAL_STORAGE_KEY) || "{}");
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch (error) {
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
     return {};
   }
 }
 
-function saveSeenMap(seenMap) {
-  try {
-    window.localStorage.setItem(SCREEN_TUTORIAL_STORAGE_KEY, JSON.stringify(seenMap));
-  } catch (error) {
-    // チュートリアルの既読保存に失敗しても、アプリ本体の利用は止めない。
-  }
-}
-
 function markSeen(tutorialId) {
-  const seenMap = readSeenMap();
-  saveSeenMap({ ...seenMap, [tutorialId]: true });
+  // A damaged / future-shaped record is never an empty writable state.
+  // Closing the tutorial should not erase recoverable saved tutorial history.
+  try {
+    const storage = window.localStorage;
+    const oldRaw = storage.getItem(SCREEN_TUTORIAL_STORAGE_KEY);
+    const seen = oldRaw == null ? {} : JSON.parse(oldRaw);
+    if (!seen || typeof seen !== "object" || Array.isArray(seen)) return false;
+    if (storage.getItem(SCREEN_TUTORIAL_STORAGE_KEY) !== oldRaw) return false;
+    storage.setItem(SCREEN_TUTORIAL_STORAGE_KEY, JSON.stringify({ ...seen, [tutorialId]: true }));
+    return true;
+  } catch {
+    // This is optional tutorial state; never interrupt core record entry.
+    return false;
+  }
 }
 
 function isSeen(tutorialId) {
