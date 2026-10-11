@@ -204,7 +204,7 @@ function readSavedRunMeasurementsForCommit() {
 }
 
 export function findSavedRunMeasurement(recordId = "") {
-  return listSavedRunMeasurements().find((item) => item.recordId === String(recordId || "")) || null;
+  return listSavedRunMeasurements().find((item) => item && typeof item === "object" && item.recordId === String(recordId || "")) || null;
 }
 
 export function commitPendingRunMeasurement(recordId = "", options = {}) {
