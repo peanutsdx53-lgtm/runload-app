@@ -54,6 +54,9 @@ function server(){
       };
       const planScreens=await Promise.all([import('/screens/mobile/planScreen.js'),import('/screens/desktop/planScreen.js')]);
       const consultationScreen=await import('/screens/consultationScreen.js');
+      const platformHistoryScreens=await Promise.all([import('/screens/mobile/historyScreen.js'),import('/screens/desktop/historyScreen.js')]);
+      const platformSettingsScreens=await Promise.all([import('/screens/mobile/settingsScreen.js'),import('/screens/desktop/settingsScreen.js')]);
+      const platformCourseScreens=await Promise.all([import('/screens/mobile/courseLibraryScreen.js'),import('/screens/desktop/courseLibraryScreen.js')]);
       const sim=await import('/ui/interactions/simulationInteractions.js');
       const restore=await import('/ui/restorePreviewPresentation.js');
       const {installMobileWalkJogHistoryUi}=await import('/ui/mobileWalkJogHistoryUi.js');
@@ -76,6 +79,35 @@ function server(){
           const line=root.querySelector('[data-plan-summary-line]');
           if(!line||line.children.length||!line.textContent.includes(attack))problems.push('plan: unsafe saved course HTML');
           if(window.__xss)problems.push('plan: script executed');
+        }
+        // Render the three additional delegated screen families for both
+        // platform implementations into an actual Chromium DOM, with hostile
+        // backup/record/query, shoe, profile and course values at once.
+        const storedRecord={id:'e01-record',date:'2026-10-11',createdAt:'2026-10-11T10:00:00Z',
+          activityType:'run',distanceKm:5,durationMinutes:30,course:{name:attack},
+          reflectionContext:{postRunReflection:attack}};
+        const storedExperience={record:storedRecord,feedback:{subjectiveStatus:'deferred'},regionalV2ResultRecord:null};
+        const savedCourse={id:'e01-course',name:attack,course:{name:attack}};
+        const storedServices={
+          workflows:{records:{loadAllExperiences:()=>[storedExperience]},history:{loadUndoEntry:()=>null}},
+          storage:{modelResultsRegionalV2:{latestByRecord:()=>new Map()},
+            plans:{loadAll:()=>[]},selfUnderstandingThreads:{loadAll:()=>[]},
+            settings:{load:()=>({savedShoes:[{id:'e01-shoe',label:attack}]})},
+            profile:{load:()=>({runningStartDateOrBand:attack,experienceSelfAssessment:attack,
+              heightCm:attack,weightKg:attack,ageBand:attack,runningGoalTags:[attack]})},
+            records:{loadAll:()=>[storedRecord]},courses:{loadAll:()=>[savedCourse]},
+            draft:{load:()=>null}},fatigue:{summarizeRun:()=>null},
+        };
+        for(let k=0;k<2;k++){
+          root.innerHTML=platformHistoryScreens[k].renderHistoryScreen({services:storedServices,
+            context:{parameters:new URLSearchParams('view=records&period=28&anchorDate=2026-10-11')}});
+          check('saved-history-platform-'+k,attack);
+          root.innerHTML=platformSettingsScreens[k].renderSettingsScreen({services:storedServices,
+            context:{parameters:new URLSearchParams('section=data')}});
+          check('saved-settings-shoes-platform-'+k,attack);
+          root.innerHTML=platformCourseScreens[k].renderCourseLibraryScreen({services:storedServices,
+            context:{parameters:new URLSearchParams('')}});
+          check('saved-course-platform-'+k,attack);
         }
         // Restored runner record/profile/plan/report strings in the delegated
         // consultation PDF-view template must be inert independently of CSP.

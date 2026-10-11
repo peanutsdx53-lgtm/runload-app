@@ -36,7 +36,10 @@ function renderDataOverview(services) {
 export function renderSettingsScreenWithPresentation({ services, context }, presentation = {}) {
   const renderMeasurementNotifications = presentation.renderMeasurementNotifications || (() => "");
   const renderFirstUseGuide = presentation.renderFirstUseGuide || (() => "");
-  const settings = normalizeAppSettings(services.storage.settings.load());
+  const storedSettings = services.storage.settings.load();
+  // Saved shoes are app-owned auxiliary state, not normalized display options.
+  // Render them without rewriting or discarding their persisted contents.
+  const settings = { ...normalizeAppSettings(storedSettings), savedShoes: storedSettings?.savedShoes };
   const profile = services.storage.profile.load();
   const saved = context?.parameters?.get("status") === "saved";
   const goalValues = new Set(Array.isArray(profile.runningGoalTags) ? profile.runningGoalTags : []);

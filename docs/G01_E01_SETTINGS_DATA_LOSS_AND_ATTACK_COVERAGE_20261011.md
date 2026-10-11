@@ -1,0 +1,15 @@
+# G-01 / E-01 — Settings durability and hostile restored-data paths (2026-10-11)
+
+## Independent regression and narrowly scoped fix
+
+The existing display-option `normalizeAppSettings` intentionally returns only the options in `DEFAULT_APP_SETTINGS`. However, both settings change handlers persisted `mergeAppSettings(current, update)`, and `mergeAppSettings` normalized the *whole* persisted settings object, thereby silently deleting valid co-located settings fields (`savedShoes`, `termsAcceptedVersion`, `termsAcceptedAt`, `mobileOnboardingVersionSeen`, `guideVersionSeen`). The shared PC/mobile settings renderer also normalized the saved object before rendering the saved-shoe list, so legitimately stored shoes were never shown on that screen. These are actual application data-loss/availability defects, not hypothetical XSS claims.
+
+Baseline: independent `tests/g01SettingsDurableMetadataPreservation.test.mjs` **RED 0/2**; new `tests/e01SavedDataPlatformsIndependent.test.mjs` exposes the missing saved shoes. Fix: keep `normalizeAppSettings` display-only (preserving its strict unknown-key discard contract); `mergeAppSettings` explicitly preserves **only five known app-owned auxiliary fields from the existing persisted data** when saving display options. The renderer reads savedShoes from original storage, and the existing `escapeHtml` protects shoe name and ID in both mobile and desktop. Corrupt existing `savedShoes` is kept as-is rather than silently overwritten; existing storage schema and values are not rewritten. Unknown unapproved settings fields are not carried forward. Valid existing saved shoes, accepted terms, onboarding and guide markers survive unrelated appearance changes.
+
+GREEN: new independent G-01 2/2; desktop/mobile history, settings and course screens E-01 6/6; `tests/auditCurrentSettingsNoUnknownKeys.test.mjs` retains the strict display-normalization contract. An expanded **CSP-independent Chromium** E-01 test runs hostile saved history/profile/saved-shoe/course inputs through the real mobile and desktop renderer delegates and parses the resulting HTML, rejecting hostile nodes, handlers, script outcomes and external fetches.
+
+## Audit scope boundaries
+
+- G-01 prior storage-integrity PASS must be read together with this additional preservation repair and all Node, PR/main CI, and Current Source/Public verification. It does not establish atomicity across unrelated same-origin writers, browser storage/OS failure modes or quota-rollback crash atomicity.
+- E-01 **remains PARTIAL** until all transitive screen branches including restored GPX/photo/route/consultation components are traced, the historic 43 semantic display-path register is reconciled with the 38 direct parser sink inventory, and complete attack proof is independently verified. Expanded six-screen tests and direct 38-sink lineage are bounded positive evidence only.
+- No scientific coefficients, Original Sources, research claims, private ROF-J, UI/UX layout, persisted format migration, hosting or user saved content are changed.
