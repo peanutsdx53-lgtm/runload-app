@@ -59,12 +59,17 @@ export function normalizeGeolocationPosition(position) {
   const lat = coords.latitude;
   const lon = coords.longitude;
   const accuracyM = coords.accuracy;
-  const altitudeM = coords.altitude == null ? null : Number(coords.altitude);
-  const altitudeAccuracyM = coords.altitudeAccuracy == null ? null : Number(coords.altitudeAccuracy);
-  const reportedSpeedMps = coords.speed == null ? null : Number(coords.speed);
-  const timestamp = Number(position?.timestamp || Date.now());
-
-  if (!Number.isFinite(lat) || !Number.isFinite(lon) || !Number.isFinite(timestamp)) return null;
+  // Geolocation Position exposes numeric optional fields, or null. Never
+  // coerce false/blank strings to real zero elevation, accuracy or speed.
+  const optionalSensorValue = (value, allowNegative = false) =>
+    typeof value === "number" && Number.isFinite(value) && (allowNegative || value >= 0)
+      ? value : null;
+  const altitudeM = optionalSensorValue(coords.altitude, true);
+  const altitudeAccuracyM = optionalSensorValue(coords.altitudeAccuracy);
+  const reportedSpeedMps = optionalSensorValue(coords.speed);
+  // A missing or malformed timestamp is not a measurement at the current time.
+  const timestamp = position?.timestamp;
+  if (typeof timestamp !== "number" || !Number.isFinite(timestamp) || timestamp < 0) return null;
   return Object.freeze({
     lat,
     lon,
