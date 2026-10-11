@@ -137,7 +137,6 @@
     margin: 0 !important;
   }
 
-  .screen--consultation.screen-layout--consultation[data-share-prep] .share-viewer,
   .screen--consultation.screen-layout--consultation[data-share-prep] .share-print-document,
   .screen--consultation.screen-layout--consultation[data-share-prep] #consultation-report-text {
     grid-column: 1 / -1;

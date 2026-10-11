@@ -60,7 +60,6 @@
 .screen-layout--consultation .support-link small{font-size:var(--type-label);color:var(--muted)}
 .screen-layout--consultation .support-link strong{margin-top:2px;font-size:var(--type-label);color:var(--warn)}
 .screen-layout--consultation .support-link i{font-style:normal;font-size:20px;color:var(--warn)}
-@media (min-width:760px){}
 
 /* ===== share preparation redesign ===== */
 .screen-layout--consultation .share-step{margin-top:24px}
@@ -184,57 +183,6 @@
 .screen-layout--consultation .share-output-actions .output small{margin-top:2px;color:inherit;opacity:.72;font-size:var(--type-label)}
 .screen-layout--consultation .share-output-actions .output i{font-style:normal;font-size:18px}
 html.consult-viewer-open{overflow:hidden}
-.screen-layout--consultation .share-viewer[hidden]{display:none!important}
-.screen-layout--consultation .share-viewer{
-  position:fixed;
-  inset:0;
-  z-index:140;
-  padding:max(14px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
-  background:color-mix(in srgb,var(--ink) 44%,transparent);
-  overflow:auto;
-}
-.screen-layout--consultation .share-viewer-shell{
-  width:min(100%,720px);
-  min-height:calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-  margin:0 auto;
-  border-radius:20px;
-  background:var(--paper);
-  overflow:hidden;
-  box-shadow:0 20px 56px rgba(0,0,0,.24);
-}
-.screen-layout--consultation .share-viewer-head{
-  padding:14px 15px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  border-bottom:1px solid var(--line);
-}
-.screen-layout--consultation .share-viewer-head small,
-.screen-layout--consultation .share-viewer-head strong{display:block}
-.screen-layout--consultation .share-viewer-head small{color:var(--accent);font-size:var(--type-label);font-weight:900;letter-spacing:.12em}
-.screen-layout--consultation .share-viewer-head strong{margin-top:2px;font-size:16px}
-.screen-layout--consultation .share-viewer-head button{
-  width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font-size:20px
-}
-.screen-layout--consultation .share-viewer-purpose{padding:16px 15px;background:var(--soft)}
-.screen-layout--consultation .share-viewer-purpose small,
-.screen-layout--consultation .share-viewer-purpose strong,
-.screen-layout--consultation .share-viewer-purpose p{display:block}
-.screen-layout--consultation .share-viewer-purpose small{color:var(--muted);font-size:var(--type-label);font-weight:850}
-.screen-layout--consultation .share-viewer-purpose strong{margin-top:3px;font-size:18px}
-.screen-layout--consultation .share-viewer-purpose p{margin:7px 0 0;font-size:var(--type-label);line-height:1.5}
-.screen-layout--consultation .share-viewer-grid{display:grid}
-.screen-layout--consultation .share-viewer-grid .share-card{padding:14px 15px;background:var(--surface)}
-.screen-layout--consultation .share-viewer-grid .share-card small{font-size:var(--type-label)}
-.screen-layout--consultation .share-viewer-grid .share-card strong{font-size:12px}
-.screen-layout--consultation .share-viewer-shell>footer{
-  padding:12px 15px;
-  border-top:1px solid var(--line);
-  color:var(--muted);
-  font-size:var(--type-label);
-  line-height:1.5;
-}
 .screen-layout--consultation .share-print-document{display:none}
 
 @media (min-width:760px){

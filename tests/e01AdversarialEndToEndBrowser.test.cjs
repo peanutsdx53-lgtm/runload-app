@@ -53,6 +53,7 @@ function server(){
         if(window.__xss)problems.push(label+': code executed');
       };
       const planScreens=await Promise.all([import('/screens/mobile/planScreen.js'),import('/screens/desktop/planScreen.js')]);
+      const consultationScreen=await import('/screens/consultationScreen.js');
       const sim=await import('/ui/interactions/simulationInteractions.js');
       const restore=await import('/ui/restorePreviewPresentation.js');
       const {installMobileWalkJogHistoryUi}=await import('/ui/mobileWalkJogHistoryUi.js');
@@ -76,6 +77,29 @@ function server(){
           if(!line||line.children.length||!line.textContent.includes(attack))problems.push('plan: unsafe saved course HTML');
           if(window.__xss)problems.push('plan: script executed');
         }
+        // Restored runner record/profile/plan/report strings in the delegated
+        // consultation PDF-view template must be inert independently of CSP.
+        const current={record:{id:'r1',date:'2026-10-11',activityType:'run',distanceKm:5,
+          durationMinutes:31,course:{name:attack}}};
+        const earlier={record:{id:'r0',date:'2026-10-09',activityType:'run',distanceKm:5,
+          durationMinutes:31,course:{name:'before'}}};
+        const consultReport={date:'2026-10-11',recent:[],
+          exactBodyObservations:[{label:attack,intensity:3,sensation:attack,lateralityLabel:attack}],
+          subjectiveParts:[{label:attack,fatigue:3,discomfort:0}]};
+        const consultationServices={
+          workflows:{records:{loadAllExperiences:()=>[earlier,current],
+            loadExperience:()=>current,loadLatestExperience:()=>current}},
+          storage:{plans:{loadAll:()=>[savedPlan]},
+            profile:{load:()=>({runningStartDateOrBand:attack,
+              experienceSelfAssessment:attack,runningGoalTags:[attack]})},
+            selfUnderstandingThreads:{findById:()=>null}},
+          consultation:{buildDeterministicConsultation:()=>({regionOptions:[],regionId:'',regional:{}}),
+            buildConsultationReport:()=>consultReport},
+          fatigue:{summarizeRun:()=>({pre:2,post:5})},
+        };
+        root.innerHTML=consultationScreen.renderConsultationScreen({services:consultationServices,
+          context:{parameters:new URLSearchParams('recordId=r1')}});
+        check('consultation-saved-profile-report',attack);
         root.innerHTML=restore.renderRestoreInspection({status:'blocked',issues:[{severity:'BLOCKING',message:attack,itemId:attack}],counts:{},canRestore:false},`file-${attack}.json`);
         check('restore-filename-and-message',attack);
         form.elements.courseJson.value=JSON.stringify({name:attack});

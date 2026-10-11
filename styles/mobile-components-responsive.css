@@ -35,9 +35,6 @@
 }
 
 @media (max-width: 34rem) {
-}
-
-@media (max-width: 34rem) {
   .screen-guide > summary { grid-template-columns: 1fr; }
 }
 

@@ -3,46 +3,21 @@
 @media (max-width: 35rem) {  .body-map { grid-template-columns: 1fr 1fr; }  .result-card__heading{ display: grid; }
 }
 
-@media (max-width: 47.99rem) {
-}
-
-@media (max-width: 35rem) {
-}
-
 @media (max-width: 35rem) {  .numbered-detail-card { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 35rem) {
-}
-
-@media (max-width: 35rem) {
 }
 
 @media (max-width: 35rem) {
   .history-calendar { min-width: 38rem; grid-template-columns: repeat(7, minmax(4.75rem, 1fr)); }  .history-calendar__day { min-height: 7.75rem; }
 }
 
-@media (max-width: 35rem) {
-}
-
 @media (max-width: 35rem) {  .report-fact-list,
-  .report-notes-list,
-  .report-period-summary { grid-template-columns: 1fr; }  .report-model-total { grid-template-columns: 1fr; }  .report-model-total > strong { grid-row: auto; grid-column: auto; }  .report-sheet__header { display: grid; }
-}
-
-@media (max-width: 35rem) {
+  .report-notes-list { grid-template-columns: 1fr; }  .report-model-total { grid-template-columns: 1fr; }  .report-model-total > strong { grid-row: auto; grid-column: auto; }
 }
 
 @media (max-width: 700px) {  .record-course-entry{ padding: var(--space-4); }
 }
 
 @media (max-width: 700px) {  .record-subjective-entry{ padding: var(--space-4); }  .subjective-body-map { grid-template-columns: 1fr 1fr; }
-}
-
-@media (max-width: 700px) {
-}
-
-@media (max-width: 35rem) {
 }
 
 @media (max-width: 35rem) {  .history-detail-disclosure > summary,
@@ -52,9 +27,6 @@
   .history-record-browser--collapsed > summary::after {
     justify-content: center;
   }
-}
-
-@media (max-width: 42rem) {
 }
 
 @media (max-width: 35rem) {  .danger-zone > summary,
@@ -92,54 +64,7 @@
   }
 }
 
-@media (max-width: 22rem) {
-}
-
-@media (max-width: 48rem) {
-}
-
-@media (max-width: 48rem) {
-}
-
 @media (max-width: 35rem) {  .course-section-row { grid-template-columns: 1fr; }
-}
-
-@media (max-width:720px){}
-
-@media (max-width: 35rem) {  .workspace-navigation { grid-template-columns: repeat(2, minmax(0, 1fr)); }  .workspace-navigation__link { padding: var(--space-2); }  .workspace-navigation__link small { font-size: var(--type-label); }
-}
-
-@media (max-width: 44rem) {
-}
-
-@media (max-width: 44rem) {
-}
-
-@media (max-width: 44rem) {
-}
-
-@media (max-width: 35rem) {
-}
-
-@media (max-width: 44rem) {
-}
-
-@media (max-width: 44rem) {
-}
-
-@media (max-width: 52rem) {
-}
-
-@media (max-width: 38rem) {
-}
-
-@media (max-width: 48rem) {
-}
-
-@media (max-width: 44rem) {
-}
-
-@media (max-width: 640px) {
 }
 
 @media (max-width: 47.99rem) {  .feature-link-card strong{
@@ -154,30 +79,7 @@
   }
 }
 
-@media (max-width: 48rem) {
-}
-
-@media (max-width: 48rem) {
-}
-
-@media (max-width: 40rem) {
-}
-
-@media (max-width: 40rem) {
-}
-
-@media (max-width: 48rem) {
-}
-
-@media (max-width: 700px) {
-}
-
 @media (max-width: 36rem) {  .record-subjective-body-map { gap: 0.3rem; }  .record-subjective-body-map figure { padding: 0.3rem; }  .record-subjective-body-map svg { height: 9rem; }  .record-selected-body-row { grid-template-columns: minmax(0, 1fr) 4.25rem; align-items: center; }  .record-selected-body-row > label:nth-of-type(2) { grid-column: 1 / 2; }  .record-selected-body-row > button { grid-column: 2 / 3; grid-row: 2 / 3; }
-}
-
-@media(max-width:720px){}
-
-@media (max-width: 520px) {
 }
 /* Mobile-only record input save controls. */
 .record-mobile-save-bar { display: none; }

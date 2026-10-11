@@ -3949,9 +3949,7 @@
   .screen--consultation.screen-layout--consultation .field span,
   .screen--consultation.screen-layout--consultation .share-purpose-step .field span,
   .screen--consultation.screen-layout--consultation .share-region-detail span,
-  .screen--consultation.screen-layout--consultation .share-preview > header span,
-  .screen--consultation.screen-layout--consultation .share-viewer-purpose small,
-  .screen--consultation.screen-layout--consultation .share-viewer-shell > footer {
+  .screen--consultation.screen-layout--consultation .share-preview > header span {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
@@ -3965,9 +3963,7 @@
   .screen--consultation.screen-layout--consultation .share-source small,
   .screen--consultation.screen-layout--consultation .share-preview > header small,
   .screen--consultation.screen-layout--consultation .share-card small,
-  .screen--consultation.screen-layout--consultation .share-output-actions .output small,
-  .screen--consultation.screen-layout--consultation .share-viewer-head small,
-  .screen--consultation.screen-layout--consultation .share-viewer-grid .share-card small {
+  .screen--consultation.screen-layout--consultation .share-output-actions .output small {
     font-size: 0.74rem !important;
     line-height: 1.4 !important;
   }
@@ -4082,8 +4078,7 @@
     font-size: 0.74rem !important;
   }
 
-  .screen--consultation.screen-layout--consultation .share-preview > header span,
-  .screen--consultation.screen-layout--consultation .share-viewer-shell > footer {
+  .screen--consultation.screen-layout--consultation .share-preview > header span {
     font-size: 0.8rem !important;
     line-height: 1.5 !important;
   }
@@ -4661,29 +4656,6 @@
     font-size: 0.88rem !important;
     line-height: 1.4 !important;
   }
-
-  .screen--consultation.screen-layout--consultation .share-viewer-purpose p {
-    font-size: 0.82rem !important;
-    line-height: 1.55 !important;
-  }
-
-  .screen--consultation.screen-layout--consultation .share-viewer {
-    display: grid !important;
-    place-items: center !important;
-    padding: 5.75rem 1.5rem 1.5rem !important;
-    background: var(--overlay-dialog) !important;
-    overflow: hidden !important;
-  }
-
-  .screen--consultation.screen-layout--consultation .share-viewer-shell {
-    width: min(60rem, calc(100vw - var(--pc-content-left) - var(--pc-content-right) - 3rem)) !important;
-    min-height: 0 !important;
-    max-height: calc(100dvh - 7.25rem) !important;
-    overflow-y: auto !important;
-    border: 1px solid var(--line) !important;
-    border-radius: 1.25rem !important;
-    box-shadow: var(--shadow-dialog) !important;
-  }
   .screen--history.screen-layout--history .display-toggle button,
   .screen--plan.screen-layout--plan .seg button,
   .screen--reading.screen-layout--reading .filters button {
@@ -4871,9 +4843,7 @@
   }
 
   body:has(.screen--reading.screen-layout--reading .drawer:not([hidden]))
-    .screen--reading.screen-layout--reading .secondary-derived-body,
-  html:has(.screen--consultation.screen-layout--consultation .share-viewer:not([hidden]))
-    .screen--consultation.screen-layout--consultation .secondary-derived-body {
+    .screen--reading.screen-layout--reading .secondary-derived-body {
     overflow: hidden !important;
   }
 }
@@ -5080,23 +5050,6 @@
     .filter-strip-head span,
     .sheet-head small
   ),
-  .screen--consultation.screen-layout--consultation :is(
-    .source small,
-    .section-head small,
-    .support-link small,
-    .route small,
-    .panel-head small,
-    .status,
-    .report header small,
-    .report section small,
-    .field small,
-    .share-source small,
-    .share-preview > header small,
-    .share-card small,
-    .share-output-actions .output small,
-    .share-viewer-head small,
-    .share-viewer-grid .share-card small
-  ),
   .screen--support-guidance.screen-layout--support .card small {
     font-size: 0.75rem !important;
     line-height: 1.35 !important;
@@ -5148,9 +5101,6 @@
   }
 
   /* CONSULTATION: higher desktop specificity must never override the hidden state. */
-  .screen--consultation.screen-layout--consultation .share-viewer[hidden] {
-    display: none !important;
-  }
 }
 
 
@@ -9718,17 +9668,6 @@
 
 
 @media (min-width:55rem){
-  
-}
-@media (min-width:64rem){
-}
-
-
-@media (min-width:80rem){
-}
-
-
-@media (min-width:55rem){
   .interpretation-room-section-title--dense{
     grid-template-columns:minmax(18rem,.9fr) minmax(0,1.1fr) !important;
     gap:1.15rem !important;
@@ -9753,8 +9692,6 @@
     font-size:.76rem !important;
   }
 }
-@media (min-width:80rem){
-}
 
 
 @media (min-width:55rem){
@@ -9768,9 +9705,6 @@
     width:min(100%,96rem) !important;
     max-width:96rem !important;
   }
-}
-
-@media (min-width:64rem){
 }
 
 
