@@ -13,7 +13,7 @@ for (const originallyPresent of [true, false]) {
     const adapter = {
       getItem(key) {
         const observed = inner.getItem(key);
-        if (key === PROBE_KEY && ++reads === 2) {
+        if (key === PROBE_KEY && ++reads === 3) {
           // A second tab edits the key after this read but before restore.
           inner.setItem(key, 'other-tab-value');
         }
@@ -36,3 +36,27 @@ test('G-01 normal storage probe restores preexisting bytes', () => {
   assert.equal(createStorageGateway(inner).probe().ok, true);
   assert.deepEqual(inner.dump(), { [PROBE_KEY]: 'original', unrelated: 'safe' });
 });
+
+for (const originallyPresent of [true, false]) {
+  test(`G-01 probe rejects an intervening change before its write (initial key ${originallyPresent ? 'present' : 'absent'})`, () => {
+    const inner = createMemoryStorage(originallyPresent ? { [PROBE_KEY]: 'older-probe' } : {});
+    let reads = 0;
+    const adapter = {
+      getItem(key) {
+        const observed = inner.getItem(key);
+        if (key === PROBE_KEY && ++reads === 1) {
+          // Simulate the second tab modifying the probe key immediately
+          // after the preflight snapshot captured its former bytes.
+          inner.setItem(key, 'newer-tab-probe');
+        }
+        return observed;
+      },
+      setItem: (key, value) => inner.setItem(key, value),
+      removeItem: (key) => inner.removeItem(key),
+    };
+    const result = createStorageGateway(adapter).probe();
+    assert.equal(result.ok, false);
+    assert.equal(result.code, 'STORAGE_PROBE_CONCURRENT_CHANGE');
+    assert.equal(inner.getItem(PROBE_KEY), 'newer-tab-probe');
+  });
+}

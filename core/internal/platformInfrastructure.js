@@ -483,6 +483,20 @@ function createStorageGateway(storage) {
     const probeKey = "runner-load-app-storage-probe-v1";
     const snapshot = captureSnapshot([probeKey]);
     if (!snapshot.ok) return snapshot;
+    // The probe is an availability check, never an invitation to overwrite
+    // a second tab that changed the same transient key after preflight.
+    try {
+      if (targetStorage.getItem(probeKey) !== snapshot.items[0].rawValue) {
+        lastFailure = {
+          ...createFailure("probe", probeKey, "A concurrent probe changed storage after the snapshot"),
+          code: "STORAGE_PROBE_CONCURRENT_CHANGE",
+        };
+        return lastFailure;
+      }
+    } catch (error) {
+      lastFailure = createFailure("probe", probeKey, error);
+      return lastFailure;
+    }
     const value = `storage-probe-${Date.now()}`;
     const writeResult = writeRaw(probeKey, value);
     if (!writeResult.ok) return writeResult;
