@@ -142,6 +142,7 @@ export function renderMobileFatigueTrend(services) {
 
 
 function paceSeconds(record = {}) {
+  if (!finite(record.distanceKm) || !finite(record.durationMinutes)) return null;
   const distance = Number(record.distanceKm);
   const duration = Number(record.durationMinutes);
   return distance > 0 && duration > 0 ? (duration * 60) / distance : null;
@@ -151,6 +152,10 @@ function paceLabel(seconds) {
   if (!finite(seconds)) return "—";
   const rounded = Math.max(0, Math.round(Number(seconds)));
   return `${Math.floor(rounded / 60)}:${String(rounded % 60).padStart(2, "0")}`;
+}
+
+function recordedNumber(value, digits = 1) {
+  return finite(value) ? Number(value).toFixed(digits) : "—";
 }
 
 function signedNumber(value, digits = 1, unit = "") {
@@ -201,8 +206,8 @@ export function renderSameCourseComparison(record = {}, allExperiences = []) {
   return `<section class="mobile-course-compare" aria-labelledby="mobile-course-compare-title">
     <header><div><small>SAME COURSE</small><h2 id="mobile-course-compare-title">同じコース</h2></div><span>前回 ${escapeHtml(formatLocalDate(previous.date))}</span></header>
     <div class="mobile-course-compare__metrics">
-      <article><small>距離差</small><strong>${escapeHtml(signedNumber(comparison.distanceDeltaKm, 2, " km"))}</strong><span>${escapeHtml(`${Number(previous.distanceKm || 0).toFixed(2)} → ${Number(record.distanceKm || 0).toFixed(2)} km`)}</span></article>
-      <article><small>時間差</small><strong>${escapeHtml(signedNumber(comparison.durationDeltaMinutes, 1, " 分"))}</strong><span>${escapeHtml(`${Number(previous.durationMinutes || 0).toFixed(1)} → ${Number(record.durationMinutes || 0).toFixed(1)} 分`)}</span></article>
+      <article><small>距離差</small><strong>${escapeHtml(signedNumber(comparison.distanceDeltaKm, 2, " km"))}</strong><span>${escapeHtml(`${recordedNumber(previous.distanceKm, 2)} → ${recordedNumber(record.distanceKm, 2)} km`)}</span></article>
+      <article><small>時間差</small><strong>${escapeHtml(signedNumber(comparison.durationDeltaMinutes, 1, " 分"))}</strong><span>${escapeHtml(`${recordedNumber(previous.durationMinutes, 1)} → ${recordedNumber(record.durationMinutes, 1)} 分`)}</span></article>
       <article><small>ペース差</small><strong>${escapeHtml(signedPaceDelta(comparison.paceDeltaSeconds))}</strong><span>${escapeHtml(`${paceLabel(comparison.previousPace)} → ${paceLabel(comparison.currentPace)} /km`)}</span></article>
     </div>
     <a href="#/result?recordId=${encodeURIComponent(previous.id)}">前回の結果を見る <b aria-hidden="true">›</b></a>
@@ -221,8 +226,8 @@ export function renderRunCapsule(services, record = {}, { measurement = null, fa
     <div class="run-capsule__body">
       <div class="run-capsule__mark" aria-hidden="true">${renderRunFingerprintSvg(fingerprint)}</div>
       <div class="run-capsule__metrics">
-        <span><small>距離</small><strong>${escapeHtml(Number(record.distanceKm || 0).toFixed(2))}<em>km</em></strong></span>
-        <span><small>時間</small><strong>${escapeHtml(Number(record.durationMinutes || 0).toFixed(1))}<em>分</em></strong></span>
+        <span><small>距離</small><strong>${escapeHtml(recordedNumber(record.distanceKm, 2))}<em>km</em></strong></span>
+        <span><small>時間</small><strong>${escapeHtml(recordedNumber(record.durationMinutes, 1))}<em>分</em></strong></span>
         <span><small>ペース</small><strong>${escapeHtml(paceLabel(pace))}<em>/km</em></strong></span>
       </div>
     </div>
