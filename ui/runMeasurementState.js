@@ -55,9 +55,11 @@ function nonNegativeNumberOrNull(value) {
   return Number.isFinite(number) && number >= 0 ? number : null;
 }
 
+function measuredNumber(value) { return typeof value === 'number' && Number.isFinite(value) ? value : Number.NaN; }
+
 function normalizeEnergyEstimate(value) {
   if (!value || typeof value !== "object") return null;
-  const estimatedKcal = Number(value.estimatedKcal);
+  const estimatedKcal = measuredNumber(value.estimatedKcal);
   const met = Number(value.met);
   const bodyMassKg = Number(value.bodyMassKg);
   const averageSpeedKmh = Number(value.averageSpeedKmh);
@@ -78,8 +80,8 @@ function normalizeEnergyEstimate(value) {
 
 function normalizeStepEstimate(value) {
   if (!value || typeof value !== "object") return null;
-  const steps = Number(value.steps);
-  const cadenceSpm = Number(value.cadenceSpm);
+  const steps = measuredNumber(value.steps);
+  const cadenceSpm = measuredNumber(value.cadenceSpm);
   const activeDurationMinutes = Number(value.activeDurationMinutes);
   if (!Number.isInteger(steps) || steps < 0 || !Number.isFinite(cadenceSpm) || cadenceSpm < 0 || !Number.isFinite(activeDurationMinutes) || activeDurationMinutes <= 0) return null;
   return Object.freeze({
