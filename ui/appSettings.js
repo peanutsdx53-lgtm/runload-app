@@ -88,9 +88,25 @@ export function normalizeAppSettings(settings = {}) {
   });
 }
 
+// Other app-owned settings share this storage key. Normalizing display options
+// must not erase previously accepted terms, onboarding acknowledgements, or
+// saved shoe presets. These are not display options; keep their original bytes
+// when writing an unrelated display/profile preference, including unreadable
+// shoe data that must be recovered or explicitly removed rather than discarded.
+const DURABLE_SETTINGS_KEYS = Object.freeze([
+  "termsAcceptedVersion", "termsAcceptedAt", "mobileOnboardingVersionSeen",
+  "guideVersionSeen", "savedShoes",
+]);
+
 export function mergeAppSettings(currentSettings = {}, settingsUpdate = {}) {
-  const current = currentSettings && typeof currentSettings === "object" ? currentSettings : {};
-  return normalizeAppSettings({ ...current, ...settingsUpdate });
+  const current = currentSettings && typeof currentSettings === "object" && !Array.isArray(currentSettings)
+    ? currentSettings : {};
+  const displaySettings = normalizeAppSettings({ ...current, ...settingsUpdate });
+  const durableSettings = {};
+  DURABLE_SETTINGS_KEYS.forEach((key) => {
+    if (Object.hasOwn(current, key)) durableSettings[key] = current[key];
+  });
+  return Object.freeze({ ...displaySettings, ...durableSettings });
 }
 
 function replaceClassByPrefix(element, prefix, nextClass) {
