@@ -35,9 +35,16 @@ export function haversineDistanceMeters(a = {}, b = {}) {
 
 export function normalizeGeolocationPosition(position) {
   const coords = position?.coords || {};
-  const lat = Number(coords.latitude);
-  const lon = Number(coords.longitude);
-  const accuracyM = Number(coords.accuracy);
+  // Browser Position.coords fields are numeric. Missing or stringified values
+  // must never be coerced into an apparently valid GPS origin/precision.
+  if (typeof coords.latitude !== "number" || typeof coords.longitude !== "number"
+    || !Number.isFinite(coords.latitude) || !Number.isFinite(coords.longitude)
+    || Math.abs(coords.latitude) > 90 || Math.abs(coords.longitude) > 180
+    || typeof coords.accuracy !== "number" || !Number.isFinite(coords.accuracy)
+    || coords.accuracy < 0) return null;
+  const lat = coords.latitude;
+  const lon = coords.longitude;
+  const accuracyM = coords.accuracy;
   const altitudeM = coords.altitude == null ? null : Number(coords.altitude);
   const altitudeAccuracyM = coords.altitudeAccuracy == null ? null : Number(coords.altitudeAccuracy);
   const reportedSpeedMps = coords.speed == null ? null : Number(coords.speed);

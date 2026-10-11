@@ -54,7 +54,12 @@ export function createMotionStepEstimator(target = globalThis) {
   }
 
   async function start() {
-    const MotionEvent = target.DeviceMotionEvent;
+    let MotionEvent;
+    try { MotionEvent = target.DeviceMotionEvent; }
+    catch {
+      status = "DENIED";
+      return Object.freeze({ ok: false, status });
+    }
     if (!MotionEvent || typeof target.addEventListener !== "function") {
       status = "UNAVAILABLE";
       return Object.freeze({ ok: false, status });
@@ -72,7 +77,12 @@ export function createMotionStepEstimator(target = globalThis) {
       }
     }
     if (!listening) {
-      target.addEventListener("devicemotion", handleMotion, { passive: true });
+      try { target.addEventListener("devicemotion", handleMotion, { passive: true }); }
+      catch {
+        status = "DENIED";
+        active = false;
+        return Object.freeze({ ok: false, status });
+      }
       listening = true;
     }
     steps = 0;
@@ -113,7 +123,11 @@ export function createMotionStepEstimator(target = globalThis) {
 
   function stop() {
     active = false;
-    if (listening) target.removeEventListener?.("devicemotion", handleMotion);
+    if (listening) {
+      // A revoked browser permission must not prevent measurement cleanup.
+      // `active` is already false, so a lingering listener cannot add steps.
+      try { target.removeEventListener?.("devicemotion", handleMotion); } catch {}
+    }
     listening = false;
     status = "STOPPED";
   }

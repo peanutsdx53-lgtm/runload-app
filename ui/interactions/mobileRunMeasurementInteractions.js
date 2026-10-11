@@ -319,8 +319,12 @@ export function bindRunMeasurement({ router, services }) {
   }
 
   function stopWatch() {
-    if (watchId != null && navigator.geolocation) navigator.geolocation.clearWatch(watchId);
+    // Permissions may be revoked while measuring or while leaving the page.
+    // A throwing geolocation getter/clearWatch must not block pause or cleanup.
+    const previousWatchId = watchId;
     watchId = null;
+    if (previousWatchId == null) return;
+    try { navigator.geolocation?.clearWatch?.(previousWatchId); } catch {}
   }
 
   async function releaseWakeLock() {
@@ -463,9 +467,11 @@ export function bindRunMeasurement({ router, services }) {
   }
 
   function beginWatch() {
-    if (!navigator.geolocation || watchId != null || paused || !measurementStarted) return;
+    if (watchId != null || paused || !measurementStarted) return;
     try {
-      watchId = navigator.geolocation.watchPosition(handlePosition, handlePositionError, {
+      const geolocation = navigator.geolocation;
+      if (!geolocation) { handlePositionError({ code: 2 }); return; }
+      watchId = geolocation.watchPosition(handlePosition, handlePositionError, {
         enableHighAccuracy: true,
         maximumAge: 1000,
         timeout: 15000,
@@ -481,7 +487,9 @@ export function bindRunMeasurement({ router, services }) {
 
   async function start() {
     if (measurementStarted) return;
-    if (!window.isSecureContext || !navigator.geolocation) {
+    let locationAvailable = false;
+    try { locationAvailable = Boolean(navigator.geolocation); } catch {}
+    if (!window.isSecureContext || !locationAvailable) {
       setMessage(prepStatus, "このブラウザーではGPS測定を開始できません。HTTPS上の対応ブラウザーで開いてください。", true);
       return;
     }
