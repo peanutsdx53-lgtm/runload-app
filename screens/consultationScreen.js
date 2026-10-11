@@ -104,8 +104,8 @@ function consultationFatigue(services, experience) {
 function consultationRegionalSummary(decision) {
   const regional = decision?.regional || {};
   const regionName = bodyRegionFormalName(regional.regionId, regional.regionLabel || "選択した部位");
-  const numericValue = Number(regional.displayIndex);
-  const available = Number.isFinite(numericValue);
+  const available = isPresentFiniteNumber(regional.displayIndex);
+  const numericValue = available ? Number(regional.displayIndex) : null;
   const value = available ? formatNumber(numericValue, 1) : "数値なし";
   const relation = !available
     ? "表示できません"
@@ -117,9 +117,10 @@ function consultationRegionalSummary(decision) {
   const comparison = regional.previousComparable;
   let previous = "比較できる過去記録なし";
   if (available && comparison?.status === "COMPARABLE") {
-    const previousValue = Number(comparison.previous?.displayConditionIndex);
-    if (Number.isFinite(previousValue)) {
-      const delta = Number.isFinite(Number(comparison.pointDelta))
+    const prior = comparison.previous?.displayConditionIndex;
+    if (isPresentFiniteNumber(prior)) {
+      const previousValue = Number(prior);
+      const delta = isPresentFiniteNumber(comparison.pointDelta)
         ? Number(comparison.pointDelta)
         : numericValue - previousValue;
       const signed = `${delta >= 0 ? "+" : ""}${formatNumber(delta, 1)}`;
