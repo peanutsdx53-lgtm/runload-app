@@ -13,10 +13,6 @@ export function isPresentFiniteNumber(value) {
   return false;
 }
 
-export function isFiniteNumericValue(value) {
-  return Number.isFinite(Number(value));
-}
-
 export function toFiniteNumber(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;

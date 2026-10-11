@@ -273,6 +273,3 @@ export function resolveAmbientProfile({ latestExperience = null, draft = null, c
   });
 }
 
-export function personalChallengeDefinitions() {
-  return CHALLENGE_DEFINITIONS;
-}

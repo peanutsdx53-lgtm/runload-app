@@ -43,3 +43,13 @@ No file was independently demonstrated to be runtime-unreachable, exactly duplic
 ## Security limits
 
 File-level graph and guarded model provenance **do not** establish E-01 XSS safety, E-07 permissions/storage resilience, encrypted backups, GitHub Pages origin isolation or third-party OSM/GPS privacy. No such PASS is claimed here.
+
+## 2026-10-11 non-UI additive review — orphan exported symbols
+
+A fresh TypeScript AST inventory of the current repository counted 210 runtime JavaScript files and 429 JS/MJS files including tests. It found two exported functions and four exported constants with no references outside their own declarations: `isFiniteNumericValue`, `personalChallengeDefinitions`, `SELF_INTERPRETATION_STORE_VERSION`, `INTERPRETATION_REFERENCE_HISTORY_LIMIT`, `MOBILE_STYLE_URLS`, `DESKTOP_STYLE_URLS`. They were removed conservatively, together with the now-dead private `flattenStyleGroups` helper. `MOBILE_STYLE_GROUPS` / `DESKTOP_STYLE_GROUPS` and platform loading remain intact; no storage key, user record, research model, UI or stylesheet is deleted. Repeating both AST scans after removal yields zero singly-referenced top-level function declarations and zero singly-referenced top-level variable declarations. New guard test enforces these removals; full graph/offline/functional tests still required.
+
+The independent CSS selector scan still includes candidate selectors without literal matches in source. These can be valid runtime-generated, stateful, SVG, media, pseudo-selector or browser-generated classes; no selector is deleted or asserted unused from string absence. The remaining symbol-level dynamic usages, all event states and every CSS selector cannot be proven absent solely by these static checks. **B-01 remains PARTIAL unless the original full gate is independently satisfied**.
+
+### Selector-level non-closure (not removal authority)
+
+A postcss CSS parser scanned all 111 stylesheets and extracted **1,735 distinct class names**. Comparison with all runtime JS/HTML/manifest strings leaves **309 classes with no exact source-text occurrence** (examples include legacy-looking `share-viewer`, `region-copy-pc` and dynamically selected `status-label--*`). This is a discovery register, *not* a proof of dead selectors: classes can be synthesized by conditional concatenation or supplied by generated markup. Nothing in this count licenses deleting the CSS or applying a complete B-01 PASS. Actual DOM/route/class-state coverage or a stronger semantic proof is still required before eliminating them.

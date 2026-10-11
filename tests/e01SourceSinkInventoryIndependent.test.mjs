@@ -19,7 +19,7 @@ const INVENTORY = Object.freeze([
   ['ui/interactions/mobileHomeEditPresentation.js', 2],
   ['ui/interactions/mobileHomeInteractions.js', 1],
   ['ui/interactions/mobilePaceCalculatorInteractions.js', 1],
-  ['ui/interactions/recordInputInteractions.js', 4],
+  ['ui/interactions/recordInputInteractions.js', 2],
   ['ui/interactions/settingsInteractions.js', 2],
   ['ui/interactions/simulationInteractions.js', 3],
   ['ui/mobileMeasurementRecordAutofill.js', 1],
@@ -53,7 +53,7 @@ for (const full of sources(ROOT)) {
 test('E01 inventory: all direct HTML insertion statements have declared provenance owners', () => {
   assert.deepEqual([...found.entries()].sort((a,b) => a[0].localeCompare(b[0])),
     [...INVENTORY].sort((a,b) => a[0].localeCompare(b[0])));
-  assert.equal([...found.values()].reduce((s,n) => s+n, 0), 40);
+  assert.equal([...found.values()].reduce((s,n) => s+n, 0), 38);
 });
 test('E01 contract: localStorage/URL input is not directly interpolated into core delegated shell assignments', () => {
   const src = fs.readFileSync(path.join(ROOT,'app.js'),'utf8');

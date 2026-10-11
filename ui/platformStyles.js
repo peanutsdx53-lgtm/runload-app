@@ -144,13 +144,6 @@ const DESKTOP_STYLE_GROUPS = Object.freeze([
   ]) }),
 ]);
 
-function flattenStyleGroups(groups) {
-  return Object.freeze(groups.flatMap((group) => group.urls));
-}
-
-export const MOBILE_STYLE_URLS = flattenStyleGroups(MOBILE_STYLE_GROUPS);
-export const DESKTOP_STYLE_URLS = flattenStyleGroups(DESKTOP_STYLE_GROUPS);
-
 function findStylesheetByHref(href) {
   const target = new URL(href, document.baseURI).href;
   return [...document.querySelectorAll('link[rel="stylesheet"][href]')]
