@@ -1,4 +1,3 @@
-import { writeMobileLocalJson } from "./mobileStorageUtilities.js";
 import { findSavedRunMeasurement } from "./runMeasurementState.js";
 
 const STORAGE_KEY = "running-record-mobile-achievements-v1";
@@ -37,17 +36,40 @@ function nowIso() {
   return new Date().toISOString();
 }
 
-function readState() {
+// A read fallback is suitable for displaying achievements, but never grants
+// authority to rewrite an unreadable, future or malformed saved record.
+function readStateForWrite() {
   try {
-    const parsed = JSON.parse(globalThis.localStorage?.getItem(STORAGE_KEY) || "null");
-    if (!parsed || typeof parsed !== "object") return null;
-    return {
-      version: STATE_VERSION,
-      unlocked: parsed.unlocked && typeof parsed.unlocked === "object" ? { ...parsed.unlocked } : {},
-      announced: parsed.announced && typeof parsed.announced === "object" ? { ...parsed.announced } : {},
-    };
+    const storage = globalThis.localStorage;
+    if (typeof storage?.getItem !== "function" || typeof storage?.setItem !== "function") return null;
+    const raw = storage.getItem(STORAGE_KEY);
+    if (raw == null) {
+      return { storage, raw, state: { version: STATE_VERSION, unlocked: {}, announced: {} } };
+    }
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    if (parsed.version != null && parsed.version !== STATE_VERSION) return null;
+    for (const key of ["unlocked", "announced"]) {
+      if (parsed[key] !== undefined &&
+        (!parsed[key] || typeof parsed[key] !== "object" || Array.isArray(parsed[key]))) return null;
+    }
+    // Preserve older optional fields and unknown extension data verbatim.
+    return { storage, raw, state: { ...parsed, version: STATE_VERSION,
+      unlocked: { ...(parsed.unlocked || {}) }, announced: { ...(parsed.announced || {}) } } };
   } catch {
     return null;
+  }
+}
+
+function writeStateSafely(snapshot) {
+  if (!snapshot) return false;
+  try {
+    // An external tab or another same-origin app may have changed storage.
+    if (snapshot.storage.getItem(STORAGE_KEY) !== snapshot.raw) return false;
+    snapshot.storage.setItem(STORAGE_KEY, JSON.stringify(snapshot.state));
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -64,8 +86,8 @@ export function collectAchievementMetrics(services) {
   let energy = 0;
   let energyRecords = 0;
   runs.forEach((record) => {
-    const estimate = Number(findSavedRunMeasurement(record.id)?.energyEstimate?.estimatedKcal);
-    if (!Number.isFinite(estimate) || estimate < 0) return;
+    const estimate = findSavedRunMeasurement(record.id)?.energyEstimate?.estimatedKcal;
+    if (typeof estimate !== "number" || !Number.isFinite(estimate) || estimate < 0) return;
     energy += estimate;
     energyRecords += 1;
   });
@@ -101,22 +123,22 @@ export function evaluateAchievements(services) {
 }
 
 export function syncAchievements(services, { initializeAnnouncements = false } = {}) {
-  const previous = readState();
-  const state = previous || { version: STATE_VERSION, unlocked: {}, announced: {} };
+  const snapshot = readStateForWrite();
+  const state = snapshot?.state || { version: STATE_VERSION, unlocked: {}, announced: {} };
   const evaluated = evaluateAchievements(services);
   const stamp = nowIso();
   evaluated.forEach((achievement) => {
     if (!achievement.unlocked || state.unlocked[achievement.id]) return;
     state.unlocked[achievement.id] = stamp;
   });
-  if (!previous && initializeAnnouncements) {
+  if (snapshot?.raw == null && snapshot && initializeAnnouncements) {
     Object.keys(state.unlocked).forEach((id) => { state.announced[id] = state.unlocked[id]; });
   }
-  writeMobileLocalJson(STORAGE_KEY, state);
+  const saved = writeStateSafely(snapshot);
   return evaluated.map((achievement) => Object.freeze({
     ...achievement,
-    unlockedAt: state.unlocked[achievement.id] || "",
-    announcedAt: state.announced[achievement.id] || "",
+    unlockedAt: saved ? state.unlocked[achievement.id] || "" : "",
+    announcedAt: saved ? state.announced[achievement.id] || "" : "",
   }));
 }
 
@@ -136,13 +158,15 @@ export function achievementSummary(services) {
 
 export function consumeUnannouncedAchievements(services) {
   const achievements = syncAchievements(services);
-  const state = readState() || { version: STATE_VERSION, unlocked: {}, announced: {} };
+  const snapshot = readStateForWrite();
+  if (!snapshot) return [];
+  const state = snapshot.state;
   const unseen = achievements.filter((achievement) => achievement.unlocked && !state.announced[achievement.id]);
   if (!unseen.length) return [];
   const stamp = nowIso();
   unseen.forEach((achievement) => { state.announced[achievement.id] = stamp; });
-  writeMobileLocalJson(STORAGE_KEY, state);
-  return unseen;
+  // Never report the notification as consumed if its durable acknowledgement failed.
+  return writeStateSafely(snapshot) ? unseen : [];
 }
 
 export function achievementDefinitions() {
