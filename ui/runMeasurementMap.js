@@ -18,6 +18,21 @@ function tileUrl(zoom, x, y) {
   return `https://tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
 }
 
+// Missing, blank and boolean coordinates must not coerce to 0. Preserve
+// genuinely recorded 0° latitude/longitude and numeric GPX strings.
+function parseGeoPoint(point) {
+  if (!point || typeof point !== "object") return null;
+  const parseAxis = (value, limit) => {
+    if (typeof value !== "number" && typeof value !== "string") return null;
+    if (typeof value === "string" && !value.trim()) return null;
+    const number = Number(value);
+    return Number.isFinite(number) && Math.abs(number) <= limit ? number : null;
+  };
+  const lat = parseAxis(point.lat, 90);
+  const lon = parseAxis(point.lon, 180);
+  return lat === null || lon === null ? null : { lat, lon };
+}
+
 function createElement(name, className = "") {
   const element = document.createElement(name);
   if (className) element.className = className;
@@ -153,29 +168,27 @@ export function createRunMeasurementMap(container, { initialZoom = 16 } = {}) {
   }
 
   function setCenter(point) {
-    if (!point || !Number.isFinite(Number(point.lat)) || !Number.isFinite(Number(point.lon))) return;
-    center = { lat: Number(point.lat), lon: Number(point.lon) };
+    const parsed = parseGeoPoint(point);
+    if (!parsed) return;
+    center = parsed;
     markerPoint = { ...center };
     render();
   }
 
   function setMarker(point) {
-    if (!point || !Number.isFinite(Number(point.lat)) || !Number.isFinite(Number(point.lon))) return;
-    markerPoint = { lat: Number(point.lat), lon: Number(point.lon) };
+    const parsed = parseGeoPoint(point);
+    if (!parsed) return;
+    markerPoint = parsed;
     renderOverlay();
   }
 
   function setTrack(points = []) {
-    track = Array.isArray(points)
-      ? points.filter((point) => Number.isFinite(Number(point?.lat)) && Number.isFinite(Number(point?.lon)))
-      : [];
+    track = Array.isArray(points) ? points.map(parseGeoPoint).filter(Boolean) : [];
     renderOverlay();
   }
 
   function fitTrack(points = []) {
-    const rows = Array.isArray(points)
-      ? points.filter((point) => Number.isFinite(Number(point?.lat)) && Number.isFinite(Number(point?.lon)))
-      : [];
+    const rows = Array.isArray(points) ? points.map(parseGeoPoint).filter(Boolean) : [];
     if (!rows.length) return;
     track = rows;
     const minLat = Math.min(...rows.map((point) => Number(point.lat)));
