@@ -1,3 +1,8 @@
+/** Canonical persisted record identity used by interpretation and history. */
+export function stableRecordKey(record = {}) {
+  return `${String(record.date || "")}|${String(record.createdAt || "")}|${String(record.id || "")}`;
+}
+
 export function compareExperienceRecordChronology(left, right) {
   return String(left?.record?.date || "").localeCompare(String(right?.record?.date || ""))
     || String(left?.record?.createdAt || "").localeCompare(String(right?.record?.createdAt || ""))

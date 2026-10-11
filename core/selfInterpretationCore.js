@@ -1,3 +1,4 @@
+import { stableRecordKey } from "../shared/recordUtilities.js";
 import { normalizeIsoText as iso, sanitizeText as text } from "../shared/textUtilities.js";
 import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
 // RunLoad user-confirmed interpretation snapshots.
@@ -12,10 +13,6 @@ const DECISIONS = new Set(["CONTINUE", "THIS_TIME_ONLY", "STOP"]);
 
 function oneLine(value, max = 180) {
   return text(value, max).replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim();
-}
-
-function stableRecordKey(record = {}) {
-  return `${String(record.date || "")}|${String(record.createdAt || "")}|${String(record.id || "")}`;
 }
 
 export function normalizeSelfInterpretation(item = {}) {

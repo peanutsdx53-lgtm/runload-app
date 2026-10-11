@@ -1,5 +1,6 @@
 import { cloneJsonValue as clone, isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
-import { compareExperienceRecordChronology } from "../shared/recordUtilities.js";
+import { compareExperienceRecordChronology, stableRecordKey } from "../shared/recordUtilities.js";
+export { stableRecordKey };
 // Result interpretation base
 // Deterministic, read-only interpretation of persisted calculation outputs.
 // This module does not calculate or modify Primary Regional Reference-100 or ROF-J values.
@@ -25,10 +26,6 @@ const COURSE_SURFACE_KEYS = Object.freeze([
 
 function uniqueStrings(values = []) {
   return Object.freeze([...new Set(values.filter(Boolean).map((value) => String(value)))]);
-}
-
-export function stableRecordKey(record = {}) {
-  return `${String(record.date || "")}|${String(record.createdAt || "")}|${String(record.id || "")}`;
 }
 
 export function referenceDirection(value) {

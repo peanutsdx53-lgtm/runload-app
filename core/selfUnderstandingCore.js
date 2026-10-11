@@ -1,6 +1,6 @@
 import { normalizeIsoText as iso, sanitizeText as text } from "../shared/textUtilities.js";
 import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
-import { compareExperienceRecordChronology, compareStableRecordKeys } from "../shared/recordUtilities.js";
+import { compareExperienceRecordChronology, compareStableRecordKeys, stableRecordKey as stableRecordKeyFromRecord } from "../shared/recordUtilities.js";
 // RunLoad self-understanding memory layer.
 // This module never recalculates or redefines the scientific numeric model.
 
@@ -40,10 +40,6 @@ const REVIEW_DECISIONS = new Set(["KEEP_WATCHING", "PAUSE", "CLOSE", "VIEWED"]);
 
 function oneLine(value, max = 160) {
   return text(value, max).replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim();
-}
-
-function stableRecordKeyFromRecord(record = {}) {
-  return `${String(record.date || "")}|${String(record.createdAt || "")}|${String(record.id || "")}`;
 }
 
 export function selfUnderstandingStableRecordKey(record = {}) {

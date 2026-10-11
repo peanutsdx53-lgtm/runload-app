@@ -1,3 +1,4 @@
+import { stableRecordKey as recordChronology } from "../shared/recordUtilities.js";
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { escapeHtml } from "./commonComponents.js";
 import { formatLocalDate } from "./recordPresentation.js";
@@ -146,10 +147,6 @@ function recordCourseKey(record = {}) {
   const name = String(course.name || "").trim();
   if (!name || name === "未設定" || name === "コース名なし") return "";
   return `name:${name.toLocaleLowerCase("ja-JP")}`;
-}
-
-function recordChronology(record = {}) {
-  return `${String(record.date || "")}|${String(record.createdAt || "")}|${String(record.id || "")}`;
 }
 
 function paceSeconds(record = {}) {
