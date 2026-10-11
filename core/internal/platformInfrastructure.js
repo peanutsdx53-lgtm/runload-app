@@ -335,11 +335,22 @@ function createStorageGateway(storage) {
     }
   }
 
-  function restoreSnapshot(items = []) {
+  function restoreSnapshot(items = [], expectedValues = null) {
     const failures = [];
     let restoredCount = 0;
     [...items].reverse().forEach((item) => {
       try {
+        // An intervening editor owns the latest bytes. Do not clobber them
+        // while rolling back a failed multi-key transaction.
+        if (expectedValues && expectedValues.has(item.key)) {
+          const expected = expectedValues.get(item.key);
+          if (targetStorage.getItem(item.key) !== expected) {
+            failures.push({ ...createFailure("rollback", item.key,
+              "A concurrent storage change prevented safe rollback"),
+              code: "STORAGE_ROLLBACK_CONFLICT" });
+            return;
+          }
+        }
         if (item.existed) targetStorage.setItem(item.key, item.rawValue);
         else targetStorage.removeItem(item.key);
         restoredCount += 1;
@@ -408,10 +419,24 @@ function createStorageGateway(storage) {
     if (!snapshot.ok) return { ...snapshot, committedCount: 0 };
 
     let committedCount = 0;
+    const expectedWrites = new Map();
     for (const change of normalizedChanges) {
       try {
+        const prior = snapshot.items[committedCount];
+        // A snapshot is not a lock. Detect changes since preflight instead
+        // of silently replacing a second tab's update to this key.
+        if (targetStorage.getItem(change.key) !== (prior.existed ? prior.rawValue : null)) {
+          const rollback = restoreSnapshot(snapshot.items.slice(0, committedCount), expectedWrites);
+          lastFailure = {
+            ...createFailure("transaction", change.key, "Storage changed after snapshot"),
+            code: "STORAGE_TRANSACTION_CONCURRENT_CHANGE",
+            rollback,
+          };
+          return { ...lastFailure, committedCount };
+        }
         if (change.remove) targetStorage.removeItem(change.key);
         else targetStorage.setItem(change.key, change.rawValue);
+        expectedWrites.set(change.key, change.remove ? null : change.rawValue);
         committedCount += 1;
       } catch (error) {
         // An adapter might mutate the failing key before throwing. Restore it
@@ -428,7 +453,13 @@ function createStorageGateway(storage) {
           // The state is unknown. Attempt restoration and report its failures.
           rollbackItems.push(failedItem);
         }
-        const rollback = restoreSnapshot(rollbackItems);
+        const expectedRollback = new Map(expectedWrites);
+        if (rollbackItems.includes(failedItem)) {
+          // setItem/removeItem may throw after a mutation. Such a mutation is
+          // not safe to assume committed; preserve the old failure semantics.
+          expectedRollback.set(failedItem.key, change.remove ? null : change.rawValue);
+        }
+        const rollback = restoreSnapshot(rollbackItems, expectedRollback);
         lastFailure = {
           ...createFailure(change.remove ? "remove" : "write", change.key, error),
           rollback,
