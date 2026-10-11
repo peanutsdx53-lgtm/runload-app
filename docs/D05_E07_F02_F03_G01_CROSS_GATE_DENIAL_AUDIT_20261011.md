@@ -1,0 +1,24 @@
+# RunLoad 第5回 D-05/E-07/F-02/F-03/G-01 横断独立監査 — 2026-10-11
+
+## Authority, scope and scientific protection
+
+Baseline formal Current V2.70; GitHub `main` `e9f8482efed56728beb70ebf62de1233b75150ee`, tree `359d594b5fee57ce0136915ba3f4ac7295c6e57a`. Original source 579 files. The protected 12-region formula, scientific model v3.1 coefficients, archived study v3.0, private ROF-J, original source research and real personal records may not change. The following are **non-UI safety corrections only**. Existing audit matrix V5.12 remains formal: 26 PASS, 15 PARTIAL, 0 FAIL, 3 unreviewed.
+
+## Independent RED → GREEN results
+
+1. **D-05 GPS numeric missing-data fabrication**: `Number(null)` and `Number('')` converted missing latitude/longitude to numeric 0, including plausible (0,139) coordinates; nonexistent accuracy converted to 0 meters. Such a Position object is outside normal trusted browser GPS guarantees, but malformed API/permission callbacks must be fail-closed, not synthesized. Independent tests reject null/absent/text/non-finite/out-of-range coordinates and missing/text/negative/non-finite accuracy. Preserve genuine latitude=0, longitude=0 and reported accuracy=0. Source: `ui/runMeasurementCore.js`, `tests/d05E07SensorDenialGpsZeroGuardIndependent.test.mjs`.
+2. **E-07 Motion listener and denied properties**: DeviceMotionEvent property getter, `addEventListener('devicemotion')`, and `removeEventListener` can throw in mocked denial/security conditions, formerly breaking measurement start/cleanup. Catch each narrowly; return `{ok:false,status:'DENIED'}` on start denial; report no estimated steps; stop is idempotent and ignores revoked permission cleanup failures. Permission `.requestPermission()` denied/rejected retained. Source: `ui/mobileRunMeasurementAutoRecord.js` and matching test.
+3. **E-07 GPS property and clearWatch**: a denied navigator.geolocation getter previously escaped start/watch setup; throwing `clearWatch` previously prevented pause/cleanup. Guard start availability, handle asynchronous-in-watch getter via existing visible geolocation error path, clear local watch identifier before best-effort `clearWatch`. Source: `ui/interactions/mobileRunMeasurementInteractions.js`, `tests/d05E07GpsApiGetterAndClearWatchIndependent.test.mjs`.
+4. Independent new tests: initially **7 FAIL / 1 PASS** across eight new boundary tests; after corrections **9 PASS / 0 FAIL** across expanded 9-test suite (one extra stop/permission-revocation RED→GREEN). Existing recording/storage/history and app startup regressions mandatory. No changes to calculation coefficients.
+
+## Cross-gate evidence and limitations
+
+- **D-05**: fault-injected GPS coordinate/accuracy, watchPosition, motion permission and paused cleanup now tested. Cannot claim physical GPS/no-sensor/offline accuracy correctness without mobile OS/real devices. Keep PARTIAL.
+- **E-07**: sensor denial, watchPosition synchronous error, getter failure, clearWatch throw, GPX size/FileReader/backup size, localStorage/IndexedDB quota errors backed by existing individual regression tests; these do not exhaust actual iOS permission dialogs, OS interruption, all memory failures or file APIs. Keep PARTIAL.
+- **F-02**: previous UI/history checks remove internal record IDs and internal technical vocabulary from user-facing success notices; 12-region identifiers still required internally. Existing `mobileHistoryDurationAndStatusBoundary`, `mobileWalkJogCopyGuard`, interpretation presentation and browser smoke tests remain part of CI. Entire page, ARIA/screenreader and all dynamic composites have not been exhaustively inspected; keep PARTIAL.
+- **F-03**: previous rounding/missing '—' tests, GPS course `gradeKnowledge:'UNKNOWN'` fallback, `ROF-J` explanatory labels, estimated step status and 12-region claim boundary tests preserved. All conditional integrated texts and physical-device visibility not all proven; keep PARTIAL.
+- **G-01**: current fail-closed localStorage read/write/restore/backup, malformed mobile record, cross-tab storage event, IndexedDB photo delete race, route/quota tests are retained. Browser storage remains non-transactional between concurrent tabs; all possible old backup formats and actual OS quota/termination cannot be certified. Keep PARTIAL, no ungrounded atomicity claim.
+
+## Release gate
+
+No earlier audit condition is auto-promoted to PASS by these narrower checks. Do not change hosting/privacy architecture, encrypted backup design, UI/UX or saved user data without consultation. New tests run as part of H01 non-browser regression and production app is cross-checked by existing Chromium browser regression. Independently verify GitHub commit/tree, source/public 332 parity, ZIP Manifest, byte-identical scientific/protected files, and CI **before** formal Current promotion.
