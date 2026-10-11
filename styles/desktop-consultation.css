@@ -43,11 +43,6 @@
     height: 100%;
   }
 
-  .screen--consultation.screen-layout--consultation .share-preview-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: .6rem !important;
-  }
-
   .screen--consultation.screen-layout--consultation .share-card {
     min-width: 0;
   }
@@ -113,10 +108,6 @@
     grid-row: 4;
     margin: 0 !important;
     align-self: start;
-  }
-
-  .screen--consultation.screen-layout--consultation[data-share-prep] .share-preview-grid {
-    grid-template-columns: 1fr !important;
   }
 
   .screen--consultation.screen-layout--consultation[data-share-prep] .share-output-actions {

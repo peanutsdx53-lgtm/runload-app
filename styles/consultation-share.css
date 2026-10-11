@@ -577,7 +577,6 @@
   line-height: 1.45;
 }
 
-.screen--consultation[data-share-prep] .share-sheet-next > strong,
 .screen--consultation[data-share-prep] .share-sheet-plan > strong {
   display: block;
   margin-top: 8px;
@@ -1017,7 +1016,6 @@ html.consult-viewer-open body {
   .screen--consultation[data-share-prep] .share-sheet-body-list strong,
   .screen--consultation[data-share-prep] .share-sheet-body-list span,
   .screen--consultation[data-share-prep] .share-sheet-user-note,
-  .screen--consultation[data-share-prep] .share-sheet-next > strong,
   .screen--consultation[data-share-prep] .share-sheet-plan > strong,
   .screen--consultation[data-share-prep] .share-sheet-region-summary strong,
   .screen--consultation[data-share-prep] .share-sheet-region-relation,
@@ -1122,14 +1120,6 @@ html.consult-viewer-open body {
   overflow-wrap: anywhere;
 }
 
-.screen--consultation[data-share-prep] .share-sheet-next-plan .share-sheet-subsection > strong {
-  display: block;
-  margin-top: 7px;
-  color: var(--share-ink);
-  font-size: .72rem;
-  line-height: 1.45;
-}
-
 .screen--consultation[data-share-prep] .share-body-silhouette circle,
 .screen--consultation[data-share-prep] .share-body-silhouette path {
   fill: #e6ecef !important;
@@ -1165,10 +1155,6 @@ html.consult-viewer-open body {
   .screen--consultation[data-share-prep] .share-sheet-head dd {
     white-space: nowrap !important;
     overflow-wrap: normal !important;
-  }
-
-  .screen--consultation[data-share-prep] .share-sheet-next-plan .share-sheet-subsection > strong {
-    font-size: 8.3pt !important;
   }
 }
 

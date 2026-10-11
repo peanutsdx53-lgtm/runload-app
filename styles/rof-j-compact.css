@@ -59,25 +59,12 @@
   margin-top: 10px;
 }
 
-.screen-layout--record .rof-anchor-guide {
-  margin-top: 8px;
-  padding: 8px 9px;
-}
-
-.screen-layout--record .rof-anchor-guide small {
-  font-size: var(--type-label);
-}
-
 .screen-layout--record .rof-about {
   margin-top: 0.35rem;
 }
 
 .screen-layout--record .rof-about > summary {
   min-height: 2.6rem;
-}
-
-.run-measurement__fatigue {
-  display: none;
 }
 
 

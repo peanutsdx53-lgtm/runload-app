@@ -271,9 +271,6 @@
 .screen-layout--record .rof-ticks{display:grid;grid-template-columns:repeat(11,1fr);margin-top:7px;color:var(--muted);font-size:var(--type-label);font-variant-numeric:tabular-nums;text-align:center}
 .screen-layout--record .rof-ticks span:first-child{text-align:left}
 .screen-layout--record .rof-ticks span:last-child{text-align:right}
-.screen-layout--record .rof-anchor-guide{margin-top:14px;padding:10px 11px;border-radius:12px;background:var(--accent-soft)}
-.screen-layout--record .rof-anchor-guide small{display:block;font-size:var(--type-label);color:var(--muted);font-weight:850}
-.screen-layout--record .rof-anchor-guide div{min-height:3em;margin-top:4px;display:flex;align-items:flex-start;font-size:var(--type-label);line-height:1.5;color:var(--accent2);font-weight:800}
 .screen-layout--record .primary-sheet-action{width:100%;min-height:44px;margin-top:12px;border:1px solid var(--accent);border-radius:12px;background:var(--accent);color:var(--color-on-accent);font-size:var(--type-label);font-weight:900}
 .screen-layout--record .primary-sheet-action:disabled{border-color:var(--line);background:var(--surface2);color:var(--muted);opacity:.72}
 .screen-layout--record .rof-about{margin-top:4px;border-top:1px solid var(--line)}
@@ -284,8 +281,7 @@
 .screen-layout--record .rof-about small{display:block;margin-top:5px;color:var(--muted);font-size:var(--type-label)}
 @media (max-width:360px){.screen-layout--record .rof-current{grid-template-columns:auto 48px minmax(0,1fr);gap:8px}
 .screen-layout--record .rof-current>strong{font-size:30px}
-.screen-layout--record .rof-current>em{font-size:var(--type-label)}
-.screen-layout--record .rof-anchor-guide div{font-size:var(--type-label)}}
+.screen-layout--record .rof-current>em{font-size:var(--type-label)}}
 .screen-layout--record .reflection-fields{display:grid;
   gap:10px;
   margin-top:10px;}

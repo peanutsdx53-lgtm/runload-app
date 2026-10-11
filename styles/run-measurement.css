@@ -75,20 +75,6 @@ body.run-standalone-open {
 }
 
 
-
-
-
-.home-measure-link {
-  flex: 0 0 auto;
-  padding: 0.65rem 0.85rem;
-  color: var(--color-on-accent);
-  font-weight: 750;
-  text-decoration: none;
-  background: var(--color-accent);
-  border-radius: var(--radius-small);
-}
-
-
 .run-measurement {
   display: grid;
   grid-template-rows: auto minmax(18rem, 48dvh) auto auto auto;
@@ -267,20 +253,6 @@ body.run-standalone-open {
   border-top: 1px solid var(--color-line);
 }
 
-.run-measurement__gps {
-  position: absolute;
-  left: 0.75rem;
-  bottom: 0.75rem;
-  z-index: 5;
-  padding: 0.45rem 0.65rem;
-  color: var(--color-ink);
-  font-size: 0.78rem;
-  font-weight: 750;
-  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-  border: 1px solid var(--color-line);
-  border-radius: 999px;
-}
-
 .run-measurement__metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -362,12 +334,6 @@ body.run-standalone-open {
   font-size: 0.82rem;
 }
 
-.run-measurement__controls {
-  display: grid;
-  gap: 0.65rem;
-  padding: 0.85rem 1rem max(1rem, env(safe-area-inset-bottom));
-}
-
 .run-measurement__route-save {
   display: flex;
   align-items: flex-start;
@@ -407,8 +373,7 @@ body.run-standalone-open {
 }
 
 .run-measurement__start,
-.run-measurement__finish,
-.run-measurement__cancel {
+.run-measurement__finish {
   min-height: 3.25rem;
   padding: 0.75rem 1rem;
   font: inherit;
@@ -421,16 +386,6 @@ body.run-standalone-open {
   color: var(--color-on-accent);
   background: var(--color-accent);
   border: 1px solid var(--color-accent);
-}
-
-.run-measurement__cancel {
-  color: var(--color-ink);
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-}
-
-.home-measure-link {
-  align-self: center;
 }
 
 
