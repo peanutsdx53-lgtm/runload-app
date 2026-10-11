@@ -271,24 +271,28 @@ function createStorageGateway(storage) {
   }
 
   function preserveCorruptValue(key, rawValue, parseError) {
-    let entries = [];
+    // Recovery evidence is user data. A second failure must never erase an
+    // unreadable, unexpected, or full recovery log merely to report this one.
+    if (key === STORAGE_KEYS.corruptStorageBackup) return;
     try {
-      const existingRawValue = targetStorage.getItem(STORAGE_KEYS.corruptStorageBackup);
-      const existing = existingRawValue ? JSON.parse(existingRawValue) : [];
-      entries = Array.isArray(existing) ? existing : [];
-    } catch {
-      entries = [];
-    }
-    const next = [...entries, {
-      key,
-      rawValue: String(rawValue).slice(0, 2 * 1024 * 1024),
-      detectedAt: new Date().toISOString(),
-      error: String(parseError?.message || parseError),
-    }].slice(-20);
-    try {
+      const formerRaw = targetStorage.getItem(STORAGE_KEYS.corruptStorageBackup);
+      const previous = formerRaw == null ? [] : JSON.parse(formerRaw);
+      if (!Array.isArray(previous)) return;
+      const boundedRaw = String(rawValue).slice(0, 2 * 1024 * 1024);
+      if (previous.some((item) => item && item.key === key && item.rawValue === boundedRaw)) return;
+      if (previous.length >= 20) return; // Never silently evict earlier recoverable evidence.
+      const next = [...previous, {
+        key,
+        rawValue: boundedRaw,
+        detectedAt: new Date().toISOString(),
+        error: String(parseError?.message || parseError),
+      }];
+      // Recheck for a second tab before writing. This is fail-closed best
+      // effort, not a claim of cross-tab atomicity for localStorage.
+      if (targetStorage.getItem(STORAGE_KEYS.corruptStorageBackup) !== formerRaw) return;
       targetStorage.setItem(STORAGE_KEYS.corruptStorageBackup, JSON.stringify(next));
     } catch {
-      // 破損値の退避失敗は、元の読込結果を上書きしない。
+      // Preserve the original damaged value and any existing recovery bytes.
     }
   }
 
