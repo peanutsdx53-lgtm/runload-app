@@ -24,8 +24,8 @@ function formatDuration(record = {}) {
 }
 
 function regionMap(resultRecord = {}) {
-  const rows = resultRecord?.result?.regions || [];
-  return new Map(rows.map((row) => [String(row.regionId || ""), row]));
+  const rows = resultRecord?.result?.regions;
+  return new Map((Array.isArray(rows) ? rows : []).filter((row) => row && typeof row === "object").map((row) => [String(row.regionId || ""), row]));
 }
 
 function miniBodyMap(resultRecord = {}, suffix = "timeline") {
@@ -39,7 +39,7 @@ function miniBodyMap(resultRecord = {}, suffix = "timeline") {
 }
 
 function selectTimeline(experiences = [], recordId = "") {
-  const eligible = experiences
+  const eligible = (Array.isArray(experiences) ? experiences : [])
     .filter((item) => item?.record?.activityType === "run")
     .filter((item) => item?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
     .sort((a, b) => chronology(a.record, b.record));
@@ -69,7 +69,8 @@ export function renderBodyTimelineScreen({ services, context }) {
       ${timeline.map(({ item, target }, index) => {
         const record = item.record;
         const result = item.regionalV2ResultRecord;
-        const available = (result?.result?.regions || []).filter((row) => finite(row?.value)).length;
+        const regionRows = result?.result?.regions;
+        const available = (Array.isArray(regionRows) ? regionRows : []).filter((row) => finite(row?.value)).length;
         return `<article class="body-timeline-card${target ? " is-current" : ""}" data-body-timeline-card data-card-index="${index}"${target ? ' data-current="true"' : ""}>
           <header><div><small>${target ? "今回" : "保存記録"}</small><strong>${escapeHtml(formatLocalDate(record.date || ""))}</strong></div><span>${escapeHtml(formatDistance(record))}<b>・</b>${escapeHtml(formatDuration(record))}</span></header>
           <div class="body-timeline-map">${miniBodyMap(result, `${index}-${String(record.id || "").replace(/[^a-zA-Z0-9_-]/g, "")}`)}</div>
