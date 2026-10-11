@@ -18,6 +18,6 @@ test('F03: absent distance/duration do not masquerade as present details',()=>{
  }
 });
 test('F03: actual numeric zero stays a recorded value',()=>{
- const output=htl(0,0);
+ const output=html(0,0);
  assert.match(output,/data-trend-detail-facts>0\.00 km ・ 0分<\/p>/);
 });
