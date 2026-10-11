@@ -40,6 +40,20 @@ try {
     createElementNS: (_ns, tag) => new Element(tag),
   };
   Object.defineProperty(globalThis, 'navigator', { configurable: true, value: {onLine: true} });
+  const invalidRoot = new Element('div');
+  const invalidMap = createRunMeasurementMap(invalidRoot);
+  for (const point of [{lat:null,lon:139},{lat:'',lon:139},{lat:false,lon:139},{lat:91,lon:139},{lat:35,lon:181},{lon:139}]) {
+    invalidMap.setCenter(point);
+  }
+  invalidRoot.children.find(e => e.className === 'run-map__tile-consent').children[0].listeners.get('click')();
+  assert.equal(calls.length, 0, 'missing/out-of-range coordinates cannot become real map locations');
+  invalidMap.fitTrack([{lat:null,lon:139},{lat:91,lon:139}]);
+  assert.equal(calls.length, 0, 'invalid track points cannot invent center');
+  invalidMap.setCenter({lat:0,lon:0});
+  assert.ok(calls.length > 0, 'real geographic zero coordinates must be retained');
+  invalidMap.destroy();
+  calls.length = 0;
+
   const outer = new Element('div');
   const map = createRunMeasurementMap(outer);
   const consent = outer.children.find(e => e.className === 'run-map__tile-consent');
