@@ -1,6 +1,7 @@
 import { compareExperienceRecordChronology as recordChronology } from "../shared/recordUtilities.js";
 import { localTodayIso as localDateKey } from "../shared/textUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
+import { isPresentFiniteNumber } from "../shared/valueUtilities.js";
 import { formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
 import { bodyRegionFormalName, PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
 import { buildReportPresentation } from "../ui/consultationPresentation.js";
@@ -90,8 +91,8 @@ function consultationFatigue(services, experience) {
     return Object.freeze({ pre: null, post: null, label: "未記録" });
   }
   const summary = services.fatigue.summarizeRun(record.id);
-  const pre = Number.isFinite(Number(summary?.pre)) ? Number(summary.pre) : null;
-  const post = Number.isFinite(Number(summary?.post)) ? Number(summary.post) : null;
+  const pre = isPresentFiniteNumber(summary?.pre) ? Number(summary.pre) : null;
+  const post = isPresentFiniteNumber(summary?.post) ? Number(summary.post) : null;
   if (pre == null && post == null) return Object.freeze({ pre, post, label: "未記録" });
   return Object.freeze({
     pre,
