@@ -1,4 +1,6 @@
 import { mondayOfWeekAtNoon as mondayOfWeek } from "./mobileDateUtilities.js";
+import { recordCourseKey } from "../shared/recordUtilities.js";
+import { formatShortLocalDate as shortDate } from "../shared/textUtilities.js";
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { achievementSummary } from "./mobileAchievements.js";
 import { collectMobileFatigueHistory } from "./mobileInsights.js";
@@ -45,14 +47,6 @@ function recordHasReflection(record = {}) {
   ].some((value) => String(value || "").trim().length > 0);
 }
 
-function recordCourseKey(record = {}) {
-  const course = record.course || {};
-  const id = String(course.id || course.courseId || "").trim();
-  if (id) return `id:${id}`;
-  const name = String(course.name || "").trim();
-  if (!name || name === "未設定" || name === "コース名なし") return "";
-  return `name:${name.toLocaleLowerCase("ja-JP")}`;
-}
 
 function extensionDate(record = {}) {
   return dateFromTimestamp(record.endedAt || record.startedAt || record.createdAt);
@@ -155,11 +149,6 @@ function daysUntil(dateText, now = new Date()) {
   return Math.round((date - today) / 86400000);
 }
 
-function shortDate(dateText = "") {
-  const match = String(dateText).match(/^\d{4}-(\d{2})-(\d{2})$/);
-  if (!match) return dateText || "—";
-  return `${Number(match[1])}月${Number(match[2])}日`;
-}
 
 function planDescriptor(plan, now) {
   if (!plan) return null;

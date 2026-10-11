@@ -1,5 +1,6 @@
-import { normalizeIsoText as iso, sanitizeText as text } from "../shared/textUtilities.js";
-import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
+import { stableRecordKey } from "../shared/recordUtilities.js";
+import { normalizeIsoText as iso, sanitizeText as text, normalizeOneLine } from "../shared/textUtilities.js";
+import { cloneJsonValue as clone, sortByUpdatedAt } from "../shared/valueUtilities.js";
 // RunLoad user-confirmed interpretation snapshots.
 // This layer stores the user's chosen meaning/focus. It does not recalculate
 // Reference-100, ROF-J, or any scientific result.
@@ -10,37 +11,30 @@ export const SELF_INTERPRETATION_STORE_VERSION = "SELF_INTERPRETATION_STORE_V1";
 const DECISIONS = new Set(["CONTINUE", "THIS_TIME_ONLY", "STOP"]);
 
 
-function oneLine(value, max = 180) {
-  return text(value, max).replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim();
-}
-
-function stableRecordKey(record = {}) {
-  return `${String(record.date || "")}|${String(record.createdAt || "")}|${String(record.id || "")}`;
-}
 
 export function normalizeSelfInterpretation(item = {}) {
   if (!item || typeof item !== "object") return null;
-  const recordId = oneLine(item.recordId, 120);
-  const decision = oneLine(item.decision, 40).toUpperCase();
+  const recordId = normalizeOneLine(item.recordId, 120);
+  const decision = normalizeOneLine(item.decision, 40).toUpperCase();
   const createdAt = iso(item.createdAt);
-  const findingCode = oneLine(item.findingCode, 80).toUpperCase();
-  const findingLabel = oneLine(item.findingLabel, 220);
+  const findingCode = normalizeOneLine(item.findingCode, 80).toUpperCase();
+  const findingLabel = normalizeOneLine(item.findingLabel, 220);
   if (!recordId || !createdAt || !findingCode || !findingLabel || !DECISIONS.has(decision)) return null;
   return Object.freeze({
-    id: oneLine(item.id || `self-interpretation-${recordId}`, 180),
+    id: normalizeOneLine(item.id || `self-interpretation-${recordId}`, 180),
     schemaVersion: SELF_INTERPRETATION_SCHEMA_VERSION,
     recordId,
-    stableRecordKey: oneLine(item.stableRecordKey, 280),
+    stableRecordKey: normalizeOneLine(item.stableRecordKey, 280),
     findingCode,
     findingLabel,
     decision,
-    nextLabel: oneLine(item.nextLabel, 180),
-    threadId: oneLine(item.threadId, 180),
-    threadType: oneLine(item.threadType, 80),
+    nextLabel: normalizeOneLine(item.nextLabel, 180),
+    threadId: normalizeOneLine(item.threadId, 180),
+    threadType: normalizeOneLine(item.threadType, 80),
     subject: Object.freeze({
-      regionId: oneLine(item.subject?.regionId, 80),
-      bodyAreaId: oneLine(item.subject?.bodyAreaId, 80),
-      courseId: oneLine(item.subject?.courseId, 120),
+      regionId: normalizeOneLine(item.subject?.regionId, 80),
+      bodyAreaId: normalizeOneLine(item.subject?.bodyAreaId, 80),
+      courseId: normalizeOneLine(item.subject?.courseId, 120),
     }),
     userNote: text(item.userNote, 300).trim(),
     createdAt,
@@ -48,16 +42,13 @@ export function normalizeSelfInterpretation(item = {}) {
   });
 }
 
-function sortItems(items = []) {
-  return [...items].sort((a, b) => String(b.updatedAt || b.createdAt).localeCompare(String(a.updatedAt || a.createdAt)) || a.id.localeCompare(b.id));
-}
 
 export function createSelfInterpretationRepository(gateway, storageKey) {
   function loadAllResult() {
     const read = gateway.readJsonResult(storageKey, []);
     if (!read.ok) return { ...read, code: "SELF_INTERPRETATION_READ_FAILED", items: [] };
     if (!Array.isArray(read.value)) return { ok: false, code: "SELF_INTERPRETATION_STORAGE_INVALID", items: [] };
-    return { ok: true, exists: read.exists, items: sortItems(read.value.map(normalizeSelfInterpretation).filter(Boolean)) };
+    return { ok: true, exists: read.exists, items: sortByUpdatedAt(read.value.map(normalizeSelfInterpretation).filter(Boolean)) };
   }
 
   function loadAll() {
@@ -66,7 +57,7 @@ export function createSelfInterpretationRepository(gateway, storageKey) {
   }
 
   function saveAll(items) {
-    const normalized = sortItems((Array.isArray(items) ? items : []).map(normalizeSelfInterpretation).filter(Boolean));
+    const normalized = sortByUpdatedAt((Array.isArray(items) ? items : []).map(normalizeSelfInterpretation).filter(Boolean));
     const result = gateway.writeJson(storageKey, normalized);
     return { ...result, items: result.ok ? normalized.map(clone) : loadAll() };
   }
@@ -88,7 +79,7 @@ export function createSelfInterpretationRepository(gateway, storageKey) {
     userNote = "",
     now = new Date().toISOString(),
   } = {}) {
-    const recordId = oneLine(record?.id, 120);
+    const recordId = normalizeOneLine(record?.id, 120);
     if (!recordId) return { ok: false, code: "SELF_INTERPRETATION_RECORD_REQUIRED", item: null };
     const current = loadAllResult();
     if (!current.ok) return { ...current, item: null };

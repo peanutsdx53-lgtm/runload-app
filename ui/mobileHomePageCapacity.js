@@ -1,3 +1,4 @@
+import { syncMobileHomePageIndices as syncPageIndices } from "./mobileHomeGridUtilities.js";
 import {
   homeGridTokenForElement as tokenForElement,
   matchesMobileHomeLayout as mobileLayoutMatches,
@@ -93,13 +94,6 @@ function applyPlacement(element, placement, token, sizes) {
   element.dataset.homeCol = String(placement.col);
   element.style.gridRow = `${placement.row} / span ${size.rows}`;
   element.style.gridColumn = `${placement.col} / span ${size.columns}`;
-}
-
-function syncPageIndices(root) {
-  [...root.querySelectorAll(".mobile-home-page")].forEach((page, index) => {
-    page.dataset.homePageIndex = String(index);
-    page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);
-  });
 }
 
 function createRepairPage(root) {

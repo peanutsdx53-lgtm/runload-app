@@ -1,4 +1,5 @@
 import { compareExperienceRecordChronology as recordChronology } from "../shared/recordUtilities.js";
+import { localTodayIso as localDateKey } from "../shared/textUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatActivitySummary, formatLocalDate, formatNumber } from "../ui/recordPresentation.js";
 import { bodyRegionFormalName, PROFILE_AGE_BAND_OPTIONS } from "../core/appCore.js";
@@ -31,13 +32,6 @@ const ACTION_OPTIONS = Object.freeze([
   Object.freeze({ value: "none", label: "特になし", exclusive: true }),
 ]);
 
-function localDateKey() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
 
 function latestPlan(plans = []) {
   const validPlans = Array.isArray(plans)

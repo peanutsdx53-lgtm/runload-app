@@ -1,11 +1,9 @@
+import { clampNumber as clamp } from "../shared/valueUtilities.js";
+
 const TILE_SIZE = 256;
 const MIN_ZOOM = 14;
 const MAX_ZOOM = 18;
 const MAX_LAT = 85.05112878;
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, Number(value)));
-}
 
 function worldPixel(lat, lon, zoom) {
   const safeLat = clamp(lat, -MAX_LAT, MAX_LAT);

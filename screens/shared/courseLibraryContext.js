@@ -1,8 +1,10 @@
 import { primarySurfaceSummary, slopeSummary } from "../../ui/coursePresentation.js";
 import { peekCourseSelection } from "../../ui/flowSessionState.js";
 
-function safeReturnTo(context) {
-  const value = String(context?.parameters?.get("returnTo") || "#/record-input");
+// Canonical course-library/GPX return route. Never use the caller's raw
+// returnTo in a link without validating its intended in-app destination.
+export function safeCourseReturnTo(context) {
+  const value = String(context?.parameters?.get?.("returnTo") || "#/record-input");
   return ["#/record-input", "#/plan", "#/simulation"].some((prefix) => value.startsWith(prefix))
     ? value
     : "#/record-input";
@@ -26,7 +28,7 @@ export function courseLibraryMeta(preset = {}) {
 
 export function buildCourseLibraryContext({ services, context }) {
   const courses = services.storage.courses.loadAll();
-  const returnTo = safeReturnTo(context);
+  const returnTo = safeCourseReturnTo(context);
   const selected = selectedPreset(returnTo);
   return {
     courses,

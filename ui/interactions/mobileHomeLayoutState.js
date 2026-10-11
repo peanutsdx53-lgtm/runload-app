@@ -1,3 +1,4 @@
+import { syncMobileHomePageIndices as syncPageIndices } from "../mobileHomeGridUtilities.js";
 import {
   HOME_COLUMNS,
   HOME_MAX_ROWS,
@@ -467,12 +468,7 @@ function createHomePage(index) {
   return page;
 }
 
-export function syncPageIndices(root) {
-  [...root.querySelectorAll(".mobile-home-page")].forEach((page, index) => {
-    page.dataset.homePageIndex = String(index);
-    page.setAttribute("aria-label", `ホーム ${index + 1}ページ目`);
-  });
-}
+export { syncPageIndices };
 
 export function ensurePageScaffold(root) {
   let viewport = root.querySelector("[data-home-page-viewport]");

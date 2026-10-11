@@ -1,3 +1,4 @@
+import { compareRecordChronology as chronology } from "../shared/recordUtilities.js";
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { PRIMARY_REGIONAL_V2_MODEL_VERSION } from "../core/appCore.js";
 import { BODY_REGION_VIEWS } from "../ui/bodyRegionVisuals.js";
@@ -10,12 +11,6 @@ function direction(value) {
   const delta = Number(value) - 100;
   if (Math.abs(delta) < 1) return "reference";
   return delta > 0 ? "above" : "below";
-}
-
-function chronology(left = {}, right = {}) {
-  return String(left.date || "").localeCompare(String(right.date || ""))
-    || String(left.createdAt || "").localeCompare(String(right.createdAt || ""))
-    || String(left.id || "").localeCompare(String(right.id || ""));
 }
 
 function formatDistance(record = {}) {

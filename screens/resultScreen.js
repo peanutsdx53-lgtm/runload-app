@@ -1,3 +1,5 @@
+import { compareRecordChronology, fmt, signed, signatureFor, signaturesComparable } from "../shared/recordUtilities.js";
+export { fmt, signed, signatureFor, signaturesComparable };
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate, formatLocalTime } from "../ui/recordPresentation.js";
@@ -30,19 +32,13 @@ export const VIEWS = Object.freeze([
   ]) }),
 ]);
 
-export function fmt(value, digits = 1) { return finite(value) ? Number(value).toFixed(digits).replace(/\.0$/, "") : "—"; }
-export function signed(value, digits = 1) { if (!finite(value)) return "—"; const n = Number(value); return `${n > 0 ? "+" : ""}${fmt(n, digits)}`; }
 export function direction(value) { if (!finite(value)) return "unavailable"; const delta = Number(value) - 100; return Math.abs(delta) < 1 ? "reference" : delta > 0 ? "above" : "below"; }
 export function position(value) { if (!finite(value) || Number(value) <= 0) return 50; return Math.max(4, Math.min(96, 50 + Math.log2(Number(value) / 100) * 20)); }
 export function modelCurrent(resultRecord = null) { return resultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION; }
-export function signatureFor(record = {}, regionId = "") { return record?.comparison_signatures?.[regionId] || null; }
-export function signaturesComparable(a, b) { return Boolean(a && b && a.modelVersion === b.modelVersion && a.outputSemanticVersion === b.outputSemanticVersion && a.regionId === b.regionId && a.constructId === b.constructId && a.referenceId === b.referenceId); }
 export function formatPace(record = {}) { const distance = Number(record.distanceKm); const duration = Number(record.durationMinutes); if (!(distance > 0) || !(duration > 0)) return "—"; const seconds = Math.round(duration * 60 / distance); return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; }
 export function runFormatLabel(record = {}) { return String(record.runningFormat || "").toUpperCase() === "RUN_WALK" ? "走り＋歩き" : "連続して走った"; }
 export function recordChronology(left = {}, right = {}) {
-  return String(left.date || "").localeCompare(String(right.date || ""))
-    || String(left.createdAt || "").localeCompare(String(right.createdAt || ""))
-    || String(left.id || "").localeCompare(String(right.id || ""));
+  return compareRecordChronology(left, right);
 }
 export function recordMomentLabel(record = {}) {
   const time = formatLocalTime(record.createdAt);

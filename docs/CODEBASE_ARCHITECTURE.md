@@ -177,3 +177,36 @@ Temporary audit workflows must be removed before merge.
 - Record comparison compatibility means *scientific comparability between two current-contract records*; it must not be confused with backward compatibility for older storage formats.
 - Preserve the scientific source archives, authority boundaries, and regression evidence outside the live executable tree. Never silently delete a user's saved current-contract records during an application upgrade.
 - The external map requires a deliberate user request; core local measurements and their saved history remain available without fetching map tiles.
+
+## 7. Pre-UI function-level duplicate classification (2026-10-11)
+
+An independent TypeScript-AST function-body scan (runtime JavaScript only,
+ignoring tests and documentation) found 9 byte-equivalent function-body groups
+before consolidation. Four groups had redundant *implementations*, so the
+numeric formatting, signed comparison, regional comparison signature lookup,
+and signature compatibility contract are now defined once in
+`shared/recordUtilities.js`. Both result screens preserve their existing
+public exports and the same scientific comparison fields; no persisted
+schema or reference model is changed.
+
+The remaining five exact-body groups are **not evidence of unused files**:
+
+| Equivalent bodies | Why they remain separate |
+| --- | --- |
+| `present` / `provided` in input and plan modules | Two tiny local guards in distinct domain processing contexts; a shared cross-domain dependency adds complexity rather than removing a parallel subsystem. |
+| `loadAll` in self-interpretation and self-understanding stores | Different normalization functions, storage keys, failure contracts and domains; shared call-body syntax does not imply interchangeable repository semantics. |
+| `renderBodyPartDetailScreen` in mobile and desktop registries | Platform-specific route adapters; their independent entrypoints are required by screen registries. |
+| `selected` in record-input and embedded subflows | Two locally-scoped presentation predicates; not separately exported or an independent data mechanism. |
+| Four `installMobileWalkJog*` scanner entrypoints | Separate scanner closures and observer lifecycles, each binding a different behavior, despite common scanner setup syntax. Their registrations are not interchangeable. |
+
+This scan distinguishes exact source-body duplication from *semantic*
+duplication; identical 50+ character bodies were classified, not automatically
+deleted. Runtime import, symbol reference, service-worker and CSS file
+reachability are independently checked by
+`tests/b01B03DependencyAndLegacyIndependent.test.mjs` and
+`tests/codebaseArchitecture.test.mjs`. A CSS selector absent as a literal
+class name from JavaScript/HTML is **not** deletion evidence: calculated
+classes, markup returned by template renderers, descendant selectors and
+platform-only branches must be reviewed before removal. Function-call and
+selector-level proof across all deferred routes and states is not yet complete;
+B-01/B-05 must remain PARTIAL pending that proof.

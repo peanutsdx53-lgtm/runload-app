@@ -1,5 +1,6 @@
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
-import { compareExperienceRecordChronology as recordChronology } from "../shared/recordUtilities.js";
+import { compareExperienceRecordChronology as recordChronology, fmt, signed, signatureFor, signaturesComparable as sameSignature } from "../shared/recordUtilities.js";
+export { fmt, signed };
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
 import {
@@ -7,10 +8,6 @@ import {
   PRIMARY_REGIONAL_V2_MODEL_VERSION,
 } from "../core/appCore.js";
 
-export function fmt(value, digits = 1) { return finite(value) ? Number(value).toFixed(digits).replace(/\.0$/, "") : "—"; }
-export function signed(value, digits = 1) { if (!finite(value)) return "—"; const n = Number(value); return `${n > 0 ? "+" : ""}${fmt(n, digits)}`; }
-function signatureFor(record = {}, regionId = "") { return record?.comparison_signatures?.[regionId] || null; }
-function sameSignature(a, b) { return Boolean(a && b && a.modelVersion === b.modelVersion && a.outputSemanticVersion === b.outputSemanticVersion && a.regionId === b.regionId && a.constructId === b.constructId && a.referenceId === b.referenceId); }
 export function shortDate(iso = "") { const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${Number(m[2])}/${Number(m[3])}` : iso; }
 
 const REGION_VIEW = Object.freeze({

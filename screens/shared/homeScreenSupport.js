@@ -1,18 +1,8 @@
 import { buildSelfUnderstandingView } from "../../core/selfUnderstandingCore.js";
+import { localTodayIso, formatShortLocalDate as shortDate } from "../../shared/textUtilities.js";
+export { shortDate };
 
-export function localTodayIso() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
 
-export function shortDate(dateText = "") {
-  const match = String(dateText).match(/^\d{4}-(\d{2})-(\d{2})$/);
-  if (!match) return dateText || "—";
-  return `${Number(match[1])}月${Number(match[2])}日`;
-}
 
 export function paceLabel(record = {}) {
   const distance = Number(record.distanceKm || 0);
