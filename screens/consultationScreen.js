@@ -294,10 +294,10 @@ function shortDateLabel(value = "") {
 function consultationTrendSvg(report = {}, regional) {
   const points = [];
   (report.recent || []).forEach((item) => {
-    if (!item.regionalDirectComparable || !Number.isFinite(Number(item.regionalValue))) return;
+    if (!item.regionalDirectComparable || !isPresentFiniteNumber(item.regionalValue)) return;
     points.push({ date: item.date, value: Number(item.regionalValue) });
   });
-  if (regional?.available) points.push({ date: report.date || "", value: Number(regional.value) });
+  if (regional?.available && isPresentFiniteNumber(regional.value)) points.push({ date: report.date || "", value: Number(regional.value) });
   const unique = [];
   const seen = new Set();
   points.sort((a, b) => String(a.date).localeCompare(String(b.date))).forEach((point) => {

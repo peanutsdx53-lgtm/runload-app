@@ -57,6 +57,7 @@ function server(){
       const platformHistoryScreens=await Promise.all([import('/screens/mobile/historyScreen.js'),import('/screens/desktop/historyScreen.js')]);
       const platformSettingsScreens=await Promise.all([import('/screens/mobile/settingsScreen.js'),import('/screens/desktop/settingsScreen.js')]);
       const platformCourseScreens=await Promise.all([import('/screens/mobile/courseLibraryScreen.js'),import('/screens/desktop/courseLibraryScreen.js')]);
+      const platformCourseEditors=await Promise.all([import('/screens/mobile/courseEditorScreen.js'),import('/screens/desktop/courseEditorScreen.js')]);
       const sim=await import('/ui/interactions/simulationInteractions.js');
       const restore=await import('/ui/restorePreviewPresentation.js');
       const {installMobileWalkJogHistoryUi}=await import('/ui/mobileWalkJogHistoryUi.js');
@@ -108,6 +109,21 @@ function server(){
           root.innerHTML=platformCourseScreens[k].renderCourseLibraryScreen({services:storedServices,
             context:{parameters:new URLSearchParams('')}});
           check('saved-course-platform-'+k,attack);
+          // Input value attributes from a stored course (including potentially
+          // malformed imported text) must remain inert after HTML parsing.
+          const editorServices={storage:{courses:{findById:()=>({
+            id:'e01-course',name:attack,course:{name:attack,routePattern:attack,
+              upPercent:attack,downPercent:attack,gradeInputMode:'SUMMARY',
+              modelSurfaceClass:'UNKNOWN',sections:[]}})}}};
+          root.innerHTML=platformCourseEditors[k].renderCourseEditorScreen({
+            services:editorServices,
+            context:{parameters:new URLSearchParams('id=e01-course&returnTo='+encodeURIComponent('#/plan?note='+attack))},
+          });
+          const input=root.querySelector('input[name="courseName"]');
+          if(!input||input.value!==attack)problems.push('course-editor-'+k+': lost saved literal');
+          if(root.querySelector('script,iframe,img[onerror],[onload],[onclick],[onerror],[onfocus],a[href^="javascript:"],input[autofocus]'))
+            problems.push('course-editor-'+k+': injected markup');
+          if(window.__xss)problems.push('course-editor-'+k+': script executed');
         }
         // Restored runner record/profile/plan/report strings in the delegated
         // consultation PDF-view template must be inert independently of CSP.
