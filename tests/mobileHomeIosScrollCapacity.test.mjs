@@ -147,7 +147,7 @@ test('PAGE-INDICATOR-IS-MOVED-SLIGHTLY-DOWN', () => {
 test('ICON-SWAP-FIX-REMAINS-PRESENT', () => {
   assert.ok(coordinator.includes('event.stopImmediatePropagation();'));
   assert.ok(coordinator.includes('releaseCoreDrag(candidate, event)'));
-  assert.ok(coordinator.includes('swapDomPositions(source, target);'));
+  assert.ok(coordinator.includes('swapMobileHomeSiblingElements(source, target, "mobile-home-owned-swap");'));
 });
 
 test('WIDGET-ICON-CROSS-SWAP-IS-OWNED-SEPARATELY', () => {
