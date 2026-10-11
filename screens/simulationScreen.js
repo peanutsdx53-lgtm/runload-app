@@ -26,8 +26,9 @@ function selectedCourse(){
 
 function latestRun(services){
   if(!services?.storage?.records)return null;
-  return services.storage.records.loadAll()
-    .filter((record)=>record.activityType==="run")
+  const records = services.storage.records.loadAll();
+  return (Array.isArray(records) ? records : [])
+    .filter((record)=>record && typeof record === "object" && record.activityType==="run")
     .sort((a,b)=>`${String(b.date||"")}|${String(b.createdAt||"")}|${String(b.id||"")}`.localeCompare(`${String(a.date||"")}|${String(a.createdAt||"")}|${String(a.id||"")}`))[0]||null;
 }
 
