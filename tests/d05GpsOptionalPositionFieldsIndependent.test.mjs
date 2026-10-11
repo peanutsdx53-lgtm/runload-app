@@ -24,7 +24,8 @@ test("D05: missing optional sensor metadata does not become measured zero", () =
 
 test("D05: malformed Position.timestamp must not be replaced by Date.now", () => {
   for (const timestamp of [undefined, null, "", false, "1700000000000", NaN, Infinity, -1]) {
-    assert.equal(normalizeGeolocationPosition(position({}, timestamp)), null);
+    const raw = position(); raw.timestamp = timestamp;
+    assert.equal(normalizeGeolocationPosition(raw), null);
   }
   assert.equal(normalizeGeolocationPosition(position({}, 0)).timestamp, 0);
 });
