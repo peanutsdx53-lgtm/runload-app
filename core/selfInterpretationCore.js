@@ -6,7 +6,6 @@ import { cloneJsonValue as clone, sortByUpdatedAt } from "../shared/valueUtiliti
 // Reference-100, ROF-J, or any scientific result.
 
 export const SELF_INTERPRETATION_SCHEMA_VERSION = "SELF_INTERPRETATION_V1";
-export const SELF_INTERPRETATION_STORE_VERSION = "SELF_INTERPRETATION_STORE_V1";
 
 const DECISIONS = new Set(["CONTINUE", "THIS_TIME_ONLY", "STOP"]);
 

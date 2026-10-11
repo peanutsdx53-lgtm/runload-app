@@ -199,6 +199,15 @@ function applyCoursePresetToForm(form, course = {}) {
   return values;
 }
 
+// Replace only text nodes supplied from course data. The <strong> label is a
+// fixed UI element; course summaries must never re-enter the HTML parser.
+export function writeSafeCourseSummaryLine(paragraph, label, content) {
+  if (!paragraph) return;
+  const strong = document.createElement("strong");
+  strong.textContent = label;
+  paragraph.replaceChildren(strong, document.createTextNode(String(content ?? "")));
+}
+
 function updateCourseSummary(form) {
   const distance = Number(form.elements.namedItem("distanceKm")?.value || 0);
   const course = readCourse(new FormData(form), distance);
@@ -207,8 +216,8 @@ function updateCourseSummary(form) {
     const heading = summary.querySelector("h4");
     const paragraphs = summary.querySelectorAll("p");
     if (heading) heading.textContent = course.name || "コース名なし";
-    if (paragraphs[0]) paragraphs[0].innerHTML = `<strong>主な路面：</strong>${primarySurfaceSummary(course)}`;
-    if (paragraphs[1]) paragraphs[1].innerHTML = `<strong>坂道：</strong>${slopeSummary(course)}`;
+    writeSafeCourseSummaryLine(paragraphs[0], "主な路面：", primarySurfaceSummary(course));
+    writeSafeCourseSummaryLine(paragraphs[1], "坂道：", slopeSummary(course));
     if (paragraphs[2]) paragraphs[2].innerHTML = `<strong>入力方法：</strong>${course.surfaceInputMode === "MIXED" ? "複数路面の割合" : course.surfaceInputMode === "SINGLE" ? "主な路面1種類" : "路面は未入力"}`;
   }
   const selectedCourseNode = form.querySelector("[data-record-selected-course]");

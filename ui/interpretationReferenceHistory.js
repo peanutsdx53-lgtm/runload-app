@@ -53,5 +53,3 @@ export function rememberInterpretationReferenceSelectionResult(gateway, { record
   }
   return Object.freeze({ ok: true, code: "READING_HISTORY_SAVED", entries: Object.freeze(entries.map((item) => Object.freeze({ ...item }))) });
 }
-
-export const INTERPRETATION_REFERENCE_HISTORY_LIMIT = MAX_HISTORY_ENTRIES;

@@ -39,3 +39,9 @@
 ## Closure decision
 
 **E-01 remains PARTIAL.** Exhaustive transitive delegated-screen source-to-DOM coverage, reconciliation of the handoff's original 43-path inventory, stronger integrated restored-record attacks and multi-origin hosting isolation confirmation are not demonstrated by these tests. No condition count may be increased using this evidence alone. Keep 44-item aggregate at PASS26 / PARTIAL15 / FAIL0 / uninspected3 unless another separate authority has legitimately changed the formal matrix.
+
+## 2026-10-11 non-UI additive verification — DOM text boundary
+
+The former recorded-course summary used two `innerHTML` sinks that assembled a fixed `<strong>` label and text from course-derived summaries. They were replaced by `replaceChildren` with a fixed strong element and a browser text node. This removes HTML parsing at that boundary without changing its visual structure. The independent `e01CourseSummaryDomSafetyIndependent.test.mjs` passes adversarial markup/attribute/script strings and asserts no HTML sink is invoked.
+
+The current direct HTML-write register is **38** expressions after retiring previous `E01-SINK-20` and `E01-SINK-21`; IDs are intentionally retained as historical identifiers, not renumbered. Existing remaining rows have refreshed code locations and per-line SHA-256. The earlier 43-path handoff and current 38 direct sinks are different granularities; neither equality nor closure of delegated renderers follows from these counts. Transitive renderer/source review and complete restored-content fuzz remain an E-01 blocker. No E-01 full PASS is claimed on this change alone.
