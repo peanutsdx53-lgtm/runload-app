@@ -6,7 +6,7 @@ import { SELF_UNDERSTANDING_STATES, selfUnderstandingThreadTitle } from "../core
 
 function localTodayIso() { const d = new Date(); const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,"0"); const day=String(d.getDate()).padStart(2,"0"); return `${y}-${m}-${day}`; }
 function courseFromPlan(plan) { return plan?.plannedSession?.course || { name:"", gradeKnowledge:"UNKNOWN", modelSurfaceClass:"UNKNOWN" }; }
-function latestRunRecord(services) { return services.storage.records.loadAll().filter((r)=>r.activityType === "run").sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0] || null; }
+function latestRunRecord(services) { const rows=services.storage.records.loadAll(); return (Array.isArray(rows)?rows:[]).filter((r)=>r&&typeof r==="object"&&r.activityType === "run").sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0] || null; }
 function courseSummary(course={}) { if (!course.name) return "未選択のままでも保存できます"; return `${slopeSummary(course)}・${primarySurfaceSummary(course)}`; }
 function planTitle(plan={}) { const session=plan.plannedSession||{}; if(plan.planType==="rest"||session.activityType==="rest")return "休養予定"; const parts=[]; if(Number(session.distanceKm)>0)parts.push(`${Number(session.distanceKm).toFixed(1)} km`); if(Number(session.durationMinutes)>0)parts.push(`${Math.round(Number(session.durationMinutes))}分`); parts.push(session.course?.name||"コース未選択"); return parts.join("・"); }
 function savedPlanCard(plan={}) { const rest=plan.planType==="rest"||plan.plannedSession?.activityType==="rest"; return `<article class="saved-card" data-plan-id="${escapeHtml(plan.id||"")}"><small>${escapeHtml(formatLocalDate(plan.scheduledDate||""))}・${rest?"休養予定":"走行予定"}</small><strong>${escapeHtml(planTitle(plan))}</strong><span>保存済み</span><div class="saved-actions">${rest?"":`<a class="plan-measure-link" href="#/run-measurement?planId=${encodeURIComponent(plan.id||"")}">この予定で測定</a><a href="#/record-input?planId=${encodeURIComponent(plan.id||"")}">手入力で記録</a>`}<a href="#/plan?planId=${encodeURIComponent(plan.id||"")}">編集</a><button type="button" data-action="delete-plan" data-plan-id="${escapeHtml(plan.id||"")}">削除</button></div></article>`; }
@@ -57,10 +57,12 @@ export function renderPlanScreenWithPresentation({ services, context }, presenta
   simulationQuery.set("returnTo",selfHref);
   if(sourceRecordId)simulationQuery.set("recordId",sourceRecordId);
   const simulationHref=`#/simulation?${simulationQuery.toString()}`;
-  const plans=services.storage.plans.loadAll().sort((a,b)=>String(a.scheduledDate||"").localeCompare(String(b.scheduledDate||"")));
-  const confirmationThemes=services.storage.selfUnderstandingThreads?.loadAll?.()
-    .filter((thread)=>thread.userState===SELF_UNDERSTANDING_STATES.watching)
-    .sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||""))) || [];
+  const rawPlans=services.storage.plans.loadAll();
+  const plans=(Array.isArray(rawPlans)?rawPlans:[]).filter((plan)=>plan&&typeof plan==="object").sort((a,b)=>String(a.scheduledDate||"").localeCompare(String(b.scheduledDate||"")));
+  const rawThemes=services.storage.selfUnderstandingThreads?.loadAll?.();
+  const confirmationThemes=(Array.isArray(rawThemes)?rawThemes:[])
+    .filter((thread)=>thread&&typeof thread==="object"&&thread.userState===SELF_UNDERSTANDING_STATES.watching)
+    .sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")));
   const confirmationExperiences=services.workflows?.records?.loadAllExperiences?.() || [];
   const selectedThreadId=String(editing?.selfUnderstandingThreadId||context?.parameters?.get("threadId")||"");
   const scheduledDate=editing?.scheduledDate||localTodayIso();
