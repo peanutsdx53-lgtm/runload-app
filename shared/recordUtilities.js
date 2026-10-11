@@ -19,3 +19,13 @@ export function compareStableRecordKeys(leftKey, rightKey) {
   };
   return compareExperienceRecordChronology(unpack(leftKey), unpack(rightKey));
 }
+
+// A single course identity contract for mobile home and same-course insights.
+export function recordCourseKey(record = {}) {
+  const course = record.course || {};
+  const id = String(course.id || course.courseId || "").trim();
+  if (id) return `id:${id}`;
+  const name = String(course.name || "").trim();
+  if (!name || name === "未設定" || name === "コース名なし") return "";
+  return `name:${name.toLocaleLowerCase("ja-JP")}`;
+}

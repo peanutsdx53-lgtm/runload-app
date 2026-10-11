@@ -1,4 +1,4 @@
-import { stableRecordKey as recordChronology } from "../shared/recordUtilities.js";
+import { stableRecordKey as recordChronology, recordCourseKey } from "../shared/recordUtilities.js";
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { escapeHtml } from "./commonComponents.js";
 import { formatLocalDate } from "./recordPresentation.js";
@@ -140,14 +140,6 @@ export function renderMobileFatigueTrend(services) {
   </section>`;
 }
 
-function recordCourseKey(record = {}) {
-  const course = record.course || {};
-  const id = String(course.id || course.courseId || "").trim();
-  if (id) return `id:${id}`;
-  const name = String(course.name || "").trim();
-  if (!name || name === "未設定" || name === "コース名なし") return "";
-  return `name:${name.toLocaleLowerCase("ja-JP")}`;
-}
 
 function paceSeconds(record = {}) {
   const distance = Number(record.distanceKm);

@@ -20,3 +20,10 @@ export function localTodayIso() {
   const day = String(now.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
+
+// Display-only concise Japanese date, invalid input stays unchanged.
+export function formatShortLocalDate(dateText = "") {
+  const match = String(dateText).match(/^\d{4}-(\d{2})-(\d{2})$/);
+  if (!match) return dateText || "—";
+  return `${Number(match[1])}月${Number(match[2])}日`;
+}
