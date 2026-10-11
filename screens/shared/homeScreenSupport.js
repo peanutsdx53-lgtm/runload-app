@@ -1,12 +1,6 @@
 import { buildSelfUnderstandingView } from "../../core/selfUnderstandingCore.js";
+import { localTodayIso } from "../../shared/textUtilities.js";
 
-export function localTodayIso() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
 
 export function shortDate(dateText = "") {
   const match = String(dateText).match(/^\d{4}-(\d{2})-(\d{2})$/);

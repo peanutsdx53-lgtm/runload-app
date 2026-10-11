@@ -1,4 +1,5 @@
 import { SURFACE_FIELDS } from "../core/appCore.js";
+import { localTodayIso as localToday } from "../shared/textUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { subjectiveFieldsFromFeedback, subjectiveSummaryFromFields } from "../ui/subjectivePresentation.js";
 import { personalContextSummary } from "../ui/personalContextPresentation.js";
@@ -67,13 +68,6 @@ function renderRunWalkDetails(record = {}, { durationStep = "0.1" } = {}) {
   </div>`;
 }
 
-function localToday() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
 
 function recordDateLabel(value = "") {
   const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);

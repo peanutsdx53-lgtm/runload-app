@@ -1,5 +1,5 @@
-import { normalizeIsoText as iso, sanitizeText as text } from "../shared/textUtilities.js";
-import { cloneJsonValue as clone } from "../shared/valueUtilities.js";
+import { normalizeIsoText as iso, sanitizeText as text, normalizeOneLine } from "../shared/textUtilities.js";
+import { cloneJsonValue as clone, sortByUpdatedAt } from "../shared/valueUtilities.js";
 import { compareExperienceRecordChronology, compareStableRecordKeys, stableRecordKey as stableRecordKeyFromRecord } from "../shared/recordUtilities.js";
 // RunLoad self-understanding memory layer.
 // This module never recalculates or redefines the scientific numeric model.
@@ -38,9 +38,6 @@ const THREAD_STATES = new Set(Object.values(SELF_UNDERSTANDING_STATES));
 const REVIEW_DECISIONS = new Set(["KEEP_WATCHING", "PAUSE", "CLOSE", "VIEWED"]);
 
 
-function oneLine(value, max = 160) {
-  return text(value, max).replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim();
-}
 
 export function selfUnderstandingStableRecordKey(record = {}) {
   return stableRecordKeyFromRecord(record);
@@ -49,12 +46,12 @@ export function selfUnderstandingStableRecordKey(record = {}) {
 function normalizeSignature(source = {}) {
   if (!source || typeof source !== "object") return null;
   const signature = {
-    regionId: oneLine(source.regionId, 80),
-    primaryRegionId: oneLine(source.primaryRegionId, 40),
-    modelVersion: oneLine(source.modelVersion, 120),
-    outputSemanticVersion: oneLine(source.outputSemanticVersion, 120),
-    constructId: oneLine(source.constructId, 120),
-    referenceId: oneLine(source.referenceId, 120),
+    regionId: normalizeOneLine(source.regionId, 80),
+    primaryRegionId: normalizeOneLine(source.primaryRegionId, 40),
+    modelVersion: normalizeOneLine(source.modelVersion, 120),
+    outputSemanticVersion: normalizeOneLine(source.outputSemanticVersion, 120),
+    constructId: normalizeOneLine(source.constructId, 120),
+    referenceId: normalizeOneLine(source.referenceId, 120),
   };
   return signature.regionId && signature.modelVersion && signature.outputSemanticVersion
     ? Object.freeze(signature)
@@ -73,28 +70,28 @@ function signaturesCompatible(left, right) {
 function normalizeSubject(type, source = {}) {
   const subject = source && typeof source === "object" ? source : {};
   if (type === SELF_UNDERSTANDING_TYPES.regionObservationPair) {
-    const regionId = oneLine(subject.regionId, 80);
-    const primaryRegionId = oneLine(subject.primaryRegionId, 40);
-    const bodyAreaId = oneLine(subject.bodyAreaId, 80);
+    const regionId = normalizeOneLine(subject.regionId, 80);
+    const primaryRegionId = normalizeOneLine(subject.primaryRegionId, 40);
+    const bodyAreaId = normalizeOneLine(subject.bodyAreaId, 80);
     if (!regionId || !bodyAreaId || SELF_UNDERSTANDING_BODY_AREA_TO_DISPLAY_REGION[bodyAreaId] !== regionId) return null;
     return Object.freeze({ regionId, primaryRegionId, bodyAreaId });
   }
   if (type === SELF_UNDERSTANDING_TYPES.regionWatch) {
-    const regionId = oneLine(subject.regionId, 80);
-    const primaryRegionId = oneLine(subject.primaryRegionId, 40);
+    const regionId = normalizeOneLine(subject.regionId, 80);
+    const primaryRegionId = normalizeOneLine(subject.primaryRegionId, 40);
     if (!regionId) return null;
     return Object.freeze({ regionId, primaryRegionId });
   }
   if (type === SELF_UNDERSTANDING_TYPES.sameCourseRofPost) {
-    const courseId = oneLine(subject.courseId, 120);
-    const courseName = oneLine(subject.courseName, 120);
+    const courseId = normalizeOneLine(subject.courseId, 120);
+    const courseName = normalizeOneLine(subject.courseName, 120);
     if (!courseId) return null;
     return Object.freeze({ courseId, courseName });
   }
   if (type === SELF_UNDERSTANDING_TYPES.contextQuestion) {
     const prompt = text(subject.prompt, 500).trim();
-    const focusKey = oneLine(subject.focusKey, 120);
-    const articleId = oneLine(subject.articleId, 160);
+    const focusKey = normalizeOneLine(subject.focusKey, 120);
+    const articleId = normalizeOneLine(subject.articleId, 160);
     if (!prompt || !focusKey) return null;
     return Object.freeze({ prompt, focusKey, articleId });
   }
@@ -110,13 +107,13 @@ function subjectKey(type, subject = {}) {
 }
 
 function normalizeReviewEvent(event = {}) {
-  const decision = oneLine(event.decision, 40).toUpperCase();
-  const recordId = oneLine(event.recordId, 120);
+  const decision = normalizeOneLine(event.decision, 40).toUpperCase();
+  const recordId = normalizeOneLine(event.recordId, 120);
   const reviewedAt = iso(event.reviewedAt);
   if (!REVIEW_DECISIONS.has(decision) || !reviewedAt) return null;
   return Object.freeze({
     recordId,
-    stableRecordKey: oneLine(event.stableRecordKey, 260),
+    stableRecordKey: normalizeOneLine(event.stableRecordKey, 260),
     reviewedAt,
     decision,
     optionalNote: text(event.optionalNote, 500).trim(),
@@ -125,10 +122,10 @@ function normalizeReviewEvent(event = {}) {
 
 export function normalizeSelfUnderstandingThread(item = {}) {
   if (!item || typeof item !== "object") return null;
-  const type = oneLine(item.type, 60).toUpperCase();
-  const userState = oneLine(item.userState || item.status, 40).toUpperCase();
+  const type = normalizeOneLine(item.type, 60).toUpperCase();
+  const userState = normalizeOneLine(item.userState || item.status, 40).toUpperCase();
   const subject = normalizeSubject(type, item.subject || {});
-  const id = oneLine(item.id, 180);
+  const id = normalizeOneLine(item.id, 180);
   const createdAt = iso(item.createdAt);
   if (!id || !THREAD_TYPES.has(type) || !THREAD_STATES.has(userState) || !subject || !createdAt) return null;
   const events = (Array.isArray(item.reviewEvents) ? item.reviewEvents : [])
@@ -142,36 +139,33 @@ export function normalizeSelfUnderstandingThread(item = {}) {
     subject,
     subjectKey: subjectKey(type, subject),
     createdAt,
-    createdFromRecordId: oneLine(item.createdFromRecordId, 120),
-    createdFromStableRecordKey: oneLine(item.createdFromStableRecordKey, 260),
+    createdFromRecordId: normalizeOneLine(item.createdFromRecordId, 120),
+    createdFromStableRecordKey: normalizeOneLine(item.createdFromStableRecordKey, 260),
     userState,
     semanticConstraints: Object.freeze({
       regionSignature: normalizeSignature(item.semanticConstraints?.regionSignature),
     }),
-    lastReviewedStableRecordKey: oneLine(item.lastReviewedStableRecordKey, 260),
-    optionalUserLabel: oneLine(item.optionalUserLabel, 120),
+    lastReviewedStableRecordKey: normalizeOneLine(item.lastReviewedStableRecordKey, 260),
+    optionalUserLabel: normalizeOneLine(item.optionalUserLabel, 120),
     reviewEvents: Object.freeze(events),
     updatedAt: iso(item.updatedAt, createdAt),
   });
 }
 
-function sortThreads(items = []) {
-  return [...items].sort((a, b) => String(b.updatedAt || b.createdAt).localeCompare(String(a.updatedAt || a.createdAt)) || a.id.localeCompare(b.id));
-}
 
 export function createSelfUnderstandingRepository(gateway, storageKey) {
   function loadAllResult() {
     const read = gateway.readJsonResult(storageKey, []);
     if (!read.ok) return { ...read, code: "SELF_UNDERSTANDING_READ_FAILED", items: [] };
     if (!Array.isArray(read.value)) return { ok: false, code: "SELF_UNDERSTANDING_STORAGE_INVALID", items: [] };
-    return { ok: true, exists: read.exists, items: sortThreads(read.value.map(normalizeSelfUnderstandingThread).filter(Boolean)) };
+    return { ok: true, exists: read.exists, items: sortByUpdatedAt(read.value.map(normalizeSelfUnderstandingThread).filter(Boolean)) };
   }
   function loadAll() {
     const result = loadAllResult();
     return result.ok ? result.items.map(clone) : [];
   }
   function saveAll(items) {
-    const normalized = sortThreads((Array.isArray(items) ? items : []).map(normalizeSelfUnderstandingThread).filter(Boolean));
+    const normalized = sortByUpdatedAt((Array.isArray(items) ? items : []).map(normalizeSelfUnderstandingThread).filter(Boolean));
     const result = gateway.writeJson(storageKey, normalized);
     return { ...result, items: result.ok ? normalized.map(clone) : loadAll() };
   }
@@ -179,7 +173,7 @@ export function createSelfUnderstandingRepository(gateway, storageKey) {
     return loadAll().find((item) => item.id === String(id || "")) || null;
   }
   function createOrResume({ type, subject, createdFromRecord = {}, semanticConstraints = {}, optionalUserLabel = "", now = new Date().toISOString() } = {}) {
-    const normalizedType = oneLine(type, 60).toUpperCase();
+    const normalizedType = normalizeOneLine(type, 60).toUpperCase();
     const normalizedSubject = normalizeSubject(normalizedType, subject);
     if (!THREAD_TYPES.has(normalizedType) || !normalizedSubject) return { ok: false, code: "SELF_UNDERSTANDING_SUBJECT_INVALID", item: null };
     const current = loadAllResult();
@@ -190,7 +184,7 @@ export function createSelfUnderstandingRepository(gateway, storageKey) {
     const next = existing ? {
       ...existing,
       userState: SELF_UNDERSTANDING_STATES.watching,
-      optionalUserLabel: oneLine(optionalUserLabel || existing.optionalUserLabel, 120),
+      optionalUserLabel: normalizeOneLine(optionalUserLabel || existing.optionalUserLabel, 120),
       updatedAt: stamp,
     } : {
       id: `self-understanding-${normalizedType.toLowerCase()}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
@@ -198,12 +192,12 @@ export function createSelfUnderstandingRepository(gateway, storageKey) {
       type: normalizedType,
       subject: normalizedSubject,
       createdAt: stamp,
-      createdFromRecordId: oneLine(createdFromRecord?.id, 120),
+      createdFromRecordId: normalizeOneLine(createdFromRecord?.id, 120),
       createdFromStableRecordKey: stableRecordKeyFromRecord(createdFromRecord),
       userState: SELF_UNDERSTANDING_STATES.watching,
       semanticConstraints: { regionSignature: normalizeSignature(semanticConstraints.regionSignature) },
       lastReviewedStableRecordKey: stableRecordKeyFromRecord(createdFromRecord),
-      optionalUserLabel: oneLine(optionalUserLabel, 120),
+      optionalUserLabel: normalizeOneLine(optionalUserLabel, 120),
       reviewEvents: [],
       updatedAt: stamp,
     };
@@ -218,7 +212,7 @@ export function createSelfUnderstandingRepository(gateway, storageKey) {
     if (!current.ok) return current;
     const item = current.items.find((thread) => thread.id === String(threadId || ""));
     if (!item) return { ok: false, code: "SELF_UNDERSTANDING_THREAD_NOT_FOUND" };
-    const normalizedDecision = oneLine(decision, 40).toUpperCase();
+    const normalizedDecision = normalizeOneLine(decision, 40).toUpperCase();
     if (!REVIEW_DECISIONS.has(normalizedDecision)) return { ok: false, code: "SELF_UNDERSTANDING_DECISION_INVALID" };
     const stamp = iso(now, new Date().toISOString());
     const state = normalizedDecision === "PAUSE" ? SELF_UNDERSTANDING_STATES.paused
@@ -230,7 +224,7 @@ export function createSelfUnderstandingRepository(gateway, storageKey) {
       userState: state,
       lastReviewedStableRecordKey: stableKey || item.lastReviewedStableRecordKey,
       reviewEvents: [...item.reviewEvents, {
-        recordId: oneLine(record?.id, 120),
+        recordId: normalizeOneLine(record?.id, 120),
         stableRecordKey: stableKey,
         reviewedAt: stamp,
         decision: normalizedDecision,
@@ -246,7 +240,7 @@ export function createSelfUnderstandingRepository(gateway, storageKey) {
     if (!current.ok) return current;
     const item = current.items.find((thread) => thread.id === String(threadId || ""));
     if (!item) return { ok: false, code: "SELF_UNDERSTANDING_THREAD_NOT_FOUND" };
-    const next = normalizeSelfUnderstandingThread({ ...item, optionalUserLabel: oneLine(optionalUserLabel, 120), updatedAt: iso(now, new Date().toISOString()) });
+    const next = normalizeSelfUnderstandingThread({ ...item, optionalUserLabel: normalizeOneLine(optionalUserLabel, 120), updatedAt: iso(now, new Date().toISOString()) });
     const saved = saveAll(current.items.map((thread) => thread.id === item.id ? next : thread));
     return { ...saved, item: saved.ok ? clone(next) : null };
   }
@@ -277,8 +271,8 @@ function bodyObservationForSubject(experience = {}, subject = {}) {
 
 function courseIdentity(record = {}) {
   const course = record.course && typeof record.course === "object" ? record.course : {};
-  const id = oneLine(course.id || course.courseId, 120);
-  return Object.freeze({ id, name: oneLine(course.name || record.courseName, 120) });
+  const id = normalizeOneLine(course.id || course.courseId, 120);
+  return Object.freeze({ id, name: normalizeOneLine(course.name || record.courseName, 120) });
 }
 
 function rofPost(rofSummariesByRecordId, recordId) {
@@ -289,9 +283,9 @@ function rofPost(rofSummariesByRecordId, recordId) {
 function runContextFromRecord(record = {}) {
   const distanceKm = Number.isFinite(Number(record.distanceKm)) ? Number(record.distanceKm) : null;
   const durationMinutes = Number.isFinite(Number(record.durationMinutes)) ? Number(record.durationMinutes) : null;
-  const runningFormat = oneLine(record.runningFormat, 60);
+  const runningFormat = normalizeOneLine(record.runningFormat, 60);
   const course = courseIdentity(record);
-  const gradeKnowledge = oneLine(record?.course?.gradeKnowledge || record?.gradeKnowledge, 60);
+  const gradeKnowledge = normalizeOneLine(record?.course?.gradeKnowledge || record?.gradeKnowledge, 60);
   const reflection = text(record?.reflectionContext?.postRunReflection, 500).trim();
   const temperatureC = Number.isFinite(Number(record?.environmentContext?.temperatureC)) ? Number(record.environmentContext.temperatureC) : null;
   const environmentNote = text(record?.environmentContext?.environmentNote, 500).trim();

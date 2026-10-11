@@ -33,3 +33,8 @@ export function normalizeKnownValue(value, knownValues, fallback = "") {
   const requested = String(value || "");
   return knownValues?.has?.(requested) ? requested : fallback;
 }
+
+// Shared stable newest-first order for user-confirmed interpretation stores.
+export function sortByUpdatedAt(items = []) {
+  return [...items].sort((a, b) => String(b.updatedAt || b.createdAt).localeCompare(String(a.updatedAt || a.createdAt)) || a.id.localeCompare(b.id));
+}
