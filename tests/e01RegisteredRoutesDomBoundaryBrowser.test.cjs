@@ -23,6 +23,7 @@ async function localServer() {
   return new Promise(resolve => srv.listen(0, '127.0.0.1', () => resolve({srv,origin:`http://127.0.0.1:${srv.address().port}`})));
 }
 async function platformRun(browser,origin,mobile) {
+  console.log('E01_ROUTE_PLATFORM_START', mobile?'mobile':'desktop');
   const viewport = mobile ? {width:390,height:844} : {width:1440,height:900};
   const context=await browser.newContext({viewport,serviceWorkers:'block'});
   const outgoing=[];
@@ -49,7 +50,9 @@ async function platformRun(browser,origin,mobile) {
   try {
     const page=await context.newPage();
     page.on('pageerror',err=>errors.push(String(err.message)));
+    console.log('E01_ROUTE_BOOT_START',mobile?'mobile':'desktop');
     const resp=await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:25000});
+    console.log('E01_ROUTE_BOOT_OK',mobile?'mobile':'desktop');
     assert.equal(resp.status(),200);
     await page.waitForSelector('.app-shell',{timeout:25000});
     const routeKeys=await page.evaluate(async mobile=>{
@@ -57,9 +60,11 @@ async function platformRun(browser,origin,mobile) {
       return Object.keys(registry.createScreenRenderers());
     },mobile);
     assert.equal(routeKeys.length,mobile?24:22,JSON.stringify({mobile,routeKeys}));
+    console.log('E01_ROUTE_REGISTRY',JSON.stringify({mobile,count:routeKeys.length}));
     const screens=[];
     const query=new URLSearchParams({recordId:'e01-record',planId:'e01-plan',id:'e01-course',returnTo:'#/home?x='+ATTACK, note:ATTACK,articleId:ATTACK}).toString();
     for(const name of routeKeys) {
+      console.log('E01_ROUTE_PROBING',mobile?'mobile':'desktop',name);
       await page.evaluate(({name,query})=>{window.location.hash=`#/${name}?${query}`;},{name,query});
       await page.waitForTimeout(90);
       const state=await page.evaluate(()=>{
@@ -80,11 +85,14 @@ async function platformRun(browser,origin,mobile) {
   }finally{await context.close();}
 }
 (async()=>{
+  const watchdog=setTimeout(()=>{console.error('E01_ROUTE_PROBE_GLOBAL_TIMEOUT_150S');process.exit(2);},150000);
   const {srv,origin}=await localServer();let browser;
   try{
+    console.log('E01_ROUTE_CHROMIUM_LAUNCH');
     browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+    console.log('E01_ROUTE_CHROMIUM_READY');
     await platformRun(browser,origin,true);
     await platformRun(browser,origin,false);
     console.log('E01_46_PLATFORM_ROUTE_BROWSER_PROBE_PASS');
-  }finally{await browser?.close();await new Promise(ok=>srv.close(ok));}
+  }finally{await browser?.close();await new Promise(ok=>srv.close(ok));clearTimeout(watchdog);}
 })().catch(e=>{console.error(e);process.exitCode=1;});
