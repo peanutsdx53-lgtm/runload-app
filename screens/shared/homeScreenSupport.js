@@ -19,7 +19,8 @@ export function activityPill(record = {}) {
 }
 
 export function homeConfirmationTheme(services) {
-  const experiences = services?.workflows?.records?.loadAllExperiences?.() || [];
+  const savedExperiences = services?.workflows?.records?.loadAllExperiences?.();
+  const experiences = Array.isArray(savedExperiences) ? savedExperiences : [];
   const rof = new Map(experiences.filter((experience) => experience?.record?.activityType === "run").map((experience) => [experience.record.id, services?.fatigue?.summarizeRun?.(experience.record.id) || null]));
   const view = buildSelfUnderstandingView({ allExperiences: experiences, threads: services?.storage?.selfUnderstandingThreads?.loadAll?.() || [], rofSummariesByRecordId: rof });
   return view.watching.find((thread) => thread.hasNewEligibleData) || null;
