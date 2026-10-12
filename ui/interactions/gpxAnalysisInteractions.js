@@ -61,21 +61,21 @@ export function bindGpxAnalysis() {
 
   file.addEventListener("change", async () => {
     const revision = invalidate();
-    const f = file.files?.[0];
+    const f = selectedGpxFile(file);
     if (!f) {
       if (status) status.textContent = "ファイルを選択してください。";
       return;
     }
-    if (Number.isFinite(f.size) && f.size > GPX_MAX_BYTES) {
-      if (status) status.textContent = "GPXファイルが大きすぎます。10MB以下のファイルを選んでください。";
+    const sizeState = gpxFileSizeState(f); if (sizeState !== "OK") {
+      if (status) status.textContent = sizeState === "LARGE" ? "GPXファイルが大きすぎます。10MB以下のファイルを選んでください。" : "GPXを解析できませんでした。ファイル内容を確認してください。";
       return;
     }
     try {
       const content = await f.text();
-      if (revision !== selectionRevision || file.files?.[0] !== f) return;
+      if (revision !== selectionRevision || selectedGpxFile(file) !== f) return;
       const parsed = parseGpxText(content);
       const next = analyzeGpx(parsed, { fallbackName: f.name.replace(/\.gpx$/i, "") || "GPXコース" });
-      if (revision !== selectionRevision || file.files?.[0] !== f) return;
+      if (revision !== selectionRevision || selectedGpxFile(file) !== f) return;
       candidate = next;
       approvedFile = f;
       if (status) status.textContent = "端末内の解析が完了しました。";
@@ -100,7 +100,7 @@ export function bindGpxAnalysis() {
       if (svg) svg.innerHTML = profileSvg(parsed.points);
       apply.disabled = false;
     } catch (error) {
-      if (revision !== selectionRevision || file.files?.[0] !== f) return;
+      if (revision !== selectionRevision || selectedGpxFile(file) !== f) return;
       candidate = null;
       approvedFile = null;
       if (status) status.textContent = error?.message === "GPX_TOO_LARGE" || error?.message === "GPX_TOO_MANY_POINTS"
@@ -112,15 +112,25 @@ export function bindGpxAnalysis() {
   });
   document.getElementById("gpx-reset")?.addEventListener("click", () => {
     invalidate();
-    file.value = "";
+    try { file.value = ""; } catch {}
     if (status) status.textContent = "ファイルを選択してください。";
   });
   apply.addEventListener("click", () => {
     // A native file input may change independently of the scheduled change
     // handler. The object identity must be the one we actually inspected.
-    if (!candidate || !approvedFile || file.files?.[0] !== approvedFile || apply.disabled) return;
+    if (!candidate || !approvedFile || selectedGpxFile(file) !== approvedFile || apply.disabled) return;
     saveGpxCandidate(candidate);
     const returnTo = ret?.value || "#/record-input";
     window.location.hash = `#/course-editor?gpx=1&returnTo=${encodeURIComponent(returnTo)}`;
   });
+}
+
+// Native File selection can become inaccessible after a permission change.
+// Keep every asynchronous freshness check and the apply gate fail-closed.
+function selectedGpxFile(input) {
+  try { return input?.files?.[0] || null; } catch { return null; }
+}
+function gpxFileSizeState(file) {
+  try { const size = file?.size; return Number.isFinite(size) && size > GPX_MAX_BYTES ? "LARGE" : "OK"; }
+  catch { return "DENIED"; }
 }
