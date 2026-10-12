@@ -11,6 +11,13 @@ const COUNT_LABELS = Object.freeze([
   ["draft", "入力途中"],
 ]);
 
+function safeInspectionCount(value) {
+  if (typeof value !== "number" && typeof value !== "string") return "—";
+  if (String(value).trim() === "") return "—";
+  const number = Number(value);
+  return Number.isSafeInteger(number) && number >= 0 ? String(number) : "—";
+}
+
 function statusCopy(status) {
   if (status === "SUPPORTED") return { label: "対応", tone: "success", title: "このバックアップは復元できます", description: "保存内容を確認できました。" };
   if (status === "REVIEW_REQUIRED") return { label: "要確認", tone: "attention", title: "確認してから復元できます", description: "復元可能ですが、参照がない項目などがあります。自分で書いた文章や予定は保持されます。" };
@@ -20,14 +27,16 @@ function statusCopy(status) {
 export function renderRestoreInspection(inspection, fileName = "") {
   const copy = statusCopy(inspection?.status);
   const counts = inspection?.counts || {};
-  const issues = Array.isArray(inspection?.issues) ? inspection.issues : [];
+  const issues = Array.isArray(inspection?.issues)
+    ? inspection.issues.filter((item) => item && typeof item === "object" && !Array.isArray(item))
+    : [];
   const blocking = issues.filter((item) => item.severity === "BLOCKING");
   const warnings = issues.filter((item) => item.severity === "WARNING");
   return `<section class="restore-preview restore-preview--${escapeHtml(String(inspection?.status || "blocked").toLowerCase())}" aria-labelledby="restore-preview-title" tabindex="-1">
     <div class="result-card__heading"><div><p>復元前の検査</p><h3 id="restore-preview-title">${escapeHtml(copy.title)}</h3></div>${renderStatusLabel(copy.label, copy.tone)}</div>
     ${fileName ? `<p class="muted-text">選択したファイル：${escapeHtml(fileName)}</p>` : ""}
     <p>${escapeHtml(copy.description)}</p>
-    <dl class="restore-preview__counts">${COUNT_LABELS.map(([key, label]) => `<div><dt>${escapeHtml(label)}</dt><dd>${Number(counts[key] || 0)}件</dd></div>`).join("")}</dl>
+    <dl class="restore-preview__counts">${COUNT_LABELS.map(([key, label]) => `<div><dt>${escapeHtml(label)}</dt><dd>${safeInspectionCount(counts[key] ?? 0)}件</dd></div>`).join("")}</dl>
     ${blocking.length ? `<div class="restore-preview__issues restore-preview__issues--blocking"><h4>復元を止める問題</h4><ul>${blocking.map((item) => `<li>${escapeHtml(item.message)}${item.itemId ? ` <small>対象：${escapeHtml(item.itemId)}</small>` : ""}</li>`).join("")}</ul></div>` : ""}
     ${warnings.length ? `<div class="restore-preview__issues"><h4>確認が必要な内容</h4><ul>${warnings.map((item) => `<li>${escapeHtml(item.message)}${item.itemId ? ` <small>対象：${escapeHtml(item.itemId)}</small>` : ""}</li>`).join("")}</ul></div>` : ""}
     ${inspection?.status === "REVIEW_REQUIRED" ? `<label class="restore-preview__ack"><input type="checkbox" data-restore-review-ack><span>要確認の内容を読み、参照が表示されない場合があることを理解しました。</span></label>` : ""}
