@@ -1,3 +1,4 @@
+import { parseLocalDateAtNoon as parseLocalDate } from "../shared/textUtilities.js";
 import { mondayOfWeekAtNoon as mondayOfWeek } from "./mobileDateUtilities.js";
 import { recordCourseKey } from "../shared/recordUtilities.js";
 import { formatShortLocalDate as shortDate } from "../shared/textUtilities.js";
@@ -14,12 +15,6 @@ function localDateText(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-function parseLocalDate(value = "") {
-  const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!match) return null;
-  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0, 0);
-  return Number.isFinite(date.getTime()) ? date : null;
-}
 
 function dateFromTimestamp(value = "") {
   const date = new Date(String(value || ""));

@@ -1,3 +1,5 @@
+import { parseLocalDateAtNoon } from "../shared/textUtilities.js";
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { findSavedRunMeasurement } from "./runMeasurementState.js";
 
 const STORAGE_KEY = "running-record-mobile-achievements-v1";
@@ -17,12 +19,9 @@ const DEFINITIONS = Object.freeze([
   Object.freeze({ id: "weeks-3", tier: "gold", title: "3週の記録", short: "3つの週で走行を記録", kind: "activeWeeks", target: 3 }),
 ]);
 
-function todayWeekKey(dateText = "") {
-  const match = String(dateText).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  const date = match
-    ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0, 0)
-    : new Date();
-  if (!Number.isFinite(date.getTime())) return "";
+function todayWeekKey(value) {
+  const date = value instanceof Date ? value : parseLocalDateAtNoon(value);
+  if (!date || !Number.isFinite(date.getTime())) return "";
   const copy = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
   const day = copy.getDay();
   copy.setDate(copy.getDate() - (day === 0 ? 6 : day - 1));
@@ -79,9 +78,9 @@ export function collectAchievementMetrics(services) {
   const courses = services?.storage?.courses?.loadAll?.() || [];
   const runs = records.filter((record) => record?.activityType === "run");
   const rests = records.filter((record) => record?.activityType === "rest");
-  const currentWeek = todayWeekKey();
+  const currentWeek = todayWeekKey(new Date());
   const weeklyRuns = runs.filter((record) => todayWeekKey(record.date) === currentWeek).length;
-  const distance = runs.reduce((sum, record) => sum + Math.max(0, Number(record.distanceKm || 0)), 0);
+  const distance = runs.reduce((sum, record) => sum + (finite(record.distanceKm) && Number(record.distanceKm) >= 0 ? Number(record.distanceKm) : 0), 0);
   const activeWeeks = new Set(runs.map((record) => todayWeekKey(record.date)).filter(Boolean)).size;
   let energy = 0;
   let energyRecords = 0;
