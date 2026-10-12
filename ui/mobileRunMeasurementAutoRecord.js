@@ -42,9 +42,16 @@ export function createMotionStepEstimator(target = globalThis) {
 
   function handleMotion(event) {
     if (!active) return;
-    const signal = signalFromEvent(event);
-    if (!(signal >= 0)) return;
-    const timestamp = Number(event?.timeStamp || target.performance?.now?.() || Date.now());
+    let signal;
+    let timestamp;
+    // Browser motion-event properties can become inaccessible after permission
+    // revocation. Never let a single bad sample escape the DOM event handler.
+    try {
+      signal = signalFromEvent(event);
+      if (!(signal >= 0)) return;
+      timestamp = Number(event?.timeStamp || target.performance?.now?.() || Date.now());
+    } catch { return; }
+    if (!Number.isFinite(timestamp)) return;
     const above = signal >= STEP_THRESHOLD;
     if (above && !wasAbove && timestamp - lastStepAt >= STEP_REFRACTORY_MS) {
       steps += 1;
@@ -55,18 +62,23 @@ export function createMotionStepEstimator(target = globalThis) {
 
   async function start() {
     let MotionEvent;
-    try { MotionEvent = target.DeviceMotionEvent; }
-    catch {
+    let registerListener;
+    let requestPermission;
+    try {
+      MotionEvent = target.DeviceMotionEvent;
+      registerListener = target.addEventListener;
+      requestPermission = MotionEvent?.requestPermission;
+    } catch {
       status = "DENIED";
       return Object.freeze({ ok: false, status });
     }
-    if (!MotionEvent || typeof target.addEventListener !== "function") {
+    if (!MotionEvent || typeof registerListener !== "function") {
       status = "UNAVAILABLE";
       return Object.freeze({ ok: false, status });
     }
-    if (typeof MotionEvent.requestPermission === "function") {
+    if (typeof requestPermission === "function") {
       try {
-        const permission = await MotionEvent.requestPermission();
+        const permission = await requestPermission.call(MotionEvent);
         if (permission !== "granted") {
           status = "DENIED";
           return Object.freeze({ ok: false, status });
@@ -77,7 +89,7 @@ export function createMotionStepEstimator(target = globalThis) {
       }
     }
     if (!listening) {
-      try { target.addEventListener("devicemotion", handleMotion, { passive: true }); }
+      try { registerListener.call(target, "devicemotion", handleMotion, { passive: true }); }
       catch {
         status = "DENIED";
         active = false;
