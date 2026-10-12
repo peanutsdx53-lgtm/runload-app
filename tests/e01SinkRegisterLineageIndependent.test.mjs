@@ -20,7 +20,7 @@ function registerRows() {
 
 test("E-01: every current HTML parser sink is pinned to one source line and source SHA", () => {
   const rows = registerRows();
-  assert.equal(rows.length, 38);
+  assert.equal(rows.length, 36);
   assert.equal(new Set(rows.map(x => x.id)).size, rows.length);
   assert.ok(!rows.some(x=>["E01-SINK-20","E01-SINK-21"].includes(x.id)), "retired sinks must remain absent");
   const byFile = new Map();
@@ -41,5 +41,5 @@ test("E-01: every current HTML parser sink is pinned to one source line and sour
       measured++;
     }
   }
-  assert.equal(measured, 38);
+  assert.equal(measured, 36);
 });

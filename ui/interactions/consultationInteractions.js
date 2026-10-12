@@ -122,7 +122,7 @@ export function bindConsultation() {
 
     const template = root.querySelector(`template[data-consult-region-visual-template="${CSS.escape(option.value)}"]`);
     root.querySelectorAll("[data-consult-region-visual]").forEach((element) => {
-      if (template) element.innerHTML = template.innerHTML;
+      if (template) element.replaceChildren(template.content.cloneNode(true));
       else element.replaceChildren();
     });
   };

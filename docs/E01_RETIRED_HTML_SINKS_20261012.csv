@@ -1,0 +1,3 @@
+id,file,line,kind,column,data_origin,trust_boundary,evidence,notes,source_line_sha256
+E01-SINK-11,ui/interactions/consultationInteractions.js,125,innerHTML,28,dynamic selected region and consultation labels,template-DOM-clone,SOURCE_REVIEW,template.innerHTML copied; untrusted text uses textContent,8223ca79a50045908b4c080d930d3ba97b97517c7c6ee4911dbdeefd8a47830a
+E01-SINK-18,ui/interactions/mobileHomeInteractions.js,737,innerHTML,10,existing icon HTML copied for animation,catalog-DOM-to-HTML,SOURCE_REVIEW,existing DOM trust dependency,94043c7adcc778160c9aaef3a065b060438b005b3bff190f56212e871e2ed7b4

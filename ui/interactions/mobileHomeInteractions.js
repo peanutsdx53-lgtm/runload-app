@@ -734,7 +734,7 @@ export function bindHome(context = {}) {
 
     const glyph = document.createElement("span");
     glyph.className = "mobile-home-launch-surface__glyph";
-    glyph.innerHTML = icon.innerHTML;
+    glyph.replaceChildren(...[...icon.childNodes].map((node) => node.cloneNode(true)));
     surface.append(glyph);
     document.body.append(surface);
 
