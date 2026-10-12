@@ -73,7 +73,19 @@ async function platformRun(browser,origin,mobile) {
       try {
         const response=await probe.goto(origin+'/index.html#/'+name+'?'+query,{waitUntil:'domcontentloaded',timeout:15000});
         assert.equal(response.status(),200,`${name}: response`);
-        await probe.waitForSelector('.app-shell',{timeout:15000});
+        try {
+          await probe.waitForSelector('.app-shell',{state:'attached',timeout:8000});
+        } catch (error) {
+          const diag=await probe.evaluate(()=>({
+            href:location.href,readyState:document.readyState,
+            title:document.title,bodyClass:document.body?.className,
+            appExists:Boolean(document.getElementById('app')),
+            appSnippet:document.getElementById('app')?.innerHTML.slice(0,400),
+            heading:document.querySelector('h1')?.textContent,
+          })).catch(e=>({diagnosticError:String(e)}));
+          console.error('E01_ROUTE_BOOT_DIAGNOSTICS',JSON.stringify({mobile,name,diag,pageErrors:errors.slice(-5)}));
+          throw error;
+        }
         await probe.waitForTimeout(70);
         const state=await probe.evaluate(()=>{
           const root=document.getElementById('app');
