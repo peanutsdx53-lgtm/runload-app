@@ -41,3 +41,13 @@ test('G01 GPX above 10MB remains rejected before text read or parse',async()=>{
    assert.equal(reads,0);assert.match(h.el('gpx-status').textContent,/10MB以下/);
  }finally{h.cleanup()}
 });
+
+test('E07 denied native GPX reset setter does not leave stale approval',async()=>{
+ const h=setup();try{
+  await h.change();assert.equal(h.el('gpx-apply').disabled,false);
+  Object.defineProperty(h.input,'value',{configurable:true,set:denied,get(){return 'unchanged'}});
+  assert.doesNotThrow(()=>h.el('gpx-reset').handlers.get('click')());
+  assert.equal(h.el('gpx-apply').disabled,true);
+  assert.doesNotThrow(h.apply);assert.equal(peekGpxCandidate(),null);
+ }finally{h.cleanup()}
+});
