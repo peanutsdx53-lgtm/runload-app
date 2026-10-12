@@ -16,9 +16,12 @@ import { createRunMeasurementNotifier } from "../runMeasurementNotifications.js"
 import { clearPendingRunMeasurement, savePendingRunMeasurement } from "../runMeasurementState.js";
 
 function geolocationErrorMessage(error) {
-  if (error?.code === 1) return "位置情報が許可されていません。ブラウザーの設定でこのアプリへの位置情報を許可してください。";
-  if (error?.code === 2) return "現在地を取得できません。屋外でGPSを受信しやすい場所に移動して再度お試しください。";
-  if (error?.code === 3) return "現在地の取得に時間がかかっています。GPS受信状態を確認してください。";
+  // A revoked GPS permission can make the error callback's fields inaccessible.
+  let code;
+  try { code = error?.code; } catch { code = null; }
+  if (code === 1) return "位置情報が許可されていません。ブラウザーの設定でこのアプリへの位置情報を許可してください。";
+  if (code === 2) return "現在地を取得できません。屋外でGPSを受信しやすい場所に移動して再度お試しください。";
+  if (code === 3) return "現在地の取得に時間がかかっています。GPS受信状態を確認してください。";
   return "現在地を取得できませんでした。";
 }
 
@@ -178,6 +181,9 @@ export function bindRunMeasurement({ router, services }) {
   let timerId = null;
   let wakeLock = null;
   let measurementStarted = false;
+  let disposed = false;
+  let startPending = false;
+  let wakeRequestInFlight = false;
   let paused = false;
   let pausedAtMs = null;
   let pausedTotalMs = 0;
@@ -333,11 +339,22 @@ export function bindRunMeasurement({ router, services }) {
   }
 
   async function requestWakeLock() {
-    if (!measurementStarted || paused || document.visibilityState !== "visible" || !navigator.wakeLock?.request) return;
+    if (disposed || !measurementStarted || paused || document.visibilityState !== "visible"
+      || wakeLock || wakeRequestInFlight) return;
+    wakeRequestInFlight = true;
     try {
-      wakeLock = await navigator.wakeLock.request("screen");
+      const acquired = await navigator.wakeLock?.request?.("screen");
+      // An OS lock that arrives after navigation/pause must be released rather
+      // than retained after the screen has already cleaned up.
+      if (disposed || !measurementStarted || paused || document.visibilityState !== "visible") {
+        try { await acquired?.release?.(); } catch {}
+        return;
+      }
+      wakeLock = acquired || null;
     } catch {
       wakeLock = null;
+    } finally {
+      wakeRequestInFlight = false;
     }
   }
 
@@ -486,7 +503,9 @@ export function bindRunMeasurement({ router, services }) {
   }
 
   async function start() {
-    if (measurementStarted) return;
+    if (disposed || measurementStarted || startPending) return;
+    startPending = true;
+    try {
     let locationAvailable = false;
     try { locationAvailable = Boolean(navigator.geolocation); } catch {}
     if (!window.isSecureContext || !locationAvailable) {
@@ -496,9 +515,11 @@ export function bindRunMeasurement({ router, services }) {
     if (!validateGoal()) return;
 
     await notifier.prepare();
+    if (disposed) return;
     clearPendingRunMeasurement();
     discardFatigueLink();
     await stepEstimator.start();
+    if (disposed) { stepEstimator.stop(); return; }
     const fatigueLink = capturePreFatigue();
     if (!fatigueLink.ok) {
       stepEstimator.stop();
@@ -544,6 +565,9 @@ export function bindRunMeasurement({ router, services }) {
     timerId = window.setInterval(updateMetrics, 500);
     beginWatch();
     await requestWakeLock();
+    } finally {
+      startPending = false;
+    }
   }
 
   async function togglePause() {
@@ -711,6 +735,7 @@ export function bindRunMeasurement({ router, services }) {
 
   async function cancel() {
     if (!measurementStarted) {
+      disposed = true;
       stepEstimator.stop();
       clearPendingRunMeasurement();
       discardFatigueLink();
@@ -756,6 +781,7 @@ export function bindRunMeasurement({ router, services }) {
   document.addEventListener("visibilitychange", visibilityHandler);
 
   return () => {
+    disposed = true;
     const wasActive = measurementStarted;
     measurementStarted = false;
     stopWatch();

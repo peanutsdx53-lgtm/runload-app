@@ -45,3 +45,26 @@ test('E-07: clearWatch throwing during pause cannot leave measurement without co
     assert.match(h.el('[data-measurement-status]').textContent,/一時停止/);
   }finally{await h.cleanup();}
 });
+
+test('E-07 asynchronous GPS callback tolerates a revoked error.code getter',async()=>{
+  let errorCallback;
+  const h=harness(()=>({watchPosition(_ok,error){errorCallback=error;return 21;},clearWatch(){}}));
+  try {
+    await h.el('[data-action="start-measurement"]').fire('click');
+    const revoked={};
+    Object.defineProperty(revoked,'code',{get(){throw new DOMException('revoked','SecurityError');}});
+    assert.doesNotThrow(()=>errorCallback(revoked));
+    assert.equal(h.root.dataset.gpsQuality,'error');
+    assert.match(h.el('[data-measurement-status]').textContent,/現在地を取得できませんでした/);
+  }finally{await h.cleanup();}
+});
+test('E-07 ordinary GPS permission denied callback retains prior behavior',async()=>{
+  let errorCallback;
+  const h=harness(()=>({watchPosition(_ok,error){errorCallback=error;return 22;},clearWatch(){}}));
+  try {
+    await h.el('[data-action="start-measurement"]').fire('click');
+    assert.doesNotThrow(()=>errorCallback({code:1}));
+    assert.equal(h.root.dataset.gpsQuality,'error');
+    assert.match(h.el('[data-measurement-status]').textContent,/位置情報が許可されていません/);
+  }finally{await h.cleanup();}
+});

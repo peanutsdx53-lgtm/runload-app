@@ -48,37 +48,40 @@ export function haversineDistanceMeters(a = {}, b = {}) {
 }
 
 export function normalizeGeolocationPosition(position) {
-  const coords = position?.coords || {};
-  // Browser Position.coords fields are numeric. Missing or stringified values
-  // must never be coerced into an apparently valid GPS origin/precision.
-  if (typeof coords.latitude !== "number" || typeof coords.longitude !== "number"
-    || !Number.isFinite(coords.latitude) || !Number.isFinite(coords.longitude)
-    || Math.abs(coords.latitude) > 90 || Math.abs(coords.longitude) > 180
-    || typeof coords.accuracy !== "number" || !Number.isFinite(coords.accuracy)
-    || coords.accuracy < 0) return null;
-  const lat = coords.latitude;
-  const lon = coords.longitude;
-  const accuracyM = coords.accuracy;
-  // Geolocation Position exposes numeric optional fields, or null. Never
-  // coerce false/blank strings to real zero elevation, accuracy or speed.
-  const optionalSensorValue = (value, allowNegative = false) =>
-    typeof value === "number" && Number.isFinite(value) && (allowNegative || value >= 0)
-      ? value : null;
-  const altitudeM = optionalSensorValue(coords.altitude, true);
-  const altitudeAccuracyM = optionalSensorValue(coords.altitudeAccuracy);
-  const reportedSpeedMps = optionalSensorValue(coords.speed);
-  // A missing or malformed timestamp is not a measurement at the current time.
-  const timestamp = position?.timestamp;
-  if (typeof timestamp !== "number" || !Number.isFinite(timestamp) || timestamp < 0) return null;
-  return Object.freeze({
-    lat,
-    lon,
-    accuracyM: Number.isFinite(accuracyM) && accuracyM >= 0 ? accuracyM : null,
-    altitudeM: Number.isFinite(altitudeM) ? altitudeM : null,
-    altitudeAccuracyM: Number.isFinite(altitudeAccuracyM) && altitudeAccuracyM >= 0 ? altitudeAccuracyM : null,
-    reportedSpeedMps: Number.isFinite(reportedSpeedMps) && reportedSpeedMps >= 0 ? reportedSpeedMps : null,
-    timestamp,
-  });
+  // Access browser Position fields only once. Revoked permissions and hostile
+  // property getters cannot escape the geolocation callback or change values
+  // after their range/accuracy validation.
+  try {
+    const coords = position?.coords;
+    if (!coords || typeof coords !== "object") return null;
+    const latitude = coords.latitude;
+    const longitude = coords.longitude;
+    const accuracy = coords.accuracy;
+    const altitude = coords.altitude;
+    const altitudeAccuracy = coords.altitudeAccuracy;
+    const speed = coords.speed;
+    const timestamp = position?.timestamp;
+    if (typeof latitude !== "number" || typeof longitude !== "number"
+      || !Number.isFinite(latitude) || !Number.isFinite(longitude)
+      || Math.abs(latitude) > 90 || Math.abs(longitude) > 180
+      || typeof accuracy !== "number" || !Number.isFinite(accuracy)
+      || accuracy < 0 || typeof timestamp !== "number"
+      || !Number.isFinite(timestamp) || timestamp < 0) return null;
+    const optionalSensorValue = (value, allowNegative = false) =>
+      typeof value === "number" && Number.isFinite(value) && (allowNegative || value >= 0)
+        ? value : null;
+    return Object.freeze({
+      lat: latitude,
+      lon: longitude,
+      accuracyM: accuracy,
+      altitudeM: optionalSensorValue(altitude, true),
+      altitudeAccuracyM: optionalSensorValue(altitudeAccuracy),
+      reportedSpeedMps: optionalSensorValue(speed),
+      timestamp,
+    });
+  } catch {
+    return null;
+  }
 }
 
 export function evaluateTrackPoint(previousPoint, currentPoint, options = {}) {
