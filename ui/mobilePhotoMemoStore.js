@@ -93,10 +93,19 @@ export async function listPhotoMemos() {
 }
 
 export async function savePhotoMemo({ blob, note = "", width = 0, height = 0 } = {}) {
-  if (!(blob instanceof Blob) || !blob.size || blob.type !== "image/jpeg") {
+  // Access to a native Blob can be revoked between selection and storage.
+  // Do not throw out of a user-driven async callback or invent a valid image.
+  let byteSize;
+  let mimeType;
+  try {
+    if (!(blob instanceof Blob)) return { ok: false, reason: "image" };
+    byteSize = blob.size;
+    mimeType = blob.type;
+  } catch { return { ok: false, reason: "unavailable" }; }
+  if (!Number.isSafeInteger(byteSize) || byteSize <= 0 || mimeType !== "image/jpeg") {
     return { ok: false, reason: "image" };
   }
-  if (blob.size > PHOTO_MEMO_MAX_BYTES) return { ok: false, reason: "size" };
+  if (byteSize > PHOTO_MEMO_MAX_BYTES) return { ok: false, reason: "size" };
   const imageWidth = Number(width);
   const imageHeight = Number(height);
   if (!Number.isInteger(imageWidth) || !Number.isInteger(imageHeight)
@@ -113,7 +122,7 @@ export async function savePhotoMemo({ blob, note = "", width = 0, height = 0 } =
       note: String(note || "").trim().slice(0, 160),
       imageBytes,
       mimeType: "image/jpeg",
-      byteSize: blob.size,
+      byteSize,
       width: imageWidth,
       height: imageHeight,
     };
@@ -159,8 +168,8 @@ export async function clearAllPhotoMemos() {
   // records in a committed readwrite transaction has a definitive completion
   // boundary, including when another tab still holds an open database handle.
   // Retain the empty schema; removing all personal rows is the user operation.
-  if (!globalThis.indexedDB) return false;
   try {
+    if (!globalThis.indexedDB) return false;
     const database = await openDatabase();
     const transaction = database.transaction(STORE_NAME, "readwrite");
     const done = transactionDone(transaction);

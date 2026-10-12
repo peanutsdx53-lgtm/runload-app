@@ -44,7 +44,7 @@ test('E01 02 app.js shell: renderer-controlled screenContent is explicitly marke
 });
 test('E01 03 settings update version is release constant, not user-supplied markup',()=>{
   const code=src('ui/appVersionStatus.js');
-  assert.match(code,/export const APP_VERSION = "2026\.10\.12\.106"/);
+  assert.match(code,/export const APP_VERSION = "2026\.10\.12\.107"/);
   assert.match(code,/export const APP_VERSION_LABEL = `v\$\{APP_VERSION\}`/);
   const html=code.slice(code.indexOf('section.innerHTML = `'),code.indexOf('return section;'));
   assert.match(html,/\$\{APP_VERSION\}/);
@@ -105,7 +105,8 @@ test('E01 10 settings restore-preview: attacker filename and issues are escaped 
   noExecutable(html);
   assert.match(html,/&lt;img/);
   const code=src('ui/interactions/settingsInteractions.js');
-  assert.match(code,/previewHost\.innerHTML\s*=\s*renderRestoreInspection\(inspection, file\.name\)/);
+  assert.match(code,/previewHost\.innerHTML\s*=\s*renderRestoreInspection\(inspection, safeBackupFileName\(file\)\)/);
+  assert.match(code,/function safeBackupFileName\(file\)/);
 });
 test('E01 11 simulation assumption chip revert id must be encoded before attribute interpolation',()=>{
   const c=src('ui/interactions/simulationInteractions.js');
