@@ -144,14 +144,16 @@ function consultationRegionalSummary(decision) {
 
 function consultationBodyRows(report = {}) {
   const rows = [];
-  report.exactBodyObservations?.forEach((item) => {
+  const exact = Array.isArray(report.exactBodyObservations) ? report.exactBodyObservations : [];
+  exact.filter((item) => item && typeof item === "object").forEach((item) => {
     const values = [];
     if (item.lateralityLabel) values.push(item.lateralityLabel);
     if (item.intensity != null) values.push(`程度 ${item.intensity}/5`);
     if (item.sensation) values.push(item.sensation);
     rows.push(Object.freeze({ label: item.label || "詳細部位", detail: values.join("・") || "記録あり" }));
   });
-  report.subjectiveParts?.forEach((item) => {
+  const subjective = Array.isArray(report.subjectiveParts) ? report.subjectiveParts : [];
+  subjective.filter((item) => item && typeof item === "object").forEach((item) => {
     const values = [];
     if (Number(item.fatigue) > 0) values.push(`疲れ・だるさ ${item.fatigue}/5`);
     if (Number(item.discomfort) > 0) values.push(`気になる感じ ${item.discomfort}/5`);
@@ -294,8 +296,9 @@ function shortDateLabel(value = "") {
 
 function consultationTrendSvg(report = {}, regional) {
   const points = [];
-  (report.recent || []).forEach((item) => {
-    if (!item.regionalDirectComparable || !isPresentFiniteNumber(item.regionalValue)) return;
+  const recent = Array.isArray(report.recent) ? report.recent : [];
+  recent.forEach((item) => {
+    if (!item || typeof item !== "object" || !item.regionalDirectComparable || !isPresentFiniteNumber(item.regionalValue)) return;
     points.push({ date: item.date, value: Number(item.regionalValue) });
   });
   if (regional?.available && isPresentFiniteNumber(regional.value)) points.push({ date: report.date || "", value: Number(regional.value) });

@@ -52,7 +52,8 @@ function fatiguePoint({ id = "", date = "", createdAt = "", activity = "", pre =
 
 export function collectMobileFatigueHistory(services, { limit = 8 } = {}) {
   const points = [];
-  const records = services?.storage?.records?.loadAll?.() || [];
+  const storedRecords = services?.storage?.records?.loadAll?.();
+  const records = Array.isArray(storedRecords) ? storedRecords : [];
   records.forEach((record) => {
     if (record?.activityType !== "run") return;
     const summary = services?.fatigue?.summarizeRun?.(record.id) || null;
