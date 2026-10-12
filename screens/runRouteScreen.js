@@ -1,9 +1,11 @@
 import { escapeHtml } from "../ui/commonComponents.js";
+import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
 import { findSavedRunMeasurement } from "../ui/runMeasurementState.js";
 
 function durationLabel(minutes) {
-  const totalSeconds = Math.max(0, Math.round(Number(minutes || 0) * 60));
+  if (!finite(minutes)) return "—";
+  const totalSeconds = Math.max(0, Math.round(Number(minutes) * 60));
   const hours = Math.floor(totalSeconds / 3600);
   const mins = Math.floor((totalSeconds % 3600) / 60);
   const seconds = String(totalSeconds % 60).padStart(2, "0");
@@ -40,7 +42,7 @@ export function renderRunRouteScreen({ services, context }) {
         </div>
       </div>
       <div class="run-route-view__summary">
-        <div><small>測定距離</small><strong>${Number(measurement.distanceKm || 0).toFixed(2)} km</strong></div>
+        <div><small>測定距離</small><strong>${finite(measurement.distanceKm) ? `${Number(measurement.distanceKm).toFixed(2)} km` : "—"}</strong></div>
         <div><small>測定時間</small><strong>${escapeHtml(durationLabel(measurement.durationMinutes))}</strong></div>
         <div><small>保存地点</small><strong>${Number(measurement.track.length)}点</strong></div>
       </div>
