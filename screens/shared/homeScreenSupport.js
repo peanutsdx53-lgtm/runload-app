@@ -38,6 +38,7 @@ export function homeState(experience, draft) {
 
 export function nextPlan(services) {
   const today = localTodayIso();
-  return services.storage.plans.loadAll().filter((plan) => String(plan.scheduledDate || "") >= today).sort((a, b) => String(a.scheduledDate).localeCompare(String(b.scheduledDate)))[0] || null;
+  const plans = services.storage.plans.loadAll();
+  return (Array.isArray(plans) ? plans : []).filter((plan) => plan && typeof plan === "object" && String(plan.scheduledDate || "") >= today).sort((a, b) => String(a.scheduledDate).localeCompare(String(b.scheduledDate)))[0] || null;
 }
 
