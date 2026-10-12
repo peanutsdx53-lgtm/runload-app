@@ -34,10 +34,16 @@ function vibrationEnabled(settings = {}) {
 }
 
 export function measurementNotificationCapabilities(target = globalThis) {
-  return Object.freeze({
-    sound: Boolean(target?.AudioContext || target?.webkitAudioContext),
-    vibration: typeof target?.navigator?.vibrate === "function",
-  });
+  // Browser feature getters can fail under privacy restrictions. Optional
+  // feedback must never prevent GPS measurement from binding or starting.
+  let sound = false;
+  let vibration = false;
+  try { sound = Boolean(target?.AudioContext); } catch {}
+  if (!sound) {
+    try { sound = Boolean(target?.webkitAudioContext); } catch {}
+  }
+  try { vibration = typeof target?.navigator?.vibrate === "function"; } catch {}
+  return Object.freeze({ sound, vibration });
 }
 
 export function createRunMeasurementNotifier(target = globalThis, settings = {}) {
