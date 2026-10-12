@@ -1,3 +1,4 @@
+import { parseLocalDateAtNoon as parseLocalDate } from "../../shared/textUtilities.js";
 import { mondayOfWeekAtNoon as mondayOfWeek } from "../../ui/mobileDateUtilities.js";
 import { escapeHtml } from "../../ui/commonComponents.js";
 import { isPresentFiniteNumber as finite } from "../../shared/valueUtilities.js";
@@ -12,11 +13,6 @@ function renderMobileConfirmationBanner(theme) {
   return `<a class="mobile-home-confirmation-banner" data-mobile-confirmation-banner href="#/history?view=checks" aria-label="次回見ることに新しい記録 ${escapeHtml(String(theme.newCount || 1))}件。確認の続きを見る"><span aria-hidden="true">⚑</span><span><small>次回見ること</small><strong>新しい記録 ${escapeHtml(String(theme.newCount || 1))}件</strong></span><i aria-hidden="true">›</i></a>`;
 }
 
-function parseLocalDate(dateText = "") {
-  const match = String(dateText).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!match) return null;
-  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0, 0);
-}
 
 function weeklySummary(services) {
   const start = mondayOfWeek();
@@ -27,8 +23,8 @@ function weeklySummary(services) {
     const date = parseLocalDate(record.date);
     return date && date >= start && date < end;
   });
-  const totalDistanceKm = records.reduce((sum, record) => sum + Math.max(0, Number(record.distanceKm || 0)), 0);
-  const totalDurationMinutes = records.reduce((sum, record) => sum + Math.max(0, Number(record.durationMinutes || 0)), 0);
+  const totalDistanceKm = records.reduce((sum, record) => sum + (finite(record.distanceKm) && Number(record.distanceKm) >= 0 ? Number(record.distanceKm) : 0), 0);
+  const totalDurationMinutes = records.reduce((sum, record) => sum + (finite(record.durationMinutes) && Number(record.durationMinutes) >= 0 ? Number(record.durationMinutes) : 0), 0);
   let estimatedKcal = 0;
   let kcalCount = 0;
   records.forEach((record) => {
