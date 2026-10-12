@@ -16,9 +16,12 @@ import { createRunMeasurementNotifier } from "../runMeasurementNotifications.js"
 import { clearPendingRunMeasurement, savePendingRunMeasurement } from "../runMeasurementState.js";
 
 function geolocationErrorMessage(error) {
-  if (error?.code === 1) return "位置情報が許可されていません。ブラウザーの設定でこのアプリへの位置情報を許可してください。";
-  if (error?.code === 2) return "現在地を取得できません。屋外でGPSを受信しやすい場所に移動して再度お試しください。";
-  if (error?.code === 3) return "現在地の取得に時間がかかっています。GPS受信状態を確認してください。";
+  // A revoked GPS permission can make the error callback's fields inaccessible.
+  let code;
+  try { code = error?.code; } catch { code = null; }
+  if (code === 1) return "位置情報が許可されていません。ブラウザーの設定でこのアプリへの位置情報を許可してください。";
+  if (code === 2) return "現在地を取得できません。屋外でGPSを受信しやすい場所に移動して再度お試しください。";
+  if (code === 3) return "現在地の取得に時間がかかっています。GPS受信状態を確認してください。";
   return "現在地を取得できませんでした。";
 }
 
