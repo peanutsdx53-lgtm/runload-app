@@ -181,6 +181,9 @@ export function bindRunMeasurement({ router, services }) {
   let timerId = null;
   let wakeLock = null;
   let measurementStarted = false;
+  let disposed = false;
+  let startPending = false;
+  let wakeRequestInFlight = false;
   let paused = false;
   let pausedAtMs = null;
   let pausedTotalMs = 0;
@@ -336,11 +339,22 @@ export function bindRunMeasurement({ router, services }) {
   }
 
   async function requestWakeLock() {
-    if (!measurementStarted || paused || document.visibilityState !== "visible" || !navigator.wakeLock?.request) return;
+    if (disposed || !measurementStarted || paused || document.visibilityState !== "visible"
+      || wakeLock || wakeRequestInFlight) return;
+    wakeRequestInFlight = true;
     try {
-      wakeLock = await navigator.wakeLock.request("screen");
+      const acquired = await navigator.wakeLock?.request?.("screen");
+      // An OS lock that arrives after navigation/pause must be released rather
+      // than retained after the screen has already cleaned up.
+      if (disposed || !measurementStarted || paused || document.visibilityState !== "visible") {
+        try { await acquired?.release?.(); } catch {}
+        return;
+      }
+      wakeLock = acquired || null;
     } catch {
       wakeLock = null;
+    } finally {
+      wakeRequestInFlight = false;
     }
   }
 
@@ -489,7 +503,9 @@ export function bindRunMeasurement({ router, services }) {
   }
 
   async function start() {
-    if (measurementStarted) return;
+    if (disposed || measurementStarted || startPending) return;
+    startPending = true;
+    try {
     let locationAvailable = false;
     try { locationAvailable = Boolean(navigator.geolocation); } catch {}
     if (!window.isSecureContext || !locationAvailable) {
@@ -499,9 +515,11 @@ export function bindRunMeasurement({ router, services }) {
     if (!validateGoal()) return;
 
     await notifier.prepare();
+    if (disposed) return;
     clearPendingRunMeasurement();
     discardFatigueLink();
     await stepEstimator.start();
+    if (disposed) { stepEstimator.stop(); return; }
     const fatigueLink = capturePreFatigue();
     if (!fatigueLink.ok) {
       stepEstimator.stop();
@@ -547,6 +565,9 @@ export function bindRunMeasurement({ router, services }) {
     timerId = window.setInterval(updateMetrics, 500);
     beginWatch();
     await requestWakeLock();
+    } finally {
+      startPending = false;
+    }
   }
 
   async function togglePause() {
@@ -714,6 +735,7 @@ export function bindRunMeasurement({ router, services }) {
 
   async function cancel() {
     if (!measurementStarted) {
+      disposed = true;
       stepEstimator.stop();
       clearPendingRunMeasurement();
       discardFatigueLink();
@@ -759,6 +781,7 @@ export function bindRunMeasurement({ router, services }) {
   document.addEventListener("visibilitychange", visibilityHandler);
 
   return () => {
+    disposed = true;
     const wasActive = measurementStarted;
     measurementStarted = false;
     stopWatch();
