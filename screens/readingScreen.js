@@ -1,3 +1,4 @@
+import { parseLocalDateAtNoon } from "../shared/textUtilities.js";
 import { toFiniteNumber as numberValue } from "../shared/valueUtilities.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { BODY_AREA_BY_ID, BODY_AREA_TO_PRIMARY_REGIONAL_V2, PRIMARY_REGIONAL_V2_REGION_DEFS } from "../core/appCore.js";
@@ -12,9 +13,7 @@ const publicArticleId = (articleId = "") => String(articleId || "");
 
 
 function dateToTime(dateText = "") {
-  const match = String(dateText || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!match) return NaN;
-  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])).getTime();
+  return parseLocalDateAtNoon(dateText)?.getTime() ?? NaN;
 }
 
 function daysBetweenDates(leftDate, rightDate) {
@@ -54,7 +53,10 @@ function repeatedBodyAreas(experience, allExperiences = []) {
   const history = buildRecordHistory(experience, allExperiences);
   const recent = history.previousRuns.slice(-4);
   return current.filter((observation) => recent.some((item) => (
-    daysBetweenDates(experience.record.date, item.record.date) <= 28
+    (() => {
+      const elapsedDays = daysBetweenDates(experience.record.date, item.record.date);
+      return elapsedDays !== null && elapsedDays >= 0 && elapsedDays <= 28;
+    })()
     && bodyAreaObservations(item.feedback || {})
       .some((prior) => prior.areaId === observation.areaId)
   )));
