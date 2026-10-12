@@ -125,7 +125,7 @@ export function bindDataManagement({ services, router, rerender, platformRuntime
       return;
     }
     const date = new Date().toISOString().slice(0, 10);
-    downloadJsonText(`running-record-backup-${date}.json`, exported.text);
+    try { downloadJsonText(`running-record-backup-${date}.json`, exported.text); } catch { showDataMessage("バックアップファイルを作成できませんでした。", "error"); return; }
     showDataMessage("バックアップファイルを作成しました。");
   });
   fileInput?.addEventListener("change", async (event) => {
