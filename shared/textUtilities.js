@@ -27,3 +27,14 @@ export function formatShortLocalDate(dateText = "") {
   if (!match) return dateText || "—";
   return `${Number(match[1])}月${Number(match[2])}日`;
 }
+
+ 
+// Date-only saved facts must not silently roll impossible days/months into
+// another calendar week. Use local noon to avoid midnight DST boundaries.
+export function parseLocalDateAtNoon(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(year, month - 1, day, 12, 0, 0, 0);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
+    ? date : null;
+}
