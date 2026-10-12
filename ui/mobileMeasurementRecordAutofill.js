@@ -42,7 +42,8 @@ function applyMeasurementAutofill() {
   if (!measurement) return;
 
   const steps = measurement.stepEstimate?.steps;
-  if (Number.isInteger(Number(steps)) && Number(steps) >= 0) {
+  if ((typeof steps === "number" || (typeof steps === "string" && steps.trim() !== ""))
+    && Number.isSafeInteger(Number(steps)) && Number(steps) >= 0) {
     setValue(form, "steps", Math.round(Number(steps)));
     setValue(form, "stepsProvenance", "ESTIMATED");
     const provenance = form.querySelector('[name="stepsProvenance"]');

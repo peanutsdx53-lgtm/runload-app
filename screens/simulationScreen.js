@@ -50,6 +50,14 @@ function sourceCourse(record, override){
   return {name:"",gradeKnowledge:"UNKNOWN",modelSurfaceClass:"UNKNOWN"};
 }
 
+// A missing saved measurement must not be coerced into a recorded zero.
+function storedMeasurement(value){
+  if(typeof value!=="number" && typeof value!=="string")return null;
+  if(typeof value==="string" && !value.trim())return null;
+  const number=Number(value);
+  return Number.isFinite(number)?number:null;
+}
+
 function runningFormatValue(record){
   return String(record?.runningFormat||"").toUpperCase()==="RUN_WALK"?"RUN_WALK":"CONTINUOUS_RUN";
 }
@@ -83,11 +91,11 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
     : null;
   const sourceEngineInput=sourceExperience?.regionalV2ResultRecord?.engine_input_snapshot || {};
   const sourceCondition=Object.freeze({
-    distanceKm:Number(recent?.distanceKm)||0,
-    durationMinutes:Number(recent?.durationMinutes)||0,
+    distanceKm:storedMeasurement(recent?.distanceKm),
+    durationMinutes:storedMeasurement(recent?.durationMinutes),
     runningFormat:runningFormatValue(recent),
-    runningDistanceKm:Number(recent?.runningDistanceKm)||0,
-    runningDurationMinutes:Number(recent?.runningDurationMinutes)||0,
+    runningDistanceKm:storedMeasurement(recent?.runningDistanceKm),
+    runningDurationMinutes:storedMeasurement(recent?.runningDurationMinutes),
     course:recent?.course&&typeof recent.course==="object"?recent.course:{},
   });
   const override=selectedCourse();
@@ -155,7 +163,7 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
       <section class="preview-panel condition-compare-preview" aria-labelledby="previewTitle">
         <div class="preview-head"><div><small>比較結果</small><h2 id="previewTitle">元の記録と変更後を読み比べる</h2></div><span class="calc-state">計算中</span></div>
         <div class="condition-compare" aria-label="元の記録と変更後の条件比較">
-          <article class="condition-snapshot previous"><small>${escapeHtml(sourceLabel)}（基準）</small><strong>${recent?`${escapeHtml(recent.distanceKm||"—")} km・${escapeHtml(recent.durationMinutes||"—")}分`:"記録なし"}</strong><span>${recent?`${escapeHtml(pace(recent.distanceKm,recent.durationMinutes))}・${escapeHtml(recent.course?.name||"コース未選択")}`:"比較対象なし"}</span></article>
+          <article class="condition-snapshot previous"><small>${escapeHtml(sourceLabel)}（基準）</small><strong>${recent?`${escapeHtml(storedMeasurement(recent.distanceKm) ?? "—")} km・${escapeHtml(storedMeasurement(recent.durationMinutes) ?? "—")}分`:"記録なし"}</strong><span>${recent?`${escapeHtml(pace(recent.distanceKm,recent.durationMinutes))}・${escapeHtml(recent.course?.name||"コース未選択")}`:"比較対象なし"}</span></article>
           <i aria-hidden="true">→</i>
           <article class="condition-snapshot assumed"><small>変更後の条件</small><strong data-simulation-current-summary>${distance.toFixed(1)} km・${Math.round(duration)}分</strong><span data-simulation-current-pace>${escapeHtml(pace(distance,duration))}・${escapeHtml(course.name||"コース未選択")}</span></article>
         </div>

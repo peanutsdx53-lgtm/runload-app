@@ -55,14 +55,14 @@ export function changedConditionItems(data){
   const distance=Number(data.get("distanceKm")),duration=Number(data.get("durationMinutes"));
   const format=String(data.get("runningFormat")||"CONTINUOUS_RUN");
   const sourceFormat=String(source.runningFormat||"CONTINUOUS_RUN");
-  if(!sameNumber(distance,source.distanceKm))items.push({id:"distanceKm",label:`距離 ${Number(source.distanceKm||0).toFixed(1)} → ${distance.toFixed(1)} km`});
-  if(!sameNumber(duration,source.durationMinutes))items.push({id:"durationMinutes",label:`時間 ${Math.round(Number(source.durationMinutes||0))} → ${Math.round(duration)}分`});
+  if(!sameNumber(distance,source.distanceKm))items.push({id:"distanceKm",label:`距離 ${sourceMeasureLabel(source.distanceKm,1)} → ${distance.toFixed(1)} km`});
+  if(!sameNumber(duration,source.durationMinutes))items.push({id:"durationMinutes",label:`時間 ${sourceMeasureLabel(source.durationMinutes)} → ${Math.round(duration)}分`});
   if(format!==sourceFormat)items.push({id:"runningFormat",label:"走り方を変更"});
   if(format==="RUN_WALK"&&sourceFormat==="RUN_WALK"){
     const runningDistance=Number(data.get("runningDistanceKm"));
     const runningDuration=Number(data.get("runningDurationMinutes"));
-    if(!sameNumber(runningDistance,source.runningDistanceKm))items.push({id:"runningDistanceKm",label:`走行区間距離 ${Number(source.runningDistanceKm||0).toFixed(1)} → ${runningDistance.toFixed(1)} km`});
-    if(!sameNumber(runningDuration,source.runningDurationMinutes))items.push({id:"runningDurationMinutes",label:`走行区間時間 ${Math.round(Number(source.runningDurationMinutes||0))} → ${Math.round(runningDuration)}分`});
+    if(!sameNumber(runningDistance,source.runningDistanceKm))items.push({id:"runningDistanceKm",label:`走行区間距離 ${sourceMeasureLabel(source.runningDistanceKm,1)} → ${runningDistance.toFixed(1)} km`});
+    if(!sameNumber(runningDuration,source.runningDurationMinutes))items.push({id:"runningDurationMinutes",label:`走行区間時間 ${sourceMeasureLabel(source.runningDurationMinutes)} → ${Math.round(runningDuration)}分`});
   }
   if(JSON.stringify(currentCourse)!==JSON.stringify(source.course||{}))items.push({id:"courseJson",label:"コース条件を変更"});
   return items;
@@ -222,4 +222,7 @@ export function bindSimulation({services}, platformEnhancement = {}){
   platformState=platformEnhancement.bind?.({ form, target, changedConditionItems, update }) || null;
   platformEnhancement.initialize?.({ form, state: platformState, changedItems: initialChanged });
   update();
+}
+function sourceMeasureLabel(value,digits=0){
+  return finite(value) ? (digits ? Number(value).toFixed(digits) : String(Math.round(Number(value)))) : "—";
 }
