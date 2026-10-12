@@ -14,6 +14,12 @@ const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Ob
 const REGION_BY_ID = new Map(REGIONS.map((region) => [region.id, region]));
 const DEFAULT_REGION_ID = "BA-DISP-019";
 
+function signedNumber(value, digits = 1) {
+  if (!finite(value)) return "—";
+  const number = Number(value);
+  return `${number > 0 ? "+" : ""}${formatNumber(number, digits)}`;
+}
+
 function reference100DistanceKm(resultRecord = {}, experience = null) {
   if (resultRecord?.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION) return null;
   const input = resultRecord?.engine_input_snapshot || {};
