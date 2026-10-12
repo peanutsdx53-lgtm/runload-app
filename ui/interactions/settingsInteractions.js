@@ -81,7 +81,7 @@ export function bindDataManagement({ services, router, rerender, platformRuntime
     restoreInspectionGeneration += 1;
     pendingRestoreInspection = null;
     pendingRestoreFile = null;
-    if (fileInput) fileInput.value = "";
+    try { if (fileInput) fileInput.value = ""; } catch {}
     if (previewHost) {
       previewHost.innerHTML = '<p class="muted-text">ファイルを選ぶと、保存内容と件数を確認してから復元できます。</p>';
     }
@@ -95,7 +95,7 @@ export function bindDataManagement({ services, router, rerender, platformRuntime
     });
     previewHost?.querySelector('[data-action="cancel-restore-preview"]')?.addEventListener("click", clearRestorePreview);
     confirmButton?.addEventListener("click", () => {
-      if (!pendingRestoreInspection || pendingRestoreFile !== fileInput?.files?.[0]) {
+      if (!pendingRestoreInspection || pendingRestoreFile !== selectedBackupFile(fileInput)) {
         showDataMessage("復元前の検査をやり直してください。", "error");
         return;
       }
@@ -134,23 +134,23 @@ export function bindDataManagement({ services, router, rerender, platformRuntime
     const generation = ++restoreInspectionGeneration;
     pendingRestoreInspection = null;
     pendingRestoreFile = null;
-    const file = event.target.files?.[0];
+    const file = selectedBackupFile(event?.target);
     if (!file) { clearRestorePreview(); return; }
     if (previewHost) previewHost.textContent = "バックアップを検査しています。";
     let inspection;
     try {
       inspection = await services.storage.backup.inspectBackupFile(file);
     } catch {
-      if (generation === restoreInspectionGeneration && fileInput?.files?.[0] === file) {
+      if (generation === restoreInspectionGeneration && selectedBackupFile(fileInput) === file) {
         showDataMessage("バックアップの検査に失敗しました。別のファイルを選択してください。", "error");
       }
       return;
     }
-    if (generation !== restoreInspectionGeneration || fileInput?.files?.[0] !== file) return;
+    if (generation !== restoreInspectionGeneration || selectedBackupFile(fileInput) !== file) return;
     pendingRestoreInspection = inspection.canRestore ? inspection : null;
     pendingRestoreFile = inspection.canRestore ? file : null;
     if (previewHost) {
-      previewHost.innerHTML = renderRestoreInspection(inspection, file.name);
+      previewHost.innerHTML = renderRestoreInspection(inspection, safeBackupFileName(file));
       previewHost.querySelector("[tabindex]")?.focus();
       bindRestorePreviewActions();
     }
@@ -297,4 +297,13 @@ export function bindSettings({ services, router, rerender, platformRuntime }) {
   });
   bindSavedShoeManagement({ services, router });
   bindDataManagement({ services, router, rerender, platformRuntime });
+}
+ 
+// Every native file boundary may be revoked independently of the change event.
+// Restore approval must remain bound to the same File object after inspection.
+function selectedBackupFile(input) {
+  try { return input?.files?.[0] || null; } catch { return null; }
+}
+function safeBackupFileName(file) {
+  try { return typeof file?.name === "string" ? file.name : ""; } catch { return ""; }
 }
