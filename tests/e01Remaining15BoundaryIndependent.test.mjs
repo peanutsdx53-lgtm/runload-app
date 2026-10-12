@@ -44,7 +44,7 @@ test('E01 02 app.js shell: renderer-controlled screenContent is explicitly marke
 });
 test('E01 03 settings update version is release constant, not user-supplied markup',()=>{
   const code=src('ui/appVersionStatus.js');
-  assert.match(code,/export const APP_VERSION = "2026\.10\.12\.100"/);
+  assert.match(code,/export const APP_VERSION = "2026\.10\.12\.101"/);
   assert.match(code,/export const APP_VERSION_LABEL = `v\$\{APP_VERSION\}`/);
   const html=code.slice(code.indexOf('section.innerHTML = `'),code.indexOf('return section;'));
   assert.match(html,/\$\{APP_VERSION\}/);
