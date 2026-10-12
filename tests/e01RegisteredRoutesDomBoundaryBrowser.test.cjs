@@ -16,7 +16,15 @@ async function localServer() {
       const relative = decodeURIComponent(uri.pathname === '/' ? '/index.html' : uri.pathname);
       const target = path.resolve(ROOT, '.' + relative);
       if (!target.startsWith(ROOT + path.sep)) {res.writeHead(403).end();return;}
-      const bytes = await fs.readFile(target);
+      let bytes = await fs.readFile(target);
+      if (path.basename(target) === 'index.html') {
+        // Security probing must not rely on production CSP to suppress injected
+        // HTML; other H01/E03 browser suites verify the real deployed CSP.
+        const original = bytes.toString('utf8');
+        const withoutCsp = original.replace(/<meta\\s+http-equiv=["']Content-Security-Policy["'][^>]*>\\s*/i, '');
+        assert.notEqual(withoutCsp, original, 'probe must actually remove CSP');
+        bytes = Buffer.from(withoutCsp, 'utf8');
+      }
       res.writeHead(200, {'content-type':(MIME[path.extname(target)] || 'application/octet-stream')+'; charset=utf-8','cache-control':'no-store'}).end(bytes);
     } catch {res.writeHead(404).end();}
   });
@@ -54,6 +62,7 @@ async function platformRun(browser,origin,mobile) {
     const resp=await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:25000});
     console.log('E01_ROUTE_BOOT_OK',mobile?'mobile':'desktop');
     assert.equal(resp.status(),200);
+    assert.equal(await page.locator('meta[http-equiv="Content-Security-Policy"]').count(), 0, 'E01 route parser probe must run without meta CSP');
     await page.waitForSelector('.app-shell',{timeout:25000});
     const routeKeys=await page.evaluate(async mobile=>{
       const registry=mobile ? await import('/screens/mobileScreenRegistry.js') : await import('/screens/desktopScreenRegistry.js');
@@ -112,6 +121,7 @@ async function platformRun(browser,origin,mobile) {
     assert.deepEqual(failures,[],`routes failed: ${JSON.stringify(failures)}`);
     assert.deepEqual(errors,[],`unexpected screen errors: ${errors.slice(0,5)}`);
     assert.equal(outgoing.filter(url=>url.includes('mal.invalid')).length,0,'attacker-controlled outbound request');
+    assert.equal(screens.length, routeKeys.length, 'every registered renderer must be exercised without CSP');
     console.log('E01_ALL_REGISTERED_ROUTES_BROWSER_PASS',JSON.stringify({mobile,count:screens.length,viewport,externalRequests:outgoing.length}));
   }finally{await context.close();}
 }
