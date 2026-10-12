@@ -47,9 +47,6 @@ function engineInput(data){
   return {input,course};
 }
 function sourceValues(services,recordId=""){const x=recordId?services.workflows.records.loadExperience(recordId):services.workflows.records.loadLatestExperience();const primary=x?.regionalV2ResultRecord?.result?.regions;const fallback=x?.regionalV2Result?.regions;const rows=Array.isArray(primary)?primary:Array.isArray(fallback)?fallback:[];return new Map(rows.filter((r)=>r&&typeof r==="object").map((r)=>[r.regionId,r.value]));}
-function sourceMeasureLabel(value,digits=0){
-  return finite(value) ? (digits ? Number(value).toFixed(digits) : String(Math.round(Number(value)))) : "—";
-}
 function sameNumber(a,b,tolerance=.001){return finite(a)&&finite(b)&&Math.abs(Number(a)-Number(b))<=tolerance;}
 export function changedConditionItems(data){
   const source=sourceConditionFrom(data);
@@ -225,4 +222,7 @@ export function bindSimulation({services}, platformEnhancement = {}){
   platformState=platformEnhancement.bind?.({ form, target, changedConditionItems, update }) || null;
   platformEnhancement.initialize?.({ form, state: platformState, changedItems: initialChanged });
   update();
+}
+function sourceMeasureLabel(value,digits=0){
+  return finite(value) ? (digits ? Number(value).toFixed(digits) : String(Math.round(Number(value)))) : "—";
 }
