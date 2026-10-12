@@ -102,12 +102,28 @@ async function platformRun(browser,origin,mobile) {
           const content=root?.querySelector('main#main-content');
           const unsafe=[...document.querySelectorAll('script[onload],script[src^="https://mal.invalid"],iframe,[onerror],[onload],[onfocus],a[href^="javascript:"],img[src^="https://mal.invalid"]')]
             .filter(n=>n.closest('#app, #platform-header-root'));
-          return {main:Boolean(content),elements:unsafe.map(n=>n.outerHTML.slice(0,120)),executed:window.__e01RouteXss,hash:window.location.hash};
+          // Inspect actual rendered text and accessible names. Merely grepping
+          // template strings does not prove that labels are visible to users.
+          const visibleText=content?.innerText || "";
+          const accessibleNames=[...content?.querySelectorAll('[aria-label]') || []]
+            .map(node=>node.getAttribute('aria-label') || "");
+          const exposedText=visibleText+" "+accessibleNames.join(" ");
+          const internalTokens=[...new Set(exposedText.match(/\\b(?:BA-DISP-\\d+|SOURCE_AUTHORED_MODEL|DIGITIZED_ORIGINAL_FIGURE|WITHIN_SOURCE_INTERPOLATION|REFERENCE_NOT_READY|AXIS_PRESERVED_NOT_COMBINED|RUNNING_CURRENT)\\b/g) || [])];
+          const headings=[...content?.querySelectorAll('h1,h2,h3') || []]
+            .map(node=>(node.innerText || "").trim()).filter(Boolean).slice(0,12);
+          const englishEyebrows=[...content?.querySelectorAll('small') || []]
+            .filter(node=>node.getClientRects().length > 0)
+            .map(node=>(node.innerText || "").trim())
+            .filter(text=>/^[A-Z][A-Z \/-]{3,}$/.test(text)).slice(0,16);
+          return {main:Boolean(content),elements:unsafe.map(n=>n.outerHTML.slice(0,120)),executed:window.__e01RouteXss,hash:window.location.hash,
+            headings,englishEyebrows,accessibleNameCount:accessibleNames.length,internalTokens};
         });
         assert.ok(state.main,`${name}: main not present`);
         assert.ok(state.hash.startsWith('#/'+name+'?'),`${name}: requested route did not survive`);
         assert.deepEqual(state.elements,[],`${name}: attacker created nodes`);
         assert.equal(state.executed,0,`${name}: script executed`);
+        assert.deepEqual(state.internalTokens,[],`${name}: user-visible scientific internals must not leak into text/ARIA`);
+        console.log('F02_E01_ACTUAL_ROUTE_DOM',JSON.stringify({mobile,name,headings:state.headings,englishEyebrows:state.englishEyebrows,accessibleNameCount:state.accessibleNameCount,internalTokens:state.internalTokens}));
         screens.push(name);
         console.log('E01_ROUTE_DONE',mobile?'mobile':'desktop',name);
       } catch (error) {
