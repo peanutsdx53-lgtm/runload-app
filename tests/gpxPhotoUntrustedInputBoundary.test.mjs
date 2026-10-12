@@ -26,7 +26,9 @@ test('GPX parser rejects too many points before mapping',()=> {
   finally {restore();}
 });
 test('GPX UI validates File.size before calling File.text',()=> {
-  assert.match(uiSource,/f\.size\s*>\s*GPX_MAX_BYTES/);
+  assert.match(uiSource,/gpxFileSizeState\(f\)/);
+  assert.match(uiSource,/Number\.isFinite\(size\)\s*&&\s*size\s*>\s*GPX_MAX_BYTES/);
+  assert.match(uiSource,/if \(sizeState !== "OK"\)/);
   assert.match(uiSource,/10MB以下/);
 });
 test('GPX parser has explicit text and point budgets',()=> {
