@@ -1,37 +1,45 @@
 
 export async function copyText(text) {
-  if (navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(text);
+  // A browser can deny property access before writeText() itself is called.
+  try {
+    const clipboard = navigator.clipboard;
+    if (typeof clipboard?.writeText === "function") {
+      await clipboard.writeText(text);
       return;
-    } catch {
-      // iOS/PWA environments can expose Clipboard API but reject writes.
-      // Fall back to a user-gesture compatible textarea copy below.
     }
+  } catch {
+    // Fall back to selecting a temporary textarea for legacy browsers.
   }
   const fallbackTextarea = document.createElement("textarea");
   fallbackTextarea.value = text;
   fallbackTextarea.setAttribute("readonly", "");
   fallbackTextarea.style.position = "fixed";
   fallbackTextarea.style.opacity = "0";
-  document.body.appendChild(fallbackTextarea);
-  fallbackTextarea.select();
-  fallbackTextarea.setSelectionRange(0, fallbackTextarea.value.length);
-  const copied = document.execCommand("copy");
-  fallbackTextarea.remove();
-  if (!copied) throw new Error("copy failed");
+  try {
+    document.body.appendChild(fallbackTextarea);
+    fallbackTextarea.select();
+    fallbackTextarea.setSelectionRange(0, fallbackTextarea.value.length);
+    if (!document.execCommand("copy")) throw new Error("copy failed");
+  } finally {
+    // Do not retain potentially sensitive consultation text after denial.
+    fallbackTextarea.remove();
+  }
 }
 
 function downloadText(filename, text, mimeType = "text/plain;charset=utf-8") {
   const blob = new Blob([text], { type: mimeType });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+  let link;
+  try {
+    link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+  } finally {
+    link?.remove();
+    URL.revokeObjectURL(url);
+  }
 }
 
 export function downloadJsonText(filename, text) {
