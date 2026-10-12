@@ -62,6 +62,7 @@ async function platformRun(browser,origin,mobile) {
     assert.equal(routeKeys.length,mobile?24:22,JSON.stringify({mobile,routeKeys}));
     console.log('E01_ROUTE_REGISTRY',JSON.stringify({mobile,count:routeKeys.length}));
     const screens=[];
+    const failures=[];
     const query=new URLSearchParams({recordId:'e01-record',planId:'e01-plan',id:'e01-course',returnTo:'#/home?x='+ATTACK, note:ATTACK,articleId:ATTACK}).toString();
     // A fresh page per route isolates navigation lifecycles and ensures the
     // requested renderer runs from a cold URL, not stale prior DOM state.
@@ -74,7 +75,7 @@ async function platformRun(browser,origin,mobile) {
         const response=await probe.goto(origin+'/index.html#/'+name+'?'+query,{waitUntil:'domcontentloaded',timeout:15000});
         assert.equal(response.status(),200,`${name}: response`);
         try {
-          await probe.waitForSelector('.app-shell',{state:'attached',timeout:8000});
+          await probe.waitForSelector('.app-shell',{state:'attached',timeout:4000});
         } catch (error) {
           const diag=await probe.evaluate(()=>({
             href:location.href,readyState:document.readyState,
@@ -100,10 +101,15 @@ async function platformRun(browser,origin,mobile) {
         assert.equal(state.executed,0,`${name}: script executed`);
         screens.push(name);
         console.log('E01_ROUTE_DONE',mobile?'mobile':'desktop',name);
+      } catch (error) {
+        const failure={mobile,name,error:String(error).slice(0,320),pageErrors:errors.slice(-3)};
+        failures.push(failure);
+        console.error('E01_ROUTE_FAILURE',JSON.stringify(failure));
       } finally {
-        await probe.close();
+        await probe.close().catch(()=>{});
       }
     }
+    assert.deepEqual(failures,[],`routes failed: ${JSON.stringify(failures)}`);
     assert.deepEqual(errors,[],`unexpected screen errors: ${errors.slice(0,5)}`);
     assert.equal(outgoing.filter(url=>url.includes('mal.invalid')).length,0,'attacker-controlled outbound request');
     console.log('E01_ALL_REGISTERED_ROUTES_BROWSER_PASS',JSON.stringify({mobile,count:screens.length,viewport,externalRequests:outgoing.length}));
