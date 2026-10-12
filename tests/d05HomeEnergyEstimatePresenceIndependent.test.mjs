@@ -1,3 +1,5 @@
+import { parseLocalDateAtNoon } from '../shared/textUtilities.js';
+import { isPresentFiniteNumber as finite } from '../shared/valueUtilities.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -12,7 +14,7 @@ const monday = new Date(2026, 9, 5, 12);
 const records = [{id:'has-null',date:'2026-10-07',activityType:'run',distanceKm:5,durationMinutes:30},
  {id:'missing',date:'2026-10-08',activityType:'run',distanceKm:5,durationMinutes:30}];
 function probe(saved) {
- const context={mondayOfWeek:()=>new Date(monday),findSavedRunMeasurement:(id)=>saved[id]||null,
+ const context={finite,parseLocalDate:parseLocalDateAtNoon,mondayOfWeek:()=>new Date(monday),findSavedRunMeasurement:(id)=>saved[id]||null,
   escapeHtml:(v)=>String(v),formatNumber:(v)=>String(v)};
  vm.runInNewContext(`${original}\nglobalThis.__audit={weeklySummary,renderOverviewWeek};`,context,
   {filename:'screens/mobile/homeScreen.js'});
