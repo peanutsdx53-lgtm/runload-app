@@ -63,21 +63,34 @@ async function platformRun(browser,origin,mobile) {
     console.log('E01_ROUTE_REGISTRY',JSON.stringify({mobile,count:routeKeys.length}));
     const screens=[];
     const query=new URLSearchParams({recordId:'e01-record',planId:'e01-plan',id:'e01-course',returnTo:'#/home?x='+ATTACK, note:ATTACK,articleId:ATTACK}).toString();
+    // A fresh page per route isolates navigation lifecycles and ensures the
+    // requested renderer runs from a cold URL, not stale prior DOM state.
+    await page.close();
     for(const name of routeKeys) {
       console.log('E01_ROUTE_PROBING',mobile?'mobile':'desktop',name);
-      await page.evaluate(({name,query})=>{window.location.hash=`#/${name}?${query}`;},{name,query});
-      await page.waitForTimeout(90);
-      const state=await page.evaluate(()=>{
-        const root=document.getElementById('app');
-        const content=root?.querySelector('main#main-content');
-        const unsafe=[...document.querySelectorAll('script[onload],script[src^="https://mal.invalid"],iframe,[onerror],[onload],[onfocus],a[href^="javascript:"],img[src^="https://mal.invalid"]')]
-          .filter(n=>n.closest('#app, #platform-header-root'));
-        return {main:Boolean(content),elements:unsafe.map(n=>n.outerHTML.slice(0,120)),executed:window.__e01RouteXss,hash:window.location.hash};
-      });
-      assert.ok(state.main,`${name}: main not present`);
-      assert.deepEqual(state.elements,[],`${name}: attacker created nodes`);
-      assert.equal(state.executed,0,`${name}: script executed`);
-      screens.push(name);
+      const probe=await context.newPage();
+      probe.on('pageerror',err=>errors.push(String(err.message)));
+      try {
+        const response=await probe.goto(origin+'/index.html#/'+name+'?'+query,{waitUntil:'domcontentloaded',timeout:15000});
+        assert.equal(response.status(),200,`${name}: response`);
+        await probe.waitForSelector('.app-shell',{timeout:15000});
+        await probe.waitForTimeout(70);
+        const state=await probe.evaluate(()=>{
+          const root=document.getElementById('app');
+          const content=root?.querySelector('main#main-content');
+          const unsafe=[...document.querySelectorAll('script[onload],script[src^="https://mal.invalid"],iframe,[onerror],[onload],[onfocus],a[href^="javascript:"],img[src^="https://mal.invalid"]')]
+            .filter(n=>n.closest('#app, #platform-header-root'));
+          return {main:Boolean(content),elements:unsafe.map(n=>n.outerHTML.slice(0,120)),executed:window.__e01RouteXss,hash:window.location.hash};
+        });
+        assert.ok(state.main,`${name}: main not present`);
+        assert.ok(state.hash.startsWith('#/'+name+'?'),`${name}: requested route did not survive`);
+        assert.deepEqual(state.elements,[],`${name}: attacker created nodes`);
+        assert.equal(state.executed,0,`${name}: script executed`);
+        screens.push(name);
+        console.log('E01_ROUTE_DONE',mobile?'mobile':'desktop',name);
+      } finally {
+        await probe.close();
+      }
     }
     assert.deepEqual(errors,[],`unexpected screen errors: ${errors.slice(0,5)}`);
     assert.equal(outgoing.filter(url=>url.includes('mal.invalid')).length,0,'attacker-controlled outbound request');
