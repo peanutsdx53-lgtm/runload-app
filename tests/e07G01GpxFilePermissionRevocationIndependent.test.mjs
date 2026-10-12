@@ -31,3 +31,13 @@ test('G01 denied FileList getter at approval cannot commit previously parsed GPX
 test('G01 valid GPX File still allows true zero elevation candidate',async()=>{
  const h=setup();try{await h.change();assert.equal(h.el('gpx-apply').disabled,false);h.apply();assert.equal(peekGpxCandidate()?.candidate?.gradeKnowledge,'KNOWN_PROFILE')}finally{h.cleanup()}
 });
+
+test('G01 GPX above 10MB remains rejected before text read or parse',async()=>{
+ const h=setup();try{
+   h.f.size=10_000_001;
+   let reads=0;h.f.text=()=>{reads++;return Promise.resolve('<gpx/>')};
+   await h.change();
+   assert.equal(h.el('gpx-apply').disabled,true);assert.equal(h.parsed(),0);
+   assert.equal(reads,0);assert.match(h.el('gpx-status').textContent,/10MB以下/);
+ }finally{h.cleanup()}
+});
