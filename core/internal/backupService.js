@@ -181,22 +181,27 @@ function createBackupService(gateway) {
   }
 
   async function inspectBackupFile(file) {
-    if (!file || typeof file.text !== "function") {
-      return blockedInspection("BACKUP_FILE_REQUIRED", "バックアップファイルを選択してください。");
-    }
-    const size = Number(file.size);
-    if (Number.isFinite(size) && size > INPUT_LIMITS.backupBytes) {
-      return blockedInspection("JSON_TOO_LARGE", "バックアップが大きすぎます。", {
-        bytes: size,
-        maximumBytes: INPUT_LIMITS.backupBytes,
-      });
-    }
+    // Native File API access can be revoked before the async read. Check the
+    // exact read method and finite file size before allocating/consuming data.
+    // A missing/denied size is not proof that the backup is a zero-byte file.
     try {
-      return inspectBackupText(await file.text());
-    } catch (error) {
-      return blockedInspection("BACKUP_FILE_READ_FAILED", "バックアップファイルを読み取れませんでした。", {
-        message: String(error?.message || error || "file_read_failed"),
-      });
+      const readText = file?.text;
+      if (typeof readText !== "function") {
+        return blockedInspection("BACKUP_FILE_REQUIRED", "バックアップファイルを選択してください。");
+      }
+      const size = file.size;
+      if (typeof size !== "number" || !Number.isSafeInteger(size) || size < 0) {
+        return blockedInspection("BACKUP_FILE_READ_FAILED", "バックアップファイルを読み取れませんでした。");
+      }
+      if (size > INPUT_LIMITS.backupBytes) {
+        return blockedInspection("JSON_TOO_LARGE", "バックアップが大きすぎます。", {
+          bytes: size,
+          maximumBytes: INPUT_LIMITS.backupBytes,
+        });
+      }
+      return inspectBackupText(await readText.call(file));
+    } catch {
+      return blockedInspection("BACKUP_FILE_READ_FAILED", "バックアップファイルを読み取れませんでした。");
     }
   }
 
