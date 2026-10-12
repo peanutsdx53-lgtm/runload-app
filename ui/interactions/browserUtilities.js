@@ -8,7 +8,7 @@ export async function copyText(text) {
       return;
     }
   } catch {
-    // Fall back to selecting a temporary textarea for legacy browsers.
+    // Fall back to selecting a temporary textarea when the API is blocked.
   }
   const fallbackTextarea = document.createElement("textarea");
   fallbackTextarea.value = text;
