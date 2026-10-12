@@ -21,7 +21,7 @@ async function localServer() {
         // Security probing must not rely on production CSP to suppress injected
         // HTML; other H01/E03 browser suites verify the real deployed CSP.
         const original = bytes.toString('utf8');
-        const withoutCsp = original.replace(/<meta\\s+http-equiv=["']Content-Security-Policy["'][^>]*>\\s*/i, '');
+        const withoutCsp = original.replace(/<meta\s+http-equiv=["']Content-Security-Policy["'][^>]*>\s*/i, '');
         assert.notEqual(withoutCsp, original, 'probe must actually remove CSP');
         bytes = Buffer.from(withoutCsp, 'utf8');
       }
