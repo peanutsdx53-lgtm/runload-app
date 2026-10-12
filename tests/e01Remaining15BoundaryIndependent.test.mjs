@@ -105,7 +105,8 @@ test('E01 10 settings restore-preview: attacker filename and issues are escaped 
   noExecutable(html);
   assert.match(html,/&lt;img/);
   const code=src('ui/interactions/settingsInteractions.js');
-  assert.match(code,/previewHost\.innerHTML\s*=\s*renderRestoreInspection\(inspection, file\.name\)/);
+  assert.match(code,/previewHost\.innerHTML\s*=\s*renderRestoreInspection\(inspection, safeBackupFileName\(file\)\)/);
+  assert.match(code,/function safeBackupFileName\(file\)/);
 });
 test('E01 11 simulation assumption chip revert id must be encoded before attribute interpolation',()=>{
   const c=src('ui/interactions/simulationInteractions.js');
