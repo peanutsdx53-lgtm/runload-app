@@ -240,8 +240,10 @@ export function analyzeMeasuredCourse({ track = [], durationMs = 0, name = "GPSæ
     const altitudeB = altitudes[index];
     const accuracyA = finite(a.altitudeAccuracyM) ? Number(a.altitudeAccuracyM) : null;
     const accuracyB = finite(b.altitudeAccuracyM) ? Number(b.altitudeAccuracyM) : null;
-    const altitudeAccurate = (accuracyA == null || accuracyA <= MAX_ALTITUDE_ACCURACY_M)
-      && (accuracyB == null || accuracyB <= MAX_ALTITUDE_ACCURACY_M);
+    // Without vertical accuracy, elevation is an unverified observation, not
+    // proof that a section is flat or uphill. Keep its slope status UNKNOWN.
+    const altitudeAccurate = accuracyA !== null && accuracyA >= 0 && accuracyA <= MAX_ALTITUDE_ACCURACY_M
+      && accuracyB !== null && accuracyB >= 0 && accuracyB <= MAX_ALTITUDE_ACCURACY_M;
     if (!finite(altitudeA) || !finite(altitudeB) || !altitudeAccurate) continue;
     if (distanceM < MIN_GRADE_DISTANCE_M) continue;
 
