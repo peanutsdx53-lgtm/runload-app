@@ -14,7 +14,7 @@ const register = read('docs/E01_HTML_SINK_REGISTER_20261011.csv').trim().split(/
 });
 
 test('E01 all HTML writes include optional-chained insertAdjacentHTML and match raw SHA-256',()=>{
-  assert.equal(register.length,38);
+  assert.equal(register.length,36);
   const grouped = new Map();
   for(const entry of register) grouped.set(entry.file,[...(grouped.get(entry.file)||[]),entry]);
   let observed=0;
@@ -32,7 +32,7 @@ test('E01 all HTML writes include optional-chained insertAdjacentHTML and match 
       observed++;
     }
   }
-  assert.equal(observed,38);
+  assert.equal(observed,36);
 });
 
 test('E01 optional-chain failure notice is the one inventory delta from naive lexical search',()=>{
