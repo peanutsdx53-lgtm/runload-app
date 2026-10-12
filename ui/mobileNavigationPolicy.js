@@ -32,8 +32,12 @@ function ensureSettingsAboutLink() {
 function setAboutReturnToSettings() {
   if (!mobileMatches() || !document.querySelector(".screen--about")) return;
   document.querySelectorAll(".mobile-topbar__back, .screen--about .secondary-derived-back").forEach((link) => {
-    link.setAttribute("href", "#/settings");
-    link.textContent = link.classList.contains("mobile-topbar__back") ? "‹ 設定" : "← 設定へ戻る";
+    const targetHref = "#/settings";
+    const targetText = link.classList.contains("mobile-topbar__back") ? "‹ 設定" : "← 設定へ戻る";
+    // MutationObserver observes the app subtree; rewriting unchanged textContent
+    // would create new childList events and repeatedly re-enter the observer.
+    if (link.getAttribute?.("href") !== targetHref) link.setAttribute("href", targetHref);
+    if (link.textContent !== targetText) link.textContent = targetText;
   });
 }
 

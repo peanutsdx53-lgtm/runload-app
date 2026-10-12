@@ -25,7 +25,7 @@ function daysBetweenDates(leftDate, rightDate) {
 }
 
 function bodyAreaObservations(feedback = {}) {
-  return Array.isArray(feedback.bodyAreaObservations)
+  return Array.isArray(feedback?.bodyAreaObservations)
     ? feedback.bodyAreaObservations.filter((item) => BODY_AREA_BY_ID[item?.areaId])
     : [];
 }
