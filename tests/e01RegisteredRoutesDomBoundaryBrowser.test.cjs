@@ -108,7 +108,7 @@ async function platformRun(browser,origin,mobile) {
           const accessibleNames=[...content?.querySelectorAll('[aria-label]') || []]
             .map(node=>node.getAttribute('aria-label') || "");
           const exposedText=visibleText+" "+accessibleNames.join(" ");
-          const internalTokens=[...new Set(exposedText.match(/\\b(?:BA-DISP-\\d+|SOURCE_AUTHORED_MODEL|DIGITIZED_ORIGINAL_FIGURE|WITHIN_SOURCE_INTERPOLATION|REFERENCE_NOT_READY|AXIS_PRESERVED_NOT_COMBINED|RUNNING_CURRENT)\\b/g) || [])];
+          const internalTokens=[...new Set(exposedText.match(/\b(?:BA-DISP-\d+|SOURCE_AUTHORED_MODEL|DIGITIZED_ORIGINAL_FIGURE|WITHIN_SOURCE_INTERPOLATION|REFERENCE_NOT_READY|AXIS_PRESERVED_NOT_COMBINED|RUNNING_CURRENT)\b/g) || [])];
           const headings=[...content?.querySelectorAll('h1,h2,h3') || []]
             .map(node=>(node.innerText || "").trim()).filter(Boolean).slice(0,12);
           const englishEyebrows=[...content?.querySelectorAll('small') || []]
