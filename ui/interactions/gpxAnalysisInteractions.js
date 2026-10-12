@@ -112,7 +112,7 @@ export function bindGpxAnalysis() {
   });
   document.getElementById("gpx-reset")?.addEventListener("click", () => {
     invalidate();
-    file.value = "";
+    try { file.value = ""; } catch {}
     if (status) status.textContent = "ファイルを選択してください。";
   });
   apply.addEventListener("click", () => {
