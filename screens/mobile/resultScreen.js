@@ -99,7 +99,7 @@ export function renderResultScreen(args) {
   if (state.empty) return renderEmptyResultScreen();
   const { services, record, regionalV2ResultRecord, allExperiences, savedMeasurement, fatigue } = state;
   const routeLink = savedMeasurement
-    ? `<section class="run-route-link-wrap"><a class="run-route-link" href="#/run-route?recordId=${encodeURIComponent(record.id)}"><span><small>位置情報の記録</small><strong>走行軌跡を見る</strong><em>${Number(savedMeasurement.distanceKm || 0).toFixed(2)} km・保存地点 ${Number(savedMeasurement.track?.length || 0)}点</em></span><i>›</i></a></section>`
+    ? `<section class="run-route-link-wrap"><a class="run-route-link" href="#/run-route?recordId=${encodeURIComponent(record.id)}"><span><small>位置情報の記録</small><strong>走行軌跡を見る</strong><em>${finite(savedMeasurement.distanceKm) ? `${Number(savedMeasurement.distanceKm).toFixed(2)} km` : "—"}・保存地点 ${Number(savedMeasurement.track?.length || 0)}点</em></span><i>›</i></a></section>`
     : "";
   const capsule = renderRunCapsule(services, record, { measurement: savedMeasurement, fatigue });
   const sameCourse = renderSameCourseComparison(record, allExperiences);
