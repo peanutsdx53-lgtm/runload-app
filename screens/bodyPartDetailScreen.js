@@ -32,10 +32,10 @@ function locatorSvg(regionId) { const [view, d] = REGION_VIEW[regionId] || []; c
 function comparableHistory(experience, regionId, allExperiences) {
   const signature = signatureFor(experience.regionalV2ResultRecord, regionId);
   if (!signature) return [];
-  return allExperiences
+  return (Array.isArray(allExperiences) ? allExperiences : [])
     .filter((item) => item?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
     .filter((item) => recordChronology(item, experience) <= 0)
-    .map((item) => ({ experience: item, row: item.regionalV2Result?.regions?.find((candidate) => candidate.regionId === regionId), signature: signatureFor(item.regionalV2ResultRecord, regionId) }))
+    .map((item) => ({ experience: item, row: (Array.isArray(item.regionalV2Result?.regions) ? item.regionalV2Result.regions : []).find((candidate) => candidate && typeof candidate === "object" && candidate.regionId === regionId), signature: signatureFor(item.regionalV2ResultRecord, regionId) }))
     .filter((item) => item.row && finite(item.row.value) && sameSignature(signature, item.signature))
     .sort((a, b) => recordChronology(a.experience, b.experience))
     .slice(-5);
@@ -72,7 +72,8 @@ export function renderBodyPartDetailScreenWithPresentation({ services, context }
   const recordId = String(context.parameters.get("recordId") || "");
   const regionId = String(context.parameters.get("regionId") || "");
   const experience = services.workflows.records.loadExperience(recordId);
-  const row = experience?.regionalV2Result?.regions?.find((item) => item.regionId === regionId) || null;
+  const regionRows = experience?.regionalV2Result?.regions;
+  const row = (Array.isArray(regionRows) ? regionRows : []).find((item) => item && typeof item === "object" && item.regionId === regionId) || null;
   const name = bodyRegionFormalName(regionId, row?.regionName || "部位");
   if (!experience || experience?.regionalV2ResultRecord?.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION || !row) {
     return `<div class="screen screen--body-part-detail screen-layout screen-layout--result"><div class="detail-topbar" data-context-back-duplicate><a href="#/result${recordId ? `?recordId=${encodeURIComponent(recordId)}` : ""}">‹ <span>今回の結果</span></a><strong>部位詳細</strong><span></span></div><main class="detail-main"><section class="detail-title"><p class="eyebrow">部位詳細</p><h1>${escapeHtml(name)}</h1><p>この部位の数値を表示できません。</p></section><p class="compact-boundary">不足する条件を0や100で補いません。</p></main></div>`;
