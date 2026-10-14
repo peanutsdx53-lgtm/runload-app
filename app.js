@@ -293,5 +293,13 @@ router = createAppRouter({
   singleEntryNavigation: platformRuntime.isMobilePlatform,
 });
 
+// Preserve the SPA route while moving keyboard focus to the main landmark.
+document.querySelector(".skip-link")?.addEventListener("click", (event) => {
+  const main = document.getElementById("main-content");
+  if (!main) return;
+  event.preventDefault();
+  main.focus();
+});
+
 router.start();
 registerPwaServiceWorker({ platform: mobileLayout ? "mobile" : "desktop" });

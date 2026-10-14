@@ -450,7 +450,7 @@ function renderReadingArticleView(article, items, context) {
   const copy = readingArticleCopy(article);
   const related = relatedReadingItems(article, items);
   return `<div class="screen screen--reading-article screen-layout screen-layout--reading-article" data-reading-article-screen>
-    <main class="reading-article-page">
+    <div class="reading-article-page">
       <article class="reading-detail reading-detail--page">
         <div class="reading-detail__content">
           <header class="reading-article-head"><h1>${readingTitleMarkup(copy.title)}</h1></header>
@@ -463,7 +463,7 @@ function renderReadingArticleView(article, items, context) {
           }).join("")}</div></section>` : ""}
         </div>
       </article>
-    </main>
+    </div>
   </div>`;
 }
 

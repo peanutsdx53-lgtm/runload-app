@@ -74,6 +74,7 @@ jobs:
           node tests/e01LiveDomInjectionRegression.test.cjs
           node tests/e01AdversarialEndToEndBrowser.test.cjs
           node tests/e01RegisteredRoutesDomBoundaryBrowser.test.cjs
+          node tests/d05E07G04BoundedRealBrowser.test.cjs
           node tests/g03ExperimentalPhotoIndexedDbBrowser.test.cjs
           node tests/g01PhotoBlockedDeletionBrowser.test.cjs
           node tests/mobileWalkJogBrowserFlow.test.mjs
