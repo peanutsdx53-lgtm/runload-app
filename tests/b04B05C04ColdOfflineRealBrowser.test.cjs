@@ -51,6 +51,53 @@ async function round(browser,origin,width){
    reg:await navigator.serviceWorker.getRegistration().then(r=>Boolean(r))}));
   assert.equal(offline.sentinel,sentinel,'Persistent local data altered/lost after offline reload');assert.equal(offline.controlled,true);assert.equal(offline.reg,true);
   assert.equal(offline.js,200,'Cached app.js unavailable offline');assert.equal(offline.css,200,'Cached CSS unavailable offline');
+  // D-02: real Chromium stays network-offline throughout save/edit/history/backup/restore/reload.
+  const recordId='d02-offline-acceptance-'+width;
+  const lifecycle=await page.evaluate(async id=>{
+    const {createApplicationServices}=await import(new URL('./core/appCore.js',location.href).href);
+    const services=createApplicationServices({storage:localStorage});
+    const record={id,date:'2026-10-10',createdAt:'2026-10-10T02:00:00.000Z',activityType:'run',
+      distanceKm:6,durationMinutes:40,runningFormat:'CONTINUOUS_RUN',stepsProvenance:'UNKNOWN',
+      course:{gradeKnowledge:'UNKNOWN',modelSurfaceClass:'UNKNOWN'}};
+    const feedback={checkStatus:'deferred',bodyAreaObservations:[],safetyFlags:{}};
+    const first=services.workflows.records.saveRecordAndFeedback(record,feedback);
+    const updated=services.workflows.records.saveRecordAndFeedback({...record,distanceKm:7},feedback);
+    const historyAfterEdit=services.workflows.history.search({period:'all'});
+    const exported=services.storage.backup.tryExportBackupText();
+    const inspection=exported.ok?services.storage.backup.inspectBackupText(exported.text):null;
+    const later=services.workflows.records.saveRecordAndFeedback({...record,distanceKm:8},feedback);
+    const imported=exported.ok?services.storage.backup.restoreBackupText(exported.text):null;
+    const final=services.workflows.records.loadExperience(id);
+    const historyAfterRestore=services.workflows.history.search({period:'all'});
+    return {firstOk:first.ok,updatedOk:updated.ok,editedDistance:historyAfterEdit.find(x=>x.record.id===id)?.record.distanceKm??null,
+      exportOk:exported.ok,inspectionOk:inspection?.canRestore??false,laterOk:later.ok,
+      importOk:imported?.ok??false,importCode:imported?.code,
+      restoredDistance:final?.record?.distanceKm??null,
+      historyDistance:historyAfterRestore.find(x=>x.record.id===id)?.record.distanceKm??null,
+      restoredModel:final?.regionalV2ResultRecord?.model_version??null};
+  },recordId);
+  assert.equal(lifecycle.firstOk,true,JSON.stringify(lifecycle));
+  assert.equal(lifecycle.updatedOk,true,JSON.stringify(lifecycle));
+  assert.equal(lifecycle.editedDistance,7,JSON.stringify(lifecycle));
+  assert.equal(lifecycle.exportOk,true,JSON.stringify(lifecycle));
+  assert.equal(lifecycle.inspectionOk,true,JSON.stringify(lifecycle));
+  assert.equal(lifecycle.laterOk,true,JSON.stringify(lifecycle));
+  assert.equal(lifecycle.importOk,true,JSON.stringify(lifecycle));
+  assert.equal(lifecycle.restoredDistance,7,JSON.stringify(lifecycle));
+  assert.equal(lifecycle.historyDistance,7,JSON.stringify(lifecycle));
+  assert.match(lifecycle.restoredModel||'',/reference100-v3\.1/);
+  // A second *offline* navigation proves persistent data and restored history, not only transient JS state.
+  await page.reload({waitUntil:'domcontentloaded',timeout:35000});
+  await page.waitForFunction(()=>!document.querySelector('#app > .app-boot'),null,{timeout:35000});
+  const persisted=await page.evaluate(async id=>{
+    const {createApplicationServices}=await import(new URL('./core/appCore.js',location.href).href);
+    const services=createApplicationServices({storage:localStorage});
+    return {record:services.workflows.records.loadExperience(id)?.record?.distanceKm??null,
+      history:services.workflows.history.search({period:'all'}).find(x=>x.record.id===id)?.record.distanceKm??null,
+      exported:services.storage.backup.tryExportBackupText().ok};
+  },recordId);
+  assert.deepEqual(persisted,{record:7,history:7,exported:true},JSON.stringify({lifecycle,persisted}));
+  console.log('D02_OFFLINE_RECORD_EDIT_HISTORY_EXPORT_RESTORE_RELOAD_PASS',JSON.stringify({width,lifecycle,persisted}));
   assert.deepEqual(requestErrors,[],'Required runtime file missing');assert.deepEqual(localErrors,[],'Uncaught browser error');
   console.log('B04_B05_C04_PRODUCTION_LIKE_OFFLINE_PASS',JSON.stringify({width,offline,originClass:'127.0.0.2 trusted loopback path /runload-app'}));
  }finally{await context.setOffline(false);await context.close()}
