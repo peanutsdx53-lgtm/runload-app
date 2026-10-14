@@ -75,6 +75,12 @@ async function platformRun(browser,origin,mobile) {
     const query=new URLSearchParams({recordId:'e01-record',planId:'e01-plan',id:'e01-course',returnTo:'#/home?x='+ATTACK, note:ATTACK,articleId:ATTACK}).toString();
     // A fresh page per route isolates navigation lifecycles and ensures the
     // requested renderer runs from a cold URL, not stale prior DOM state.
+    // G-04: the skip link must reach the main landmark without changing the SPA route.
+    const beforeSkipHash=await page.evaluate(()=>location.hash);
+    await page.locator('.skip-link').focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await page.evaluate(()=>location.hash),beforeSkipHash,'skip link must preserve the active screen');
+    assert.equal(await page.evaluate(()=>document.activeElement?.id),'main-content','skip link must focus the primary content');
     await page.close();
     for(const name of routeKeys) {
       console.log('E01_ROUTE_PROBING',mobile?'mobile':'desktop',name);
@@ -127,13 +133,14 @@ async function platformRun(browser,origin,mobile) {
           const clickable=shown('button,a[href],[role="button"],input:not([type="hidden"])');
           const staged=shown('details,[aria-expanded],summary,dialog,[role="dialog"]');
           const japaneseCharacters=(normalizedText.match(/[ぁ-んァ-ヶ一-龠]/g)||[]).length;
-          return {main:Boolean(content),elements:unsafe.map(n=>n.outerHTML.slice(0,120)),executed:window.__e01RouteXss,hash:window.location.hash,
+          return {main:Boolean(content),landmarkCount:document.querySelectorAll("main").length,elements:unsafe.map(n=>n.outerHTML.slice(0,120)),executed:window.__e01RouteXss,hash:window.location.hash,
             headings,englishEyebrows,accessibleNameCount:accessibleNames.length,internalTokens,
             copyAudit:{visibleChars:normalizedText.length,japaneseCharacters,readableBlocks:readableBlocks.length,
               longestBlockChars:Math.max(0,...readableBlocks.map(x=>x.length)),clickableControls:clickable.length,
               stagedControls:staged.length}};
         });
         assert.ok(state.main,`${name}: main not present`);
+        assert.equal(state.landmarkCount,1,`${name}: nested or missing main landmark on ${mobile?"mobile":"desktop"}`);
         assert.ok(state.hash.startsWith('#/'+name+'?'),`${name}: requested route did not survive`);
         assert.deepEqual(state.elements,[],`${name}: attacker created nodes`);
         assert.equal(state.executed,0,`${name}: script executed`);
