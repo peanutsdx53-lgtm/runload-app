@@ -81,3 +81,23 @@ test('rest record never becomes a fabricated zero or current run result in repor
   assert.equal(row.compatibility.directDeltaAllowed,false,id);
  }
 });
+
+// F-03: scientific boundaries must appear in human-facing desktop/mobile views.
+test('F03: both platforms preserve reference meaning, ROF-J, R11 limitation and rest null',()=>{
+ const s=setUp();
+ const desktop=renderDesktop({services:s,context:context('recordId=new-2')});
+ const mobile=renderMobile({services:s,context:context('recordId=new-2')});
+ assert.match(desktop,/100は安全値、正常値、初心者平均を意味しません/);
+ assert.match(mobile,/100は安全値・正常値・初心者平均ではありません/);
+ assert.match(desktop,/部位同士の順位ではありません/);
+ assert.match(mobile,/部位同士の点数や順位ではありません/);
+ assert.match(desktop,/疲労変化/);
+ assert.match(mobile,/疲労感の記録|疲労感/);
+ const detail=renderBodyPartDetailScreenWithPresentation({services:s,context:context('recordId=new-2&regionId=BA-DISP-028')});
+ assert.match(detail,/内側縦足弓を直接測定した値ではありません/);
+ const rest={id:'f03-rest',date:'2026-10-11',createdAt:'2026-10-11T09:00:00.000Z',activityType:'rest'};
+ assert.equal(s.workflows.records.saveRecordAndFeedback(rest,feedback).ok,true);
+ const restMobile=renderMobile({services:s,context:context('recordId=f03-rest')});
+ assert.match(restMobile,/数値なしを0として扱いません/);
+ assert.match(restMobile,/休養として保存済み/);
+});
