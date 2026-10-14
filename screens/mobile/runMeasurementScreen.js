@@ -40,7 +40,7 @@ export function renderRunMeasurementScreen({ services, context }) {
         <button type="button" class="context-help-button app-utility-button context-help-button--measurement" data-screen-tutorial-start="run-measurement" aria-label="GPS測定の使い方を開く"><span class="app-utility-button__question" aria-hidden="true">?</span></button>
       </header>
 
-      <main class="run-measurement-prep__body">
+      <div class="run-measurement-prep__body">
         <section class="run-measurement-prep__intro"><p class="eyebrow">測定</p><h1>活動と測定方法</h1><p>活動と測定方法を選びます。</p></section>
 
         <fieldset class="run-measurement-mode" data-measurement-mode-group>
@@ -76,7 +76,7 @@ export function renderRunMeasurementScreen({ services, context }) {
 
         <p class="run-measurement__status run-measurement-prep__status" data-measurement-prep-status role="status" aria-live="polite">開始時に位置情報の許可を確認します。</p>
         <button class="run-measurement__start run-measurement-prep__start" type="button" data-action="start-measurement">測定を開始</button>
-      </main>
+      </div>
     </section>
 
     <section class="run-measurement-active" data-measurement-active hidden>
@@ -135,7 +135,7 @@ export function renderRunMeasurementScreen({ services, context }) {
 
     <section class="run-measurement-post" data-measurement-post hidden>
       <header class="run-measurement__header"><span></span><strong>測定終了</strong><span></span></header>
-      <main class="run-measurement-post__body">
+      <div class="run-measurement-post__body">
         <section class="run-measurement-post__summary"><p class="eyebrow">測定完了</p><h1>測定が完了しました</h1><div class="run-measurement-post__facts run-measurement-post__facts--primary"><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span></div></section>
 
         <details class="run-measurement-post__auto-details">
@@ -159,7 +159,7 @@ export function renderRunMeasurementScreen({ services, context }) {
           <button type="button" class="run-measurement__start" data-action="record-post-fatigue" disabled>疲労感を保存して記録を完成する</button>
           <button type="button" class="run-measurement-post__skip" data-action="skip-post-fatigue">疲労感なしで記録を完成する</button>
         </section>
-      </main>
+      </div>
     </section>
   </div>`;
 }
