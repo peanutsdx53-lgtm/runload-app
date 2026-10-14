@@ -173,6 +173,15 @@ const SCIENTIFIC_CONCEPTS = {
   privacy: [/保存|データ/],
   terms: [/規約/],
   'body-timeline': [/身体|推移/],
+  'run-route': [/走行軌跡|ルート/],
+  'support-guidance': [/公的サポート|相談/],
+  about: [/走行記録|クレジット/],
+  home: [/走行記録|ホーム/],
+  reading: [/ランニング/],
+  'course-editor': [/コース/],
+  'gpx-analysis': [/ルート|坂道/],
+  'run-measurement': [/測定/],
+  settings: [/設定/],
 };
 async function storedRunSemanticRoutes(browser,origin,mobile) {
   const context=await browser.newContext({viewport:mobile?{width:390,height:844}:{width:1440,height:900},serviceWorkers:'block'});
@@ -222,6 +231,15 @@ async function storedRunSemanticRoutes(browser,origin,mobile) {
       });
       assert.ok(state.text.length>10,JSON.stringify({mobile,name,problem:'empty route'}));
       for(const p of SCIENTIFIC_CONCEPTS[name])assert.match(state.text,p,JSON.stringify({mobile,name,missing:String(p)}));
+      // Shared scientific meaning; layouts and heading styles may legitimately differ.
+      if(name==='result') {
+        assert.match(state.text,/100は安全値[、・]正常値/,JSON.stringify({mobile,name}));
+        assert.match(state.text,/部位同士の(?:点数や)?順位/,JSON.stringify({mobile,name}));
+      }
+      if(name==='consultation') assert.match(state.text,/100|診断|自己判断/,JSON.stringify({mobile,name}));
+      if(name==='body-timeline') assert.match(state.text,/部位同士の順位や危険度/,JSON.stringify({mobile,name}));
+      if(name==='run-measurement') assert.match(state.text,mobile?/活動と測定方法/:/この端末では測定を利用できません/);
+      if(name==='privacy') assert.match(state.text,/地図表示ではOpenStreetMap/,JSON.stringify({mobile,name}));
       assert.deepEqual(state.injected,[],JSON.stringify({mobile,name,unsafe:state.injected}));
       assert.equal(state.escaped,0,JSON.stringify({mobile,name}));
       const idMatch=state.exposed.match(/\b(?:BA-DISP-\d+|BFR-\d{3}-[A-Z]+|R(?:0[1-9]|1[0-2])|runload-primary-regional-reference100-[\w.-]+|PRIMARY_REGIONAL_[A-Z0-9_]+|SOURCE_AUTHORED_MODEL|P2_CROSS_SOURCE_BRIDGE|EVIDENCE_INSUFFICIENT|RUNNING_CURRENT)\b/g)||[];
