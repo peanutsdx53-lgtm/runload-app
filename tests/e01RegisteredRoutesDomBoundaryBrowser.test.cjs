@@ -115,14 +115,28 @@ async function platformRun(browser,origin,mobile) {
             .filter(node=>node.getClientRects().length > 0)
             .map(node=>(node.innerText || "").trim())
             .filter(text=>/^[A-Z][A-Z \/-]{3,}$/.test(text)).slice(0,16);
+          // F-01/F-04: visible copy/staged-control census on registered real Chromium DOM.
+          // Do not print synthetic stored text containing adversarial strings.
+          const normalizedText=visibleText.replace(/\s+/g,' ').trim();
+          const shown=selector=>[...content?.querySelectorAll(selector)||[]].filter(node=>node.getClientRects().length>0);
+          const readableBlocks=shown('p,li,dd,summary').map(node=>(node.innerText||'').replace(/\s+/g,' ').trim()).filter(Boolean);
+          const clickable=shown('button,a[href],[role="button"],input:not([type="hidden"])');
+          const staged=shown('details,[aria-expanded],summary,dialog,[role="dialog"]');
+          const japaneseCharacters=(normalizedText.match(/[ぁ-んァ-ヶ一-龠]/g)||[]).length;
           return {main:Boolean(content),elements:unsafe.map(n=>n.outerHTML.slice(0,120)),executed:window.__e01RouteXss,hash:window.location.hash,
-            headings,englishEyebrows,accessibleNameCount:accessibleNames.length,internalTokens};
+            headings,englishEyebrows,accessibleNameCount:accessibleNames.length,internalTokens,
+            copyAudit:{visibleChars:normalizedText.length,japaneseCharacters,readableBlocks:readableBlocks.length,
+              longestBlockChars:Math.max(0,...readableBlocks.map(x=>x.length)),clickableControls:clickable.length,
+              stagedControls:staged.length}};
         });
         assert.ok(state.main,`${name}: main not present`);
         assert.ok(state.hash.startsWith('#/'+name+'?'),`${name}: requested route did not survive`);
         assert.deepEqual(state.elements,[],`${name}: attacker created nodes`);
         assert.equal(state.executed,0,`${name}: script executed`);
         assert.deepEqual(state.internalTokens,[],`${name}: user-visible scientific internals must not leak into text/ARIA`);
+        assert.ok(state.copyAudit.visibleChars>=2,`${name}: empty user copy`);
+        assert.ok(state.copyAudit.japaneseCharacters>0,`${name}: Japanese user-facing text absent`);
+        console.log('F01_F04_REGISTERED_SCREEN_COPY_AUDIT',JSON.stringify({mobile,name,...state.copyAudit}));
         console.log('F02_E01_ACTUAL_ROUTE_DOM',JSON.stringify({mobile,name,headings:state.headings,englishEyebrows:state.englishEyebrows,accessibleNameCount:state.accessibleNameCount,internalTokens:state.internalTokens}));
         screens.push(name);
         console.log('E01_ROUTE_DONE',mobile?'mobile':'desktop',name);
