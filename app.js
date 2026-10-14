@@ -24,13 +24,6 @@ const screenRenderers = await createScreenRenderers({ mobile: mobileLayout });
 const bindScreenInteractions = await createScreenInteractionBinder({ mobile: mobileLayout });
 
 const appRoot = document.getElementById("app");
-// Preserve the SPA route while moving keyboard focus to the main landmark.
-document.querySelector(".skip-link")?.addEventListener("click", (event) => {
-  const main = document.getElementById("main-content");
-  if (!main) return;
-  event.preventDefault();
-  main.focus();
-});
 const platformHeaderRoot = document.getElementById("platform-header-root");
 const baseApplicationServices = createApplicationServices();
 const fatigue = createRofJServices({
@@ -298,6 +291,14 @@ router = createAppRouter({
   defaultScreen: initialScreen,
   onScreenChange: renderScreen,
   singleEntryNavigation: platformRuntime.isMobilePlatform,
+});
+
+// Preserve the SPA route while moving keyboard focus to the main landmark.
+document.querySelector(".skip-link")?.addEventListener("click", (event) => {
+  const main = document.getElementById("main-content");
+  if (!main) return;
+  event.preventDefault();
+  main.focus();
 });
 
 router.start();
