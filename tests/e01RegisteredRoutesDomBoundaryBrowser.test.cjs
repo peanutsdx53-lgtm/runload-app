@@ -146,7 +146,7 @@ async function platformRun(browser,origin,mobile) {
           const zoom=await probe.evaluate(()=>{
             document.documentElement.style.zoom='2';
             const headings=[...document.querySelectorAll('#main-content h1,#main-content h2')]
-              .filter(node=>node.getClientRects().length>0);
+              .filter(node=>node.getClientRects().length>0 && !node.closest('.visually-hidden,[aria-hidden="true"]'));
             const clipped=headings.filter(node=>{
               const s=getComputedStyle(node);
               return node.scrollWidth>node.clientWidth+3 && s.overflowX!=='visible';
