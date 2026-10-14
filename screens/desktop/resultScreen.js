@@ -172,7 +172,11 @@ function renderPcRestResultConsole({ record, feedback = null }) {
 
 function renderPcResultConsole({ services, record, resultRecord, allExperiences, feedback = null }) {
   if (record.activityType === "rest") return renderPcRestResultConsole({ record, feedback });
-  if (!modelCurrent(resultRecord) || record.activityType !== "run") return "";
+  // A stored record can have no current-model snapshot (e.g. an older version).
+  // Never leave the result screen blank or silently recalculate historical results.
+  if (!modelCurrent(resultRecord) || record.activityType !== "run") {
+    return `<section class="pc-result-console pc-result-console--unavailable" aria-label="部位別結果の表示案内"><h1>この記録の部位別結果は表示できません</h1><p>現在の計算モデルで確認できる12部位の値がないため、数値を表示していません。保存済みの記録は変更していません。</p><a href="#/history?view=records&recordId=${encodeURIComponent(record.id)}">履歴に戻る</a></section>`;
+  }
   const infos = regionRows(resultRecord).map((row, index) => rowInfo(resultRecord, allExperiences, row, index));
   const availableCount = infos.filter((info) => finite(info.row.value)).length;
   const comparableCount = infos.filter((info) => finite(info.delta)).length;
