@@ -107,8 +107,12 @@ async function platformRun(browser,origin,mobile) {
           const visibleText=content?.innerText || "";
           const accessibleNames=[...content?.querySelectorAll('[aria-label]') || []]
             .map(node=>node.getAttribute('aria-label') || "");
-          const exposedText=visibleText+" "+accessibleNames.join(" ");
-          const internalTokens=[...new Set(exposedText.match(/\b(?:BA-DISP-\d+|SOURCE_AUTHORED_MODEL|DIGITIZED_ORIGINAL_FIGURE|WITHIN_SOURCE_INTERPOLATION|REFERENCE_NOT_READY|AXIS_PRESERVED_NOT_COMBINED|RUNNING_CURRENT)\b/g) || [])];
+          // F-02: assistive technology announces alt, title and placeholders too.
+          // Preserve technical identifiers in storage and DOM data attributes.
+          const accessibilityStrings=[...content?.querySelectorAll('[title],[alt],[placeholder],[aria-description],[aria-valuetext]') || []]
+            .flatMap(n=>['title','alt','placeholder','aria-description','aria-valuetext'].map(k=>n.getAttribute(k)).filter(Boolean));
+          const exposedText=[visibleText,...accessibleNames,...accessibilityStrings].join(' ');
+          const internalTokens=[...new Set(exposedText.match(/\b(?:BA-DISP-\d+|BFR-\d{3}-[A-Z]+|R(?:0[1-9]|1[0-2])|runload-primary-regional-reference100-[A-Za-z0-9.\-]+|INTERPRETATION_OUTPUT_V\d+|PRIMARY_REGIONAL_[A-Z0-9_]+|SOURCE_AUTHORED_MODEL|DIGITIZED_ORIGINAL_FIGURE|WITHIN_SOURCE_INTERPOLATION|REFERENCE_NOT_READY|AXIS_PRESERVED_NOT_COMBINED|RUNNING_CURRENT)\b/g) || [])];
           const headings=[...content?.querySelectorAll('h1,h2,h3') || []]
             .map(node=>(node.innerText || "").trim()).filter(Boolean).slice(0,12);
           const englishEyebrows=[...content?.querySelectorAll('small') || []]
