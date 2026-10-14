@@ -1,6 +1,6 @@
 import { compareRecordChronology as chronology } from "../shared/recordUtilities.js";
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
-import { PRIMARY_REGIONAL_V2_MODEL_VERSION } from "../core/appCore.js";
+import { PRIMARY_REGIONAL_V2_MODEL_VERSION, bodyRegionFormalName } from "../core/appCore.js";
 import { BODY_REGION_VIEWS } from "../ui/bodyRegionVisuals.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
@@ -34,7 +34,7 @@ function miniBodyMap(resultRecord = {}, suffix = "timeline") {
     const value = rows.get(regionId)?.value;
     const state = direction(value);
     const style = state === "unavailable" ? ` style="fill:url(#timeline-hatch-${view.key}-${suffix})"` : "";
-    return `<path class="body-timeline-map__region" data-direction="${state}"${style} d="${d}"><title>${escapeHtml(`${view.title} ${regionId} ${finite(value) ? Number(value).toFixed(1) : "数値なし"}`)}</title></path>`;
+    return `<path class="body-timeline-map__region" data-direction="${state}"${style} d="${d}"><title>${escapeHtml(`${view.title} ${bodyRegionFormalName(regionId, "部位")} ${finite(value) ? Number(value).toFixed(1) : "数値なし"}`)}</title></path>`;
   }).join("")}</g></svg></figure>`).join("");
 }
 
