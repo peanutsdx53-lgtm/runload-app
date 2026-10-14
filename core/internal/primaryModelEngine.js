@@ -252,7 +252,7 @@ function summarizeRegions(segResults){
         speedMps:x.speedMps!=null&&Number.isFinite(Number(x.speedMps))?Number(x.speedMps):null,
         speedProvenance:segment.speedProvenance||null,
         sourceConditionClass:x.evidenceState==='DIRECT'?'SOURCE_DIRECT_RANGE':x.evidenceState||'EVIDENCE_INSUFFICIENT',
-        projectDerivationMethod:r.id==='R11'?'HO_MEDIAL_LATERAL_MIDFOOT_PEAK_PRESSURE_NORMALIZED_50_50':r.id==='R12'?'HO_FOREFOOT_COMPONENT_PEAK_PRESSURE_NORMALIZED_1_3':r.id==='R01'||r.id==='R08'?(x.evidenceState==='P2_CROSS_SOURCE_BRIDGE'?'JIN_STANCE_POS_NEG_WORK_NORMALIZED_50_50_BOUNDARY250':'FUKUCHI_POSITIVE_NEGATIVE_WORK_PER_STRIDE_NORMALIZED_50_50'):null,
+        projectDerivationMethod:EMG_GROUPS[r.id]?(r.id==='R07'?'GAZENDAM_HOF_FF1_SO_GM_GL_EQUAL_MEAN_REFERENCE100':`GAZENDAM_HOF_FIG3_FF_WEIGHTED_${EMG_GROUPS[r.id].join('_')}_EQUAL_MEAN_REFERENCE100`):r.id==='R11'?'HO_MEDIAL_LATERAL_MIDFOOT_PEAK_PRESSURE_NORMALIZED_50_50':r.id==='R12'?'HO_FOREFOOT_COMPONENT_PEAK_PRESSURE_NORMALIZED_1_3':r.id==='R01'||r.id==='R08'?(x.evidenceState==='P2_CROSS_SOURCE_BRIDGE'?'JIN_STANCE_POS_NEG_WORK_NORMALIZED_50_50_BOUNDARY250':'FUKUCHI_POSITIVE_NEGATIVE_WORK_PER_STRIDE_NORMALIZED_50_50'):null,
         remainderState:segment.remainderState||null,
         calculationState:x.state||'EVIDENCE_INSUFFICIENT',
         evidenceState:x.evidenceState||'EVIDENCE_INSUFFICIENT',
