@@ -141,6 +141,23 @@ async function platformRun(browser,origin,mobile) {
         });
         assert.ok(state.main,`${name}: main not present`);
         assert.equal(state.landmarkCount,1,`${name}: nested or missing main landmark on ${mobile?"mobile":"desktop"}`);
+        // Browser approximation of text enlargement; physical VoiceOver/OS zoom remains a separate gate.
+        if(['home','record-input','history','settings','run-measurement'].includes(name)){
+          const zoom=await probe.evaluate(()=>{
+            document.documentElement.style.zoom='2';
+            const headings=[...document.querySelectorAll('#main-content h1,#main-content h2')]
+              .filter(node=>node.getClientRects().length>0);
+            const clipped=headings.filter(node=>{
+              const s=getComputedStyle(node);
+              return node.scrollWidth>node.clientWidth+3 && s.overflowX!=='visible';
+            }).map(n=>n.textContent?.trim().slice(0,45));
+            document.documentElement.style.zoom='';
+            return {headings:headings.length,clipped};
+          });
+          assert.ok(zoom.headings>0,JSON.stringify({mobile,name,zoom}));
+          assert.deepEqual(zoom.clipped,[],JSON.stringify({mobile,name,zoom}));
+          console.log('G04_200_PERCENT_BROWSER_TEXT_ZOOM_PASS',JSON.stringify({mobile,name,headings:zoom.headings}));
+        }
         assert.ok(state.hash.startsWith('#/'+name+'?'),`${name}: requested route did not survive`);
         assert.deepEqual(state.elements,[],`${name}: attacker created nodes`);
         assert.equal(state.executed,0,`${name}: script executed`);
