@@ -34,6 +34,10 @@ assert.ok(Number.isFinite(explicit.regions.R01.value));
 assert.equal(explicit.regions.R01.unsupportedDistanceKm,0);
 assert.equal(explicit.regions.R11.routeTrace[0].sourceConditionClass,'SOURCE_DIRECT_RANGE');
 assert.equal(explicit.regions.R11.routeTrace[0].projectDerivationMethod,'HO_MEDIAL_LATERAL_MIDFOOT_PEAK_PRESSURE_NORMALIZED_50_50');
+for(const [r,m] of Object.entries({R02:'GX_GD',R03:'VM_VL_RF',R04:'BF_ST_SM'})){
+  assert.equal(explicit.regions[r].routeTrace[0].projectDerivationMethod,`GAZENDAM_HOF_FIG3_FF_WEIGHTED_${m}_EQUAL_MEAN_REFERENCE100`);
+}
+assert.equal(explicit.regions.R07.routeTrace[0].projectDerivationMethod,'GAZENDAM_HOF_FF1_SO_GM_GL_EQUAL_MEAN_REFERENCE100');
 const derived=engine.calculateRun({distanceKm:4,durationMinutes:24,segments:[{distanceKm:2,durationMinutes:800/60},{distanceKm:2,durationMinutes:600/60}]});
 assert.equal(derived.regions.R01.state,'OK');
 assert.equal(derived.regions.R01.routeTrace[0].speedProvenance,'SEGMENT_DISTANCE_DURATION_DERIVED');
