@@ -39,6 +39,11 @@ assert.match(html, /data-current="true"/);
 assert.equal((html.match(/data-body-timeline-card/g) || []).length, 3);
 assert.match(html, /data-direction="above"/);
 assert.match(html, /data-direction="below"/);
+assert.match(html, /<title>前面 股関節部 102\.0<\/title>/);
+assert.match(html, /<title>後面 殿部 98\.0<\/title>/);
+assert.match(html, /<title>足裏 前足部 106\.0<\/title>/);
+assert.doesNotMatch(html, /<title>[^<]*BA-DISP-/);
+
 
 const resultSource = fs.readFileSync(new URL("../screens/mobile/resultScreen.js", import.meta.url), "utf8");
 assert.match(resultSource, /記録の形/);
