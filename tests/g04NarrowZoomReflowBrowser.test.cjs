@@ -112,6 +112,41 @@ async function run(browser,origin,width) {
     assert.ok(home.dock.rect.left>=-1 && home.dock.rect.right<=width+1,JSON.stringify({width,home}));
     await page.locator('[data-home-edit-toggle]').click();
     await page.waitForFunction(()=>document.querySelector('.mobile-home-os')?.classList.contains('is-home-editing'),{timeout:6000});
+
+    const zoomPanel=await page.evaluate(()=>{
+      const panel=document.querySelector('[data-home-zoom-editor]');
+      const r=panel?.getBoundingClientRect();
+      const buttons=[...panel?.querySelectorAll('button')||[]].filter(b=>!b.disabled).map(b=>{
+        const x=b.getBoundingClientRect();
+        return {name:b.textContent.trim(),width:x.width,height:x.height,left:x.left,right:x.right};
+      });
+      return {visible:panel&&getComputedStyle(panel).display!=='none',
+        oldGrid:getComputedStyle(document.querySelector('.mobile-home-page-viewport')).display,
+        width:r?.width,buttons};
+    });
+    assert.ok(zoomPanel.visible,JSON.stringify({width,zoomPanel}));
+    assert.equal(zoomPanel.oldGrid,'none',JSON.stringify({width,zoomPanel}));
+    assert.ok(zoomPanel.buttons.length>=7,JSON.stringify({width,zoomPanel}));
+    for(const item of zoomPanel.buttons) {
+      assert.ok(item.width>=50 && item.height>=44 && item.left>=-1 && item.right<=width+1,
+        JSON.stringify({width,item}));
+    }
+    const dockDown=page.locator('[data-home-zoom-editor] [data-home-zoom-action="down"][data-home-zoom-token^="app:"]').last();
+    // Last eligible app down action belongs to the fixed group; regular list edits
+    // remain available at 100% without changing their original drag behavior.
+    const firstDock=await page.evaluate(()=>[...document.querySelectorAll('.mobile-home-dock [data-home-item-id]')].map(el=>el.dataset.homeItemId));
+    const dockToken='app:'+firstDock[0];
+    await page.locator('[data-home-zoom-action="down"][data-home-zoom-token="'+dockToken+'"]').click();
+    const afterDock=await page.evaluate(()=>[...document.querySelectorAll('.mobile-home-dock [data-home-item-id]')].map(el=>el.dataset.homeItemId));
+    assert.equal(afterDock[1],firstDock[0],JSON.stringify({width,firstDock,afterDock}));
+    const savedLayout=await page.evaluate(()=>{
+      const saved=[...Array(localStorage.length)].map((_,i)=>localStorage.key(i))
+        .filter(k=>k && k.includes('home')).map(k=>[k,localStorage.getItem(k)]);
+      return saved.some(([k,v])=>v?.includes('dock')&&v.includes('"'+firstDock[0]+'"'));
+    });
+    assert.ok(savedLayout,JSON.stringify({width,problem:'zoom edit not persisted'}));
+    console.log('G04_ZOOM_EDITOR_ACTUAL_BUTTON_PASS',JSON.stringify({width,buttonCount:zoomPanel.buttons.length,firstDock,afterDock}));
+
     if(width===205){await page.waitForTimeout(160);const jpeg=await page.screenshot({type:'jpeg',quality:75});console.log('G04_SCREENSHOT_EDIT205_JPEG_BASE64',jpeg.toString('base64'));}
     const edit=await page.evaluate(()=>{
       const grid=document.querySelector('.mobile-home-grid');
