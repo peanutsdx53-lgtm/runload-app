@@ -44,6 +44,8 @@ import {
 import {
   ensureEditControls,
   ensureWidgetPicker,
+  renderZoomEditPanel,
+  applyZoomEditAction,
   refreshWidgetPicker,
   swapItems,
   createDragGhost,
@@ -121,6 +123,17 @@ export function bindHome(context = {}) {
   const editButton = root.querySelector("[data-home-edit-toggle]");
   const widgetPicker = root.querySelector("[data-home-widget-picker]");
   const pageIndicator = root.querySelector("[data-home-page-indicator]");
+  function refreshZoomEditor(focus = null, notice = "") {
+    const panel = renderZoomEditPanel(root,currentPageElement(),dockContainer);
+    if(notice) panel.querySelector("[data-home-zoom-status]").textContent=notice;
+    if(focus) {
+      const options=[...panel.querySelectorAll("[data-home-zoom-action]")];
+      const node=options.find(button=>button.dataset.homeZoomToken===focus.token
+        && button.dataset.homeZoomAction===focus.action && !button.disabled)
+        || options.find(button=>button.dataset.homeZoomToken===focus.token && !button.disabled);
+      node?.focus();
+    }
+  }
 
   function currentPageElement() {
     return pageElements(root)[activePage] || pageElements(root)[0] || null;
@@ -370,6 +383,7 @@ export function bindHome(context = {}) {
     updatePageIndicator();
     refreshPageSlots(root, editing);
     updateViewportHeight();
+    refreshZoomEditor();
   }
 
   function finishGridDrag(event, cancelled) {
@@ -784,6 +798,23 @@ export function bindHome(context = {}) {
   }
 
   function handleClick(event) {
+    const zoomButton=event.target.closest("[data-home-zoom-action]");
+    if(zoomButton && editing && globalThis.matchMedia?.("(max-width:19rem)")?.matches) {
+      event.preventDefault();
+      event.stopPropagation();
+      const action=zoomButton.dataset.homeZoomAction, token=zoomButton.dataset.homeZoomToken;
+      const changed=applyZoomEditAction(root,currentPageElement(),dockContainer,action,token,{
+        persist:persistHomeLayout, cycleWidgetSize, removeWidget, removeHomeApp
+      });
+      if(changed) {
+        refreshPageSlots(root,editing);
+        updatePageIndicator();
+        updateViewportHeight();
+      }
+      refreshZoomEditor(changed?{token,action}:null,
+        changed?"配置を更新しました。":"移動先に空きがないため、配置は変更していません。");
+      return;
+    }
     const pageTarget = event.target.closest("[data-home-page-target]");
     if (pageTarget) {
       event.preventDefault();
@@ -1010,6 +1041,11 @@ export function bindHome(context = {}) {
   root.addEventListener("pointerup", handlePointerUp);
   root.addEventListener("pointercancel", handlePointerCancel);
   root.addEventListener("click", handleClick, true);
+  const refreshAfterClick=event=>{
+    if(event.target.closest("[data-home-zoom-action]"))return;
+    if(editing)queueMicrotask(()=>refreshZoomEditor());
+  };
+  root.addEventListener("click",refreshAfterClick);
   root.addEventListener("contextmenu", handleContextMenu);
   root.addEventListener("selectstart", handleSelectStart);
   root.addEventListener("dragstart", handleDragStart);
@@ -1036,6 +1072,7 @@ export function bindHome(context = {}) {
     root.removeEventListener("pointerup", handlePointerUp);
     root.removeEventListener("pointercancel", handlePointerCancel);
     root.removeEventListener("click", handleClick, true);
+    root.removeEventListener("click",refreshAfterClick);
     root.removeEventListener("contextmenu", handleContextMenu);
     root.removeEventListener("selectstart", handleSelectStart);
     root.removeEventListener("dragstart", handleDragStart);
