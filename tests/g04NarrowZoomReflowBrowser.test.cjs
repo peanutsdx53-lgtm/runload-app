@@ -32,6 +32,7 @@ async function run(browser,origin,width) {
   await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.mobile-home-dock',{timeout:25000});
   await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
+  if(width===205){const jpeg=await page.screenshot({type:'jpeg',quality:70});console.log('G04_SCREENSHOT_HOME205_JPEG_BASE64',jpeg.toString('base64'));}
   const home=await page.evaluate(()=>{
     const dock=document.querySelector('.mobile-home-dock');
     const style=getComputedStyle(dock),box=dock.getBoundingClientRect();
@@ -106,6 +107,7 @@ async function run(browser,origin,width) {
   }
   await page.goto(origin+'/index.html#/record-input',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.screen-layout--record .mobile-save-bar',{timeout:25000});
+  if(width===205){const jpeg=await page.screenshot({type:'jpeg',quality:70});console.log('G04_SCREENSHOT_RECORD205_JPEG_BASE64',jpeg.toString('base64'));}
   const record=await page.evaluate(()=>{
     const bar=document.querySelector('.screen-layout--record .mobile-save-bar');
     const style=getComputedStyle(bar),r=bar.getBoundingClientRect();
