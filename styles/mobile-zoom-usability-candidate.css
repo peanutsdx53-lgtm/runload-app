@@ -16,8 +16,8 @@
   }
   .screen-layout--home .mobile-home-os {
     box-sizing:border-box; width:100%; min-width:0;
-    height:auto; min-height:100%; max-height:none;
-    overflow:visible; padding:10px 10px calc(24px + env(safe-area-inset-bottom));
+    height:100dvh; min-height:0; max-height:100dvh;
+    overflow-x:hidden; overflow-y:auto; padding:10px 10px calc(24px + env(safe-area-inset-bottom));
   }
   .screen-layout--home .mobile-home-os__header {
     box-sizing:border-box; display:flex; flex-direction:column;
@@ -199,5 +199,36 @@
   .screen-layout--record .mobile-record-bottom-clearance {display:none}
   .screen-layout--record [data-record-stage] {
     scroll-margin-top:12px; scroll-margin-bottom:24px;
+  }
+}
+
+/* The production Home moves apps and widgets to a four-column grid at runtime.
+   Inline grid-area coordinates make that grid unreadably narrow at 200%.
+   Keep those coordinates stored, but reflow the visual presentation to a list
+   only when not editing. Editing retains the original coordinate system. */
+@media screen and (max-width:19rem) {
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    display:flex; flex-direction:column; align-items:stretch;
+    gap:10px; padding:8px 0 18px; width:100%; min-width:0;
+    min-height:0; height:auto; transform:none;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid > :is([data-home-item-id],[data-home-widget-id]) {
+    box-sizing:border-box; flex:0 0 auto; align-self:stretch;
+    grid-row:auto !important; grid-column:auto !important;
+    width:100%; min-width:0; max-width:100%; height:auto !important;
+    min-height:76px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid > .mobile-home-app {
+    display:flex; flex-direction:row; align-items:center; justify-content:flex-start;
+    gap:12px; min-height:66px; padding:8px 12px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid > .mobile-home-app .mobile-home-app__icon {
+    flex:0 0 auto; max-width:58px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid > .mobile-home-widget-shell > .mobile-home-widget {
+    height:auto !important; min-height:104px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) :is(.mobile-home-grid-slot,.mobile-home-drop-preview) {
+    display:none;
   }
 }
