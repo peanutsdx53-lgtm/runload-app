@@ -131,20 +131,23 @@ async function run(browser,origin,width) {
       assert.ok(item.width>=50 && item.height>=44 && item.left>=-1 && item.right<=width+1,
         JSON.stringify({width,item}));
     }
-    const dockDown=page.locator('[data-home-zoom-editor] [data-home-zoom-action="down"][data-home-zoom-token^="app:"]').last();
-    // Last eligible app down action belongs to the fixed group; regular list edits
-    // remain available at 100% without changing their original drag behavior.
+    // Verify the actual fixed-dock reorder; 100% drag editing stays unchanged.
     const firstDock=await page.evaluate(()=>[...document.querySelectorAll('.mobile-home-dock [data-home-item-id]')].map(el=>el.dataset.homeItemId));
     const dockToken='app:'+firstDock[0];
     await page.locator('[data-home-zoom-action="down"][data-home-zoom-token="'+dockToken+'"]').click();
     const afterDock=await page.evaluate(()=>[...document.querySelectorAll('.mobile-home-dock [data-home-item-id]')].map(el=>el.dataset.homeItemId));
     assert.equal(afterDock[1],firstDock[0],JSON.stringify({width,firstDock,afterDock}));
-    const savedLayout=await page.evaluate((firstId)=>{
-      const saved=[...Array(localStorage.length)].map((_,i)=>localStorage.key(i))
-        .filter(k=>k && k.includes('home')).map(k=>[k,localStorage.getItem(k)]);
-      return saved.some(([k,v])=>v?.includes('dock')&&v.includes('"'+firstId+'"'));
-    },firstDock[0]);
-    assert.ok(savedLayout,JSON.stringify({width,problem:'zoom edit not persisted'}));
+    const savedDock=await page.evaluate(()=>{
+      const layout=JSON.parse(localStorage.getItem('running-record-mobile-home-layout-v1'));
+      return layout?.dock;
+    });
+    assert.deepEqual(savedDock,afterDock,JSON.stringify({width,problem:'dock order not persisted',savedDock,afterDock}));
+    await page.reload({waitUntil:'domcontentloaded'});
+    await page.waitForSelector('.mobile-home-dock [data-home-item-id]');
+    const reloadedDock=await page.evaluate(()=>[...document.querySelectorAll('.mobile-home-dock [data-home-item-id]')].map(el=>el.dataset.homeItemId));
+    assert.deepEqual(reloadedDock,afterDock,JSON.stringify({width,problem:'dock order lost on reload'}));
+    await page.locator('[data-home-edit-toggle]').click();
+    await page.waitForFunction(()=>document.querySelector('.mobile-home-os')?.classList.contains('is-home-editing'));
     console.log('G04_ZOOM_EDITOR_ACTUAL_BUTTON_PASS',JSON.stringify({width,buttonCount:zoomPanel.buttons.length,firstDock,afterDock}));
 
     if(width===205){await page.waitForTimeout(160);const jpeg=await page.screenshot({type:'jpeg',quality:75});console.log('G04_SCREENSHOT_EDIT205_JPEG_BASE64',jpeg.toString('base64'));}
