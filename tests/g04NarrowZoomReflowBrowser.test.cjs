@@ -31,6 +31,22 @@ async function run(browser,origin,width) {
  try{
   await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.mobile-home-dock',{timeout:25000});
+  // Establish the approved first-use state before visual inspection.  A
+  // foreground onboarding panel otherwise obscures the actual application.
+  await page.evaluate(()=>{
+    const dialog=document.querySelector('[data-mobile-onboarding]');
+    if(!dialog) return;
+    const next=dialog.querySelector('[data-onboarding-next]');
+    for(let step=0;step<3;step++) next?.click();
+    const consent=dialog.querySelector('[data-onboarding-consent]');
+    if(consent){
+      consent.checked=true;
+      consent.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    dialog.querySelector('[data-onboarding-complete]')?.click();
+  });
+  await page.waitForFunction(()=>!document.querySelector('[data-mobile-onboarding]'),{timeout:10000});
+
   await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
   if(width===205){const jpeg=await page.screenshot({type:'jpeg',quality:70});console.log('G04_SCREENSHOT_HOME205_JPEG_BASE64',jpeg.toString('base64'));}
   const home=await page.evaluate(()=>{
