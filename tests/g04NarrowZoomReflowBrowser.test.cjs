@@ -32,6 +32,21 @@ async function run(browser,origin,width) {
   await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.mobile-home-dock',{timeout:25000});
   await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
+  // Visual reviews must show the actual application, not the first-use tour.
+  if(width===390){
+    await page.evaluate(()=>{
+      const dialog=document.querySelector('[data-mobile-onboarding]');
+      if(!dialog)return;
+      const next=dialog.querySelector('[data-onboarding-next]');
+      for(let i=0;i<3;i++) next?.click();
+      const consent=dialog.querySelector('[data-onboarding-consent]');
+      if(consent){consent.checked=true;consent.dispatchEvent(new Event('change',{bubbles:true}));}
+      dialog.querySelector('[data-onboarding-complete]')?.click();
+    });
+    await page.waitForTimeout(180);
+    const image=await page.screenshot({type:'jpeg',quality:68});
+    console.log('G04_STANDARD_HOME_390_JPEG_BASE64',image.toString('base64'));
+  }
   const home=await page.evaluate(()=>{
     const dock=document.querySelector('.mobile-home-dock');
     const style=getComputedStyle(dock),box=dock.getBoundingClientRect();
@@ -107,6 +122,39 @@ async function run(browser,origin,width) {
     assert.equal(overlap(record.buttons[0],record.buttons[1]),false,JSON.stringify({width,record}));
   }else{
     assert.equal(record.position,'fixed',JSON.stringify({width,record}));
+  }
+
+  if(width>=320){
+    await page.goto(origin+'/index.html#/settings',{waitUntil:'domcontentloaded',timeout:20000});
+    await page.waitForSelector('.screen--settings .head p',{timeout:20000});
+    const standard=await page.evaluate(()=>{
+      const el=document.querySelector('.screen--settings .head p');
+      return {font:parseFloat(getComputedStyle(el).fontSize),html:document.documentElement.className,
+        pageScroll:document.documentElement.scrollWidth};
+    });
+    if(width===390){
+      const image=await page.screenshot({type:'jpeg',quality:68});
+      console.log('G04_STANDARD_SETTINGS390_JPEG_BASE64',image.toString('base64'));
+    }
+    // Apply the very same app-level settings function used by the settings form.
+    // This does not change Safari's page zoom or the persisted model.
+    await page.evaluate(async()=>{
+      const {applyAppSettings}=await import('./ui/appSettings.js');
+      applyAppSettings({textSize:'large'});
+    });
+    const large=await page.evaluate(()=>{
+      const el=document.querySelector('.screen--settings .head p');
+      return {font:parseFloat(getComputedStyle(el).fontSize),html:document.documentElement.className,
+        pageScroll:document.documentElement.scrollWidth};
+    });
+    assert.ok(large.font>=standard.font+1.5,JSON.stringify({width,standard,large,problem:'in-app text size is ineffective'}));
+    assert.ok(large.html.includes('rl-text-large'),JSON.stringify({width,large}));
+    assert.ok(large.pageScroll<=width+2,JSON.stringify({width,large,problem:'horizontal overflow'}));
+    if(width===390){
+      const image=await page.screenshot({type:'jpeg',quality:68});
+      console.log('G04_LARGE_SETTINGS390_JPEG_BASE64',image.toString('base64'));
+    }
+    console.log('G04_100_PERCENT_TEXT_SETTING_BROWSER_PASS',JSON.stringify({width,standard:standard.font,large:large.font}));
   }
   assert.deepEqual(errors,[],JSON.stringify({width,errors}));
   console.log('G04_NARROW_ZOOM_REFLOW_BROWSER_PASS',JSON.stringify({width,homeDock:home.dock.position,recordSaveBar:record.position}));
