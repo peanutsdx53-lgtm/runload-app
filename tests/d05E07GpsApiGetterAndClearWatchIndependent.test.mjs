@@ -76,9 +76,10 @@ test('D-05/E-07: Android-like GPS unavailable then accepted fix clears obsolete 
   const geo={watchPosition(success,error){successCallback=success;errorCallback=error;return 31;},clearWatch(){}};
   const h=harness(()=>geo);
   const status=h.el('[data-measurement-status]');
+  let gpsTimestamp=Date.now();
   const fix=(accuracy=8)=>({
     coords:{latitude:35,longitude:139,accuracy},
-    timestamp:Date.now(),
+    timestamp:(gpsTimestamp+=6000),
   });
   try{
     await h.el('[data-action="start-measurement"]').fire('click');
