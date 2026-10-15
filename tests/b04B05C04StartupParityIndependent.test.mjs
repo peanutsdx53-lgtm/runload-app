@@ -58,3 +58,60 @@ test('B-05: offline resource inventory has no duplicate paths or silent missing 
  // Shared and per-platform entries may overlap by design; verify duplicates separately.
  assert(Object.values(groups).flat().length>=300);
 });
+
+test('B-05: platform CSS begins together and preserves canonical cascade order',async()=>{
+  const {loadPlatformStyles}=await import('../ui/platformStyles.js');
+  const source=await read('ui/platformStyles.js');
+  const index=await read('index.html');
+  const originalDocument=globalThis.document;
+  const initial=[...index.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(m=>m[1]);
+  assert(initial.length>=20);
+  function setup(){
+    const nodes=initial.map(href=>({rel:'stylesheet',href:new URL(href,'https://runload.test/').href}));
+    const waiting=[];
+    const document={
+      baseURI:'https://runload.test/',
+      querySelectorAll:()=>nodes.filter(node=>node.rel==='stylesheet'&&node.href),
+      createElement:()=>{
+        const handlers={};
+        const link={rel:'',dataset:{},addEventListener:(name,fn)=>{handlers[name]=fn;},finish:()=>handlers.load?.()};
+        Object.defineProperty(link,'href',{get(){return this._href;},set(value){this._href=new URL(value,document.baseURI).href;}});
+        return link;
+      },
+      head:{
+        insertBefore:(node,anchor)=>{
+          const i=nodes.indexOf(anchor);
+          assert(i>=0,'Missing stylesheet cascade anchor');
+          nodes.splice(i,0,node);waiting.push(node);
+        },
+        appendChild:(node)=>{nodes.push(node);waiting.push(node);},
+      },
+    };
+    return {document,nodes,waiting};
+  }
+  try{
+    for (const platform of ['mobile','desktop']){
+      const fixture=setup();
+      globalThis.document=fixture.document;
+      const promise=loadPlatformStyles(platform);
+      // All assets must be requested before any load event is delivered.
+      // Sequential group waiting would only add the first group's assets.
+      const matches=source.match(new RegExp('const '+(platform==='mobile'?'MOBILE':'DESKTOP')+'_STYLE_GROUPS[\\s\\S]*?(?=const DESKTOP_STYLE_GROUPS|function findStylesheetByHref)'))?.[0]||'';
+      const total=(matches.match(/"\.\/styles\/[^"]+\.css"/g)||[]).length;
+      assert(total>20 && fixture.waiting.length===total,
+        JSON.stringify({platform,expected:total,actual:fixture.waiting.length}));
+      const beforeLoad=fixture.nodes.map(node=>node.href);
+      for(const link of [...fixture.waiting].reverse())link.finish();
+      await promise;
+      assert.deepEqual(fixture.nodes.map(node=>node.href),beforeLoad,
+        platform+' CSS ordering changed when responses finished in reverse');
+      const duplicate=loadPlatformStyles(platform);
+      await duplicate;
+      assert.deepEqual(fixture.nodes.map(node=>node.href),beforeLoad,
+        platform+' reloading existing CSS created duplicate style nodes');
+    }
+  }finally{
+    if(originalDocument===undefined)delete globalThis.document;
+    else globalThis.document=originalDocument;
+  }
+});
