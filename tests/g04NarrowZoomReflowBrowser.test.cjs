@@ -126,9 +126,9 @@ async function run(browser,origin,width) {
 
   if(width>=320){
     await page.goto(origin+'/index.html#/settings',{waitUntil:'domcontentloaded',timeout:20000});
-    await page.waitForSelector('.screen--settings .head p',{timeout:20000});
+    await page.waitForSelector('.screen--settings .head p:not(.eyebrow)',{timeout:20000});
     const standard=await page.evaluate(()=>{
-      const el=document.querySelector('.screen--settings .head p');
+      const el=document.querySelector('.screen--settings .head p:not(.eyebrow)');
       return {font:parseFloat(getComputedStyle(el).fontSize),html:document.documentElement.className,
         pageScroll:document.documentElement.scrollWidth};
     });
@@ -143,7 +143,7 @@ async function run(browser,origin,width) {
       applyAppSettings({textSize:'large'});
     });
     const large=await page.evaluate(()=>{
-      const el=document.querySelector('.screen--settings .head p');
+      const el=document.querySelector('.screen--settings .head p:not(.eyebrow)');
       return {font:parseFloat(getComputedStyle(el).fontSize),html:document.documentElement.className,
         pageScroll:document.documentElement.scrollWidth};
     });
