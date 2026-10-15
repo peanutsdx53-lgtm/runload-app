@@ -1,4 +1,7 @@
-import { HOME_APP_CATALOG, WIDGET_CATALOG } from "./mobileHomeLayoutState.js";
+import { HOME_APP_CATALOG, WIDGET_CATALOG, DEFAULT_LAYOUT,
+  gridTokenForElement, currentWidgetSizes, visibleTokensForPage, placementsForPage,
+  applyPlacementStyle, setItemZone } from "./mobileHomeLayoutState.js";
+import { packTokens, findNearestFreePlacement } from "./mobileHomeGridModel.js";
 
 export function ensureEditControls(root) {
   const status = root.querySelector(".mobile-home-os__status");
@@ -192,4 +195,78 @@ export function renderZoomEditPanel(root, page, dock) {
   status.setAttribute("role", "status");
   panel.append(status);
   return panel;
+}
+
+
+// Safe keyboard/touch alternative to 4-column drag editing at extreme zoom.
+// Coordinates are still serialized through the existing protected writers.
+export function applyZoomEditAction(root, page, dock, action, token, handlers) {
+  const grid = page?.querySelector(".mobile-home-grid");
+  if (!grid || !token) return false;
+  const isApp = token.startsWith("app:");
+  const appId = isApp ? token.slice(4) : "";
+  if (action === "size" && token.startsWith("widget:")) {
+    handlers.cycleWidgetSize(token.slice(7));
+    return true;
+  }
+  if (action === "hide" && token.startsWith("widget:")) {
+    handlers.removeWidget(token.slice(7));
+    return true;
+  }
+  if (action === "remove" && isApp) {
+    handlers.removeHomeApp(appId);
+    return true;
+  }
+  const items = [...grid.children].filter(item => gridTokenForElement(item) && !item.hidden)
+    .sort((a,b) => (Number(a.dataset.homeRow)||1)-(Number(b.dataset.homeRow)||1)
+      || (Number(a.dataset.homeCol)||1)-(Number(b.dataset.homeCol)||1));
+  const dockItems = [...dock.querySelectorAll("[data-home-item-id]")];
+  if (action === "up" || action === "down") {
+    const collection = dockItems.some(item => gridTokenForElement(item)===token) ? dockItems : items;
+    const index = collection.findIndex(item => gridTokenForElement(item)===token);
+    const nextIndex = index + (action==="up" ? -1 : 1);
+    if (index < 0 || nextIndex < 0 || nextIndex >= collection.length) return false;
+    if (collection===dockItems) {
+      const current=collection[index], adjacent=collection[nextIndex];
+      if (action==="up") adjacent.before(current);
+      else adjacent.after(current);
+    } else {
+      [items[index],items[nextIndex]]=[items[nextIndex],items[index]];
+      const sizes=currentWidgetSizes(root);
+      const packed=packTokens(items.map(gridTokenForElement),{widgetSizes:sizes});
+      if(packed.length!==items.length) return false;
+      const byToken=new Map(items.map(item=>[gridTokenForElement(item),item]));
+      for (const placement of packed) {
+        const item=byToken.get(placement.token);
+        grid.append(item);
+        applyPlacementStyle(item,placement,sizes);
+      }
+    }
+    handlers.persist();
+    return true;
+  }
+  if(!isApp) return false;
+  const item=[...root.querySelectorAll("[data-home-item-id]")].find(node=>node.dataset.homeItemId===appId);
+  if(!item) return false;
+  if(action==="to-grid") {
+    if(!item.closest(".mobile-home-dock"))return false;
+    const free=findNearestFreePlacement(placementsForPage(page),token,{row:1,col:1},{
+      widgetSizes:currentWidgetSizes(root),occupiedTokens:visibleTokensForPage(page)
+    });
+    if(!free)return false;
+    grid.append(item);
+    setItemZone(item,"apps");
+    applyPlacementStyle(item,free,currentWidgetSizes(root));
+  }else if(action==="to-dock") {
+    if(!item.closest(".mobile-home-grid") ||
+      dock.querySelectorAll("[data-home-item-id]").length>=DEFAULT_LAYOUT.dock.length)return false;
+    dock.append(item);
+    setItemZone(item,"dock");
+    item.style.removeProperty("grid-row");
+    item.style.removeProperty("grid-column");
+    delete item.dataset.homeRow;
+    delete item.dataset.homeCol;
+  }else return false;
+  handlers.persist();
+  return true;
 }
