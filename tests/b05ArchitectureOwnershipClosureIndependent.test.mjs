@@ -28,10 +28,10 @@ test("B05: full and short date formatters have different contracts",async()=>{
   assert.equal(formatShortLocalDate("2026-10-11"),"10月11日");
   assert.notEqual(formatLocalDate(""),formatShortLocalDate(""));
 });
-test("B05: all 112 stylesheets have loader and service worker owners",()=>{
+test("B05: all 113 stylesheets have loader and service worker owners",()=>{
   const css=fs.readdirSync(new URL("../styles/",import.meta.url)).filter(x=>x.endsWith(".css"));
   const loader=read("ui/platformStyles.js"),sw=read("service-worker.js"),html=read("index.html");
-  assert.equal(css.length,112);
+  assert.equal(css.length,113);
   for(const name of css){
     const ref="./styles/"+name;
     assert.ok(loader.includes('"'+ref+'"')||html.includes(ref),"unowned "+name);
