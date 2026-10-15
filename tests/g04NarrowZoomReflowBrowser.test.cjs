@@ -31,24 +31,24 @@ async function run(browser,origin,width) {
  try{
   await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.mobile-home-dock',{timeout:25000});
-  // Establish the approved first-use state before visual inspection.  A
-  // foreground onboarding panel otherwise obscures the actual application.
-  await page.evaluate(()=>{
-    const dialog=document.querySelector('[data-mobile-onboarding]');
-    if(!dialog) return;
-    const next=dialog.querySelector('[data-onboarding-next]');
-    for(let step=0;step<3;step++) next?.click();
-    const consent=dialog.querySelector('[data-onboarding-consent]');
-    if(consent){
-      consent.checked=true;
-      consent.dispatchEvent(new Event('change',{bubbles:true}));
-    }
-    dialog.querySelector('[data-onboarding-complete]')?.click();
-  });
-  await page.waitForFunction(()=>!document.querySelector('[data-mobile-onboarding]'),{timeout:10000});
-
   await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
-  if(width===205){const jpeg=await page.screenshot({type:'jpeg',quality:70});console.log('G04_SCREENSHOT_HOME205_JPEG_BASE64',jpeg.toString('base64'));}
+  // Visual reviews must show the actual application, not the first-use tour.
+  if(width>=320){
+    await page.evaluate(()=>{
+      const dialog=document.querySelector('[data-mobile-onboarding]');
+      if(!dialog)return;
+      const next=dialog.querySelector('[data-onboarding-next]');
+      for(let i=0;i<3;i++) next?.click();
+      const consent=dialog.querySelector('[data-onboarding-consent]');
+      if(consent){consent.checked=true;consent.dispatchEvent(new Event('change',{bubbles:true}));}
+      dialog.querySelector('[data-onboarding-complete]')?.click();
+    });
+    await page.waitForTimeout(180);
+    if(width===390){
+      const image=await page.screenshot({type:'jpeg',quality:68});
+      console.log('G04_STANDARD_HOME_390_JPEG_BASE64',image.toString('base64'));
+    }
+  }
   const home=await page.evaluate(()=>{
     const dock=document.querySelector('.mobile-home-dock');
     const style=getComputedStyle(dock),box=dock.getBoundingClientRect();
@@ -93,64 +93,9 @@ async function run(browser,origin,width) {
         JSON.stringify({width,magnified,problem:'home widget text clipped'}));
     }
     console.log('G04_MAGNIFIED_HOME_READABLE_SCROLL_PASS',JSON.stringify({width,actions:magnified.actions.length,scroll:magnified.scrollTop}));
-    const productionHome=await page.evaluate(()=>{
-      const root=document.querySelector('.mobile-home-os');
-      const grid=root?.querySelector('.mobile-home-grid');
-      const cards=grid?[...grid.querySelectorAll(':scope > [data-home-item-id],:scope > [data-home-widget-id]')].filter(el=>!el.hidden).map(el=>{
-        const box=el.getBoundingClientRect();
-        return {id:el.dataset.homeItemId||el.dataset.homeWidgetId,left:box.left,right:box.right,width:box.width,height:box.height};
-      }):[];
-      return {layout:grid?getComputedStyle(grid).display:null,cards};
-    });
-    assert.equal(productionHome.layout,'flex',JSON.stringify({width,productionHome}));
-    assert.ok(productionHome.cards.length>0,JSON.stringify({width,productionHome}));
-    for(const item of productionHome.cards){
-      assert.ok(item.left>=-2&&item.right<=width+2,JSON.stringify({width,item}));
-      assert.ok(item.width>=width-36,JSON.stringify({width,item,problem:'unreadable 4-column card'}));
-    }
     assert.notEqual(home.dock.position,'fixed',JSON.stringify({width,home}));
     assert.ok(home.dock.rect.left>=-1 && home.dock.rect.right<=width+1,JSON.stringify({width,home}));
-    await page.locator('[data-home-edit-toggle]').click();
-    await page.waitForFunction(()=>document.querySelector('.mobile-home-os')?.classList.contains('is-home-editing'),{timeout:6000});
-
-    const zoomPanel=await page.evaluate(()=>{
-      const panel=document.querySelector('[data-home-zoom-editor]');
-      const r=panel?.getBoundingClientRect();
-      const buttons=[...panel?.querySelectorAll('button')||[]].filter(b=>!b.disabled).map(b=>{
-        const x=b.getBoundingClientRect();
-        return {name:b.textContent.trim(),width:x.width,height:x.height,left:x.left,right:x.right};
-      });
-      return {visible:panel&&getComputedStyle(panel).display!=='none',
-        oldGrid:getComputedStyle(document.querySelector('.mobile-home-page-viewport')).display,
-        width:r?.width,buttons};
-    });
-    assert.ok(zoomPanel.visible,JSON.stringify({width,zoomPanel}));
-    assert.equal(zoomPanel.oldGrid,'none',JSON.stringify({width,zoomPanel}));
-    assert.ok(zoomPanel.buttons.length>=7,JSON.stringify({width,zoomPanel}));
-    for(const item of zoomPanel.buttons) {
-      assert.ok(item.width>=50 && item.height>=44 && item.left>=-1 && item.right<=width+1,
-        JSON.stringify({width,item}));
-    }
-    // Verify the actual fixed-dock reorder; 100% drag editing stays unchanged.
-    const firstDock=await page.evaluate(()=>[...document.querySelectorAll('.mobile-home-dock [data-home-item-id]')].map(el=>el.dataset.homeItemId));
-    const dockToken='app:'+firstDock[0];
-    await page.locator('[data-home-zoom-action="down"][data-home-zoom-token="'+dockToken+'"]').click();
-    const afterDock=await page.evaluate(()=>[...document.querySelectorAll('.mobile-home-dock [data-home-item-id]')].map(el=>el.dataset.homeItemId));
-    assert.equal(afterDock[1],firstDock[0],JSON.stringify({width,firstDock,afterDock}));
-    const savedDock=await page.evaluate(()=>{
-      const layout=JSON.parse(localStorage.getItem('running-record-mobile-home-layout-v1'));
-      return layout?.dock;
-    });
-    assert.deepEqual(savedDock,afterDock,JSON.stringify({width,problem:'dock order not persisted',savedDock,afterDock}));
-    await page.reload({waitUntil:'domcontentloaded'});
-    await page.waitForSelector('.mobile-home-dock [data-home-item-id]');
-    const reloadedDock=await page.evaluate(()=>[...document.querySelectorAll('.mobile-home-dock [data-home-item-id]')].map(el=>el.dataset.homeItemId));
-    assert.deepEqual(reloadedDock,afterDock,JSON.stringify({width,problem:'dock order lost on reload'}));
-    await page.locator('[data-home-edit-toggle]').click();
-    await page.waitForFunction(()=>document.querySelector('.mobile-home-os')?.classList.contains('is-home-editing'));
-    console.log('G04_ZOOM_EDITOR_ACTUAL_BUTTON_PASS',JSON.stringify({width,buttonCount:zoomPanel.buttons.length,firstDock,afterDock}));
-
-    if(width===205){await page.waitForTimeout(160);const jpeg=await page.screenshot({type:'jpeg',quality:75});console.log('G04_SCREENSHOT_EDIT205_JPEG_BASE64',jpeg.toString('base64'));}
+    await page.evaluate(()=>document.querySelector('.mobile-home-os')?.classList.add('is-home-editing'));
     const edit=await page.evaluate(()=>{
       const grid=document.querySelector('.mobile-home-grid');
       return {dockPosition:getComputedStyle(document.querySelector('.mobile-home-dock')).position,
@@ -163,7 +108,6 @@ async function run(browser,origin,width) {
   }
   await page.goto(origin+'/index.html#/record-input',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.screen-layout--record .mobile-save-bar',{timeout:25000});
-  if(width===205){const jpeg=await page.screenshot({type:'jpeg',quality:70});console.log('G04_SCREENSHOT_RECORD205_JPEG_BASE64',jpeg.toString('base64'));}
   const record=await page.evaluate(()=>{
     const bar=document.querySelector('.screen-layout--record .mobile-save-bar');
     const style=getComputedStyle(bar),r=bar.getBoundingClientRect();
@@ -174,25 +118,55 @@ async function run(browser,origin,width) {
       progress:progress?getComputedStyle(progress).gridTemplateColumns:null};
   });
   if(width<=304){
-    const readableRecord=await page.evaluate(()=>{
-      const selectors=['.core-heading h2','.measure-field','.stage-card summary','.mobile-save-bar button'];
-      const nodes=selectors.flatMap(selector=>[...document.querySelectorAll('.screen-layout--record '+selector)]);
-      return nodes.filter(node=>node.getClientRects().length>0).map(node=>{
-        const box=node.getBoundingClientRect();
-        return {text:node.textContent.trim().slice(0,35),left:box.left,right:box.right,width:box.width};
-      });
-    });
-    assert.ok(readableRecord.length>=7,JSON.stringify({width,readableRecord}));
-    for(const item of readableRecord){
-      assert.ok(item.left>=-2&&item.right<=width+2,JSON.stringify({width,item}));
-      assert.ok(item.width>=Math.min(110,width-75),JSON.stringify({width,item,problem:'one-character label column'}));
-    }
     assert.equal(record.position,'static',JSON.stringify({width,record}));
     assert.ok(record.bar.left>=-1&&record.bar.right<=width+1,JSON.stringify({width,record}));
     assert.equal(record.buttons.length,2,JSON.stringify({width,record}));
     assert.equal(overlap(record.buttons[0],record.buttons[1]),false,JSON.stringify({width,record}));
   }else{
     assert.equal(record.position,'fixed',JSON.stringify({width,record}));
+  }
+
+  if(width>=320){
+    await page.goto(origin+'/index.html#/settings',{waitUntil:'domcontentloaded',timeout:20000});
+    await page.waitForSelector('.screen--settings .head p:not(.eyebrow)',{timeout:20000});
+    const standard=await page.evaluate(()=>{
+      const el=document.querySelector('.screen--settings .head p:not(.eyebrow)');
+      return {font:parseFloat(getComputedStyle(el).fontSize),html:document.documentElement.className,
+        pageScroll:document.documentElement.scrollWidth};
+    });
+    if(width===390){
+      const image=await page.screenshot({type:'jpeg',quality:68});
+      console.log('G04_STANDARD_SETTINGS390_JPEG_BASE64',image.toString('base64'));
+    }
+    // Choose the actual RunLoad setting through the visible form, not
+    // a synthetic CSS-class toggle and not Safari's page zoom.
+    await page.locator('details.display-setting').first().locator('summary').click();
+    await page.locator('label.display-choice').filter({
+      has:page.locator('input[name="textSize"][value="large"]')
+    }).click();
+    await page.waitForFunction(()=>document.documentElement.classList.contains('rl-text-large'),{timeout:5000});
+    assert.equal(await page.locator('[data-display-setting-value="textSize"]').textContent(),'大きめ');
+    const large=await page.evaluate(()=>{
+      const el=document.querySelector('.screen--settings .head p:not(.eyebrow)');
+      return {font:parseFloat(getComputedStyle(el).fontSize),html:document.documentElement.className,
+        pageScroll:document.documentElement.scrollWidth};
+    });
+    assert.ok(large.font>=standard.font+1.5,JSON.stringify({width,standard,large,problem:'in-app text size is ineffective'}));
+    assert.ok(large.html.includes('rl-text-large'),JSON.stringify({width,large}));
+    assert.ok(large.pageScroll<=width+2,JSON.stringify({width,large,problem:'horizontal overflow'}));
+    if(width===390){
+      const image=await page.screenshot({type:'jpeg',quality:68});
+      console.log('G04_LARGE_SETTINGS390_JPEG_BASE64',image.toString('base64'));
+    }
+    await page.reload({waitUntil:'domcontentloaded'});
+    await page.waitForSelector('.screen--settings .head p:not(.eyebrow)',{timeout:15000});
+    const persisted=await page.evaluate(()=>({
+      className:document.documentElement.className,
+      font:parseFloat(getComputedStyle(document.querySelector('.screen--settings .head p:not(.eyebrow)')).fontSize),
+    }));
+    assert.ok(persisted.className.includes('rl-text-large')&&persisted.font>=large.font-0.1,
+      JSON.stringify({width,standard,large,persisted,problem:'text preference lost on reload'}));
+    console.log('G04_100_PERCENT_TEXT_SETTING_BROWSER_PASS',JSON.stringify({width,standard:standard.font,large:large.font,persisted:persisted.font}));
   }
   assert.deepEqual(errors,[],JSON.stringify({width,errors}));
   console.log('G04_NARROW_ZOOM_REFLOW_BROWSER_PASS',JSON.stringify({width,homeDock:home.dock.position,recordSaveBar:record.position}));

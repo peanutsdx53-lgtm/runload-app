@@ -47,7 +47,7 @@ export function renderSettingsScreenWithPresentation({ services, context }, pres
   return `<div class="screen screen--settings screen-layout screen-layout--settings secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="#/more">← その他へ戻る</a><strong>設定</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
-    <section class="head"><p class="eyebrow">設定</p><h1>設定</h1><p>表示、使い回す情報、端末内データをまとめます。</p></section>
+    <section class="head"><p class="eyebrow">設定</p><h1>設定</h1><p>表示と端末内データを管理します。</p></section>
     ${saved ? '<p class="parity-save-message" role="status">設定を保存しました。</p>' : ""}
     <form id="app-settings-form" novalidate>
       <section class="group"><p class="group-title">表示</p>
