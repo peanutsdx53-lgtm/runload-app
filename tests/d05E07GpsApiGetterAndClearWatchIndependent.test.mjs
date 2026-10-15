@@ -82,7 +82,7 @@ test('D-05/E-07: Android-like GPS unavailable then accepted fix clears obsolete 
   });
   try{
     await h.el('[data-action="start-measurement"]').fire('click');
-    assert.equal(h.root.dataset.gpsQuality,'waiting');
+    assert.equal(h.root.dataset.measurementPhase,'active');
     errorCallback({code:2});
     assert.equal(h.root.dataset.gpsQuality,'error');
     assert.match(status.textContent,/現在地を取得できません/);
