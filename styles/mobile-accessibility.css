@@ -23,3 +23,22 @@
   .screen-layout--result .region-sheet a.region-row{text-decoration:none;cursor:pointer}
   .screen-layout--result .region-sheet a.region-row:focus-visible{outline:3px solid var(--color-focus);outline-offset:2px}
 }
+
+/* Text enlargement belongs to RunLoad settings, not Safari page zoom.
+   Only text grows; touch targets and grid geometry retain their normal sizes. */
+@media (max-width:54.99rem) {
+  :root.rl-text-large .screen p,
+  :root.rl-text-large .screen .note,
+  :root.rl-text-large .screen .muted-text {
+    font-size:max(15px,.9375rem);
+    line-height:1.6;
+    overflow-wrap:break-word;
+  }
+  :root.rl-text-large .screen small {font-size:max(13px,.8125rem);line-height:1.45}
+  :root.rl-text-large .screen .field > span,
+  :root.rl-text-large .screen .boundary > span {
+    font-size:max(14px,.875rem);
+    line-height:1.5;
+    overflow-wrap:break-word;
+  }
+}
