@@ -1,7 +1,4 @@
-import { HOME_APP_CATALOG, WIDGET_CATALOG, DEFAULT_LAYOUT,
-  gridTokenForElement, currentWidgetSizes, visibleTokensForPage, placementsForPage,
-  applyPlacementStyle, setItemZone } from "./mobileHomeLayoutState.js";
-import { packTokens, findNearestFreePlacement } from "./mobileHomeGridModel.js";
+import { HOME_APP_CATALOG, WIDGET_CATALOG, DEFAULT_LAYOUT, gridTokenForElement, currentWidgetSizes, visibleTokensForPage, placementsForPage, applyPlacementStyle, setItemZone } from "./mobileHomeLayoutState.js"; import { packTokens, findNearestFreePlacement } from "./mobileHomeGridModel.js";
 
 export function ensureEditControls(root) {
   const status = root.querySelector(".mobile-home-os__status");
