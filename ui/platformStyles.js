@@ -73,6 +73,7 @@ const MOBILE_STYLE_GROUPS = Object.freeze([
     "./styles/mobile-body-part-detail.css",
     "./styles/mobile-history.css",
     "./styles/mobile-home-viewport-balance.css",
+    "./styles/mobile-zoom-reflow.css",
   ]) }),
   Object.freeze({ before: "./styles/settings-navigation.css", urls: Object.freeze([
     "./styles/consultation-share-mobile.css",

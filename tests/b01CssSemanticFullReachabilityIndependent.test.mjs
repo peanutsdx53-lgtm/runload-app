@@ -72,8 +72,8 @@ const known=Object.freeze([
   "status-label--neutral",
   "status-label--success"
 ]);
-test('B01 independent full CSS selector inventory: 111 files and 60 explicitly owned retained names',()=>{
- assert.equal(css.length,111);
+test('B01 independent full CSS selector inventory: 112 files and 60 explicitly owned retained names',()=>{
+ assert.equal(css.length,112);
  assert.deepEqual(unknown,known,'Unexplained CSS class requires dynamic generator provenance or reviewed deletion');
 });
 test('B01 independent runtime generator witnesses for retained dynamic classes',()=>{
