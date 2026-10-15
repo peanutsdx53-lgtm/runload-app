@@ -220,6 +220,7 @@ const MOBILE_PLATFORM_URLS = [
   "./styles/mobile-body-part-detail.css",
   "./styles/mobile-history.css",
   "./styles/mobile-home-viewport-balance.css",
+    "./styles/mobile-zoom-reflow.css",
   "./styles/consultation-share-mobile.css",
   "./styles/mobile-components-responsive.css",
   "./styles/mobile-consultation-share-responsive.css",
