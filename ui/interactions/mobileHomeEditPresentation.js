@@ -1,4 +1,4 @@
-import { HOME_APP_CATALOG, WIDGET_CATALOG } from "./mobileHomeLayoutState.js";
+import { HOME_APP_CATALOG, WIDGET_CATALOG, DEFAULT_LAYOUT, gridTokenForElement, currentWidgetSizes, visibleTokensForPage, placementsForPage, applyPlacementStyle, setItemZone } from "./mobileHomeLayoutState.js"; import { packTokens, findNearestFreePlacement } from "./mobileHomeGridModel.js";
 
 export function ensureEditControls(root) {
   const status = root.querySelector(".mobile-home-os__status");
@@ -103,3 +103,167 @@ export function moveGhost(ghost, clientX, clientY) {
   ghost.style.top = `${clientY}px`;
 }
 
+
+
+// At extreme browser page zoom the four-column edit grid is impossible to
+// operate reliably. Render a separate, semantically ordered editor while
+// keeping the actual DOM grid and persisted coordinates intact.
+export function renderZoomEditPanel(root, page, dock) {
+  let panel = root.querySelector("[data-home-zoom-editor]");
+  if (!panel) {
+    panel = document.createElement("section");
+    panel.className = "mobile-home-zoom-editor";
+    panel.dataset.homeZoomEditor = "";
+    panel.setAttribute("aria-label", "ホームの配置編集");
+    root.querySelector(".mobile-home-os__header")?.after(panel);
+  }
+  panel.hidden = !root.classList.contains("is-home-editing");
+  if (panel.hidden) return panel;
+
+  const h2 = document.createElement("h2");
+  h2.textContent = "ホームを整理";
+  const note = document.createElement("p");
+  note.textContent = "移動はボタンで選択します。指でドラッグする必要はありません。";
+  note.className = "mobile-home-zoom-editor__note";
+  panel.replaceChildren(h2, note);
+
+  const appNames = new Map(HOME_APP_CATALOG.map(({ id, label }) => [id, label]));
+  const widgetNames = new Map(WIDGET_CATALOG.map(({ id, label }) => [id, label]));
+  function addButton(bar, text, action, token, enabled, name) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = text;
+    button.dataset.homeZoomAction = action;
+    button.dataset.homeZoomToken = token;
+    button.disabled = !enabled;
+    button.setAttribute("aria-label", name + "：" + text);
+    bar.append(button);
+  }
+  function addGroup(title, items, zone) {
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    panel.append(heading);
+    if (!items.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "項目はありません。";
+      panel.append(empty);
+      return;
+    }
+    const list = document.createElement("ol");
+    list.className = "mobile-home-zoom-editor__list";
+    for (const [index, item] of items.entries()) {
+      const id = item.dataset.homeItemId || item.dataset.homeWidgetId || "";
+      const isWidget = Boolean(item.dataset.homeWidgetId);
+      const token = (isWidget ? "widget:" : "app:") + id;
+      const name = (isWidget ? widgetNames : appNames).get(id) || "ホームの項目";
+      const li = document.createElement("li");
+      li.className = "mobile-home-zoom-editor__item";
+      const label = document.createElement("strong");
+      label.textContent = name;
+      li.append(label);
+      const bar = document.createElement("div");
+      bar.className = "mobile-home-zoom-editor__actions";
+      addButton(bar, "前へ", "up", token, index > 0, name);
+      addButton(bar, "後へ", "down", token, index < items.length - 1, name);
+      if (isWidget) {
+        addButton(bar, "大きさ変更", "size", token, true, name);
+        addButton(bar, "非表示", "hide", token, true, name);
+      } else {
+        addButton(bar, zone === "dock" ? "一覧へ移動" : "固定欄へ移動",
+          zone === "dock" ? "to-grid" : "to-dock", token, true, name);
+        if (zone !== "dock") addButton(bar, "ホームから外す", "remove", token, true, name);
+      }
+      li.append(bar);
+      list.append(li);
+    }
+    panel.append(list);
+  }
+  const gridItems = [...(page?.querySelector(".mobile-home-grid")?.children || [])]
+    .filter(item => (item.dataset.homeItemId || item.dataset.homeWidgetId) && !item.hidden)
+    .sort((a, b) => (Number(a.dataset.homeRow) || 1) - (Number(b.dataset.homeRow) || 1)
+      || (Number(a.dataset.homeCol) || 1) - (Number(b.dataset.homeCol) || 1));
+  const dockItems = [...(dock?.querySelectorAll("[data-home-item-id]") || [])];
+  const pageNumber = Number(page?.dataset.homePageIndex || 0) + 1;
+  addGroup("ページ " + pageNumber + " の項目", gridItems, "grid");
+  addGroup("固定欄", dockItems, "dock");
+  const status = document.createElement("p");
+  status.className = "mobile-home-zoom-editor__status";
+  status.dataset.homeZoomStatus = "";
+  status.setAttribute("role", "status");
+  panel.append(status);
+  return panel;
+}
+
+
+// Safe keyboard/touch alternative to 4-column drag editing at extreme zoom.
+// Coordinates are still serialized through the existing protected writers.
+export function applyZoomEditAction(root, page, dock, action, token, handlers) {
+  const grid = page?.querySelector(".mobile-home-grid");
+  if (!grid || !token) return false;
+  const isApp = token.startsWith("app:");
+  const appId = isApp ? token.slice(4) : "";
+  if (action === "size" && token.startsWith("widget:")) {
+    handlers.cycleWidgetSize(token.slice(7));
+    return true;
+  }
+  if (action === "hide" && token.startsWith("widget:")) {
+    handlers.removeWidget(token.slice(7));
+    return true;
+  }
+  if (action === "remove" && isApp) {
+    handlers.removeHomeApp(appId);
+    return true;
+  }
+  const items = [...grid.children].filter(item => gridTokenForElement(item) && !item.hidden)
+    .sort((a,b) => (Number(a.dataset.homeRow)||1)-(Number(b.dataset.homeRow)||1)
+      || (Number(a.dataset.homeCol)||1)-(Number(b.dataset.homeCol)||1));
+  const dockItems = [...dock.querySelectorAll("[data-home-item-id]")];
+  if (action === "up" || action === "down") {
+    const collection = dockItems.some(item => gridTokenForElement(item)===token) ? dockItems : items;
+    const index = collection.findIndex(item => gridTokenForElement(item)===token);
+    const nextIndex = index + (action==="up" ? -1 : 1);
+    if (index < 0 || nextIndex < 0 || nextIndex >= collection.length) return false;
+    if (collection===dockItems) {
+      const current=collection[index], adjacent=collection[nextIndex];
+      if (action==="up") adjacent.before(current);
+      else adjacent.after(current);
+    } else {
+      [items[index],items[nextIndex]]=[items[nextIndex],items[index]];
+      const sizes=currentWidgetSizes(root);
+      const packed=packTokens(items.map(gridTokenForElement),{widgetSizes:sizes});
+      if(packed.length!==items.length) return false;
+      const byToken=new Map(items.map(item=>[gridTokenForElement(item),item]));
+      for (const placement of packed) {
+        const item=byToken.get(placement.token);
+        grid.append(item);
+        applyPlacementStyle(item,placement,sizes);
+      }
+    }
+    handlers.persist();
+    return true;
+  }
+  if(!isApp) return false;
+  const item=[...root.querySelectorAll("[data-home-item-id]")].find(node=>node.dataset.homeItemId===appId);
+  if(!item) return false;
+  if(action==="to-grid") {
+    if(!item.closest(".mobile-home-dock"))return false;
+    const free=findNearestFreePlacement(placementsForPage(page),token,{row:1,col:1},{
+      widgetSizes:currentWidgetSizes(root),occupiedTokens:visibleTokensForPage(page)
+    });
+    if(!free)return false;
+    grid.append(item);
+    setItemZone(item,"apps");
+    applyPlacementStyle(item,free,currentWidgetSizes(root));
+  }else if(action==="to-dock") {
+    if(!item.closest(".mobile-home-grid") ||
+      dock.querySelectorAll("[data-home-item-id]").length>=DEFAULT_LAYOUT.dock.length)return false;
+    dock.append(item);
+    setItemZone(item,"dock");
+    item.style.removeProperty("grid-row");
+    item.style.removeProperty("grid-column");
+    delete item.dataset.homeRow;
+    delete item.dataset.homeCol;
+  }else return false;
+  handlers.persist();
+  return true;
+}

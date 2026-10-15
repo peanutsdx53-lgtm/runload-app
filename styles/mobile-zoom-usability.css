@@ -232,3 +232,75 @@
     display:none;
   }
 }
+
+
+/* G-04 alternative edit surface: never force 4 tiny interactive columns at 200%. */
+.mobile-home-zoom-editor { display:none; }
+@media screen and (max-width:19rem) {
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-page-viewport,
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-dock {
+    display:none !important;
+  }
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-zoom-editor:not([hidden]) {
+    box-sizing:border-box; display:block; position:relative;
+    width:100%; min-width:0; max-width:100%;
+    margin:8px 0 18px; padding:12px 10px;
+    border:1px solid var(--color-line,#a1b6c5);
+    border-radius:15px; background:var(--color-surface,#fff);
+    color:var(--color-text,#152b3c);
+  }
+  .mobile-home-zoom-editor :is(h2,h3,p) {
+    margin:0 0 10px; white-space:normal; overflow-wrap:break-word;
+    word-break:normal; line-height:1.35;
+  }
+  .mobile-home-zoom-editor h2 { font-size:19px; }
+  .mobile-home-zoom-editor h3 { font-size:16px; margin-top:14px; }
+  .mobile-home-zoom-editor__note {font-size:13px;}
+  .mobile-home-zoom-editor__list {
+    list-style:none; padding:0; margin:0; display:grid; gap:12px;
+  }
+  .mobile-home-zoom-editor__item {
+    box-sizing:border-box; min-width:0; padding:11px 7px;
+    border:1px solid var(--color-line,#a1b6c5); border-radius:12px;
+  }
+  .mobile-home-zoom-editor__item > strong {
+    display:block; width:100%; min-width:0; margin-bottom:8px;
+    font-size:15px; line-height:1.4; overflow-wrap:break-word;
+  }
+  .mobile-home-zoom-editor__actions {
+    box-sizing:border-box; display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    width:100%; min-width:0; gap:8px 6px;
+  }
+  .mobile-home-zoom-editor__actions button {
+    box-sizing:border-box; display:flex; justify-content:center;
+    align-items:center; width:100%; min-width:0; min-height:48px;
+    padding:9px 5px; font-size:13px; font-weight:700;
+    text-align:center; white-space:normal; line-height:1.35;
+    overflow-wrap:anywhere; border-radius:9px;
+    border:1px solid var(--color-line,#9db4c6);
+    color:var(--color-text,#152b3c); background:var(--color-surface,#fff);
+    touch-action:manipulation;
+  }
+  .mobile-home-zoom-editor__actions button:disabled {opacity:.35;}
+  .mobile-home-zoom-editor__actions button:focus-visible {
+    outline:3px solid var(--color-focus,#1567b2); outline-offset:2px;
+  }
+  .mobile-home-zoom-editor__status {font-size:13px; min-height:1.4em;}
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-page-indicator {
+    box-sizing:border-box; position:relative; bottom:auto; left:auto;
+    transform:none; width:100%; max-width:100%;
+    margin:12px 0; display:flex; flex-wrap:wrap;
+    justify-content:flex-start; gap:8px;
+  }
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-page-indicator .mobile-home-page-dot,
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-page-indicator .mobile-home-page-control {
+    box-sizing:border-box; position:relative; transform:none;
+    width:auto; min-width:44px; min-height:44px;
+    padding:7px 8px; border-radius:10px;
+    background:var(--color-surface,#fff); color:var(--color-text,#152b3c);
+  }
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-page-indicator .mobile-home-page-dot::after {
+    content:attr(aria-label); display:block; font-size:11px; white-space:normal;
+  }
+}
