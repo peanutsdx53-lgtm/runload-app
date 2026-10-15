@@ -33,7 +33,7 @@ async function run(browser,origin,width) {
   await page.waitForSelector('.mobile-home-dock',{timeout:25000});
   await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
   // Visual reviews must show the actual application, not the first-use tour.
-  if(width===390){
+  if(width>=320){
     await page.evaluate(()=>{
       const dialog=document.querySelector('[data-mobile-onboarding]');
       if(!dialog)return;
@@ -44,8 +44,10 @@ async function run(browser,origin,width) {
       dialog.querySelector('[data-onboarding-complete]')?.click();
     });
     await page.waitForTimeout(180);
-    const image=await page.screenshot({type:'jpeg',quality:68});
-    console.log('G04_STANDARD_HOME_390_JPEG_BASE64',image.toString('base64'));
+    if(width===390){
+      const image=await page.screenshot({type:'jpeg',quality:68});
+      console.log('G04_STANDARD_HOME_390_JPEG_BASE64',image.toString('base64'));
+    }
   }
   const home=await page.evaluate(()=>{
     const dock=document.querySelector('.mobile-home-dock');
