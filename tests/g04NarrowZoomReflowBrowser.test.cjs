@@ -111,6 +111,7 @@ async function run(browser,origin,width) {
     assert.notEqual(home.dock.position,'fixed',JSON.stringify({width,home}));
     assert.ok(home.dock.rect.left>=-1 && home.dock.rect.right<=width+1,JSON.stringify({width,home}));
     await page.evaluate(()=>document.querySelector('.mobile-home-os')?.classList.add('is-home-editing'));
+    if(width===205){await page.waitForTimeout(160);const jpeg=await page.screenshot({type:'jpeg',quality:75});console.log('G04_SCREENSHOT_EDIT205_JPEG_BASE64',jpeg.toString('base64'));}
     const edit=await page.evaluate(()=>{
       const grid=document.querySelector('.mobile-home-grid');
       return {dockPosition:getComputedStyle(document.querySelector('.mobile-home-dock')).position,
