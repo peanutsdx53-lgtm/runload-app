@@ -62,6 +62,7 @@ const known=Object.freeze([
   "rl-appearance-dark",
   "rl-color-natural",
   "rl-color-standard",
+  "rl-text-large",
   "run-measurement-energy",
   "self-understanding-rail",
   "self-understanding-rail--compact",
@@ -72,12 +73,12 @@ const known=Object.freeze([
   "status-label--neutral",
   "status-label--success"
 ]);
-test('B01 independent full CSS selector inventory: 112 files and 60 explicitly owned retained names',()=>{
+test('B01 independent full CSS selector inventory: 112 files and 61 explicitly owned retained names',()=>{
  assert.equal(css.length,112);
  assert.deepEqual(unknown,known,'Unexplained CSS class requires dynamic generator provenance or reviewed deletion');
 });
 test('B01 independent runtime generator witnesses for retained dynamic classes',()=>{
- for(const prefix of ['achievement-card--','home-state--','mobile-home-ambient--','mobile-home-tone--','mobile-home-tone-','mobile-home-widget--tone-','restore-preview--','status-label--','rl-appearance-','rl-color-']){
+ for(const prefix of ['achievement-card--','home-state--','mobile-home-ambient--','mobile-home-tone--','mobile-home-tone-','mobile-home-widget--tone-','restore-preview--','status-label--','rl-appearance-','rl-color-','rl-text-']){
    assert.ok(combined.includes(prefix),`Missing class generator ${prefix}`);
  }
 });
