@@ -3,10 +3,20 @@ import { saveGpxCandidate } from "../flowSessionState.js";
 const GPX_MAX_BYTES = GPX_MAX_TEXT_CHARS;
 function pct(v){return Number.isFinite(Number(v))?`${Number(v).toFixed(1).replace(/\.0$/,"")}%`:"—";}
 function profileSvg(points = []) {
-  const valid = points.filter((point) => point.ele != null && String(point.ele).trim() !== "" && Number.isFinite(Number(point.ele)));
-  if (valid.length < 2) return '<text x="380" y="110" text-anchor="middle">標高データが不足しています</text>';
-  const heights = valid.map((point) => Number(point.ele));
-  const min = Math.min(...heights), max = Math.max(...heights), span = Math.max(1, max - min);
+  // GPX allows up to 100,000 points. Spreading all elevations into
+  // Math.min/Math.max exceeds some browsers' function-argument limits.
+  // Scan iteratively instead; preserve the same valid-elevation contract.
+  let min = Infinity, max = -Infinity, validElevationCount = 0;
+  for (const point of points) {
+    if (point.ele == null || String(point.ele).trim() === "") continue;
+    const elevation = Number(point.ele);
+    if (!Number.isFinite(elevation)) continue;
+    validElevationCount++;
+    if (elevation < min) min = elevation;
+    if (elevation > max) max = elevation;
+  }
+  if (validElevationCount < 2) return '<text x="380" y="110" text-anchor="middle">標高データが不足しています</text>';
+  const span = Math.max(1, max - min);
   const groups = [];
   let current = [];
   let previousSegment = null;
