@@ -1,6 +1,6 @@
 /* G-04: reflow for the narrow CSS viewport produced by Safari page zoom.
    Keep the existing 100% mobile layout unchanged at ordinary 320px+ widths. */
-@media screen and (max-width: 22rem) {
+@media screen and (max-width: 19rem) {
   .screen-layout--home .mobile-home-os {
     padding-inline: 10px;
     padding-bottom: calc(20px + env(safe-area-inset-bottom));
