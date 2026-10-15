@@ -47,6 +47,35 @@ async function run(browser,origin,width) {
       assert.equal(overlap(home.buttons[i],home.buttons[j]),false,JSON.stringify({width,i,j,home}));
   }
   if(width<=304){
+    const magnified=await page.evaluate(()=>{
+      const root=document.querySelector('.mobile-home-os');
+      const head=root?.querySelector('.mobile-home-os__header');
+      const actions=[...head?.querySelectorAll('.mobile-home-os__header-actions > *')||[]]
+        .filter(node=>getComputedStyle(node).display!=='none')
+        .map(node=>{const r=node.getBoundingClientRect();return {name:node.textContent.trim(),left:r.left,right:r.right,top:r.top,bottom:r.bottom};});
+      const firstWidget=root?.querySelector('.mobile-home-widget');
+      const widgetBox=firstWidget?.getBoundingClientRect();
+      const widgetContents=firstWidget?[...firstWidget.querySelectorAll('strong,span,small')].filter(el=>el.getClientRects().length>0).map(el=>{const r=el.getBoundingClientRect();return {label:el.textContent.trim().slice(0,32),top:r.top,bottom:r.bottom};}):[];
+      const state={overflowY:getComputedStyle(root).overflowY,scrollHeight:root.scrollHeight,
+        clientHeight:root.clientHeight,actions,widgetBox:widgetBox?{top:widgetBox.top,bottom:widgetBox.bottom}:null,widgetContents};
+      root.scrollTop=root.scrollHeight;
+      state.scrollTop=root.scrollTop;
+      const dock=root.querySelector('.mobile-home-dock').getBoundingClientRect();
+      state.dockBottom=dock.bottom;
+      return state;
+    });
+    assert.equal(magnified.overflowY,'auto',JSON.stringify({width,magnified}));
+    assert.ok(magnified.scrollHeight>magnified.clientHeight+70,JSON.stringify({width,magnified}));
+    assert.ok(magnified.scrollTop>50,JSON.stringify({width,magnified}));
+    for(const item of magnified.actions){
+      assert.ok(item.left>=-1&&item.right<=width+1,JSON.stringify({width,magnified,problem:'header action outside viewport'}));
+    }
+    assert.ok(magnified.dockBottom<=470+12,JSON.stringify({width,magnified,problem:'bottom dock unreachable after scroll'}));
+    if(magnified.widgetBox)for(const item of magnified.widgetContents){
+      assert.ok(item.top>=magnified.widgetBox.top-4 && item.bottom<=magnified.widgetBox.bottom+4,
+        JSON.stringify({width,magnified,problem:'home widget text clipped'}));
+    }
+    console.log('G04_MAGNIFIED_HOME_READABLE_SCROLL_PASS',JSON.stringify({width,actions:magnified.actions.length,scroll:magnified.scrollTop}));
     assert.notEqual(home.dock.position,'fixed',JSON.stringify({width,home}));
     assert.ok(home.dock.rect.left>=-1 && home.dock.rect.right<=width+1,JSON.stringify({width,home}));
     await page.evaluate(()=>document.querySelector('.mobile-home-os')?.classList.add('is-home-editing'));
@@ -84,6 +113,6 @@ async function run(browser,origin,width) {
  }finally{await context.close();}
 }
 (async()=>{const {srv,origin}=await server();let browser;
- try{browser=await chromium.launch({headless:true});for(const w of [205,320,390])await run(browser,origin,w);}
+ try{browser=await chromium.launch({headless:true});for(const w of [195,205,256,320,390])await run(browser,origin,w);}
  finally{await browser?.close();await new Promise(ok=>srv.close(ok));}
 })().catch(e=>{console.error(e);process.exitCode=1;});
