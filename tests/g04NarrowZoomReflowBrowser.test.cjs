@@ -76,6 +76,21 @@ async function run(browser,origin,width) {
         JSON.stringify({width,magnified,problem:'home widget text clipped'}));
     }
     console.log('G04_MAGNIFIED_HOME_READABLE_SCROLL_PASS',JSON.stringify({width,actions:magnified.actions.length,scroll:magnified.scrollTop}));
+    const productionHome=await page.evaluate(()=>{
+      const root=document.querySelector('.mobile-home-os');
+      const grid=root?.querySelector('.mobile-home-grid');
+      const cards=grid?[...grid.querySelectorAll(':scope > [data-home-item-id],:scope > [data-home-widget-id]')].filter(el=>!el.hidden).map(el=>{
+        const box=el.getBoundingClientRect();
+        return {id:el.dataset.homeItemId||el.dataset.homeWidgetId,left:box.left,right:box.right,width:box.width,height:box.height};
+      }):[];
+      return {layout:grid?getComputedStyle(grid).display:null,cards};
+    });
+    assert.equal(productionHome.layout,'flex',JSON.stringify({width,productionHome}));
+    assert.ok(productionHome.cards.length>0,JSON.stringify({width,productionHome}));
+    for(const item of productionHome.cards){
+      assert.ok(item.left>=-2&&item.right<=width+2,JSON.stringify({width,item}));
+      assert.ok(item.width>=width-36,JSON.stringify({width,item,problem:'unreadable 4-column card'}));
+    }
     assert.notEqual(home.dock.position,'fixed',JSON.stringify({width,home}));
     assert.ok(home.dock.rect.left>=-1 && home.dock.rect.right<=width+1,JSON.stringify({width,home}));
     await page.evaluate(()=>document.querySelector('.mobile-home-os')?.classList.add('is-home-editing'));
@@ -101,6 +116,19 @@ async function run(browser,origin,width) {
       progress:progress?getComputedStyle(progress).gridTemplateColumns:null};
   });
   if(width<=304){
+    const readableRecord=await page.evaluate(()=>{
+      const selectors=['.core-heading h2','.measure-field','.stage-card summary','.mobile-save-bar button'];
+      const nodes=selectors.flatMap(selector=>[...document.querySelectorAll('.screen-layout--record '+selector)]);
+      return nodes.filter(node=>node.getClientRects().length>0).map(node=>{
+        const box=node.getBoundingClientRect();
+        return {text:node.textContent.trim().slice(0,35),left:box.left,right:box.right,width:box.width};
+      });
+    });
+    assert.ok(readableRecord.length>=7,JSON.stringify({width,readableRecord}));
+    for(const item of readableRecord){
+      assert.ok(item.left>=-2&&item.right<=width+2,JSON.stringify({width,item}));
+      assert.ok(item.width>=Math.min(110,width-75),JSON.stringify({width,item,problem:'one-character label column'}));
+    }
     assert.equal(record.position,'static',JSON.stringify({width,record}));
     assert.ok(record.bar.left>=-1&&record.bar.right<=width+1,JSON.stringify({width,record}));
     assert.equal(record.buttons.length,2,JSON.stringify({width,record}));
