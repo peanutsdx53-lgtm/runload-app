@@ -136,12 +136,14 @@ async function run(browser,origin,width) {
       const image=await page.screenshot({type:'jpeg',quality:68});
       console.log('G04_STANDARD_SETTINGS390_JPEG_BASE64',image.toString('base64'));
     }
-    // Apply the very same app-level settings function used by the settings form.
-    // This does not change Safari's page zoom or the persisted model.
-    await page.evaluate(async()=>{
-      const {applyAppSettings}=await import('./ui/appSettings.js');
-      applyAppSettings({textSize:'large'});
-    });
+    // Choose the actual RunLoad setting through the visible form, not
+    // a synthetic CSS-class toggle and not Safari's page zoom.
+    await page.locator('details.display-setting').first().locator('summary').click();
+    await page.locator('label.display-choice').filter({
+      has:page.locator('input[name="textSize"][value="large"]')
+    }).click();
+    await page.waitForFunction(()=>document.documentElement.classList.contains('rl-text-large'),{timeout:5000});
+    assert.equal(await page.locator('[data-display-setting-value="textSize"]').textContent(),'大きめ');
     const large=await page.evaluate(()=>{
       const el=document.querySelector('.screen--settings .head p:not(.eyebrow)');
       return {font:parseFloat(getComputedStyle(el).fontSize),html:document.documentElement.className,
@@ -154,7 +156,15 @@ async function run(browser,origin,width) {
       const image=await page.screenshot({type:'jpeg',quality:68});
       console.log('G04_LARGE_SETTINGS390_JPEG_BASE64',image.toString('base64'));
     }
-    console.log('G04_100_PERCENT_TEXT_SETTING_BROWSER_PASS',JSON.stringify({width,standard:standard.font,large:large.font}));
+    await page.reload({waitUntil:'domcontentloaded'});
+    await page.waitForSelector('.screen--settings .head p:not(.eyebrow)',{timeout:15000});
+    const persisted=await page.evaluate(()=>({
+      className:document.documentElement.className,
+      font:parseFloat(getComputedStyle(document.querySelector('.screen--settings .head p:not(.eyebrow)')).fontSize),
+    }));
+    assert.ok(persisted.className.includes('rl-text-large')&&persisted.font>=large.font-0.1,
+      JSON.stringify({width,standard,large,persisted,problem:'text preference lost on reload'}));
+    console.log('G04_100_PERCENT_TEXT_SETTING_BROWSER_PASS',JSON.stringify({width,standard:standard.font,large:large.font,persisted:persisted.font}));
   }
   assert.deepEqual(errors,[],JSON.stringify({width,errors}));
   console.log('G04_NARROW_ZOOM_REFLOW_BROWSER_PASS',JSON.stringify({width,homeDock:home.dock.position,recordSaveBar:record.position}));
