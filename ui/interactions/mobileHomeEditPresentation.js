@@ -103,3 +103,93 @@ export function moveGhost(ghost, clientX, clientY) {
   ghost.style.top = `${clientY}px`;
 }
 
+
+
+// At extreme browser page zoom the four-column edit grid is impossible to
+// operate reliably. Render a separate, semantically ordered editor while
+// keeping the actual DOM grid and persisted coordinates intact.
+export function renderZoomEditPanel(root, page, dock) {
+  let panel = root.querySelector("[data-home-zoom-editor]");
+  if (!panel) {
+    panel = document.createElement("section");
+    panel.className = "mobile-home-zoom-editor";
+    panel.dataset.homeZoomEditor = "";
+    panel.setAttribute("aria-label", "ホームの配置編集");
+    root.querySelector(".mobile-home-os__header")?.after(panel);
+  }
+  panel.hidden = !root.classList.contains("is-home-editing");
+  if (panel.hidden) return panel;
+
+  const h2 = document.createElement("h2");
+  h2.textContent = "ホームを整理";
+  const note = document.createElement("p");
+  note.textContent = "移動はボタンで選択します。指でドラッグする必要はありません。";
+  note.className = "mobile-home-zoom-editor__note";
+  panel.replaceChildren(h2, note);
+
+  const appNames = new Map(HOME_APP_CATALOG.map(({ id, label }) => [id, label]));
+  const widgetNames = new Map(WIDGET_CATALOG.map(({ id, label }) => [id, label]));
+  function addButton(bar, text, action, token, enabled, name) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = text;
+    button.dataset.homeZoomAction = action;
+    button.dataset.homeZoomToken = token;
+    button.disabled = !enabled;
+    button.setAttribute("aria-label", name + "：" + text);
+    bar.append(button);
+  }
+  function addGroup(title, items, zone) {
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    panel.append(heading);
+    if (!items.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "項目はありません。";
+      panel.append(empty);
+      return;
+    }
+    const list = document.createElement("ol");
+    list.className = "mobile-home-zoom-editor__list";
+    for (const [index, item] of items.entries()) {
+      const id = item.dataset.homeItemId || item.dataset.homeWidgetId || "";
+      const isWidget = Boolean(item.dataset.homeWidgetId);
+      const token = (isWidget ? "widget:" : "app:") + id;
+      const name = (isWidget ? widgetNames : appNames).get(id) || "ホームの項目";
+      const li = document.createElement("li");
+      li.className = "mobile-home-zoom-editor__item";
+      const label = document.createElement("strong");
+      label.textContent = name;
+      li.append(label);
+      const bar = document.createElement("div");
+      bar.className = "mobile-home-zoom-editor__actions";
+      addButton(bar, "前へ", "up", token, index > 0, name);
+      addButton(bar, "後へ", "down", token, index < items.length - 1, name);
+      if (isWidget) {
+        addButton(bar, "大きさ変更", "size", token, true, name);
+        addButton(bar, "非表示", "hide", token, true, name);
+      } else {
+        addButton(bar, zone === "dock" ? "一覧へ移動" : "固定欄へ移動",
+          zone === "dock" ? "to-grid" : "to-dock", token, true, name);
+        if (zone !== "dock") addButton(bar, "ホームから外す", "remove", token, true, name);
+      }
+      li.append(bar);
+      list.append(li);
+    }
+    panel.append(list);
+  }
+  const gridItems = [...(page?.querySelector(".mobile-home-grid")?.children || [])]
+    .filter(item => (item.dataset.homeItemId || item.dataset.homeWidgetId) && !item.hidden)
+    .sort((a, b) => (Number(a.dataset.homeRow) || 1) - (Number(b.dataset.homeRow) || 1)
+      || (Number(a.dataset.homeCol) || 1) - (Number(b.dataset.homeCol) || 1));
+  const dockItems = [...(dock?.querySelectorAll("[data-home-item-id]") || [])];
+  const pageNumber = Number(page?.dataset.homePageIndex || 0) + 1;
+  addGroup("ページ " + pageNumber + " の項目", gridItems, "grid");
+  addGroup("固定欄", dockItems, "dock");
+  const status = document.createElement("p");
+  status.className = "mobile-home-zoom-editor__status";
+  status.dataset.homeZoomStatus = "";
+  status.setAttribute("role", "status");
+  panel.append(status);
+  return panel;
+}
