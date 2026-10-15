@@ -1,0 +1,89 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs/promises');
+const http=require('node:http');
+const path=require('node:path');
+const {chromium}=require('playwright');
+const ROOT=path.resolve(__dirname,'..');
+const MIME={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webmanifest':'application/manifest+json'};
+function overlap(a,b){
+ const w=Math.min(a.right,b.right)-Math.max(a.left,b.left);
+ const h=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);
+ return w>2&&h>2;
+}
+async function server(){
+ const srv=http.createServer(async(req,res)=>{
+  try {
+   const p=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
+   const target=path.resolve(ROOT,'.'+(p==='/'?'/index.html':p));
+   if(!target.startsWith(ROOT+path.sep))return res.writeHead(403).end();
+   res.writeHead(200,{'content-type':MIME[path.extname(target)]||'application/octet-stream','cache-control':'no-store'}).end(await fs.readFile(target));
+  }catch{return res.writeHead(404).end();}
+ });
+ return await new Promise(resolve=>srv.listen(0,'127.0.0.1',()=>resolve({srv,origin:'http://127.0.0.1:'+srv.address().port})));
+}
+async function run(browser,origin,width) {
+ const context=await browser.newContext({viewport:{width,height:470},serviceWorkers:'block'});
+ await context.route('**/*',route=>route.request().url().startsWith(origin+'/')?route.continue():route.abort('blockedbyclient'));
+ const page=await context.newPage();
+ const errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ try{
+  await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:20000});
+  await page.waitForSelector('.mobile-home-dock',{timeout:25000});
+  await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
+  const home=await page.evaluate(()=>{
+    const dock=document.querySelector('.mobile-home-dock');
+    const style=getComputedStyle(dock),box=dock.getBoundingClientRect();
+    const buttons=[...dock.querySelectorAll('.mobile-home-dock__item')].map(x=>{const b=x.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width};});
+    const grid=document.querySelector('.mobile-home-grid');
+    return {width:window.innerWidth,dock:{position:style.position,columns:style.gridTemplateColumns,rect:{left:box.left,right:box.right,top:box.top,bottom:box.bottom}},buttons,
+      homeGrid: grid?getComputedStyle(grid).gridTemplateColumns:null};
+  });
+  assert.equal(home.buttons.length,4,JSON.stringify({width,home}));
+  for(let i=0;i<home.buttons.length;i++){
+    assert.ok(home.buttons[i].width>=28,JSON.stringify({width,home,i}));
+    for(let j=i+1;j<home.buttons.length;j++)
+      assert.equal(overlap(home.buttons[i],home.buttons[j]),false,JSON.stringify({width,i,j,home}));
+  }
+  if(width<=352){
+    assert.notEqual(home.dock.position,'fixed',JSON.stringify({width,home}));
+    assert.ok(home.dock.rect.left>=-1 && home.dock.rect.right<=width+1,JSON.stringify({width,home}));
+    await page.evaluate(()=>document.querySelector('.mobile-home-os')?.classList.add('is-home-editing'));
+    const edit=await page.evaluate(()=>{
+      const grid=document.querySelector('.mobile-home-grid');
+      return {dockPosition:getComputedStyle(document.querySelector('.mobile-home-dock')).position,
+        editGrid:grid?{overflowX:getComputedStyle(grid).overflowX,columns:getComputedStyle(grid).gridTemplateColumns}:null};
+    });
+    assert.notEqual(edit.dockPosition,'fixed',JSON.stringify({width,edit}));
+    if(edit.editGrid)assert.equal(edit.editGrid.overflowX,'auto',JSON.stringify({width,edit}));
+  } else{
+    assert.equal(home.dock.position,'fixed',JSON.stringify({width,home}));
+  }
+  await page.goto(origin+'/index.html#/record-input',{waitUntil:'domcontentloaded',timeout:20000});
+  await page.waitForSelector('.screen-layout--record .mobile-save-bar',{timeout:25000});
+  const record=await page.evaluate(()=>{
+    const bar=document.querySelector('.screen-layout--record .mobile-save-bar');
+    const style=getComputedStyle(bar),r=bar.getBoundingClientRect();
+    const rects=[...bar.querySelectorAll('button')].map(node=>{const x=node.getBoundingClientRect();return {left:x.left,right:x.right,top:x.top,bottom:x.bottom};});
+    const progress=document.querySelector('.mobile-record-progress');
+    return {position:style.position,columns:style.gridTemplateColumns,width:window.innerWidth,
+      bar:{left:r.left,right:r.right,top:r.top,bottom:r.bottom},buttons:rects,
+      progress:progress?getComputedStyle(progress).gridTemplateColumns:null};
+  });
+  if(width<=352){
+    assert.equal(record.position,'static',JSON.stringify({width,record}));
+    assert.ok(record.bar.left>=-1&&record.bar.right<=width+1,JSON.stringify({width,record}));
+    assert.equal(record.buttons.length,2,JSON.stringify({width,record}));
+    assert.equal(overlap(record.buttons[0],record.buttons[1]),false,JSON.stringify({width,record}));
+  }else{
+    assert.equal(record.position,'fixed',JSON.stringify({width,record}));
+  }
+  assert.deepEqual(errors,[],JSON.stringify({width,errors}));
+  console.log('G04_NARROW_ZOOM_REFLOW_BROWSER_PASS',JSON.stringify({width,homeDock:home.dock.position,recordSaveBar:record.position}));
+ }finally{await context.close();}
+}
+(async()=>{const {srv,origin}=await server();let browser;
+ try{browser=await chromium.launch({headless:true});for(const w of [205,320,390])await run(browser,origin,w);}
+ finally{await browser?.close();await new Promise(ok=>srv.close(ok));}
+})().catch(e=>{console.error(e);process.exitCode=1;});
