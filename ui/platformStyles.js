@@ -170,9 +170,17 @@ function loadStylesheet(href, beforeHref) {
 }
 
 async function loadStyleGroups(groups) {
+  // Insert all link nodes synchronously in their canonical cascade order.
+  // Network loading can proceed in parallel; the CSS cascade still follows
+  // DOM order rather than response completion order. This avoids forcing
+  // mobile startup through successive stylesheet download waves.
+  const pending = [];
   for (const group of groups) {
-    await Promise.all(group.urls.map((href) => loadStylesheet(href, group.before)));
+    for (const href of group.urls) {
+      pending.push(loadStylesheet(href, group.before));
+    }
   }
+  await Promise.all(pending);
 }
 
 export async function loadPlatformStyles(platform) {
