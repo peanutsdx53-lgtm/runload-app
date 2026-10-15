@@ -27,7 +27,7 @@ const containsFamily = (source, family) =>
   new RegExp(`\\b${family}(?:-|__|\\b)`).test(source);
 
 test('B01: no remaining CSS rules rely on seven independently unreferenced component families', () => {
-  assert.equal(styles.length, 112, 'No stylesheet file removed; loaders/offline cache remain valid');
+  assert.equal(styles.length, 113, 'No stylesheet file removed; loaders/offline cache remain valid');
   assert.ok(runtime.length >= 210);
   const runtimeSource = runtime.map(file => fs.readFileSync(path.join(root,file), 'utf8')).join('\n');
   const cssSource = styles.map(file => fs.readFileSync(path.join(root,file), 'utf8')).join('\n');
