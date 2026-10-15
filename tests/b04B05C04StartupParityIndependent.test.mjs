@@ -97,8 +97,8 @@ test('B-05: platform CSS begins together and preserves canonical cascade order',
       // All assets must be requested before any load event is delivered.
       // Sequential group waiting would only add the first group's assets.
       const matches=source.match(new RegExp('const '+(platform==='mobile'?'MOBILE':'DESKTOP')+'_STYLE_GROUPS[\\s\\S]*?(?=const DESKTOP_STYLE_GROUPS|function findStylesheetByHref)'))?.[0]||'';
-      const references=(matches.match(/"\\.\\/styles\\/[^"]+\\.css"/g)||[]).length;
-      const anchors=(matches.match(/before:\\s*"\\.\\/styles\\/[^"]+\\.css"/g)||[]).length;
+      const references=(matches.match(/"\.\/styles\/[^"]+\.css"/g)||[]).length;
+      const anchors=(matches.match(/before:\s*"\.\/styles\/[^"]+\.css"/g)||[]).length;
       const total=references-anchors;
       assert(total>20 && fixture.waiting.length===total,
         JSON.stringify({platform,expected:total,actual:fixture.waiting.length}));
