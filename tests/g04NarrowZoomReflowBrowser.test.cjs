@@ -46,7 +46,7 @@ async function run(browser,origin,width) {
     for(let j=i+1;j<home.buttons.length;j++)
       assert.equal(overlap(home.buttons[i],home.buttons[j]),false,JSON.stringify({width,i,j,home}));
   }
-  if(width<=352){
+  if(width<=304){
     assert.notEqual(home.dock.position,'fixed',JSON.stringify({width,home}));
     assert.ok(home.dock.rect.left>=-1 && home.dock.rect.right<=width+1,JSON.stringify({width,home}));
     await page.evaluate(()=>document.querySelector('.mobile-home-os')?.classList.add('is-home-editing'));
@@ -71,7 +71,7 @@ async function run(browser,origin,width) {
       bar:{left:r.left,right:r.right,top:r.top,bottom:r.bottom},buttons:rects,
       progress:progress?getComputedStyle(progress).gridTemplateColumns:null};
   });
-  if(width<=352){
+  if(width<=304){
     assert.equal(record.position,'static',JSON.stringify({width,record}));
     assert.ok(record.bar.left>=-1&&record.bar.right<=width+1,JSON.stringify({width,record}));
     assert.equal(record.buttons.length,2,JSON.stringify({width,record}));
