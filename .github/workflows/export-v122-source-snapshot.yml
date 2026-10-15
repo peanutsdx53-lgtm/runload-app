@@ -1,0 +1,35 @@
+name: Export fixed v122 source snapshot
+on:
+  push:
+    branches:
+      - snapshot-v122-reference-20261015
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 6780633eddf83609c1d55cb702b0c75ea8d83679
+          persist-credentials: false
+      - name: Create verifiable source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "6780633eddf83609c1d55cb702b0c75ea8d83679"
+          git archive --format=zip --output=RunLoad_App_Source_v2026.10.15.122_6780633.zip HEAD
+          sha256sum RunLoad_App_Source_v2026.10.15.122_6780633.zip > SOURCE_SHA256SUMS.txt
+          git rev-parse HEAD > SOURCE_GIT_COMMIT.txt
+          git write-tree > SOURCE_GIT_TREE.txt
+          unzip -tq RunLoad_App_Source_v2026.10.15.122_6780633.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: runload-v122-source-exact-6780633
+          path: |
+            RunLoad_App_Source_v2026.10.15.122_6780633.zip
+            SOURCE_SHA256SUMS.txt
+            SOURCE_GIT_COMMIT.txt
+            SOURCE_GIT_TREE.txt
+          if-no-files-found: error
+          retention-days: 14
