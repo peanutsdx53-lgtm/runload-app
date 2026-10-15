@@ -139,11 +139,11 @@ async function run(browser,origin,width) {
     await page.locator('[data-home-zoom-action="down"][data-home-zoom-token="'+dockToken+'"]').click();
     const afterDock=await page.evaluate(()=>[...document.querySelectorAll('.mobile-home-dock [data-home-item-id]')].map(el=>el.dataset.homeItemId));
     assert.equal(afterDock[1],firstDock[0],JSON.stringify({width,firstDock,afterDock}));
-    const savedLayout=await page.evaluate(()=>{
+    const savedLayout=await page.evaluate((firstId)=>{
       const saved=[...Array(localStorage.length)].map((_,i)=>localStorage.key(i))
         .filter(k=>k && k.includes('home')).map(k=>[k,localStorage.getItem(k)]);
-      return saved.some(([k,v])=>v?.includes('dock')&&v.includes('"'+firstDock[0]+'"'));
-    });
+      return saved.some(([k,v])=>v?.includes('dock')&&v.includes('"'+firstId+'"'));
+    },firstDock[0]);
     assert.ok(savedLayout,JSON.stringify({width,problem:'zoom edit not persisted'}));
     console.log('G04_ZOOM_EDITOR_ACTUAL_BUTTON_PASS',JSON.stringify({width,buttonCount:zoomPanel.buttons.length,firstDock,afterDock}));
 
