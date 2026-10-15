@@ -18,3 +18,8 @@
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
+/* G-04: expose keyboard/VoiceOver region navigation as regular HTML links. */
+@media (max-width:54.99rem){
+  .screen-layout--result .region-sheet a.region-row{text-decoration:none;cursor:pointer}
+  .screen-layout--result .region-sheet a.region-row:focus-visible{outline:3px solid var(--color-focus);outline-offset:2px}
+}
