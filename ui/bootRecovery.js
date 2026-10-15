@@ -1,4 +1,5 @@
 const BOOT_RECOVERY_TIMEOUT_MS = 8000;
+const BOOT_RECOVERY_GRACE_MS = 8000;
 const BOOT_RECOVERY_SESSION_KEY = "runload.bootRecovery.attempt.v1";
 const APP_CACHE_PREFIX = "running-record-app-";
 
@@ -56,7 +57,7 @@ async function recoverStalledBoot() {
   } catch {}
 
   if (alreadyAttempted) {
-    setBootMessage("起動できませんでした。Safariで再読み込みしてください");
+    setBootMessage("起動を完了できていません。画面が変わらない場合は再読み込みしてください。");
     return;
   }
 
@@ -67,8 +68,24 @@ async function recoverStalledBoot() {
     await clearDeliveryState();
     globalThis.location.reload();
   } catch {
-    setBootMessage("更新状態を修復できませんでした。Safariで再読み込みしてください");
+    setBootMessage("更新の確認ができませんでした。画面が変わらない場合は再読み込みしてください。");
   }
 }
 
-globalThis.setTimeout(recoverStalledBoot, BOOT_RECOVERY_TIMEOUT_MS);
+function checkSlowBoot() {
+  if (appBootCompleted()) {
+    try { sessionStorage.removeItem(BOOT_RECOVERY_SESSION_KEY); } catch {}
+    return;
+  }
+  // A slow but healthy Android/iOS startup must not be reported as a failure,
+  // or trigger cache deletion, merely because the boot screen is still visible.
+  // Give pending module/style loading a bounded opportunity to complete.
+  if (navigator.onLine === false) {
+    setBootMessage("オフラインで読み込み中です。画面が変わらない場合は接続状態を確認してください。");
+    return;
+  }
+  setBootMessage("起動に時間がかかっています。しばらくお待ちください。");
+  globalThis.setTimeout(recoverStalledBoot, BOOT_RECOVERY_GRACE_MS);
+}
+
+globalThis.setTimeout(checkSlowBoot, BOOT_RECOVERY_TIMEOUT_MS);
