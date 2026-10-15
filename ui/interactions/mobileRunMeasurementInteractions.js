@@ -194,6 +194,7 @@ export function bindRunMeasurement({ router, services }) {
   let distanceM = 0;
   let acceptedPointCount = 0;
   let rejectedPointCount = 0;
+  let gpsErrorActive = false;
   let lastAcceptedPoint = null;
   let track = [];
   let paceExceededAt = null;
@@ -459,6 +460,12 @@ export function bindRunMeasurement({ router, services }) {
     map?.setTrack(track);
     const quality = gpsQuality(accepted.accuracyM);
     setGpsStatus(quality.label, quality.quality);
+    // Only a valid, accepted position resolves a previous browser GPS error.
+    // Avoid persistent contradictory status text after connectivity recovers.
+    if (gpsErrorActive) {
+      gpsErrorActive = false;
+      setMessage(activeStatus, "GPSを再取得しました。測定を続けています。");
+    }
 
     const currentPace = rollingPaceSecondsPerKm(track);
     if (currentPaceNode) currentPaceNode.textContent = formatPace(currentPace);
@@ -479,6 +486,7 @@ export function bindRunMeasurement({ router, services }) {
 
   function handlePositionError(error) {
     rejectedPointCount += 1;
+    gpsErrorActive = true;
     setMessage(activeStatus, geolocationErrorMessage(error), true);
     setGpsStatus("GPS エラー", "error");
   }
@@ -550,6 +558,7 @@ export function bindRunMeasurement({ router, services }) {
     distanceM = 0;
     acceptedPointCount = 0;
     rejectedPointCount = 0;
+    gpsErrorActive = false;
     lastAcceptedPoint = null;
     track = [];
     paceExceededAt = null;
