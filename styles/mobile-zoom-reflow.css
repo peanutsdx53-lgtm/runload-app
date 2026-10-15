@@ -101,3 +101,76 @@
     scroll-margin-bottom: 24px;
   }
 }
+
+/* G-04 iPhone Safari 200% follow-up (2026-10-15 real-device screen recording).
+   A fixed three-row launcher remains clipped even after docking controls reflow.
+   Allow an internal vertical scroll only at extreme page zoom; at normal zoom
+   the three-row Home's original fixed-screen design is unchanged. */
+@media screen and (max-width: 19rem) {
+  .screen-layout--home .mobile-home-os {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+  .screen-layout--home .mobile-home-os__header {
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .screen-layout--home .mobile-home-os__header > div:first-child {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .screen-layout--home .mobile-home-os__header [data-app-version] {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .screen-layout--home .mobile-home-os__header-actions {
+    display: flex;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    gap: 6px;
+  }
+  .screen-layout--home .mobile-home-os__header-actions > :is(button, .mobile-home-os__status) {
+    box-sizing: border-box;
+    flex: 1 1 68px;
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    min-height: 40px;
+    padding-inline: 6px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    transform: none;
+    min-height: 0;
+    grid-auto-rows: minmax(190px, auto);
+    grid-template-rows: repeat(var(--home-grid-rows, 3), minmax(190px, auto));
+    padding-top: 4px;
+    padding-bottom: 18px;
+    row-gap: 12px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-widget {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-widget :is(strong, span, small) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .screen-layout--home .mobile-home-os.is-home-editing {
+    overflow-y: auto;
+  }
+}
