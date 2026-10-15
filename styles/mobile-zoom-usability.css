@@ -1,0 +1,234 @@
+/* G-04 candidate: extreme mobile magnification usability.
+   Presentation only; normal >= 320 CSS-pixel viewport untouched.
+   This is deliberately independent of model, persistence and event code. */
+@media screen and (max-width:19rem) {
+  /* Preserve a short, navigable Home instead of growing 3 fixed rows. */
+  .screen--home.mobile-home-ambient,
+  .screen--home.mobile-home-ambient .mobile-home-hub,
+  .screen--home.mobile-home-ambient .mobile-home-hub-viewport,
+  .screen--home.mobile-home-ambient .mobile-home-hub-track,
+  .screen--home.mobile-home-ambient .mobile-home-hub-page--apps {
+    min-width:0; max-width:100%;
+  }
+  .screen--home.mobile-home-ambient .mobile-home-hub-page--apps {
+    overflow-x:hidden; overflow-y:auto; overscroll-behavior-y:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  .screen-layout--home .mobile-home-os {
+    box-sizing:border-box; width:100%; min-width:0;
+    height:100dvh; min-height:0; max-height:100dvh;
+    overflow-x:hidden; overflow-y:auto; padding:10px 10px calc(24px + env(safe-area-inset-bottom));
+  }
+  .screen-layout--home .mobile-home-os__header {
+    box-sizing:border-box; display:flex; flex-direction:column;
+    align-items:stretch; gap:8px; min-width:0; margin-bottom:12px;
+  }
+  .screen-layout--home .mobile-home-os__header > div:first-child {
+    width:100%; min-width:0;
+  }
+  .screen-layout--home .mobile-home-os__header h1 {
+    font-size:clamp(19px, 10vw, 25px); line-height:1.15;
+    overflow-wrap:normal; word-break:normal;
+  }
+  .screen-layout--home .mobile-home-os__header-actions {
+    display:grid; grid-template-columns:minmax(0,1fr); gap:8px;
+    width:100%; min-width:0;
+  }
+  .screen-layout--home .mobile-home-os__header-actions > * {
+    box-sizing:border-box; width:100%; max-width:100%; min-width:0;
+    min-height:44px; padding:9px 8px; line-height:1.3;
+    text-align:center; overflow-wrap:normal; word-break:normal;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    transform:none; grid-auto-rows:minmax(0,auto);
+    grid-template-rows:none; row-gap:10px;
+  }
+  .screen-layout--home .mobile-home-widgets {
+    display:grid; grid-template-columns:minmax(0,1fr);
+    gap:10px; min-width:0;
+  }
+  .screen-layout--home .mobile-home-widget,
+  .screen-layout--home .mobile-home-widget-shell,
+  .screen-layout--home .mobile-home-widget-shell > .mobile-home-widget {
+    box-sizing:border-box; min-width:0; width:100%;
+    height:auto; min-height:116px; max-height:none;
+    padding:12px 10px;
+  }
+  .screen-layout--home .mobile-home-widget :is(strong,small,span),
+  .screen-layout--home .mobile-home-app :is(strong,small,span) {
+    white-space:normal; overflow-wrap:break-word; word-break:normal;
+  }
+  .screen-layout--home .mobile-home-apps,
+  .screen-layout--home .mobile-home-dock {
+    box-sizing:border-box; display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px 8px; min-width:0; width:100%;
+  }
+  .screen-layout--home .mobile-home-dock {
+    position:static; inset:auto; transform:none;
+    margin:12px 0 0; min-height:0; padding:10px 6px;
+  }
+  .screen-layout--home .mobile-home-app,
+  .screen-layout--home .mobile-home-dock__item {
+    box-sizing:border-box; min-width:0; width:100%; min-height:74px;
+    padding-inline:4px;
+  }
+  .screen-layout--home .mobile-home-dock__icon,
+  .screen-layout--home .mobile-home-app__icon {max-width:100%}
+  /* Editing is vertically reachable, with visibly separated hit targets.
+     Keep the underlying four-column coordinate model for persistence and moves. */
+  .screen-layout--home .mobile-home-os.is-home-editing {
+    overflow-y:auto; height:100%; max-height:100dvh;
+  }
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-page-viewport {
+    overflow-x:auto; overflow-y:visible; max-width:100%;
+    overscroll-behavior-x:contain;
+  }
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-grid {
+    grid-template-columns:repeat(4,minmax(80px,1fr));
+    grid-auto-rows:minmax(132px,auto);
+    grid-template-rows:repeat(var(--home-grid-rows,3),minmax(132px,auto));
+    column-gap:14px; row-gap:18px;
+    min-width:360px; padding:24px 12px 60px;
+  }
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-ios-drag-handle,
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-widget-remove,
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-widget-size {
+    min-width:42px; min-height:42px;
+  }
+  /* The primary task: simple, legible one-column form. */
+  .screen-layout--record {
+    box-sizing:border-box; width:100%; max-width:100%; min-width:0;
+    padding:10px 8px 32px;
+  }
+  .screen-layout--record .record-form,
+  .screen-layout--record .core-card,
+  .screen-layout--record .stage-card,
+  .screen-layout--record .mobile-record-wellbeing {
+    box-sizing:border-box; min-width:0; max-width:100%; width:100%;
+  }
+  .screen-layout--record .core-card,
+  .screen-layout--record .stage-card {padding:12px 10px}
+  .screen-layout--record .mobile-record-progress {
+    position:relative; top:auto; display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px; margin:0 0 12px; padding:5px;
+  }
+  .screen-layout--record .mobile-record-progress__item {
+    box-sizing:border-box; min-width:0; min-height:48px;
+    grid-template-columns:21px minmax(0,1fr);
+    padding:5px 4px; column-gap:5px;
+  }
+  .screen-layout--record .mobile-record-progress__item :is(strong,em) {
+    white-space:normal; overflow:visible;
+    text-overflow:clip; overflow-wrap:normal; word-break:normal;
+    line-height:1.15;
+  }
+  .screen-layout--record .core-heading {
+    display:grid; grid-template-columns:27px minmax(0,1fr);
+    gap:7px; align-items:start;
+  }
+  .screen-layout--record .core-heading .core-stage-icon {
+    width:27px; height:27px;
+  }
+  .screen-layout--record .core-heading .core-title-copy {
+    min-width:0; width:100%;
+  }
+  .screen-layout--record .core-heading [data-record-required-progress] {
+    grid-column:2; min-width:0; max-width:100%;
+    position:static; margin:0; padding:4px 0;
+    text-align:left; white-space:normal;
+  }
+  .screen-layout--record .core-heading h2 {
+    min-width:0; font-size:clamp(16px,8vw,21px);
+    line-height:1.3; white-space:normal; word-break:normal;
+  }
+  .screen-layout--record :is(.activity-field,.date-field) {
+    display:flex; flex-direction:column; align-items:stretch;
+    gap:8px; min-width:0; width:100%;
+  }
+  .screen-layout--record .activity-toggle {
+    box-sizing:border-box; width:100%; min-width:0;
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:5px;
+  }
+  .screen-layout--record .date-control {
+    box-sizing:border-box; max-width:100%; min-width:0;
+    width:100%;
+  }
+  .screen-layout--record :is(.measure-grid,.field-grid,.optional-stack,.field-grid--two,.field-grid--four) {
+    box-sizing:border-box; display:grid;
+    grid-template-columns:minmax(0,1fr); gap:10px;
+    min-width:0; width:100%;
+  }
+  .screen-layout--record .measure-field,
+  .screen-layout--record .measure-field > div,
+  .screen-layout--record .field,
+  .screen-layout--record .field > :is(input,select,textarea) {
+    box-sizing:border-box; min-width:0; width:100%; max-width:100%;
+  }
+  .screen-layout--record .measure-field > div {
+    display:flex; min-height:50px; height:auto; padding:7px;
+  }
+  .screen-layout--record .measure-field input {
+    min-width:0; flex:1 1 0; width:1%;
+  }
+  .screen-layout--record .measure-field b {flex:0 0 auto}
+  .screen-layout--record .stage-card summary {
+    box-sizing:border-box; display:grid;
+    grid-template-columns:25px minmax(0,1fr) 14px;
+    align-items:start; gap:6px; width:100%; min-width:0;
+  }
+  .screen-layout--record .stage-card summary .summary-copy {
+    min-width:0; width:100%;
+  }
+  .screen-layout--record .stage-card summary .summary-copy :is(small,strong,em) {
+    display:block; min-width:0; max-width:100%;
+    white-space:normal; overflow-wrap:break-word; word-break:normal;
+  }
+  .screen-layout--record .mobile-save-bar {
+    box-sizing:border-box; position:static; inset:auto;
+    transform:none; width:100%; max-width:100%; min-width:0;
+    margin:12px 0; display:grid; grid-template-columns:minmax(0,1fr);
+    gap:9px; padding:9px 0;
+  }
+  .screen-layout--record .mobile-save-bar button {
+    box-sizing:border-box; min-width:0; width:100%;
+    min-height:48px; white-space:normal;
+    overflow-wrap:break-word; word-break:normal;
+  }
+  .screen-layout--record .mobile-record-bottom-clearance {display:none}
+  .screen-layout--record [data-record-stage] {
+    scroll-margin-top:12px; scroll-margin-bottom:24px;
+  }
+}
+
+/* The production Home moves apps and widgets to a four-column grid at runtime.
+   Inline grid-area coordinates make that grid unreadably narrow at 200%.
+   Keep those coordinates stored, but reflow the visual presentation to a list
+   only when not editing. Editing retains the original coordinate system. */
+@media screen and (max-width:19rem) {
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid {
+    display:flex; flex-direction:column; align-items:stretch;
+    gap:10px; padding:8px 0 18px; width:100%; min-width:0;
+    min-height:0; height:auto; transform:none;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid > :is([data-home-item-id],[data-home-widget-id]) {
+    box-sizing:border-box; flex:0 0 auto; align-self:stretch;
+    grid-row:auto !important; grid-column:auto !important;
+    width:100%; min-width:0; max-width:100%; height:auto !important;
+    min-height:76px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid > .mobile-home-app {
+    display:flex; flex-direction:row; align-items:center; justify-content:flex-start;
+    gap:12px; min-height:66px; padding:8px 12px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid > .mobile-home-app .mobile-home-app__icon {
+    flex:0 0 auto; max-width:58px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) .mobile-home-grid > .mobile-home-widget-shell > .mobile-home-widget {
+    height:auto !important; min-height:104px;
+  }
+  .screen-layout--home .mobile-home-os:not(.is-home-editing) :is(.mobile-home-grid-slot,.mobile-home-drop-preview) {
+    display:none;
+  }
+}

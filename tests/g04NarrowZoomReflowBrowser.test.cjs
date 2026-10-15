@@ -31,7 +31,24 @@ async function run(browser,origin,width) {
  try{
   await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.mobile-home-dock',{timeout:25000});
+  // Establish the approved first-use state before visual inspection.  A
+  // foreground onboarding panel otherwise obscures the actual application.
+  await page.evaluate(()=>{
+    const dialog=document.querySelector('[data-mobile-onboarding]');
+    if(!dialog) return;
+    const next=dialog.querySelector('[data-onboarding-next]');
+    for(let step=0;step<3;step++) next?.click();
+    const consent=dialog.querySelector('[data-onboarding-consent]');
+    if(consent){
+      consent.checked=true;
+      consent.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    dialog.querySelector('[data-onboarding-complete]')?.click();
+  });
+  await page.waitForFunction(()=>!document.querySelector('[data-mobile-onboarding]'),{timeout:10000});
+
   await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
+  if(width===205){const jpeg=await page.screenshot({type:'jpeg',quality:70});console.log('G04_SCREENSHOT_HOME205_JPEG_BASE64',jpeg.toString('base64'));}
   const home=await page.evaluate(()=>{
     const dock=document.querySelector('.mobile-home-dock');
     const style=getComputedStyle(dock),box=dock.getBoundingClientRect();
@@ -76,9 +93,26 @@ async function run(browser,origin,width) {
         JSON.stringify({width,magnified,problem:'home widget text clipped'}));
     }
     console.log('G04_MAGNIFIED_HOME_READABLE_SCROLL_PASS',JSON.stringify({width,actions:magnified.actions.length,scroll:magnified.scrollTop}));
+    const productionHome=await page.evaluate(()=>{
+      const root=document.querySelector('.mobile-home-os');
+      const grid=root?.querySelector('.mobile-home-grid');
+      const cards=grid?[...grid.querySelectorAll(':scope > [data-home-item-id],:scope > [data-home-widget-id]')].filter(el=>!el.hidden).map(el=>{
+        const box=el.getBoundingClientRect();
+        return {id:el.dataset.homeItemId||el.dataset.homeWidgetId,left:box.left,right:box.right,width:box.width,height:box.height};
+      }):[];
+      return {layout:grid?getComputedStyle(grid).display:null,cards};
+    });
+    assert.equal(productionHome.layout,'flex',JSON.stringify({width,productionHome}));
+    assert.ok(productionHome.cards.length>0,JSON.stringify({width,productionHome}));
+    for(const item of productionHome.cards){
+      assert.ok(item.left>=-2&&item.right<=width+2,JSON.stringify({width,item}));
+      assert.ok(item.width>=width-36,JSON.stringify({width,item,problem:'unreadable 4-column card'}));
+    }
     assert.notEqual(home.dock.position,'fixed',JSON.stringify({width,home}));
     assert.ok(home.dock.rect.left>=-1 && home.dock.rect.right<=width+1,JSON.stringify({width,home}));
-    await page.evaluate(()=>document.querySelector('.mobile-home-os')?.classList.add('is-home-editing'));
+    await page.locator('[data-home-edit-toggle]').click();
+    await page.waitForFunction(()=>document.querySelector('.mobile-home-os')?.classList.contains('is-home-editing'),{timeout:6000});
+    if(width===205){await page.waitForTimeout(160);const jpeg=await page.screenshot({type:'jpeg',quality:75});console.log('G04_SCREENSHOT_EDIT205_JPEG_BASE64',jpeg.toString('base64'));}
     const edit=await page.evaluate(()=>{
       const grid=document.querySelector('.mobile-home-grid');
       return {dockPosition:getComputedStyle(document.querySelector('.mobile-home-dock')).position,
@@ -91,6 +125,7 @@ async function run(browser,origin,width) {
   }
   await page.goto(origin+'/index.html#/record-input',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.screen-layout--record .mobile-save-bar',{timeout:25000});
+  if(width===205){const jpeg=await page.screenshot({type:'jpeg',quality:70});console.log('G04_SCREENSHOT_RECORD205_JPEG_BASE64',jpeg.toString('base64'));}
   const record=await page.evaluate(()=>{
     const bar=document.querySelector('.screen-layout--record .mobile-save-bar');
     const style=getComputedStyle(bar),r=bar.getBoundingClientRect();
@@ -101,6 +136,19 @@ async function run(browser,origin,width) {
       progress:progress?getComputedStyle(progress).gridTemplateColumns:null};
   });
   if(width<=304){
+    const readableRecord=await page.evaluate(()=>{
+      const selectors=['.core-heading h2','.measure-field','.stage-card summary','.mobile-save-bar button'];
+      const nodes=selectors.flatMap(selector=>[...document.querySelectorAll('.screen-layout--record '+selector)]);
+      return nodes.filter(node=>node.getClientRects().length>0).map(node=>{
+        const box=node.getBoundingClientRect();
+        return {text:node.textContent.trim().slice(0,35),left:box.left,right:box.right,width:box.width};
+      });
+    });
+    assert.ok(readableRecord.length>=7,JSON.stringify({width,readableRecord}));
+    for(const item of readableRecord){
+      assert.ok(item.left>=-2&&item.right<=width+2,JSON.stringify({width,item}));
+      assert.ok(item.width>=Math.min(110,width-75),JSON.stringify({width,item,problem:'one-character label column'}));
+    }
     assert.equal(record.position,'static',JSON.stringify({width,record}));
     assert.ok(record.bar.left>=-1&&record.bar.right<=width+1,JSON.stringify({width,record}));
     assert.equal(record.buttons.length,2,JSON.stringify({width,record}));
