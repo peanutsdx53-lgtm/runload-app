@@ -1,0 +1,103 @@
+/* G-04: reflow for the narrow CSS viewport produced by Safari page zoom.
+   Keep the existing 100% mobile layout unchanged at ordinary 320px+ widths. */
+@media screen and (max-width: 22rem) {
+  .screen-layout--home .mobile-home-os {
+    padding-inline: 10px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+  .screen-layout--home .mobile-home-os__header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .screen-layout--home .mobile-home-widgets {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .screen-layout--home .mobile-home-apps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 16px;
+  }
+  /* At high page zoom a floating four-icon dock overlaps both itself
+     and the record widget. Put the same four controls in normal flow. */
+  .screen-layout--home .mobile-home-dock {
+    position: relative;
+    inset: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    min-height: 0;
+    margin: 16px 0 0;
+    padding: 10px 4px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 4px;
+  }
+  .screen-layout--home .mobile-home-dock__item {
+    min-width: 0;
+    min-height: 76px;
+  }
+  .screen-layout--home .mobile-home-dock__icon {
+    max-width: 100%;
+  }
+  /* Keep four-column editing coordinates intact, but make the grid pan
+     horizontally rather than allowing the move handles to overlap. */
+  .screen-layout--home .mobile-home-os.is-home-editing .mobile-home-grid {
+    grid-template-columns: repeat(4, minmax(68px, 1fr));
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  .screen-layout--home .mobile-home-page-indicator {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    max-width: 100%;
+    width: fit-content;
+    margin: 10px auto;
+    flex-wrap: wrap;
+  }
+  /* The 2-button record save bar must not cover fields at 200% zoom. */
+  .screen-layout--record {
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
+  }
+  .screen-layout--record .mobile-save-bar {
+    position: static;
+    inset: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    margin: 14px 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .screen-layout--record .mobile-save-bar button {
+    min-width: 0;
+    width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .screen-layout--record .mobile-record-progress {
+    position: relative;
+    top: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .screen-layout--record .mobile-record-progress__item {
+    min-width: 0;
+    align-content: center;
+  }
+  .screen-layout--record .mobile-record-progress__item :is(strong, em) {
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+  }
+  .screen-layout--record .mobile-record-bottom-clearance {
+    display: none;
+  }
+  .screen-layout--record [data-record-stage] {
+    scroll-margin-top: 88px;
+    scroll-margin-bottom: 24px;
+  }
+}
