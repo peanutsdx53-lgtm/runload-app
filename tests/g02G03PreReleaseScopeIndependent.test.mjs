@@ -101,3 +101,19 @@ test('F03: both platforms preserve reference meaning, ROF-J, R11 limitation and 
  assert.match(restMobile,/数値なしを0として扱いません/);
  assert.match(restMobile,/休養として保存済み/);
 });
+
+
+test('G04: mobile SVG remains touchable, while VoiceOver follows ordinary 12-region detail links',()=>{
+ const s=setUp();
+ const mobile=renderMobile({services:s,context:context('recordId=new-2')});
+ const desktop=renderDesktop({services:s,context:context('recordId=new-2')});
+ assert.equal((mobile.match(/<svg viewBox="70 10 160 430" aria-hidden="true" focusable="false"/g)||[]).length,3);
+ assert.equal((mobile.match(/<a class="region-link" tabindex="-1"/g)||[]).length,12);
+ assert.ok((mobile.match(/<a class="region-row" href="#\/body-part-detail\?recordId=new-2&regionId=/g)||[]).length>=12);
+ for(const def of PRIMARY_REGIONAL_V2_REGION_DEFS){
+   const url='#/body-part-detail?recordId=new-2&regionId='+encodeURIComponent(def.displayId);
+   assert.ok(mobile.includes('href="'+url+'"'),def.displayId);
+ }
+ assert.match(desktop,/<svg viewBox="70 10 160 430" aria-label="前面の部位図"/);
+ assert.ok(!desktop.includes('class="region-link" tabindex="-1"'));
+});
