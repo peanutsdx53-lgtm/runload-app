@@ -97,13 +97,23 @@ export function renderRunFingerprintSvg(fingerprint, { className = "run-fingerpr
       <radialGradient id="${id}-glow" cx="50%" cy="42%" r="65%"><stop offset="0" stop-color="currentColor" stop-opacity=".28"></stop><stop offset="1" stop-color="currentColor" stop-opacity="0"></stop></radialGradient>
       <linearGradient id="${id}-line" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".96"></stop><stop offset="1" stop-color="currentColor" stop-opacity=".35"></stop></linearGradient>
     </defs>
-    <circle cx="120" cy="120" r="101" class="run-fingerprint__halo" fill="url(#${id}-glow)"></circle>
+    <circle cx="120" cy="120" r="104" class="run-fingerprint__halo" fill="url(#${id}-glow)"></circle>
+    <g class="run-fingerprint__grid" aria-hidden="true">
+      <circle cx="120" cy="120" r="102"></circle>
+      <circle cx="120" cy="120" r="86"></circle>
+      <circle cx="120" cy="120" r="65"></circle>
+      <circle cx="120" cy="120" r="43"></circle>
+      ${Array.from({ length: 12 }, (_, n) => { const a=(-Math.PI/2)+n*Math.PI/6; return `<line x1="120" y1="120" x2="${(120+102*Math.cos(a)).toFixed(2)}" y2="${(120+102*Math.sin(a)).toFixed(2)}"></line>`; }).join("")}
+    </g>
     <g transform="rotate(${Number(fingerprint.rotation || 0)} 120 120)">
       <circle cx="120" cy="120" r="82" class="run-fingerprint__ring"></circle>
       <circle cx="120" cy="120" r="58" class="run-fingerprint__ring run-fingerprint__ring--inner" stroke-dasharray="${Number(fingerprint.orbitOffset || 20)} 13"></circle>
+      <polygon points="${fingerprint.outerPoints}" class="run-fingerprint__shape run-fingerprint__shape--glow"></polygon>
       <polygon points="${fingerprint.outerPoints}" class="run-fingerprint__shape" fill="url(#${id}-line)"></polygon>
       <polygon points="${fingerprint.innerPoints}" class="run-fingerprint__shape run-fingerprint__shape--inner"></polygon>
-      <circle cx="120" cy="120" r="9" class="run-fingerprint__core"></circle>
+      ${fingerprint.outerPoints.split(" ").map((point) => { const [x,y]=point.split(",");return `<circle cx="${x}" cy="${y}" r="2.5" class="run-fingerprint__vertex"></circle>`; }).join("")}
+      <circle cx="120" cy="120" r="13" class="run-fingerprint__core-ring"></circle>
+      <circle cx="120" cy="120" r="5" class="run-fingerprint__core"></circle>
     </g>
   </svg>`;
 }

@@ -1,7 +1,6 @@
 import { escapeHtml } from "../../ui/commonComponents.js";
 import { bodyRegionFormalName } from "../../core/appCore.js";
 import { formatLocalDate } from "../../ui/recordPresentation.js";
-import { buildRunFingerprint, renderRunFingerprintSvg } from "../../ui/mobileRunFingerprint.js";
 import { consumeUnannouncedAchievements } from "../../ui/mobileAchievements.js";
 import { renderRunCapsule, renderSameCourseComparison } from "../../ui/mobileInsights.js";
 import {
@@ -34,9 +33,9 @@ function regionRow(info, recordId) {
   const referenceDelta = finite(row.value) ? Number(row.value) - 100 : null;
   const previous = info.previous ? `前回 ${fmt(info.prev, 1)}` : "前回比較なし";
   const delta = finite(info.delta) ? `変化 ${signed(info.delta, 1)}` : "変化 —";
-  const reference = finite(referenceDelta) ? `基準100との差 ${signed(referenceDelta, 1)}` : "数値なし";
+  const reference = finite(referenceDelta) ? `基準差 ${signed(referenceDelta, 1)}` : "数値なし";
   const scale = finite(row.value) ? `<span class="region-scale"><i style="--pos:${position(row.value)}%"></i></span>` : "";
-  return `<a class="region-row" href="#/body-part-detail?recordId=${encodeURIComponent(recordId)}&regionId=${encodeURIComponent(row.regionId)}"><span class="locator">${locatorSvg(row.regionId)}</span><span class="region-copy"><strong>${escapeHtml(name)}</strong><small>${previous} ・ ${delta}</small></span><span class="region-metric"><strong>${current}</strong><small>${reference}</small></span>${scale}</a>`;
+  return `<a class="region-row" href="#/body-part-detail?recordId=${encodeURIComponent(recordId)}&regionId=${encodeURIComponent(row.regionId)}"><span class="locator">${locatorSvg(row.regionId)}</span><span class="region-copy"><strong>${escapeHtml(name)}</strong><small>${previous} ・ ${delta}</small></span><span class="region-metric"><strong>${current}</strong></span><span class="region-reference-delta">${reference}</span>${scale}</a>`;
 }
 
 function regionList(infos, mode, recordId) {
@@ -78,12 +77,10 @@ function renderRegional(resultRecord, allExperiences, record) {
 
 function renderRunLab({ services, record, measurement }) {
   if (record.activityType !== "run") return "";
-  const fatigue = fatigueSnapshot(services, record);
-  const fingerprint = buildRunFingerprint(record, { measurement, fatigue });
   const replayLink = measurement?.track?.length >= 2
     ? `<a class="mobile-run-lab-link" href="#/run-route?recordId=${encodeURIComponent(record.id)}&replay=1"><span><small>再生</small><strong>走行を再生</strong></span><b aria-hidden="true">▶</b></a>`
     : `<span class="mobile-run-lab-link is-disabled" aria-disabled="true"><span><small>再生</small><strong>GPS記録なし</strong></span><b aria-hidden="true">—</b></span>`;
-  return `<details class="mobile-run-lab"><summary class="mobile-run-lab__head"><div><small>別の見方</small><strong id="mobile-run-lab-title">記録を別の形で見る</strong></div><span><em>記録を詳しく見る</em><i aria-hidden="true">⌄</i></span></summary><div class="mobile-run-lab__grid" aria-labelledby="mobile-run-lab-title"><article class="run-fingerprint-card"><div class="run-fingerprint-card__visual">${renderRunFingerprintSvg(fingerprint)}</div><div class="run-fingerprint-card__copy"><small>記録の形</small><strong>記録の形</strong><p>距離・時間・活動・疲労感などから、この保存記録だけの図形を作ります。</p></div></article><a class="mobile-run-lab-link" href="#/body-timeline?recordId=${encodeURIComponent(record.id)}"><span><small>身体の推移</small><strong>身体の推移</strong></span><b aria-hidden="true">↔</b></a>${replayLink}</div></details>`;
+  return `<details class="mobile-run-lab"><summary class="mobile-run-lab__head"><div><small>別の見方</small><strong id="mobile-run-lab-title">走行ルートと推移</strong></div><span><em>開く</em><i aria-hidden="true">⌄</i></span></summary><div class="mobile-run-lab__grid" aria-labelledby="mobile-run-lab-title"><a class="mobile-run-lab-link" href="#/body-timeline?recordId=${encodeURIComponent(record.id)}"><span><small>身体の推移</small><strong>身体の推移</strong></span><b aria-hidden="true">↔</b></a>${replayLink}</div></details>`;
 }
 
 function renderAchievementReward(services) {

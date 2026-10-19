@@ -46,7 +46,10 @@ assert.doesNotMatch(html, /<title>[^<]*BA-DISP-/);
 
 
 const resultSource = fs.readFileSync(new URL("../screens/mobile/resultScreen.js", import.meta.url), "utf8");
-assert.match(resultSource, /記録の形/);
+assert.match(resultSource, /走行ルートと推移/);
+assert.doesNotMatch(resultSource, /run-fingerprint-card/);
+const capsuleSource = fs.readFileSync(new URL("../ui/mobileInsights.js", import.meta.url), "utf8");
+assert.match(capsuleSource, /run-capsule__shape-note/);
 assert.match(resultSource, /#\/body-timeline\?recordId=/);
 assert.match(resultSource, /#\/run-route\?recordId=.*replay=1/);
 assert.match(resultSource, /if \(record\.activityType !== "run"\) return ""/);

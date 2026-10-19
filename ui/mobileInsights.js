@@ -232,6 +232,7 @@ export function renderRunCapsule(services, record = {}, { measurement = null, fa
         <span><small>ペース</small><strong>${escapeHtml(paceLabel(pace))}<em>/km</em></strong></span>
       </div>
     </div>
+    <p class="run-capsule__shape-note">記録をもとに描いた図形です。12部位の値を示すグラフではありません。</p>
     <footer><span><small>疲労感</small><strong>${escapeHtml(fatiguePair)}</strong></span>${typeof energy === "number" && Number.isFinite(energy) && energy >= 0 ? `<span><small>推定消費</small><strong>${escapeHtml(String(Math.round(energy)))} kcal</strong></span>` : ""}<span><small>実績</small><strong>${summary.unlockedCount} / ${summary.totalCount}</strong></span></footer>
   </section>`;
 }

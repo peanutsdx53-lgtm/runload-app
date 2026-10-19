@@ -14,3 +14,12 @@
 @media (prefers-reduced-motion:reduce){
   .run-capsule,.mobile-course-compare,.mobile-fatigue-trend{scroll-behavior:auto}
 }
+
+/* Round 3: one premium record emblem, always labeled as decorative. */
+@media(max-width:54.99rem){
+  .run-capsule {background:linear-gradient(134deg,#112f46 1%,#18536e 52%,#1d6477 100%);border:1px solid rgba(185,235,246,.25);box-shadow:0 15px 38px rgba(16,55,75,.2);}
+  .run-capsule__mark {position:relative;color:#aeeaff;filter:drop-shadow(0 0 11px rgba(82,215,240,.23));opacity:1;}
+  .run-capsule__mark .run-fingerprint__svg {width:120px;height:120px;max-width:100%;}
+  .run-capsule__shape-note {position:relative;z-index:1;margin:7px 0 0;color:rgba(239,250,254,.80);font-size:11px;line-height:1.5;font-weight:650;}
+}
+@media(max-width:360px){.run-capsule__mark .run-fingerprint__svg{width:95px;height:95px}}
