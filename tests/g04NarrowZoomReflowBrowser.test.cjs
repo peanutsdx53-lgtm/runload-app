@@ -76,10 +76,11 @@ async function run(browser,origin,width) {
     for(let j=i+1;j<home.items.length;j++)
       assert.equal(overlap(home.items[i],home.items[j]),false,JSON.stringify({width,home,i,j}));
   }
-  // At <=350px, the dashboard's 2x2 nav is in the document flow so that it
-  // cannot hide content. At ordinary width it is a fixed four-item dock.
-  assert.equal(home.navPosition,width<=350?'static':'fixed',JSON.stringify({width,home}));
-  if(width<=350){
+  // The approved W6 dashboard places its navigation in the document flow
+  // at all mobile widths; the <=350px variant uses 2x2 buttons. Verify
+  // scrolling reveals every destination without covering the last card.
+  assert.equal(home.navPosition,'static',JSON.stringify({width,home}));
+  {
     assert.ok(home.pageHeight>home.viewportHeight+50,JSON.stringify({width,home,problem:'page should be scrollable'}));
     const scroll=await page.evaluate(()=>{
       window.scrollTo(0,document.documentElement.scrollHeight);
