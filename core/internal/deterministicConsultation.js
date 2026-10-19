@@ -10,6 +10,8 @@ const { PRIMARY_REGIONAL_V2_REGION_DEFS } = internalModules.primaryRegionalRegio
 const { bodyRegionFormalName } = internalModules.bodyRegionTerminology;
 const { summarizePersonalContext } = internalModules.personalContext;
 const { PRIMARY_REGIONAL_V2_MODEL_VERSION, buildPrimaryRegionalV2ComparisonSignature, comparePrimaryRegionalV2Signatures } = internalModules.primaryRegionalResultService;
+const CURRENT_RUNNING_EVIDENCE_VERSION = 'runload-running-a1a2b-v4.0';
+const VALID_CONSULTATION_MODEL_VERSIONS = new Set([PRIMARY_REGIONAL_V2_MODEL_VERSION, CURRENT_RUNNING_EVIDENCE_VERSION]);
 
 const REGIONS = Object.freeze(PRIMARY_REGIONAL_V2_REGION_DEFS.map((region) => Object.freeze({ id: region.displayId, name: region.name })));
 
@@ -212,7 +214,7 @@ function primaryPreviousComparable(experience, allExperiences, regionId, current
     const priorRow = prior?.regionalV2Result?.regions?.find((row) => row.regionId === regionId) || null;
     if (!priorRow || !finite(priorRow.value)) continue;
     sawRegion = true;
-    if (priorRecord?.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION) continue;
+    if (!VALID_CONSULTATION_MODEL_VERSIONS.has(priorRecord?.model_version)) continue;
     const priorSignature = buildPrimaryRegionalV2ComparisonSignature(priorRecord, priorRow);
     const compatibility = comparePrimaryRegionalV2Signatures(currentSignature, priorSignature);
     if (!compatibility.directDeltaAllowed) continue;
@@ -242,7 +244,7 @@ function regionalContext(experience, allExperiences, regionId) {
       endpoint: null, exposure: null, contributors: Object.freeze([]), previousComparable: null, isPrimaryRegionalV2: true,
     });
   }
-  if (resultRecord?.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION || !row) {
+  if (!VALID_CONSULTATION_MODEL_VERSIONS.has(resultRecord?.model_version) || !row) {
     return Object.freeze({
       state: "UNAVAILABLE", regionId, regionLabel: bodyRegionFormalName(regionId, region?.name || "選択した部位"),
       row: null, displayIndex: null, displayDeltaPoints: null, referenceValue: null, referenceDistanceKm: null,

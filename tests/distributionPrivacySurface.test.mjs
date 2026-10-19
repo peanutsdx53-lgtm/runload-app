@@ -22,7 +22,12 @@ const patterns = [
   ['Slack token', /\bxox[baprs]-[A-Za-z0-9-]{12,}\b/],
 ];
 let checks=0;
-assert.equal(files.length,333,'runtime asset inventory must match distribution'); checks++;
+assert.equal(files.length,336,'runtime asset inventory must match v125: 333 legacy + 3 running-evidence runtime modules');
+assert.deepEqual(files.filter(x=>x.startsWith('core/runningEvidence/')).sort(),[
+'core/runningEvidence/runningEvidenceEngine.js',
+'core/runningEvidence/runningEvidenceProductBridge.js',
+'core/runningEvidence/runningEvidenceRegistry.js',
+].sort(),'explicit research runtime module inventory'); checks++;
 for (const file of files) {
   assert.ok(!file.startsWith('tests/') && !file.startsWith('docs/'));checks++;
   const bytes=fs.readFileSync(file);

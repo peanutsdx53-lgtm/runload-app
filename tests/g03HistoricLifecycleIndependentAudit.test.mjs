@@ -51,7 +51,7 @@ test('G-03: export, inspect and restore of actual v3.0 backup retain exact model
   assert.deepEqual(dest.storage.modelResultsRegionalV2.loadForRecord(old.record_id),[old]);
 });
 
-test('G-03: deliberate edit writes distinct v3.1 but retains original, all 12 regions and model signatures incompatible',()=>{
+test('G-03: deliberate edit writes distinct v4 but retains original, all 12 regions and model signatures incompatible',()=>{
   const s=svc();importOriginal(s);
   const rec=s.storage.records.loadAll().find(x=>x.id===old.record_id);
   const fb=s.storage.subjectiveFeedback.loadAll().find(x=>x.recordId===old.record_id);
@@ -60,7 +60,7 @@ test('G-03: deliberate edit writes distinct v3.1 but retains original, all 12 re
   const pair=s.storage.modelResultsRegionalV2.loadForRecord(old.record_id);
   assert.equal(pair.length,2);
   const prev=pair.find(x=>x.model_version==='runload-primary-regional-reference100-v3.0');
-  const cur=pair.find(x=>x.model_version==='runload-primary-regional-reference100-v3.1');
+  const cur=pair.find(x=>x.model_version==='runload-running-a1a2b-v4.0');
   assert.deepEqual(prev,old);
   assert.ok(cur);
   assert.notEqual(cur.id,prev.id);

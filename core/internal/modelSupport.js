@@ -282,7 +282,8 @@ internalModules.modelConstants = moduleExports;
 // ===== core/model/primaryRegionalV2/primaryRegionalV2Snapshot.js =====
 {
 const moduleExports = Object.create(null);
-const REGIONAL_MODEL_SNAPSHOT_ID = "PRIMARY_REGIONAL_REFERENCE100_V3_1";
+const REGIONAL_MODEL_SNAPSHOT_ID = "RUNNING_EVIDENCE_A1A2B_V4";
+const REGIONAL_V31_SNAPSHOT_ID = "PRIMARY_REGIONAL_REFERENCE100_V3_1";
 const PREVIOUS_REGIONAL_MODEL_SNAPSHOT_ID = "PRIMARY_REGIONAL_REFERENCE100_V3";
 const PREVIOUS_REGIONAL_MODEL_SNAPSHOT = Object.freeze({
   snapshotId: PREVIOUS_REGIONAL_MODEL_SNAPSHOT_ID,
@@ -291,16 +292,22 @@ const PREVIOUS_REGIONAL_MODEL_SNAPSHOT = Object.freeze({
   authorityVersion: "RunLoad Calculation Engine V1.2+ 2026-09-16",
 });
 const PRIMARY_REGIONAL_V2_SNAPSHOT = Object.freeze({
-  snapshotId: REGIONAL_MODEL_SNAPSHOT_ID,
+  snapshotId: REGIONAL_V31_SNAPSHOT_ID,
   modelVersion: "runload-primary-regional-reference100-v3.1",
   outputSemanticVersion: "runload-primary-regional-reference100-output-v3.1",
   authorityVersion: "RunLoad Calculation Engine V1.2+ 2026-09-16",
 });
-const CURRENT_REGIONAL_MODEL_SNAPSHOT = PRIMARY_REGIONAL_V2_SNAPSHOT;
+const CURRENT_REGIONAL_MODEL_SNAPSHOT = Object.freeze({
+  snapshotId: REGIONAL_MODEL_SNAPSHOT_ID,
+  modelVersion: "runload-running-a1a2b-v4.0",
+  outputSemanticVersion: "runload-running-evidence-construct-v4.0",
+  authorityVersion: "RunLoad Evidence-Gated Hybrid A1/A2/B 2026-10-19",
+});
 
 function normalizeRegionalModelSnapshot(value) {
   const source = value && typeof value === "object" ? value : null;
-  if (source?.snapshotId === REGIONAL_MODEL_SNAPSHOT_ID && source.modelVersion === PRIMARY_REGIONAL_V2_SNAPSHOT.modelVersion && source.outputSemanticVersion === PRIMARY_REGIONAL_V2_SNAPSHOT.outputSemanticVersion) return PRIMARY_REGIONAL_V2_SNAPSHOT;
+  if (source?.snapshotId === REGIONAL_MODEL_SNAPSHOT_ID && source.modelVersion === CURRENT_REGIONAL_MODEL_SNAPSHOT.modelVersion && source.outputSemanticVersion === CURRENT_REGIONAL_MODEL_SNAPSHOT.outputSemanticVersion) return CURRENT_REGIONAL_MODEL_SNAPSHOT;
+  if (source?.snapshotId === REGIONAL_V31_SNAPSHOT_ID && source.modelVersion === PRIMARY_REGIONAL_V2_SNAPSHOT.modelVersion && source.outputSemanticVersion === PRIMARY_REGIONAL_V2_SNAPSHOT.outputSemanticVersion) return PRIMARY_REGIONAL_V2_SNAPSHOT;
   if (source?.snapshotId === PREVIOUS_REGIONAL_MODEL_SNAPSHOT_ID && source.modelVersion === PREVIOUS_REGIONAL_MODEL_SNAPSHOT.modelVersion && source.outputSemanticVersion === PREVIOUS_REGIONAL_MODEL_SNAPSHOT.outputSemanticVersion) return PREVIOUS_REGIONAL_MODEL_SNAPSHOT;
   return null;
 }
@@ -319,6 +326,7 @@ function isCurrentRegionalModelRecord(record = {}) {
 const isPrimaryRegionalV2Record = isCurrentRegionalModelRecord;
 function regionalModelGenerationForRecord() { return REGIONAL_MODEL_SNAPSHOT_ID; }
 moduleExports["REGIONAL_MODEL_SNAPSHOT_ID"] = REGIONAL_MODEL_SNAPSHOT_ID;
+moduleExports["REGIONAL_V31_SNAPSHOT_ID"] = REGIONAL_V31_SNAPSHOT_ID;
 moduleExports["PREVIOUS_REGIONAL_MODEL_SNAPSHOT_ID"] = PREVIOUS_REGIONAL_MODEL_SNAPSHOT_ID;
 moduleExports["PREVIOUS_REGIONAL_MODEL_SNAPSHOT"] = PREVIOUS_REGIONAL_MODEL_SNAPSHOT;
 moduleExports["PRIMARY_REGIONAL_V2_SNAPSHOT"] = PRIMARY_REGIONAL_V2_SNAPSHOT;

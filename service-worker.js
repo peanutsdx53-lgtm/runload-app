@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.19.124";
+const CACHE_NAME = "running-record-app-runtime-2026.10.19.125";
 const CACHE_PREFIX = "running-record-app-";
 const COMMON_PRECACHE_URLS = [
   "./shared/valueUtilities.js",
@@ -19,6 +19,9 @@ const COMMON_PRECACHE_URLS = [
   "./core/internal/inputSupport.js",
   "./core/internal/recordRepositories.js",
   "./core/internal/primaryModelEngine.js",
+  "./core/runningEvidence/runningEvidenceRegistry.js",
+  "./core/runningEvidence/runningEvidenceEngine.js",
+  "./core/runningEvidence/runningEvidenceProductBridge.js",
   "./core/internal/surfacePresetCatalog.js",
   "./core/internal/primaryInputProcessing.js",
   "./core/internal/primaryModelResults.js",

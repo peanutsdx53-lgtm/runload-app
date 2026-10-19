@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {createEvidenceRunningResultRecord} from '../core/runningEvidence/runningEvidenceProductBridge.js';
 import { createApplicationServices, createMemoryStorage, STORAGE_KEYS, PRIMARY_REGIONAL_V2_REGION_DEFS } from '../core/appCore.js';
 import { buildWorkspace } from '../screens/historyScreen.js';
 import { renderHistoryScreen as desktopHistory } from '../screens/desktop/historyScreen.js';
@@ -17,7 +18,7 @@ const before=services.workflows.records.loadExperience('target');
 const oldResult=structuredClone(before.regionalV2ResultRecord);
 const storedBefore=JSON.stringify(services.storage.modelResultsRegionalV2.loadAll());
 const changed={...before.record,updatedAt:'2026-10-09T02:00:00.000Z',distanceKm:8,durationMinutes:32};
-const expected=services.model.primaryRegionalV2.createPrimaryRegionalV2ResultRecord({record:changed,allRecords:[...services.storage.records.loadAll().filter(x=>x.id!=='target'),changed]}).resultRecord;
+const expected=createEvidenceRunningResultRecord({record:changed}).resultRecord;
 check('SETUP-REVISIONS-DIFFER',()=>assert.notEqual(oldResult.source_record_revision,expected.source_record_revision));
 check('SETUP-RECORD-ONLY-EDIT',()=>assert.equal(services.storage.gateway.writeJson(STORAGE_KEYS.records,[...services.storage.records.loadAll().filter(x=>x.id!=='target'),changed]).ok,true));
 const loaded=services.workflows.records.loadExperience('target');

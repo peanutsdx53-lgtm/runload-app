@@ -1,3 +1,4 @@
+import {calculateEvidenceRunningForProduct} from '../runningEvidence/runningEvidenceProductBridge.js';
 import { createSelfUnderstandingRepository } from "../selfUnderstandingCore.js";
 import { createSelfInterpretationRepository } from "../selfInterpretationCore.js";
 import "./publicHelpGuidance.js";
@@ -64,7 +65,7 @@ function createApplicationServices(options = {}) {
 
   const services = {
     model: Object.freeze({
-      primaryRegionalV2: Object.freeze({ calculatePrimaryRegionalV2, createPrimaryRegionalV2ResultRecord }),
+      primaryRegionalV2: Object.freeze({ calculatePrimaryRegionalV2:calculateEvidenceRunningForProduct, createPrimaryRegionalV2ResultRecord }),
     }),
     safety: Object.freeze({
       evaluateSupportDecision,
