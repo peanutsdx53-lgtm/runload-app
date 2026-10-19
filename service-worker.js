@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.19.125";
+const CACHE_NAME = "running-record-app-runtime-2026.10.19.126";
 const CACHE_PREFIX = "running-record-app-";
 const COMMON_PRECACHE_URLS = [
   "./shared/valueUtilities.js",
@@ -239,7 +239,8 @@ const MOBILE_PLATFORM_URLS = [
   "./styles/mobile-screens-responsive.css",
   "./styles/mobile-self-understanding-responsive.css",
   "./styles/mobile-self-understanding.css",
-  "./ui/mobileRunFingerprint.js",
+  "./ui/mobileRunningRadar.js",
+  "./ui/anatomicalBodySvg.js",
   "./ui/mobileVersionStatus.js",
   "./ui/mobileRofJPresentation.js",
   "./ui/mobileAppRuntime.js",

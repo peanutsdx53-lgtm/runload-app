@@ -9,28 +9,12 @@ import { bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, PRIMARY_REGION
 import { rofJSelectionDescriptor } from "../core/rofJAuthorConfirmedScale.js";
 import { findSavedRunMeasurement } from "../ui/runMeasurementState.js";
 
-const FRONT = '<circle cx="150" cy="36" r="20"></circle><path d="M110 78 C120 66 135 60 150 60 C165 60 180 66 190 78 L204 126 C208 138 204 150 196 160 L182 176 L188 212 C192 228 190 246 184 262 L172 308 C168 324 166 340 166 356 L166 400 C166 410 158 418 148 418 C138 418 130 410 130 400 L130 356 C130 340 128 324 124 308 L112 262 C106 246 104 228 108 212 L114 176 L100 160 C92 150 88 138 92 126 Z"></path>';
-const BACK = '<circle cx="150" cy="36" r="20"></circle><path d="M112 76 C122 66 136 60 150 60 C164 60 178 66 188 76 L202 124 C206 136 202 150 194 160 L182 174 L188 212 C192 228 190 244 184 262 L172 310 C168 326 166 342 166 358 L166 402 C166 412 158 420 148 420 C138 420 130 412 130 402 L130 358 C130 342 128 326 124 310 L112 262 C106 244 104 228 108 212 L114 174 L102 160 C94 150 90 136 94 124 Z"></path>';
-const FOOT = '<path d="M114 78 C126 66 140 60 154 60 C172 60 186 72 194 92 C198 102 200 116 200 132 L200 238 C200 274 186 306 160 320 C150 326 140 326 130 320 C108 306 96 274 96 238 L96 132 C96 112 102 90 114 78 Z"></path>';
+import { ANATOMY_FRONT, ANATOMY_BACK, ANATOMY_SOLE, ANATOMY_MARKINGS, ANATOMY_REGIONS } from "../ui/anatomicalBodySvg.js";
+
 export const VIEWS = Object.freeze([
-  Object.freeze({ key: "front", title: "前面", silhouette: FRONT, paths: Object.freeze([
-    ["BA-DISP-014", "M120 148 C130 138 140 134 150 134 C160 134 170 138 180 148 L178 184 C168 190 160 194 150 194 C140 194 132 190 122 184 Z"],
-    ["BA-DISP-016", "M122 194 C132 202 141 206 150 206 C159 206 168 202 178 194 L174 270 C164 278 158 282 150 282 C142 282 136 278 126 270 Z"],
-    ["BA-DISP-019", "M126 270 C136 278 142 281 150 281 C158 281 164 278 174 270 L170 300 C162 306 157 309 150 309 C143 309 138 306 130 300 Z"],
-    ["BA-DISP-021", "M130 306 C138 314 144 318 150 318 C156 318 162 314 170 306 L166 382 C160 390 156 394 150 394 C144 394 140 390 134 382 Z"],
-    ["BA-DISP-024", "M135 386 L165 386 L166 416 L134 416 Z"],
-  ]) }),
-  Object.freeze({ key: "back", title: "後面", silhouette: BACK, paths: Object.freeze([
-    ["BA-DISP-015", "M120 146 C130 158 139 166 150 166 C161 166 170 158 180 146 L180 198 C170 208 160 213 150 213 C140 213 130 208 120 198 Z"],
-    ["BA-DISP-018", "M122 200 C132 208 141 213 150 213 C159 213 168 208 178 200 L174 278 C164 286 158 290 150 290 C142 290 136 286 126 278 Z"],
-    ["BA-DISP-023", "M128 288 C136 298 143 302 150 302 C157 302 164 298 172 288 L166 368 C160 378 156 383 150 383 C144 383 140 378 134 368 Z"],
-    ["BA-DISP-025", "M142 370 C146 378 148 382 150 382 C152 382 154 378 158 370 L158 416 H142 Z"],
-  ]) }),
-  Object.freeze({ key: "sole", title: "足裏", silhouette: FOOT, paths: Object.freeze([
-    ["BA-DISP-029", "M112 92 C124 84 138 80 154 80 C174 80 188 94 190 120 L190 164 C174 170 158 172 140 168 C126 165 114 158 106 148 L106 120 C107 108 109 99 112 92 Z"],
-    ["BA-DISP-028", "M106 154 C120 166 136 172 154 172 C170 172 182 168 190 164 L190 252 C176 260 162 264 148 262 C130 260 116 252 104 240 L104 176 Z"],
-    ["BA-DISP-027", "M104 240 C118 254 132 262 148 264 C164 266 178 260 190 252 C186 282 174 304 158 314 C148 320 138 318 128 312 C112 300 104 274 104 240 Z"],
-  ]) }),
+  Object.freeze({ key: "front", title: "前面", silhouette: ANATOMY_FRONT, markings: ANATOMY_MARKINGS.front, paths: ANATOMY_REGIONS.front }),
+  Object.freeze({ key: "back", title: "後面", silhouette: ANATOMY_BACK, markings: ANATOMY_MARKINGS.back, paths: ANATOMY_REGIONS.back }),
+  Object.freeze({ key: "sole", title: "足裏", silhouette: ANATOMY_SOLE, markings: ANATOMY_MARKINGS.sole, paths: ANATOMY_REGIONS.sole }),
 ]);
 
 export function direction(value) { if (!finite(value)) return "unavailable"; const delta = Number(value) - 100; return Math.abs(delta) < 1 ? "reference" : delta > 0 ? "above" : "below"; }
@@ -87,14 +71,14 @@ export function locatorSvg(regionId) {
   for (const view of VIEWS) {
     const match = view.paths.find(([id]) => id === regionId);
     if (!match) continue;
-    return `<svg viewBox="70 10 160 430" aria-hidden="true"><g class="mini-silhouette">${view.silhouette}</g><path class="mini-region" d="${match[1]}"></path></svg>`;
+    return `<svg viewBox="70 10 160 430" aria-hidden="true"><g class="mini-silhouette">${view.silhouette}</g>${view.markings}<path class="mini-region" d="${match[1]}"></path></svg>`;
   }
   return "";
 }
 
 export function bodyMap(resultRecord, infos, idSuffix = "main", selectedId = "", { enhancedTouch = false, renderPathClass = null, renderAdditionalRegionPath = null } = {}) {
   const byId = new Map(infos.map((info) => [info.row.regionId, info]));
-  return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430"${enhancedTouch ? ' aria-hidden="true" focusable="false"' : ` aria-label="${view.title}の部位図"`}><defs><pattern id="hatch-${view.key}-${idSuffix}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="currentColor" opacity=".08"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern><clipPath id="body-clip-${view.key}">${view.silhouette}</clipPath></defs><g class="body-silhouette">${view.silhouette}</g><g class="region-layer">${view.paths.map(([id, d]) => {
+  return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430"${enhancedTouch ? ' aria-hidden="true" focusable="false"' : ` aria-label="${view.title}の部位図"`}><defs><pattern id="hatch-${view.key}-${idSuffix}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="currentColor" opacity=".08"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern><clipPath id="body-clip-${view.key}">${view.silhouette}</clipPath><linearGradient id="anatomy-fill-${view.key}-${idSuffix}" x1="0%" y1="0%" x2="100%" y2="75%"><stop offset="0%" stop-color="#f6fcff"/><stop offset="52%" stop-color="#d9ebf5"/><stop offset="100%" stop-color="#a8c7d9"/></linearGradient></defs><g class="body-silhouette" style="fill:url(#anatomy-fill-${view.key}-${idSuffix})">${view.silhouette}</g><g class="region-layer">${view.paths.map(([id, d]) => {
     const info = byId.get(id); const value = info?.row?.value; const name = bodyRegionFormalName(id, info?.row?.regionName || id); const state = direction(value);
     const label = `${name}：${finite(value) ? `今回の目安 ${fmt(value, 1)}` : "今回の目安は数値なし"}`;
     const unavailableStyle = state === "unavailable" ? ` style="fill:url(#hatch-${view.key}-${idSuffix})"` : "";
@@ -103,7 +87,7 @@ export function bodyMap(resultRecord, infos, idSuffix = "main", selectedId = "",
     const mainPath = `${enhancedTouch ? `<path class="region-hit-area" d="${d}" aria-hidden="true"></path>` : ""}<path class="region-path${extraPathClass}${selectedClass}" data-direction="${state}" data-region-id="${escapeHtml(id)}"${unavailableStyle} d="${d}"><title>${escapeHtml(label)}</title></path>`;
     const additionalPath = typeof renderAdditionalRegionPath === "function" ? renderAdditionalRegionPath({ id, viewKey: view.key, state, selectedClass, unavailableStyle }) : "";
     return `<a class="region-link"${enhancedTouch ? ' tabindex="-1"' : ""} href="#/body-part-detail?recordId=${encodeURIComponent(resultRecord?.record_id || "")}&regionId=${encodeURIComponent(id)}" aria-label="${escapeHtml(`${label}。詳細を開く`)}">${mainPath}${additionalPath}</a>`;
-  }).join("")}</g></svg></figure>`).join("");
+  }).join("")}</g>${view.markings}</svg></figure>` ).join("");
 }
 
 export function renderRunSummary(record = {}) {

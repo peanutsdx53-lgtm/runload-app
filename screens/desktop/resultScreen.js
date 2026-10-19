@@ -25,17 +25,8 @@ import {
   VIEWS,
 } from "../resultScreen.js";
 
-const FRONT_LOWER_DESKTOP = "M135 382 C140 390 145 394 150 394 C155 394 160 390 165 382 L166 402 C166 410 159 416 150 416 C141 416 134 410 134 402 Z";
-
-function renderDesktopRegionPathClass({ id, viewKey }) {
-  return id === "BA-DISP-024" && viewKey === "front" ? " region-path--front-lower-shape" : "";
-}
-
-function renderDesktopAdditionalRegionPath({ id, viewKey, state, selectedClass, unavailableStyle }) {
-  if (id !== "BA-DISP-024" || viewKey !== "front") return "";
-  return `<path class="region-path region-path--pc-shape${selectedClass}" data-direction="${state}" data-region-id="${id}"${unavailableStyle} d="${FRONT_LOWER_DESKTOP}" aria-hidden="true"></path>`;
-}
-
+function renderDesktopRegionPathClass() { return ""; }
+function renderDesktopAdditionalRegionPath() { return ""; }
 
 function pcRegionGroups(infos, selectedId) {
   const viewByRegion = new Map(VIEWS.flatMap((view) => view.paths.map(([id]) => [id, view.title])));

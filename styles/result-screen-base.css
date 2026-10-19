@@ -16,3 +16,14 @@
 .screen-layout--result .body-view[data-view="sole"] .region-path[data-direction="unavailable"]{fill:url(#hatch-sole)}
 .screen-layout--result .region-link:focus-visible .region-path,.screen-layout--result .region-link:hover .region-path{filter:brightness(1.12) saturate(1.08);stroke:var(--focus);stroke-width:9;transform:scale(1.02)}
 .screen-layout--result .body-view{min-width:0;margin:0;text-align:center}
+
+/* Shared anatomical study SVG (mobile and desktop). Overlay colours remain
+ * per-region Reference-100 comparisons, not a medical tissue-load map. */
+.screen-layout--result .body-silhouette { fill: #d8e8f1; stroke: #88a9bc; stroke-width: 1.8; stroke-linejoin: round; }
+.screen-layout--result .body-silhouette path { fill: inherit; stroke: #8bacbf; }
+.screen-layout--result .body-silhouette circle { fill: inherit; stroke: #8bacbf; }
+.screen-layout--result .anatomy-detail { pointer-events:none; fill:none; stroke:#759ab0; stroke-width:1.15; opacity:.62; stroke-linecap:round; stroke-linejoin:round; }
+.screen-layout--result .anatomy-detail circle { fill:none; stroke-dasharray:2.5 2.5; }
+.screen-layout--result .region-path { opacity:.85; stroke-width:2.1; stroke-linejoin:round; }
+.screen-layout--result .body-view svg { filter:drop-shadow(0 7px 5px rgba(34,91,125,.1)); }
+.screen-layout--result .mini-silhouette { fill:#dceaf1; stroke:#82a5b7; stroke-width:2; }
