@@ -34,11 +34,11 @@ test('Round6 no fake polygon and no inspector when manual-only input cannot form
 });
 
 test('Round6 anatomy proportions and knee shape iterate without changing twelve clickable region ids',()=>{
- assert.match(ANATOMY_FRONT,/M150 13/);
- assert.match(ANATOMY_BACK,/M150 13/);
- assert.match(ANATOMY_FRONT,/L82 220/);
- assert.match(ANATOMY_MARKINGS.front,/class="anatomy-landmark" d=/);
- assert.doesNotMatch(ANATOMY_MARKINGS.front,/class="anatomy-landmark" cx=/);
+ assert.match(ANATOMY_FRONT,/M150 15/);
+ assert.match(ANATOMY_BACK,/M150 15/);
+ assert.match(ANATOMY_FRONT,/L84 211/);
+ assert.match(ANATOMY_MARKINGS.front,/class="anatomy-detail"/);
+ assert.doesNotMatch(ANATOMY_MARKINGS.front,/class="anatomy-landmark"/);
  assert.deepEqual(VIEWS.map(view=>view.paths.length),[5,4,3]);
  const ids=VIEWS.flatMap(view=>view.paths.map(([id])=>id));
  assert.equal(new Set(ids).size,12);

@@ -36,7 +36,6 @@
 .screen-layout--result .anatomy-underpaint {pointer-events:none;stroke:#8bafc2;stroke-width:1;fill:#8fbace;fill-opacity:.17;stroke-opacity:.28}
 .screen-layout--result .anatomy-detail {pointer-events:none;fill:none;stroke:#5d879e;stroke-width:1.12;opacity:.72;stroke-linecap:round;stroke-linejoin:round}
 .screen-layout--result .anatomy-detail .anatomy-highlight {stroke:#fcfdff;stroke-width:1.85;opacity:.9}
-.screen-layout--result .anatomy-detail .anatomy-landmark {stroke:#ecf9ff;fill:#477b96;fill-opacity:.11;stroke-width:1.6;stroke-dasharray:none}
 .screen-layout--result .body-view[data-view="sole"] .anatomy-detail {stroke-width:1.35}
 .screen-layout--result .region-path {opacity:.77;stroke-width:1.7}
 .screen-layout--result .region-path[data-direction="unavailable"] {opacity:.56}

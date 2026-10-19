@@ -151,25 +151,60 @@
 }
 @media (prefers-reduced-motion:reduce){.running-radar__axis-button{transition:none}}
 
-/* Give each anatomical view enough room for the region shape to be recognised
- * on a phone. Sole is a third independent view, not squeezed to 1/3 width. */
+/* Compact, simultaneous THREE-view body map on phones. No switches and no
+ * replacement colour vocabulary: inherit the result surface and 12-region
+ * semantic palette. Fine-art SVG is purposely simplified for this scale. */
 @media (max-width:54.99rem) {
  .screen--result.screen-layout--result .body-map {
-   grid-template-columns:repeat(2,minmax(0,1fr));
-   gap:10px;
-   padding:14px 9px;
+   display:grid;
+   grid-template-columns:repeat(3,minmax(0,1fr));
+   align-items:start;
+   gap:clamp(2px,1.2vw,9px);
+   padding:12px 7px 14px;
    background:linear-gradient(160deg,#fafdff,#e8f4fa 100%);
    border:1px solid #c2d8e4;
  }
- .screen--result.screen-layout--result .body-view {min-width:0;display:grid;justify-items:center;align-content:start;gap:5px}
- .screen--result.screen-layout--result .body-view figcaption {margin:0;color:#376079;font-size:13px;font-weight:850;letter-spacing:.02em}
- .screen--result.screen-layout--result .body-view svg {height:330px;width:auto;max-width:100%;max-height:none;filter:drop-shadow(0 9px 8px rgba(28,78,112,.13))}
- .screen--result.screen-layout--result .body-view[data-view="sole"] {grid-column:1/-1;align-items:center;border-top:1px solid #d4e6ef;margin-top:3px;padding-top:11px}
- .screen--result.screen-layout--result .body-view[data-view="sole"] svg {height:230px}
+ .screen--result.screen-layout--result .body-view {
+   display:grid;
+   min-width:0;
+   grid-column:auto;
+   justify-items:center;
+   align-content:start;
+   gap:5px;
+   margin:0;
+   border:0;
+   padding:0;
+ }
+ .screen--result.screen-layout--result .body-view figcaption {
+   margin:0;
+   font-size:clamp(10px,2.8vw,13px);
+   color:#376079;
+   font-weight:850;
+   line-height:1.3;
+ }
+ .screen--result.screen-layout--result .body-view svg {
+   display:block;
+   width:100%;
+   height:auto;
+   max-width:110px;
+   max-height:none;
+   filter:drop-shadow(0 6px 6px rgba(28,78,112,.1));
+ }
+ .screen--result.screen-layout--result .body-view[data-view="sole"] {
+   display:grid;
+   grid-column:auto;
+   border:0;
+   margin:0;
+   padding:0;
+ }
+ .screen--result.screen-layout--result .body-view[data-view="sole"] svg {
+   width:100%;height:auto;max-height:none;
+ }
 }
-@media (max-width:300px){
- .screen--result.screen-layout--result .body-view svg {height:260px}
- .screen--result.screen-layout--result .body-view[data-view="sole"] svg {height:180px}
+@media (max-width:280px) {
+ .screen--result.screen-layout--result .body-map {padding:7px 2px 9px;gap:1px}
+ .screen--result.screen-layout--result .body-view {gap:2px}
+ .screen--result.screen-layout--result .body-view figcaption {font-size:9px}
 }
 
 @media(max-width:54.99rem){
