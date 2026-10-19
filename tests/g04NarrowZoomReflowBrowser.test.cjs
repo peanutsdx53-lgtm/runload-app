@@ -32,6 +32,21 @@ async function run(browser,origin,width) {
   await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.w1-mobile-home .home-dashboard-cards',{timeout:25000});
   await page.waitForSelector('.app-shell--w1-mobile > .primary-navigation',{timeout:12000});
+  // Finish the product's first-use tutorial through its actual controls.
+  // Otherwise its modal legitimately intercepts later settings clicks.
+  await page.evaluate(()=>{
+    const dialog=document.querySelector('[data-mobile-onboarding]');
+    if(!dialog)return;
+    const next=dialog.querySelector('[data-onboarding-next]');
+    for(let i=0;i<3;i++)next?.click();
+    const consent=dialog.querySelector('[data-onboarding-consent]');
+    if(consent){consent.checked=true;consent.dispatchEvent(new Event('change',{bubbles:true}));}
+    dialog.querySelector('[data-onboarding-complete]')?.click();
+  });
+  await page.waitForFunction(()=>{
+    const dialog=document.querySelector('[data-mobile-onboarding]');
+    return !dialog||getComputedStyle(dialog).display==='none'||!dialog.getClientRects().length;
+  },null,{timeout:5000});
   await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
   // Test the APPROVED W6 dashboard and four primary destinations, not retired
   // OS-like home widgets or the deleted mobile-home-dock implementation.
