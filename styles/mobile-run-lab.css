@@ -72,7 +72,107 @@
  .running-radar__details{border:1px solid #c5dce7;border-radius:15px;background:#fff;overflow:hidden;margin-top:12px}.running-radar__details summary{cursor:pointer;list-style:none;padding:12px;font-size:12px;font-weight:850;display:flex;justify-content:space-between;gap:8px}.running-radar__details summary::-webkit-details-marker{display:none}.running-radar__details summary span{color:#447c95}.running-radar__details[open] summary span{transform:rotate(180deg)}
  .running-radar__metrics{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid #dce8ef}.running-radar__metric{padding:11px;min-width:0;border-bottom:1px solid #ebf1f4}.running-radar__metric:nth-child(odd){border-right:1px solid #ebf1f4}.running-radar__metric dt{font-size:11px;color:#68869a}.running-radar__metric dd{margin:3px 0 0;color:#183e59;font-size:17px;font-weight:850;overflow-wrap:anywhere}.running-radar__metric dd small{font-size:11px;color:#67849a}
  .running-radar__caption{margin:12px 0 0;font-size:11.5px;line-height:1.6;color:#315c70}
- .running-radar__source{margin:7px 0 0;font-size:10.5px;line-height:1.55;color:#607f90}
  .running-radar__empty{margin:15px 0 8px;border-radius:14px;padding:23px 14px;background:#f0f7fb;display:grid;gap:9px;justify-items:center;text-align:center}.running-radar__empty strong{font-size:18px}.running-radar__empty span{font-size:12px;line-height:1.6;color:#627f91}
 }
 @media(max-width:340px){.running-radar{margin-inline:10px;padding:15px 10px}.running-radar__head h2{font-size:19px}.running-radar__labels text{font-size:10px}}
+
+/* Quality pass: an interactive, readable three-record comparison on mobile.
+ * Shared body diagrams and scientific Reference-100 metrics remain separate. */
+@media (max-width:54.99rem) {
+ .running-radar {padding:0 0 17px;border:1px solid #c8dce7;background:#fbfdff;border-radius:25px;box-shadow:0 16px 34px rgba(26,73,101,.09);color:#153b51}
+ .running-radar__head {padding:22px 19px 2px;align-items:center}
+ .running-radar__head small {font-size:9px;color:#418da4;letter-spacing:.19em}
+ .running-radar__head h2 {font-size:23px;line-height:1.22;margin:8px 0 6px;letter-spacing:-.045em}
+ .running-radar__head p {font-size:12px;color:#557589;line-height:1.55}
+ .running-radar__trial {font-size:10px;background:#e5f4f4;border:1px solid #cae6e9;color:#257e85;padding:6px 9px}
+ .running-radar__legend {margin:19px 15px 4px;padding:9px 8px;background:#f0f7fa;border-radius:13px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .running-radar__legend-item {min-width:0;justify-content:center;gap:5px;line-height:1.35;font-size:12px;white-space:nowrap}
+ .running-radar__legend-item span {min-width:0}
+ .running-radar__legend-item small {display:block;font-size:9px;color:#708da0;text-align:left}
+ .running-radar__legend-item i {width:9px;height:9px;flex-shrink:0;border-radius:50%;box-shadow:0 0 0 3px #ffffff}
+ .running-radar__svg {width:calc(100% - 22px);max-width:420px;margin:3px auto 0;filter:drop-shadow(0 4px 7px rgba(21,67,94,.06))}
+ .running-radar__grid polygon {stroke:#b4d2df;stroke-width:1;fill:#eef7fb;fill-opacity:.045}
+ .running-radar__grid polygon:last-of-type {stroke:#91bacd;stroke-width:1.2}
+ .running-radar__grid line {stroke:#d0e2ea;stroke-width:1}
+ .running-radar__series--current .running-radar__area{fill-opacity:.16}
+ .running-radar__series--previous .running-radar__area{fill-opacity:.065}
+ .running-radar__series--history .running-radar__area{fill-opacity:.05}
+ .running-radar__outline {stroke-width:2.1}
+ .running-radar__series--current .running-radar__outline{stroke-width:3.4}
+ .running-radar__point {stroke-width:1.7;stroke:#fff}
+ .running-radar__labels text {font-size:11.2px;font-weight:800;fill:#3a657a}
+ .running-radar__history-label{margin:0 18px 12px;font-size:11px;color:#537487}
+ .running-radar__history-label select{height:46px;border-radius:12px;border:1px solid #b9d5e0;box-shadow:0 2px 7px rgba(24,75,105,.035);font-size:13px;padding:0 12px}
+ .running-radar__inspector {margin:12px 14px 0;border-radius:18px;border:1px solid #d5e4eb;background:linear-gradient(160deg,#f4fafd,#eef6fa);padding:13px 12px}
+ .running-radar__inspector-lead {margin:0 0 12px;display:grid;gap:4px;color:#456c80;font-size:12px;font-weight:750;line-height:1.35}
+ .running-radar__inspector-lead span {font-size:9px;letter-spacing:.2em;font-weight:850;color:#087f94}
+ .running-radar__axis-buttons {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .running-radar__axis-button {appearance:none;cursor:pointer;min-width:0;min-height:48px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;padding:7px 8px;border:1px solid #d3e2eb;border-radius:11px;background:#fff;color:#365e73;font:inherit;font-size:11px;font-weight:800;text-align:left;line-height:1.2;transition:background .13s ease,border-color .13s ease,box-shadow .13s ease}
+ .running-radar__axis-button.is-active {background:#e0f3f4;border-color:#68aeb6;box-shadow:inset 0 0 0 1px rgba(12,146,156,.22);color:#125b66}
+ .running-radar__axis-button:focus-visible {outline:3px solid #125e8c;outline-offset:2px}
+ .running-radar__axis-index {font-size:9px;letter-spacing:.11em;color:#839eb0}
+ .running-radar__axis-button.is-active .running-radar__axis-index {color:#30838e}
+ .running-radar__axis-panel {background:#fff;border-radius:12px;border:1px solid #dbe7ee;margin-top:10px;padding:13px 11px 11px}
+ .running-radar__axis-panel[hidden] {display:none}
+ .running-radar__axis-panel-heading {display:flex;align-items:end;justify-content:space-between;gap:6px;margin-bottom:12px}
+ .running-radar__axis-panel-heading small {font-size:9px;letter-spacing:.1em;font-weight:800;color:#6c91a4}
+ .running-radar__axis-panel-heading h3 {margin:4px 0 0;font-size:16px;letter-spacing:-.025em;color:#163f58}
+ .running-radar__axis-panel-heading>span {font-size:11px;color:#7895a4;font-weight:750}
+ .running-radar__comparison-values {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .running-radar__compare-value {min-width:0;border-left:3px solid var(--comparison-color);background:#f3f8fa;border-radius:6px 10px 10px 6px;padding:9px 5px 8px 9px;display:grid;gap:6px}
+ .running-radar__compare-value--current {--comparison-color:#0c929c}
+ .running-radar__compare-value--previous {--comparison-color:#5877cd}
+ .running-radar__compare-value--history {--comparison-color:#dc9e46}
+ .running-radar__compare-value small {font-size:10px;font-weight:800;color:#5c7d90}
+ .running-radar__compare-value strong {display:block;overflow-wrap:anywhere;font-size:clamp(12px,3.7vw,18px);font-variant-numeric:tabular-nums;color:#143b53;letter-spacing:-.045em;line-height:1.2}
+ .running-radar__compare-value strong em {display:block;font-size:10px;letter-spacing:0;font-style:normal;font-weight:650;color:#7190a1;margin-top:3px}
+ .running-radar__history-inspector {display:none}
+ .running-radar__axis-panel>p {margin:9px 0 0;color:#617f90;font-size:11px;line-height:1.45}
+ .running-radar__details {margin:15px 14px 0}
+ .running-radar__details summary {font-size:12px;padding:13px}
+ .running-radar__caption {margin:13px 18px 0;font-size:11px;line-height:1.55}
+ .running-radar__method {margin:9px 14px 0;border:1px solid #d7e5ee;background:#f3f8fa;border-radius:12px;overflow:hidden}
+ .running-radar__method summary {list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px;color:#496a80;font-size:11px;font-weight:800}
+ .running-radar__method summary::-webkit-details-marker{display:none}
+ .running-radar__method[open] summary span {transform:rotate(180deg)}
+ .running-radar__method p{font-size:11px;line-height:1.6;color:#536d7d;margin:0;padding:2px 13px 12px}
+ .running-radar__empty {margin:18px 16px}
+}
+@media (max-width:275px){
+ .running-radar__axis-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .running-radar__head{padding:17px 12px 0}
+ .running-radar__head h2{font-size:19px}
+ .running-radar__legend{margin-inline:8px;gap:2px;padding:8px 4px}
+ .running-radar__legend-item{font-size:11px}
+ .running-radar__legend-item small{font-size:8px}
+ .running-radar__inspector{margin-inline:8px;padding:10px 7px}
+ .running-radar__compare-value{padding:8px 3px 7px 5px}
+ .running-radar__compare-value strong{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){.running-radar__axis-button{transition:none}}
+
+/* Give each anatomical view enough room for the region shape to be recognised
+ * on a phone. Sole is a third independent view, not squeezed to 1/3 width. */
+@media (max-width:54.99rem) {
+ .screen--result.screen-layout--result .body-map {
+   grid-template-columns:repeat(2,minmax(0,1fr));
+   gap:10px;
+   padding:14px 9px;
+   background:linear-gradient(160deg,#fafdff,#e8f4fa 100%);
+   border:1px solid #c2d8e4;
+ }
+ .screen--result.screen-layout--result .body-view {min-width:0;display:grid;justify-items:center;align-content:start;gap:5px}
+ .screen--result.screen-layout--result .body-view figcaption {margin:0;color:#376079;font-size:13px;font-weight:850;letter-spacing:.02em}
+ .screen--result.screen-layout--result .body-view svg {height:330px;width:auto;max-width:100%;max-height:none;filter:drop-shadow(0 9px 8px rgba(28,78,112,.13))}
+ .screen--result.screen-layout--result .body-view[data-view="sole"] {grid-column:1/-1;align-items:center;border-top:1px solid #d4e6ef;margin-top:3px;padding-top:11px}
+ .screen--result.screen-layout--result .body-view[data-view="sole"] svg {height:230px}
+}
+@media (max-width:300px){
+ .screen--result.screen-layout--result .body-view svg {height:260px}
+ .screen--result.screen-layout--result .body-view[data-view="sole"] svg {height:180px}
+}
+
+@media(max-width:54.99rem){
+ .running-radar__focus [hidden] {display:none}
+ .running-radar__focus line{stroke:#0c929c;stroke-width:2.5;stroke-dasharray:3 4;stroke-linecap:round;opacity:.48;pointer-events:none}
+}

@@ -9,12 +9,12 @@ import { bodyRegionFormalName, PRIMARY_REGIONAL_V2_MODEL_VERSION, PRIMARY_REGION
 import { rofJSelectionDescriptor } from "../core/rofJAuthorConfirmedScale.js";
 import { findSavedRunMeasurement } from "../ui/runMeasurementState.js";
 
-import { ANATOMY_FRONT, ANATOMY_BACK, ANATOMY_SOLE, ANATOMY_MARKINGS, ANATOMY_REGIONS } from "../ui/anatomicalBodySvg.js";
+import { ANATOMY_FRONT, ANATOMY_BACK, ANATOMY_SOLE, ANATOMY_MARKINGS, ANATOMY_REGIONS, ANATOMY_UNDERPAINT } from "../ui/anatomicalBodySvg.js";
 
 export const VIEWS = Object.freeze([
-  Object.freeze({ key: "front", title: "前面", silhouette: ANATOMY_FRONT, markings: ANATOMY_MARKINGS.front, paths: ANATOMY_REGIONS.front }),
-  Object.freeze({ key: "back", title: "後面", silhouette: ANATOMY_BACK, markings: ANATOMY_MARKINGS.back, paths: ANATOMY_REGIONS.back }),
-  Object.freeze({ key: "sole", title: "足裏", silhouette: ANATOMY_SOLE, markings: ANATOMY_MARKINGS.sole, paths: ANATOMY_REGIONS.sole }),
+  Object.freeze({ key: "front", title: "前面", silhouette: ANATOMY_FRONT, markings: ANATOMY_MARKINGS.front, underpaint: ANATOMY_UNDERPAINT.front, paths: ANATOMY_REGIONS.front }),
+  Object.freeze({ key: "back", title: "後面", silhouette: ANATOMY_BACK, markings: ANATOMY_MARKINGS.back, underpaint: ANATOMY_UNDERPAINT.back, paths: ANATOMY_REGIONS.back }),
+  Object.freeze({ key: "sole", title: "足裏", silhouette: ANATOMY_SOLE, markings: ANATOMY_MARKINGS.sole, underpaint: ANATOMY_UNDERPAINT.sole, paths: ANATOMY_REGIONS.sole }),
 ]);
 
 export function direction(value) { if (!finite(value)) return "unavailable"; const delta = Number(value) - 100; return Math.abs(delta) < 1 ? "reference" : delta > 0 ? "above" : "below"; }
@@ -71,14 +71,14 @@ export function locatorSvg(regionId) {
   for (const view of VIEWS) {
     const match = view.paths.find(([id]) => id === regionId);
     if (!match) continue;
-    return `<svg viewBox="70 10 160 430" aria-hidden="true"><g class="mini-silhouette">${view.silhouette}</g>${view.markings}<path class="mini-region" d="${match[1]}"></path></svg>`;
+    return `<svg viewBox="70 10 160 430" aria-hidden="true"><g class="mini-silhouette">${view.silhouette}</g>${view.underpaint}${view.markings}<path class="mini-region" d="${match[1]}"></path></svg>`;
   }
   return "";
 }
 
 export function bodyMap(resultRecord, infos, idSuffix = "main", selectedId = "", { enhancedTouch = false, renderPathClass = null, renderAdditionalRegionPath = null } = {}) {
   const byId = new Map(infos.map((info) => [info.row.regionId, info]));
-  return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430"${enhancedTouch ? ' aria-hidden="true" focusable="false"' : ` aria-label="${view.title}の部位図"`}><defs><pattern id="hatch-${view.key}-${idSuffix}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="currentColor" opacity=".08"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern><clipPath id="body-clip-${view.key}">${view.silhouette}</clipPath><linearGradient id="anatomy-fill-${view.key}-${idSuffix}" x1="0%" y1="0%" x2="100%" y2="75%"><stop offset="0%" stop-color="#f6fcff"/><stop offset="52%" stop-color="#d9ebf5"/><stop offset="100%" stop-color="#a8c7d9"/></linearGradient></defs><g class="body-silhouette" style="fill:url(#anatomy-fill-${view.key}-${idSuffix})">${view.silhouette}</g><g class="region-layer">${view.paths.map(([id, d]) => {
+  return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430"${enhancedTouch ? ' aria-hidden="true" focusable="false"' : ` aria-label="${view.title}の部位図"`}><defs><pattern id="hatch-${view.key}-${idSuffix}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="currentColor" opacity=".08"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern><clipPath id="body-clip-${view.key}">${view.silhouette}</clipPath><linearGradient id="anatomy-fill-${view.key}-${idSuffix}" x1="0%" y1="0%" x2="100%" y2="75%"><stop offset="0%" stop-color="#f6fcff"/><stop offset="52%" stop-color="#d9ebf5"/><stop offset="100%" stop-color="#a8c7d9"/></linearGradient></defs><g class="body-silhouette" style="fill:url(#anatomy-fill-${view.key}-${idSuffix})">${view.silhouette}</g>${view.underpaint}<g class="region-layer">${view.paths.map(([id, d]) => {
     const info = byId.get(id); const value = info?.row?.value; const name = bodyRegionFormalName(id, info?.row?.regionName || id); const state = direction(value);
     const label = `${name}：${finite(value) ? `今回の目安 ${fmt(value, 1)}` : "今回の目安は数値なし"}`;
     const unavailableStyle = state === "unavailable" ? ` style="fill:url(#hatch-${view.key}-${idSuffix})"` : "";

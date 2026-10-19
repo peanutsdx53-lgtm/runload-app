@@ -27,3 +27,18 @@
 .screen-layout--result .region-path { opacity:.85; stroke-width:2.1; stroke-linejoin:round; }
 .screen-layout--result .body-view svg { filter:drop-shadow(0 7px 5px rgba(34,91,125,.1)); }
 .screen-layout--result .mini-silhouette { fill:#dceaf1; stroke:#82a5b7; stroke-width:2; }
+
+/* Anatomical blueprint quality pass. These neutral fascia lines and landmarks
+ * are deliberately separate from the semantic Reference-100 region overlay. */
+.screen-layout--result .body-silhouette {stroke:#6e9db6;stroke-width:1.6;stroke-linejoin:round;filter:drop-shadow(0 3px 5px rgba(20,80,116,.13))}
+.screen-layout--result .body-silhouette path {stroke:#78a4bc;stroke-width:1.35}
+.screen-layout--result .body-silhouette circle {stroke:#78a4bc;stroke-width:1.35}
+.screen-layout--result .anatomy-underpaint {pointer-events:none;stroke:#8bafc2;stroke-width:1;fill:#8fbace;fill-opacity:.17;stroke-opacity:.28}
+.screen-layout--result .anatomy-detail {pointer-events:none;fill:none;stroke:#5d879e;stroke-width:1.12;opacity:.72;stroke-linecap:round;stroke-linejoin:round}
+.screen-layout--result .anatomy-detail .anatomy-highlight {stroke:#fcfdff;stroke-width:1.85;opacity:.9}
+.screen-layout--result .anatomy-detail .anatomy-landmark {stroke:#ecf9ff;fill:#477b96;fill-opacity:.11;stroke-width:1.6;stroke-dasharray:none}
+.screen-layout--result .body-view[data-view="sole"] .anatomy-detail {stroke-width:1.35}
+.screen-layout--result .region-path {opacity:.77;stroke-width:1.7}
+.screen-layout--result .region-path[data-direction="unavailable"] {opacity:.56}
+.screen-layout--result .body-view svg {filter:drop-shadow(0 9px 7px rgba(23,69,99,.08))}
+.screen-layout--result .mini-silhouette {stroke-width:1.6}

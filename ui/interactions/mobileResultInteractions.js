@@ -1,4 +1,34 @@
 function setView(root, view) {
+  // Visual-only interaction. All comparison values are pre-rendered from
+  // immutable saved snapshots; selection never writes or recalculates them.
+  const radar = root.querySelector("[data-running-radar]");
+  const syncAxisPanel = () => {
+    if (!radar) return;
+    radar.querySelectorAll("[data-running-radar-axis-panel]:not([hidden])").forEach(panel => {
+      const chosenId = radar.querySelector("[data-running-radar-select]")?.value || "";
+      const target = panel.querySelector("[data-running-radar-history-value-slot]");
+      const selected = [...panel.querySelectorAll("[data-running-radar-history-value]")]
+        .find(node => node.getAttribute("data-running-radar-history-value") === chosenId);
+      if (target) target.textContent = selected?.textContent || "—";
+    });
+  };
+  radar?.querySelector("[data-running-radar-select]")?.addEventListener("change", syncAxisPanel);
+  radar?.querySelectorAll("[data-running-radar-axis]").forEach(button => button.addEventListener("click", () => {
+    radar.querySelectorAll("[data-running-radar-axis]").forEach(item => {
+      const active = item === button;
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-pressed", String(active));
+    });
+    radar.querySelectorAll("[data-running-radar-axis-panel]").forEach(panel => {
+      panel.hidden = panel.getAttribute("data-running-radar-axis-panel") !== button.getAttribute("data-running-radar-axis");
+    });
+    radar.querySelectorAll("[data-running-radar-focus-ray]").forEach(ray => {
+      if (ray.getAttribute("data-running-radar-focus-ray") === button.getAttribute("data-running-radar-axis")) ray.removeAttribute("hidden");
+      else ray.setAttribute("hidden", "hidden");
+    });
+    syncAxisPanel();
+  }));
+  syncAxisPanel();
   root.querySelectorAll("[data-result-mobile-view]").forEach((button) => {
     const active = button.dataset.resultMobileView === view;
     button.classList.toggle("active", active);
@@ -22,9 +52,40 @@ export function bindMobileResult() {
     if (count && selected) count.textContent = `${selected.dataset.available || "0"}/6`;
     radar?.querySelectorAll("[data-running-radar-layer]").forEach(layer => {
       if (!layer.classList.contains("running-radar__series--history")) return;
-      layer.hidden = layer.getAttribute("data-running-radar-layer") !== event.target.value;
+      if (layer.getAttribute("data-running-radar-layer") === event.target.value) layer.removeAttribute("hidden");
+      else layer.setAttribute("hidden", "hidden");
     });
   });
+  // Visual-only interaction. All comparison values are pre-rendered from
+  // immutable saved snapshots; selection never writes or recalculates them.
+  const radar = root.querySelector("[data-running-radar]");
+  const syncAxisPanel = () => {
+    if (!radar) return;
+    radar.querySelectorAll("[data-running-radar-axis-panel]:not([hidden])").forEach(panel => {
+      const chosenId = radar.querySelector("[data-running-radar-select]")?.value || "";
+      const target = panel.querySelector("[data-running-radar-history-value-slot]");
+      const selected = [...panel.querySelectorAll("[data-running-radar-history-value]")]
+        .find(node => node.getAttribute("data-running-radar-history-value") === chosenId);
+      if (target) target.textContent = selected?.textContent || "—";
+    });
+  };
+  radar?.querySelector("[data-running-radar-select]")?.addEventListener("change", syncAxisPanel);
+  radar?.querySelectorAll("[data-running-radar-axis]").forEach(button => button.addEventListener("click", () => {
+    radar.querySelectorAll("[data-running-radar-axis]").forEach(item => {
+      const active = item === button;
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-pressed", String(active));
+    });
+    radar.querySelectorAll("[data-running-radar-axis-panel]").forEach(panel => {
+      panel.hidden = panel.getAttribute("data-running-radar-axis-panel") !== button.getAttribute("data-running-radar-axis");
+    });
+    radar.querySelectorAll("[data-running-radar-focus-ray]").forEach(ray => {
+      if (ray.getAttribute("data-running-radar-focus-ray") === button.getAttribute("data-running-radar-axis")) ray.removeAttribute("hidden");
+      else ray.setAttribute("hidden", "hidden");
+    });
+    syncAxisPanel();
+  }));
+  syncAxisPanel();
   root.querySelectorAll("[data-result-mobile-view]").forEach((button) => {
     button.addEventListener("click", () => setView(root, button.dataset.resultMobileView));
   });
