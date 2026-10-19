@@ -9616,3 +9616,21 @@
     justify-content: start !important;
   }
 }
+
+/* Scientific v4 UI acceptance: between the 80rem desktop console breakpoint
+ * and the width at which its 31rem+39rem minimum tracks actually fit after
+ * the fixed sidebar, the old two-track grid clips the third region column.
+ * Keep both panels independently readable; 83rem+ retains the intended split.
+ * This changes layout only, not the running model or saved values. */
+@media (min-width: 80rem) and (max-width: 82.99rem) {
+  .screen--result .pc-result-main {
+    grid-template-columns: minmax(0, 1fr);
+    overflow: visible;
+    gap: 14px;
+  }
+  .screen--result .pc-result-body,
+  .screen--result .pc-result-numbers {
+    border: 1px solid var(--color-line);
+    border-radius: 17px;
+  }
+}
