@@ -30,81 +30,54 @@ async function run(browser,origin,width) {
  page.on('pageerror',e=>errors.push(e.message));
  try{
   await page.goto(origin+'/index.html#/home',{waitUntil:'domcontentloaded',timeout:20000});
-  await page.waitForSelector('.mobile-home-dock',{timeout:25000});
+  await page.waitForSelector('.w1-mobile-home .home-dashboard-cards',{timeout:25000});
+  await page.waitForSelector('.app-shell--w1-mobile > .primary-navigation',{timeout:12000});
   await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
-  // Visual reviews must show the actual application, not the first-use tour.
-  if(width>=320){
-    await page.evaluate(()=>{
-      const dialog=document.querySelector('[data-mobile-onboarding]');
-      if(!dialog)return;
-      const next=dialog.querySelector('[data-onboarding-next]');
-      for(let i=0;i<3;i++) next?.click();
-      const consent=dialog.querySelector('[data-onboarding-consent]');
-      if(consent){consent.checked=true;consent.dispatchEvent(new Event('change',{bubbles:true}));}
-      dialog.querySelector('[data-onboarding-complete]')?.click();
-    });
-    await page.waitForTimeout(180);
-    if(width===390){
-      const image=await page.screenshot({type:'jpeg',quality:68});
-      console.log('G04_STANDARD_HOME_390_JPEG_BASE64',image.toString('base64'));
-    }
-  }
+  // Test the APPROVED W6 dashboard and four primary destinations, not retired
+  // OS-like home widgets or the deleted mobile-home-dock implementation.
   const home=await page.evaluate(()=>{
-    const dock=document.querySelector('.mobile-home-dock');
-    const style=getComputedStyle(dock),box=dock.getBoundingClientRect();
-    const buttons=[...dock.querySelectorAll('.mobile-home-dock__item')].map(x=>{const b=x.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width};});
-    const grid=document.querySelector('.mobile-home-grid');
-    return {width:window.innerWidth,dock:{position:style.position,columns:style.gridTemplateColumns,rect:{left:box.left,right:box.right,top:box.top,bottom:box.bottom}},buttons,
-      homeGrid: grid?getComputedStyle(grid).gridTemplateColumns:null};
+    const nav=document.querySelector('.app-shell--w1-mobile > .primary-navigation');
+    const box=nav.getBoundingClientRect();
+    const items=[...nav.querySelectorAll('[data-navigation-screen]')].map(x=>{
+      const r=x.getBoundingClientRect();
+      return {route:x.getAttribute('data-navigation-screen'),label:x.textContent.trim(),
+        left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};
+    });
+    return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,
+      pageHeight:document.documentElement.scrollHeight,viewportHeight:innerHeight,
+      navPosition:getComputedStyle(nav).position,
+      navRect:{left:box.left,right:box.right,top:box.top,bottom:box.bottom},items,
+      cards:document.querySelectorAll('.home-dashboard-cards .home-dashboard-card').length,
+      editor:!!document.querySelector('[data-w1-edit-home]'),
+      start:!!document.querySelector('.w1-mobile-hero [href="#/record-input"]')};
   });
-  assert.equal(home.buttons.length,4,JSON.stringify({width,home}));
-  for(let i=0;i<home.buttons.length;i++){
-    assert.ok(home.buttons[i].width>=28,JSON.stringify({width,home,i}));
-    for(let j=i+1;j<home.buttons.length;j++)
-      assert.equal(overlap(home.buttons[i],home.buttons[j]),false,JSON.stringify({width,i,j,home}));
+  assert.deepEqual(home.items.map(x=>x.route),['home','record-input','history','settings'],JSON.stringify({width,home}));
+  assert.ok(home.cards>0&&home.editor&&home.start,JSON.stringify({width,home,problem:'W6 dashboard not rendered'}));
+  assert.ok(home.documentWidth<=width+2,JSON.stringify({width,home,problem:'unwanted horizontal scroll'}));
+  for(let i=0;i<home.items.length;i++){
+    const item=home.items[i];
+    assert.ok(item.width>=28&&item.height>=40,JSON.stringify({width,item}));
+    assert.ok(item.left>=-1&&item.right<=width+1,JSON.stringify({width,item,problem:'navigation outside viewport'}));
+    for(let j=i+1;j<home.items.length;j++)
+      assert.equal(overlap(home.items[i],home.items[j]),false,JSON.stringify({width,home,i,j}));
   }
-  if(width<=304){
-    const magnified=await page.evaluate(()=>{
-      const root=document.querySelector('.mobile-home-os');
-      const head=root?.querySelector('.mobile-home-os__header');
-      const actions=[...head?.querySelectorAll('.mobile-home-os__header-actions > *')||[]]
-        .filter(node=>getComputedStyle(node).display!=='none')
-        .map(node=>{const r=node.getBoundingClientRect();return {name:node.textContent.trim(),left:r.left,right:r.right,top:r.top,bottom:r.bottom};});
-      const firstWidget=root?.querySelector('.mobile-home-widget');
-      const widgetBox=firstWidget?.getBoundingClientRect();
-      const widgetContents=firstWidget?[...firstWidget.querySelectorAll('strong,span,small')].filter(el=>el.getClientRects().length>0).map(el=>{const r=el.getBoundingClientRect();return {label:el.textContent.trim().slice(0,32),top:r.top,bottom:r.bottom};}):[];
-      const state={overflowY:getComputedStyle(root).overflowY,scrollHeight:root.scrollHeight,
-        clientHeight:root.clientHeight,actions,widgetBox:widgetBox?{top:widgetBox.top,bottom:widgetBox.bottom}:null,widgetContents};
-      root.scrollTop=root.scrollHeight;
-      state.scrollTop=root.scrollTop;
-      const dock=root.querySelector('.mobile-home-dock').getBoundingClientRect();
-      state.dockBottom=dock.bottom;
-      return state;
+  // At <=350px, the dashboard's 2x2 nav is in the document flow so that it
+  // cannot hide content. At ordinary width it is a fixed four-item dock.
+  assert.equal(home.navPosition,width<=350?'static':'fixed',JSON.stringify({width,home}));
+  if(width<=350){
+    assert.ok(home.pageHeight>home.viewportHeight+50,JSON.stringify({width,home,problem:'page should be scrollable'}));
+    const scroll=await page.evaluate(()=>{
+      window.scrollTo(0,document.documentElement.scrollHeight);
+      return {scrollY:window.scrollY,navBottom:document.querySelector('.primary-navigation').getBoundingClientRect().bottom};
     });
-    assert.equal(magnified.overflowY,'auto',JSON.stringify({width,magnified}));
-    assert.ok(magnified.scrollHeight>magnified.clientHeight+70,JSON.stringify({width,magnified}));
-    assert.ok(magnified.scrollTop>50,JSON.stringify({width,magnified}));
-    for(const item of magnified.actions){
-      assert.ok(item.left>=-1&&item.right<=width+1,JSON.stringify({width,magnified,problem:'header action outside viewport'}));
-    }
-    assert.ok(magnified.dockBottom<=470+12,JSON.stringify({width,magnified,problem:'bottom dock unreachable after scroll'}));
-    if(magnified.widgetBox)for(const item of magnified.widgetContents){
-      assert.ok(item.top>=magnified.widgetBox.top-4 && item.bottom<=magnified.widgetBox.bottom+4,
-        JSON.stringify({width,magnified,problem:'home widget text clipped'}));
-    }
-    console.log('G04_MAGNIFIED_HOME_READABLE_SCROLL_PASS',JSON.stringify({width,actions:magnified.actions.length,scroll:magnified.scrollTop}));
-    assert.notEqual(home.dock.position,'fixed',JSON.stringify({width,home}));
-    assert.ok(home.dock.rect.left>=-1 && home.dock.rect.right<=width+1,JSON.stringify({width,home}));
-    await page.evaluate(()=>document.querySelector('.mobile-home-os')?.classList.add('is-home-editing'));
-    const edit=await page.evaluate(()=>{
-      const grid=document.querySelector('.mobile-home-grid');
-      return {dockPosition:getComputedStyle(document.querySelector('.mobile-home-dock')).position,
-        editGrid:grid?{overflowX:getComputedStyle(grid).overflowX,columns:getComputedStyle(grid).gridTemplateColumns}:null};
-    });
-    assert.notEqual(edit.dockPosition,'fixed',JSON.stringify({width,edit}));
-    if(edit.editGrid)assert.equal(edit.editGrid.overflowX,'auto',JSON.stringify({width,edit}));
-  } else{
-    assert.equal(home.dock.position,'fixed',JSON.stringify({width,home}));
+    assert.ok(scroll.scrollY>20,JSON.stringify({width,scroll,problem:'dashboard cannot be scrolled'}));
+    assert.ok(scroll.navBottom<=470+12,JSON.stringify({width,scroll,problem:'navigation unreachable'}));
+    console.log('G04_W6_NARROW_DASHBOARD_SCROLL_PASS',JSON.stringify({width,scrollY:scroll.scrollY}));
+  }
+  if(width===390){
+    // The actual browser screenshot is retained by CI on failure; the test
+    // intentionally avoids logging a large base64 image into H01 logs.
+    console.log('G04_W6_STANDARD_HOME_PASS',JSON.stringify({width,cards:home.cards}));
   }
   await page.goto(origin+'/index.html#/record-input',{waitUntil:'domcontentloaded',timeout:20000});
   await page.waitForSelector('.screen-layout--record .mobile-save-bar',{timeout:25000});
@@ -169,7 +142,7 @@ async function run(browser,origin,width) {
     console.log('G04_100_PERCENT_TEXT_SETTING_BROWSER_PASS',JSON.stringify({width,standard:standard.font,large:large.font,persisted:persisted.font}));
   }
   assert.deepEqual(errors,[],JSON.stringify({width,errors}));
-  console.log('G04_NARROW_ZOOM_REFLOW_BROWSER_PASS',JSON.stringify({width,homeDock:home.dock.position,recordSaveBar:record.position}));
+  console.log('G04_NARROW_ZOOM_REFLOW_BROWSER_PASS',JSON.stringify({width,nav:home.navPosition,recordSaveBar:record.position}));
  }finally{await context.close();}
 }
 (async()=>{const {srv,origin}=await server();let browser;
