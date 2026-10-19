@@ -68,7 +68,13 @@ async function platformRun(browser,origin,mobile) {
       const registry=mobile ? await import('/screens/mobileScreenRegistry.js') : await import('/screens/desktopScreenRegistry.js');
       return Object.keys(registry.createScreenRenderers());
     },mobile);
-    assert.equal(routeKeys.length,mobile?24:22,JSON.stringify({mobile,routeKeys}));
+    // W6 retired three mobile routes (plan/pace/departure) and the desktop plan route.
+    // Keep a fixed registry count so a accidentally missing renderer cannot silently
+    // reduce the number of security-probed screens.
+    assert.equal(routeKeys.length,21,JSON.stringify({mobile,routeKeys}));
+    for (const retired of ['plan','pace-tool','departure-check']) {
+      assert.equal(routeKeys.includes(retired),false,JSON.stringify({mobile,retired,routeKeys}));
+    }
     console.log('E01_ROUTE_REGISTRY',JSON.stringify({mobile,count:routeKeys.length}));
     const screens=[];
     const failures=[];
@@ -190,7 +196,6 @@ const SCIENTIFIC_CONCEPTS = {
   'interpretation-room': [/記録|確認|振り返/],
   consultation: [/共有|相談/],
   simulation: [/条件|比較/],
-  plan: [/予定/],
   'record-input': [/記録/],
   'body-part-detail': [/部位|記録/],
   'course-library': [/コース/],
@@ -294,6 +299,6 @@ async function storedRunSemanticRoutes(browser,origin,mobile) {
     await platformRun(browser,origin,false);
     await storedRunSemanticRoutes(browser,origin,true);
     await storedRunSemanticRoutes(browser,origin,false);
-    console.log('E01_46_PLATFORM_ROUTE_BROWSER_PROBE_PASS');
+    console.log('E01_42_PLATFORM_ROUTE_BROWSER_PROBE_PASS');
   }finally{await browser?.close();await new Promise(ok=>srv.close(ok));clearTimeout(watchdog);}
 })().catch(e=>{console.error(e);process.exitCode=1;});
