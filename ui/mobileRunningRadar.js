@@ -167,9 +167,9 @@ export function renderMobileRunningRadar({record,allExperiences=[],services,meas
     ${canShape?`<svg class="running-radar__svg" viewBox="0 0 300 290" role="img" aria-label="6軸のランニング記録を比較するレーダー図。未取得の軸は線で接続しません。"><g class="running-radar__grid">${guides}${axisLines}</g><g class="running-radar__focus">${focusRays}</g>${historyLayers}${previous?seriesGroup(previous.profile,"#5877cd","previous"):""}${seriesGroup(current,"#0c929c","current")}<g class="running-radar__labels">${axisNames}</g></svg>`:
     `<div class="running-radar__empty"><strong>今回の表示は ${current.available}/6軸</strong><span>図形に必要な3軸がそろっていません。距離・時間の記録は下で確認できます。GPS・疲労感の記録があると表示内容が増えます。</span></div>`}
     ${profiles.length>1&&canShape?`<label class="running-radar__history-label">3色目の比較記録<select data-running-radar-select>${choices}</select></label>`:""}
-    ${canShape?axisInspector({current,previous,selected},profiles.slice(1)):""}
+    ${canShape?`<details class="running-radar__explore"><summary><span><strong>6軸の数値を詳しく比較</strong><small>気になる軸を選択して3つの記録を確認</small></span><i aria-hidden="true">⌄</i></summary>${axisInspector({current,previous,selected},profiles.slice(1))}</details>`:""}
     <details class="running-radar__details"><summary>今回の6軸の実数値・取得状況を見る <span aria-hidden="true">⌄</span></summary><dl class="running-radar__metrics">${metricDetails(current)}</dl></details>
-    <p class="running-radar__caption">青緑＝今回、青＝前回、琥珀＝選択した過去記録。未取得の軸は欠けたまま表示します。外側ほど良いという意味ではありません。</p>
+    <p class="running-radar__caption">未取得の軸は線でつなぎません。外側ほど良いという意味ではありません。</p>
     <details class="running-radar__method"><summary>指標の定義・尺度について <span aria-hidden="true">⌄</span></summary><p>距離・平均速度は走行記録、ペース変動・起伏・推定歩調は保存GPS等、疲労変化はROF-Jの入力から算出します。GPS由来の値には誤差があります。</p><p>尺度は視覚比較用に固定：距離20km、速度20km/h、変動50%、上り密度80m/km、歩調220歩/分、疲労差−10〜+10。六角形の面積は総合点ではなく、外側ほど健康的・安全という意味もありません。12部位の科学的な計算値とは独立しています。</p></details>
   </section>`;
 }
