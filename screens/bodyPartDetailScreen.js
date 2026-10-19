@@ -76,7 +76,17 @@ function runningEvidenceDisclosure(row, resultRecord) {
   };
   const ref = Number(row?.referenceSpeedMps);
   const reference = Number.isFinite(ref) && ref > 0 ? `${ref} m/s` : "参照条件不明";
-  return `<section class="compact-boundary" data-scientific-evidence="running-v4"><h2>計算根拠と適用条件</h2><p>原典の観測量：${metric}（${unit}）。参照速度：${escapeHtml(reference)}。計算経路：${escapeHtml(routes[route] || "適用範囲外・数値なし")}。</p><p>原典：${sources}。これは公開研究における参照値であり、本人の組織負荷を測った値ではありません。記録の平均速度と原著の定速実験の条件を同一視しません。基準100は正常・安全・危険の境界ではありません。</p></section>`;
+  // The raw value is the SAME underlying scientific construct before Ref-100 normalization.
+  // It is not a per-user measurement; B is an intra-source interpolation, A2 a paper equation.
+  const rawKind = {
+    A1_PUBLISHED_TABLE: "原著に掲載された表値",
+    A2_PUBLISHED_EQUATION: "原著式による計算値",
+    B_INTRA_SOURCE_INTERPOLATION: "アプリ内で算出した原著内の直線補間値",
+  }[route] || "原典適用範囲外";
+  const rawDisclosure = finite(row?.rawValue)
+    ? `<p data-scientific-raw-unit="running-v4"><strong>正規化前の参照値：</strong>${escapeHtml(Number(row.rawValue).toPrecision(7))} ${unit}（${escapeHtml(rawKind)}）。<strong>表示上の参照100：</strong>${escapeHtml(fmt(row.value,1))}。原典の単位の値は本人の測定値ではありません。</p>`
+    : `<p data-scientific-raw-unit="running-v4">適格な原典の値がないため、正規化前の値も参照100も表示しません。</p>`;
+  return `<section class="compact-boundary" data-scientific-evidence="running-v4"><h2>計算根拠と適用条件</h2><p>原典の観測量：${metric}（${unit}）。参照速度：${escapeHtml(reference)}。計算経路：${escapeHtml(routes[route] || "適用範囲外・数値なし")}。</p>${rawDisclosure}<p>原典：${sources}。これは公開研究における参照値であり、本人の組織負荷を測った値ではありません。記録の平均速度と原著の定速実験の条件を同一視しません。基準100は正常・安全・危険の境界ではありません。</p></section>`;
 }
 
 export function renderBodyPartDetailScreenWithPresentation({ services, context }, presentation = {}) {
