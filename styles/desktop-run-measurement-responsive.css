@@ -18,3 +18,38 @@
     display: none !important;
   }
 }
+
+/* W2: PC does not measure GPS, but keeps direct access to manual recording. */
+.screen--run-measurement-unavailable .w2-desktop-measurement-back {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  color: var(--color-accent-strong);
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.screen--run-measurement-unavailable .w2-desktop-measurement-back:focus-visible {
+  outline: 3px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}
+/* The old desktop-wide generic rule hides secondary copy on launch cards.
+   Do not hide the explanation or action destination on this GPS fallback. */
+@media (min-width:55rem) {
+  .screen--run-measurement-unavailable .run-launch__lead,
+  .screen--run-measurement-unavailable .run-launch__choice--app > :is(small,span) {
+    display: block !important;
+  }
+  .screen--run-measurement-unavailable .run-launch__lead {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+  .screen--run-measurement-unavailable .run-launch__choice--app {
+    min-height: 94px;
+    align-content: center;
+    gap: 3px;
+    padding: 13px 18px;
+  }
+  .screen--run-measurement-unavailable .run-launch__choice--app strong { line-height:1.4; }
+}

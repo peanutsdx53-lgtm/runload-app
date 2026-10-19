@@ -538,15 +538,47 @@ function normalizeEmbeddedBodyStatus(form, platformEnhancement = {}) {
   refreshRecordBodyUi(form, platformEnhancement);
 }
 
+// The outer app header belongs to the screen underneath this embedded flow.
+// While a flow is open it must return to Record, not leave directly for Home.
+function setRecordSubflowHeaderBack(isOpen) {
+  document.querySelectorAll(".pc-global-back, .mobile-topbar__back").forEach((link) => {
+    const label = link.querySelector("span:last-child");
+    if (isOpen) {
+      if (!link.hasAttribute("data-record-original-back")) {
+        link.setAttribute("data-record-original-back", link.getAttribute("href") || "#/home");
+        link.setAttribute("data-record-original-text", label?.textContent || link.textContent || "");
+        link.setAttribute("data-record-original-aria", link.getAttribute("aria-label") || "");
+      }
+      link.setAttribute("href", "#/record-input");
+      link.setAttribute("aria-label", "記録へ戻る");
+      if (label) label.textContent = "記録";
+      else link.textContent = "‹ 記録";
+    } else if (link.hasAttribute("data-record-original-back")) {
+      link.setAttribute("href", link.getAttribute("data-record-original-back"));
+      const oldAria = link.getAttribute("data-record-original-aria") || "";
+      if (oldAria) link.setAttribute("aria-label", oldAria);
+      else link.removeAttribute("aria-label");
+      if (label) label.textContent = link.getAttribute("data-record-original-text") || "ホーム";
+      else link.textContent = link.getAttribute("data-record-original-text") || "‹ ホーム";
+      for (const name of ["data-record-original-back", "data-record-original-text", "data-record-original-aria"]) link.removeAttribute(name);
+    }
+  });
+}
+
 function openRecordSubflow(form, name) {
+  form.__recordSubflowReturnFocus = form.querySelector(`[data-action="open-record-subflow"][data-subflow="${name}"]`);
   form.querySelectorAll("[data-record-subflow]").forEach((section) => { section.hidden = section.dataset.recordSubflow !== name; });
   document.body.classList.add("record-subflow-open");
+  setRecordSubflowHeaderBack(true);
   form.querySelector(`[data-record-subflow="${name}"] .record-subscreen__back`)?.focus();
 }
 
 function closeRecordSubflow(form) {
   form.querySelectorAll("[data-record-subflow]").forEach((section) => { section.hidden = true; });
   document.body.classList.remove("record-subflow-open");
+  setRecordSubflowHeaderBack(false);
+  form.__recordSubflowReturnFocus?.focus?.({ preventScroll: true });
+  form.__recordSubflowReturnFocus = null;
 }
 
 function applySavedShoeToEmbedded(form, services) {
@@ -584,6 +616,15 @@ function bindEmbeddedRecordSubflows(form, services, platformEnhancement = {}) {
     button.addEventListener("click", () => openRecordSubflow(form, String(button.dataset.subflow || "")));
   });
   form.querySelectorAll('[data-action="close-record-subflow"]').forEach((button) => button.addEventListener("click", () => closeRecordSubflow(form)));
+  // The shell header stays visible above the embedded flow on desktop/mobile.
+  // Treat its back control as closing the flow, preserving all unsaved form values.
+  document.querySelectorAll(".pc-global-back, .mobile-topbar__back").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      if (!document.body.classList.contains("record-subflow-open")) return;
+      event.preventDefault();
+      closeRecordSubflow(form);
+    });
+  });
 
   form.querySelectorAll("[data-record-body-region]").forEach((path) => {
     const activate = () => {

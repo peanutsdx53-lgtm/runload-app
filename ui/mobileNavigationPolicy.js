@@ -52,6 +52,14 @@ function applyMobileNavigationPolicy() {
   ensureSettingsAboutLink();
   setAboutReturnToSettings();
   removeMoreNavigationItem();
+  // An empty activity archive should not crowd out the saved-record history.
+  // The expanded activity-history route still shows its own empty state.
+  const activityPanel = document.querySelector('.screen--history [data-mobile-activity-history]');
+  const activityCount = activityPanel?.querySelector('.mobile-activity-history-count');
+  if (activityCount) {
+    if (activityCount.textContent.trim() === '0件') activityPanel.style.display = 'none';
+    else activityPanel.style.removeProperty('display');
+  }
 }
 
 function redirectMoreRouteToHome() {
@@ -83,3 +91,18 @@ if (typeof document !== "undefined") {
   }
   applyMobileNavigationPolicy();
 }
+
+// A new route is a new reading context. Keep the current position for
+// same-route updates, but do not carry a previous screen's scroll offset
+// into the next destination (including changes to route parameters).
+let lastRenderedMobileRoute = "";
+globalThis.addEventListener?.("running-record:screen-rendered", () => {
+  if (!mobileMatches()) return;
+  const route = String(globalThis.location?.hash || "");
+  if (!route || route === lastRenderedMobileRoute) return;
+  lastRenderedMobileRoute = route;
+  const root = document.scrollingElement;
+  if (root) root.scrollTop = 0;
+  const main = document.querySelector("#main-content");
+  if (main && main.scrollTop) main.scrollTop = 0;
+});

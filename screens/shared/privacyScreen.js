@@ -18,20 +18,21 @@ export function renderPrivacyScreen({ context } = {}) {
   const returnTo = String(context?.parameters?.get?.("returnTo") || "");
   const fromSettings = returnTo.startsWith("#/settings");
   const fromTerms = returnTo.startsWith("#/terms");
-  const backHref = fromSettings ? "#/settings?section=data" : fromTerms ? "#/terms" : "#/more";
-  const backLabel = fromSettings ? "設定" : fromTerms ? "利用規約" : "その他";
+  const fromAbout = returnTo === "#/about";
+  const backHref = fromSettings ? "#/settings?section=data" : fromTerms ? "#/terms" : fromAbout ? "#/about" : "#/more";
+  const backLabel = fromSettings ? "設定" : fromTerms ? "利用規約" : fromAbout ? "このアプリについて" : "その他";
   return `<div class="screen screen--privacy screen-layout screen-layout--privacy secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${backHref}">← ${backLabel}へ戻る</a><strong>データの扱い</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
     <section class="head"><p class="eyebrow">データの扱い</p><h1>データの扱い</h1><p>何を端末に保存し、いつ外部機能を開くかを確認します。</p></section><p class="visually-hidden">バックアップファイルは、このアプリによるパスワード保護や暗号化を行いません。</p>
     <section class="lead"><strong>記録と保存した位置情報（GPS）の走行軌跡は、この端末のブラウザーに保存します。</strong> 位置情報（GPS）の測定を開始した場合だけ端末の位置情報を取得します。地図表示ではOpenStreetMapの地図画像を取得しますが、保存したアプリ内の記録を外部解析サービスへ自動送信しません。</section>
     <div class="list">
-      ${item({ type: "local", eyebrow: "保存", title: "端末内に保存する", description: "記録・結果・予定・設定・保存コース・位置情報の走行軌跡", open: true, body: '<p>走行・休養記録、保存済み結果、身体の記録、予定、プロフィール、設定、保存コースに加え、GPS測定で保存を選んだ走行軌跡を同じ端末・同じブラウザーで扱います。</p><p>このアプリで保存した記録を表示します。</p>' })}
+      ${item({ type: "local", eyebrow: "保存", title: "端末内に保存する", description: "記録・結果・設定・保存コース・位置情報の走行軌跡", open: true, body: '<p>走行・休養記録、保存済み結果、身体の記録、プロフィール、設定、保存コースに加え、GPS測定で保存を選んだ走行軌跡を同じ端末・同じブラウザーで扱います。</p><p>このアプリで保存した記録を表示します。</p>' })}
       ${item({ type: "temporary", eyebrow: "入力途中", title: "入力途中だけ一時保持する", description: "補助画面から戻るための内容", body: '<p>コース、身体記録、シューズなどの補助画面を往復する間だけ、入力途中の内容を一時的に保持します。</p><p>保存完了、入力フロー終了、端末内データ削除などで消去する設計です。</p>' })}
       ${item({ type: "external", eyebrow: "外部通信", title: "GPSと外部通信", description: "GPSは測定時だけ取得・地図画像はOpenStreetMapから取得", body: '<ul><li>GPS測定を開始した場合だけ、ブラウザーの許可を得て端末の位置情報を取得します。</li><li>保存を選んだGPS走行軌跡は端末内へ保存し、このアプリのバックアップ対象に含めます。</li><li>地図表示ではOpenStreetMapの地図タイルを取得するため外部通信が発生します。表示地域に対応する地図画像の要求はOpenStreetMap側へ送られます。</li><li>相談文、保存記録、GPS走行軌跡を外部解析サービスへ自動アップロードしません。</li><li>ルートファイル（GPX）は端末内で読み取ります。</li></ul>' })}
       ${item({ type: "link", eyebrow: "外部機能", title: "外部サイト・電話を開くとき", description: "本人が選んだときだけ別機能へ移動", body: '<p>公的案内、参考資料、電話リンクなどを選ぶとこのアプリとは別の機能を開きます。このアプリの端末内記録をリンク先へ自動で付け加えません。</p><p>外部サイトでは、そのサイト側の通信やデータ保存、プライバシー方針が適用されます。</p>' })}
       ${item({ type: "backup", eyebrow: "バックアップ", title: "バックアップは自分で保存する", description: "設定から書き出し・復元を行う", body: '<p>バックアップ操作を選んだ場合だけ、保存データを書き出します。保存済みのGPS走行軌跡もバックアップに含みます。自動で外部サービスへ送信しません。</p><p>バックアップファイルの内容・復元範囲を設定画面で確認してから実行できます。</p>' })}
-      ${item({ type: "delete", eyebrow: "削除", title: "端末内データを削除する", description: "アプリ内保存データをまとめて消去", body: '<p>アプリ内の削除操作では、このアプリがこのブラウザーに保存した記録・結果・予定・プロフィール・設定・保存コース・GPS走行軌跡などを削除します。</p><p>すでに端末へ書き出したバックアップファイルは、このアプリ側の削除では消えません。</p>' })}
+      ${item({ type: "delete", eyebrow: "削除", title: "端末内データを削除する", description: "アプリ内保存データをまとめて消去", body: '<p>アプリ内の削除操作では、このアプリがこのブラウザーに保存した記録・結果・プロフィール・設定・保存コース・GPS走行軌跡などを削除します。</p><p>すでに端末へ書き出したバックアップファイルは、このアプリ側の削除では消えません。</p>' })}
     </div>
     <p class="warning">ここでは、このアプリで保存・送信される情報を説明しています。医療情報管理制度への適合や法的評価を示すものではありません。</p>
     ${fromSettings ? "" : '<div class="actions"><a href="#/settings?section=data"><span>バックアップ・削除の設定へ</span><span>›</span></a></div>'}

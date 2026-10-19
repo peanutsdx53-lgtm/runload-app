@@ -34,7 +34,7 @@ assert.equal(metrics.runs, 3);
 assert.equal(metrics.rests, 1);
 assert.equal(metrics.weeklyRuns, 3);
 assert.equal(metrics.distance, 6);
-assert.equal(metrics.plans, 1);
+assert.equal("plans" in metrics, false);
 assert.equal("reflections" in metrics, false);
 
 const evaluated = evaluateAchievements(services);
@@ -43,7 +43,7 @@ assert.equal(evaluated.find((item) => item.id === "week-3")?.unlocked, true);
 assert.equal(evaluated.find((item) => item.id === "distance-5")?.unlocked, true);
 assert.equal(evaluated.find((item) => item.id === "distance-25")?.unlocked, false);
 assert.equal(evaluated.find((item) => item.id === "rest-1")?.unlocked, true);
-assert.equal(evaluated.find((item) => item.id === "plan-1")?.unlocked, true);
+assert.equal(evaluated.some((item) => item.id === "plan-1"), false);
 
 const synced = syncAchievements(services, { initializeAnnouncements: true });
 assert.ok(synced.some((item) => item.unlockedAt));

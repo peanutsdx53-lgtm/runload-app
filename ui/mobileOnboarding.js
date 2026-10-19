@@ -29,9 +29,9 @@ const STEPS = Object.freeze([
   Object.freeze({
     key: "home",
     eyebrow: "ホーム",
-    title: "アプリ一覧＋記録概要",
-    body: "アプリ一覧を中心に使います。横へ動かすと、今週の記録や次の予定を確認できます。",
-    visual: `<div class="mobile-onboarding__home-demo" aria-hidden="true"><span><b>▦</b><small>アプリ一覧</small></span><i>›</i><span><b>12.3</b><small>記録概要</small></span></div>`,
+    title: "ホームは記録と活動の入口",
+    body: "ホームで記録を始め、自分用の情報ウィンドウを確認できます。詳しい操作は画面下の「記録」「履歴」「設定」から進めます。",
+    visual: `<div class="mobile-onboarding__home-demo" aria-hidden="true"><span><b>＋</b><small>記録を始める</small></span><i>›</i><span><b>▤</b><small>自分用の情報</small></span></div>`,
   }),
   Object.freeze({
     key: "privacy",

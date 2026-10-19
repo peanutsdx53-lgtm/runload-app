@@ -4,7 +4,7 @@ const POSITION_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_KEY = "running-record-mobile-home-widgets-v1";
 
 const PRIMARY_WIDGET_SLOTS = Object.freeze(["plan", "changes"]);
-const DEFAULT_HOME_APPS = Object.freeze(["simulation", "plan", "reading", "settings"]);
+const DEFAULT_HOME_APPS = Object.freeze(["simulation", "reading", "settings"]);
 const DEFAULT_DOCK = Object.freeze(["record", "measure", "history", "course"]);
 const DEFAULT_WIDGET_ORDER = Object.freeze(["today", "plan", "changes", "checkpoint"]);
 const DEFAULT_WIDGET_SIZES = Object.freeze({ today: "medium", plan: "small", changes: "small", checkpoint: "small" });
@@ -142,9 +142,8 @@ function persistDefaultLayout() {
       { token: "widget:changes", row: 2, col: 3 },
       { token: "widget:checkpoint", row: 1, col: 1 },
       { token: "app:simulation", row: 3, col: 1 },
-      { token: "app:plan", row: 3, col: 2 },
-      { token: "app:reading", row: 3, col: 3 },
-      { token: "app:settings", row: 3, col: 4 },
+      { token: "app:reading", row: 3, col: 2 },
+      { token: "app:settings", row: 3, col: 3 },
     ]],
   });
 }
@@ -178,7 +177,7 @@ function applyDefaultLayout(root) {
   applyPlacement(changes, 2, 3, 2, 1);
   if (checkpoint) applyPlacement(checkpoint, 1, 1, 2, 1);
 
-  const appPlacements = Object.freeze({ simulation: 1, plan: 2, reading: 3, settings: 4 });
+  const appPlacements = Object.freeze({ simulation: 1, reading: 2, settings: 3 });
   DEFAULT_HOME_APPS.forEach((id) => {
     const item = root.querySelector(`[data-home-item-id="${id}"]`);
     if (!item) return;

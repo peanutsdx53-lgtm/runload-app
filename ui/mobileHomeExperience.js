@@ -71,9 +71,6 @@ function weekMetrics(services, now = new Date()) {
     if (["WALK", "JOGGING", "MIXED"].includes(activityId)) activities.add(activityId);
   });
 
-  const plans = services?.storage?.plans?.loadAll?.() || [];
-  const weeklyPlans = plans.filter((plan) => inRange(parseLocalDate(plan.scheduledDate), start, end));
-
   return Object.freeze({
     key,
     recordCount: weeklyRecords.length + extensionRecords.length,
@@ -81,7 +78,6 @@ function weekMetrics(services, now = new Date()) {
     restCount: weeklyRests.length,
     repeatedCourse,
     activityCount: activities.size,
-    planCount: weeklyPlans.length,
   });
 }
 
@@ -91,7 +87,6 @@ const CHALLENGE_DEFINITIONS = Object.freeze([
   Object.freeze({ id: "rest-1", title: "休養も記録", short: "休養記録を1件残す", target: 1, metric: "restCount", href: "#/record-input", tone: "green" }),
   Object.freeze({ id: "repeat-course-2", title: "同じコース2回", short: "同じコースを2回記録", target: 2, metric: "repeatedCourse", href: "#/course-library?returnTo=%23%2Fhome", tone: "cyan" }),
   Object.freeze({ id: "activities-2", title: "2種類の活動", short: "異なる活動を2種類記録", target: 2, metric: "activityCount", href: "#/run-measurement", tone: "orange" }),
-  Object.freeze({ id: "plan-1", title: "予定を1件", short: "今週の予定を1件作る", target: 1, metric: "planCount", href: "#/plan", tone: "indigo" }),
 ]);
 
 function stableWeekIndex(weekKey = "") {
@@ -128,39 +123,6 @@ export function buildPersonalChallenge(services, { now = new Date() } = {}) {
   const selected = ordered.find((item) => !item.complete) || ordered[0] || null;
   if (!selected) return null;
   return Object.freeze({ ...selected, completedCount });
-}
-
-function nextPlan(services, now = new Date()) {
-  const today = localDateText(now);
-  return (services?.storage?.plans?.loadAll?.() || [])
-    .filter((plan) => String(plan.scheduledDate || "") >= today)
-    .sort((left, right) => String(left.scheduledDate || "").localeCompare(String(right.scheduledDate || "")))[0] || null;
-}
-
-function daysUntil(dateText, now = new Date()) {
-  const date = parseLocalDate(dateText);
-  if (!date) return null;
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
-  return Math.round((date - today) / 86400000);
-}
-
-
-function planDescriptor(plan, now) {
-  if (!plan) return null;
-  const planned = plan.plannedSession || {};
-  const rest = plan.planType === "rest" || planned.activityType === "rest";
-  const distance = Number(planned.distanceKm);
-  const detail = rest ? "休養" : distance > 0 ? `${distance.toFixed(1).replace(/\.0$/, "")} km` : "走行予定";
-  const days = daysUntil(plan.scheduledDate, now);
-  return Object.freeze({
-    kind: "plan",
-    score: days !== null && days <= 2 ? 96 : 68,
-    label: "次の予定",
-    title: shortDate(plan.scheduledDate),
-    note: detail,
-    href: `#/plan?planId=${encodeURIComponent(plan.id)}`,
-    tone: "plan",
-  });
 }
 
 function challengeDescriptor(challenge) {
@@ -227,7 +189,6 @@ function latestDescriptor(latestExperience) {
 export function buildDynamicHomeCards(services, latestExperience, { now = new Date() } = {}) {
   const challenge = buildPersonalChallenge(services, { now });
   const candidates = [
-    planDescriptor(nextPlan(services, now), now),
     challengeDescriptor(challenge),
     fatigueDescriptor(services),
     achievementDescriptor(services),

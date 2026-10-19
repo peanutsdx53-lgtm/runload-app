@@ -21,19 +21,18 @@ async function test(id, fn) {
 await test('PACE-TOOL-IS-OPTIONAL-EMOJI-HOME-APP', () => {
   const home = read('screens/mobile/homeScreen.js');
   const homeLayout = read('ui/interactions/mobileHomeLayoutState.js');
-  assert.ok(home.includes('href: "#/pace-tool"'));
-  assert.ok(home.includes('label: "ペース換算"'));
-  assert.ok(home.includes('emoji: "🧮"'));
-  assert.ok(homeLayout.includes('id: "pace-tool"'));
-  assert.ok(homeLayout.includes('["#/pace-tool", "pace-tool"]'));
+  assert.ok(!home.includes('href: "#/pace-tool"'));
+  assert.ok(!home.includes('label: "ペース換算"'));
+  assert.ok(!homeLayout.includes('id: "pace-tool"'));
+  assert.ok(!homeLayout.includes('["#/pace-tool", "pace-tool"]'));
 });
 
 await test('PACE-TOOL-HAS-ROUTE-BINDER-AND-HOME-NAVIGATION', () => {
   const registry = read('screens/mobileScreenRegistry.js');
   const binders = read('ui/mobileScreenInteractionBinders.js');
   const architecture = read('ui/screenArchitecture.js');
-  assert.ok(registry.includes('renderPaceCalculatorScreen'));
-  assert.ok(registry.includes('"pace-tool": renderPaceCalculatorScreen'));
+  assert.ok(!registry.includes('"pace-tool":'));
+  assert.ok(!registry.includes('renderPaceCalculatorScreen'));
   assert.ok(binders.includes('bindMobilePaceCalculator'));
   assert.ok(binders.includes('"pace-tool": bindMobilePaceCalculator'));
   assert.ok(architecture.includes('screen === "pace-tool"'));

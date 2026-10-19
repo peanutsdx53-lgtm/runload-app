@@ -1420,3 +1420,100 @@
     overflow: auto !important;
   }
 }
+
+/* W1-A approved desktop navigation: one icon per destination, not stacked glyph and SVG. */
+@media (min-width:55rem) {
+  #app > .app-shell:not(.app-shell--immersive):not(.app-shell--standalone) .primary-navigation__glyph { display:none!important; }
+}
+
+/* W1 source-only UI styles, no persistence or engine changes. */
+@media (min-width:55rem) {
+  #platform-header-root .app-header--desktop .app-header__actions { min-width: 50px; }
+  .app-shell:not(.app-shell--immersive) .primary-navigation__link[data-navigation-screen="simulation"] { white-space:normal; }
+  .pc-home-heading p:not(.eyebrow) { max-width:42rem; }
+  .pc-home-rail__cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr)); }
+}
+
+/* W1: the "Other" destination replaces the removed duplicate header menu. */
+@media (min-width:55rem) {
+  #app .app-shell:not(.app-shell--immersive) .primary-navigation__link[data-navigation-screen="more"] {
+    display:grid!important;
+  }
+}
+@media (min-width:55rem) and (max-width:79.99rem) {
+  #app .app-shell:not(.app-shell--immersive) .primary-navigation:has([data-navigation-screen="simulation"]) {
+    grid-template-columns:repeat(6,minmax(0,1fr));
+  }
+  #app .app-shell:not(.app-shell--immersive) .primary-navigation__link {
+    min-width:0; padding-inline:4px;
+  }
+  #app .app-shell:not(.app-shell--immersive) .primary-navigation__label { font-size:12px; }
+}
+
+/* W1 1024–1279px desktop: keep the PC's left task navigation.
+   The previous 880–1279px frame otherwise puts 5/6 destinations in a footer,
+   contrary to the desktop A/B information-architecture comparison. */
+@media (min-width:55rem) and (max-width:79.99rem) {
+  #app > .app-shell:not(.app-shell--immersive):not(.app-shell--standalone) {
+    width:100%; min-height:100dvh; margin:0; padding-bottom:0;
+    overflow:visible; border:0; border-radius:0; box-shadow:none;
+  }
+  #app > .app-shell:not(.app-shell--immersive):not(.app-shell--standalone) > .app-main {
+    box-sizing:border-box; width:auto; max-width:none; margin:0;
+    padding:calc(4.75rem + 26px) 22px 48px 122px;
+  }
+  #app > .app-shell:not(.app-shell--immersive):not(.app-shell--standalone) > .primary-navigation {
+    position:fixed; display:grid; top:50%; bottom:auto; left:16px;
+    transform:translateY(-50%); width:82px; height:auto;
+    max-height:calc(100dvh - 30px); overflow-y:auto;
+    grid-template-columns:minmax(0,1fr); gap:4px;
+    padding:7px; border-radius:18px; border:1px solid var(--color-line);
+    box-shadow:0 10px 22px #173a4d12; z-index:35;
+  }
+  #app > .app-shell:not(.app-shell--immersive):not(.app-shell--standalone) > .primary-navigation > .primary-navigation__link {
+    min-width:0; min-height:58px; width:100%;
+    padding:6px 2px; display:grid; justify-items:center; align-content:center;
+  }
+  #app > .app-shell:not(.app-shell--immersive):not(.app-shell--standalone) > .primary-navigation .primary-navigation__label {
+    font-size:12px; line-height:1.2; text-align:center;
+  }
+  body > .app-header--desktop.app-header--viewport-fixed { padding-left:122px!important; }
+}
+
+/* W1 More: explicit 3-column row layout prevents compact labels from
+   collapsing into each other under the older shared .row link styles. */
+@media (min-width:55rem) {
+  #app .screen--more.screen-layout--more { align-items:start!important; gap:16px 20px!important; }
+  #app .screen--more.screen-layout--more > .group { align-self:start!important; height:auto!important; padding:16px!important; }
+  #app .screen--more.screen-layout--more .list { display:grid!important; gap:9px!important; }
+  #app .screen--more.screen-layout--more .list > a.row {
+    display:grid!important; grid-template-columns:36px minmax(0,1fr) 16px!important;
+    align-items:center!important; column-gap:12px!important;
+    min-height:76px!important; height:auto!important; padding:12px 14px!important;
+    text-decoration:none!important;
+  }
+  #app .screen--more.screen-layout--more .list > a.row > .icon {
+    display:grid!important; place-items:center!important;
+    width:36px!important; height:36px!important; font-size:18px!important;
+  }
+  #app .screen--more.screen-layout--more .list > a.row > .copy {
+    display:grid!important; align-content:center!important; gap:2px!important;
+    min-width:0!important; margin:0!important; text-decoration:none!important;
+  }
+  #app .screen--more.screen-layout--more .list > a.row > .copy > strong {
+    display:block!important; margin:0!important; font-size:15px!important;
+    line-height:1.4!important; text-decoration:none!important; overflow-wrap:anywhere;
+  }
+  #app .screen--more.screen-layout--more .list > a.row > .copy > span {
+    display:block!important; margin:0!important; line-height:1.4!important;
+    text-decoration:none!important; font-size:12px!important; overflow-wrap:anywhere;
+  }
+  #app .screen--more.screen-layout--more .list > a.row > .arrow {
+    display:block!important; margin:0!important; text-decoration:none!important;
+  }
+  /* The existing primary-row color was white against a light selection surface. */
+  #app .screen--more.screen-layout--more .list > a.row.primary,
+  #app .screen--more.screen-layout--more .list > a.row.primary .copy > strong { color:#193d55!important; }
+  #app .screen--more.screen-layout--more .list > a.row.primary .copy > span { color:#465e70!important; }
+  #app .screen--more.screen-layout--more .list > a.row.primary > .icon { color:#193d55!important; background:#e8f0f5!important; }
+}

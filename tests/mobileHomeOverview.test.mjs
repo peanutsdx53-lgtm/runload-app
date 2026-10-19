@@ -7,17 +7,14 @@ const gestureCss = fs.readFileSync("styles/mobile-home-gesture.css", "utf8");
 const interactions = fs.readFileSync("ui/interactions/mobileHomeInteractions.js", "utf8");
 const hub = fs.readFileSync("ui/mobileHomeHub.js", "utf8");
 
-for (const legacySurface of ["mobile-home-widgets", "mobile-home-apps", "mobile-home-app-catalog", "mobile-home-dock"]) {
-  assert.ok(home.includes(legacySurface), `existing editable Home surface missing: ${legacySurface}`);
+for (const activeSurface of ["data-home-card-list", "data-new-home-editor", "data-home-editor-visible", "data-home-editor-save"]) {
+  assert.ok(home.includes(activeSurface), `new editable home surface missing: ${activeSurface}`);
 }
-assert.match(home, /data-home-hub-page-index="0"/);
-assert.match(home, /data-home-hub-page-index="1"/);
-assert.match(home, /data-home-hub-target="1"/);
-assert.match(home, /data-home-hub-target="0"/);
-assert.match(home, /weeklySummary\(services\)/);
-assert.match(home, /findSavedRunMeasurement/);
-assert.match(home, /kcalCount > 0/);
-assert.match(home, /activityType !== "run"/);
+// Historical render helpers are retained for independent regression fixtures,
+// but the active new-home renderer must never mount the old phone launcher.
+const activeHomeRenderer = home.slice(home.indexOf("function renderW1MobileHome("), home.indexOf("// Retained only for independent historical tests"));
+assert.doesNotMatch(activeHomeRenderer, /renderMobileHomeOs|mobile-home-hub-page--apps|data-w1-previous/);
+assert.match(home, /直近の記録/);
 assert.match(css, /\.mobile-home-hub\.is-home-overview-active \.mobile-home-dock/);
 assert.match(css, /\.mobile-home-os\.is-home-editing \.mobile-home-overview-open/);
 assert.match(interactions, /bindMobileHomeHub/);

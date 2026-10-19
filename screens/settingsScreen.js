@@ -27,10 +27,9 @@ function renderSavedShoes(settings = {}) {
 
 function renderDataOverview(services) {
   const records = services.storage.records.loadAll();
-  const plans = services.storage.plans.loadAll();
   const courseCount = services.storage.courses.loadAll().length;
   const draft = services.storage.draft.load();
-  return `<div class="data-overview"><div><small>走行・休養記録</small><strong>${records.length}件</strong></div><div><small>予定</small><strong>${plans.length}件</strong></div><div><small>保存コース</small><strong>${courseCount}件</strong></div><div><small>入力途中</small><strong>${draft ? "下書きあり" : "なし"}</strong></div></div>`;
+  return `<div class="data-overview"><div><small>走行・休養記録</small><strong>${records.length}件</strong></div><div><small>保存コース</small><strong>${courseCount}件</strong></div><div><small>入力途中</small><strong>${draft ? "下書きあり" : "なし"}</strong></div></div>`;
 }
 
 export function renderSettingsScreenWithPresentation({ services, context }, presentation = {}) {
@@ -89,6 +88,7 @@ export function renderSettingsScreenWithPresentation({ services, context }, pres
     <section class="group"><p class="group-title">案内</p>
       <div class="settings-guide-links">
         ${renderFirstUseGuide(settings)}
+        <a class="settings-guide-link" href="#/reading?origin=settings"><span><small>参考情報</small><strong>読みもの</strong></span><span aria-hidden="true">›</span></a>
         <a class="settings-guide-link" href="#/terms?returnTo=%23%2Fsettings"><span><small>利用規約</small><strong>利用規約</strong></span><span aria-hidden="true">›</span></a>
         <a class="settings-guide-link" href="#/privacy?returnTo=%23%2Fsettings"><span><small>データの扱い</small><strong>プライバシー</strong></span><span aria-hidden="true">›</span></a>
       </div>
@@ -100,7 +100,7 @@ export function renderSettingsScreenWithPresentation({ services, context }, pres
         <p class="note">この端末のアプリデータを対象にします。写真メモの画像はバックアップファイルに含みません。</p>
         <div class="action-row"><button type="button" class="primary" data-action="export-backup">バックアップを保存</button><label for="restore-backup-file">バックアップを選択</label><input class="hidden-file" id="restore-backup-file" data-action="restore-backup" type="file" accept="application/json,.json"></div>
         <div class="restore-preview" data-restore-preview-host aria-live="polite"><p class="muted-text">ファイルを選ぶと、内容を確認してから復元できます。</p></div>
-        <div class="danger-box"><strong>この端末内のアプリデータを削除</strong><p>記録、結果、予定、保存コース、プロフィール、設定、保存シューズ、下書きなどを削除します。端末へ書き出したバックアップファイルは削除しません。</p><label class="field"><span>確認のため「削除」と入力</span><input id="clear-data-confirmation" autocomplete="off"></label><div class="action-row"><button type="button" class="danger" data-action="clear-all-user-data">すべて削除</button></div></div>
+        <div class="danger-box"><strong>この端末内のアプリデータを削除</strong><p>記録、結果、保存コース、プロフィール、設定、保存シューズ、下書きなどを削除します。端末へ書き出したバックアップファイルは削除しません。</p><label class="field"><span>確認のため「削除」と入力</span><input id="clear-data-confirmation" autocomplete="off"></label><div class="action-row"><button type="button" class="danger" data-action="clear-all-user-data">すべて削除</button></div></div>
         <div class="form-messages" data-data-management-messages role="status" aria-live="polite" tabindex="-1" hidden></div>
         <div class="action-row"><a href="#/privacy?returnTo=%23%2Fsettings">データの扱いを確認 <span class="action-chevron">›</span></a></div>
       </div></details>

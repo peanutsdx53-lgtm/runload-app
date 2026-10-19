@@ -71,8 +71,8 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
   const safeRoomOrigin=["result","history","body-part-detail","home"].includes(roomOrigin)?roomOrigin:"result";
   const roomBack=`#/interpretation-room?recordId=${encodeURIComponent(recordId)}&origin=${encodeURIComponent(safeRoomOrigin)}`;
   const planBack=returnTo.startsWith("#/plan")?returnTo:"#/plan";
-  const back=from==="plan"?planBack:from==="interpretation-room"?roomBack:"#/home";
-  const backLabel=from==="plan"?"予定へ戻る":from==="interpretation-room"?"結果の整理へ戻る":"ホームへ戻る";
+  const back=from==="plan"?planBack:from==="interpretation-room"?roomBack:from==="record-input"?"#/record-input":"#/home";
+  const backLabel=from==="plan"?"予定へ戻る":from==="interpretation-room"?"結果の整理へ戻る":from==="record-input"?"記録へ戻る":"ホームへ戻る";
 
   const recent=sourceRun(services,recordId);
   if (!recent) {
@@ -81,8 +81,8 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
       ? "指定した走行記録が見つかりません。別の記録を選び直してください。"
       : "比較できる走行記録がまだありません。最初に走行記録を保存してください。";
     return `<div class="screen screen--simulation screen-layout screen-layout--simulation condition-compare">
-      <a class="back-link" href="${escapeHtml(back)}">‹ ${escapeHtml(backLabel)}</a>
-      <section class="intro condition-compare-hero"><div class="condition-compare-hero__copy"><p class="eyebrow">条件比較</p><h1>比較元の記録がありません</h1><p role="status">${message}</p>
+      <a class="back-link" data-context-back-duplicate href="${escapeHtml(back)}">‹ ${escapeHtml(backLabel)}</a>
+      <section class="intro condition-compare-hero"><div class="condition-compare-hero__copy"><p class="eyebrow">条件比較</p><h1>比較元の記録がありません</h1><p role="status">${message}</p><p class="w3-context-band" role="note"><strong>条件比較と実際の記録は別です</strong><span>条件を変えた場合の参考比較は、実際にその距離やコースを走った記録ではありません。</span></p>
       <a class="secondary-action" href="${missingRequested ? "#/history" : "#/record-input"}">${missingRequested ? "履歴から選び直す" : "走行記録を入力する"}</a></div></section>
     </div>`;
   }
@@ -129,6 +129,7 @@ export function renderSimulationScreenWithPresentation({ services, context }, pr
       <div class="condition-compare-hero__copy">${recordDate?`<time>${escapeHtml(recordDate)}</time>`:""}<p class="eyebrow">条件比較</p><h1>${escapeHtml(comparisonTitle)}</h1><p>保存された記録を基準に、条件を変えた場合の12部位の表示と元の記録との差を整理します。</p></div>
       <div class="condition-compare-hero__mark"><span>${simulationScreenIcon("compare")}</span><div><strong>条件比較</strong><small>条件差と部位差を分けて確認</small></div></div>
     </section>
+    <p class="w3-context-band" role="note"><strong>参考条件の比較</strong><span>ここで変更するのは比較用の条件です。実際の走行記録や元の保存値は変更しません。</span></p>
     <section class="condition-compare-overview" aria-labelledby="simulationOverviewTitle">
       <div class="condition-compare-section-head"><div><small>比較の要約</small><h2 id="simulationOverviewTitle">今回の比較で見えること</h2></div><p>条件を変更した結果を、元の記録との差として整理します。</p></div>
       <div class="condition-compare-overview-idle" hidden><span>${simulationScreenIcon("conditions")}</span><div><strong>条件を1項目変更すると比較が始まります</strong><p>右側で距離・時間・コースなどを変更すると、元の保存記録との差だけを表示します。</p></div></div>

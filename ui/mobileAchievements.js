@@ -13,7 +13,6 @@ const DEFINITIONS = Object.freeze([
   Object.freeze({ id: "distance-25", tier: "silver", title: "累計25 km", short: "走行距離の累計25 km", kind: "distance", target: 25 }),
   Object.freeze({ id: "distance-100", tier: "gold", title: "累計100 km", short: "走行距離の累計100 km", kind: "distance", target: 100 }),
   Object.freeze({ id: "rest-1", tier: "bronze", title: "休養も記録", short: "休養記録を1件保存", kind: "rests", target: 1 }),
-  Object.freeze({ id: "plan-1", tier: "bronze", title: "次の予定", short: "予定を1件保存", kind: "plans", target: 1 }),
   Object.freeze({ id: "course-3", tier: "silver", title: "3つのコース", short: "コースを3件保存", kind: "courses", target: 3 }),
   Object.freeze({ id: "energy-500", tier: "silver", title: "推定500 kcal", short: "対応するGPS走行の推定消費500 kcal", kind: "energy", target: 500 }),
   Object.freeze({ id: "weeks-3", tier: "gold", title: "3週の記録", short: "3つの週で走行を記録", kind: "activeWeeks", target: 3 }),
@@ -74,7 +73,6 @@ function writeStateSafely(snapshot) {
 
 export function collectAchievementMetrics(services) {
   const records = services?.storage?.records?.loadAll?.() || [];
-  const plans = services?.storage?.plans?.loadAll?.() || [];
   const courses = services?.storage?.courses?.loadAll?.() || [];
   const runs = records.filter((record) => record?.activityType === "run");
   const rests = records.filter((record) => record?.activityType === "rest");
@@ -96,7 +94,6 @@ export function collectAchievementMetrics(services) {
     rests: rests.length,
     weeklyRuns,
     distance,
-    plans: plans.length,
     courses: courses.length,
     energy,
     energyRecords,

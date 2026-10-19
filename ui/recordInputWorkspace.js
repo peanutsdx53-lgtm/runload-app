@@ -65,10 +65,17 @@ function serializeRecordInputForm(form) {
 }
 
 export function saveRecordInputWorkspace(fieldsOrForm) {
-  const fields = fieldsOrForm?.querySelectorAll
+  const isForm = typeof fieldsOrForm?.querySelectorAll === "function";
+  const fields = isForm
     ? serializeRecordInputForm(fieldsOrForm)
     : normalizeFields(fieldsOrForm || {});
-  const payload = Object.freeze({ version: 1, updatedAt: new Date().toISOString(), fields });
+  // Visual disclosure state is a session-only workspace preference, not a saved record.
+  const openStages = isForm
+    ? [...fieldsOrForm.querySelectorAll('details.stage-card[data-record-stage][open]')]
+        .map((node) => Number(node.dataset.recordStage))
+        .filter((stage) => [2, 3, 4].includes(stage))
+    : (loadRecordInputWorkspace()?.openStages || []);
+  const payload = Object.freeze({ version: 1, updatedAt: new Date().toISOString(), fields, openStages });
   storage().setItem(WORKSPACE_KEY, JSON.stringify(payload));
   return payload;
 }
@@ -100,6 +107,11 @@ export function restoreRecordInputWorkspace(form, workspace = loadRecordInputWor
       control.value = value;
     }
   });
+  if (Array.isArray(workspace.openStages)) {
+    form.querySelectorAll('details.stage-card[data-record-stage]').forEach((node) => {
+      node.open = workspace.openStages.includes(Number(node.dataset.recordStage));
+    });
+  }
   return true;
 }
 

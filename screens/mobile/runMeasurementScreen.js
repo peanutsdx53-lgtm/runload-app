@@ -41,7 +41,7 @@ export function renderRunMeasurementScreen({ services, context }) {
       </header>
 
       <div class="run-measurement-prep__body">
-        <section class="run-measurement-prep__intro"><p class="eyebrow">測定</p><h1>活動と測定方法</h1><p>活動と測定方法を選びます。</p></section>
+        <section class="run-measurement-prep__intro"><p class="eyebrow">測定</p><h1>活動と測定方法</h1><p>活動と測定方法を選びます。測定後に入力画面で記録を保存します。</p></section>
 
         <fieldset class="run-measurement-mode" data-measurement-mode-group>
           <legend>測定方法</legend>
@@ -76,6 +76,7 @@ export function renderRunMeasurementScreen({ services, context }) {
 
         <p class="run-measurement__status run-measurement-prep__status" data-measurement-prep-status role="status" aria-live="polite">開始時に位置情報の許可を確認します。</p>
         <button class="run-measurement__start run-measurement-prep__start" type="button" data-action="start-measurement">測定を開始</button>
+        <a class="w2-measurement-manual-link" href="#/record-input"><span>GPSを使えない場合</span><strong>手入力で記録する</strong><span aria-hidden="true">›</span></a>
       </div>
     </section>
 
@@ -137,6 +138,7 @@ export function renderRunMeasurementScreen({ services, context }) {
       <header class="run-measurement__header"><span></span><strong>測定終了</strong><span></span></header>
       <div class="run-measurement-post__body">
         <section class="run-measurement-post__summary"><p class="eyebrow">測定完了</p><h1>測定が完了しました</h1><div class="run-measurement-post__facts run-measurement-post__facts--primary"><span><small>時間</small><strong data-measurement-post-time>—</strong></span><span><small>距離</small><strong data-measurement-post-distance>—</strong></span></div></section>
+        <p class="w2-measurement-unsaved-note" role="note"><strong>記録はまだ保存されていません。</strong><span>測定結果を確認し、次の入力画面で保存してください。</span></p>
 
         <details class="run-measurement-post__auto-details">
           <summary><span><small>自動整理</small><strong>補助記録を確認</strong></span><b>歩数・コースなど</b></summary>
@@ -155,9 +157,9 @@ export function renderRunMeasurementScreen({ services, context }) {
         <p class="run-measurement-post__fatigue-comparison" data-measurement-fatigue-comparison hidden></p>
         <section class="run-measurement-post__completion">
           <div><small>次の操作</small><strong>記録を完成する</strong></div>
-          <p class="run-measurement__status" data-measurement-post-status role="status" aria-live="polite">疲労感は任意です。そのまま記録入力へ進めます。</p>
-          <button type="button" class="run-measurement__start" data-action="record-post-fatigue" disabled>疲労感を保存して記録を完成する</button>
-          <button type="button" class="run-measurement-post__skip" data-action="skip-post-fatigue">疲労感なしで記録を完成する</button>
+          <p class="run-measurement__status" data-measurement-post-status role="status" aria-live="polite">疲労感は任意です。入力画面へ進み、内容を確認して保存してください。</p>
+          <button type="button" class="run-measurement__start" data-action="record-post-fatigue" disabled>疲労感を記録して入力画面へ</button>
+          <button type="button" class="run-measurement-post__skip" data-action="skip-post-fatigue">疲労感なしで入力画面へ</button>
         </section>
       </div>
     </section>

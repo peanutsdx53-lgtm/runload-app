@@ -5,8 +5,8 @@ import { renderRecordInputScreen } from "./desktop/recordInputScreen.js";
 import { renderHistoryScreen } from "./desktop/historyScreen.js";
 import { renderResultScreen } from "./desktop/resultScreen.js";
 import { renderSimulationScreen } from "./desktop/simulationScreen.js";
-import { renderPlanScreen } from "./desktop/planScreen.js";
 import { renderSettingsScreen } from "./desktop/settingsScreen.js";
+import "./desktop/planScreen.js"; // inert while retired screen source remains in PWA cache
 import { renderHomeScreen } from "./desktop/homeScreen.js";
 import { SHARED_SCREEN_RENDERERS } from "./sharedScreenRegistry.js";
 import { renderCourseLibraryScreen } from "./desktop/courseLibraryScreen.js";
@@ -24,7 +24,6 @@ export const DESKTOP_SCREEN_RENDERERS = Object.freeze({
   result: renderResultScreen,
   history: renderHistoryScreen,
   settings: renderSettingsScreen,
-  plan: renderPlanScreen,
   simulation: renderSimulationScreen,
   "course-library": renderCourseLibraryScreen,
   "course-editor": renderCourseEditorScreen,

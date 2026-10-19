@@ -57,7 +57,7 @@ await test('HEADER-HOME-USES-GLOBAL-JAPANESE-SCREEN-NAME',()=>{
   assert.ok(!architecture.includes('backLabel: "Home"'));
   assert.ok(!desktopHome.includes('<h1>今日</h1>'));
   assert.ok(!desktopHome.includes('CURRENT STATE'));
-  assert.ok(desktopHome.includes('<h2>記録と予定</h2>'));
+  assert.ok(desktopHome.includes('<h2>記録と振り返り</h2>'));
   assert.ok(!desktopHome.includes('#/run-measurement'));
   assert.ok(mobileHome.includes('#/run-measurement'));
 });

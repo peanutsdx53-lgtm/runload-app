@@ -45,5 +45,5 @@ export function renderPlatformShell({ currentScreen, currentLocation, screenCont
   if (currentScreen === "interpretation-room") {
     return `<div class="app-shell app-shell--immersive">${renderImmersiveHeader({ currentScreen, currentLocation, hasResult })}<main id="main-content" class="app-main" tabindex="-1">${screenContent}</main>${layers}</div>`;
   }
-  return `<div class="app-shell">${renderHeader({ currentScreen, currentLocation, hasResult })}<main id="main-content" class="app-main" tabindex="-1">${screenContent}</main>${renderPrimaryNavigation({ currentScreen, currentLocation, hasResult })}${layers}</div>`;
+  return `<div class="app-shell app-shell--w1-mobile">${renderHeader({ currentScreen, currentLocation, hasResult })}<main id="main-content" class="app-main" tabindex="-1">${screenContent}</main>${renderPrimaryNavigation({ currentScreen, currentLocation, hasResult, w1Mobile: true })}${layers}</div>`;
 }

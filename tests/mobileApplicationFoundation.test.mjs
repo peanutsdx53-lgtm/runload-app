@@ -26,19 +26,18 @@ assert.doesNotMatch(shell, /primary-navigation--mobile|MOBILE_PRIMARY_NAVIGATION
 assert.match(navCss, /Home is reached from the header, not a floating bottom navigation/);
 assert.match(navCss, /screen-layout:not\(\.screen-layout--home\).*primary-navigation/);
 
-assert.match(home, /mobile-home-apps/);
-assert.match(home, /mobile-home-dock/);
-assert.match(home, /data-home-app-catalog/);
-assert.match(home, /mobile-home-hub/);
-assert.match(home, /mobile-home-overview/);
-assert.match(home, /今週の記録/);
-assert.match(home, /次の予定/);
-assert.match(home, /最新の記録/);
-assert.match(home, /前回との距離差/);
-assert.doesNotMatch(home, /今日のRunLoad/, "abstract Phase 3 dashboard wording must not return");
-assert.doesNotMatch(home, /mobile-dashboard/, "the Phase 3 replacement dashboard must remain withdrawn");
-assert.match(homeHub, /is-home-editing/);
-assert.match(homeHub, /moveTo\(0, \{ smooth: false \}\)/, "entering Home edit mode must force the existing app Home");
+assert.match(home, /data-home-card-id/);
+assert.match(home, /data-new-home-editor/);
+assert.match(home, /data-home-editor-visible/);
+assert.match(home, /data-home-editor-move/);
+assert.match(home, /data-home-editor-save/);
+assert.match(home, /data-home-editor-reset/);
+assert.match(home, /GPSで測定する/);
+assert.match(home, /直近の記録/);
+// Historical render helpers are retained for independent regression fixtures,
+// but the active new-home renderer must never mount the old phone launcher.
+const activeHomeRenderer = home.slice(home.indexOf("function renderW1MobileHome("), home.indexOf("// Retained only for independent historical tests"));
+assert.doesNotMatch(activeHomeRenderer, /renderMobileHomeOs|mobile-home-hub-page--apps|data-w1-previous/);
 assert.match(worker, /\.\/ui\/mobileHomeHub\.js/);
 
 assert.doesNotMatch(tokens, /--mobile-type-/, "shared tokens must not carry mobile-only roles");

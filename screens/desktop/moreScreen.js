@@ -25,8 +25,11 @@ function renderRow(item) {
 }
 
 export function renderMoreScreen() {
+  // Approved PC-A exposes comparison in the six-item primary navigation,
+  // not a duplicate in the Other screen.
+  const groups = GROUPS;
   return `<div class="screen screen--more screen-layout screen-layout--more">
     <section class="head"><p class="eyebrow">メニュー</p><h1>その他</h1><p>設定、共有、サポート、アプリ情報をまとめています。</p></section>
-    ${GROUPS.map((group) => `<section class="group"><p class="group-title">${escapeHtml(group.label)}</p><div class="list">${group.items.map(renderRow).join("")}</div></section>`).join("")}
+    ${groups.map((group) => `<section class="group"><p class="group-title">${escapeHtml(group.label)}</p><div class="list">${group.items.map(renderRow).join("")}</div></section>`).join("")}
   </div>`;
 }

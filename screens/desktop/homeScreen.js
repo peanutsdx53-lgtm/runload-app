@@ -1,6 +1,6 @@
 import { escapeHtml } from "../../ui/commonComponents.js";
 import { formatNumber } from "../../ui/recordPresentation.js";
-import { activityPill, homeConfirmationTheme, homeState, nextPlan, paceLabel, shortDate } from "../shared/homeScreenSupport.js";
+import { activityPill, homeConfirmationTheme, homeState, paceLabel, shortDate } from "../shared/homeScreenSupport.js";
 
 function renderPcFocus(experience, draft) {
   const record = experience?.record || null;
@@ -63,18 +63,6 @@ function renderPcConfirmationCard(theme) {
   return `<article class="card self-understanding-home-card"><div class="card-head"><div><small>次回見ること</small><strong>新しい記録があります</strong></div><span class="pill">${escapeHtml(String(theme.newCount || 1))}件</span></div><div class="plan"><strong>${escapeHtml(theme.title || "次回見ること")}</strong><span>あなたが続けて見ると決めた内容です</span></div><a class="card-link" href="#/history?view=checks"><span>確認の続きを見る</span><span>›</span></a></article>`;
 }
 
-function renderPlanCard(services) {
-  const plan = nextPlan(services);
-  if (!plan) {
-    return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>未設定</strong></div><span class="pill">—</span></div><a class="card-link" href="#/plan"><span>予定を作る</span><span>›</span></a></article>`;
-  }
-  const planned = plan.plannedSession || {};
-  const rest = plan.planType === "rest" || planned.activityType === "rest";
-  const main = rest ? "休養" : (Number(planned.distanceKm) > 0 ? `${formatNumber(planned.distanceKm, 2)} km` : "走行予定");
-  const details = rest ? "内容はあとで変更できます" : [planned.course?.name, Number(planned.durationMinutes) > 0 ? `${formatNumber(planned.durationMinutes, 0)}分` : ""].filter(Boolean).join("・") || "内容はあとで変更できます";
-  return `<article class="card"><div class="card-head"><div><small>次の予定</small><strong>${escapeHtml(shortDate(plan.scheduledDate))}</strong></div><span class="pill">保存済み</span></div><div class="plan"><strong>${escapeHtml(main)}</strong><span>${escapeHtml(details)}</span></div><a class="card-link" href="#/plan?planId=${encodeURIComponent(plan.id)}"><span>予定を開く</span><span>›</span></a></article>`;
-}
-
 export function renderHomeScreen({ services }) {
   const latestExperience = services.workflows.records.loadLatestExperience();
   const draft = services.storage.draft.load();
@@ -83,7 +71,7 @@ export function renderHomeScreen({ services }) {
   return `<div class="screen screen--home screen-layout screen-layout--home home-state--${escapeHtml(state)}" data-home-state="${escapeHtml(state)}">
     <div class="home-desktop">
       ${renderPcFocus(latestExperience, draft)}
-      <section class="section"><div class="section-head"><div><h2>記録と予定</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPcConfirmationCard(confirmationTheme)}${renderPlanCard(services)}</div></section>
+      <section class="section"><div class="section-head"><div><h2>記録と振り返り</h2></div></div><div class="grid">${renderLatestRecord(latestExperience)}${renderPcConfirmationCard(confirmationTheme)}</div></section>
     </div>
   </div>`;
 }

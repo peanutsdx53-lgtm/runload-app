@@ -106,3 +106,17 @@
   body.record-overlay-open .record-mobile-save-bar { display: none; }
   .record-selected-body-row { grid-template-columns: minmax(0, 1fr) 4.7rem 5.3rem 2.35rem; gap: 0.35rem; }
 }
+
+/* W6 follow-up: embedded Record screens occupy the full mobile viewport.
+   Hide the parent Record save bar until the user returns to the input screen. */
+@media (max-width: 54.99rem) {
+  .screen-layout--record .subscreen[data-record-subflow] {
+    bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    overscroll-behavior: contain;
+  }
+  body.record-subflow-open .screen-layout--record .mobile-save-bar,
+  body.record-subflow-open .record-mobile-save-bar {
+    display: none !important;
+  }
+}

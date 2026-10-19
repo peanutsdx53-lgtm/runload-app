@@ -18,14 +18,17 @@ assert.match(appVersion, /^\d{4}\.\d{2}\.\d{2}\.\d+$/);
 assert.ok(sw.includes(`running-record-app-runtime-${appVersion}`));
 assert.match(screenRegistry, /achievements: renderAchievementsScreen/);
 assert.doesNotMatch(app, /start: renderStart/);
-assert.match(home, /mobile-home-hub-page--apps/);
-assert.match(home, /mobile-home-hub-page--overview/);
-assert.match(home, /記録概要/);
-assert.match(home, /renderOverviewAchievements/);
+assert.match(home, /data-home-card-list/);
+assert.match(home, /data-new-home-editor/);
+assert.match(home, /GPSで測定する/);
+// Historical render helpers are retained for independent regression fixtures,
+// but the active new-home renderer must never mount the old phone launcher.
+const activeHomeRenderer = home.slice(home.indexOf("function renderW1MobileHome("), home.indexOf("// Retained only for independent historical tests"));
+assert.doesNotMatch(activeHomeRenderer, /renderMobileHomeOs|mobile-home-hub-page--apps|data-w1-previous/);
 assert.doesNotMatch(screenRegistry, /renderMobileMoreScreen/);
 assert.equal(fs.existsSync(path.join(root, "screens/mobile/moreScreen.js")), false);
 assert.match(read("ui/mobileNavigationPolicy.js"), /startsWith\("#\/more"\)/);
-assert.match(achievements, /記録・予定・休養など、保存された事実を対象/);
+assert.match(achievements, /走行・休養の保存記録をもとに、達成状況を表示/);
 assert.doesNotMatch(home, /今日のRunLoad/);
 assert.doesNotMatch(read("ui/mobileOnboarding.js"), /ホーム\s*\|\s*記録\s*\|\s*測定\s*\|\s*履歴\s*\|\s*その他/);
 

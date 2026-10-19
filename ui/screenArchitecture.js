@@ -127,8 +127,12 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
   if (screen === "simulation") {
     const from = parameter("from");
     if (from === "home") return { title: "条件比較", backHref: "#/home", backLabel: "ホーム" };
+    if (from === "record-input") return { title: "条件比較", backHref: "#/record-input", backLabel: "記録" };
     if (from === "plan") return { title: "条件比較", backHref: safeWorkflowReturn(parameter("returnTo") || "#/plan"), backLabel: "予定" };
     if (from === "history") return { title: "条件比較", backHref: "#/history", backLabel: "履歴" };
+    // A comparison opened from Home or without a saved source must not
+    // advertise an unavailable Result screen as its return destination.
+    if (!recordId) return { title: "条件比較", backHref: "#/home", backLabel: "ホーム" };
     if (from === "interpretation-room") {
       const roomOrigin = parameter("roomOrigin");
       return {
@@ -202,6 +206,9 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     if (returnTo.startsWith("#/terms")) {
       return { title: "プライバシー", backHref: "#/terms", backLabel: "利用規約" };
     }
+    if (returnTo === "#/about") {
+      return { title: "プライバシー", backHref: "#/about", backLabel: "このアプリについて" };
+    }
     return { title: "プライバシー", backHref: "#/more", backLabel: "その他" };
   }
 
@@ -209,6 +216,9 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     const returnTo = parameter("returnTo");
     if (returnTo.startsWith("#/settings")) {
       return { title: "利用規約", backHref: "#/settings", backLabel: "設定" };
+    }
+    if (returnTo === "#/about") {
+      return { title: "利用規約", backHref: "#/about", backLabel: "このアプリについて" };
     }
     return { title: "利用規約", backHref: "#/more", backLabel: "その他" };
   }
@@ -230,7 +240,6 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
     label: "結果を使う",
     items: Object.freeze([
       Object.freeze({ screen: "simulation", label: "条件を比べる", description: "条件を変えて同じ計算モデルで確認" }),
-      Object.freeze({ screen: "plan", label: "予定", description: "次の走行・休養予定を作る" }),
     ]),
   }),
   Object.freeze({

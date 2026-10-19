@@ -22,7 +22,7 @@ function createSettingsUpdatePanel() {
     <div class="action-row">
       <button type="button" class="primary" data-action="reset-update-state">最新版を再読み込み</button>
     </div>
-    <p class="note">記録、予定、保存コース、プロフィール、設定を残したまま最新版を読み込み直します。</p>
+    <p class="note">記録、保存コース、プロフィール、設定を残したまま最新版を読み込み直します。</p>
     <p class="visually-hidden" data-update-reset-status role="status" aria-live="polite"></p>`;
   return section;
 }

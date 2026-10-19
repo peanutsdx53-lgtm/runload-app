@@ -112,7 +112,7 @@
 .screen-layout--record .subscreen>header button{justify-self:start;border:0;background:none;color:var(--accent2);font-weight:850}
 .screen-layout--record .subscreen>header span{font-size:var(--type-label)}
 .screen-layout--record .subscreen>header strong{font-size:var(--type-label)}
-.screen-layout--record .subscreen main{width:min(100%,560px)}
+.screen-layout--record .subscreen .record-subscreen__content{width:min(100%,560px)}
 @media (min-width:880px){.screen-layout--record .page-head h1{font-size:36px}
 .screen-layout--record .core-card{padding:20px 22px}
 .screen-layout--record .measure-grid{max-width:560px}
@@ -123,7 +123,7 @@
 .screen-layout--record .subscreen{bottom:74px}
 .screen-layout--record .sheet{border-radius:26px;align-self:center}
 .screen-layout--record .overlay{align-items:center}
-.screen-layout--record .subscreen main{width:min(100%,700px)}}
+.screen-layout--record .subscreen .record-subscreen__content{width:min(100%,700px)}}
 @media (orientation:landscape) and (max-height:520px) and (max-width:932px){.screen-layout--record .page-head h1{font-size:25px}
 .screen-layout--record .core-card{margin-top:9px;padding:12px 14px}
 .screen-layout--record .measure-grid{max-width:520px}
@@ -340,7 +340,7 @@
 .screen-layout--record .core-heading>#requiredProgress{padding-left:6px;padding-right:6px}
 .screen-layout--record .fatigue-inline{padding:8px;gap:8px}
 .screen-layout--record .fatigue-inline button{padding:0 9px}}
-.screen-layout--record .subscreen>main{padding:18px 12px 34px;max-width:820px;margin:0 auto}
+.screen-layout--record .subscreen>.record-subscreen__content{padding:18px 12px 34px;max-width:820px;margin:0 auto}
 .screen-layout--record .sub-flow{display:grid;gap:13px}
 .screen-layout--record .sub-flow[hidden]{display:none}
 .screen-layout--record .sub-flow-head{padding:2px 2px 4px}

@@ -23,7 +23,9 @@ assert.equal(onboarding.shouldOpenMobileOnboarding(completed, { mobile: true }),
 const markup = onboarding.renderMobileOnboarding({ open: true, alreadyAccepted: false });
 assert.equal((markup.match(/data-onboarding-step=/g) || []).length, 4, "onboarding must stay at four concise steps");
 assert.match(markup, /利用規約に同意し、データの扱いを確認しました/);
-assert.match(markup, /アプリ一覧＋記録概要/);
+assert.match(markup, /ホームは記録と活動の入口/);
+assert.match(markup, /自分用の情報ウィンドウ/);
+assert.doesNotMatch(markup, /アプリ一覧＋記録概要|今週の記録や次の予定/);
 assert.doesNotMatch(markup, /5 TABS|下のナビゲーション/);
 assert.match(markup, /#\/terms/);
 assert.match(markup, /#\/privacy/);

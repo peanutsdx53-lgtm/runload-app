@@ -166,5 +166,5 @@ export function prepareResultScreenState({ services, context }) {
 }
 
 export function renderEmptyResultScreen() {
-  return `<div class="screen screen--result screen-layout screen-layout--result"><section class="intro"><div class="intro-heading"><div><p class="eyebrow">結果</p><h1>今回の走り</h1></div></div><p>保存した記録がまだありません。</p><a href="#/record-input"><span><small>最初の記録</small><strong>記録を始める</strong></span><i>›</i></a></section></div>`;
+  return `<div class="screen screen--result screen-layout screen-layout--result"><section class="intro"><div class="intro-heading"><div><p class="eyebrow">結果</p><h1>今回の走り</h1></div></div><p>保存した記録がまだありません。走行・休養の記録を保存すると、ここから結果を確認できます。</p><p class="w3-context-band" role="note"><strong>表示について</strong><span>12部位の目安は記録と条件に基づく参考表示で、身体の状態を直接測定した値ではありません。</span></p><a class="w3-empty-primary" href="#/record-input"><span>最初の記録を入力する</span><span aria-hidden="true">›</span></a><a class="w3-empty-secondary" href="#/history">保存記録を確認する</a></section></div>`;
 }

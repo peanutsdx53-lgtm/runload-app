@@ -1,3 +1,5 @@
+import { bindRestoreSourceGuard } from "./interactions/browserUtilities.js";
+bindRestoreSourceGuard();
 import "./mobileRofJPresentation.js";
 import "./mobileVersionStatus.js";
 import "./mobileMeasurementRecordAutofill.js";

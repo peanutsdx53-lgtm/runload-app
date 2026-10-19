@@ -2,7 +2,6 @@ import { escapeHtml } from "./commonComponents.js";
 import { PRIMARY_DESTINATIONS, resolveScreenContextNavigation } from "./screenArchitecture.js";
 import {
   renderContextHelpButton,
-  renderFeatureMenu,
   renderImmersiveHeader,
   renderPrimaryNavigation,
   renderShellLayers,
@@ -31,7 +30,7 @@ export function renderPlatformHeader({ currentScreen, currentLocation, hasResult
   const titleControl = readingArticleOpen
     ? `<span class="app-header__brand app-header__screen-title" aria-hidden="true"></span>`
     : `<strong class="app-header__brand app-header__screen-title">${escapeHtml(title)}</strong>`;
-  return `<header class="app-header app-header--desktop app-header--viewport-fixed"><div class="app-header__leading">${backControl}</div>${titleControl}<div class="app-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen)}${renderFeatureMenu({ currentScreen, hasResult, idSuffix: "desktop" })}</div></header>`;
+  return `<header class="app-header app-header--desktop app-header--viewport-fixed"><div class="app-header__leading">${backControl}</div>${titleControl}<div class="app-header__actions" aria-label="操作">${renderContextHelpButton(currentScreen)}</div></header>`;
 }
 
 export function renderPlatformShell({ currentScreen, currentLocation, screenContent, hasResult = false, guide = {}, onboardingMarkup = "" }) {
@@ -42,5 +41,5 @@ export function renderPlatformShell({ currentScreen, currentLocation, screenCont
   if (currentScreen === "interpretation-room") {
     return `<div class="app-shell app-shell--immersive">${renderImmersiveHeader({ currentScreen, currentLocation, hasResult })}<main id="main-content" class="app-main" tabindex="-1">${screenContent}</main>${layers}</div>`;
   }
-  return `<div class="app-shell"><main id="main-content" class="app-main" tabindex="-1">${screenContent}</main>${renderPrimaryNavigation({ currentScreen, currentLocation, hasResult })}${layers}</div>`;
+  return `<div class="app-shell"><main id="main-content" class="app-main" tabindex="-1">${screenContent}</main>${renderPrimaryNavigation({ currentScreen, currentLocation, hasResult, w1Desktop: true })}${layers}</div>`;
 }

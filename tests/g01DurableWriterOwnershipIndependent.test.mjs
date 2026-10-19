@@ -17,6 +17,8 @@ const COUNT=new Map([
  ['ui/mobileWalkJogMeasurementWiring.js',1],
  ['ui/interactions/mobileHomeLayoutState.js',3],
  ['ui/mobileHomeGridUtilities.js',2],
+ // Reviewed UI-only home card preferences writer; excludes record/GPS/backup schemas.
+ ['ui/mobileAppRuntime.js',1],
  ['ui/recordInputWorkspace.js',3],
  ['ui/runMeasurementState.js',1],
  ['ui/mobileWalkJogGpsQualityUi.js',1],
@@ -42,4 +44,12 @@ test('G01 protected editor lock, transaction preflight and non-destructive fallb
  assert.match(achievements,/return writeStateSafely\(snapshot\) \? unseen : \[\]/);
  const tutorial=read('ui/screenTutorial.js');
  assert.match(tutorial,/storage\.getItem\(SCREEN_TUTORIAL_STORAGE_KEY\) !== oldRaw/);
+});
+
+test('G01 new home UI preference writes only the isolated key and validates concurrency',()=>{
+ const source=fs.readFileSync(path.join(ROOT,'ui/mobileAppRuntime.js'),'utf8');
+ assert.match(source,/HOME_CARD_PREFS_KEY = "runload-ui-home-summary-v1"/);
+ assert.match(source,/current\.raw !== snapshotRaw/);
+ assert.match(source,/localStorage\.setItem\(HOME_CARD_PREFS_KEY,/);
+ assert.match(source,/保存できませんでした/);
 });

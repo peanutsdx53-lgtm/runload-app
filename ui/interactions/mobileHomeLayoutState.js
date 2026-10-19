@@ -17,14 +17,14 @@ const STORAGE_KEY = "running-record-mobile-home-layout-v1";
 const POSITION_STORAGE_KEY = "running-record-mobile-home-positions-v1";
 const WIDGET_STORAGE_KEY = "running-record-mobile-home-widgets-v1";
 export const DEFAULT_LAYOUT = Object.freeze({
-  pages: Object.freeze([Object.freeze(["simulation", "plan", "reading", "share", "settings"])]),
+  pages: Object.freeze([Object.freeze(["simulation", "reading", "share", "settings"])]),
   dock: Object.freeze(["record", "measure", "history", "course"]),
   activePage: 0,
 });
 
 export const WIDGET_CATALOG = Object.freeze([
   Object.freeze({ id: "today", label: "今日", description: "今日の記録" }),
-  Object.freeze({ id: "plan", label: "次の予定", description: "保存した予定" }),
+  Object.freeze({ id: "plan", label: "記録の補助", description: "記録を確認" }),
   Object.freeze({ id: "changes", label: "最近の変化", description: "履歴と推移" }),
   Object.freeze({ id: "checkpoint", label: "次回見ること", description: "自分で続けて見ること" }),
 ]);
@@ -43,7 +43,6 @@ const WIDGET_SIZE_LABELS = Object.freeze({ small: "小", medium: "中", large: "
 
 export const HOME_APP_CATALOG = Object.freeze([
   Object.freeze({ id: "simulation", label: "条件比較", description: "条件を変えて比較" }),
-  Object.freeze({ id: "plan", label: "予定", description: "次の予定を作成・確認" }),
   Object.freeze({ id: "reading", label: "読みもの", description: "走行に関する情報を確認" }),
   Object.freeze({ id: "share", label: "共有", description: "記録を共有用に整理" }),
   Object.freeze({ id: "settings", label: "設定", description: "表示や共有情報を設定" }),
@@ -51,18 +50,13 @@ export const HOME_APP_CATALOG = Object.freeze([
   Object.freeze({ id: "measure", label: "測定", description: "GPSで走行を測定" }),
   Object.freeze({ id: "history", label: "履歴", description: "保存した記録を確認" }),
   Object.freeze({ id: "course", label: "コース", description: "コースを保存・確認" }),
-  Object.freeze({ id: "departure-check", label: "出発チェック", description: "出発前の準備を確認" }),
-  Object.freeze({ id: "pace-tool", label: "ペース換算", description: "距離と時間からペースを換算" }),
 ]);
 
 const ITEM_ID_BY_HREF = Object.freeze([
   ["#/simulation", "simulation"],
-  ["#/plan", "plan"],
   ["#/reading", "reading"],
   ["#/consultation", "share"],
   ["#/settings", "settings"],
-  ["#/departure-check", "departure-check"],
-  ["#/pace-tool", "pace-tool"],
   ["#/record-input", "record"],
   ["#/run-measurement", "measure"],
   ["#/history", "history"],

@@ -29,6 +29,14 @@ const known=Object.freeze([
   "mobile-home-ambient--night",
   "mobile-home-ambient--rest",
   "mobile-home-ambient--saved",
+  // Retained CSS left by retired phone-home layout; no product renderer uses these.
+  // Remove with coordinated CSS/PWA cleanup, not by resurrecting the old screen.
+  "mobile-home-hub",
+  "mobile-home-hub-page",
+  "mobile-home-hub-page--apps",
+  "mobile-home-hub-page--overview",
+  "mobile-home-hub-track",
+  "mobile-home-hub-viewport",
   "mobile-home-tone--blue",
   "mobile-home-tone--cyan",
   "mobile-home-tone--green",

@@ -32,9 +32,7 @@ function setActiveStage(form, stage, { scroll = false } = {}) {
     if (active) button.setAttribute("aria-current", "step"); else button.removeAttribute("aria-current");
   });
   const target = form.querySelector(`[data-record-stage="${targetStage}"]`);
-  if (target instanceof HTMLDetailsElement) {
-    form.querySelectorAll("details.stage-card[data-record-stage]").forEach((details) => { details.open = details === target; });
-  }
+  if (target instanceof HTMLDetailsElement) target.open = true;
   if (scroll && target) {
     const reduceMotion = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });

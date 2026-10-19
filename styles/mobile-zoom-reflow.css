@@ -174,3 +174,91 @@
     overflow-y: auto;
   }
 }
+
+/* W6-A: narrow effective CSS viewport reflow. This is NOT a browser zoom test.
+   Keep the approved 320px+ layouts and navigation unchanged. */
+@media screen and (max-width: 15rem) {
+  /* A two-row contextual header gives its title its own line instead of
+     painting underneath the back link and the help control. */
+  .app-shell > .mobile-topbar--context {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "back actions" "title title";
+    row-gap: 3px;
+    column-gap: 6px;
+  }
+  .app-shell > .mobile-topbar--context > .mobile-topbar__back {
+    grid-area: back;
+    justify-self: start;
+  }
+  .app-shell > .mobile-topbar--context > .mobile-topbar__screen-title {
+    grid-area: title;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .app-shell > .mobile-topbar--context > .mobile-topbar__screen-title strong {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    line-height: 1.35;
+  }
+  .app-shell > .mobile-topbar--context > .mobile-topbar__actions {
+    grid-area: actions;
+  }
+  /* About's hero, credit grid and panels must not give the parent grid a
+     larger min-content width than the visible screen. */
+  .screen--about .about-body {
+    min-width: 0;
+    max-width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .screen--about .about-body > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .screen--about .about-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px;
+    gap: 8px;
+    overflow-wrap: anywhere;
+  }
+  .screen--about .about-hero > div { min-width: 0; max-width: 100%; }
+  .screen--about .about-hero > strong {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .screen--about .about-panel { padding: 12px; }
+  .screen--about .about-credits div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .screen--about .about-credits :is(dd, a) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* W6-D: existing primary mobile actions should meet a 44px minimum hit height.
+   Inline attribution links are separate text links, not app action buttons. */
+@media screen and (max-width: 54.99rem) {
+  .app-shell > .mobile-topbar .mobile-topbar__back {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+  .screen--about .about-credits dd a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .w6-home-clarity .w1-mobile-heading .w1-mobile-achievements-link {
+    min-height: 44px;
+  }
+  .screen-layout--record .mobile-record-secondary-tools a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}

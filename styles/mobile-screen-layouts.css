@@ -593,8 +593,9 @@
 @media (max-width:360px){.screen-layout--history .selected-focus-value strong{font-size:36px}
 }
 .screen-layout--history .selected-focus-body{padding:14px;
-  background:var(--surface);}
-.screen-layout--history .selected-facts-compact{grid-template-columns:.8fr .9fr 1.3fr;
+  background:var(--surface);
+  container-type:inline-size;}
+.screen-layout--history .selected-facts-compact{grid-template-columns:1.2fr .8fr 1fr;
   padding:0;
   border:1px solid var(--line);
   border-radius:14px;
@@ -626,7 +627,7 @@
   border-color:color-mix(in srgb,var(--accent) 38%,var(--line));
   background:linear-gradient(135deg,var(--surface),color-mix(in srgb,var(--accent-soft) 82%,var(--surface)));}
 @media (max-width:620px){.screen-layout--history .selected-focus-body{padding:12px}
-.screen-layout--history .selected-facts-compact{grid-template-columns:.75fr .85fr 1.4fr;}
+.screen-layout--history .selected-facts-compact{grid-template-columns:1.2fr .8fr 1fr;}
 .screen-layout--history .selected-facts-compact>div,.screen-layout--history .selected-facts-compact>div:nth-child(3){padding:11px 9px;}
 .screen-layout--history .selected-facts-compact>div:first-child{padding-left:9px}
 .screen-layout--history .selected-facts-compact>div:last-child{padding-right:9px}
@@ -637,6 +638,19 @@
     margin:0;}}
 @media (max-width:360px){.screen-layout--history .selected-facts-compact dd{font-size:var(--type-label)}}
 
+
+/* When the selected-record panel becomes narrow (e.g. compact landscape),
+   keep the baseline label intact and align each fact as a full-width row. */
+@container (max-width:245px){
+  .screen-layout--history .selected-facts-compact{grid-template-columns:minmax(0,1fr);}
+  .screen-layout--history .selected-facts-compact>div,
+  .screen-layout--history .selected-facts-compact>div:nth-child(3){
+    display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+    border-right:0;border-bottom:1px solid var(--line);
+  }
+  .screen-layout--history .selected-facts-compact>div:last-child{border-bottom:0;}
+  .screen-layout--history .selected-facts-compact dd{margin-top:0;}
+}
 
 /* ===== Screen: plan ===== */
 /* Shared Plan visual foundation is loaded from plan-screen-base.css. */

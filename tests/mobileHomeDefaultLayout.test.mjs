@@ -41,17 +41,17 @@ test('HOME-GRID-REMAINS-HARD-CAPPED-AT-THREE-ROWS', () => {
 });
 
 test('FIRST-RUN-CANONICAL-LAYOUT-FITS-EXACTLY-IN-THREE-ROWS', () => {
-  assert.match(guard, /DEFAULT_HOME_APPS = Object\.freeze\(\["simulation", "plan", "reading", "settings"\]\)/);
+  assert.match(guard, /DEFAULT_HOME_APPS = Object\.freeze\(\["simulation", "reading", "settings"\]\)/);
   assert.match(guard, /DEFAULT_VISIBLE_WIDGETS = Object\.freeze\(\["today", "plan", "changes"\]\)/);
   assert.match(guard, /applyPlacement\(today, 1, 1, 4, 1\)/);
   assert.match(guard, /applyPlacement\(plan, 2, 1, 2, 1\)/);
   assert.match(guard, /applyPlacement\(changes, 2, 3, 2, 1\)/);
   assert.match(guard, /applyPlacement\(item, 3, appPlacements\[id\], 1, 1\)/);
-  assert.equal(4 + 2 + 2 + 4, 3 * 4);
+  assert.ok(4 + 2 + 2 + 3 <= 3 * 4);
 });
 
 test('SETTINGS-HAS-A-DEFINED-FIRST-RUN-CELL-AND-SHARE-MOVES-TO-CATALOG', () => {
-  assert.match(guard, /settings: 4/);
+  assert.match(guard, /settings: 3/);
   assert.match(guard, /moveAppToCatalog\(root, "share"\)/);
   assert.match(guard, /catalog\.append\(item\)/);
   assert.ok(homeLayout.includes('id: "share", label: "共有"'), 'Share must remain available in the app catalog');

@@ -1,8 +1,9 @@
 export function renderTermsScreen({ context } = {}) {
   const returnTo = String(context?.parameters?.get?.("returnTo") || "");
   const fromSettings = returnTo.startsWith("#/settings");
-  const backHref = fromSettings ? "#/settings" : "#/more";
-  const backLabel = fromSettings ? "設定" : "その他";
+  const fromAbout = returnTo === "#/about";
+  const backHref = fromSettings ? "#/settings" : fromAbout ? "#/about" : "#/more";
+  const backLabel = fromSettings ? "設定" : fromAbout ? "このアプリについて" : "その他";
   return `<div class="screen screen--terms screen-layout secondary-derived-screen">
     <header class="secondary-derived-head"><a class="secondary-derived-back" href="${backHref}">← ${backLabel}へ戻る</a><strong>利用規約</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body terms-body">

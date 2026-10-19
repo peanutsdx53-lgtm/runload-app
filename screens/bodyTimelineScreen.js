@@ -57,7 +57,7 @@ export function renderBodyTimelineScreen({ services, context }) {
   const experiences = services.workflows.records.loadAllExperiences();
   const timeline = selectTimeline(experiences, recordId);
   if (!timeline.length) {
-    return `<div class="screen screen--body-timeline screen-layout screen-layout--body-timeline"><section class="body-timeline-empty"><p class="eyebrow">身体の推移</p><h1>身体の推移</h1><p>表示できる走行記録がまだありません。</p></section></div>`;
+    return `<div class="screen screen--body-timeline screen-layout screen-layout--body-timeline"><section class="body-timeline-empty"><p class="eyebrow">身体の推移</p><h1>身体の推移</h1><p>表示できる走行記録がまだありません。記録を保存すると、同じ部位の推移を確認できます。</p><a class="w3-empty-primary" href="#/record-input">走行記録を入力する <span aria-hidden="true">›</span></a><a class="w3-empty-secondary" href="#/history">履歴を見る</a></section></div>`;
   }
   const selected = timeline.find((entry) => entry.target) || timeline.at(-1);
   return `<div class="screen screen--body-timeline screen-layout screen-layout--body-timeline" data-body-timeline data-target-index="${timeline.indexOf(selected)}">
@@ -65,6 +65,7 @@ export function renderBodyTimelineScreen({ services, context }) {
       <div><p class="eyebrow">身体の推移</p><h1>身体の推移</h1></div>
       <p>左右にスワイプして保存記録を見比べます。</p>
     </section>
+    <p class="w3-context-band" role="note"><strong>時点ごとの参考表示</strong><span>同じ部位自身の基準100と比較します。部位間の順位や危険度ではありません。記録が欠けている場合は数値なしとして扱います。</span></p>
     <div class="body-timeline-rail" data-body-timeline-rail>
       ${timeline.map(({ item, target }, index) => {
         const record = item.record;

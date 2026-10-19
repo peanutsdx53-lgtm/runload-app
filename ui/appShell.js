@@ -75,20 +75,30 @@ function navigationHref(item) {
 }
 
 function primaryNavigationIcon(screen) {
-  const glyphs = Object.freeze({ home: "⌂", "record-input": "＋", result: "◉", history: "▤", more: "•••" });
+  const glyphs = Object.freeze({ home: "⌂", "record-input": "＋", result: "◉", history: "▤", more: "•••", simulation: "≋", settings: "⚙" });
   const paths = {
     home: '<path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4Z"/>',
     "record-input": '<path d="M5 19h4l10-10-4-4L5 15v4Zm9-13 4 4"/>',
     result: '<path d="M5 19V9m7 10V5m7 14v-7"/>',
     history: '<path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6M12 8v4l3 2"/>',
     more: '<circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/>',
+    simulation: '<path d="M4 7h16M4 17h16M9 4v6M15 14v6"/>',
+    settings: '<path d="M12 4v3m0 10v3M4 12h3m10 0h3m-13-5 2 2m6 6 2 2m0-10-2 2m-6 6-2 2"/>',
   };
   return `<span class="primary-navigation__glyph" aria-hidden="true">${escapeHtml(glyphs[screen] || glyphs.more)}</span><svg class="primary-navigation__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths[screen] || paths.more}</svg>`;
 }
 
-export function renderPrimaryNavigation({ currentScreen, currentLocation, hasResult = false }) {
-  const activeScreen = resolveCurrentPrimaryScreen(currentScreen, currentLocation);
-  const items = PRIMARY_DESTINATIONS.map((item) => {
+export function renderPrimaryNavigation({ currentScreen, currentLocation, hasResult = false, w1Desktop = false, w1Mobile = false }) {
+  // Approved W1-A navigation. Registered routes and stored objects remain unchanged.
+  const activeScreen = w1Mobile && currentScreen === "settings" ? "settings"
+    : w1Desktop && currentScreen === "simulation" ? "simulation"
+    : resolveCurrentPrimaryScreen(currentScreen, currentLocation);
+  const navItems = w1Mobile
+    ? [{screen:"home",label:"ホーム"},{screen:"record-input",label:"記録"},{screen:"history",label:"履歴"},{screen:"settings",label:"設定"}]
+    : w1Desktop
+      ? [...PRIMARY_DESTINATIONS.slice(0, -1), {screen:"simulation",label:"条件比較"}, PRIMARY_DESTINATIONS.at(-1)]
+      : PRIMARY_DESTINATIONS;
+  const items = navItems.map((item) => {
     const current = item.screen === activeScreen;
     const className = `primary-navigation__link${current ? " is-current" : ""}`;
     const content = `${primaryNavigationIcon(item.screen)}<span class="primary-navigation__label">${escapeHtml(item.label)}</span>`;

@@ -43,8 +43,8 @@ function servicesFor(record) {
     durationMinutes: 30,
     reflectionContext: { postRunReflection: "後半で呼吸が乱れた" },
   };
-  record.date = "2026-10-26";
-  const challenge = buildPersonalChallenge(servicesFor(record), { now: new Date(2026, 9, 26, 12, 0, 0, 0) });
+  record.date = "2026-12-14";
+  const challenge = buildPersonalChallenge(servicesFor(record), { now: new Date(2026, 11, 14, 12, 0, 0, 0) });
   assert.equal(challenge.id, "reflection-2");
   assert.equal(challenge.value, 1, "current reflection data must count toward the mobile Home reflection challenge");
 }
@@ -58,8 +58,8 @@ function servicesFor(record) {
     durationMinutes: 30,
     reflectionContext: { nextCheckPoint: "次回は序盤のペースを見る" },
   };
-  record.date = "2026-10-26";
-  const challenge = buildPersonalChallenge(servicesFor(record), { now: new Date(2026, 9, 26, 12, 0, 0, 0) });
+  record.date = "2026-12-14";
+  const challenge = buildPersonalChallenge(servicesFor(record), { now: new Date(2026, 11, 14, 12, 0, 0, 0) });
   assert.equal(challenge.id, "reflection-2");
   assert.equal(challenge.value, 0, "retired next-check data must not count as a Current reflection");
 }

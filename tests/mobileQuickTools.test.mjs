@@ -23,9 +23,9 @@ await test('MOBILE-QUICK-TOOLS-ARE-OPTIONAL-HOME-APPS', () => {
   const homeLayout = read('ui/interactions/mobileHomeLayoutState.js');
   const homeEdit = read('ui/interactions/mobileHomeEditPresentation.js');
   assert.ok(home.includes('data-home-app-catalog'));
-  assert.ok(home.includes('href: "#/departure-check"'));
-  assert.ok(home.includes('emoji: "✅"'));
-  for (const emoji of ['⚖️', '📅', '📖', '📤', '⚙️', '📒', '⏱️', '🕘', '🗺️']) assert.ok(home.includes(`emoji: "${emoji}"`));
+  assert.ok(!home.includes('href: "#/departure-check"'));
+  assert.ok(!home.includes('emoji: "✅"'));
+  for (const emoji of ['⚖️', '📖', '📤', '⚙️', '📒', '⏱️', '🕘', '🗺️']) assert.ok(home.includes(`emoji: "${emoji}"`));
   assert.ok(!home.includes('function mobileHomeIcon'));
   assert.ok(!home.includes('<svg viewBox="0 0 24 24"'));
   assert.ok(homeLayout.includes('HOME_APP_CATALOG'));
@@ -54,7 +54,7 @@ await test('MOBILE-HOME-ALL-APP-LAUNCHERS-ARE-REMOVABLE-AND-RESTORABLE', () => {
   const homeLayout = read('ui/interactions/mobileHomeLayoutState.js');
   const css = read('styles/mobile-quick-tools.css');
   assert.ok(homeLayout.includes('export const HOME_APP_CATALOG'));
-  for (const id of ['simulation', 'plan', 'reading', 'share', 'settings', 'record', 'measure', 'history', 'course', 'pace-tool']) {
+  for (const id of ['simulation', 'reading', 'share', 'settings', 'record', 'measure', 'history', 'course']) {
     assert.ok(homeLayout.includes(`id: "${id}"`), `missing app catalog entry ${id}`);
   }
   assert.ok(interactions.includes('function removeHomeApp(id)'));
@@ -84,11 +84,11 @@ await test('MOBILE-QUICK-TOOLS-HAVE-ROUTES-AND-HOME-BACK-NAVIGATION', () => {
   const registry = read('screens/mobileScreenRegistry.js');
   const architecture = read('ui/screenArchitecture.js');
   const binders = read('ui/mobileScreenInteractionBinders.js');
-  for (const route of ['departure-check']) {
-    assert.ok(registry.includes(`"${route}":`));
-    assert.ok(binders.includes(`"${route}": bindMobileQuickTool`));
-    assert.ok(architecture.includes(`screen === "${route}"`));
+  for (const route of ['plan','departure-check','pace-tool']) {
+    assert.ok(!registry.includes(`"${route}":`), `retired route registered: ${route}`);
   }
+  assert.ok(binders.includes('bindMobileQuickTool'));
+  assert.ok(architecture.includes('function homeUtilityReturn()'));
   assert.ok(architecture.includes('backHref: "#/home", backLabel: "ホーム"'));
 });
 

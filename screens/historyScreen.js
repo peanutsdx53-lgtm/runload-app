@@ -379,5 +379,5 @@ export function renderHistoryScreenWithPresentation({ services, context }, prese
     return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">履歴</p><h1>履歴</h1><p>過去の記録と、次回も見ると決めた内容を見返します。</p></div></section>${checks || renderEmpty()}</div>`;
   }
   const content = renderContent({ workspace, context, services });
-  return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">履歴</p><h1>履歴</h1><p>過去の記録と、次回も見ると決めた内容を見返します。</p></div></section>${renderModeSwitch(workspace)}${content}${services.workflows.history.loadUndoEntry()?'<div class="history-undo" role="status"><p>直前に削除した記録を元に戻せます。</p><button type="button" data-action="undo-history-delete">削除を元に戻す</button></div>':""}</div>`;
+  return `<div class="screen screen--history screen-layout screen-layout--history"><section class="page-head"><div><p class="eyebrow">履歴</p><h1>履歴</h1><p>保存した実際の記録と、その推移、次回も確認すると決めた内容を見返します。数値なしは0として扱いません。</p></div></section>${renderModeSwitch(workspace)}${content}${services.workflows.history.loadUndoEntry()?'<div class="history-undo" role="status"><p>直前に削除した記録を元に戻せます。</p><button type="button" data-action="undo-history-delete">削除を元に戻す</button></div>':""}</div>`;
 }

@@ -47,11 +47,11 @@ export function renderAchievementsScreen({ services }) {
   const notStarted = achievements.filter((item) => !item.unlocked && item.progress <= 0);
   const next = inProgress[0] || notStarted[0] || null;
   return `<div class="screen screen--achievements screen-layout secondary-derived-screen">
-    <header class="secondary-derived-head"><a class="secondary-derived-back" href="#/more">← その他へ戻る</a><strong>実績</strong><span aria-hidden="true"></span></header>
+    <header class="secondary-derived-head"><a class="secondary-derived-back" href="#/home">← ホームへ戻る</a><strong>実績</strong><span aria-hidden="true"></span></header>
     <div class="secondary-derived-body">
-      <section class="achievement-hero"><div><small>実績</small><h1>実績</h1></div><strong>${unlocked.length}<span> / ${achievements.length}</span></strong></section>
+      <section class="achievement-hero"><div><small>これまでの記録から</small><h1>達成状況</h1></div><strong>${unlocked.length}<span> / ${achievements.length}</span></strong></section>
       ${renderNextAchievement(next)}
-      <p class="achievement-policy">記録・予定・休養など、保存された事実を対象にします。</p>
+      <p class="achievement-policy">走行・休養の保存記録をもとに、達成状況を表示します。</p>
       ${inProgress.length ? `<section class="achievement-section"><header><strong>進行中</strong><span>${inProgress.length}</span></header><div class="achievement-list">${inProgress.map(renderAchievement).join("")}</div></section>` : ""}
       <section class="achievement-section"><header><strong>達成済み</strong><span>${unlocked.length}</span></header><div class="achievement-list">${unlocked.length ? unlocked.map(renderAchievement).join("") : '<div class="achievement-empty"><strong>取得済み実績はありません</strong><span>記録を保存すると自動で反映します。</span></div>'}</div></section>
       ${notStarted.length ? `<details class="achievement-locked"><summary>未着手の実績 <span>${notStarted.length}</span></summary><div class="achievement-list">${notStarted.map(renderAchievement).join("")}</div></details>` : ""}
