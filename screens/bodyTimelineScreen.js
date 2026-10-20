@@ -1,6 +1,6 @@
 import { compareRecordChronology as chronology } from "../shared/recordUtilities.js";
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
-import { PRIMARY_REGIONAL_V2_MODEL_VERSION, bodyRegionFormalName } from "../core/appCore.js";
+import { PRIMARY_REGIONAL_V2_MODEL_VERSION, RUNNING_EVIDENCE_MODEL_VERSION, bodyRegionFormalName } from "../core/appCore.js";
 import { BODY_REGION_VIEWS } from "../ui/bodyRegionVisuals.js";
 import { escapeHtml } from "../ui/commonComponents.js";
 import { formatLocalDate } from "../ui/recordPresentation.js";
@@ -41,7 +41,7 @@ function miniBodyMap(resultRecord = {}, suffix = "timeline") {
 function selectTimeline(experiences = [], recordId = "") {
   const eligible = (Array.isArray(experiences) ? experiences : [])
     .filter((item) => item?.record?.activityType === "run")
-    .filter((item) => item?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION)
+    .filter((item) => [PRIMARY_REGIONAL_V2_MODEL_VERSION, RUNNING_EVIDENCE_MODEL_VERSION].includes(item?.regionalV2ResultRecord?.model_version))
     .sort((a, b) => chronology(a.record, b.record));
   if (!eligible.length) return [];
   const requested = eligible.findIndex((item) => item.record.id === recordId);
@@ -60,12 +60,14 @@ export function renderBodyTimelineScreen({ services, context }) {
     return `<div class="screen screen--body-timeline screen-layout screen-layout--body-timeline"><section class="body-timeline-empty"><p class="eyebrow">身体の推移</p><h1>身体の推移</h1><p>表示できる走行記録がまだありません。記録を保存すると、同じ部位の推移を確認できます。</p><a class="w3-empty-primary" href="#/record-input">走行記録を入力する <span aria-hidden="true">›</span></a><a class="w3-empty-secondary" href="#/history">履歴を見る</a></section></div>`;
   }
   const selected = timeline.find((entry) => entry.target) || timeline.at(-1);
+  const mixedModels = new Set(timeline.map(({ item }) => item.regionalV2ResultRecord.model_version)).size > 1;
   return `<div class="screen screen--body-timeline screen-layout screen-layout--body-timeline" data-body-timeline data-target-index="${timeline.indexOf(selected)}">
     <section class="body-timeline-hero">
       <div><p class="eyebrow">身体の推移</p><h1>身体の推移</h1></div>
       <p>左右にスワイプして保存記録を見比べます。</p>
     </section>
     <p class="w3-context-band" role="note"><strong>時点ごとの参考表示</strong><span>同じ部位自身の基準100と比較します。部位間の順位や危険度ではありません。記録が欠けている場合は数値なしとして扱います。</span></p>
+    ${mixedModels ? '<p class="w3-context-band" role="note"><strong>計算方式の異なる保存記録</strong><span>旧モデルと新モデルの基準・測定対象は異なるため、別の計算方式をまたいだ増減比較はできません。各記録はその時点の参考表示です。</span></p>' : ''}
     <div class="body-timeline-rail" data-body-timeline-rail>
       ${timeline.map(({ item, target }, index) => {
         const record = item.record;
@@ -73,7 +75,7 @@ export function renderBodyTimelineScreen({ services, context }) {
         const regionRows = result?.result?.regions;
         const available = (Array.isArray(regionRows) ? regionRows : []).filter((row) => finite(row?.value)).length;
         return `<article class="body-timeline-card${target ? " is-current" : ""}" data-body-timeline-card data-card-index="${index}"${target ? ' data-current="true"' : ""}>
-          <header><div><small>${target ? "今回" : "保存記録"}</small><strong>${escapeHtml(formatLocalDate(record.date || ""))}</strong></div><span>${escapeHtml(formatDistance(record))}<b>・</b>${escapeHtml(formatDuration(record))}</span></header>
+          <header><div><small>${target ? "今回" : "保存記録"} ・ ${result.model_version === RUNNING_EVIDENCE_MODEL_VERSION ? "研究参照 v4" : "旧計算 v3"}</small><strong>${escapeHtml(formatLocalDate(record.date || ""))}</strong></div><span>${escapeHtml(formatDistance(record))}<b>・</b>${escapeHtml(formatDuration(record))}</span></header>
           <div class="body-timeline-map">${miniBodyMap(result, `${index}-${String(record.id || "").replace(/[^a-zA-Z0-9_-]/g, "")}`)}</div>
           <footer><span><strong>${available}</strong><small>/ 12 数値あり</small></span><a href="#/result?recordId=${encodeURIComponent(record.id)}">この日の結果</a></footer>
         </article>`;
