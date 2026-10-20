@@ -1,45 +1,132 @@
 /**
- * Shared compact silhouettes: front, back and plantar sole.
- * The viewBox (70 10 160 430) and all twelve BA-DISP identifiers are stable.
- * Designed primarily to remain legible with THREE figures visible on a phone.
- * These contours are schematic navigation artwork, not diagnostic anatomy.
- * Semantic Reference-100 colours are owned by the existing CSS, not this file.
+ * Shared display-only, shared vector anatomy. All drawings are original SVG
+ * silhouettes; they are neither diagnostic anatomy nor new scientific data.
+ * Front/back share one scale and region coordinates. Do not alter 12 IDs.
+ * The integrated contour avoids overlap seams between neck, shoulder, arms,
+ * pelvis and legs; interior linework is intentionally sparse at 390px.
  */
-const HEAD = `<path d="M150 15 C140 15 133 21 131 31 Q128 37 130 43 Q130 48 135 51 Q138 57 145 59 Q150 61 155 59 Q162 56 165 51 Q170 48 170 42 Q173 35 169 27 Q165 15 150 15 Z"/><path d="M142 57 L141 69 Q150 74 159 69 L158 57 Z"/>`;
 
-/* Shoulders are not drawn as a second inflated chest: arms taper gently from
- * shoulder to elbow to wrist, with simplified natural hands. */
-const ARMS = `<path d="M117 80 Q108 80 103 91 C99 102 97 119 95 137 Q92 155 87 172 L79 193 Q76 199 75 207 Q73 215 77 220 Q80 223 82 217 L84 211 Q85 221 89 221 Q92 221 92 216 L93 209 Q96 204 96 199 L99 189 Q108 167 111 144 L120 113 L123 91 Z"/><path d="M183 80 Q192 80 197 91 C201 102 203 119 205 137 Q208 155 213 172 L221 193 Q224 199 225 207 Q227 215 223 220 Q220 223 218 217 L216 211 Q215 221 211 221 Q208 221 208 216 L207 209 Q204 204 204 199 L201 189 Q192 167 189 144 L180 113 L177 91 Z"/>`;
+// One uninterrupted outside contour per side, including hands, knees and feet.
+// This is the base form BEFORE any Reference-100 overlay is applied.
+const FRONT_CONTOUR = `<path d="M150 15
+ C140 15 134 20 132 29 Q130 36 132 43 Q130 45 133 49
+ Q135 55 141 58 Q143 60 142 67 Q142 71 136 73
+ Q124 75 115 80 Q106 82 103 93
+ Q99 107 97 124 Q94 147 89 166
+ Q86 180 82 193 Q77 200 76 207
+ Q73 218 77 222 Q80 226 83 218
+ L84 211 Q85 222 90 223 Q95 223 94 216
+ L95 204 Q98 201 99 190
+ Q106 176 111 158 Q118 135 121 108
+ Q123 103 124 102 Q126 122 127 145
+ Q129 161 125 176 Q119 189 116 206
+ Q113 217 114 237 Q112 263 116 286
+ Q118 298 121 307 Q118 320 119 341
+ Q121 364 121 380 Q122 391 122 402
+ Q115 406 111 413 Q108 417 113 421
+ Q125 425 137 421 Q141 418 139 412
+ Q136 405 137 398 Q140 375 142 354
+ Q144 333 141 315 Q145 291 146 262
+ Q147 238 149 218 Q150 215 151 218
+ Q153 238 154 262 Q155 291 159 315
+ Q156 333 158 354 Q160 375 163 398
+ Q164 405 161 412 Q159 418 163 421
+ Q175 425 187 421 Q192 417 189 413
+ Q185 406 178 402 Q178 391 179 380
+ Q179 364 181 341 Q182 320 179 307
+ Q182 298 184 286 Q188 263 186 237
+ Q187 217 184 206 Q181 189 175 176
+ Q171 161 173 145 Q174 122 176 102
+ Q177 103 179 108 Q182 135 189 158
+ Q194 176 201 190 Q202 201 205 204
+ L206 216 Q205 223 210 223 Q215 222 214 209
+ L217 218 Q220 226 223 222
+ Q227 218 224 207 Q223 200 218 193
+ Q214 180 211 166 Q206 147 203 124
+ Q201 107 197 93 Q194 82 185 80
+ Q176 75 164 73 Q158 71 158 67
+ Q157 60 159 58 Q165 55 167 49
+ Q170 45 168 43 Q170 36 168 29
+ C166 20 160 15 150 15 Z"/>`;
 
-/* A subtly tapered waist, pelvic contour and leg separation are more useful
- * at small sizes than detailed superficial muscle engraving. */
-const TORSO_FRONT = `<path d="M140 67 Q132 68 124 73 Q116 76 112 87 Q116 104 119 122 L126 155 Q128 166 123 179 Q117 190 114 205 Q112 214 121 220 Q131 227 145 226 Q149 220 150 217 Q151 220 155 226 Q169 227 179 220 Q188 214 186 205 Q183 190 177 179 Q172 166 174 155 L181 122 Q184 104 188 87 Q184 76 176 73 Q168 68 160 67 Q150 73 140 67 Z"/>`;
-const TORSO_BACK = `<path d="M140 67 Q131 68 123 74 Q115 78 112 89 Q115 108 120 128 L126 158 Q127 169 123 181 Q117 194 115 205 Q113 214 122 220 Q133 227 145 226 Q149 219 150 217 Q151 219 155 226 Q167 227 178 220 Q187 214 185 205 Q183 194 177 181 Q173 169 174 158 L180 128 Q185 108 188 89 Q185 78 177 74 Q169 68 160 67 Q150 72 140 67 Z"/>`;
+// Posterior contours intentionally use slightly fuller posterior calves and
+// gluteal transitions, not a duplicated anterior silhouette.
+const BACK_CONTOUR = `<path d="M150 15
+ C140 15 134 20 132 29 Q130 36 132 43 Q130 45 133 49
+ Q135 55 141 58 Q143 60 142 67 Q142 71 136 73
+ Q124 74 114 80 Q105 83 102 95
+ Q98 115 95 133 Q93 151 88 170
+ Q84 186 80 195 Q74 206 75 215
+ Q74 224 79 224 Q83 223 85 213
+ Q85 224 90 224 Q95 222 94 214
+ Q94 203 98 196 Q108 171 113 149
+ Q118 128 121 108 Q123 105 124 104
+ Q126 124 127 148 Q129 165 124 182
+ Q118 194 115 211 Q111 226 114 248
+ Q113 270 118 293 Q121 302 122 308
+ Q117 321 119 344 Q121 368 122 383
+ Q121 396 123 405 Q116 408 112 414
+ Q109 419 115 422 Q126 426 138 422
+ Q142 419 139 413 Q136 408 137 402
+ Q140 383 141 363 Q145 338 140 317
+ Q144 299 146 273 Q147 242 149 219
+ Q150 214 151 219 Q153 242 154 273
+ Q156 299 160 317 Q155 338 159 363
+ Q160 383 163 402 Q164 408 161 413
+ Q158 419 162 422 Q174 426 185 422
+ Q191 419 188 414 Q184 408 177 405
+ Q179 396 178 383 Q179 368 181 344
+ Q183 321 178 308 Q179 302 182 293
+ Q187 270 186 248 Q189 226 185 211
+ Q182 194 176 182 Q171 165 173 148
+ Q174 124 176 104 Q177 105 179 108
+ Q182 128 187 149 Q192 171 202 196
+ Q206 203 206 214 Q205 222 210 224
+ Q215 224 215 213 Q217 223 221 224
+ Q226 224 225 215 Q226 206 220 195
+ Q216 186 212 170 Q207 151 205 133
+ Q202 115 198 95 Q195 83 186 80
+ Q176 74 164 73 Q158 71 158 67
+ Q157 60 159 58 Q165 55 167 49
+ Q170 45 168 43 Q170 36 168 29
+ C166 20 160 15 150 15 Z"/>`;
 
-const LEGS_FRONT = `<path d="M119 217 Q114 232 113 253 Q112 277 116 290 Q119 299 120 306 Q124 312 135 310 Q142 303 143 291 L147 248 L147 224 Q134 218 119 217 Z"/><path d="M153 224 L153 248 L157 291 Q158 303 165 310 Q176 312 180 306 Q181 299 184 290 Q188 277 187 253 Q186 232 181 217 Q166 218 153 224 Z"/><path d="M121 307 Q117 320 118 340 L120 377 Q119 389 121 403 Q126 408 135 404 L140 375 Q144 352 140 330 L137 310 Q130 313 121 307 Z"/><path d="M163 310 L160 330 Q156 352 160 375 L165 404 Q174 408 179 403 Q181 389 180 377 L182 340 Q183 320 179 307 Q170 313 163 310 Z"/><path d="M121 400 Q115 405 111 411 Q108 417 113 420 Q126 425 139 419 Q142 415 138 407 L135 402 Z"/><path d="M165 402 L162 407 Q158 415 161 419 Q174 425 187 420 Q192 417 189 411 Q185 405 179 400 Z"/>`;
-/* The posterior silhouette is individually defined instead of reusing the
- * anterior thigh/knee outline unchanged. */
-const LEGS_BACK = `<path d="M118 218 Q113 236 114 256 Q114 279 117 289 Q120 299 121 307 Q130 313 138 308 Q143 301 144 290 L147 250 L147 225 Q134 217 118 218 Z"/><path d="M153 225 L153 250 L156 290 Q157 301 162 308 Q170 313 179 307 Q180 299 183 289 Q186 279 186 256 Q187 236 182 218 Q166 217 153 225 Z"/><path d="M121 305 Q116 319 119 342 L122 381 Q121 393 122 404 Q128 410 136 402 L140 375 Q144 353 139 332 L137 308 Q130 312 121 305 Z"/><path d="M163 308 L161 332 Q156 353 160 375 L164 402 Q172 410 178 404 Q179 393 178 381 L181 342 Q184 319 179 305 Q170 312 163 308 Z"/><path d="M122 402 Q115 406 112 412 Q110 417 115 421 Q127 425 140 420 Q142 414 136 403 Z"/><path d="M164 403 Q158 414 160 420 Q173 425 185 421 Q190 417 188 412 Q185 406 178 402 Z"/>`;
+// A slim neck transition is part of the form, rather than an isolated ball
+// and cylinder. This very gentle collar contour also anchors the original
+// neck datum used by the existing v129 acceptance test.
+const NECK_TRANSITION = `<path d="M140 67 Q150 72 160 67 Q155 75 150 75 Q145 75 140 67 Z" opacity=".13" style="stroke:none"/>`;
+export const ANATOMY_FRONT = `${FRONT_CONTOUR}${NECK_TRANSITION}`;
+export const ANATOMY_BACK = `${BACK_CONTOUR}${NECK_TRANSITION}`;
 
-export const ANATOMY_FRONT = `${HEAD}${ARMS}${TORSO_FRONT}${LEGS_FRONT}`;
-export const ANATOMY_BACK = `${HEAD}${ARMS}${TORSO_BACK}${LEGS_BACK}`;
+// The five toes are integrated into the single plantar contour, with a broad
+// metatarsal pad, inward medial arch, and rounded (not rectangular) heel.
+export const ANATOMY_SOLE = `<path d="M119 125
+ Q110 118 107 108 Q104 96 108 82
+ Q109 69 115 64 Q122 59 128 64
+ Q136 69 137 80 Q139 73 146 72
+ Q152 72 155 79 Q158 82 157 89
+ Q162 82 169 85 Q176 89 175 96
+ Q181 91 185 97 Q189 101 187 109
+ Q194 110 195 119 Q196 125 193 134
+ Q199 151 193 170 Q187 186 183 201
+ Q180 211 181 227 Q183 240 185 257
+ Q189 277 183 296 Q181 304 171 314
+ Q163 326 150 329 Q137 327 129 321
+ Q116 312 115 297 Q112 282 118 264
+ Q125 246 132 225 Q138 207 136 190
+ Q134 176 124 163 Q118 154 116 146
+ Q113 135 119 125 Z"/>`;
 
-/* An integrated five-toe plantar outline replaces the old four detached oval
- * buttons. Natural medial/lateral contour: broad forefoot, medial arch, heel.
- * Single path, not a row of disconnected circles. */
-export const ANATOMY_SOLE = `<path d="M119 125 Q108 117 107 106 Q106 94 109 81 Q112 66 121 64 Q131 62 135 74 Q137 77 138 82 Q139 73 146 72 Q155 73 154 84 Q157 78 163 80 Q169 83 167 92 Q172 86 177 92 Q182 98 178 105 Q184 102 187 109 Q191 115 188 126 Q196 144 189 167 Q180 190 179 207 Q183 229 187 248 Q190 269 185 286 Q181 304 171 314 Q162 323 148 323 Q135 322 125 313 Q110 299 108 282 Q104 263 113 239 Q120 216 123 194 Q124 168 115 148 Q111 135 119 125 Z"/>`;
-
-/* Deliberately sparse tonal cues: no artificial six-pack, robotic kneecaps or
- * fishbone calves; keep region overlays as the dominant information. */
+// Quiet, restrained tonal cues. No extra region or pseudo-scientific metric.
 export const ANATOMY_UNDERPAINT = Object.freeze({
-  front: `<g class="anatomy-underpaint" aria-hidden="true"><path d="M121 90 Q150 79 179 90 L174 120 Q150 136 126 120 Z"/><path d="M120 195 Q150 184 180 195 L181 215 Q150 227 119 215 Z"/></g>`,
-  back: `<g class="anatomy-underpaint" aria-hidden="true"><path d="M121 93 Q134 86 147 92 L147 142 Q135 148 125 134 Z M153 92 Q166 86 179 93 L175 134 Q165 148 153 142 Z"/><path d="M120 197 Q150 189 180 197 L180 216 Q150 228 120 216 Z"/></g>`,
-  sole: `<g class="anatomy-underpaint" aria-hidden="true"><path d="M116 121 Q151 107 188 126 L185 160 Q152 177 122 158 Z"/><path d="M121 266 Q151 249 181 266 Q177 304 148 317 Q123 308 121 266 Z"/></g>`,
+ front: `<g class="anatomy-underpaint" aria-hidden="true"><path d="M127 101 Q137 95 147 105 Q145 121 133 124 Z M153 105 Q163 95 173 101 L167 124 Q155 121 153 105 Z"/><path d="M130 149 Q150 158 170 149 Q167 166 174 181 Q150 186 126 181 Q133 166 130 149 Z"/></g>`,
+ back: `<g class="anatomy-underpaint" aria-hidden="true"><path d="M128 101 Q138 91 146 103 L146 130 Q135 133 129 119 Z M154 103 Q162 91 172 101 L171 119 Q165 133 154 130 Z"/><path d="M122 201 Q136 194 147 204 Q150 218 142 223 Q125 221 122 201 Z M153 204 Q164 194 178 201 Q175 221 158 223 Q150 218 153 204 Z"/></g>`,
+ sole: `<g class="anatomy-underpaint" aria-hidden="true"><path d="M117 130 Q150 119 192 132 Q194 152 186 161 Q151 176 123 158 Z"/><path d="M124 269 Q150 260 181 269 Q181 308 151 321 Q127 318 124 269 Z"/></g>`,
 });
 export const ANATOMY_MARKINGS = Object.freeze({
-  front: `<g class="anatomy-detail" aria-hidden="true"><path d="M129 87 Q139 93 149 95 Q161 93 171 87"/><path d="M127 159 Q150 164 173 159"/><path d="M120 305 Q130 309 139 304 M161 304 Q170 309 180 305"/><path class="anatomy-highlight" d="M122 228 Q115 257 120 284 M178 228 Q185 257 180 284"/></g>`,
-  back: `<g class="anatomy-detail" aria-hidden="true"><path d="M149 91 L149 169"/><path d="M125 96 Q134 115 145 125 M175 96 Q166 115 155 125"/><path d="M121 209 Q134 220 147 218 M153 218 Q166 220 179 209"/><path class="anatomy-highlight" d="M121 310 Q130 305 139 311 M161 311 Q170 305 179 310"/></g>`,
-  sole: `<g class="anatomy-detail" aria-hidden="true"><path d="M118 130 Q147 148 189 133"/><path d="M134 175 Q141 218 128 249"/><path class="anatomy-highlight" d="M127 288 Q147 307 173 288"/></g>`,
+ front: `<g class="anatomy-detail" aria-hidden="true"><path d="M129 89 Q140 96 150 96 Q160 96 171 89"/><path d="M128 165 Q150 169 172 165"/><path class="anatomy-highlight" d="M125 310 Q134 313 140 310 M160 310 Q166 313 175 310"/></g>`,
+ back: `<g class="anatomy-detail" aria-hidden="true"><path d="M150 92 L150 161"/><path d="M127 98 Q134 116 145 128 M173 98 Q166 116 155 128"/><path class="anatomy-highlight" d="M122 211 Q135 222 147 218 M153 218 Q165 222 178 211"/></g>`,
+ sole: `<g class="anatomy-detail" aria-hidden="true"><path d="M118 135 Q148 150 192 137"/><path d="M132 181 Q141 214 129 246"/><path class="anatomy-highlight" d="M127 293 Q150 309 173 292"/></g>`,
 });
 
 /* Soft organic colour overlays continue to use the exact same 12 IDs and the
