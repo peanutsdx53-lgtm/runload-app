@@ -4,9 +4,9 @@ import assert from "node:assert/strict";
 import {createApplicationServices,createMemoryStorage} from "../core/appCore.js";
 import {internalModules} from "../core/internal/modules.js";
 const vOld="runload-primary-regional-reference100-v3.0";
-const vNew="runload-primary-regional-reference100-v3.1";
+const vNew="runload-running-a1a2b-v4.0";
 const sOld="runload-primary-regional-reference100-output-v3.0";
-const sNew="runload-primary-regional-reference100-output-v3.1";
+const sNew="runload-running-evidence-construct-v4.0";
 const record={id:"case1",date:"2026-10-10",createdAt:"2026-10-10T00:00:00.000Z",activityType:"run",distanceKm:6,durationMinutes:40,runningFormat:"CONTINUOUS_RUN",stepsProvenance:"UNKNOWN",course:{gradeKnowledge:"UNKNOWN",modelSurfaceClass:"UNKNOWN"}};
 const feedback={checkStatus:"deferred",bodyAreaObservations:[],safetyFlags:{}};
 function setup(){
@@ -14,8 +14,11 @@ function setup(){
  assert.equal(svc.workflows.records.saveRecordAndFeedback(record,feedback).ok,true);
  return svc;
 }
-function asPrevious(x){
- const y=structuredClone(x);y.id=y.id.replace("v3.1-result","v3-result");
+function asPrevious(current){
+ const {primaryRegionalResultService:legacy} = internalModules;
+ const {resultRecord:seed} = legacy.createPrimaryRegionalV2ResultRecord({record});
+ const y=structuredClone(seed);
+ y.id=y.id.replace('v3.1-result','v3-result');
  y.model_version=vOld;y.output_semantic_version=sOld;
  y.result.model_version=vOld;y.result.outputSemanticVersion=sOld;
  for(const sig of Object.values(y.comparison_signatures)){sig.modelVersion=vOld;sig.outputSemanticVersion=sOld;}

@@ -85,7 +85,7 @@ async function round(browser,origin,width){
   assert.equal(lifecycle.importOk,true,JSON.stringify(lifecycle));
   assert.equal(lifecycle.restoredDistance,7,JSON.stringify(lifecycle));
   assert.equal(lifecycle.historyDistance,7,JSON.stringify(lifecycle));
-  assert.match(lifecycle.restoredModel||'',/reference100-v3\.1/);
+  assert.equal(lifecycle.restoredModel||'','runload-running-a1a2b-v4.0');
   // A second *offline* navigation proves persistent data and restored history, not only transient JS state.
   await page.reload({waitUntil:'domcontentloaded',timeout:35000});
   await page.waitForFunction(()=>!document.querySelector('#app > .app-boot'),null,{timeout:35000});

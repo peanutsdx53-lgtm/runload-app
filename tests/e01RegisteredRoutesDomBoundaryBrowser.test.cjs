@@ -235,7 +235,7 @@ async function storedRunSemanticRoutes(browser,origin,mobile) {
       return {ok:saved.ok,model:stored?.regionalV2ResultRecord?.model_version??null};
     },{id,payload:ATTACK});
     assert.equal(persisted.ok,true,JSON.stringify({mobile,persisted}));
-    assert.match(persisted.model||'',/reference100-v3\.1/);
+    assert.equal(persisted.model||'','runload-running-a1a2b-v4.0');
     const routes=Object.keys(SCIENTIFIC_CONCEPTS),trace=[];
     for(const name of routes){
       const query=new URLSearchParams({recordId:id,planId:id,returnTo:'#/result',regionId:'BA-DISP-014',articleId:'not-found'}).toString();

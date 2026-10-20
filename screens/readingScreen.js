@@ -8,7 +8,12 @@ const SLOPE_DIRECT_REGION_IDS = new Set(PRIMARY_REGIONAL_V2_REGION_DEFS
   .filter((region) => ["R05", "R06", "R09", "R10"].includes(region.id))
   .map((region) => region.displayId));
 const CONSULTATION_PREP_CORE_ARTICLE_ID = "consultation-prep";
-const visibleArticles = (articles = []) => articles;
+// Only entries backed by an explicit source record are eligible for public reading.
+// A blank title without a source must never be silently promoted by fallback logic.
+const evidenceBackedArticle = article => Boolean(article?.id && Array.isArray(article.sources)
+  && article.sources.some(source => source && String(source.title || '').trim()
+    && (String(source.sourceId || '').trim() || String(source.url || '').trim())));
+const visibleArticles = (articles = []) => articles.filter(evidenceBackedArticle);
 const publicArticleId = (articleId = "") => String(articleId || "");
 
 
@@ -72,7 +77,7 @@ function targetRegionId(context, experience) {
 
 function buildColumnRecommendation(services, experience, allExperiences = [], context = {}, deferredArticleIds = DEFERRED_READING_ARTICLE_IDS) {
   const all = visibleArticles(services.column.list());
-  const find = (id) => { const article = services.column.findById(id); return article && !deferredArticleIds.has(article.id) ? article : all[0] || null; };
+  const find = (id) => { const article = all.find(row => row.id === id); return article && !deferredArticleIds.has(article.id) ? article : all[0] || null; };
   const recommendation = (id, reason) => Object.freeze({ article: find(id), reason });
   if (!experience) {
     return recommendation("regional-three-views", "最初に、12部位の数字の見方を確認できます。");
@@ -446,11 +451,21 @@ function renderReadingArticle(article, filter, isFeatured = false, context = nul
   </article>`;
 }
 
+function readingListReturnHref(context) {
+  const query = new URLSearchParams();
+  for (const key of ["origin", "recordId", "regionId", "from", "roomOrigin"]) {
+    const value = context?.parameters?.get?.(key) || "";
+    if (value) query.set(key, value);
+  }
+  return `#/reading${query.size ? `?${query.toString()}` : ""}`;
+}
+
 function renderReadingArticleView(article, items, context) {
   const copy = readingArticleCopy(article);
   const related = relatedReadingItems(article, items);
   return `<div class="screen screen--reading-article screen-layout screen-layout--reading-article" data-reading-article-screen>
     <div class="reading-article-page">
+      <nav class="reading-article-context-back" aria-label="記事から戻る"><a href="${escapeHtml(readingListReturnHref(context))}">← 読みもの一覧へ戻る</a></nav>
       <article class="reading-detail reading-detail--page">
         <div class="reading-detail__content">
           <header class="reading-article-head"><h1>${readingTitleMarkup(copy.title)}</h1></header>

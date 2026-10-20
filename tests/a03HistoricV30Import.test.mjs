@@ -31,7 +31,7 @@ test('original v3.0 backup is imported byte-for-byte semantically and remains av
   assert.equal(s.storage.modelResultsRegionalV2.loadForRecord(old.record_id).length,1);
 });
 
-test('original v3.0 and scientifically revised v3.1 yield distinct IDs, values and noncomparable signatures', () => {
+test('original v3.0 and scientifically revised v4 yield distinct IDs, values and noncomparable signatures', () => {
   const s=app(); restore(s);
   const record=s.storage.records.loadAll().find(x=>x.id===old.record_id);
   const feedback=s.storage.subjectiveFeedback.loadAll().find(x=>x.recordId===old.record_id);
@@ -39,10 +39,10 @@ test('original v3.0 and scientifically revised v3.1 yield distinct IDs, values a
   const both=s.storage.modelResultsRegionalV2.loadForRecord(old.record_id);
   assert.equal(both.length,2);
   assert.deepEqual(both.find(x=>x.model_version===old.model_version),old);
-  const newer=both.find(x=>x.model_version==='runload-primary-regional-reference100-v3.1');
+  const newer=both.find(x=>x.model_version==='runload-running-a1a2b-v4.0');
   const upgradedRecord=s.storage.records.loadAll().find(x=>x.id===old.record_id);
-  assert.equal(upgradedRecord.regionalModelSnapshot.snapshotId,'PRIMARY_REGIONAL_REFERENCE100_V3_1');
-  assert.equal(upgradedRecord.regionalModelSnapshot.modelVersion,'runload-primary-regional-reference100-v3.1');
+  assert.equal(upgradedRecord.regionalModelSnapshot.snapshotId,'RUNNING_EVIDENCE_A1A2B_V4');
+  assert.equal(upgradedRecord.regionalModelSnapshot.modelVersion,'runload-running-a1a2b-v4.0');
   assert.ok(newer);assert.notEqual(newer.id,old.id);
   assert.notEqual(newer.result.regions[0].value,old.result.regions[0].value);
   assert.notEqual(newer.result.regions[7].value,old.result.regions[7].value);

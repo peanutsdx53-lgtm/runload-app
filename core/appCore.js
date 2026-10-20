@@ -1,3 +1,4 @@
+import {V4_MODEL_VERSION} from './runningEvidence/runningEvidenceProductBridge.js';
 import "./internal/applicationServices.js";
 import { internalModules } from "./internal/modules.js";
 
@@ -38,3 +39,4 @@ export const normalizePlanFactSession = internalModules.planPreview["normalizePl
 export const registerPwaServiceWorker = internalModules.pwaRegistration["registerPwaServiceWorker"];
 export const summarizePersonalContext = internalModules.personalContext["summarizePersonalContext"];
 export const validateCoursePresetInput = internalModules.courseRepository["validateCoursePresetInput"];
+export const RUNNING_EVIDENCE_MODEL_VERSION=V4_MODEL_VERSION;

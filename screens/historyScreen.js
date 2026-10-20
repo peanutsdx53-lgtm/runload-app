@@ -1,3 +1,4 @@
+import { RUNNING_EVIDENCE_MODEL_VERSION } from '../core/appCore.js';
 import { compareExperienceRecordChronology as recordChronology } from "../shared/recordUtilities.js";
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
 
@@ -21,7 +22,7 @@ function signedNumber(value, digits = 1) {
 }
 
 function reference100DistanceKm(resultRecord = {}, experience = null) {
-  if (resultRecord?.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION) return null;
+  if (![PRIMARY_REGIONAL_V2_MODEL_VERSION,RUNNING_EVIDENCE_MODEL_VERSION].includes(resultRecord?.model_version)) return null;
   const input = resultRecord?.engine_input_snapshot || {};
   const runWalk = String(input.runningFormat || experience?.record?.runningFormat || "").toUpperCase() === "RUN_WALK";
   const value = Number(runWalk ? input.runningDistanceKm : input.distanceKm);
@@ -109,7 +110,7 @@ export function buildWorkspace(services, context, { normalizeView = normalizedVi
   });
 
   const semanticRows = rows.map((item) => {
-    const isPrimary = item.resultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION;
+    const isPrimary = [PRIMARY_REGIONAL_V2_MODEL_VERSION,RUNNING_EVIDENCE_MODEL_VERSION].includes(item.resultRecord?.model_version);
     const conditionIndexExact = isPrimary && finite(item.row?.value) ? Number(item.row.value) : null;
     const signature = isPrimary && item.row
       ? buildPrimaryRegionalV2ComparisonSignature(item.resultRecord, item.row)

@@ -1,4 +1,4 @@
-import { PRIMARY_REGIONAL_V2_REGION_DEFS, SURFACE_FIELDS } from "../../core/appCore.js";
+import { PRIMARY_REGIONAL_V2_REGION_DEFS, SURFACE_FIELDS, RUNNING_EVIDENCE_MODEL_VERSION as V4_MODEL_VERSION } from "../../core/appCore.js";
 import { consumeCourseSelection } from "../flowSessionState.js";
 import { primarySurfaceSummary, slopeSummary } from "../coursePresentation.js";
 import { escapeHtml } from "../commonComponents.js";
@@ -46,7 +46,7 @@ function engineInput(data){
   }
   return {input,course};
 }
-function sourceValues(services,recordId=""){const x=recordId?services.workflows.records.loadExperience(recordId):services.workflows.records.loadLatestExperience();const primary=x?.regionalV2ResultRecord?.result?.regions;const fallback=x?.regionalV2Result?.regions;const rows=Array.isArray(primary)?primary:Array.isArray(fallback)?fallback:[];return new Map(rows.filter((r)=>r&&typeof r==="object").map((r)=>[r.regionId,r.value]));}
+function sourceValues(services,recordId=""){const x=recordId?services.workflows.records.loadExperience(recordId):services.workflows.records.loadLatestExperience();if(x?.regionalV2ResultRecord?.model_version!==V4_MODEL_VERSION)return new Map();const primary=x?.regionalV2ResultRecord?.result?.regions;const fallback=x?.regionalV2Result?.regions;const rows=Array.isArray(primary)?primary:Array.isArray(fallback)?fallback:[];return new Map(rows.filter((r)=>r&&typeof r==="object").map((r)=>[r.regionId,r.value]));}
 function sameNumber(a,b,tolerance=.001){return finite(a)&&finite(b)&&Math.abs(Number(a)-Number(b))<=tolerance;}
 export function changedConditionItems(data){
   const source=sourceConditionFrom(data);

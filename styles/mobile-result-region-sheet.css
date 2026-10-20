@@ -106,3 +106,59 @@
     font-size: 10.5px !important;
   }
 }
+
+
+/* Round 3: the reference delta owns a grid row and can never extend off-card. */
+@media (max-width: 54.99rem) {
+  .screen-layout--result .mobile-list a.region-row {
+    grid-template-columns: 44px minmax(0, 1fr) minmax(76px, 92px);
+    grid-template-rows: auto auto auto;
+    column-gap: 10px;
+    row-gap: 6px;
+    padding: 13px 13px 11px;
+    overflow: hidden;
+    min-width: 0;
+  }
+  .screen-layout--result .mobile-list .locator { grid-column:1; grid-row:1 / 4; align-self:center; width:42px; height:66px; }
+  .screen-layout--result .mobile-list .region-copy { grid-column:2;grid-row:1;min-width:0;align-self:center; }
+  .screen-layout--result .mobile-list .region-copy strong { white-space:normal; overflow-wrap:anywhere; text-overflow:clip; line-height:1.3; }
+  .screen-layout--result .mobile-list .region-copy small { white-space:normal; overflow-wrap:anywhere; }
+  .screen-layout--result .mobile-list .region-metric { grid-column:3;grid-row:1;align-self:center;justify-self:end;width:auto;min-width:0;text-align:right; }
+  .screen-layout--result .mobile-list .region-metric strong { font-size:clamp(20px,5vw,26px);line-height:1.08; }
+  .screen-layout--result .mobile-list .region-reference-delta { grid-column:2 / -1;grid-row:2;min-width:0;justify-self:end;text-align:right;font-size:12px;font-weight:750;color:var(--muted);white-space:normal;overflow-wrap:anywhere; }
+  .screen-layout--result .mobile-list .region-scale { grid-column:2 / -1;grid-row:3;margin:7px 0 1px;width:100%;min-width:0; }
+  .screen--body-part-detail .mobile-trend-detail > div { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; }
+  .screen--body-part-detail .mobile-trend-detail span { display:flex; flex-wrap:wrap; justify-content:flex-end;align-items:baseline; gap:3px 8px; min-width:0; }
+  .screen--body-part-detail .mobile-trend-detail span em { font-size:11px;max-width:100%; }
+  .screen--body-part-detail .detail-method-note { margin:15px 4px 0;padding:0 4px; }
+  .screen--body-part-detail .detail-method-note > summary { color:var(--accent-strong); font-size:13px;font-weight:850;cursor:pointer;min-height:44px;display:flex;align-items:center; }
+  .screen--body-part-detail .detail-method-note > p { margin:2px 0 14px;font-size:12px;color:var(--muted);line-height:1.65; }
+}
+@media (max-width: 23rem) {
+  .screen-layout--result .mobile-list a.region-row { grid-template-columns:36px minmax(0,1fr) 70px;column-gap:7px;padding-inline:9px; }
+  .screen-layout--result .mobile-list .locator {width:35px;height:58px;}
+  .screen-layout--result .mobile-list .region-reference-delta {font-size:11px;}
+}
+
+/* Round 3: research evidence is one tap away without covering the saved-record trend. */
+.screen--body-part-detail .detail-evidence { margin-block:14px; overflow:hidden; }
+.screen--body-part-detail .detail-evidence > summary { min-height:48px; padding:12px 15px; cursor:pointer; font-size:14px; font-weight:850; color:var(--accent-strong); }
+.screen--body-part-detail .detail-evidence > summary:focus-visible {outline:3px solid var(--accent);outline-offset:-2px;}
+.screen--body-part-detail .detail-evidence__content {padding:0 15px 15px; overflow-wrap:anywhere;}
+.screen--body-part-detail .detail-evidence__content p {margin:8px 0 0;line-height:1.65;}
+.screen--body-part-detail .trend-first-entry {min-height:92px;margin-top:16px;padding:16px;display:flex;flex-direction:column;gap:8px;justify-content:center;align-items:center;text-align:center;background:color-mix(in srgb,var(--accent-soft) 25%,var(--surface));border:1px dashed var(--line);border-radius:16px;}
+.screen--body-part-detail .trend-first-entry strong {font-size:15px;color:var(--accent-strong);}
+.screen--body-part-detail .trend-first-entry span {font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* Extremely narrow effective viewport (e.g., magnified mobile UI). */
+@media (max-width: 220px) {
+  .result-mobile-layout { max-width:100%; min-width:0; }
+  .result-mobile-layout > :not(.sheet-overlay) {box-sizing:border-box;min-width:0;max-width:calc(100% - 16px);margin-inline:8px;}
+  .result-mobile-layout .run-capsule header { flex-wrap:wrap; }
+  .result-mobile-layout .run-capsule__body {grid-template-columns:minmax(0,1fr);justify-items:center;}
+  .result-mobile-layout .run-capsule__metrics {width:100%;grid-template-columns:1fr;}
+  .result-mobile-layout .run-capsule__metrics span:last-child {grid-column:auto;}
+  .result-mobile-layout .run-capsule__metrics strong {font-size:20px;white-space:normal;overflow-wrap:anywhere;}
+  .result-mobile-layout .section-heading > div {min-width:0;}
+  .result-mobile-layout .section-heading h2 {overflow-wrap:anywhere;}
+}

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   createApplicationServices,createMemoryStorage,PRIMARY_REGIONAL_V2_REGION_DEFS,
-  PRIMARY_REGIONAL_V2_MODEL_VERSION,
+  PRIMARY_REGIONAL_V2_MODEL_VERSION, RUNNING_EVIDENCE_MODEL_VERSION,
 } from '../core/appCore.js';
 import {buildWorkspace} from '../screens/historyScreen.js';
 import {renderResultScreen as renderDesktop} from '../screens/desktop/resultScreen.js';
@@ -14,12 +14,12 @@ const record=(id,date,km,min)=>({id,date,createdAt:`${date}T06:30:00.000Z`,activ
 const context=(input)=>({parameters:new URLSearchParams(input)});
 function setUp(){const s=createApplicationServices({storage:createMemoryStorage()});for(const r of [record('new-1','2026-10-08',5,31),record('new-2','2026-10-10',7.5,44)])assert.equal(s.workflows.records.saveRecordAndFeedback(r,feedback).ok,true);return s;}
 
-test('pre-release new records always use current v3.1, no legacy default',()=>{
+test('new running records use v4, no legacy default, no legacy default',()=>{
  const s=setUp();for(const id of ['new-1','new-2']){
   const e=s.workflows.records.loadExperience(id);
-  assert.equal(e.regionalV2ResultRecord.model_version,PRIMARY_REGIONAL_V2_MODEL_VERSION);
-  assert.equal(e.regionalV2ResultRecord.output_semantic_version,'runload-primary-regional-reference100-output-v3.1');
-  assert.equal(e.record.regionalModelSnapshot.modelVersion,PRIMARY_REGIONAL_V2_MODEL_VERSION);
+  assert.equal(e.regionalV2ResultRecord.model_version,RUNNING_EVIDENCE_MODEL_VERSION);
+  assert.equal(e.regionalV2ResultRecord.output_semantic_version,'runload-running-evidence-construct-v4.0');
+  assert.equal(e.record.regionalModelSnapshot.modelVersion,RUNNING_EVIDENCE_MODEL_VERSION);
   assert.equal(e.regionalV2Recovery,null);
   assert.equal(e.regionalV2Result.regions.length,12);
  }
@@ -27,7 +27,7 @@ test('pre-release new records always use current v3.1, no legacy default',()=>{
 
 test('all 12 region values preserve meaning across saved record, history, consultation, desktop/mobile output and detail',()=>{
  const s=setUp();const all=s.workflows.records.loadAllExperiences(),e=s.workflows.records.loadExperience('new-2');
- const saved=s.storage.modelResultsRegionalV2.loadForRecord('new-2').find(x=>x.model_version===PRIMARY_REGIONAL_V2_MODEL_VERSION);
+ const saved=s.storage.modelResultsRegionalV2.loadForRecord('new-2').find(x=>x.model_version===RUNNING_EVIDENCE_MODEL_VERSION);
  assert.ok(saved);assert.deepEqual(e.regionalV2ResultRecord.result.regions,saved.result.regions);
  const desktop=renderDesktop({services:s,context:context('recordId=new-2')});
  const mobile=renderMobile({services:s,context:context('recordId=new-2')});
@@ -36,7 +36,7 @@ test('all 12 region values preserve meaning across saved record, history, consul
   const id=def.displayId,expected=saved.result.regions.find(x=>x.regionId===id);
   assert.ok(expected,id);const history=buildWorkspace(s,context(`recordId=new-2&regionId=${id}&period=28&view=records`));
   const h=history.trendRows.find(x=>x.experience.record.id==='new-2');assert.ok(h,id);
-  assert.equal(h.row.value,expected.value,id);assert.equal(h.resultRecord.model_version,PRIMARY_REGIONAL_V2_MODEL_VERSION,id);
+  assert.equal(h.row.value,expected.value,id);assert.equal(h.resultRecord.model_version,RUNNING_EVIDENCE_MODEL_VERSION,id);
   const memo=s.consultation.buildConsultationReport(e,all,{regionId:id});
   assert.equal(memo.modelReference.regional.value,expected.value,id);
   const detail=renderBodyPartDetailScreenWithPresentation({services:s,context:context(`recordId=new-2&regionId=${id}`)});
@@ -54,7 +54,7 @@ test('all 12 region values preserve meaning across saved record, history, consul
  }
 });
 
-test('round-trip portable backup cannot silently revise new v3.1 model, 12 values or signatures',()=>{
+test('round-trip portable backup cannot silently revise new v4 model, 12 values or signatures',()=>{
  const s=setUp();const exported=s.storage.backup.tryExportBackupText();assert.equal(exported.ok,true);
  const dest=createApplicationServices({storage:createMemoryStorage()});assert.equal(dest.storage.backup.restoreBackupText(exported.text).ok,true);
  for(const id of ['new-1','new-2']){

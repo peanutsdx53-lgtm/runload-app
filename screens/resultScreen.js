@@ -1,3 +1,4 @@
+import { RUNNING_EVIDENCE_MODEL_VERSION } from '../core/appCore.js';
 import { compareRecordChronology, fmt, signed, signatureFor, signaturesComparable } from "../shared/recordUtilities.js";
 export { fmt, signed, signatureFor, signaturesComparable };
 import { isPresentFiniteNumber as finite } from "../shared/valueUtilities.js";
@@ -34,7 +35,7 @@ export const VIEWS = Object.freeze([
 
 export function direction(value) { if (!finite(value)) return "unavailable"; const delta = Number(value) - 100; return Math.abs(delta) < 1 ? "reference" : delta > 0 ? "above" : "below"; }
 export function position(value) { if (!finite(value) || Number(value) <= 0) return 50; return Math.max(4, Math.min(96, 50 + Math.log2(Number(value) / 100) * 20)); }
-export function modelCurrent(resultRecord = null) { return resultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION; }
+export function modelCurrent(resultRecord = null) { return (resultRecord?.model_version === RUNNING_EVIDENCE_MODEL_VERSION || resultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION); }
 export function formatPace(record = {}) { const distance = Number(record.distanceKm); const duration = Number(record.durationMinutes); if (!(distance > 0) || !(duration > 0)) return "—"; const seconds = Math.round(duration * 60 / distance); return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; }
 export function runFormatLabel(record = {}) { return String(record.runningFormat || "").toUpperCase() === "RUN_WALK" ? "走り＋歩き" : "連続して走った"; }
 export function recordChronology(left = {}, right = {}) {

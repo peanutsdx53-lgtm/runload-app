@@ -4,7 +4,6 @@ import { escapeHtml } from "./commonComponents.js";
 import { formatLocalDate } from "./recordPresentation.js";
 import { listMobileExtensionRecords } from "./mobileWalkJogRecordStore.js";
 import { achievementSummary } from "./mobileAchievements.js";
-import { buildRunFingerprint, renderRunFingerprintSvg } from "./mobileRunFingerprint.js";
 
 
 function clamp(value, min, max) {
@@ -218,14 +217,12 @@ export function renderSameCourseComparison(record = {}, allExperiences = []) {
 export function renderRunCapsule(services, record = {}, { measurement = null, fatigue = null } = {}) {
   if (record.activityType !== "run") return "";
   const summary = achievementSummary(services);
-  const fingerprint = buildRunFingerprint(record, { measurement, fatigue });
   const pace = paceSeconds(record);
   const fatiguePair = `${finite(fatigue?.pre) ? Number(fatigue.pre) : "—"} → ${finite(fatigue?.post) ? Number(fatigue.post) : "—"}`;
   const energy = measurement?.energyEstimate?.estimatedKcal;
   return `<section class="run-capsule" aria-labelledby="run-capsule-title">
     <header><div><small>RUN CAPSULE</small><h2 id="run-capsule-title">今回の記録</h2></div><time datetime="${escapeHtml(record.date || "")}">${escapeHtml(formatLocalDate(record.date))}</time></header>
     <div class="run-capsule__body">
-      <div class="run-capsule__mark" aria-hidden="true">${renderRunFingerprintSvg(fingerprint)}</div>
       <div class="run-capsule__metrics">
         <span><small>距離</small><strong>${escapeHtml(recordedNumber(record.distanceKm, 2))}<em>km</em></strong></span>
         <span><small>時間</small><strong>${escapeHtml(recordedNumber(record.durationMinutes, 1))}<em>分</em></strong></span>

@@ -1,3 +1,4 @@
+import {V4_MODEL_VERSION} from '../runningEvidence/runningEvidenceProductBridge.js';
 import { compareExperienceRecordChronology as recordChronology } from "../../shared/recordUtilities.js";
 import { isPresentFiniteNumber as hasFiniteValue, normalizeKnownValue } from "../../shared/valueUtilities.js";
 import "./readingService.js";
@@ -98,7 +99,7 @@ function regionalReference(experience, regionId) {
     primaryRegionalV2: true,
   };
   if (experience?.record?.activityType === "rest") return Object.freeze({ ...base, state: "REST" });
-  if (!resultRecord || resultRecord.model_version !== PRIMARY_REGIONAL_V2_MODEL_VERSION) return Object.freeze(base);
+  if (!resultRecord || ![PRIMARY_REGIONAL_V2_MODEL_VERSION,V4_MODEL_VERSION].includes(resultRecord.model_version)) return Object.freeze(base);
   const row = resultRow(experience, regionId);
   if (!row || !hasFiniteValue(row.value)) {
     return Object.freeze({ ...base, state: resultRecord?.result?.state || "UNAVAILABLE" });
@@ -120,7 +121,7 @@ function modelReference(experience, regionId) {
   const regional = regionalReference(experience, regionId);
   return Object.freeze({
     modelVersion: String(experience?.regionalV2ResultRecord?.model_version || ""),
-    primaryRegionalV2: experience?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION,
+    primaryRegionalV2: [PRIMARY_REGIONAL_V2_MODEL_VERSION,V4_MODEL_VERSION].includes(experience?.regionalV2ResultRecord?.model_version),
     state: isRest ? "REST" : regional.state === "SUPPORTED_NUMERIC" ? "RUN" : "NO_NUMERIC_RESULT",
     regional,
   });
@@ -128,7 +129,7 @@ function modelReference(experience, regionId) {
 
 function recentFacts(allExperiences, target, regionId) {
   const currentRow = resultRow(target, regionId);
-  const currentSignature = currentRow && target?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION
+  const currentSignature = currentRow && [PRIMARY_REGIONAL_V2_MODEL_VERSION,V4_MODEL_VERSION].includes(target?.regionalV2ResultRecord?.model_version)
     ? buildPrimaryRegionalV2ComparisonSignature(target.regionalV2ResultRecord, currentRow)
     : null;
   return [...allExperiences]
@@ -138,7 +139,7 @@ function recentFacts(allExperiences, target, regionId) {
     .slice(0, 6)
     .map((item) => {
       const row = resultRow(item, regionId);
-      const signature = row && item?.regionalV2ResultRecord?.model_version === PRIMARY_REGIONAL_V2_MODEL_VERSION
+      const signature = row && [PRIMARY_REGIONAL_V2_MODEL_VERSION,V4_MODEL_VERSION].includes(item?.regionalV2ResultRecord?.model_version)
         ? buildPrimaryRegionalV2ComparisonSignature(item.regionalV2ResultRecord, row)
         : null;
       const compared = currentSignature && signature
