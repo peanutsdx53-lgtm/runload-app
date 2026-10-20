@@ -30,3 +30,4 @@ test('Round6 no fake polygon and no inspector when manual-only input cannot form
  assert.doesNotMatch(html,/class="running-radar__explore"/);
  assert.match(html,/2\/6軸/);
 });
+

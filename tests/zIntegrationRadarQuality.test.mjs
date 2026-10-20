@@ -38,3 +38,4 @@ test('Round5 visual stays in mobile module; unchanged six-axis values and missin
   assert.doesNotMatch(style,/Compact, simultaneous THREE-view/);
   assert.doesNotMatch(mobile,/Math\.random/);
 });
+
