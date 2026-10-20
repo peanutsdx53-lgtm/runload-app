@@ -46,3 +46,9 @@
  * of drawing outlined breast/abdominal plates. Scientific region colours and
  * selection states above remain untouched. */
 .screen-layout--result .anatomy-underpaint { stroke:none; fill-opacity:.28; filter:blur(2px); }
+
+/* v132 visual refinement: softly modeled anatomy, never semantic region colours. */
+.screen-layout--result .anatomy-underpaint { fill-opacity:.19; filter:blur(3px); }
+.screen-layout--result .anatomy-detail .anatomy-jaw { opacity:.22; stroke-width:.8; }
+.screen-layout--result .anatomy-detail .anatomy-contour-soft { opacity:.3; stroke-width:.8; }
+.screen-layout--result .anatomy-detail .anatomy-digits { opacity:.7; stroke-width:1.05; }
