@@ -4,7 +4,6 @@ import { createApplicationServices, createMemoryStorage } from '../core/appCore.
 import { renderResultScreen as renderMobile } from '../screens/mobile/resultScreen.js';
 import { renderBodyPartDetailScreen as renderDetail } from '../screens/mobile/bodyPartDetailScreen.js';
 import { renderRunCapsule } from '../ui/mobileInsights.js';
-import { renderRunFingerprintSvg, buildRunFingerprint } from '../ui/mobileRunFingerprint.js';
 
 const feedback={checkStatus:'deferred',bodyAreaObservations:[],safetyFlags:{}};
 function recordAt(km, duration=30) {
@@ -36,18 +35,12 @@ test('Round3: unavailable values remain unavailable rather than invented zero or
  assert.equal((all.match(/class="region-reference-delta">数値なし/g)||[]).length,3);
 });
 
-test('Round3: recording emblem exists exactly once and source dimensions are distinct from regional reference values',()=>{
+test('Integrated result: old decorative polygon is absent, real radar is the only shape comparison',()=>{
  const v=recordAt(5.5);const html=renderMobile(v);
- assert.equal((html.match(/class="run-fingerprint__svg"/g)||[]).length,1);
- assert.ok(!html.includes('run-fingerprint-card'));
- assert.match(html,/記録をもとに描いた図形/);
- assert.match(html,/12部位の値を示すグラフではありません/);
+ assert.doesNotMatch(html,/run-fingerprint__svg|run-fingerprint-card/);
+ assert.match(html,/EXPERIMENTAL · RUN PROFILE/);
+ assert.match(html,/走りの個性を比べる/);
  assert.match(html,/走行ルートと推移/);
- const fp=buildRunFingerprint(v.record);const svg=renderRunFingerprintSvg(fp);
- assert.equal((svg.match(/class="run-fingerprint__vertex"/g)||[]).length,12);
- assert.equal((svg.match(/<line x1="120"/g)||[]).length,12);
- assert.equal((svg.match(/class="run-fingerprint__shape--glow"/g)||[]).length,0); // combined shape classes, not standalone
- assert.match(svg,/run-fingerprint__shape--glow/);
 });
 
 test('Round3: selected historical record has an explicit metric label and reference caveat remains discoverable',()=>{
