@@ -280,7 +280,7 @@
   -webkit-touch-callout:none;}
 .screen-layout--result .body-map svg,.screen-layout--result .locator svg,.screen-layout--result .detail-locator svg{-webkit-user-drag:none;
   user-drag:none;}
-.screen-layout--result .region-link:active .region-path{filter:brightness(1.08) saturate(1.06);stroke:var(--focus);stroke-width:8}
+.screen-layout--result .region-link:active .region-path{filter:brightness(1.08) saturate(1.06)}
 .screen-layout--result .mobile-region-trigger:active,.screen-layout--result .history-link:active,.screen-layout--result .sheet-tabs button:active{transform:scale(.992)}
 .screen-layout--result .region-sheet,.screen-layout--result .detail-screen{overscroll-behavior:contain}
 .screen-layout--result body[data-scroll-locked="true"]{overscroll-behavior:none}

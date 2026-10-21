@@ -12,6 +12,25 @@ function setView(root, view) {
 export function bindMobileResult() {
   const root = document.querySelector(".screen-layout--result");
   if (!root) return null;
+  // iOS touch feedback: keep the outline visible while pressing without
+  // putting a thick stroke on top of the narrow, value-colored regions.
+  let pressedRegion = null;
+  const clearPressedRegion = () => {
+    pressedRegion?.classList.remove("is-pressing");
+    pressedRegion = null;
+  };
+  const onRegionPointerDown = (event) => {
+    if (event.button !== undefined && event.button !== 0) return;
+    const link = event.target.closest?.(".region-link");
+    if (!link || !root.contains(link)) return;
+    clearPressedRegion();
+    pressedRegion = link;
+    link.classList.add("is-pressing");
+  };
+  root.addEventListener("pointerdown", onRegionPointerDown);
+  window.addEventListener("pointerup", clearPressedRegion);
+  window.addEventListener("pointercancel", clearPressedRegion);
+  window.addEventListener("blur", clearPressedRegion);
   const sheet = root.querySelector("[data-result-region-sheet]");
   // Experimental radar: read-only UI controls; no persistence or model changes.
   const radar = root.querySelector("[data-running-radar]");
@@ -73,5 +92,12 @@ export function bindMobileResult() {
   sheet?.addEventListener("click", (event) => { if (event.target === sheet) close(); });
   const onKeyDown = (event) => { if (event.key === "Escape" && sheet && !sheet.hidden) close(); };
   document.addEventListener("keydown", onKeyDown);
-  return () => document.removeEventListener("keydown", onKeyDown);
+  return () => {
+    clearPressedRegion();
+    root.removeEventListener("pointerdown", onRegionPointerDown);
+    window.removeEventListener("pointerup", clearPressedRegion);
+    window.removeEventListener("pointercancel", clearPressedRegion);
+    window.removeEventListener("blur", clearPressedRegion);
+    document.removeEventListener("keydown", onKeyDown);
+  };
 }

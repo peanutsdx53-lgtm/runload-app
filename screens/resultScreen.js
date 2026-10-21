@@ -85,7 +85,7 @@ export function bodyMap(resultRecord, infos, idSuffix = "main", selectedId = "",
     const unavailableStyle = state === "unavailable" ? ` style="fill:url(#hatch-${view.key}-${idSuffix})"` : "";
     const selectedClass = id === selectedId ? " is-selected" : "";
     const extraPathClass = typeof renderPathClass === "function" ? String(renderPathClass({ id, viewKey: view.key }) || "") : "";
-    const mainPath = `${enhancedTouch ? `<path class="region-hit-area" d="${d}" aria-hidden="true"></path>` : ""}<path class="region-path${extraPathClass}${selectedClass}" data-direction="${state}" data-region-id="${escapeHtml(id)}"${unavailableStyle} d="${d}"><title>${escapeHtml(label)}</title></path>`;
+    const mainPath = `${enhancedTouch ? `<path class="region-hit-area" d="${d}" aria-hidden="true"></path>` : ""}<path class="region-feedback-outline" d="${d}" aria-hidden="true" focusable="false"></path><path class="region-path${extraPathClass}${selectedClass}" data-direction="${state}" data-region-id="${escapeHtml(id)}"${unavailableStyle} d="${d}"><title>${escapeHtml(label)}</title></path>`;
     const additionalPath = typeof renderAdditionalRegionPath === "function" ? renderAdditionalRegionPath({ id, viewKey: view.key, state, selectedClass, unavailableStyle }) : "";
     return `<a class="region-link"${enhancedTouch ? ' tabindex="-1"' : ""} href="#/body-part-detail?recordId=${encodeURIComponent(resultRecord?.record_id || "")}&regionId=${encodeURIComponent(id)}" aria-label="${escapeHtml(`${label}。詳細を開く`)}">${mainPath}${additionalPath}</a>`;
   }).join("")}</g>${BODY_SEAMS[view.key] ? `<g class="body-region-seams" clip-path="url(#body-clip-${view.key}-${idSuffix})" aria-hidden="true">${BODY_SEAMS[view.key]}</g>` : ""}</svg></figure>`).join("");

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import crypto from "node:crypto";
 const read = path => fs.readFileSync(new URL(path, import.meta.url));
 const hash = data => crypto.createHash("sha256").update(data).digest("hex");
-const fileHashes = {"screens/resultScreen.js": "73cfb6991b6bf8b10bfbd08596467d50b8523025c4292df3b14b348859fc03f1", "screens/desktop/resultScreen.js": "db347b3522e31ab75b49508d31a86cd6330d732789f4bb84b05fdc5dca1a4876", "styles/desktop-foundation.css": "58bcab8f81bb71fc38d3fe8244f7be743d0c73c6b6e982f529ae493ff17d2eb5", "styles/result-screen-base.css": "77957ee5621a2a1949f4572bad4a74433f74fe8ee7bb56c17f20fb3eadf20ed5", "ui/bodyRegionVisuals.js": "259417b238242ae0552f194a5160d717b2d9ee0436f8f9f2b4f0420f617e93eb"};
+const fileHashes = {"screens/resultScreen.js": "fa349e9f50a86caa5fb13b3450ed341a8b98ffa60df5272e0e2f691d1862dffb", "screens/desktop/resultScreen.js": "db347b3522e31ab75b49508d31a86cd6330d732789f4bb84b05fdc5dca1a4876", "styles/desktop-foundation.css": "58bcab8f81bb71fc38d3fe8244f7be743d0c73c6b6e982f529ae493ff17d2eb5", "styles/result-screen-base.css": "d5b6f09cc8fc1035cef549b8b6b40c8e69534ae4009080593e8935bbb87b31ac", "ui/bodyRegionVisuals.js": "259417b238242ae0552f194a5160d717b2d9ee0436f8f9f2b4f0420f617e93eb"};
 test("v134 coloring acceptance pins mirrored region geometry, stroke-free narrow anatomy and the current renderer", () => {
  for (const [path, expected] of Object.entries(fileHashes)) assert.equal(hash(read("../"+path)),expected,path);
  const shared = read("../screens/resultScreen.js").toString();
