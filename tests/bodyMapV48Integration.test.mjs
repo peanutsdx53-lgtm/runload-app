@@ -35,7 +35,7 @@ test("result chart preserves 3 unchanged viewBox, IDs, links, CSS state names, a
   assert.match(html, /data-direction="unavailable"/);
   assert.match(html, /fill:url\(#hatch-sole-test\)/);
   assert.match(html, /#\/body-part-detail\?recordId=sample&regionId=BA-DISP-014/);
-  assert.match(html, /clipPath id="body-clip-front"/);
+  assert.match(html, /clipPath id="body-clip-front-test"/);
   for (const id of infos.map(x => x.row.regionId)) assert.match(locatorSvg(id), /class="mini-region"/);
   assert.equal(direction(100),"reference");
   assert.equal(direction(109),"above");
@@ -50,6 +50,6 @@ test("result, timeline and detail source share geometry; PC ankle references the
   assert.match(result, /BODY_REGION_VIEWS/);
   assert.match(timeline, /BODY_REGION_VIEWS/);
   assert.match(detail, /BODY_REGION_VIEWS/);
-  assert.match(pc, /FRONT_LOWER_DESKTOP = VIEWS\.find/);
+  assert.doesNotMatch(pc, /FRONT_LOWER_DESKTOP|region-path--pc-shape/);
   for (const code of [result, timeline, detail]) assert.match(code, /viewBox="70 10 160 430"/);
 });

@@ -13,8 +13,8 @@ test('clipped fill: 12 result regions preserve ID, state and viewBox',()=>{
  assert.equal((html.match(/class="region-link"/g)||[]).length,12);
  for(const view of VIEWS){
   assert.equal(view.paths.length,viewIds[view.key]);
-  assert.match(html,new RegExp(`<clipPath id="body-clip-${view.key}">`));
-  assert.match(html,new RegExp(`<g class="region-layer" clip-path="url\\(#body-clip-${view.key}\\)">`));
+  assert.match(html,new RegExp(`<clipPath id="body-clip-${view.key}-v132-audit">`));
+  assert.match(html,new RegExp(`<g class="region-layer" clip-path="url\\(#body-clip-${view.key}-v132-audit\\)">`));
  }
  for(const [id] of VIEWS.flatMap(v=>v.paths))assert.match(html,new RegExp(`data-region-id="${id}"`));
  assert.match(html,/data-direction="unavailable"/);

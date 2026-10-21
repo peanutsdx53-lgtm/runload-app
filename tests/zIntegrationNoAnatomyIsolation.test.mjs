@@ -4,8 +4,8 @@ import fs from "node:fs";
 import crypto from "node:crypto";
 const read = path => fs.readFileSync(new URL(path, import.meta.url));
 const hash = data => crypto.createHash("sha256").update(data).digest("hex");
-const fileHashes = {"screens/resultScreen.js": "68b142a82813ae0ee22be305c2d44a7ec0c63d1c806eb9a424d1166891bb6306", "screens/desktop/resultScreen.js": "5d7dc869734e4edfdebf4d61f4389148ec317777a1a6ab3a3f6386a2063af0f0", "styles/desktop-foundation.css": "49e4841e97234a454e13863ed0ea976854a2307a4bf8833b8323691ba75c707b", "styles/result-screen-base.css": "772e71dbdb720ef12d39473c9d48b70dc847429a6052bcc54e6e58d0d8a2bb24"};
-test("v48 approved anatomy integration retains fixed rendering CSS and new canonical map snapshot", () => {
+const fileHashes = {"screens/resultScreen.js": "593830eda766550788cc0f9e57df9d6e1c0d92163eea7c478a5c2b806befce83", "screens/desktop/resultScreen.js": "db347b3522e31ab75b49508d31a86cd6330d732789f4bb84b05fdc5dca1a4876", "styles/desktop-foundation.css": "5aa103df4375c0e4b025dfe791d1bade2cb26eff9b12f4c495a0ac308ab1ff31", "styles/result-screen-base.css": "bc1fdfd2df58c17e38ceb5000ea76bf3828769c1ad6270f6481e40e8cc6d3961", "ui/bodyRegionVisuals.js": "eed15af80d10ec705099081248bb3cfca22300578ddf16335ac7c0f17271c25e"};
+test("v133 coloring acceptance pins updated renderer and immutable v48 anatomical geometry", () => {
  for (const [path, expected] of Object.entries(fileHashes)) assert.equal(hash(read("../"+path)),expected,path);
  const shared = read("../screens/resultScreen.js").toString();
  assert.doesNotMatch(shared,/anatomicalBodySvg|ANATOMY_FRONT|ANATOMY_SOLE/);

@@ -833,8 +833,7 @@
 
 /* PC-only result additions stay hidden outside the desktop layout. */
 .screen-layout--result .region-copy-pc,
-.screen-layout--result .region-metric-pc,
-.screen-layout--result .region-path--pc-shape {
+.screen-layout--result .region-metric-pc {
   display: none;
 }
 
@@ -887,26 +886,6 @@
 
   .screen--result.screen-layout--result .body-view svg {
     max-height: 28rem;
-  }
-
-  .screen--result.screen-layout--result .body-view[data-view="front"] .region-layer {
-    clip-path: url(#body-clip-front);
-  }
-
-  .screen--result.screen-layout--result .body-view[data-view="back"] .region-layer {
-    clip-path: url(#body-clip-back);
-  }
-
-  .screen--result.screen-layout--result .body-view[data-view="sole"] .region-layer {
-    clip-path: url(#body-clip-sole);
-  }
-
-  .screen--result.screen-layout--result .region-path--front-lower-shape {
-    display: none;
-  }
-
-  .screen--result.screen-layout--result .region-path--pc-shape {
-    display: inline;
   }
 
   .screen--result.screen-layout--result .region-path[data-direction="above"] {
