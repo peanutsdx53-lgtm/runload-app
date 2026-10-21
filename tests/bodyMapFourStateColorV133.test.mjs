@@ -67,7 +67,7 @@ test('all map instances have unique SVG clip and hatch IDs to prevent paint coll
     for (const suffix of ['panel-A','panel-B']) {
       assert.equal(html.split(`id="body-clip-${view.key}-${suffix}"`).length - 1, 1);
       assert.equal(html.split(`id="hatch-${view.key}-${suffix}"`).length - 1, 1);
-      assert.equal(html.split(`clip-path="url(#body-clip-${view.key}-${suffix})"`).length - 1, 1);
+      assert.equal(html.split(`clip-path="url(#body-clip-${view.key}-${suffix})"`).length - 1, 2);
     }
   }
 });

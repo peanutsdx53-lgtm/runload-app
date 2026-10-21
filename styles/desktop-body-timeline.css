@@ -222,8 +222,8 @@
     stroke: color-mix(in srgb, var(--color-model) 76%, #fff);
   }
   .screen--body-timeline .body-timeline-map__region[data-direction="reference"] {
-    fill: var(--color-accent-soft);
-    stroke: var(--color-accent-strong);
+    fill: color-mix(in srgb, var(--color-success) 55%, var(--color-map-silhouette));
+    stroke: none;
   }
   .screen--body-timeline .body-timeline-map__region[data-direction="below"] {
     fill: var(--color-info);

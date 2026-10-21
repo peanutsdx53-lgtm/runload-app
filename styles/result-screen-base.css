@@ -7,10 +7,35 @@
   stroke-width: 3;
 }
 
-.screen-layout--result .region-path{fill-opacity:1;stroke-width:4;transition:filter .15s ease,stroke-width .15s ease,transform .15s ease;transform-box:fill-box;transform-origin:center}
-.screen-layout--result .region-path[data-direction="above"]{fill:var(--model);stroke:color-mix(in srgb,var(--model) 78%,var(--surface))}
-.screen-layout--result .region-path[data-direction="reference"]{fill:var(--accent-soft);stroke:var(--accent-strong)}
-.screen-layout--result .region-path[data-direction="below"]{fill:var(--color-info);stroke:color-mix(in srgb,var(--color-info) 78%,var(--surface))}
-.screen-layout--result .region-path[data-direction="unavailable"]{fill:var(--color-neutral-soft);stroke:var(--muted);stroke-dasharray:9 6}
-.screen-layout--result .region-link:focus-visible .region-path,.screen-layout--result .region-link:hover .region-path{filter:brightness(1.12) saturate(1.08);stroke:var(--focus);stroke-width:9;transform:scale(1.02)}
+/* Region borders are removed: broad strokes covered narrow Achilles/ankles,
+   and overlapping polygons produced broken dark arcs. The colors themselves
+   remain the region indication; narrow regions retain their full fill area. */
+.screen-layout--result .region-path{
+  fill-opacity:1;
+  stroke:none !important;
+  transition:filter .15s ease;
+}
+.screen-layout--result .region-path[data-direction="above"]{fill:var(--color-model)}
+/* Near 100 must be visibly green, NOT almost identical to the pale body base.
+   Use semantic success color from the existing app, not a new arbitrary palette. */
+.screen-layout--result .region-path[data-direction="reference"]{
+  fill:color-mix(in srgb,var(--color-success) 55%,var(--color-map-silhouette))
+}
+.screen-layout--result .region-path[data-direction="below"]{fill:var(--color-info)}
+.screen-layout--result .region-path[data-direction="unavailable"]{fill:var(--color-neutral-soft)}
+.screen-layout--result .region-link:focus-visible .region-path,
+.screen-layout--result .region-link:hover .region-path{
+  filter:brightness(1.12) saturate(1.1);
+  stroke:none !important;
+}
+/* Thin, continuous seam guides are drawn ONCE above the fills, never twice as
+   two polygon strokes; short Achilles segments get no surrounding dark stroke. */
+.screen-layout--result .body-region-seams{
+  fill:none;
+  stroke:color-mix(in srgb,var(--color-map-line) 50%,transparent);
+  stroke-width:0.75;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  pointer-events:none;
+}
 .screen-layout--result .body-view{min-width:0;margin:0;text-align:center}

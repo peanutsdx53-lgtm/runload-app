@@ -72,6 +72,11 @@ export function locatorSvg(regionId) {
   return "";
 }
 
+const FRONT_SEAMS = `<path d="M107 298 C117 301 129 304 141 300 M159 300 C171 304 183 301 193 298 M109 320 C117 326 133 327 140 321 M160 321 C167 327 183 326 191 320 M112 384 C116 389 126 390 136 384 M164 384 C174 390 184 389 188 384"/>`;
+const BACK_SEAMS = `<path d="M106 225 C115 238 134 244 150 233 C166 244 185 238 194 225"/>`;
+const SOLE_SEAMS = `<path d="M82 206 C101 222 117 226 132 220 C150 214 174 210 191 210 C202 208 211 203 219 196"/><path d="M110 344 C130 331 151 323 172 325 C190 324 202 329 210 335"/>`;
+const BODY_SEAMS = Object.freeze({front:FRONT_SEAMS,back:BACK_SEAMS,sole:SOLE_SEAMS});
+
 export function bodyMap(resultRecord, infos, idSuffix = "main", selectedId = "", { enhancedTouch = false, renderPathClass = null, renderAdditionalRegionPath = null } = {}) {
   const byId = new Map(infos.map((info) => [info.row.regionId, info]));
   return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430"${enhancedTouch ? ' aria-hidden="true" focusable="false"' : ` aria-label="${view.title}の部位図"`}><defs><pattern id="hatch-${view.key}-${idSuffix}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="var(--color-neutral-soft, #e7edf2)"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern><clipPath id="body-clip-${view.key}-${idSuffix}">${view.silhouette}</clipPath></defs><g class="body-silhouette">${view.silhouette}</g><g class="region-layer" clip-path="url(#body-clip-${view.key}-${idSuffix})">${view.paths.map(([id, d]) => {
@@ -83,7 +88,7 @@ export function bodyMap(resultRecord, infos, idSuffix = "main", selectedId = "",
     const mainPath = `${enhancedTouch ? `<path class="region-hit-area" d="${d}" aria-hidden="true"></path>` : ""}<path class="region-path${extraPathClass}${selectedClass}" data-direction="${state}" data-region-id="${escapeHtml(id)}"${unavailableStyle} d="${d}"><title>${escapeHtml(label)}</title></path>`;
     const additionalPath = typeof renderAdditionalRegionPath === "function" ? renderAdditionalRegionPath({ id, viewKey: view.key, state, selectedClass, unavailableStyle }) : "";
     return `<a class="region-link"${enhancedTouch ? ' tabindex="-1"' : ""} href="#/body-part-detail?recordId=${encodeURIComponent(resultRecord?.record_id || "")}&regionId=${encodeURIComponent(id)}" aria-label="${escapeHtml(`${label}。詳細を開く`)}">${mainPath}${additionalPath}</a>`;
-  }).join("")}</g></svg></figure>`).join("");
+  }).join("")}</g>${BODY_SEAMS[view.key] ? `<g class="body-region-seams" clip-path="url(#body-clip-${view.key}-${idSuffix})" aria-hidden="true">${BODY_SEAMS[view.key]}</g>` : ""}</svg></figure>`).join("");
 }
 
 export function renderRunSummary(record = {}) {

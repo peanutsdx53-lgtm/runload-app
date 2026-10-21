@@ -2558,3 +2558,7 @@
 .screen-layout--reading-article .reading-related-card small{color:var(--accent);font-size:var(--type-label);font-weight:900}
 .screen-layout--reading-article .reading-related-card strong{margin-top:3px;color:var(--ink);font-size:.84rem;line-height:1.45}
 .screen-layout--reading-article .reading-related-card>b{color:var(--accent2)}
+
+/* v134: keep the Achilles / ankle / arch fills visible in small locators. */
+.screen-layout--result .locator .mini-region,
+.screen-layout--result .detail-locator .mini-region{stroke:none!important}
