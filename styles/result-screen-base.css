@@ -23,28 +23,32 @@
 }
 .screen-layout--result .region-path[data-direction="below"]{fill:var(--color-info)}
 .screen-layout--result .region-path[data-direction="unavailable"]{fill:var(--color-neutral-soft)}
-/* Transient interaction ring lives in its own path, BEHIND the color fill.
-   Constant on-screen stroke width keeps narrow Achilles/ankle colors visible.
-   No outline at rest, and the ring never receives clicks. */
-.screen-layout--result .region-feedback-outline {
-  fill: none;
-  stroke: var(--focus, var(--color-focus, #1d66b1));
-  stroke-width: 3px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .08s linear;
+/* v136: The painted regions stay clipped to the body. For selection we
+   first clip each region to the actual silhouette, then calculate its
+   COMPLETE perimeter with SVG morphology outside the clip. The ring is
+   isolated in the TOPMOST layer, so neighboring fills cannot cover it.
+   Two-color exterior band remains visible around even narrow Achilles areas.
+   The filter outputs NO interior fill and never changes the reference colors. */
+.screen-layout--result .region-feedback-layer,
+.screen-layout--result .region-feedback {pointer-events:none}
+.screen-layout--result .region-feedback {
+  opacity:0;
+  transition:opacity .05s linear;
 }
-.screen-layout--result .region-link:is(:active,:focus-visible,.is-pressing) .region-feedback-outline {
-  opacity: 1;
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(1):is(:active,:focus-visible,.is-pressing)) .region-feedback-layer > .region-feedback:nth-child(1) {opacity:1}
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(2):is(:active,:focus-visible,.is-pressing)) .region-feedback-layer > .region-feedback:nth-child(2) {opacity:1}
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(3):is(:active,:focus-visible,.is-pressing)) .region-feedback-layer > .region-feedback:nth-child(3) {opacity:1}
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(4):is(:active,:focus-visible,.is-pressing)) .region-feedback-layer > .region-feedback:nth-child(4) {opacity:1}
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(5):is(:active,:focus-visible,.is-pressing)) .region-feedback-layer > .region-feedback:nth-child(5) {opacity:1}
+@media (hover:hover) and (pointer:fine) {
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(1):hover) .region-feedback-layer > .region-feedback:nth-child(1) {opacity:1}
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(2):hover) .region-feedback-layer > .region-feedback:nth-child(2) {opacity:1}
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(3):hover) .region-feedback-layer > .region-feedback:nth-child(3) {opacity:1}
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(4):hover) .region-feedback-layer > .region-feedback:nth-child(4) {opacity:1}
+.screen-layout--result .body-view svg:has(.region-layer > .region-link:nth-child(5):hover) .region-feedback-layer > .region-feedback:nth-child(5) {opacity:1}
 }
-@media (hover: hover) and (pointer: fine) {
-  .screen-layout--result .region-link:hover .region-feedback-outline {opacity:1}
-}
-@media (prefers-reduced-motion: reduce) {
-  .screen-layout--result .region-feedback-outline {transition:none}
+@media (prefers-reduced-motion:reduce) {
+  .screen-layout--result .region-feedback {transition:none}
 }
 .screen-layout--result .region-link:focus-visible .region-path,
 .screen-layout--result .region-link:hover .region-path{

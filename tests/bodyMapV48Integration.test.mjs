@@ -28,7 +28,8 @@ test("result chart preserves 3 unchanged viewBox, IDs, links, CSS state names, a
   assert.equal((html.match(/viewBox="70 10 160 430"/g)||[]).length, 3);
   assert.equal((html.match(/class="region-link"/g)||[]).length, 12);
   assert.equal((html.match(/class="region-hit-area"/g)||[]).length, 12);
-  assert.equal((html.match(/data-region-id="BA-DISP-/g)||[]).length, 12);
+  assert.equal((html.match(/class="region-path(?: is-selected)?"/g)||[]).length, 12);
+  assert.equal((html.match(/class="region-feedback" data-region-id="BA-DISP-/g)||[]).length, 12);
   assert.match(html, /data-direction="above"/);
   assert.match(html, /data-direction="below"/);
   assert.match(html, /data-direction="reference"/);

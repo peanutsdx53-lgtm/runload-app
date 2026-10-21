@@ -29,10 +29,10 @@ test('twelve regions retain value state and renderer markers without thick perim
  assert.equal(ids.length,12);
  for (const [key,value] of Object.entries({reference:100,above:118,below:82,unavailable:null})){
   const html=bodyMap({record_id:'test'},ids.map(regionId=>({row:{regionId,value}})),`q-${key}`);
-  for(const regionId of ids){assert.equal((html.match(new RegExp(`data-region-id="${regionId}"`,'g'))||[]).length,1,regionId);
+  for(const regionId of ids){assert.equal((html.match(new RegExp(`data-region-id="${regionId}"`,'g'))||[]).length,2,regionId);
   assert.match(html,new RegExp(`data-direction="${key}"`));}
   assert.equal((html.match(/class="body-region-seams"/g)||[]).length,3);
-  assert.equal((html.match(/clip-path="url\(#body-clip-(?:front|back|sole)-q-/g)||[]).length,6);
+  assert.equal((html.match(/clip-path="url\(#body-clip-(?:front|back|sole)-q-/g)||[]).length,18);
  }
  const css=read('styles/result-screen-base.css');
  assert.match(css,/stroke:none !important/);
