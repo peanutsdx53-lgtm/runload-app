@@ -67,14 +67,14 @@ export function locatorSvg(regionId) {
   for (const view of VIEWS) {
     const match = view.paths.find(([id]) => id === regionId);
     if (!match) continue;
-    return `<svg viewBox="70 10 160 430" aria-hidden="true"><g class="mini-silhouette">${view.silhouette}</g><path class="mini-region" d="${match[1]}"></path></svg>`;
+    return `<svg viewBox="70 10 160 430" aria-hidden="true"><defs><clipPath id="result-locator-clip-${regionId}">${view.silhouette}</clipPath></defs><g class="mini-silhouette">${view.silhouette}</g><path class="mini-region" clip-path="url(#result-locator-clip-${regionId})" d="${match[1]}"></path></svg>`;
   }
   return "";
 }
 
 export function bodyMap(resultRecord, infos, idSuffix = "main", selectedId = "", { enhancedTouch = false, renderPathClass = null, renderAdditionalRegionPath = null } = {}) {
   const byId = new Map(infos.map((info) => [info.row.regionId, info]));
-  return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430"${enhancedTouch ? ' aria-hidden="true" focusable="false"' : ` aria-label="${view.title}の部位図"`}><defs><pattern id="hatch-${view.key}-${idSuffix}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="currentColor" opacity=".08"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern><clipPath id="body-clip-${view.key}">${view.silhouette}</clipPath></defs><g class="body-silhouette">${view.silhouette}</g><g class="region-layer">${view.paths.map(([id, d]) => {
+  return VIEWS.map((view) => `<figure class="body-view" data-view="${view.key}"><figcaption>${view.title}</figcaption><svg viewBox="70 10 160 430"${enhancedTouch ? ' aria-hidden="true" focusable="false"' : ` aria-label="${view.title}の部位図"`}><defs><pattern id="hatch-${view.key}-${idSuffix}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="currentColor" opacity=".08"></rect><line x1="0" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="3" opacity=".24"></line></pattern><clipPath id="body-clip-${view.key}">${view.silhouette}</clipPath></defs><g class="body-silhouette">${view.silhouette}</g><g class="region-layer" clip-path="url(#body-clip-${view.key})">${view.paths.map(([id, d]) => {
     const info = byId.get(id); const value = info?.row?.value; const name = bodyRegionFormalName(id, info?.row?.regionName || id); const state = direction(value);
     const label = `${name}：${finite(value) ? `今回の目安 ${fmt(value, 1)}` : "今回の目安は数値なし"}`;
     const unavailableStyle = state === "unavailable" ? ` style="fill:url(#hatch-${view.key}-${idSuffix})"` : "";

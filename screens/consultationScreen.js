@@ -283,7 +283,7 @@ function regionLocatorSvg(regionId) {
     const silhouette = view.silhouette
       .replaceAll("<circle ", '<circle fill="#e6ecef" stroke="#a9bbc5" stroke-width="2.5" ')
       .replaceAll("<path ", '<path fill="#e6ecef" stroke="#a9bbc5" stroke-width="2.5" ');
-    return `<svg viewBox="70 10 160 430" role="img" aria-label="${escapeHtml(view.title)}の${escapeHtml(bodyRegionFormalName(regionId, "選択した部位"))}"><g class="share-body-silhouette">${silhouette}</g><path class="share-body-region" fill="#6f96ad" stroke="#234f6b" stroke-width="3" d="${match[1]}"></path></svg>`;
+    return `<svg viewBox="70 10 160 430" role="img" aria-label="${escapeHtml(view.title)}の${escapeHtml(bodyRegionFormalName(regionId, "選択した部位"))}"><defs><clipPath id="share-body-clip-${regionId}">${view.silhouette}</clipPath></defs><g class="share-body-silhouette">${silhouette}</g><path clip-path="url(#share-body-clip-${regionId})" class="share-body-region" fill="#6f96ad" stroke="#234f6b" stroke-width="3" d="${match[1]}"></path></svg>`;
   }
   return "";
 }

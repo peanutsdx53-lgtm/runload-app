@@ -30,7 +30,7 @@ function regionMap(resultRecord = {}) {
 
 function miniBodyMap(resultRecord = {}, suffix = "timeline") {
   const rows = regionMap(resultRecord);
-  return BODY_REGION_VIEWS.map((view) => `<figure class="body-timeline-map__view"><figcaption>${escapeHtml(view.title)}</figcaption><svg viewBox="70 10 160 430" aria-label="${escapeHtml(view.title)}の部位図"><defs><pattern id="timeline-hatch-${view.key}-${suffix}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="12" stroke="currentColor" stroke-width="3" opacity=".26"></line></pattern></defs><g class="body-timeline-map__silhouette">${view.silhouette}</g><g>${view.paths.map(([regionId, d]) => {
+  return BODY_REGION_VIEWS.map((view) => `<figure class="body-timeline-map__view"><figcaption>${escapeHtml(view.title)}</figcaption><svg viewBox="70 10 160 430" aria-label="${escapeHtml(view.title)}の部位図"><defs><pattern id="timeline-hatch-${view.key}-${suffix}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="12" stroke="currentColor" stroke-width="3" opacity=".26"></line></pattern><clipPath id="timeline-clip-${view.key}-${suffix}">${view.silhouette}</clipPath></defs><g class="body-timeline-map__silhouette">${view.silhouette}</g><g clip-path="url(#timeline-clip-${view.key}-${suffix})">${view.paths.map(([regionId, d]) => {
     const value = rows.get(regionId)?.value;
     const state = direction(value);
     const style = state === "unavailable" ? ` style="fill:url(#timeline-hatch-${view.key}-${suffix})"` : "";

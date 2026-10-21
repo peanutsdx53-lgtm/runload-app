@@ -16,7 +16,7 @@ function locatorSvg(regionId) {
   for (const view of BODY_REGION_VIEWS) {
     const region = view.paths.find(([id]) => id === regionId);
     if (!region) continue;
-    return `<svg viewBox="70 10 160 430" aria-hidden="true"><g class="mini-silhouette">${view.silhouette}</g><path class="mini-region" d="${region[1]}"></path></svg>`;
+    return `<svg viewBox="70 10 160 430" aria-hidden="true"><defs><clipPath id="detail-locator-clip-${regionId}">${view.silhouette}</clipPath></defs><g class="mini-silhouette">${view.silhouette}</g><path class="mini-region" clip-path="url(#detail-locator-clip-${regionId})" d="${region[1]}"></path></svg>`;
   }
   return "";
 }
