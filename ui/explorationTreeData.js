@@ -52,7 +52,7 @@ export function buildTreeView(services,requestedRecordId=""){
 
 // Transition gate: only ordinary run records enter Explore from Result.
 // Every non-normal or unverified state continues to the existing interpretation
-// workflow, preserving its support/consult/rest handling while features migrate.
+// workflow, preserving its support/consult/rest handling while all comparison functions are retained.
 export function resolveResultExplorationEntry({ services, record, origin="result", regionId="" }={}) {
  const id=String(record?.id||"");
  const params=new URLSearchParams({recordId:id,origin});
