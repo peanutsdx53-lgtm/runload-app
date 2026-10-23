@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {TREE_CATEGORIES,TREE_TOPICS,buildTreeView} from "../ui/explorationTreeData.js";
+import {TREE_CATEGORIES,TREE_TOPICS,buildTreeView,resolveResultExplorationEntry} from "../ui/explorationTreeData.js";
 import {renderExplorationTreeScreen} from "../screens/explorationTreeScreen.js";
 
 function services(record=null,rof=null,safetyRoute="normal",articles=[]){
@@ -74,4 +74,32 @@ test("article source and user data are HTML-escaped",()=>{
  const html=renderExplorationTreeScreen({services:services(risky),context:{parameters:new URLSearchParams()}});
  assert.doesNotMatch(html,/<svg onload=/);
  assert.match(html,/&lt;svg/);
+});
+
+test("normal verified runs enter Explore; safety and rest remain in original review workflow",()=>{
+ const valid=resolveResultExplorationEntry({services:services(run,{pre:0,post:0}),record:run});
+ assert.equal(valid.mode,"EXPLORATION");
+ assert.match(valid.href,/^#\/exploration-tree\?recordId=run-1&origin=result$/);
+ const urgent=resolveResultExplorationEntry({services:services(run,null,"urgent"),record:run});
+ assert.equal(urgent.mode,"EXISTING_INTERPRETATION");
+ assert.match(urgent.href,/^#\/interpretation-room\?/);
+ const review=resolveResultExplorationEntry({services:services(run,null,"review"),record:run});
+ assert.equal(review.mode,"EXISTING_INTERPRETATION");
+ const missing=resolveResultExplorationEntry({services:services(),record:run});
+ assert.equal(missing.mode,"EXISTING_INTERPRETATION");
+ const rest=resolveResultExplorationEntry({services:services({...run,activityType:"rest"}),record:{...run,activityType:"rest"}});
+ assert.equal(rest.mode,"EXISTING_INTERPRETATION");
+});
+test("transition preserves selected body region and direct access to existing interpretation",()=>{
+ const valid=resolveResultExplorationEntry({services:services(run),record:run,regionId:"BA-DISP-023"});
+ assert.match(valid.href,/regionId=BA-DISP-023/);
+ const html=renderExplorationTreeScreen({services:services(run),context:{parameters:new URLSearchParams("recordId=run-1&origin=result&regionId=BA-DISP-023")}});
+ assert.match(html,/これまでの見比べ画面を開く/);
+ assert.match(html,/#\/interpretation-room\?recordId=run-1/);
+});
+test("support-priority direct entry displays guidance before the knowledge map",()=>{
+ const html=renderExplorationTreeScreen({services:services(run,null,"urgent"),context:{parameters:new URLSearchParams("recordId=run-1&origin=result")}});
+ assert.match(html,/et-priority-notice/);
+ assert.match(html,/案内を優先/);
+ assert.doesNotMatch(html,/class="et-node is-glowing"/);
 });
