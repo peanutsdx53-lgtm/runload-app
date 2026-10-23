@@ -181,7 +181,12 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     return { title: "公的サポート", backHref: "#/more", backLabel: "その他" };
   }
 
-  if (screen === "exploration-tree") return { title: "探究ツリー", backHref: "#/home", backLabel: "ホーム" };
+  if (screen === "exploration-tree") {
+    const origin = parameter("origin");
+    if (recordId && origin === "result") return { title: "探究ツリー", backHref: screenHref("result", { recordId }), backLabel: "結果" };
+    if (recordId && origin === "history") return { title: "探究ツリー", backHref: screenHref("history", { recordId }), backLabel: "履歴" };
+    return { title: "探究ツリー", backHref: "#/home", backLabel: "ホーム" };
+  }
 
   if (screen === "reading") {
     const origin = parameter("origin");
@@ -196,7 +201,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
         backLabel: "部位結果",
       };
     }
-    if (origin === "exploration-tree") return { title: "読みもの", backHref: screenHref("exploration-tree", { recordId }), backLabel: "探究ツリー" };
+    if (origin === "exploration-tree") return { title: "読みもの", backHref: screenHref("exploration-tree", { recordId, topic: parameter("topic") }), backLabel: "探究ツリー" };
     if (articleId) return { title: "読みもの", backHref: "#/reading", backLabel: "読みもの" };
     if (origin === "home") return { title: "読みもの", backHref: "#/home", backLabel: "ホーム" };
     return { title: "読みもの", backHref: "#/more", backLabel: "その他" };
