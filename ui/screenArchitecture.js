@@ -259,7 +259,6 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
     items: Object.freeze([
       Object.freeze({ screen: "consultation", label: "共有用にまとめる", description: "指導者などに見せる内容を整理" }),
       Object.freeze({ screen: "support-guidance", label: "公的な相談先", description: "119・#7119など公式案内を確認" }),
-      Object.freeze({ screen: "reading", label: "読みもの", description: "結果を理解する一般情報" }),
       Object.freeze({ screen: "privacy", label: "プライバシー", description: "保存と外部との境界を確認" }),
       Object.freeze({ screen: "terms", label: "利用規約", description: "利用条件を確認" }),
       Object.freeze({ screen: "settings", label: "設定", description: "表示・プロフィール・データ管理" }),

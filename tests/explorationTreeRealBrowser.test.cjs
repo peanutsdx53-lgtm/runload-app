@@ -19,6 +19,40 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
    page.on("pageerror",e=>errors.push(e.message));
    await page.goto(BASE+"/#/exploration-tree",{waitUntil:"domcontentloaded"});
    await page.locator(".screen--exploration-tree").waitFor({timeout:30000});
+   // First-use legal/onboarding gates must be completed before real taps;
+   // do not force pointer events through an active consent overlay.
+   if(width>=880){
+    const gate=page.locator("[data-desktop-first-use]");
+    if(await gate.count()){
+     await gate.locator("[data-desktop-terms-consent]").check();
+     await gate.locator("[data-desktop-terms-accept]").click();
+    }
+   }else{
+    await page.evaluate(()=>{
+     const dialog=document.querySelector("[data-mobile-onboarding]");
+     if(!dialog)return;
+     const next=dialog.querySelector("[data-onboarding-next]");
+     for(let i=0;i<3;i++)next?.click();
+     const consent=dialog.querySelector("[data-onboarding-consent]");
+     if(consent){consent.checked=true;consent.dispatchEvent(new Event("change",{bubbles:true}));}
+     dialog.querySelector("[data-onboarding-complete]")?.click();
+    });
+    await page.waitForFunction(()=>{
+     const dialog=document.querySelector("[data-mobile-onboarding]");
+     return !dialog||getComputedStyle(dialog).display==="none"||!dialog.getClientRects().length;
+    },null,{timeout:7000});
+   }
+   // Desktop onboarding deliberately opens the introductory Guide after
+   // accepting terms. Close it through its real control before tree taps.
+   const guide=page.locator(".guide-dialog");
+   if(await guide.count()){
+    await guide.locator(".guide-dialog__close").click();
+    await guide.waitFor({state:"detached",timeout:7000});
+   }
+   // First-use onboarding may route to Home. Navigate back to the target
+   // screen so the visual/interaction test measures Explore itself.
+   await page.goto(BASE+"/#/exploration-tree",{waitUntil:"domcontentloaded"});
+   await page.locator(".screen--exploration-tree").waitFor({timeout:20000});
    const valid=await page.evaluate(()=>{
     const screen=document.querySelector(".screen--exploration-tree");
     return {categories:screen.querySelectorAll("[data-et-category]").length,
@@ -31,10 +65,13 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
    assert.equal(valid.hasPageOverflow,false,width+" document overflow");
    if(width>=880)assert.equal(valid.desktopNavigation,true,width+" uses real navigation");
    if(width>=880){
-    await page.evaluate(()=>document.querySelector('[data-et-topic="01-01"]').click());
+    await page.locator("[data-et-map-category='01']").click();
+    await page.locator("[data-et-topic='01-01']").click();
     assert.equal(await page.locator(".et-detail [data-et-detail='01-01']").isVisible(),true);
-    await page.evaluate(()=>document.querySelector('.et-detail [data-et-detail="01-01"] [data-et-tab="article"]').click());
-    assert.equal(await page.locator(".et-detail [data-et-detail='01-01'] [data-et-tab-panel='article']").isVisible(),true);
+    const article=page.locator(".et-detail [data-et-detail='01-01'] .et-inline-article");
+    assert.equal(await article.count(),1);
+    await article.locator("summary").click();
+    assert.equal(await article.locator(".et-article-content").isVisible(),true);
    }else{
     async function checkSingleRow(routeLabel){
       const layout=await page.locator(".app-shell--w1-mobile > .primary-navigation").evaluate(nav=>{
@@ -47,12 +84,16 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
       assert.ok(Math.max(...layout.tops)-Math.min(...layout.tops)<2,width+" "+routeLabel+" navigation wrapped to two rows: "+JSON.stringify(layout));
     }
     await checkSingleRow("exploration");
-    await page.evaluate(()=>document.querySelector("[data-et-category='04']").click());
-    assert.equal(await page.locator("[data-et-mobile-page='branch-04']").isVisible(),true);
-    await page.evaluate(()=>document.querySelector("[data-et-mobile-topic='04-01']").click());
-    assert.equal(await page.locator("[data-et-mobile-page='detail']").isVisible(),true);
-    await page.evaluate(()=>document.querySelector("[data-et-back='branch']").click());
-    assert.equal(await page.locator("[data-et-mobile-page='branch-04']").isVisible(),true);
+    assert.equal(await page.locator(".et-mini-tree .et-mini-node").count(),7,width+" seven visible tree hubs");
+    assert.equal(await page.locator(".et-mini-tree").isVisible(),true);
+    await page.locator("[data-et-category='04']").click();
+    assert.equal(await page.locator("[data-et-topic-list='04']").isVisible(),true);
+    await page.locator("[data-et-mobile-topic='04-01']").click();
+    assert.equal(await page.locator("[data-et-mobile-inline-detail]").isVisible(),true);
+    assert.equal(await page.locator(".et-mobile-detail-panels [data-et-detail='04-01']").isVisible(),true);
+    await page.locator("[data-et-close-detail]").click();
+    assert.equal(await page.locator("[data-et-mobile-inline-detail]").isVisible(),false);
+    assert.equal(await page.locator("[data-et-topic-list='04']").isVisible(),true);
     await page.goto(BASE+"/#/result",{waitUntil:"domcontentloaded"});
     await page.locator(".screen-layout--result").waitFor({timeout:20000});
     await checkSingleRow("result");

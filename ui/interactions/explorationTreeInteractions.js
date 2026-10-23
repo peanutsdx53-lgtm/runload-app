@@ -1,60 +1,65 @@
-// Screen-local, delegation-based interactions; returns cleanup on every route exit.
+// Exploration events stay inside this screen and are cleaned up on route exit.
 export function bindExplorationTree({root=document}={}){
  const screen=root.querySelector?.("[data-exploration-tree]");
  if(!screen)return null;
- const known=new Set([...screen.querySelectorAll("[data-et-detail]")].map(el=>el.dataset.etDetail));
- const select=(id)=>{
-  if(!known.has(id))return;
-  screen.querySelectorAll("[data-et-detail]").forEach(panel=>{
-   const on=panel.dataset.etDetail===id;
-   panel.hidden=!on;
-   panel.querySelectorAll("[data-et-tab]").forEach(button=>{const selected=button.dataset.etTab==="overview";button.setAttribute("aria-selected",String(selected));button.tabIndex=selected?0:-1;});
-   panel.querySelectorAll("[data-et-tab-panel]").forEach(el=>{el.hidden=el.dataset.etTabPanel!=="overview";});
+ const known=new Set([...screen.querySelectorAll("[data-et-detail]")].map(p=>p.dataset.etDetail));
+ const select=id=>{
+  if(!known.has(id))return false;
+  screen.querySelectorAll("[data-et-detail]").forEach(panel=>{panel.hidden=panel.dataset.etDetail!==id;});
+  screen.querySelectorAll("[data-et-topic]").forEach(button=>{
+   const active=button.dataset.etTopic===id;
+   button.classList.toggle("is-selected",active);
+   button.setAttribute("aria-pressed",String(active));
   });
-  screen.querySelectorAll("[data-et-topic]").forEach(b=>{const active=b.dataset.etTopic===id;b.classList.toggle("is-selected",active);b.setAttribute("aria-pressed",String(active));});
+  screen.querySelectorAll("[data-et-mobile-topic]").forEach(button=>{
+   button.setAttribute("aria-pressed",String(button.dataset.etMobileTopic===id));
+  });
+  screen.querySelectorAll("[data-et-cluster]").forEach(group=>group.classList.toggle("is-active",group.dataset.etCluster===id.slice(0,2)));
+  screen.querySelectorAll("[data-et-map-category]").forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.etMapCategory===id.slice(0,2))));
   screen.dataset.etSelectedTopic=id;
+  return true;
  };
- const showPage=(id)=>{
-  screen.querySelectorAll("[data-et-mobile-page]").forEach(p=>{p.hidden=p.dataset.etMobilePage!==id;});
-  screen.dataset.etCurrentMobilePage=id;
+ const showCategory=id=>{
+  screen.querySelectorAll("[data-et-topic-list]").forEach(list=>{list.hidden=list.dataset.etTopicList!==id;});
+  screen.querySelectorAll("[data-et-category]").forEach(button=>{
+   button.setAttribute("aria-pressed",String(button.dataset.etCategory===id));
+  });
+  screen.dataset.etSelectedCategory=id;
  };
- select(known.has(screen.dataset.etInitialTopic)?screen.dataset.etInitialTopic:[...known][0]);
- // Returning from a Reading article may specify its exact theme.
- const requestedTopic=new URLSearchParams(window.location.hash.split("?")[1]||"").get("topic");
- showPage(requestedTopic&&known.has(requestedTopic)?"detail":"map");
- const onClick=(event)=>{
-  const b=event.target.closest?.("button");
-  if(!b||!screen.contains(b))return;
-  if(b.dataset.etTopic){select(b.dataset.etTopic);return;}
-  if(b.dataset.etCategory){
-   showPage("branch-"+b.dataset.etCategory);
-   screen.querySelector(".et-mobile")?.scrollIntoView?.({block:"start",behavior:"instant"});
+ const detail=screen.querySelector("[data-et-mobile-inline-detail]");
+ const showDetail=id=>{
+  if(!select(id))return;
+  showCategory(id.slice(0,2));
+  if(detail){
+   detail.hidden=false;
+   const heading=detail.querySelector('[data-et-detail]:not([hidden]) h2');
+   detail.scrollIntoView({block:"nearest",behavior:"instant"});
+   heading?.focus({preventScroll:true});
+  }
+ };
+ const hideDetail=()=>{
+  if(detail)detail.hidden=true;
+  const category=screen.dataset.etSelectedCategory||"01";
+  const button=screen.querySelector('[data-et-category="'+category+'"]');
+  button?.focus({preventScroll:true});
+ };
+ select(known.has(screen.dataset.etInitialTopic)?screen.dataset.etInitialTopic:"01-01");
+ const query=new URLSearchParams(window.location.hash.split("?")[1]||"");
+ const requested=query.get("topic");
+ showCategory(requested&&known.has(requested)?requested.slice(0,2):"01");
+ if(requested&&known.has(requested))showDetail(requested);
+ const onClick=event=>{
+  const button=event.target.closest?.("button");
+  if(!button||!screen.contains(button))return;
+  if(button.dataset.etMapCategory)return select(button.dataset.etMapCategory+"-01");
+  if(button.dataset.etTopic)return select(button.dataset.etTopic);
+  if(button.dataset.etCategory){
+   hideDetail();
+   showCategory(button.dataset.etCategory);
    return;
   }
-  if(b.dataset.etMobileTopic){
-   select(b.dataset.etMobileTopic);
-   showPage("detail");
-   screen.querySelector(".et-mobile")?.scrollIntoView?.({block:"start",behavior:"instant"});
-   const selected=screen.querySelector('.et-mobile-detail-panels [data-et-detail]:not([hidden]) h2');
-   if(selected){selected.tabIndex=-1;selected.focus({preventScroll:true});}
-   return;
-  }
-  if(b.dataset.etBack){
-   if(b.dataset.etBack==="map")showPage("map");
-   else{
-    const id=screen.dataset.etSelectedTopic||"01-01";
-    showPage("branch-"+id.slice(0,2));
-   }
-   screen.querySelector(".et-mobile")?.scrollIntoView?.({block:"start",behavior:"instant"});
-   return;
-  }
-  if(b.dataset.etTab){
-   const panel=b.closest("[data-et-detail]");
-   if(!panel)return;
-   const tab=b.dataset.etTab;
-   panel.querySelectorAll("[data-et-tab]").forEach(x=>{const on=x.dataset.etTab===tab;x.setAttribute("aria-selected",String(on));x.tabIndex=on?0:-1;});
-   panel.querySelectorAll("[data-et-tab-panel]").forEach(x=>{x.hidden=x.dataset.etTabPanel!==tab;});
-  }
+  if(button.dataset.etMobileTopic)return showDetail(button.dataset.etMobileTopic);
+  if(button.hasAttribute("data-et-close-detail"))return hideDetail();
  };
  screen.addEventListener("click",onClick);
  return ()=>screen.removeEventListener("click",onClick);
