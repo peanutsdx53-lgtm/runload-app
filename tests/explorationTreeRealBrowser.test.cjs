@@ -33,8 +33,10 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
    if(width>=880){
     await page.evaluate(()=>document.querySelector('[data-et-topic="01-01"]').click());
     assert.equal(await page.locator(".et-detail [data-et-detail='01-01']").isVisible(),true);
-    await page.evaluate(()=>document.querySelector('.et-detail [data-et-detail="01-01"] [data-et-tab="article"]').click());
-    assert.equal(await page.locator(".et-detail [data-et-detail='01-01'] [data-et-tab-panel='article']").isVisible(),true);
+    const article=page.locator(".et-detail [data-et-detail='01-01'] .et-inline-article");
+    assert.equal(await article.count(),1);
+    await article.locator("summary").click();
+    assert.equal(await article.locator(".et-article-content").isVisible(),true);
    }else{
     async function checkSingleRow(routeLabel){
       const layout=await page.locator(".app-shell--w1-mobile > .primary-navigation").evaluate(nav=>{
@@ -47,12 +49,16 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
       assert.ok(Math.max(...layout.tops)-Math.min(...layout.tops)<2,width+" "+routeLabel+" navigation wrapped to two rows: "+JSON.stringify(layout));
     }
     await checkSingleRow("exploration");
-    await page.evaluate(()=>document.querySelector("[data-et-category='04']").click());
-    assert.equal(await page.locator("[data-et-mobile-page='branch-04']").isVisible(),true);
-    await page.evaluate(()=>document.querySelector("[data-et-mobile-topic='04-01']").click());
-    assert.equal(await page.locator("[data-et-mobile-page='detail']").isVisible(),true);
-    await page.evaluate(()=>document.querySelector("[data-et-back='branch']").click());
-    assert.equal(await page.locator("[data-et-mobile-page='branch-04']").isVisible(),true);
+    assert.equal(await page.locator(".et-mini-tree .et-mini-node").count(),7,width+" seven visible tree hubs");
+    assert.equal(await page.locator(".et-mini-tree").isVisible(),true);
+    await page.locator("[data-et-category='04']").click();
+    assert.equal(await page.locator("[data-et-topic-list='04']").isVisible(),true);
+    await page.locator("[data-et-mobile-topic='04-01']").click();
+    assert.equal(await page.locator("[data-et-mobile-inline-detail]").isVisible(),true);
+    assert.equal(await page.locator(".et-mobile-detail-panels [data-et-detail='04-01']").isVisible(),true);
+    await page.locator("[data-et-close-detail]").click();
+    assert.equal(await page.locator("[data-et-mobile-inline-detail]").isVisible(),false);
+    assert.equal(await page.locator("[data-et-topic-list='04']").isVisible(),true);
     await page.goto(BASE+"/#/result",{waitUntil:"domcontentloaded"});
     await page.locator(".screen-layout--result").waitFor({timeout:20000});
     await checkSingleRow("result");
