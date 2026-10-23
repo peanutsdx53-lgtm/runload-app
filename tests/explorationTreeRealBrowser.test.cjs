@@ -67,6 +67,21 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
      await page.locator(".understanding-link").waitFor({timeout:25000});
      const entry=await page.locator(".understanding-link").getAttribute("href");
      assert.match(entry,/^#\/exploration-tree\?recordId=et-smoke-run/,String(entry));
+     // Complete the actual first-use onboarding before interacting with
+     // the result CTA. The onboarding overlay intentionally blocks taps.
+     await page.evaluate(()=>{
+      const dialog=document.querySelector("[data-mobile-onboarding]");
+      if(!dialog)return;
+      const next=dialog.querySelector("[data-onboarding-next]");
+      for(let i=0;i<3;i++)next?.click();
+      const consent=dialog.querySelector("[data-onboarding-consent]");
+      if(consent){consent.checked=true;consent.dispatchEvent(new Event("change",{bubbles:true}));}
+      dialog.querySelector("[data-onboarding-complete]")?.click();
+     });
+     await page.waitForFunction(()=>{
+      const dialog=document.querySelector("[data-mobile-onboarding]");
+      return !dialog||getComputedStyle(dialog).display==="none"||!dialog.getClientRects().length;
+     },null,{timeout:7000});
      await page.locator(".understanding-link").click();
      await page.locator(".screen--exploration-tree").waitFor({timeout:20000});
      assert.match(await page.locator(".et-status").textContent(),/今回の走り/);
