@@ -14,6 +14,8 @@ export function bindExplorationTree({root=document}={}){
   screen.querySelectorAll("[data-et-mobile-topic]").forEach(button=>{
    button.setAttribute("aria-pressed",String(button.dataset.etMobileTopic===id));
   });
+  screen.querySelectorAll("[data-et-cluster]").forEach(group=>group.classList.toggle("is-active",group.dataset.etCluster===id.slice(0,2)));
+  screen.querySelectorAll("[data-et-map-category]").forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.etMapCategory===id.slice(0,2))));
   screen.dataset.etSelectedTopic=id;
   return true;
  };
@@ -49,6 +51,7 @@ export function bindExplorationTree({root=document}={}){
  const onClick=event=>{
   const button=event.target.closest?.("button");
   if(!button||!screen.contains(button))return;
+  if(button.dataset.etMapCategory)return select(button.dataset.etMapCategory+"-01");
   if(button.dataset.etTopic)return select(button.dataset.etTopic);
   if(button.dataset.etCategory){
    hideDetail();
