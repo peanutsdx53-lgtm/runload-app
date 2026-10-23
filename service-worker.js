@@ -148,6 +148,7 @@ const COMMON_PRECACHE_URLS = [
   "./ui/restorePreviewPresentation.js",
   "./ui/screenArchitecture.js",
   "./ui/explorationTreeData.js",
+  "./ui/explorationTreePresentation.js",
   "./ui/interactions/explorationTreeInteractions.js",
   "./ui/screenInteractions.js",
   "./ui/sharedScreenInteractionBinders.js",
