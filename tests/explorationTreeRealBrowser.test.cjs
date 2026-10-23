@@ -87,6 +87,9 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
      await page.locator(".understanding-link").click();
      await page.locator(".screen--exploration-tree").waitFor({timeout:20000});
      assert.match(await page.locator(".et-status").textContent(),/今回の走り/);
+     const diag=await page.evaluate(()=>({hash:location.hash,header:document.querySelector(".mobile-topbar")?.outerHTML.slice(0,1100)||"",shell:document.querySelector(".app-shell")?.className||""}));
+     console.log("EXPLORATION_RESULT_ROUNDTRIP_DIAG",JSON.stringify(diag));
+     assert.match(diag.hash,/^#\/exploration-tree\?recordId=et-smoke-run/);
      const back=page.locator(".mobile-topbar__back");
      assert.match(await back.getAttribute("href"),/^#\/result\?recordId=et-smoke-run/);
     }
