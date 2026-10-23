@@ -56,6 +56,23 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
     await page.goto(BASE+"/#/result",{waitUntil:"domcontentloaded"});
     await page.locator(".screen-layout--result").waitFor({timeout:20000});
     await checkSingleRow("result");
+    if(width===390){
+     // Exercise the actual stored-record -> Result -> Explore -> Result path.
+     await page.evaluate(()=>{
+      const record={id:"et-smoke-run",date:"2026-10-22",activityType:"run",distanceKm:5,durationMinutes:30,
+       course:{name:"Regression route",gradeKnowledge:"UNKNOWN"}};
+      localStorage.setItem("runner-load-app-new-v1-records-v1",JSON.stringify([record]));
+     });
+     await page.goto(BASE+"/#/result?recordId=et-smoke-run",{waitUntil:"domcontentloaded"});
+     await page.locator(".understanding-link").waitFor({timeout:25000});
+     const entry=await page.locator(".understanding-link").getAttribute("href");
+     assert.match(entry,/^#\/exploration-tree\?recordId=et-smoke-run/,String(entry));
+     await page.locator(".understanding-link").click();
+     await page.locator(".screen--exploration-tree").waitFor({timeout:20000});
+     assert.match(await page.locator(".et-status").textContent(),/今回の走り/);
+     const back=page.locator(".mobile-topbar__back");
+     assert.match(await back.getAttribute("href"),/^#\/result\?recordId=et-smoke-run/);
+    }
    }
    assert.deepEqual(errors,[],width+" JS exceptions");
    await page.close();
