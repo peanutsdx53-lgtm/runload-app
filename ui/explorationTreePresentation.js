@@ -60,12 +60,12 @@ function desktopMap(vm){
  const clouds=TREE_CATEGORIES.map(c=>'<ellipse cx="'+c.x+'" cy="'+c.y+'" rx="143" ry="129" fill="'+c.tint+'" opacity=".73"/>').join("");
  const connections=TREE_CATEGORIES.map(c=>'<path d="M'+center.join(" ")+' Q'+((center[0]+c.x)/2+20)+' '+((center[1]+c.y)/2-14)+' '+c.x+' '+c.y+'" stroke="'+c.color+'" opacity=".33" stroke-width="2.4" fill="none"/>').join("");
  const twigs=TREE_CATEGORIES.flatMap(c=>offsets.map(([x,y])=>'<path d="M'+c.x+' '+c.y+' L'+(c.x+x)+' '+(c.y+y)+'" stroke="'+c.color+'" opacity=".26" stroke-width="1.9"/>')).join("");
- const nodes=TREE_CATEGORIES.map(c=>'<div class="et-cluster-title" style="--et-color:'+c.color+';left:'+(c.x/920*100)+'%;top:'+((c.y-126)/650*100)+'%">'+h(c.name)+'</div>'+
- '<div class="et-cluster-hub" aria-hidden="true" style="--et-color:'+c.color+';--et-pale:'+c.tint+';left:'+(c.x/920*100)+'%;top:'+(c.y/650*100)+'%">'+glyph(c)+'</div>'+
+ const nodes=TREE_CATEGORIES.map(c=>'<div class="et-cluster" data-et-cluster="'+c.id+'"><div class="et-cluster-title" style="--et-color:'+c.color+';left:'+(c.x/920*100)+'%;top:'+((c.y-126)/650*100)+'%">'+h(c.name)+'</div>'+
+ '<button type="button" class="et-cluster-hub" data-et-map-category="'+c.id+'" aria-label="'+h(c.name)+'のテーマを見る" aria-pressed="false" style="--et-color:'+c.color+';--et-pale:'+c.tint+';left:'+(c.x/920*100)+'%;top:'+(c.y/650*100)+'%">'+glyph(c)+'</button>'+
  c.topics.map((name,i)=>{
   const [dx,dy]=offsets[i],id=c.id+"-"+String(i+1).padStart(2,"0");
   return '<button type="button" class="et-node'+(vm.highlights[id]?" is-glowing":"")+'" data-et-topic="'+id+'" aria-label="'+h(name)+'" style="--et-color:'+c.color+';--et-pale:'+c.tint+';left:'+((c.x+dx)/920*100)+'%;top:'+((c.y+dy)/650*100)+'%"><span class="et-node-mark" aria-hidden="true">'+(i+1)+'</span><span class="et-node-label">'+h(name)+'</span></button>';
- }).join("")).join("");
+ }).join("")+"</div>").join("");
  return '<div class="et-map-viewport" tabindex="0" aria-label="探究ツリー全体。マップ内は左右に移動できます。"><div class="et-map-stage">'+
  '<svg aria-hidden="true" class="et-map-lines" viewBox="0 0 920 650" preserveAspectRatio="none">'+clouds+connections+twigs+'</svg>'+
  '<span class="et-center"><span class="et-run-symbol" aria-hidden="true">✧</span><strong>'+(vm.record?"今回の走り":"自由探索")+'</strong><small>7つの分野</small></span>'+nodes+'</div></div>';
@@ -99,7 +99,7 @@ function library(services){
 }
 export function renderExplorationTreePresentation({services,context}){
  const topicRequested=String(context?.parameters?.get?.("topic")||"");
- const selected=findTopic(topicRequested)?.id||"04-01";
+ const selected=findTopic(topicRequested)?.id||"02-04";
  const recordId=String(context?.parameters?.get?.("recordId")||"");
  const vm=buildTreeView(services,recordId);
  const panels=TREE_TOPICS.map(t=>topicPanel(t,vm,services)).join("");
