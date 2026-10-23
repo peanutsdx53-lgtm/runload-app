@@ -19,6 +19,29 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
    page.on("pageerror",e=>errors.push(e.message));
    await page.goto(BASE+"/#/exploration-tree",{waitUntil:"domcontentloaded"});
    await page.locator(".screen--exploration-tree").waitFor({timeout:30000});
+   // First-use legal/onboarding gates must be completed before real taps;
+   // do not force pointer events through an active consent overlay.
+   if(width>=880){
+    const gate=page.locator("[data-desktop-first-use]");
+    if(await gate.count()){
+     await gate.locator("[data-desktop-terms-consent]").check();
+     await gate.locator("[data-desktop-terms-accept]").click();
+    }
+   }else{
+    await page.evaluate(()=>{
+     const dialog=document.querySelector("[data-mobile-onboarding]");
+     if(!dialog)return;
+     const next=dialog.querySelector("[data-onboarding-next]");
+     for(let i=0;i<3;i++)next?.click();
+     const consent=dialog.querySelector("[data-onboarding-consent]");
+     if(consent){consent.checked=true;consent.dispatchEvent(new Event("change",{bubbles:true}));}
+     dialog.querySelector("[data-onboarding-complete]")?.click();
+    });
+    await page.waitForFunction(()=>{
+     const dialog=document.querySelector("[data-mobile-onboarding]");
+     return !dialog||getComputedStyle(dialog).display==="none"||!dialog.getClientRects().length;
+    },null,{timeout:7000});
+   }
    const valid=await page.evaluate(()=>{
     const screen=document.querySelector(".screen--exploration-tree");
     return {categories:screen.querySelectorAll("[data-et-category]").length,
