@@ -96,7 +96,7 @@ export function renderPrimaryNavigation({ currentScreen, currentLocation, hasRes
     : w1Desktop && currentScreen === "simulation" ? "simulation"
     : resolveCurrentPrimaryScreen(currentScreen, currentLocation);
   const navItems = w1Mobile
-    ? [{screen:"home",label:"ホーム"},{screen:"record-input",label:"記録"},{screen:"history",label:"履歴"},{screen:"settings",label:"設定"}]
+    ? [{screen:"home",label:"ホーム"},{screen:"record-input",label:"記録"},{screen:"exploration-tree",label:"探究"},{screen:"history",label:"履歴"},{screen:"settings",label:"設定"}]
     : w1Desktop
       ? [...PRIMARY_DESTINATIONS.slice(0, -1), {screen:"simulation",label:"条件比較"}, PRIMARY_DESTINATIONS.at(-1)]
       : PRIMARY_DESTINATIONS;
@@ -129,6 +129,7 @@ export function resolveCurrentPrimaryScreen(currentScreen, currentLocation = nul
     return "result";
   }
   if (["plan", "consultation", "reading"].includes(currentScreen) && parameter("from") === "interpretation-room") return "result";
+  if (currentScreen === "reading" && parameter("origin") === "exploration-tree") return "exploration-tree";
   if (currentScreen === "consultation" && parameter("recordId")) return "result";
   if (currentScreen === "reading" && parameter("origin") === "result-condition") return "result";
   if (currentScreen === "support-guidance") {
