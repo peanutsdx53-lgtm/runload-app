@@ -1,4 +1,5 @@
 import { bindReading } from "./interactions/readingInteractions.js";
+import { bindExplorationTree } from "./interactions/explorationTreeInteractions.js";
 import { bindConsultation } from "./interactions/consultationInteractions.js";
 import { bindCourseEditor, bindCourseLibrary } from "./interactions/courseInteractions.js";
 import { bindHistory } from "./interactions/historyInteractions.js";
@@ -18,6 +19,7 @@ export const SHARED_SCREEN_INTERACTION_BINDERS = Object.freeze({
   plan: bindPlan,
   consultation: bindConsultation,
   reading: bindReading,
+  "exploration-tree": bindExplorationTree,
   settings: bindSettings,
   simulation: bindSimulation,
   "gpx-analysis": bindGpxAnalysis,

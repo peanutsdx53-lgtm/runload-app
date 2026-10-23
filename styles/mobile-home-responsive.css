@@ -517,3 +517,88 @@
 @media (max-width:350px) {
   .w6-home-clarity .w1-home-editor-row {padding:10px 8px;}
 }
+
+
+/* Exploration WIP: keep five mobile destinations in ONE row even at 320px.
+   Replaces the old <=350px 2x2 fallback for Home and ordinary routed screens.
+   Below 280 CSS px, preserve 56px targets and allow horizontal scrolling
+   rather than wrapping, clipping or shrinking touch targets below reachability. */
+@media screen and (max-width: 54.99rem) {
+  html body #app > .app-shell--w1-mobile:has(.w1-mobile-home) > .primary-navigation,
+  html body #app > .app-shell--w1-mobile:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) > .primary-navigation,
+  html body #app > .app-shell--w1-mobile:has(.screen--exploration-tree) > .primary-navigation {
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    grid-template-rows:minmax(0,1fr)!important;
+    gap:0!important;
+    min-height:64px!important;
+    height:auto!important;
+    max-width:100%;
+    padding:5px max(5px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(5px,env(safe-area-inset-left))!important;
+    align-items:stretch;
+    overflow-x:visible;
+    overflow-y:visible;
+  }
+  html body #app > .app-shell--w1-mobile:has(.w1-mobile-home) > .primary-navigation .primary-navigation__link,
+  html body #app > .app-shell--w1-mobile:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) > .primary-navigation .primary-navigation__link,
+  html body #app > .app-shell--w1-mobile:has(.screen--exploration-tree) > .primary-navigation .primary-navigation__link {
+    display:grid!important;
+    grid-template-rows:22px auto!important;
+    gap:2px!important;
+    align-content:center!important;
+    justify-items:center!important;
+    min-width:0!important;
+    min-height:52px!important;
+    padding:5px 1px!important;
+    text-align:center;
+  }
+  html body #app > .app-shell--w1-mobile > .primary-navigation .primary-navigation__label {
+    display:block;
+    font-size:clamp(10px,2.8vw,12px)!important;
+    line-height:1.2;
+    font-weight:750;
+    white-space:nowrap!important;
+    min-width:0;
+  }
+  html body #app > .app-shell--w1-mobile > .primary-navigation .primary-navigation__icon {
+    width:20px;
+    height:20px;
+  }
+  /* Exploration uses a routed-screen section rather than screen-layout. */
+  html body #app > .app-shell--w1-mobile:has(.screen--exploration-tree) {
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));
+  }
+  html body #app > .app-shell--w1-mobile:has(.screen--exploration-tree) > .primary-navigation {
+    position:fixed!important;
+    inset:auto 8px calc(8px + env(safe-area-inset-bottom)) 8px!important;
+    transform:none!important;
+    width:auto!important;
+    border:1px solid var(--color-line);
+    border-radius:16px;
+    background:var(--color-surface);
+    z-index:50;
+  }
+}
+@media screen and (max-width:350px) {
+  /* Preserve the existing single-row design on genuinely narrow iPhones. */
+  html body #app > .app-shell--w1-mobile:has(.w1-mobile-home) > .primary-navigation,
+  html body #app > .app-shell--w1-mobile:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) > .primary-navigation,
+  html body #app > .app-shell--w1-mobile:has(.screen--exploration-tree) > .primary-navigation {
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    grid-template-rows:1fr!important;
+  }
+  html body #app > .app-shell--w1-mobile:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) {
+    padding-bottom:calc(84px + env(safe-area-inset-bottom))!important;
+  }
+}
+@media screen and (max-width:279px) {
+  html body #app > .app-shell--w1-mobile:has(.w1-mobile-home) > .primary-navigation,
+  html body #app > .app-shell--w1-mobile:has(.screen-layout:not(.screen-layout--home):not(.screen-layout--record)) > .primary-navigation,
+  html body #app > .app-shell--w1-mobile:has(.screen--exploration-tree) > .primary-navigation {
+    grid-template-columns:repeat(5,minmax(56px,1fr))!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    overscroll-behavior-x:contain;
+    scrollbar-width:thin;
+  }
+}

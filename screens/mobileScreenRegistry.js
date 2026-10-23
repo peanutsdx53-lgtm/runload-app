@@ -1,4 +1,5 @@
 import { renderReadingScreen } from "./mobile/readingScreen.js";
+import { renderExplorationTreeScreen } from "./explorationTreeScreen.js";
 import { renderInterpretationRoomScreen } from "./mobile/interpretationRoomScreen.js";
 import { renderBodyPartDetailScreen } from "./mobile/bodyPartDetailScreen.js";
 import { renderRecordInputScreen } from "./mobile/recordInputScreen.js";
@@ -23,6 +24,7 @@ export const MOBILE_SCREEN_RENDERERS = Object.freeze({
   "body-part-detail": renderBodyPartDetailScreen,
   "interpretation-room": renderInterpretationRoomScreen,
   reading: renderReadingScreen,
+  "exploration-tree": renderExplorationTreeScreen,
   result: renderResultScreen,
   history: renderHistoryScreen,
   settings: renderSettingsScreen,

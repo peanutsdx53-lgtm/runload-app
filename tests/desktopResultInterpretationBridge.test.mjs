@@ -23,7 +23,9 @@ test('PC-RESULT-HAS-DIRECT-NEXT-RUN-BRIDGE',()=>{
 test('PC-REGION-SELECTION-CARRIES-INTO-INTERPRETATION',()=>{
   assert.match(interactions,/data-result-next-interpretation/);
   assert.match(interactions,/hash\.set\("regionId", regionId\)/);
-  assert.match(interactions,/#\/interpretation-room\?\$\{hash\.toString\(\)\}/);
+  assert.match(interactions,/resolveResultExplorationEntry/);
+  assert.match(interactions,/entryLink\.setAttribute\("href",candidate\.href\)/);
+  assert.match(interactions,/const route = url\.hash\.split/);
 });
 
 test('PC-NEXT-BRIDGE-IS-DESKTOP-SPECIFIC',()=>{
