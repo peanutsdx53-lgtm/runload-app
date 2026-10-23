@@ -3,6 +3,7 @@ export const PRIMARY_DESTINATIONS = Object.freeze([
   Object.freeze({ screen: "record-input", label: "記録", description: "走行・休養を残す", icon: "record" }),
   Object.freeze({ screen: "result", label: "結果", description: "今回の結果を見る", requiresRecord: true, icon: "result" }),
   Object.freeze({ screen: "history", label: "履歴", description: "保存した記録を比べる", icon: "history" }),
+  Object.freeze({ screen: "exploration-tree", label: "探究", description: "知識と走りをつなげる", icon: "explore" }),
   Object.freeze({ screen: "more", label: "その他", description: "設定・共有・読みもの", icon: "more" }),
 ]);
 
@@ -180,6 +181,8 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
     return { title: "公的サポート", backHref: "#/more", backLabel: "その他" };
   }
 
+  if (screen === "exploration-tree") return { title: "探究ツリー", backHref: "#/home", backLabel: "ホーム" };
+
   if (screen === "reading") {
     const origin = parameter("origin");
     const regionId = parameter("regionId");
@@ -193,6 +196,7 @@ export function resolveScreenContextNavigation(screen = "", currentLocation = nu
         backLabel: "部位結果",
       };
     }
+    if (origin === "exploration-tree") return { title: "読みもの", backHref: screenHref("exploration-tree", { recordId }), backLabel: "探究ツリー" };
     if (articleId) return { title: "読みもの", backHref: "#/reading", backLabel: "読みもの" };
     if (origin === "home") return { title: "読みもの", backHref: "#/home", backLabel: "ホーム" };
     return { title: "読みもの", backHref: "#/more", backLabel: "その他" };
@@ -240,6 +244,7 @@ export const FEATURE_DESTINATION_GROUPS = Object.freeze([
     label: "結果を使う",
     items: Object.freeze([
       Object.freeze({ screen: "simulation", label: "条件を比べる", description: "条件を変えて同じ計算モデルで確認" }),
+      Object.freeze({ screen: "exploration-tree", label: "探究ツリー", description: "走りと知識のつながりを探す" }),
     ]),
   }),
   Object.freeze({
