@@ -168,7 +168,7 @@
 .et-cluster .et-cluster-hub{pointer-events:auto;cursor:pointer;font-family:inherit}
 .et-cluster:not(.is-active) .et-node{display:none!important}
 .et-cluster.is-active .et-cluster-hub{outline:3px solid var(--et-color);outline-offset:3px;box-shadow:0 0 0 8px var(--et-pale),0 8px 24px #2e598e30}
-.et-cluster.is-active .et-node{width:132px}
+.et-cluster.is-active .et-node{width:132px;pointer-events:auto}
 .et-cluster.is-active .et-node-label{font-size:13px;line-height:1.38;max-width:132px}
 .et-cluster-title{font-size:16px;font-weight:900}
 @media (max-width:54.99rem){
