@@ -1,6 +1,28 @@
-export function bindDesktopResult() {
+import { resolveResultExplorationEntry } from "../explorationTreeData.js";
+
+export function bindDesktopResult({ services } = {}) {
   const consoleRoot = document.querySelector(".pc-result-console");
   if (!consoleRoot) return null;
+  // The comparison renderer is science-protected: switch only its standard
+  // Result navigation after the real support decision has been read.
+  // The original route remains available for non-normal and unverified cases.
+  const entryLink=consoleRoot.querySelector("[data-result-next-interpretation]");
+  if (entryLink) {
+    const params=new URLSearchParams((entryLink.getAttribute("href")||"").split("?")[1]||"");
+    const id=String(params.get("recordId")||"");
+    const exp=id?services?.workflows?.records?.loadExperience?.(id):null;
+    const candidate=resolveResultExplorationEntry({
+      services,
+      record:exp?.record||null,
+      origin:"result",
+      regionId:String(params.get("regionId")||""),
+    });
+    if(candidate.mode==="EXPLORATION") {
+      entryLink.setAttribute("href",candidate.href);
+      const title=entryLink.querySelector("strong");
+      if(title)title.textContent=candidate.label;
+    }
+  }
   const cssEscape = (value) => globalThis.CSS?.escape ? CSS.escape(value) : String(value).replace(/["\\]/g, "\\$&");
   const linked = (regionId) => consoleRoot.querySelectorAll(`[data-region-id="${cssEscape(regionId)}"]`);
   const setSelectedRegion = (regionId) => {
