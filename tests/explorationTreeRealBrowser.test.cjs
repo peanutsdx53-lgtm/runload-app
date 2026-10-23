@@ -46,7 +46,7 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
    // accepting terms. Close it through its real control before tree taps.
    const guide=page.locator(".guide-dialog");
    if(await guide.count()){
-    await guide.locator("[data-guide-close]").first().click();
+    await guide.locator(".guide-dialog__close").click();
     await guide.waitFor({state:"detached",timeout:7000});
    }
    const valid=await page.evaluate(()=>{
