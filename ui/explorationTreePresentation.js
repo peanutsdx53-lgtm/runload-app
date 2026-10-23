@@ -22,7 +22,7 @@ function evidence(topic,vm){
 function topicPanel(t,vm){
  const c=categoryById(t.category),article=vm.articles[t.id],facts=evidence(t,vm);
  const recordLink=vm.record?dest("result",{recordId:vm.record.id}):dest("record-input");
- const articleHref=article?dest("reading",{articleId:article.id,origin:"exploration-tree",recordId:vm.record?.id||""}):dest("reading",{origin:"exploration-tree"});
+ const articleHref=article?dest("reading",{articleId:article.id,origin:"exploration-tree",recordId:vm.record?.id||"",topic:t.id}):dest("reading",{origin:"exploration-tree",recordId:vm.record?.id||"",topic:t.id});
  const hasSignal=Object.hasOwn(vm.highlights,t.id);
  return '<article class="et-topic-panel" data-et-detail="'+h(t.id)+'" hidden style="--et-color:'+c.color+';--et-pale:'+c.tint+'">'+
   '<div class="et-panel-hero">'+symbol(c)+'<div><p>'+h(c.name)+'</p><h2>'+h(t.name)+'</h2><span>興味を持ったところから自由に探せます</span></div></div>'+
@@ -56,13 +56,18 @@ export function renderExplorationTreePresentation({services,context}){
  const requestedRecordId=String(context?.parameters?.get?.("recordId")||"");
  const vm=buildTreeView(services,requestedRecordId);
  const panels=TREE_TOPICS.map(t=>topicPanel(t,vm)).join("");
+ const routeOrigin=String(context?.parameters?.get?.("origin")||"");
+ const regionId=String(context?.parameters?.get?.("regionId")||"");
+ const existingHref=vm.record?dest("interpretation-room",{recordId:vm.record.id,origin:routeOrigin||"result",regionId}):"";
+ const existingFlow=existingHref?'<a class="et-existing-flow" href="'+h(existingHref)+'">これまでの見比べ画面を開く ↗</a>':"";
+ const supportNotice=vm.record&&!vm.allowed?'<div class="et-priority-notice" role="note"><strong>この記録では確認の案内を優先します。</strong><p>記録の安全に関する案内や表示条件を、探究テーマだけから判断しないでください。</p>'+existingFlow+'</div>':"";
  const recordStatus=vm.record?'<span class="et-status">今回の走り：'+h(vm.record.date)+'</span>':'<span class="et-status">記録がなくても探索できます</span>';
  return '<section class="screen screen--exploration-tree et" data-exploration-tree data-et-initial-topic="'+selected+'">'+
-  '<header class="et-head"><div><p class="et-kicker">DISCOVER YOUR RUN</p><h1>探究ツリー</h1><p>走りから、新しい発見へ。興味のある分野を自由に探せます。</p></div><div class="et-head-tools">'+recordStatus+'<a href="#/reading" class="et-text-link">読みもの ↗</a></div></header>'+
+  '<header class="et-head"><div><p class="et-kicker">DISCOVER YOUR RUN</p><h1>探究ツリー</h1><p>走りから、新しい発見へ。興味のある分野を自由に探せます。</p></div><div class="et-head-tools">'+recordStatus+'<a href="#/reading" class="et-text-link">読みもの ↗</a></div></header>'+supportNotice+
   '<div class="et-desktop"><div class="et-map-card"><div class="et-map-toolbar"><div><h2>つながる7つの世界</h2><p>28のテーマから気になる問いを選んでください</p></div><span class="et-map-caption">✧ 光るノードは記録との接点</span></div>'+nodeMap(vm)+'<div class="et-map-bottom">探究ツリーは自由探索です。選択や閲覧を強制しません。</div></div>'+
   '<aside class="et-detail" aria-label="選択したテーマの詳細">'+panels+'</aside></div>'+
   '<div class="et-mobile"><div class="et-mobile-page" data-et-mobile-page="map"><div class="et-mobile-intro"><h2>興味のある分野を探す</h2><p>気になる分野を選ぶと、そこから枝をたどれます。</p></div><div class="et-category-grid">'+categoryCards(vm)+'</div></div>'+
   TREE_CATEGORIES.map(c=>'<div class="et-mobile-page" data-et-mobile-page="branch-'+c.id+'" hidden><button class="et-mobile-back" type="button" data-et-back="map">‹ すべての分野へ</button><div class="et-mobile-branch-title" style="--et-color:'+c.color+';--et-pale:'+c.tint+'">'+symbol(c)+'<h2>'+h(c.name)+'</h2></div><div class="et-branch-list">'+c.topics.map((name,i)=>{const id=c.id+"-"+String(i+1).padStart(2,"0");return '<button type="button" class="et-branch-item" data-et-mobile-topic="'+id+'"><span>'+h(name)+'</span>'+(vm.highlights[id]?'<span class="et-branch-glow">✧ 記録に関連</span>':'')+'<span aria-hidden="true">›</span></button>';}).join("")+'</div></div>').join("")+
   '<div class="et-mobile-page et-mobile-detail" data-et-mobile-page="detail" hidden><button class="et-mobile-back" type="button" data-et-back="branch">‹ テーマ一覧へ</button><div class="et-mobile-detail-panels">'+panels+'</div></div></div>'+
-  '<p class="et-disclaimer">科学・権利審査未完のテーマ／コラム接続は試験表示です。実記録と一般情報を混同しないようにしてください。</p></section>';
+  '<div class="et-migration-footer">'+(!supportNotice?existingFlow:"")+'</div><p class="et-disclaimer">科学・権利審査未完のテーマ／コラム接続は試験表示です。実記録と一般情報を混同しないようにしてください。</p></section>';
 }
