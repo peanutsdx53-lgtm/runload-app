@@ -48,3 +48,22 @@ export function buildTreeView(services,requestedRecordId=""){
   rof:Object.freeze({pre:finite(rof?.pre)?rof.pre:null,post:finite(rof?.post)?rof.post:null,delta:finite(rof?.delta)?rof.delta:null}),
   safety,allowed,highlights:Object.freeze(links),articles:Object.freeze(availableArticle)});
 }
+
+
+// Transition gate: only ordinary run records enter Explore from Result.
+// Every non-normal or unverified state continues to the existing interpretation
+// workflow, preserving its support/consult/rest handling while features migrate.
+export function resolveResultExplorationEntry({ services, record, origin="result", regionId="" }={}) {
+ const id=String(record?.id||"");
+ const params=new URLSearchParams({recordId:id,origin});
+ if(regionId)params.set("regionId",String(regionId));
+ const oldHref="#/interpretation-room?"+params.toString();
+ const experience=id?services?.workflows?.records?.loadExperience?.(id):null;
+ const safety=String(experience?.supportDecision?.route||"unknown").toLowerCase();
+ const isEligible=Boolean(id&&record?.activityType==="run"&&experience?.record?.id===id&&safety==="normal");
+ return Object.freeze({
+  href:isEligible?"#/exploration-tree?"+params.toString():oldHref,
+  label:isEligible?"探究ツリーへ":"今回を見比べる",
+  mode:isEligible?"EXPLORATION":"EXISTING_INTERPRETATION",
+ });
+}
