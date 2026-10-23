@@ -41,6 +41,8 @@ const BASE="http://127.0.0.1:4173";
     }
     const guide=page.locator(".guide-dialog");
     if(await guide.count())await guide.locator(".guide-dialog__close").click();
+    await page.goto(BASE+"/#/exploration-tree",{waitUntil:"domcontentloaded"});
+    await page.locator(".screen--exploration-tree").waitFor({timeout:20000});
     await page.screenshot({path:path.join(out,label+"-map.png"),fullPage:true});
     if(width<880){
      await page.locator("[data-et-category='04']").click();
@@ -48,6 +50,7 @@ const BASE="http://127.0.0.1:4173";
      await page.locator("[data-et-mobile-topic='04-01']").click();
      await page.screenshot({path:path.join(out,label+"-detail.png"),fullPage:true});
     }else{
+     await page.locator("[data-et-map-category='02']").click();
      await page.locator("[data-et-topic='02-04']").click();
      await page.screenshot({path:path.join(out,label+"-detail.png"),fullPage:true});
     }
