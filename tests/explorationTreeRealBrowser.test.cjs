@@ -36,12 +36,26 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
     await page.evaluate(()=>document.querySelector('.et-detail [data-et-detail="01-01"] [data-et-tab="article"]').click());
     assert.equal(await page.locator(".et-detail [data-et-detail='01-01'] [data-et-tab-panel='article']").isVisible(),true);
    }else{
+    async function checkSingleRow(routeLabel){
+      const layout=await page.locator(".app-shell--w1-mobile > .primary-navigation").evaluate(nav=>{
+       const links=[...nav.querySelectorAll(".primary-navigation__link")].filter(el=>getComputedStyle(el).display!=="none");
+       const tops=links.map(el=>el.getBoundingClientRect().top);
+       const rect=nav.getBoundingClientRect();
+       return {names:links.map(el=>el.dataset.navigationScreen),tops,navWidth:rect.width,scrollWidth:nav.scrollWidth,clientWidth:nav.clientWidth};
+      });
+      assert.deepEqual(layout.names,["home","record-input","exploration-tree","history","settings"],width+" "+routeLabel+" destinations");
+      assert.ok(Math.max(...layout.tops)-Math.min(...layout.tops)<2,width+" "+routeLabel+" navigation wrapped to two rows: "+JSON.stringify(layout));
+    }
+    await checkSingleRow("exploration");
     await page.evaluate(()=>document.querySelector("[data-et-category='04']").click());
     assert.equal(await page.locator("[data-et-mobile-page='branch-04']").isVisible(),true);
     await page.evaluate(()=>document.querySelector("[data-et-mobile-topic='04-01']").click());
     assert.equal(await page.locator("[data-et-mobile-page='detail']").isVisible(),true);
     await page.evaluate(()=>document.querySelector("[data-et-back='branch']").click());
     assert.equal(await page.locator("[data-et-mobile-page='branch-04']").isVisible(),true);
+    await page.goto(BASE+"/#/result",{waitUntil:"domcontentloaded"});
+    await page.locator(".screen-layout--result").waitFor({timeout:20000});
+    await checkSingleRow("result");
    }
    assert.deepEqual(errors,[],width+" JS exceptions");
    await page.close();
