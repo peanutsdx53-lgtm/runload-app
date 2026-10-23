@@ -54,7 +54,9 @@ function interpretationReturnContext(parameter, recordId = "") {
 }
 
 export function resolveScreenContextNavigation(screen = "", currentLocation = null) {
-  if (PRIMARY_SCREEN_IDS.has(screen)) return null;
+  // Explore is a primary destination but still needs a contextual return
+  // when entered from a saved Result (and a Home return from direct entry).
+  if (PRIMARY_SCREEN_IDS.has(screen) && screen !== "exploration-tree") return null;
 
   const parameter = (name) => locationParameter(currentLocation, name);
   const recordId = parameter("recordId");
