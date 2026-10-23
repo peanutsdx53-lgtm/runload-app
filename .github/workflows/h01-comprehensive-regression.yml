@@ -67,6 +67,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Browser persistence, privacy, CSP, and mobile walk-jog regressions
         run: |
+          node tests/explorationTreeRealBrowser.test.cjs
           node tests/g01E02D04RealBrowser.test.cjs
           node tests/b04B05C04ColdOfflineRealBrowser.test.cjs
           node tests/g01CrossTabRealStorageEventBrowser.test.cjs
