@@ -42,6 +42,13 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
      return !dialog||getComputedStyle(dialog).display==="none"||!dialog.getClientRects().length;
     },null,{timeout:7000});
    }
+   // Desktop onboarding deliberately opens the introductory Guide after
+   // accepting terms. Close it through its real control before tree taps.
+   const guide=page.locator(".guide-dialog");
+   if(await guide.count()){
+    await guide.locator("[data-guide-close]").first().click();
+    await guide.waitFor({state:"detached",timeout:7000});
+   }
    const valid=await page.evaluate(()=>{
     const screen=document.querySelector(".screen--exploration-tree");
     return {categories:screen.querySelectorAll("[data-et-category]").length,
