@@ -48,7 +48,7 @@ async function run(browser,origin,width) {
     return !dialog||getComputedStyle(dialog).display==='none'||!dialog.getClientRects().length;
   },null,{timeout:5000});
   await page.waitForFunction(()=>[...document.querySelectorAll('link[rel=stylesheet]')].some(l=>l.href.includes('mobile-zoom-reflow.css')),{timeout:12000});
-  // Test the APPROVED W6 dashboard and four primary destinations, not retired
+  // Test the W6 dashboard and five primary destinations, not retired
   // OS-like home widgets or the deleted mobile-home-dock implementation.
   const home=await page.evaluate(()=>{
     const nav=document.querySelector('.app-shell--w1-mobile > .primary-navigation');
@@ -60,25 +60,39 @@ async function run(browser,origin,width) {
     });
     return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,
       pageHeight:document.documentElement.scrollHeight,viewportHeight:innerHeight,
-      navPosition:getComputedStyle(nav).position,
+      navPosition:getComputedStyle(nav).position,navScrollable:nav.scrollWidth>nav.clientWidth+2,navScrollWidth:nav.scrollWidth,navClientWidth:nav.clientWidth,
       navRect:{left:box.left,right:box.right,top:box.top,bottom:box.bottom},items,
       cards:document.querySelectorAll('.home-dashboard-cards .home-dashboard-card').length,
       editor:!!document.querySelector('[data-w1-edit-home]'),
       start:!!document.querySelector('.w1-mobile-hero [href="#/record-input"]')};
   });
-  assert.deepEqual(home.items.map(x=>x.route),['home','record-input','history','settings'],JSON.stringify({width,home}));
+  assert.deepEqual(home.items.map(x=>x.route),['home','record-input','exploration-tree','history','settings'],JSON.stringify({width,home}));
   assert.ok(home.cards>0&&home.editor&&home.start,JSON.stringify({width,home,problem:'W6 dashboard not rendered'}));
   assert.ok(home.documentWidth<=width+2,JSON.stringify({width,home,problem:'unwanted horizontal scroll'}));
   for(let i=0;i<home.items.length;i++){
     const item=home.items[i];
     assert.ok(item.width>=28&&item.height>=40,JSON.stringify({width,item}));
-    assert.ok(item.left>=-1&&item.right<=width+1,JSON.stringify({width,item,problem:'navigation outside viewport'}));
+    if(width>=280)assert.ok(item.left>=-1&&item.right<=width+1,JSON.stringify({width,item,problem:'navigation outside viewport'}));
     for(let j=i+1;j<home.items.length;j++)
       assert.equal(overlap(home.items[i],home.items[j]),false,JSON.stringify({width,home,i,j}));
   }
-  // The approved W6 dashboard places its navigation in the document flow
-  // at all mobile widths; the <=350px variant uses 2x2 buttons. Verify
-  // scrolling reveals every destination without covering the last card.
+  const navRows=home.items.map(item=>item.top);
+  assert.ok(Math.max(...navRows)-Math.min(...navRows)<2,JSON.stringify({width,home,problem:'navigation must stay one row'}));
+  if(width<280){
+    assert.equal(home.navScrollable,true,JSON.stringify({width,home,problem:'high zoom must allow navigation panning'}));
+    for(const item of home.items)assert.ok(item.width>=44,JSON.stringify({width,item,problem:'target too narrow'}));
+    const endItem=await page.evaluate(()=>{
+      const nav=document.querySelector('.app-shell--w1-mobile > .primary-navigation');
+      nav.scrollLeft=nav.scrollWidth;
+      const last=nav.querySelector('[data-navigation-screen="settings"]');
+      const a=last.getBoundingClientRect(),b=nav.getBoundingClientRect();
+      return {right:a.right,viewportRight:b.right,left:a.left,viewportLeft:b.left};
+    });
+    assert.ok(endItem.right<=endItem.viewportRight+1&&endItem.left>=endItem.viewportLeft-1,JSON.stringify({width,endItem,problem:'last navigation item unreachable'}));
+  }
+  // The dashboard navigation remains in normal flow. At high zoom the five
+  // destinations stay on one row with an internal scroller, preserving touch
+  // targets rather than breaking into two vertically stacked rows.
   assert.equal(home.navPosition,'static',JSON.stringify({width,home}));
   {
     assert.ok(home.pageHeight>home.viewportHeight+50,JSON.stringify({width,home,problem:'page should be scrollable'}));
