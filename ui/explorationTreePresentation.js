@@ -83,7 +83,7 @@ function mobileTree(vm){
   return '<button type="button" class="et-mini-node'+(count?" has-signal":"")+'" data-et-category="'+c.id+'" style="--et-color:'+c.color+';--et-pale:'+c.tint+';left:'+x+'%;top:'+y+'%" aria-pressed="false">'+glyph(c)+'<span>'+h(c.name)+'</span></button>';
  }).join("");
  return '<div class="et-mini-tree" aria-label="7分野の探究ツリー"><svg aria-hidden="true" class="et-mini-lines" viewBox="0 0 100 100" preserveAspectRatio="none">'+lines+'</svg>'+
- '<div class="et-mini-center" aria-hidden="true"><span>✧</span><strong>今回の走り</strong></div>'+nodes+'</div>';
+ '<div class="et-mini-center" aria-hidden="true"><span>✧</span><strong>'+(vm.record?"今回の走り":"自由に探す")+'</strong></div>'+nodes+'</div>';
 }
 function mobileCategories(){
  return TREE_CATEGORIES.map(c=>'<div class="et-category-topic-list" data-et-topic-list="'+c.id+'" hidden>'+
