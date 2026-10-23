@@ -101,4 +101,4 @@
 .et-priority-notice strong{display:block;font-size:14px;line-height:1.45}
 .et-priority-notice p{font-size:12px;line-height:1.65;color:#584b71;margin:5px 0 8px}
 .et-existing-flow{display:inline-flex;align-items:center;min-height:42px;padding:9px 11px;border-radius:11px;border:1px solid #d9e5f6;color:#255e9c;font-size:12px;font-weight:800;background:#fff}
-.et-migration-footer{margin:14px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+.et-compat-footer{margin:14px 0 0;display:flex;flex-wrap:wrap;gap:8px}
