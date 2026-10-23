@@ -63,12 +63,27 @@ test("screen is a standard shell child without duplicate header or global nav",(
  assert.doesNotMatch(view,/<header class="app-header"/);
  assert.doesNotMatch(view,/<nav class="primary-navigation"/);
 });
-test("record and existing Reading URLs carry the proper return context",()=>{
- const articles=[{id:"talk-test-as-subjective-cue",title:"Article",sources:[{title:"Reference",sourceId:"one"}]}];
- const html=renderExplorationTreeScreen({services:services(run,{pre:0,post:4},"normal",articles),context:{parameters:new URLSearchParams({recordId:"run-1",topic:"01-01"})}});
- assert.match(html,/#\/result\?recordId=run-1/);
- assert.match(html,/origin=exploration-tree/);
- assert.match(html,/#\/reading\?articleId=talk-test-as-subjective-cue/);
+test("existing source-backed Reading is opened inside Explore without a route change",()=>{
+ const articles=[{id:"talk-test-as-subjective-cue",title:"Article",summary:"Short summary",body:["Main body"],sources:[{title:"Reference",sourceId:"one"}]}];
+ const svc=services(run,{pre:0,post:4},"normal",articles);
+ svc.column.findById=id=>articles.find(a=>a.id===id)||null;
+ const html=renderExplorationTreeScreen({services:svc,context:{parameters:new URLSearchParams({recordId:"run-1",topic:"01-01"})}});
+ assert.match(html,/今回の走り/);
+ assert.match(html,/Article/);
+ assert.match(html,/Short summary/);
+ assert.match(html,/Main body/);
+ assert.match(html,/引用元/);
+ assert.match(html,/読みものを探す/);
+ assert.doesNotMatch(html,/#\/reading\?/);
+});
+test("mobile tree visibly contains seven tappable colored branches, not a menu-only imitation",()=>{
+ const html=renderExplorationTreeScreen({services:services(),context:{parameters:new URLSearchParams()}});
+ assert.match(html,/class="et-mini-tree"/);
+ assert.match(html,/class="et-mini-lines"/);
+ assert.equal((html.match(/class="et-mini-node/g)||[]).length,7);
+ assert.equal((html.match(/data-et-topic-list=/g)||[]).length,7);
+ assert.match(html,/data-et-mobile-inline-detail/);
+ assert.doesNotMatch(html,/data-et-mobile-page="branch-/);
 });
 test("article source and user data are HTML-escaped",()=>{
  const risky={...run,date:'<svg onload="alert(1)">'};
@@ -95,13 +110,13 @@ test("transition preserves selected body region and direct access to existing in
  const valid=resolveResultExplorationEntry({services:services(run),record:run,regionId:"BA-DISP-023"});
  assert.match(valid.href,/regionId=BA-DISP-023/);
  const html=renderExplorationTreeScreen({services:services(run),context:{parameters:new URLSearchParams("recordId=run-1&origin=result&regionId=BA-DISP-023")}});
- assert.match(html,/これまでの見比べ画面を開く/);
+ assert.doesNotMatch(html,/これまでの見比べ画面を開く/);\n assert.doesNotMatch(html,/et-existing-flow/);
  assert.match(html,/#\/interpretation-room\?recordId=run-1/);
 });
 test("support-priority direct entry displays guidance before the knowledge map",()=>{
  const html=renderExplorationTreeScreen({services:services(run,null,"urgent"),context:{parameters:new URLSearchParams("recordId=run-1&origin=result")}});
  assert.match(html,/et-priority-notice/);
- assert.match(html,/案内を優先/);
+ assert.match(html,/身体の確認を優先/);\n assert.match(html,/安全に関する案内を確認/);
  assert.doesNotMatch(html,/class="et-node is-glowing"/);
 });
 
