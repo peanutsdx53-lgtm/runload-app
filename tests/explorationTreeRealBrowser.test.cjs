@@ -1,8 +1,16 @@
 // Real browser smoke against the assembled RunLoad runtime; run with a local HTTP server.
 const assert=require("node:assert/strict");
 const {chromium}=require("playwright");
+const {spawn}=require("node:child_process");
 const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
 (async()=>{
+ let server=null;
+ async function ready(){try{return (await fetch(BASE+"/index.html")).ok;}catch{return false;}}
+ if(!await ready()){
+  server=spawn("python3",["-m","http.server","4173","--bind","127.0.0.1"],{cwd:process.cwd(),stdio:"ignore"});
+  for(let i=0;i<40&&!await ready();i++)await new Promise(resolve=>setTimeout(resolve,150));
+  assert.equal(await ready(),true,"local RunLoad HTTP server must be reachable");
+ }
  const browser=await chromium.launch({headless:true});
  try{
   for(const [width,height] of [[1600,900],[1280,800],[390,844],[320,640]]){
@@ -39,5 +47,5 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
    await page.close();
   }
   console.log("EXPLORATION_TREE_REAL_BROWSER_PASS=4_VIEWPORTS");
- }finally{await browser.close();}
+ }finally{await browser.close();server?.kill();}
 })().catch(e=>{console.error(e);process.exitCode=1});
