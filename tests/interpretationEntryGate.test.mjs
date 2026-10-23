@@ -30,7 +30,9 @@ await test('RESULT-GATE-USES-PLAIN-LANGUAGE',()=>{
   const gate=source.match(/<nav class="result-next-actions"[\s\S]*?<\/nav>/)?.[0]||'';
   assert.match(source,/今回を見比べる/);
   assert.match(gate,/interpretationLinkCopy/);
-  assert.match(gate,/origin=result/);
+  assert.match(source,/resolveResultExplorationEntry\(\{services,record,origin:"result"\}\)/);
+  assert.match(gate,/escapeHtml\(entry\.href\)/);
+  assert.match(source,/entry\.mode === "EXPLORATION"/);
   assert.doesNotMatch(gate,/RunLoad解釈|解釈エンジン|計算エンジン|Reference-100/);
 });
 
