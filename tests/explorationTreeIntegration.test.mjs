@@ -110,13 +110,15 @@ test("transition preserves selected body region and direct access to existing in
  const valid=resolveResultExplorationEntry({services:services(run),record:run,regionId:"BA-DISP-023"});
  assert.match(valid.href,/regionId=BA-DISP-023/);
  const html=renderExplorationTreeScreen({services:services(run),context:{parameters:new URLSearchParams("recordId=run-1&origin=result&regionId=BA-DISP-023")}});
- assert.doesNotMatch(html,/これまでの見比べ画面を開く/);\n assert.doesNotMatch(html,/et-existing-flow/);
- assert.match(html,/#\/interpretation-room\?recordId=run-1/);
+ assert.doesNotMatch(html,/これまでの見比べ画面を開く/);
+ assert.doesNotMatch(html,/et-existing-flow/);
+ assert.doesNotMatch(html,/#\/interpretation-room\?recordId=run-1/);
 });
 test("support-priority direct entry displays guidance before the knowledge map",()=>{
  const html=renderExplorationTreeScreen({services:services(run,null,"urgent"),context:{parameters:new URLSearchParams("recordId=run-1&origin=result")}});
  assert.match(html,/et-priority-notice/);
- assert.match(html,/身体の確認を優先/);\n assert.match(html,/安全に関する案内を確認/);
+ assert.match(html,/身体の確認を優先/);
+ assert.match(html,/安全に関する案内を確認/);
  assert.doesNotMatch(html,/class="et-node is-glowing"/);
 });
 
