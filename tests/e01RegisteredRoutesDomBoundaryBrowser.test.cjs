@@ -71,7 +71,8 @@ async function platformRun(browser,origin,mobile) {
     // W6 retired three mobile routes (plan/pace/departure) and the desktop plan route.
     // Keep a fixed registry count so a accidentally missing renderer cannot silently
     // reduce the number of security-probed screens.
-    assert.equal(routeKeys.length,21,JSON.stringify({mobile,routeKeys}));
+    assert.equal(routeKeys.length,22,JSON.stringify({mobile,routeKeys}));
+    assert.ok(routeKeys.includes('exploration-tree'),'Exploration Tree must be included in DOM security route inventory');
     for (const retired of ['plan','pace-tool','departure-check']) {
       assert.equal(routeKeys.includes(retired),false,JSON.stringify({mobile,retired,routeKeys}));
     }
