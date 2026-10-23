@@ -19,7 +19,9 @@ export function bindExplorationTree({root=document}={}){
   screen.dataset.etCurrentMobilePage=id;
  };
  select(known.has(screen.dataset.etInitialTopic)?screen.dataset.etInitialTopic:[...known][0]);
- showPage("map");
+ // Returning from a Reading article may specify its exact theme.
+ const requestedTopic=new URLSearchParams(window.location.hash.split("?")[1]||"").get("topic");
+ showPage(requestedTopic&&known.has(requestedTopic)?"detail":"map");
  const onClick=(event)=>{
   const b=event.target.closest?.("button");
   if(!b||!screen.contains(b))return;
