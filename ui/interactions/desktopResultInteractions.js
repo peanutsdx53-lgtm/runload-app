@@ -20,7 +20,8 @@ export function bindDesktopResult() {
       const url = new URL(nextLink.getAttribute("href"), window.location.href);
       const hash = new URLSearchParams(url.hash.split("?")[1] || "");
       hash.set("regionId", regionId);
-      nextLink.setAttribute("href", `#/interpretation-room?${hash.toString()}`);
+      const route = url.hash.split("?")[0] || "#/interpretation-room";
+      nextLink.setAttribute("href", `${route}?${hash.toString()}`);
     }
   };
   const setSummaryMode = (mode) => {
