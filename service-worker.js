@@ -1,4 +1,4 @@
-const CACHE_NAME = "running-record-app-runtime-2026.10.21.136";
+const CACHE_NAME = "running-record-app-runtime-2026.10.23.explore-branch-1";
 const CACHE_PREFIX = "running-record-app-";
 const COMMON_PRECACHE_URLS = [
   "./shared/valueUtilities.js",
@@ -57,6 +57,7 @@ const COMMON_PRECACHE_URLS = [
   "./screens/shared/courseLibraryContext.js",
   "./screens/historyScreen.js",
   "./screens/interpretationRoomScreen.js",
+  "./screens/explorationTreeScreen.js",
   "./screens/shared/homeScreenSupport.js",
   "./screens/runRouteScreen.js",
   "./screens/bodyTimelineScreen.js",
@@ -93,6 +94,7 @@ const COMMON_PRECACHE_URLS = [
   "./styles/settings-navigation.css",
   "./styles/interpretation-room.css",
   "./styles/self-understanding.css",
+  "./styles/exploration-tree.css",
   "./styles/interpretation-room-compact.css",
   "./styles/interpretation-loop.css",
   "./styles/interpretation-technical-details.css",
@@ -145,6 +147,8 @@ const COMMON_PRECACHE_URLS = [
   "./ui/recordPresentation.js",
   "./ui/restorePreviewPresentation.js",
   "./ui/screenArchitecture.js",
+  "./ui/explorationTreeData.js",
+  "./ui/interactions/explorationTreeInteractions.js",
   "./ui/screenInteractions.js",
   "./ui/sharedScreenInteractionBinders.js",
   "./ui/screenTutorial.js",
