@@ -95,3 +95,10 @@
 }
 @media (max-width:360px){.et .et-panel-actions{flex-direction:column}.et .et-panel-actions a{width:100%}}
 @media (prefers-reduced-motion:reduce){.et *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* Transition: preserve safety-first entry and access to the original review UI. */
+.et-priority-notice{margin:0 0 15px;padding:14px 16px;border:1px solid #d5cde4;border-radius:15px;background:#f9f6ff;color:#3c315b}
+.et-priority-notice strong{display:block;font-size:14px;line-height:1.45}
+.et-priority-notice p{font-size:12px;line-height:1.65;color:#584b71;margin:5px 0 8px}
+.et-existing-flow{display:inline-flex;align-items:center;min-height:42px;padding:9px 11px;border-radius:11px;border:1px solid #d9e5f6;color:#255e9c;font-size:12px;font-weight:800;background:#fff}
+.et-migration-footer{margin:14px 0 0;display:flex;flex-wrap:wrap;gap:8px}
