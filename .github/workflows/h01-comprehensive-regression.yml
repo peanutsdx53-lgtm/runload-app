@@ -55,12 +55,19 @@ jobs:
         run: |
           set -euo pipefail
           passed=0
+          failed=0
           for file in tests/*.test.mjs; do
             if [[ "$file" == *mobileWalkJogBrowserFlow.test.mjs ]]; then continue; fi
-            node "$file" >/tmp/h01-last-test.log 2>&1 || { echo "FAIL ${file}"; cat /tmp/h01-last-test.log; exit 1; }
-            passed=$((passed+1))
+            if node "$file" >/tmp/h01-last-test.log 2>&1; then
+              passed=$((passed+1))
+            else
+              echo "FAIL ${file}"
+              cat /tmp/h01-last-test.log
+              failed=$((failed+1))
+            fi
           done
-          echo "NON_BROWSER_MODULE_PASS=${passed}"
+          echo "NON_BROWSER_MODULE_PASS=${passed} FAIL=${failed}"
+          test "$failed" -eq 0
       - name: Prepare isolated real Chromium/Playwright runner
         run: |
           npm install --no-save playwright@1.55.0
