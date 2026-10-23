@@ -16,7 +16,7 @@ export function bindExplorationTree({root=document}={}){
  };
  const showPage=(id)=>{
   screen.querySelectorAll("[data-et-mobile-page]").forEach(p=>{p.hidden=p.dataset.etMobilePage!==id;});
-  screen.dataset.etMobilePage=id;
+  screen.dataset.etCurrentMobilePage=id;
  };
  select(known.has(screen.dataset.etInitialTopic)?screen.dataset.etInitialTopic:[...known][0]);
  showPage("map");
