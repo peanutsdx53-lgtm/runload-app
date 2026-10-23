@@ -22,7 +22,7 @@ const patterns = [
   ['Slack token', /\bxox[baprs]-[A-Za-z0-9-]{12,}\b/],
 ];
 let checks=0;
-assert.equal(files.length,336,'consolidated scientific v125 and experimental mobile radar without anatomy');
+assert.equal(files.length,341,'consolidated runtime plus five exploration-tree modules and stylesheet; no science code removed');
 assert.deepEqual(files.filter(x=>x.startsWith('core/runningEvidence/')).sort(),[
 'core/runningEvidence/runningEvidenceEngine.js',
 'core/runningEvidence/runningEvidenceProductBridge.js',
