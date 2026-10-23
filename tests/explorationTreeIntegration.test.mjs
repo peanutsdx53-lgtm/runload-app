@@ -85,11 +85,16 @@ test("mobile tree visibly contains seven tappable colored branches, not a menu-o
  assert.match(html,/data-et-mobile-inline-detail/);
  assert.doesNotMatch(html,/data-et-mobile-page="branch-/);
 });
-test("article source and user data are HTML-escaped",()=>{
- const risky={...run,date:'<svg onload="alert(1)">'};
- const html=renderExplorationTreeScreen({services:services(risky),context:{parameters:new URLSearchParams()}});
- assert.doesNotMatch(html,/<svg onload=/);
+test("in-place article content and source titles are escaped; unsafe source URLs are not linked",()=>{
+ const malicious={id:"talk-test-as-subjective-cue",title:'<svg onload="alert(1)">',summary:'<img src=x>',body:['<script>alert(1)</script>'],sources:[{title:'<em>Source</em>',sourceId:"x",url:"javascript:alert(1)"}]};
+ const svc=services({...run,date:'<svg onload="alert(1)">'},null,"normal",[malicious]);
+ svc.column.findById=()=>malicious;
+ const html=renderExplorationTreeScreen({services:svc,context:{parameters:new URLSearchParams()}});
+ assert.doesNotMatch(html,/<svg onload=|<script>|<img src=x>|href="javascript:/);
  assert.match(html,/&lt;svg/);
+ assert.match(html,/&lt;img/);
+ assert.match(html,/&lt;script/);
+ assert.match(html,/&lt;em&gt;Source/);
 });
 
 test("normal verified runs enter Explore; safety and rest remain in original review workflow",()=>{
