@@ -49,6 +49,10 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
     await guide.locator(".guide-dialog__close").click();
     await guide.waitFor({state:"detached",timeout:7000});
    }
+   // First-use onboarding may route to Home. Navigate back to the target
+   // screen so the visual/interaction test measures Explore itself.
+   await page.goto(BASE+"/#/exploration-tree",{waitUntil:"domcontentloaded"});
+   await page.locator(".screen--exploration-tree").waitFor({timeout:20000});
    const valid=await page.evaluate(()=>{
     const screen=document.querySelector(".screen--exploration-tree");
     return {categories:screen.querySelectorAll("[data-et-category]").length,
@@ -61,7 +65,8 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
    assert.equal(valid.hasPageOverflow,false,width+" document overflow");
    if(width>=880)assert.equal(valid.desktopNavigation,true,width+" uses real navigation");
    if(width>=880){
-    await page.evaluate(()=>document.querySelector('[data-et-topic="01-01"]').click());
+    await page.locator("[data-et-map-category='01']").click();
+    await page.locator("[data-et-topic='01-01']").click();
     assert.equal(await page.locator(".et-detail [data-et-detail='01-01']").isVisible(),true);
     const article=page.locator(".et-detail [data-et-detail='01-01'] .et-inline-article");
     assert.equal(await article.count(),1);
