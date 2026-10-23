@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {TREE_CATEGORIES,TREE_TOPICS,buildTreeView,resolveResultExplorationEntry} from "../ui/explorationTreeData.js";
 import {renderExplorationTreeScreen} from "../screens/explorationTreeScreen.js";
+import {resolveScreenContextNavigation} from "../ui/screenArchitecture.js";
 
 function services(record=null,rof=null,safetyRoute="normal",articles=[]){
  const exp=record?{record,supportDecision:{route:safetyRoute}}:null;
@@ -102,4 +103,14 @@ test("support-priority direct entry displays guidance before the knowledge map",
  assert.match(html,/et-priority-notice/);
  assert.match(html,/案内を優先/);
  assert.doesNotMatch(html,/class="et-node is-glowing"/);
+});
+
+test("Explore header preserves Result return despite being a primary destination",()=>{
+ const fromResult=resolveScreenContextNavigation("exploration-tree",{parameters:new URLSearchParams("recordId=run-1&origin=result")});
+ assert.equal(fromResult.backHref,"#/result?recordId=run-1");
+ const direct=resolveScreenContextNavigation("exploration-tree",{parameters:new URLSearchParams()});
+ assert.equal(direct.backHref,"#/home");
+ const article=resolveScreenContextNavigation("reading",{parameters:new URLSearchParams("origin=exploration-tree&recordId=run-1&topic=04-01")});
+ assert.match(article.backHref,/#\/exploration-tree\?/);
+ assert.match(article.backHref,/topic=04-01/);
 });
