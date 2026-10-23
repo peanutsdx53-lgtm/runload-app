@@ -1,4 +1,5 @@
 import { renderReadingScreen } from "./desktop/readingScreen.js";
+import { renderExplorationTreeScreen } from "./explorationTreeScreen.js";
 import { renderInterpretationRoomScreen } from "./desktop/interpretationRoomScreen.js";
 import { renderBodyPartDetailScreen } from "./desktop/bodyPartDetailScreen.js";
 import { renderRecordInputScreen } from "./desktop/recordInputScreen.js";
@@ -21,6 +22,7 @@ export const DESKTOP_SCREEN_RENDERERS = Object.freeze({
   "body-part-detail": renderBodyPartDetailScreen,
   "interpretation-room": renderInterpretationRoomScreen,
   reading: renderReadingScreen,
+  "exploration-tree": renderExplorationTreeScreen,
   result: renderResultScreen,
   history: renderHistoryScreen,
   settings: renderSettingsScreen,
