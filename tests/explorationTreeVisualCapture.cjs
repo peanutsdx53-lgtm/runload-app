@@ -40,7 +40,7 @@ const BASE="http://127.0.0.1:4173";
      });
     }
     const guide=page.locator(".guide-dialog");
-    if(await guide.count())await guide.locator("[data-guide-close]").first().click();
+    if(await guide.count())await guide.locator(".guide-dialog__close").click();
     await page.screenshot({path:path.join(out,label+"-map.png"),fullPage:true});
     if(width<880){
      await page.locator("[data-et-category='04']").click();
