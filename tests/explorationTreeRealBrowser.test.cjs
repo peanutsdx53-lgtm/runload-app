@@ -63,12 +63,10 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
        course:{name:"Regression route",gradeKnowledge:"UNKNOWN"}};
       localStorage.setItem("runner-load-app-new-v1-records-v1",JSON.stringify([record]));
      });
-     await page.goto(BASE+"/#/result?recordId=et-smoke-run",{waitUntil:"domcontentloaded"});
-     await page.locator(".understanding-link").waitFor({timeout:25000});
-     const entry=await page.locator(".understanding-link").getAttribute("href");
-     assert.match(entry,/^#\/exploration-tree\?recordId=et-smoke-run/,String(entry));
-     // Complete the actual first-use onboarding before interacting with
-     // the result CTA. The onboarding overlay intentionally blocks taps.
+     // Complete onboarding at Home before opening a specific stored Result.
+     // The completion handler may rerender the app and change its route.
+     await page.goto(BASE+"/#/home",{waitUntil:"domcontentloaded"});
+     // The onboarding overlay intentionally blocks first-use taps.
      await page.evaluate(()=>{
       const dialog=document.querySelector("[data-mobile-onboarding]");
       if(!dialog)return;
@@ -82,6 +80,10 @@ const BASE=process.env.RUNLOAD_TEST_ORIGIN||"http://127.0.0.1:4173";
       const dialog=document.querySelector("[data-mobile-onboarding]");
       return !dialog||getComputedStyle(dialog).display==="none"||!dialog.getClientRects().length;
      },null,{timeout:7000});
+     await page.goto(BASE+"/#/result?recordId=et-smoke-run",{waitUntil:"domcontentloaded"});
+     await page.locator(".understanding-link").waitFor({timeout:25000});
+     const entry=await page.locator(".understanding-link").getAttribute("href");
+     assert.match(entry,/^#\/exploration-tree\?recordId=et-smoke-run/,String(entry));
      await page.locator(".understanding-link").click();
      await page.locator(".screen--exploration-tree").waitFor({timeout:20000});
      assert.match(await page.locator(".et-status").textContent(),/今回の走り/);
