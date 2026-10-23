@@ -564,7 +564,7 @@
     width:20px;
     height:20px;
   }
-  /* Exploration uses a routed-screen section, not a legacy screen-layout. */
+  /* Exploration uses a routed-screen section rather than screen-layout. */
   html body #app > .app-shell--w1-mobile:has(.screen--exploration-tree) {
     padding-bottom:calc(84px + env(safe-area-inset-bottom));
   }
